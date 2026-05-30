@@ -311,39 +311,6 @@
         throw this.notImplementedError("setMetaDoc");
     }
 
-    /**
-     * Watch all per-member presence docs under `/Nodes/{rootId}/_presence/*`.
-     * Callback receives the full list of presence records on every change.
-     * @param {string} _rootId
-     * @param {function(Array<Object>):void} _onSnap
-     * @param {function(Error):void} [_onErr]
-     * @returns {function():void} unsubscribe
-     */
-    watchPresence (/*_rootId, _onSnap, _onErr*/) {
-        throw this.notImplementedError("watchPresence");
-    }
-
-    /**
-     * Set the caller's own presence doc.
-     * @param {string} _rootId
-     * @param {string} _uid
-     * @param {Object} _data
-     * @returns {Promise<void>}
-     */
-    async setPresenceDoc (/*_rootId, _uid, _data*/) {
-        throw this.notImplementedError("setPresenceDoc");
-    }
-
-    /**
-     * Delete a presence doc (rule allows self or owner).
-     * @param {string} _rootId
-     * @param {string} _uid
-     * @returns {Promise<void>}
-     */
-    async deletePresenceDoc (/*_rootId, _uid*/) {
-        throw this.notImplementedError("deletePresenceDoc");
-    }
-
 
     // ---------------------------------------------------------------- membership discovery
 

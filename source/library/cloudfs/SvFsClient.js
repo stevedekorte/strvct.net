@@ -93,18 +93,6 @@
     }
 
     /**
-     * Pool-managed watch on `/Nodes/{rootId}/_presence/*`.
-     * @param {string} rootId
-     * @param {function(Array<Object>):void} onSnap
-     * @param {function(Error):void} [onErr]
-     * @returns {Object} listener-pool handle
-     */
-    watchPresence (rootId, onSnap, onErr) {
-        const unsubscribe = this.backend().watchPresence(rootId, onSnap, onErr);
-        return this.listenerPool().acquire({ label: "presence:" + rootId, unsubscribe });
-    }
-
-    /**
      * Pool-managed watch on the HAEB liveness roster `/live/{sessionId}/*`.
      * onSnap receives a { uid: data } map on every connect/disconnect.
      * @param {string} sessionId

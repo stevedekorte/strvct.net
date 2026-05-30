@@ -305,25 +305,6 @@
         await this._scopeCol(rootId, "_meta").doc(docId).set(data);
     }
 
-    watchPresence (rootId, onSnap, onErr) {
-        return this._scopeCol(rootId, "_presence").onSnapshot(
-            (snap) => {
-                const list = [];
-                snap.forEach((d) => list.push(d.data()));
-                onSnap(list);
-            },
-            (err) => { if (onErr) onErr(err); else console.error("[SvFirebaseFsBackend] watchPresence error:", err); }
-        );
-    }
-
-    async setPresenceDoc (rootId, uid, data) {
-        await this._scopeCol(rootId, "_presence").doc(uid).set(data);
-    }
-
-    async deletePresenceDoc (rootId, uid) {
-        await this._scopeCol(rootId, "_presence").doc(uid).delete();
-    }
-
     // ---------------------------------------------------------------- HAEB event bus (RTDB-backed)
     //
     // The host-authoritative event bus lives in RTDB as three top-level trees
