@@ -200,6 +200,46 @@
         return result;
     }
 
+    /**
+     * @description Finds any descendant node (including self) with the given JSON ID,
+     * searching the FULL node graph — both navigable subnodes and JSON-schema slot
+     * values — not just the JSON-schema subset walked by descendantWithJsonId(). This
+     * reaches subtrees deliberately excluded from asJson(): e.g. a session's aiChat
+     * (a subnode that is intentionally not in the JSON schema) and the message nodes
+     * beneath it. Cycle-guarded so reference/pointer back-edges can't loop.
+     * @param {string} jsonId - The JSON ID to search for.
+     * @param {Set} [visited] - Internal cycle guard; nodes already visited.
+     * @returns {SvNode|null} The matching node, or null if none is found.
+     * @category Node Search
+     */
+    anyDescendantWithJsonId (jsonId, visited = new Set()) {
+        if (visited.has(this)) {
+            return null;
+        }
+        visited.add(this);
+
+        if (this.jsonId() === jsonId) {
+            return this;
+        }
+
+        // Union of navigable subnodes and JSON-schema slot values: the former
+        // includes non-schema subnodes (e.g. aiChat), the latter includes
+        // node-valued data slots that aren't subnodes. Duplicates are harmless
+        // — the visited set dedupes on recursion.
+        const candidates = this.subnodes().concat(this.nextJsonDescendants());
+        return candidates.detectAndReturnValue(sn => {
+            if (sn) {
+                if (sn.isKindOf(SvPointerField)) {
+                    sn = sn.nodeTileLink();
+                }
+                if (sn && sn.isKindOf(SvNode) && sn.anyDescendantWithJsonId) {
+                    return sn.anyDescendantWithJsonId(jsonId, visited);
+                }
+            }
+            return null;
+        });
+    }
+
     descendantWithJsonIdOrThrow (jsonId, path = "") {
         const result = this.descendantWithJsonId(jsonId, path);
         if (!result) {

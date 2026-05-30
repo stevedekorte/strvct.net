@@ -528,6 +528,58 @@ Function.prototype.callsOnNarrationTool = function () {
 };
 
 
+// --- Object-message primitive metadata ---
+// Describes how a method may be invoked as a typed object-message
+// (invokeObjectMethod) across a host/client boundary, independent of the
+// AI tool-call metadata above. A method may carry both.
+
+// callableBy — which roles may invoke this method as a message. Checked by the
+// receiver's dispatcher to authorize the sender.
+
+Function.prototype.setCallableBy = function (roles) {
+    assert(Type.isArray(roles), "callableBy must be an array of role strings");
+    const validRoles = ["host", "owningClient", "anyClient", "ai"];
+    roles.forEach(role => assert(validRoles.includes(role), "Invalid callableBy role: " + role));
+    this.setMetaProperty("callableBy", roles);
+    return this;
+};
+
+Function.prototype.callableBy = function () {
+    return this.getMetaProperty("callableBy") ?? [];
+};
+
+// messageMode — how a successful invocation is replicated:
+//   "localPresentation" — each peer runs it locally off replicated content (TTS, SFX); nothing broadcast
+//   "sharedPure"        — applied as-is anywhere; one canonical mutation is broadcast to all
+//   "sharedBehavioral"  — computed once by the action's owner; the resulting pure mutation is broadcast
+
+Function.prototype.setMessageMode = function (mode) {
+    const validModes = ["localPresentation", "sharedPure", "sharedBehavioral"];
+    assert(validModes.includes(mode), "Invalid messageMode: " + mode);
+    this.setMetaProperty("messageMode", mode);
+    return this;
+};
+
+Function.prototype.messageMode = function () {
+    return this.getMetaProperty("messageMode");
+};
+
+// canOccurOnClient — whether a client may execute this method locally (e.g. when
+// walking tool-calls embedded in replicated content). Defensive guard: clients
+// skip anything not flagged true, so behavioral / host-authoritative methods
+// never run client-side.
+
+Function.prototype.setCanOccurOnClient = function (aBool) {
+    assert(Type.isBoolean(aBool));
+    this.setMetaProperty("canOccurOnClient", aBool);
+    return this;
+};
+
+Function.prototype.canOccurOnClient = function () {
+    return this.getMetaProperty("canOccurOnClient") == true;
+};
+
+
 // --- JSON Schema Validation ---
 
 /*

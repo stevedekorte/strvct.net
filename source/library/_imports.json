@@ -12,6 +12,7 @@
     "credentials/_imports.json",
     "i18n/_imports.json",
     "cloudfs/_imports.json",
+    "cloudmessaging/_imports.json",
     "services/_imports.json",
     "app/_imports.json",
     "cli/_imports.json"
