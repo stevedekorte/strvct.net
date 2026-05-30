@@ -419,4 +419,130 @@
         await this._narrationDocRef(rootId, msgId).update(patch);
     }
 
+    // ---------------------------------------------------------------- HAEB event bus (RTDB-backed)
+    //
+    // The host-authoritative event bus lives in RTDB as three top-level trees
+    // keyed by sessionId (kept separate so the tiny ACL record isn't bloated
+    // by the event log):
+    //   /events/{sessionId}/{seq}          host writes; members read (append-only log)
+    //   /requests/{sessionId}/{uid}/{id}   clients write own uid; host reads
+    //   /sessions/{sessionId}              { hostUid, memberUids } ACL record (CF-written)
+    //
+    // `seq` is a host-assigned monotonic integer. Event keys are zero-padded
+    // so RTDB orderByKey() == chronological order (lexicographic == numeric).
+    // The rules read the ACL from /sessions/{sessionId}.
+
+    _eventsRef (sessionId) {
+        return firebase.database().ref("events/" + sessionId);
+    }
+
+    _requestsRef (sessionId) {
+        return firebase.database().ref("requests/" + sessionId);
+    }
+
+    _seqKey (seq) {
+        return String(seq).padStart(12, "0");
+    }
+
+    /**
+     * Host: append an event at the given seq. Stamps seq + server time.
+     */
+    async emitEvent (sessionId, seq, eventData) {
+        const payload = Object.assign({}, eventData || {});
+        payload.seq = seq;
+        payload.serverTime = firebase.database.ServerValue.TIMESTAMP;
+        await this._eventsRef(sessionId).child(this._seqKey(seq)).set(payload);
+    }
+
+    /**
+     * Host: recover the max existing seq (for the in-memory counter on restart).
+     * Returns -1 if the log is empty.
+     */
+    async maxEventSeq (sessionId) {
+        const snap = await this._eventsRef(sessionId).orderByKey().limitToLast(1).once("value");
+        let maxSeq = -1;
+        snap.forEach((child) => {
+            const v = child.val();
+            const s = (v && typeof v.seq === "number") ? v.seq : parseInt(child.key, 10);
+            if (typeof s === "number" && isFinite(s)) maxSeq = s;
+        });
+        return maxSeq;
+    }
+
+    /**
+     * Member: subscribe to events with seq > sinceSeq, in order, then live.
+     * Pass sinceSeq = -1 (or null) to replay from seq=0 (the snapshot).
+     * Returns an unsubscribe function.
+     */
+    watchEvents (sessionId, sinceSeq, onEvent, onErr) {
+        let q = this._eventsRef(sessionId).orderByKey();
+        if (typeof sinceSeq === "number" && sinceSeq >= 0) {
+            q = q.startAfter(this._seqKey(sinceSeq));
+        }
+        const onAdded = (snap) => {
+            const v = snap.val();
+            if (v) onEvent(v);
+        };
+        const onError = (err) => {
+            if (onErr) onErr(err);
+            else console.error("[SvFirebaseFsBackend] watchEvents error:", err);
+        };
+        q.on("child_added", onAdded, onError);
+        return () => {
+            try { q.off("child_added", onAdded); }
+            catch (e) { console.warn("[SvFirebaseFsBackend] events off failed:", e && e.message); }
+        };
+    }
+
+    /**
+     * Client: send a request under the client's own uid.
+     */
+    async sendRequest (sessionId, uid, requestId, requestData) {
+        const payload = Object.assign({}, requestData || {});
+        payload.senderRequestId = requestId;
+        payload.clientTime = firebase.database.ServerValue.TIMESTAMP;
+        await this._requestsRef(sessionId).child(uid).child(requestId).set(payload);
+    }
+
+    /**
+     * Host: subscribe to all members' inbound requests. requests/{uid}/{id}
+     * is two levels deep, so we watch child_added at the requests root for
+     * per-uid buckets, and child_added within each bucket for individual
+     * requests. onRequest receives { uid, requestId, request }.
+     * Returns an unsubscribe function.
+     */
+    watchRequests (sessionId, onRequest, onErr) {
+        const ref = this._requestsRef(sessionId);
+        const uidUnsubs = new Map();
+        const onError = (err) => {
+            if (onErr) onErr(err);
+            else console.error("[SvFirebaseFsBackend] watchRequests error:", err);
+        };
+        const watchUid = (uid) => {
+            if (uidUnsubs.has(uid)) return;
+            const uidRef = ref.child(uid);
+            const onReq = (snap) => {
+                const v = snap.val();
+                if (v) onRequest({ uid, requestId: snap.key, request: v });
+            };
+            uidRef.on("child_added", onReq, onError);
+            uidUnsubs.set(uid, () => { try { uidRef.off("child_added", onReq); } catch (e) { /* noop */ } });
+        };
+        const onUidAdded = (snap) => watchUid(snap.key);
+        ref.on("child_added", onUidAdded, onError);
+        return () => {
+            try { ref.off("child_added", onUidAdded); } catch (e) { /* noop */ }
+            uidUnsubs.forEach((u) => u());
+            uidUnsubs.clear();
+        };
+    }
+
+    /**
+     * Host: delete a processed request (apply-then-delete; idempotent apply
+     * makes a crash-replay harmless). Backstopped by a CF sweep for orphans.
+     */
+    async deleteRequest (sessionId, uid, requestId) {
+        await this._requestsRef(sessionId).child(uid).child(requestId).remove();
+    }
+
 }.initThisClass());
