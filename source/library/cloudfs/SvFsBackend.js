@@ -344,57 +344,6 @@
         throw this.notImplementedError("deletePresenceDoc");
     }
 
-    /**
-     * Watch the narration stream under `/Nodes/{rootId}/_narration/*`,
-     * ordered by `createdAt` ascending.
-     *
-     * @param {string} _rootId
-     * @param {Object} _opts                 - { since, limit }
-     * @param {Date} [_opts.since]           - createdAt cursor (>); skip past on join.
-     * @param {number} [_opts.limit]
-     * @param {function(Array<Object>):void} _onSnap
-     * @param {function(Error):void} [_onErr]
-     * @returns {function():void} unsubscribe
-     */
-    watchNarration (/*_rootId, _opts, _onSnap, _onErr*/) {
-        throw this.notImplementedError("watchNarration");
-    }
-
-    /**
-     * One-shot list of recent narration docs (for join-time backfill).
-     * Default opts return the N most recent by `createdAt`.
-     * @param {string} _rootId
-     * @param {Object} _opts                 - { limit, descending }
-     * @returns {Promise<Array<Object>>}
-     */
-    async listNarration (/*_rootId, _opts*/) {
-        throw this.notImplementedError("listNarration");
-    }
-
-    /**
-     * Create a narration message. The rule requires `data.senderId` to match
-     * the caller's auth uid; for editors, the host's activity state must be
-     * "idle" (or absent).
-     * @param {string} _rootId
-     * @param {string} _msgId
-     * @param {Object} _data
-     * @returns {Promise<void>}
-     */
-    async setNarrationDoc (/*_rootId, _msgId, _data*/) {
-        throw this.notImplementedError("setNarrationDoc");
-    }
-
-    /**
-     * Update an existing narration message (rule: author-only). Used for
-     * streaming chunk appends and isFinal transitions.
-     * @param {string} _rootId
-     * @param {string} _msgId
-     * @param {Object} _patch
-     * @returns {Promise<void>}
-     */
-    async updateNarrationDoc (/*_rootId, _msgId, _patch*/) {
-        throw this.notImplementedError("updateNarrationDoc");
-    }
 
     // ---------------------------------------------------------------- membership discovery
 

@@ -105,21 +105,6 @@
     }
 
     /**
-     * Pool-managed watch on `/Nodes/{rootId}/_narration/*`, ordered by
-     * `createdAt` ascending. Pass `{ since: <Timestamp> }` to skip past
-     * already-applied messages on reconnect.
-     * @param {string} rootId
-     * @param {Object} opts                 — { since, limit }
-     * @param {function(Array<Object>):void} onSnap
-     * @param {function(Error):void} [onErr]
-     * @returns {Object} listener-pool handle
-     */
-    watchNarration (rootId, opts, onSnap, onErr) {
-        const unsubscribe = this.backend().watchNarration(rootId, opts, onSnap, onErr);
-        return this.listenerPool().acquire({ label: "narration:" + rootId, unsubscribe });
-    }
-
-    /**
      * Pool-managed watch on the HAEB liveness roster `/live/{sessionId}/*`.
      * onSnap receives a { uid: data } map on every connect/disconnect.
      * @param {string} sessionId
