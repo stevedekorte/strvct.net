@@ -21,7 +21,7 @@ Strvct's persistence system stores object graphs in the browser's IndexedDB. Rat
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="190" y="20" width="440" height="100"/>
+  <rect class="box" x="190" y="20" width="440" height="15"/>
   <text x="205" y="42" class="b">Node Graph</text>
   <line class="edge" x1="240" y1="65" x2="310" y2="90"/>
   <line class="edge" x1="240" y1="65" x2="380" y2="65"/>
@@ -37,23 +37,23 @@ Strvct's persistence system stores object graphs in the browser's IndexedDB. Rat
   <circle cx="560" cy="65" r="8" class="fill"/>
   <line class="flow" x1="410" y1="106" x2="410" y2="150" marker-end="url(#alp)"/>
   <text x="425" y="135" class="dim">current node</text>
-  <rect class="fill" x="190" y="150" width="440" height="46"/>
+  <rect class="fill" x="190" y="150" width="440" height="52"/>
   <text x="205" y="170" class="b">SvStorableNode</text>
   <text x="205" y="188" class="dim">your node class; slot setters hook into the persistence system</text>
-  <line class="flow" x1="410" y1="225" x2="410" y2="255" marker-end="url(#alp)"/>
+  <line class="flow" x1="410" y1="202" x2="410" y2="255" marker-end="url(#alp)"/>
   <text x="420" y="245" class="dim">didUpdateSlot marks object dirty</text>
-  <rect class="fill" x="190" y="255" width="440" height="46"/>
+  <rect class="fill" x="190" y="255" width="440" height="52"/>
   <text x="205" y="275" class="b">SvObjectPool</text>
   <text x="205" y="293" class="dim">in-memory cache; tracks dirty objects, serializes to JSON</text>
-  <line class="flow" x1="410" y1="330" x2="410" y2="360" marker-end="url(#alp)"/>
+  <line class="flow" x1="410" y1="307" x2="410" y2="360" marker-end="url(#alp)"/>
   <text x="420" y="350" class="dim">commit at end of event loop</text>
-  <rect class="fill" x="190" y="360" width="440" height="46"/>
+  <rect class="fill" x="190" y="360" width="440" height="52"/>
   <text x="205" y="380" class="b">SvPersistentAtomicMap</text>
   <text x="205" y="398" class="dim">IndexedDB wrapper; in-memory cache, batched writes</text>
-  <line class="flow" x1="410" y1="435" x2="410" y2="465" marker-end="url(#alp)"/>
+  <line class="flow" x1="410" y1="412" x2="410" y2="465" marker-end="url(#alp)"/>
   <text x="420" y="455" class="dim">atomic transaction</text>
-  <rect class="box" x="190" y="465" width="440" height="55"/>
-  <text x="410" y="498" text-anchor="middle" class="b">IndexedDB</text>
+  <rect class="box" x="190" y="465" width="440" height="42"/>
+  <text x="205" y="489" class="b">IndexedDB</text>
 </svg>
 
 - **`SvObjectPool`** — Manages an in-memory cache of objects indexed by persistent unique IDs (puuids). Tracks dirty objects and handles serialization, deserialization, and garbage collection.

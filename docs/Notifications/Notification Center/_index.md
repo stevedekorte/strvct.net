@@ -22,42 +22,43 @@ Notifications are queued and dispatched at the end of the event loop, so multipl
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="180" height="260"/>
-  <text x="55" y="42" class="b">Senders</text>
-  <rect class="fill" x="55" y="65" width="150" height="46"/>
-  <text x="70" y="85" class="b">SvNode A</text>
-  <text x="70" y="103" class="dim">post by name</text>
-  <rect class="fill" x="55" y="135" width="150" height="46"/>
-  <text x="70" y="155" class="b">SvNode B</text>
-  <text x="70" y="173" class="dim">post by name</text>
-  <rect class="fill" x="55" y="205" width="150" height="46"/>
-  <text x="70" y="225" class="b">SvNode C</text>
-  <text x="70" y="243" class="dim">post by name</text>
-  <line class="flow" x1="220" y1="150" x2="270" y2="150" marker-end="url(#anc)"/>
-  <text x="245" y="140" text-anchor="middle" class="dim">post</text>
-  <rect class="box" x="270" y="20" width="280" height="260"/>
-  <text x="285" y="42" class="b">NotificationCenter</text>
-  <text x="285" y="62" class="dim">queued, deduplicated</text>
-  <rect class="fill" x="285" y="80" width="250" height="28"/>
-  <text x="300" y="100" class="dim">name · sender</text>
-  <rect class="fill" x="285" y="130" width="250" height="28"/>
-  <text x="300" y="150" class="dim">name · sender</text>
-  <rect class="fill" x="285" y="180" width="250" height="28"/>
-  <text x="300" y="200" class="dim">name · sender</text>
-  <text x="410" y="250" text-anchor="middle" class="dim">drains at end of event loop</text>
-  <line class="flow" x1="550" y1="150" x2="600" y2="150" marker-end="url(#anc)"/>
-  <text x="575" y="140" text-anchor="middle" class="dim">dispatch</text>
-  <rect class="box" x="600" y="20" width="180" height="260"/>
-  <text x="615" y="42" class="b">Observers</text>
-  <rect class="fill" x="615" y="65" width="150" height="46"/>
-  <text x="630" y="85" class="b">View X</text>
-  <text x="630" y="103" class="dim">handler(note)</text>
-  <rect class="fill" x="615" y="135" width="150" height="46"/>
-  <text x="630" y="155" class="b">View Y</text>
-  <text x="630" y="173" class="dim">handler(note)</text>
-  <rect class="fill" x="615" y="205" width="150" height="46"/>
-  <text x="630" y="225" class="b">View Z</text>
-  <text x="630" y="243" class="dim">handler(note)</text>
+  <rect class="box" x="70" y="20" width="180" height="252"/>
+  <text x="85" y="42" class="b">Senders</text>
+  <rect class="fill" x="85" y="65" width="150" height="52"/>
+  <text x="100" y="85" class="b">SvNode A</text>
+  <text x="100" y="103" class="dim">post by name</text>
+  <rect class="fill" x="85" y="135" width="150" height="52"/>
+  <text x="100" y="155" class="b">SvNode B</text>
+  <text x="100" y="173" class="dim">post by name</text>
+  <rect class="fill" x="85" y="205" width="150" height="52"/>
+  <text x="100" y="225" class="b">SvNode C</text>
+  <text x="100" y="243" class="dim">post by name</text>
+  <line class="flow" x1="250" y1="146" x2="320" y2="146" marker-end="url(#anc)"/>
+  <text x="285" y="138" text-anchor="middle" class="dim">post</text>
+  <rect class="box" x="320" y="20" width="180" height="252"/>
+  <text x="335" y="42" class="b">NotificationCenter</text>
+  <text x="335" y="62" class="dim">queued, deduplicated</text>
+  <rect class="fill" x="335" y="80" width="150" height="34"/>
+  <text x="350" y="100" class="dim">name · sender</text>
+  <rect class="fill" x="335" y="122" width="150" height="34"/>
+  <text x="350" y="142" class="dim">name · sender</text>
+  <rect class="fill" x="335" y="164" width="150" height="34"/>
+  <text x="350" y="184" class="dim">name · sender</text>
+  <text x="335" y="220" class="dim">drains at end</text>
+  <text x="335" y="238" class="dim">of event loop</text>
+  <line class="flow" x1="500" y1="146" x2="570" y2="146" marker-end="url(#anc)"/>
+  <text x="535" y="138" text-anchor="middle" class="dim">dispatch</text>
+  <rect class="box" x="570" y="20" width="180" height="252"/>
+  <text x="585" y="42" class="b">Observers</text>
+  <rect class="fill" x="585" y="65" width="150" height="52"/>
+  <text x="600" y="85" class="b">View X</text>
+  <text x="600" y="103" class="dim">handler(note)</text>
+  <rect class="fill" x="585" y="135" width="150" height="52"/>
+  <text x="600" y="155" class="b">View Y</text>
+  <text x="600" y="173" class="dim">handler(note)</text>
+  <rect class="fill" x="585" y="205" width="150" height="52"/>
+  <text x="600" y="225" class="b">View Z</text>
+  <text x="600" y="243" class="dim">handler(note)</text>
 </svg>
 
 ## Posting Notifications

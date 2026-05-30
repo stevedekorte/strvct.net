@@ -22,7 +22,7 @@ No. The choice is load-bearing rather than stylistic.
 
 ## Why not TypeScript?
 
-Integration cost. STRVCT's content-addressable build and in-browser source-level debugging (via eval with sourceURL) work cleanly with plain JavaScript. Adding a TS compile step while preserving content-hashed caching and step-through debugging looked like meaningful work for uncertain gain, especially given that slot annotations already carry type information at runtime and serve most of the same validation and documentation roles. The option remains open for the future, but it's not currently a priority.
+STRVCT is designed for large client-side projects, with hundreds of model classes loaded in the browser. At that scale, traditional web package systems become too slow, which is why the framework uses a content-hashed caching build instead of standard ES modules. TypeScript would add its own transpiler and type-checker pass on top of that, and getting source-level debugging to work cleanly with both the eval-based loading and a TS pipeline is non-trivial. Slot annotations already carry runtime type information that serves most of TypeScript's validation and documentation roles, so the integration cost looked high relative to the benefit. It's left as potential future work.
 
 ## How does persistence work?
 
@@ -71,6 +71,10 @@ MIT-licensed, and the entire codebase is readable: plain JavaScript, no transpil
 **Origins:** STRVCT began as internal infrastructure, not as a framework project. The earliest code was written in 2016 as part of an application called bitmarkets.js — Miller columns, a node hierarchy, and slot-based persistence — and was carried into a second unrelated application, voluntary.app, starting in 2017. The framework code was progressively separated from application code and extracted into its own repository, strvct.net, in 2020. It has since grown to include the object pool persistence system, gestures and drag-and-drop, content-addressable builds, cloud sync, and internationalization. The [Timeline](../Timeline/) has the full list of milestones.
 
 **Public presence:** The project has not been publicly marketed or announced. Its only public presence is the GitHub repository and links from the author's GitHub and Twitter profile subtitles. It is not a commercial product, has no funding or sponsoring organization, and is developed as a personal framework — used in production by [undreamedof.ai](https://undreamedof.ai).
+
+## How do you pronounce STRVCT?
+
+Like "struct" — as in *structure*. The V is stylized; the pronunciation is the same.
 
 ## How does it work with AI-assisted development?
 

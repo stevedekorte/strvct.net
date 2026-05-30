@@ -28,7 +28,7 @@ This page covers the key concepts: the domain model, storage, UI synchronization
   <rect class="box" x="30" y="20" width="200" height="160"/>
   <text x="45" y="42" class="b">UI</text>
   <text x="45" y="62" class="dim">SvNodeView hierarchy</text>
-  <rect class="fill" x="45" y="80" width="170" height="82"/>
+  <rect class="fill" x="45" y="80" width="170" height="88"/>
   <text x="60" y="100" class="b">Views</text>
   <text x="60" y="118" class="dim">observe a node's slots;</text>
   <text x="60" y="136" class="dim">created lazily on navigation;</text>
@@ -36,7 +36,7 @@ This page covers the key concepts: the domain model, storage, UI synchronization
   <rect class="box" x="310" y="20" width="200" height="160"/>
   <text x="325" y="42" class="b">Model</text>
   <text x="325" y="62" class="dim">SvNode graph</text>
-  <rect class="fill" x="325" y="80" width="170" height="82"/>
+  <rect class="fill" x="325" y="80" width="170" height="88"/>
   <text x="340" y="100" class="b">Domain objects</text>
   <text x="340" y="118" class="dim">slots, subnodes,</text>
   <text x="340" y="136" class="dim">annotations;</text>
@@ -44,7 +44,7 @@ This page covers the key concepts: the domain model, storage, UI synchronization
   <rect class="box" x="590" y="20" width="200" height="160"/>
   <text x="605" y="42" class="b">Storage</text>
   <text x="605" y="62" class="dim">SvPersistentObjectPool</text>
-  <rect class="fill" x="605" y="80" width="170" height="82"/>
+  <rect class="fill" x="605" y="80" width="170" height="88"/>
   <text x="620" y="100" class="b">IndexedDB</text>
   <text x="620" y="118" class="dim">monitors mutations;</text>
   <text x="620" y="136" class="dim">bundles per-loop changes</text>

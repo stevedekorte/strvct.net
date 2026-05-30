@@ -58,36 +58,36 @@ this.addWeakTimeout(() => this.fadeOut(), 300);
       <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="350" height="320"/>
+  <rect class="box" x="40" y="20" width="350" height="302"/>
   <text x="55" y="42" class="b">addTimeout · strong</text>
   <text x="55" y="62" class="dim">closure pins the object alive</text>
-  <rect class="fill" x="55" y="85" width="320" height="46"/>
+  <rect class="fill" x="55" y="85" width="320" height="52"/>
   <text x="70" y="105" class="b">Browser timer queue</text>
   <text x="70" y="123" class="dim">held by the JS engine</text>
-  <line class="strong" x1="215" y1="140" x2="215" y2="170" marker-end="url(#at)"/>
+  <line class="strong" x1="215" y1="137" x2="215" y2="170" marker-end="url(#at)"/>
   <text x="227" y="162" class="dim">strong ref</text>
-  <rect class="fill" x="55" y="170" width="320" height="46"/>
+  <rect class="fill" x="55" y="170" width="320" height="52"/>
   <text x="70" y="190" class="b">Callback closure</text>
   <text x="70" y="208" class="dim">captures the object directly</text>
-  <line class="strong" x1="215" y1="225" x2="215" y2="255" marker-end="url(#at)"/>
+  <line class="strong" x1="215" y1="222" x2="215" y2="255" marker-end="url(#at)"/>
   <text x="227" y="247" class="dim">strong ref</text>
-  <rect class="fill" x="55" y="255" width="320" height="46"/>
+  <rect class="fill" x="55" y="255" width="320" height="52"/>
   <text x="70" y="275" class="b">Object</text>
   <text x="70" y="293" class="dim">pinned; cannot be collected</text>
-  <rect class="box" x="430" y="20" width="350" height="320"/>
+  <rect class="box" x="430" y="20" width="350" height="302"/>
   <text x="445" y="42" class="b">addWeakTimeout · GC-friendly</text>
   <text x="445" y="62" class="dim">weak link breaks the chain</text>
-  <rect class="fill" x="445" y="85" width="320" height="46"/>
+  <rect class="fill" x="445" y="85" width="320" height="52"/>
   <text x="460" y="105" class="b">Browser timer queue</text>
   <text x="460" y="123" class="dim">held by the JS engine</text>
-  <line class="strong" x1="605" y1="140" x2="605" y2="170" marker-end="url(#at)"/>
+  <line class="strong" x1="605" y1="137" x2="605" y2="170" marker-end="url(#at)"/>
   <text x="617" y="162" class="dim">strong ref</text>
-  <rect class="fill" x="445" y="170" width="320" height="46"/>
+  <rect class="fill" x="445" y="170" width="320" height="52"/>
   <text x="460" y="190" class="b">Closure</text>
   <text x="460" y="208" class="dim">holds only WeakRef + Symbol</text>
-  <line class="weak" x1="605" y1="225" x2="605" y2="255" marker-end="url(#atw)"/>
+  <line class="weak" x1="605" y1="222" x2="605" y2="255" marker-end="url(#atw)"/>
   <text x="617" y="247" class="dim">weak ref</text>
-  <rect class="fill" x="445" y="255" width="320" height="46"/>
+  <rect class="fill" x="445" y="255" width="320" height="52"/>
   <text x="460" y="275" class="b">Object</text>
   <text x="460" y="293" class="dim">collectable; timer becomes no-op</text>
   <text x="410" y="370" text-anchor="middle" class="dim">The weak link between closure and object breaks the reference chain that would otherwise pin the object alive.</text>

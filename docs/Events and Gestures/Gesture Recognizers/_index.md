@@ -40,30 +40,30 @@ For example, a `SvPanGestureRecognizer` sends `onPanBegin`, `onPanMove`, `onPanC
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="46"/>
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
   <text x="235" y="40" class="b">Raw events stream</text>
   <text x="235" y="58" class="dim">mouse + touch, unified input</text>
-  <line class="flow" x1="410" y1="75" x2="410" y2="110" marker-end="url(#agr)"/>
-  <rect class="fill" x="220" y="110" width="380" height="64"/>
+  <line class="flow" x1="410" y1="72" x2="410" y2="110" marker-end="url(#agr)"/>
+  <rect class="fill" x="220" y="110" width="380" height="70"/>
   <text x="235" y="130" class="b">SvGestureRecognizer · state machine</text>
   <text x="235" y="148" class="dim">tracks finger count, timing, movement, hold;</text>
   <text x="235" y="166" class="dim">tap, pan, pinch, rotation, long-press, slide</text>
-  <line class="flow" x1="410" y1="190" x2="410" y2="225" marker-end="url(#agr)"/>
+  <line class="flow" x1="410" y1="180" x2="410" y2="225" marker-end="url(#agr)"/>
   <text x="425" y="212" class="dim">when gesture conditions are met</text>
-  <rect class="fill" x="220" y="225" width="380" height="64"/>
+  <rect class="fill" x="220" y="225" width="380" height="70"/>
   <text x="235" y="245" class="b">SvGestureManager · singleton</text>
   <text x="235" y="263" class="dim">arbitrates competing gestures;</text>
   <text x="235" y="281" class="dim">cancels conflicts on same / ancestor views</text>
-  <line class="flow" x1="410" y1="305" x2="410" y2="340" marker-end="url(#agr)"/>
+  <line class="flow" x1="410" y1="295" x2="410" y2="340" marker-end="url(#agr)"/>
   <text x="425" y="327" class="dim">if accepted</text>
-  <rect class="fill" x="220" y="340" width="380" height="82"/>
+  <rect class="fill" x="220" y="340" width="380" height="88"/>
   <text x="235" y="360" class="b">Delegate messages to view</text>
   <text x="235" y="378" class="dim">onGestureBegin → onGestureMove → onGestureComplete</text>
   <text x="235" y="396" class="dim">(or onGestureCancelled if interrupted)</text>
   <text x="235" y="414" class="dim">e.g. onPanBegin, onPinchMove, onTapComplete</text>
-  <line class="flow" x1="410" y1="440" x2="410" y2="475" marker-end="url(#agr)"/>
-  <rect class="fill" x="290" y="475" width="240" height="28"/>
-  <text x="305" y="495" class="b">View handler runs</text>
+  <line class="flow" x1="410" y1="428" x2="410" y2="475" marker-end="url(#agr)"/>
+  <rect class="fill" x="220" y="475" width="380" height="34"/>
+  <text x="235" y="495" class="b">View handler runs</text>
 </svg>
 
 ## Available Gestures

@@ -11,7 +11,7 @@ Because STRVCT generates the UI from annotated model nodes, the same machinery c
 
 Both work in any STRVCT application without per-node setup.
 
-<svg viewBox="0 0 820 380" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 390" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -25,21 +25,21 @@ Both work in any STRVCT application without per-node setup.
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="46"/>
-  <text x="305" y="40" class="b">Option-click a tile</text>
-  <text x="305" y="58" class="dim">on any node in the running app</text>
-  <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#ains)"/>
-  <rect class="fill" x="220" y="115" width="380" height="64"/>
-  <text x="235" y="135" class="b">Inspector node generated on demand</text>
-  <text x="235" y="153" class="dim">framework walks the target's slot metadata;</text>
-  <text x="235" y="171" class="dim">one field tile per slot whose canInspect() is true</text>
-  <line class="flow" x1="410" y1="195" x2="410" y2="230" marker-end="url(#ains)"/>
-  <rect class="fill" x="220" y="230" width="380" height="82"/>
-  <text x="235" y="250" class="b">Field tiles open in the next column</text>
-  <text x="235" y="268" class="dim">slot name · current value · type-aware editor;</text>
-  <text x="235" y="286" class="dim">edits write through to the live object,</text>
-  <text x="235" y="304" class="dim">persistence and view sync follow automatically</text>
-  <text x="410" y="365" text-anchor="middle" class="dim">Option-Shift-D toggles developer mode globally, revealing nodes that applications hide from end users.</text>
+  <rect class="fill" x="220" y="20" width="380" height="88"/>
+  <text x="235" y="40" class="b">Option-click a tile</text>
+  <text x="235" y="58" class="dim">on any node in the running app</text>
+  <line class="flow" x1="410" y1="108" x2="410" y2="133" marker-end="url(#ains)"/>
+  <rect class="fill" x="220" y="133" width="380" height="88"/>
+  <text x="235" y="153" class="b">Inspector node generated on demand</text>
+  <text x="235" y="171" class="dim">framework walks the target's slot metadata;</text>
+  <text x="235" y="189" class="dim">one field tile per slot whose canInspect() is true</text>
+  <line class="flow" x1="410" y1="221" x2="410" y2="246" marker-end="url(#ains)"/>
+  <rect class="fill" x="220" y="246" width="380" height="88"/>
+  <text x="235" y="266" class="b">Field tiles open in the next column</text>
+  <text x="235" y="284" class="dim">slot name · current value · type-aware editor;</text>
+  <text x="235" y="302" class="dim">edits write through to the live object,</text>
+  <text x="235" y="320" class="dim">persistence and view sync follow automatically</text>
+  <text x="220" y="370" class="dim">Option-Shift-D toggles developer mode globally, revealing nodes that applications hide from end users.</text>
 </svg>
 
 ## Option-Click: Inspect a Tile

@@ -22,24 +22,24 @@ Slot change hooks centralize this. When a slot value changes, the framework auto
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="46"/>
+  <rect class="fill" x="290" y="20" width="240" height="52"/>
   <text x="305" y="40" class="b">slot setter</text>
   <text x="305" y="58" class="dim">obj.setName("foo")</text>
-  <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#asch)"/>
+  <line class="flow" x1="410" y1="72" x2="410" y2="115" marker-end="url(#asch)"/>
   <text x="425" y="100" class="dim">if value changed</text>
-  <rect class="fill" x="290" y="115" width="240" height="46"/>
+  <rect class="fill" x="290" y="115" width="240" height="52"/>
   <text x="305" y="135" class="b">didUpdateSlot fires</text>
   <text x="305" y="153" class="dim">per-slot hook + general hook</text>
-  <line class="flow" x1="410" y1="175" x2="410" y2="200"/>
+  <line class="flow" x1="410" y1="167" x2="410" y2="200"/>
   <line class="flow" x1="230" y1="200" x2="590" y2="200"/>
   <line class="flow" x1="230" y1="200" x2="230" y2="225" marker-end="url(#asch)"/>
   <line class="flow" x1="590" y1="200" x2="590" y2="225" marker-end="url(#asch)"/>
-  <rect class="fill" x="80" y="225" width="300" height="82"/>
+  <rect class="fill" x="80" y="225" width="300" height="88"/>
   <text x="95" y="245" class="b">if slot.shouldStoreSlot() is true</text>
   <text x="95" y="263" class="dim">didMutate() marks object dirty;</text>
   <text x="95" y="281" class="dim">persistence layer commits</text>
   <text x="95" y="299" class="dim">at end of event loop</text>
-  <rect class="fill" x="440" y="225" width="300" height="82"/>
+  <rect class="fill" x="440" y="225" width="300" height="88"/>
   <text x="455" y="245" class="b">if slot.syncsToView() is true</text>
   <text x="455" y="263" class="dim">posts onUpdatedNode notification;</text>
   <text x="455" y="281" class="dim">observing views schedule</text>

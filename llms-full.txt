@@ -103,36 +103,36 @@ This is a direct consequence of the naked objects architecture. In a conventiona
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="350" height="320"/>
+  <rect class="box" x="40" y="20" width="350" height="289"/>
   <text x="55" y="42" class="b">Slot annotations</text>
   <text x="55" y="62" class="dim">declared once in initPrototypeSlots()</text>
-  <rect class="fill" x="55" y="80" width="320" height="28"/>
+  <rect class="fill" x="55" y="80" width="320" height="34"/>
   <text x="70" y="100" class="dim">slot.description()</text>
-  <rect class="fill" x="55" y="125" width="320" height="28"/>
+  <rect class="fill" x="55" y="125" width="320" height="34"/>
   <text x="70" y="145" class="dim">slot.isReadOnly()</text>
-  <rect class="fill" x="55" y="170" width="320" height="28"/>
+  <rect class="fill" x="55" y="170" width="320" height="34"/>
   <text x="70" y="190" class="dim">slot.isRequired()</text>
-  <rect class="fill" x="55" y="215" width="320" height="28"/>
+  <rect class="fill" x="55" y="215" width="320" height="34"/>
   <text x="70" y="235" class="dim">slot.slotType()</text>
-  <rect class="fill" x="55" y="260" width="320" height="28"/>
+  <rect class="fill" x="55" y="260" width="320" height="34"/>
   <text x="70" y="280" class="dim">slot.minimum() · slot.maximum()</text>
   <line class="flow" x1="390" y1="97" x2="430" y2="97" marker-end="url(#aac)"/>
   <line class="flow" x1="390" y1="142" x2="430" y2="142" marker-end="url(#aac)"/>
   <line class="flow" x1="390" y1="187" x2="430" y2="187" marker-end="url(#aac)"/>
   <line class="flow" x1="390" y1="232" x2="430" y2="232" marker-end="url(#aac)"/>
   <line class="flow" x1="390" y1="277" x2="430" y2="277" marker-end="url(#aac)"/>
-  <rect class="box" x="430" y="20" width="350" height="320"/>
+  <rect class="box" x="430" y="20" width="350" height="289"/>
   <text x="445" y="42" class="b">ARIA attributes</text>
   <text x="445" y="62" class="dim">emitted by the framework's ~15 view classes</text>
-  <rect class="fill" x="445" y="80" width="320" height="28"/>
+  <rect class="fill" x="445" y="80" width="320" height="34"/>
   <text x="460" y="100" class="dim">aria-description</text>
-  <rect class="fill" x="445" y="125" width="320" height="28"/>
+  <rect class="fill" x="445" y="125" width="320" height="34"/>
   <text x="460" y="145" class="dim">aria-readonly</text>
-  <rect class="fill" x="445" y="170" width="320" height="28"/>
+  <rect class="fill" x="445" y="170" width="320" height="34"/>
   <text x="460" y="190" class="dim">aria-required</text>
-  <rect class="fill" x="445" y="215" width="320" height="28"/>
+  <rect class="fill" x="445" y="215" width="320" height="34"/>
   <text x="460" y="235" class="dim">role  (button, list, ...)</text>
-  <rect class="fill" x="445" y="260" width="320" height="28"/>
+  <rect class="fill" x="445" y="260" width="320" height="34"/>
   <text x="460" y="280" class="dim">aria-valuemin · aria-valuemax</text>
   <text x="410" y="370" text-anchor="middle" class="dim">The same annotations also generate JSON Schema for AI tool calls; one declaration drives accessibility, validation, and AI integration.</text>
 </svg>
@@ -373,7 +373,7 @@ React and Strvct solve the same fundamental problem — keeping a UI in sync wit
 
 They represent genuinely different philosophies about where developer effort should go.
 
-<svg viewBox="0 0 820 460" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 410" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -387,41 +387,41 @@ They represent genuinely different philosophies about where developer effort sho
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="350" height="420"/>
-  <text x="55" y="42" class="b">React</text>
-  <text x="55" y="62" class="dim">view library</text>
-  <rect class="fill" x="55" y="85" width="320" height="118"/>
-  <text x="70" y="105" class="b">You write</text>
-  <text x="70" y="123" class="dim">Components (JSX)</text>
-  <text x="70" y="141" class="dim">State management</text>
-  <text x="70" y="159" class="dim">Routing</text>
-  <text x="70" y="177" class="dim">Persistence</text>
-  <text x="70" y="195" class="dim">Styling, i18n, etc.</text>
-  <rect class="fill" x="55" y="245" width="320" height="100"/>
-  <text x="70" y="265" class="b">Framework provides</text>
-  <text x="70" y="283" class="dim">DOM reconciliation</text>
-  <text x="70" y="301" class="dim">Component lifecycle</text>
-  <text x="70" y="319" class="dim">Hooks</text>
-  <text x="70" y="337" class="dim">Re-render scheduling</text>
-  <text x="215" y="400" text-anchor="middle" class="dim">flexible runtime: SPA, SSR,</text>
-  <text x="215" y="418" text-anchor="middle" class="dim">static, hybrid</text>
-  <rect class="box" x="430" y="20" width="350" height="420"/>
-  <text x="445" y="42" class="b">Strvct</text>
-  <text x="445" y="62" class="dim">naked objects framework</text>
-  <rect class="fill" x="445" y="85" width="320" height="100"/>
-  <text x="460" y="105" class="b">You write</text>
-  <text x="460" y="123" class="dim">Domain model (SvNode classes)</text>
-  <text x="460" y="141" class="dim">Slot annotations</text>
-  <text x="460" y="159" class="dim">Action methods</text>
-  <text x="460" y="177" class="dim">Custom views (only when needed)</text>
-  <rect class="fill" x="445" y="245" width="320" height="100"/>
-  <text x="460" y="265" class="b">Framework provides</text>
-  <text x="460" y="283" class="dim">UI generation from model</text>
-  <text x="460" y="301" class="dim">Persistence (IndexedDB + cloud)</text>
-  <text x="460" y="319" class="dim">Navigation, i18n, accessibility</text>
-  <text x="460" y="337" class="dim">Inspector, debug tools</text>
-  <text x="605" y="400" text-anchor="middle" class="dim">local-first runtime;</text>
-  <text x="605" y="418" text-anchor="middle" class="dim">offline by default, cloud sync optional</text>
+  <rect class="box" x="90" y="20" width="290" height="370"/>
+  <text x="105" y="42" class="b">React</text>
+  <text x="105" y="62" class="dim">view library</text>
+  <rect class="fill" x="105" y="85" width="260" height="124"/>
+  <text x="120" y="105" class="b">You write</text>
+  <text x="120" y="123" class="dim">Components (JSX)</text>
+  <text x="120" y="141" class="dim">State management</text>
+  <text x="120" y="159" class="dim">Routing</text>
+  <text x="120" y="177" class="dim">Persistence</text>
+  <text x="120" y="195" class="dim">Styling, i18n, etc.</text>
+  <rect class="fill" x="105" y="224" width="260" height="106"/>
+  <text x="120" y="244" class="b">Framework provides</text>
+  <text x="120" y="262" class="dim">DOM reconciliation</text>
+  <text x="120" y="280" class="dim">Component lifecycle</text>
+  <text x="120" y="298" class="dim">Hooks</text>
+  <text x="120" y="316" class="dim">Re-render scheduling</text>
+  <text x="105" y="354" class="dim">flexible runtime: SPA, SSR,</text>
+  <text x="105" y="372" class="dim">static, hybrid</text>
+  <rect class="box" x="440" y="20" width="290" height="370"/>
+  <text x="455" y="42" class="b">Strvct</text>
+  <text x="455" y="62" class="dim">naked objects framework</text>
+  <rect class="fill" x="455" y="85" width="260" height="106"/>
+  <text x="470" y="105" class="b">You write</text>
+  <text x="470" y="123" class="dim">Domain model (SvNode classes)</text>
+  <text x="470" y="141" class="dim">Slot annotations</text>
+  <text x="470" y="159" class="dim">Action methods</text>
+  <text x="470" y="177" class="dim">Custom views (only when needed)</text>
+  <rect class="fill" x="455" y="206" width="260" height="106"/>
+  <text x="470" y="226" class="b">Framework provides</text>
+  <text x="470" y="244" class="dim">UI generation from model</text>
+  <text x="470" y="262" class="dim">Persistence (IndexedDB + cloud)</text>
+  <text x="470" y="280" class="dim">Navigation, i18n, accessibility</text>
+  <text x="470" y="298" class="dim">Inspector, debug tools</text>
+  <text x="455" y="336" class="dim">local-first runtime;</text>
+  <text x="455" y="354" class="dim">offline by default, cloud sync optional</text>
 </svg>
 
 ## Architecture
@@ -612,6 +612,7 @@ Architectural sketches of the Strvct framework. Working drafts; not yet placed i
 - Sync Flow
 - View Resolution
 - Persistence Pipeline
+- Conventions
 
 
 ---
@@ -623,56 +624,172 @@ Source: /docs/Diagrams/Annotations/
 
 One slot declaration carries metadata that independent framework layers read without coordinating. Adding a new layer leaves existing layers unchanged.
 
-<svg viewBox="0 0 820 480" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 410" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
     .dim { fill: #666; }
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .dashed { stroke-dasharray: 4,4; fill: none; stroke: #111; stroke-width: 1; }
     .flow { stroke: #111; stroke-width: 1; fill: none; }
   </style>
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="260" y="20" width="300" height="200"/>
+  <text x="275" y="40" class="b">a single slot declaration</text>
+  <text x="275" y="62" class="dim">newSlot("name", "")</text>
+  <text x="275" y="80" class="dim">  .setSlotType("String")</text>
+  <text x="275" y="98" class="dim">  .setShouldStoreSlot(true)</text>
+  <text x="275" y="116" class="dim">  .setSyncsToView(true)</text>
+  <text x="275" y="134" class="dim">  .setCanEditInspection(true)</text>
+  <text x="275" y="152" class="dim">  .setIsSubnodeField(true)</text>
+  <text x="275" y="170" class="dim">  .setFinalInitProto(Cls)</text>
+  <text x="275" y="188" class="dim">  .setTranslationContext(...)</text>
+  <line class="flow" x1="410" y1="220" x2="410" y2="240"/>
+  <line class="flow" x1="130" y1="240" x2="690" y2="240"/>
+  <line class="flow" x1="130" y1="240" x2="130" y2="270" marker-end="url(#a2)"/>
+  <line class="flow" x1="270" y1="240" x2="270" y2="270" marker-end="url(#a2)"/>
+  <line class="flow" x1="410" y1="240" x2="410" y2="270" marker-end="url(#a2)"/>
+  <line class="flow" x1="550" y1="240" x2="550" y2="270" marker-end="url(#a2)"/>
+  <line class="flow" x1="690" y1="240" x2="690" y2="270" marker-end="url(#a2)"/>
+  <rect class="box" x="65" y="270" width="130" height="52"/>
+  <text x="80" y="290" class="b">UI</text>
+  <text x="80" y="308" class="dim">type, edit, nav</text>
+  <rect class="box" x="205" y="270" width="130" height="52"/>
+  <text x="220" y="290" class="b">Storage</text>
+  <text x="220" y="308" class="dim">should-store</text>
+  <rect class="box" x="345" y="270" width="130" height="52"/>
+  <text x="360" y="290" class="b">Sync</text>
+  <text x="360" y="308" class="dim">syncsToView</text>
+  <rect class="box" x="485" y="270" width="130" height="52"/>
+  <text x="500" y="290" class="b">AI / Patch</text>
+  <text x="500" y="308" class="dim">type / schema</text>
+  <rect class="box" x="625" y="270" width="130" height="52"/>
+  <text x="640" y="290" class="b">i18n</text>
+  <text x="640" y="308" class="dim">translation ctx</text>
+  <text x="65" y="355" class="dim">No inter-layer coordination; each consumer reads only what it needs.</text>
+  <text x="65" y="375" class="dim">A new layer added later: have it read the slot metadata it cares about.</text>
+</svg>
+
+
+---
+
+<!-- Page: docs/Diagrams/Conventions -->
+Source: /docs/Diagrams/Conventions/
+
+# Diagram Conventions
+
+Style and layout rules for the SVG diagrams used throughout the Strvct docs.
+
+## Why a Convention
+
+The docs use ~30 inline SVG diagrams to visualize architecture, flows, and relationships. Without a shared style they drift apart, become harder to scan, and require per-page mental re-orientation. The rules below let any diagram be authored, edited, or scripted against the same set of expectations.
+
+## Style Block
+
+Every diagram opens with the same `<style>` block:
+
+```svg
+<style>
+  text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+  .b { font-weight: 600; }
+  .dim { fill: #666; }
+  .box { fill: none; stroke: #111; stroke-width: 1; }
+  .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+  .flow { stroke: #111; stroke-width: 1; fill: none; }
+  .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+</style>
+```
+
+- **`.b`** — bold text (titles, labels)
+- **`.dim`** — secondary text (descriptions, captions); color `#666`
+- **`.box`** — outline rectangle, no fill; used for outer containers
+- **`.fill`** — cream-filled rectangle (`#f0ede5`); used for inner content blocks
+- **`.flow`** — solid line for direct references / calls / direct data flow
+- **`.flow-dashed`** — dashed line (`4 3`) for indirect notifications, observers, no-direct-reference relationships
+
+## Arrowhead Markers
+
+A single arrowhead marker is defined per diagram in `<defs>`, with a unique id (e.g., `ato`, `aio`, `anc`):
+
+```svg
 <defs>
-      <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-        <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-      </marker>
-    </defs>
-    <rect class="fill" x="250" y="20" width="320" height="28"/>
-    <text x="265" y="40" class="b">a single slot declaration</text>
-    <text x="272" y="78">newSlot("name", "")</text>
-    <text x="282" y="100">.setSlotType("String")</text>
-    <text x="282" y="122">.setShouldStoreSlot(true)</text>
-    <text x="282" y="144">.setSyncsToView(true)</text>
-    <text x="282" y="166">.setCanEditInspection(true)</text>
-    <text x="282" y="188">.setIsSubnodeField(true)</text>
-    <text x="282" y="210">.setFinalInitProto(Cls)</text>
-    <text x="282" y="232">.setTranslationContext(...)</text>
-    <line class="flow" x1="410" y1="240" x2="410" y2="270"/>
-    <line class="flow" x1="120" y1="270" x2="700" y2="270"/>
-    <line class="flow" x1="120" y1="270" x2="120" y2="300" marker-end="url(#a2)"/>
-    <line class="flow" x1="270" y1="270" x2="270" y2="300" marker-end="url(#a2)"/>
-    <line class="flow" x1="420" y1="270" x2="420" y2="300" marker-end="url(#a2)"/>
-    <line class="flow" x1="570" y1="270" x2="570" y2="300" marker-end="url(#a2)"/>
-    <line class="flow" x1="700" y1="270" x2="700" y2="300" marker-end="url(#a2)"/>
-    <rect class="box" x="55"  y="300" width="130" height="70"/>
-    <text x="120" y="330" text-anchor="middle" class="b">UI</text>
-    <text x="120" y="352" text-anchor="middle" class="dim">type, edit, nav</text>
-    <rect class="box" x="205" y="300" width="130" height="70"/>
-    <text x="270" y="330" text-anchor="middle" class="b">Storage</text>
-    <text x="270" y="352" text-anchor="middle" class="dim">should-store</text>
-    <rect class="box" x="355" y="300" width="130" height="70"/>
-    <text x="420" y="330" text-anchor="middle" class="b">Sync</text>
-    <text x="420" y="352" text-anchor="middle" class="dim">syncsToView</text>
-    <rect class="box" x="505" y="300" width="130" height="70"/>
-    <text x="570" y="330" text-anchor="middle" class="b">AI / Patch</text>
-    <text x="570" y="352" text-anchor="middle" class="dim">type / schema</text>
-    <rect class="box" x="635" y="300" width="130" height="70"/>
-    <text x="700" y="330" text-anchor="middle" class="b">i18n</text>
-    <text x="700" y="352" text-anchor="middle" class="dim">translation ctx</text>
-    <text x="410" y="412" text-anchor="middle" class="dim">No inter-layer coordination; each consumer reads only what it needs.</text>
-    <text x="410" y="438" text-anchor="middle" class="dim">A new layer added later: have it read the slot metadata it cares about.</text>
-  </svg>
+  <marker id="xxx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+  </marker>
+</defs>
+```
+
+Lines reference it via `marker-end="url(#xxx)"`.
+
+## ViewBox
+
+- **Width**: 820 (matches the docs column width)
+- **Height**: tight to content with ~20px bottom margin below the last element
+
+## Layout Rules
+
+### Inside fill rects
+
+Content is **left-top justified** with consistent padding:
+
+- **Text x** = `fill.x + 15` (15px left padding)
+- **First text baseline y** = `fill.y + 20`
+- **Subsequent lines** spaced 18px apart
+- **Bottom padding** = 11px (cap-top above first baseline matches descender-bottom below last baseline). Concretely: `fill.h = (last_text_y - fill.y) + 14`.
+
+### Stacking fill rects
+
+Vertically adjacent fill rects in the same column should sit **15px apart** when they're sibling rows in a list. Larger gaps (~30px) are appropriate when an arrow + label lives between them.
+
+For centered stacks (rects whose horizontal centers align around `viewBox.width / 2`), give all rects the same width — use the maximum needed by any row's content, centered.
+
+### Inside .box containers
+
+Containers wrap one or more `.fill` rects plus optional title/subtitle text and caption text below the fills.
+
+- **Container title (b)** at `container.x + 15`, `container.y + 22`
+- **Container subtitle (dim)** at `container.x + 15`, `container.y + 42` (when present)
+- **Inner fills** at `container.x + 15`, `container.y + 60+` (with 15px horizontal padding from container edges)
+- **Captions below last fill** are left-justified at `container.x + 15`, starting at `last_fill_bottom + 24`, with 18px line spacing
+- **Container bottom padding** = 15px below the lowest content element
+
+### Multi-column layouts
+
+For 2- and 3-column comparisons, each column's containers should be the same width and aligned at the top (`y=20`). Container heights should match (use the tallest column's height). Captions inside columns are still left-justified to their column.
+
+## Lines and Arrows
+
+- **Solid line** (`.flow`) — direct reference or call (e.g., a UI view calling getter/setter on its model node)
+- **Dashed line** (`.flow-dashed`) — indirect notification or observation (e.g., the model posts a notification, observers pick it up without holding a reference)
+- **Arrow direction** points to the *recipient* of the action
+
+For the Model ↔ UI ↔ Storage triple, mutation notifications from Model outward are **dashed** (Model holds no references); UI/Storage calls into Model are **solid** (they hold direct references).
+
+## Two-line Arrow Labels
+
+When labeling a line in a tight gap:
+
+- **For label above the line**: two text elements at `arrow_y - 22` and `arrow_y - 7`
+- **For label below the line**: two text elements at `arrow_y + 13` and `arrow_y + 28`
+- All centered with `text-anchor="middle"` at the gap midpoint x
+
+## Captions and Footnotes
+
+The summary line below a diagram is **left-justified** at the same x as the leftmost container (when there is one) or `container.x + 15`. Do not center such lines.
+
+## When to Break the Conventions
+
+The conventions exist to keep diagrams scannable, not to be rigid. Acceptable deviations:
+
+- A diagram showing a state machine or a network graph won't use stacked fills at all
+- A side-by-side comparison may need asymmetric heights when content lengths differ enough that padding the shorter side would look strange
+- Inline annotations (e.g., a small "(weak ref)" label between two boxes) can sit at any x
+
+When in doubt, prefer consistency with adjacent diagrams in the same page or section.
 
 
 ---
@@ -699,52 +816,57 @@ Application code sits on the Strvct framework, which sits on the platform. Insid
         <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
       </marker>
     </defs>
-    <rect class="box" x="40" y="20" width="740" height="110"/>
+    <rect class="box" x="40" y="20" width="740" height="89"/>
     <text x="55" y="42" class="b">Application Code</text>
-    <rect class="fill" x="80" y="60" width="660" height="28"/>
+    <rect class="fill" x="80" y="60" width="660" height="34"/>
     <text x="95" y="80" class="dim">UoCharacter, UoCampaign, UoSession …</text>
-    <line class="flow" x1="410" y1="130" x2="410" y2="155" marker-end="url(#a1)"/>
-    <rect class="box" x="40" y="155" width="740" height="320"/>
+    <line class="flow" x1="410" y1="109" x2="410" y2="155" marker-end="url(#a1)"/>
+    <rect class="box" x="40" y="155" width="740" height="311"/>
     <text x="55" y="177" class="b">STRVCT Framework</text>
-    <rect class="fill" x="80" y="200" width="240" height="46"/>
+    <rect class="fill" x="80" y="200" width="240" height="52"/>
     <text x="95" y="220" class="b">Domain Model</text>
     <text x="95" y="238" class="dim">SvNode tree</text>
-    <rect class="fill" x="500" y="200" width="240" height="46"/>
+    <rect class="fill" x="500" y="200" width="240" height="52"/>
     <text x="515" y="220" class="b">View Layer</text>
     <text x="515" y="238" class="dim">SvDomView, tiles</text>
     <line class="flow" x1="320" y1="235" x2="500" y2="235" marker-end="url(#a1)"/>
     <line class="flow" x1="500" y1="235" x2="320" y2="235" marker-end="url(#a1)"/>
-    <rect class="fill" x="290" y="300" width="240" height="46"/>
+    <rect class="fill" x="290" y="300" width="240" height="52"/>
     <text x="305" y="320" class="b">Slot System</text>
     <text x="305" y="338" class="dim">shared metadata</text>
-    <line class="flow" x1="410" y1="370" x2="410" y2="390"/>
+    <line class="flow" x1="410" y1="352" x2="410" y2="410"/>
     <line class="flow" x1="120" y1="390" x2="700" y2="390"/>
     <line class="flow" x1="120" y1="390" x2="120" y2="410" marker-end="url(#a1)"/>
     <line class="flow" x1="265" y1="390" x2="265" y2="410" marker-end="url(#a1)"/>
     <line class="flow" x1="410" y1="390" x2="410" y2="410" marker-end="url(#a1)"/>
     <line class="flow" x1="555" y1="390" x2="555" y2="410" marker-end="url(#a1)"/>
     <line class="flow" x1="700" y1="390" x2="700" y2="410" marker-end="url(#a1)"/>
-    <rect class="box" x="55"  y="410" width="130" height="50"/>
-    <text x="120" y="441" text-anchor="middle" class="b">Persistence</text>
-    <rect class="box" x="200" y="410" width="130" height="50"/>
-    <text x="265" y="441" text-anchor="middle" class="b">Sync</text>
-    <rect class="box" x="345" y="410" width="130" height="50"/>
-    <text x="410" y="441" text-anchor="middle" class="b">AI Tools</text>
-    <rect class="box" x="490" y="410" width="130" height="50"/>
-    <text x="555" y="441" text-anchor="middle" class="b">i18n</text>
-    <rect class="box" x="635" y="410" width="130" height="50"/>
-    <text x="700" y="441" text-anchor="middle" class="b">Schema</text>
-    <line class="flow" x1="410" y1="475" x2="410" y2="490"/>
+    <rect class="box" x="55" y="410" width="130" height="52"/>
+    <text x="70" y="430" class="b">Persistence</text>
+    <text x="70" y="448" class="dim">shouldStore</text>
+    <rect class="box" x="200" y="410" width="130" height="52"/>
+    <text x="215" y="430" class="b">Sync</text>
+    <text x="215" y="448" class="dim">syncsToView</text>
+    <rect class="box" x="345" y="410" width="130" height="52"/>
+    <text x="360" y="430" class="b">AI Tools</text>
+    <text x="360" y="448" class="dim">type / schema</text>
+    <rect class="box" x="490" y="410" width="130" height="52"/>
+    <text x="505" y="430" class="b">i18n</text>
+    <text x="505" y="448" class="dim">translation ctx</text>
+    <rect class="box" x="635" y="410" width="130" height="52"/>
+    <text x="650" y="430" class="b">Schema</text>
+    <text x="650" y="448" class="dim">JSON Schema</text>
+    <line class="flow" x1="410" y1="462" x2="410" y2="490"/>
     <line class="flow" x1="220" y1="490" x2="600" y2="490"/>
     <line class="flow" x1="220" y1="490" x2="220" y2="510" marker-end="url(#a1)"/>
     <line class="flow" x1="600" y1="490" x2="600" y2="510" marker-end="url(#a1)"/>
-    <rect class="box" x="40" y="510" width="360" height="110"/>
+    <rect class="box" x="40" y="510" width="360" height="89"/>
     <text x="55" y="532" class="b">Web Browser / Electron Platform</text>
-    <rect class="fill" x="80" y="550" width="280" height="28"/>
+    <rect class="fill" x="80" y="550" width="280" height="34"/>
     <text x="95" y="570" class="dim">IndexedDB · DOM · Fetch</text>
-    <rect class="box" x="420" y="510" width="360" height="110"/>
+    <rect class="box" x="420" y="510" width="360" height="89"/>
     <text x="435" y="532" class="b">Node.js Headless Platform</text>
-    <rect class="fill" x="460" y="550" width="280" height="28"/>
+    <rect class="fill" x="460" y="550" width="280" height="34"/>
     <text x="475" y="570" class="dim">LevelDB · Browser API Shims</text>
   </svg>
 
@@ -758,64 +880,63 @@ Source: /docs/Diagrams/Persistence%20Pipeline/
 
 Drilling into Local Storage. The object pool persists slot mutations through the synchronous track on the left. The blob pool stores content-addressable binaries asynchronously on the right. Garbage collection bridges them: the object pool walks reachable nodes, collects referenced hashes, and the blob pool removes any blob not in that set.
 
-<svg viewBox="0 0 820 620" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 450" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
     .dim { fill: #666; }
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .dashed { stroke-dasharray: 4,4; fill: none; stroke: #111; stroke-width: 1; }
     .flow { stroke: #111; stroke-width: 1; fill: none; }
   </style>
-<defs>
-      <marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-        <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-      </marker>
-    </defs>
-    <rect class="box" x="60"  y="20" width="320" height="565"/>
-    <text x="75" y="42" class="b">Object Pool (sync)</text>
-    <rect class="box" x="440" y="20" width="320" height="565"/>
-    <text x="455" y="42" class="b">Blob Pool (async)</text>
-    <rect class="fill" x="100" y="95" width="240" height="46"/>
-    <text x="115" y="115" class="b">SvNode setter called</text>
-    <text x="115" y="133" class="dim">slot mutation</text>
-    <line class="flow" x1="220" y1="165" x2="220" y2="190" marker-end="url(#a6)"/>
-    <rect class="fill" x="100" y="190" width="240" height="46"/>
-    <text x="115" y="210" class="b">addDirtyObject(self)</text>
-    <text x="115" y="228" class="dim">via ObjectPool</text>
-    <line class="flow" x1="220" y1="260" x2="220" y2="285" marker-end="url(#a6)"/>
-    <rect class="fill" x="100" y="285" width="240" height="46"/>
-    <text x="115" y="305" class="b">end of event loop</text>
-    <text x="115" y="323" class="dim">begin atomic txn</text>
-    <line class="flow" x1="220" y1="355" x2="220" y2="380" marker-end="url(#a6)"/>
-    <rect class="fill" x="100" y="380" width="240" height="46"/>
-    <text x="115" y="400" class="b">recordForStore() per object</text>
-    <text x="115" y="418" class="dim">write keyed by puuid</text>
-    <rect class="fill" x="100" y="475" width="240" height="46"/>
-    <text x="115" y="495" class="b">GC: walk reachable</text>
-    <text x="115" y="513" class="dim">collect referenced hashes</text>
-    <rect class="fill" x="480" y="95" width="240" height="46"/>
-    <text x="495" y="115" class="b">asyncStoreBlob(blob)</text>
-    <text x="495" y="133" class="dim">from app code</text>
-    <line class="flow" x1="600" y1="165" x2="600" y2="190" marker-end="url(#a6)"/>
-    <rect class="fill" x="480" y="190" width="240" height="46"/>
-    <text x="495" y="210" class="b">sha256(blob) → hash</text>
-    <text x="495" y="228" class="dim">content-addressable key</text>
-    <line class="flow" x1="600" y1="260" x2="600" y2="285" marker-end="url(#a6)"/>
-    <rect class="fill" x="480" y="285" width="240" height="46"/>
-    <text x="495" y="305" class="b">write hash → data + meta</text>
-    <text x="495" y="323" class="dim">{hash} and {hash}/meta</text>
-    <line class="flow" x1="600" y1="355" x2="600" y2="380" marker-end="url(#a6)"/>
-    <rect class="fill" x="480" y="380" width="240" height="46"/>
-    <text x="495" y="400" class="b">node stores hash string</text>
-    <text x="495" y="418" class="dim">drives GC reachability</text>
-    <rect class="fill" x="480" y="475" width="240" height="46"/>
-    <text x="495" y="495" class="b">remove orphan blobs</text>
-    <text x="495" y="513" class="dim">not in referenced set</text>
-    <line class="flow" x1="340" y1="510" x2="480" y2="510" marker-end="url(#a6)"/>
-    <text x="410" y="503" text-anchor="middle" class="dim">ref hash set</text>
-  </svg>
+  <defs>
+    <marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="120" y="20" width="250" height="415"/>
+  <text x="135" y="42" class="b">Object Pool (sync)</text>
+  <rect class="box" x="450" y="20" width="250" height="415"/>
+  <text x="465" y="42" class="b">Blob Pool (async)</text>
+  <rect class="fill" x="135" y="60" width="220" height="52"/>
+  <text x="150" y="80" class="b">SvNode setter called</text>
+  <text x="150" y="98" class="dim">slot mutation</text>
+  <line class="flow" x1="245" y1="112" x2="245" y2="137" marker-end="url(#a6)"/>
+  <rect class="fill" x="135" y="137" width="220" height="52"/>
+  <text x="150" y="157" class="b">addDirtyObject(self)</text>
+  <text x="150" y="175" class="dim">via ObjectPool</text>
+  <line class="flow" x1="245" y1="189" x2="245" y2="214" marker-end="url(#a6)"/>
+  <rect class="fill" x="135" y="214" width="220" height="52"/>
+  <text x="150" y="234" class="b">end of event loop</text>
+  <text x="150" y="252" class="dim">begin atomic txn</text>
+  <line class="flow" x1="245" y1="266" x2="245" y2="291" marker-end="url(#a6)"/>
+  <rect class="fill" x="135" y="291" width="220" height="52"/>
+  <text x="150" y="311" class="b">recordForStore() per object</text>
+  <text x="150" y="329" class="dim">write keyed by puuid</text>
+  <rect class="fill" x="135" y="368" width="220" height="52"/>
+  <text x="150" y="388" class="b">GC: walk reachable</text>
+  <text x="150" y="406" class="dim">collect referenced hashes</text>
+  <rect class="fill" x="465" y="60" width="220" height="52"/>
+  <text x="480" y="80" class="b">asyncStoreBlob(blob)</text>
+  <text x="480" y="98" class="dim">from app code</text>
+  <line class="flow" x1="575" y1="112" x2="575" y2="137" marker-end="url(#a6)"/>
+  <rect class="fill" x="465" y="137" width="220" height="52"/>
+  <text x="480" y="157" class="b">sha256(blob) → hash</text>
+  <text x="480" y="175" class="dim">content-addressable key</text>
+  <line class="flow" x1="575" y1="189" x2="575" y2="214" marker-end="url(#a6)"/>
+  <rect class="fill" x="465" y="214" width="220" height="52"/>
+  <text x="480" y="234" class="b">write hash → data + meta</text>
+  <text x="480" y="252" class="dim">{hash} and {hash}/meta</text>
+  <line class="flow" x1="575" y1="266" x2="575" y2="291" marker-end="url(#a6)"/>
+  <rect class="fill" x="465" y="291" width="220" height="52"/>
+  <text x="480" y="311" class="b">node stores hash string</text>
+  <text x="480" y="329" class="dim">drives GC reachability</text>
+  <rect class="fill" x="465" y="368" width="220" height="52"/>
+  <text x="480" y="388" class="b">remove orphan blobs</text>
+  <text x="480" y="406" class="dim">not in referenced set</text>
+  <line class="flow" x1="355" y1="394" x2="465" y2="394" marker-end="url(#a6)"/>
+  <text x="410" y="387" text-anchor="middle" class="dim">ref hash set</text>
+</svg>
 
 
 ---
@@ -842,42 +963,42 @@ A user or agent mutation is validated by the setter, then broadcast through the 
         <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
       </marker>
     </defs>
-    <rect class="box" x="290" y="20" width="240" height="50"/>
-    <text x="410" y="51" text-anchor="middle" class="b">user input</text>
-    <line class="flow" x1="410" y1="70" x2="410" y2="95" marker-end="url(#a3)"/>
-    <rect class="fill" x="290" y="95" width="240" height="46"/>
+    <rect class="box" x="290" y="20" width="240" height="42"/>
+    <text x="305" y="44" class="b">user input</text>
+    <line class="flow" x1="410" y1="62" x2="410" y2="95" marker-end="url(#a3)"/>
+    <rect class="fill" x="290" y="95" width="240" height="52"/>
     <text x="305" y="115" class="b">SvDomView</text>
     <text x="305" y="133" class="dim">handles event, calls action</text>
-    <line class="flow" x1="410" y1="165" x2="410" y2="190" marker-end="url(#a3)"/>
-    <rect class="fill" x="290" y="190" width="240" height="46"/>
+    <line class="flow" x1="410" y1="147" x2="410" y2="190" marker-end="url(#a3)"/>
+    <rect class="fill" x="290" y="190" width="240" height="52"/>
     <text x="305" y="210" class="b">SvNode setter</text>
     <text x="305" y="228" class="dim">validates against slotType</text>
     <line class="flow" x1="530" y1="225" x2="630" y2="225" marker-end="url(#a3)"/>
     <text x="580" y="218" text-anchor="middle" class="dim">reject</text>
-    <rect class="box" x="630" y="190" width="160" height="70"/>
-    <text x="710" y="220" text-anchor="middle" class="b">rejection</text>
-    <text x="710" y="242" text-anchor="middle" class="dim">with slot schema</text>
-    <line class="flow" x1="410" y1="260" x2="410" y2="285" marker-end="url(#a3)"/>
+    <rect class="box" x="630" y="190" width="160" height="60"/>
+    <text x="645" y="214" class="b">rejection</text>
+    <text x="645" y="232" class="dim">with slot schema</text>
+    <line class="flow" x1="410" y1="242" x2="410" y2="285" marker-end="url(#a3)"/>
     <text x="425" y="277" class="dim">didUpdateSlot</text>
-    <rect class="fill" x="290" y="285" width="240" height="46"/>
+    <rect class="fill" x="290" y="285" width="240" height="52"/>
     <text x="305" y="305" class="b">SvNotificationCenter</text>
     <text x="305" y="323" class="dim">post to observers</text>
-    <line class="flow" x1="410" y1="355" x2="410" y2="380"/>
+    <line class="flow" x1="410" y1="337" x2="410" y2="380"/>
     <line class="flow" x1="180" y1="380" x2="640" y2="380"/>
     <line class="flow" x1="180" y1="380" x2="180" y2="400" marker-end="url(#a3)"/>
     <line class="flow" x1="640" y1="380" x2="640" y2="400" marker-end="url(#a3)"/>
-    <rect class="fill" x="60" y="400" width="240" height="46"/>
+    <rect class="fill" x="60" y="400" width="240" height="52"/>
     <text x="75" y="420" class="b">observing views</text>
     <text x="75" y="438" class="dim">scheduleSyncToView</text>
-    <rect class="fill" x="520" y="400" width="240" height="46"/>
+    <rect class="fill" x="520" y="400" width="240" height="52"/>
     <text x="535" y="420" class="b">persistence hook</text>
     <text x="535" y="438" class="dim">addDirtyObject(self)</text>
-    <line class="flow" x1="180" y1="470" x2="180" y2="495" marker-end="url(#a3)"/>
-    <line class="flow" x1="640" y1="470" x2="640" y2="495" marker-end="url(#a3)"/>
-    <rect class="box" x="60" y="495" width="240" height="50"/>
-    <text x="180" y="526" text-anchor="middle" class="b">view re-renders</text>
-    <rect class="box" x="520" y="495" width="240" height="50"/>
-    <text x="640" y="526" text-anchor="middle" class="b">IndexedDB commit</text>
+    <line class="flow" x1="180" y1="452" x2="180" y2="495" marker-end="url(#a3)"/>
+    <line class="flow" x1="640" y1="452" x2="640" y2="495" marker-end="url(#a3)"/>
+    <rect class="box" x="60" y="495" width="240" height="42"/>
+    <text x="75" y="519" class="b">view re-renders</text>
+    <rect class="box" x="520" y="495" width="240" height="42"/>
+    <text x="535" y="519" class="b">IndexedDB commit</text>
     <text x="410" y="585" text-anchor="middle" class="dim">Coalesced once per event loop. Bidirectional sync stops when values converge.</text>
   </svg>
 
@@ -891,55 +1012,54 @@ Source: /docs/Diagrams/View%20Resolution/
 
 When a node becomes visible, the framework finds a view class by climbing the node's inheritance chain. Custom views are an override; the default is always available.
 
-<svg viewBox="0 0 820 540" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 360" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
     .dim { fill: #666; }
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .dashed { stroke-dasharray: 4,4; fill: none; stroke: #111; stroke-width: 1; }
     .flow { stroke: #111; stroke-width: 1; fill: none; }
   </style>
-<defs>
-      <marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-        <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-      </marker>
-    </defs>
-    <rect class="fill" x="290" y="20" width="240" height="46"/>
-    <text x="305" y="40" class="b">navigate to node N</text>
-    <text x="305" y="58" class="dim">instance of class C</text>
-    <line class="flow" x1="410" y1="90" x2="410" y2="135" marker-end="url(#a4)"/>
-    <rect class="fill" x="290" y="135" width="240" height="46"/>
-    <text x="305" y="155" class="b">C declares nodeViewClass()?</text>
-    <text x="305" y="173" class="dim">decision</text>
-    <line class="flow" x1="290" y1="170" x2="200" y2="170" marker-end="url(#a4)"/>
-    <text x="245" y="162" text-anchor="middle" class="dim">yes</text>
-    <rect class="box" x="40" y="135" width="160" height="70"/>
-    <text x="120" y="165" text-anchor="middle" class="b">use declared</text>
-    <text x="120" y="187" text-anchor="middle" class="b">class</text>
-    <line class="flow" x1="410" y1="205" x2="410" y2="245" marker-end="url(#a4)"/>
-    <text x="425" y="232" class="dim">no</text>
-    <rect class="fill" x="290" y="245" width="240" height="28"/>
-    <text x="305" y="265" class="b">look up</text>
-    <text x="410" y="297" text-anchor="middle">C.name + "View"</text>
-    <line class="flow" x1="410" y1="315" x2="410" y2="355" marker-end="url(#a4)"/>
-    <rect class="fill" x="290" y="355" width="240" height="46"/>
-    <text x="305" y="375" class="b">found?</text>
-    <text x="305" y="393" class="dim">decision</text>
-    <line class="flow" x1="530" y1="390" x2="620" y2="390" marker-end="url(#a4)"/>
-    <text x="575" y="382" text-anchor="middle" class="dim">yes</text>
-    <rect class="box" x="620" y="355" width="160" height="70"/>
-    <text x="700" y="385" text-anchor="middle" class="b">use that</text>
-    <text x="700" y="407" text-anchor="middle" class="b">view class</text>
-    <line class="flow" x1="290" y1="390" x2="200" y2="390" marker-end="url(#a4)"/>
-    <text x="245" y="382" text-anchor="middle" class="dim">no</text>
-    <rect class="box" x="40" y="355" width="160" height="70"/>
-    <text x="120" y="385" text-anchor="middle" class="b">climb to</text>
-    <text x="120" y="407" text-anchor="middle" class="b">superclass</text>
-    <path class="flow" d="M 120 355 L 120 280 L 290 280" marker-end="url(#a4)"/>
-    <text x="410" y="500" text-anchor="middle" class="dim">Root reached without a match falls through to SvNodeView (default).</text>
-  </svg>
+  <defs>
+    <marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="290" y="20" width="240" height="52"/>
+  <text x="305" y="40" class="b">navigate to node N</text>
+  <text x="305" y="58" class="dim">instance of class C</text>
+  <line class="flow" x1="410" y1="72" x2="410" y2="95" marker-end="url(#a4)"/>
+  <rect class="fill" x="290" y="95" width="240" height="52"/>
+  <text x="305" y="115" class="b">C declares nodeViewClass()?</text>
+  <text x="305" y="133" class="dim">decision</text>
+  <line class="flow" x1="410" y1="147" x2="410" y2="170" marker-end="url(#a4)"/>
+  <text x="425" y="162" class="dim">no</text>
+  <rect class="fill" x="290" y="170" width="240" height="52"/>
+  <text x="305" y="190" class="b">look up</text>
+  <text x="305" y="208" class="dim">C.name + "View"</text>
+  <line class="flow" x1="410" y1="222" x2="410" y2="245" marker-end="url(#a4)"/>
+  <rect class="fill" x="290" y="245" width="240" height="52"/>
+  <text x="305" y="265" class="b">found?</text>
+  <text x="305" y="283" class="dim">decision</text>
+  <rect class="box" x="40" y="95" width="200" height="52"/>
+  <text x="55" y="115" class="b">use declared</text>
+  <text x="55" y="133" class="b">class</text>
+  <rect class="box" x="40" y="245" width="200" height="52"/>
+  <text x="55" y="265" class="b">climb to</text>
+  <text x="55" y="283" class="b">superclass</text>
+  <rect class="box" x="580" y="245" width="200" height="52"/>
+  <text x="595" y="265" class="b">use that</text>
+  <text x="595" y="283" class="b">view class</text>
+  <line class="flow" x1="290" y1="121" x2="240" y2="121" marker-end="url(#a4)"/>
+  <text x="265" y="113" text-anchor="middle" class="dim">yes</text>
+  <line class="flow" x1="530" y1="271" x2="580" y2="271" marker-end="url(#a4)"/>
+  <text x="555" y="263" text-anchor="middle" class="dim">yes</text>
+  <line class="flow" x1="290" y1="271" x2="240" y2="271" marker-end="url(#a4)"/>
+  <text x="265" y="263" text-anchor="middle" class="dim">no</text>
+  <path class="flow" d="M 140 245 L 140 196 L 290 196" marker-end="url(#a4)"/>
+  <text x="40" y="335" class="dim">Root reached without a match falls through to SvNodeView (default).</text>
+</svg>
 
 
 ---
@@ -1031,24 +1151,24 @@ The system routes dropped data through a MIME-type dispatch chain, ultimately de
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="46"/>
-  <text x="305" y="40" class="b">browser drop event</text>
-  <text x="305" y="58" class="dim">DataTransfer with files / text / html / ...</text>
-  <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#add)"/>
-  <rect class="fill" x="220" y="115" width="380" height="64"/>
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
+  <text x="235" y="40" class="b">browser drop event</text>
+  <text x="235" y="58" class="dim">DataTransfer with files / text / html / ...</text>
+  <line class="flow" x1="410" y1="72" x2="410" y2="115" marker-end="url(#add)"/>
+  <rect class="fill" x="220" y="115" width="380" height="70"/>
   <text x="235" y="135" class="b">SvDropListener</text>
   <text x="235" y="153" class="dim">dragenter / dragover / dragleave handlers;</text>
   <text x="235" y="171" class="dim">onBrowserDrop fires on the view</text>
-  <line class="flow" x1="410" y1="200" x2="410" y2="235" marker-end="url(#add)"/>
+  <line class="flow" x1="410" y1="185" x2="410" y2="235" marker-end="url(#add)"/>
   <text x="425" y="222" class="dim">if acceptsDrop(event)</text>
-  <rect class="fill" x="220" y="235" width="380" height="100"/>
+  <rect class="fill" x="220" y="235" width="380" height="106"/>
   <text x="235" y="255" class="b">MIME-type dispatch</text>
   <text x="235" y="273" class="dim">text/plain  →  onTextDrop</text>
   <text x="235" y="291" class="dim">text/html  →  onHtmlDrop</text>
   <text x="235" y="309" class="dim">image/*    →  onImageDrop</text>
   <text x="235" y="327" class="dim">file       →  onFileDrop</text>
-  <line class="flow" x1="410" y1="350" x2="410" y2="385" marker-end="url(#add)"/>
-  <rect class="fill" x="220" y="385" width="380" height="64"/>
+  <line class="flow" x1="410" y1="341" x2="410" y2="385" marker-end="url(#add)"/>
+  <rect class="fill" x="220" y="385" width="380" height="70"/>
   <text x="235" y="405" class="b">View or backing node handler</text>
   <text x="235" y="423" class="dim">application logic processes the drop;</text>
   <text x="235" y="441" class="dim">unhandled MIME types are silently ignored</text>
@@ -1284,27 +1404,27 @@ Raw DOM events are too low-level for most application code. Distinguishing a tap
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="46"/>
-  <text x="305" y="40" class="b">1. Browser DOM Event</text>
-  <text x="305" y="58" class="dim">mouse, touch, keyboard, drop, ...</text>
-  <line class="flow" x1="410" y1="75" x2="410" y2="110" marker-end="url(#aef)"/>
-  <rect class="fill" x="220" y="110" width="380" height="64"/>
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
+  <text x="235" y="40" class="b">1. Browser DOM Event</text>
+  <text x="235" y="58" class="dim">mouse, touch, keyboard, drop, ...</text>
+  <line class="flow" x1="410" y1="72" x2="410" y2="110" marker-end="url(#aef)"/>
+  <rect class="fill" x="220" y="110" width="380" height="70"/>
   <text x="235" y="130" class="b">2. SvEventListener</text>
   <text x="235" y="148" class="dim">calls named method on delegate view;</text>
   <text x="235" y="166" class="dim">returning false stops propagation</text>
   <line class="flow" x1="410" y1="180" x2="410" y2="215" marker-end="url(#aef)"/>
   <text x="425" y="202" class="dim">if a gesture recognizer is attached</text>
-  <rect class="fill" x="220" y="215" width="380" height="64"/>
+  <rect class="fill" x="220" y="215" width="380" height="70"/>
   <text x="235" y="235" class="b">3. Recognizer state machine updates</text>
   <text x="235" y="253" class="dim">tracks finger count, timing, movement;</text>
   <text x="235" y="271" class="dim">requests activation when conditions are met</text>
   <line class="flow" x1="410" y1="285" x2="410" y2="320" marker-end="url(#aef)"/>
-  <rect class="fill" x="220" y="320" width="380" height="64"/>
+  <rect class="fill" x="220" y="320" width="380" height="70"/>
   <text x="235" y="340" class="b">4. SvGestureManager arbitrates</text>
   <text x="235" y="358" class="dim">resolves competing gestures across views;</text>
   <text x="235" y="376" class="dim">if accepted, sends delegate messages</text>
   <line class="flow" x1="410" y1="390" x2="410" y2="425" marker-end="url(#aef)"/>
-  <rect class="fill" x="220" y="425" width="380" height="64"/>
+  <rect class="fill" x="220" y="425" width="380" height="70"/>
   <text x="235" y="445" class="b">5. View handler executes</text>
   <text x="235" y="463" class="dim">onGestureBegin / Move / Complete / Cancelled,</text>
   <text x="235" y="481" class="dim">or raw onMouseDown, etc., for non-gesture events</text>
@@ -1373,38 +1493,38 @@ Views manage their listeners through `SvListenerDomView`, which maintains a map 
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="46"/>
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
   <text x="235" y="40" class="b">SvListenerDomView</text>
   <text x="235" y="58" class="dim">manages a map of listeners; lazy creation, automatic cleanup</text>
-  <line class="flow" x1="410" y1="75" x2="410" y2="105"/>
+  <line class="flow" x1="410" y1="72" x2="410" y2="135"/>
   <line class="flow" x1="160" y1="105" x2="660" y2="105"/>
   <line class="flow" x1="160" y1="105" x2="160" y2="135" marker-end="url(#ael)"/>
   <line class="flow" x1="410" y1="105" x2="410" y2="135" marker-end="url(#ael)"/>
   <line class="flow" x1="660" y1="105" x2="660" y2="135" marker-end="url(#ael)"/>
-  <rect class="fill" x="60" y="135" width="200" height="82"/>
+  <rect class="fill" x="60" y="135" width="200" height="88"/>
   <text x="75" y="155" class="b">SvMouseListener</text>
   <text x="75" y="173" class="dim">mousedown, mouseup,</text>
   <text x="75" y="191" class="dim">mouseover, mouseleave,</text>
   <text x="75" y="209" class="dim">click, dblclick, contextmenu</text>
-  <rect class="fill" x="310" y="135" width="200" height="46"/>
+  <rect class="fill" x="310" y="135" width="200" height="52"/>
   <text x="325" y="155" class="b">SvKeyboardListener</text>
   <text x="325" y="173" class="dim">keydown, keyup, input</text>
-  <rect class="fill" x="560" y="135" width="200" height="64"/>
+  <rect class="fill" x="560" y="135" width="200" height="70"/>
   <text x="575" y="155" class="b">SvTouchListener</text>
   <text x="575" y="173" class="dim">touchstart, touchmove,</text>
   <text x="575" y="191" class="dim">touchend, touchcancel</text>
-  <line class="flow" x1="160" y1="240" x2="160" y2="280" marker-end="url(#ael)"/>
+  <line class="flow" x1="160" y1="223" x2="160" y2="280" marker-end="url(#ael)"/>
   <line class="flow" x1="410" y1="240" x2="410" y2="280" marker-end="url(#ael)"/>
   <line class="flow" x1="660" y1="240" x2="660" y2="280" marker-end="url(#ael)"/>
   <rect class="box" x="60" y="280" width="200" height="60"/>
-  <text x="160" y="305" text-anchor="middle" class="dim">view.onMouseDown(event)</text>
-  <text x="160" y="325" text-anchor="middle" class="dim">view.onClick(event), ...</text>
+  <text x="75" y="304" class="dim">view.onMouseDown(event)</text>
+  <text x="75" y="322" class="dim">view.onClick(event), ...</text>
   <rect class="box" x="310" y="280" width="200" height="60"/>
-  <text x="410" y="305" text-anchor="middle" class="dim">view.onKeyDown(event)</text>
-  <text x="410" y="325" text-anchor="middle" class="dim">view.onKeyUp(event)</text>
+  <text x="325" y="304" class="dim">view.onKeyDown(event)</text>
+  <text x="325" y="322" class="dim">view.onKeyUp(event)</text>
   <rect class="box" x="560" y="280" width="200" height="60"/>
-  <text x="660" y="305" text-anchor="middle" class="dim">view.onTouchStart(event)</text>
-  <text x="660" y="325" text-anchor="middle" class="dim">view.onTouchMove(event)</text>
+  <text x="575" y="304" class="dim">view.onTouchStart(event)</text>
+  <text x="575" y="322" class="dim">view.onTouchMove(event)</text>
   <text x="410" y="370" text-anchor="middle" class="dim">Each listener registers lazily on first use and cleans up automatically when the view is removed.</text>
 </svg>
 
@@ -1524,30 +1644,30 @@ For example, a `SvPanGestureRecognizer` sends `onPanBegin`, `onPanMove`, `onPanC
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="46"/>
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
   <text x="235" y="40" class="b">Raw events stream</text>
   <text x="235" y="58" class="dim">mouse + touch, unified input</text>
-  <line class="flow" x1="410" y1="75" x2="410" y2="110" marker-end="url(#agr)"/>
-  <rect class="fill" x="220" y="110" width="380" height="64"/>
+  <line class="flow" x1="410" y1="72" x2="410" y2="110" marker-end="url(#agr)"/>
+  <rect class="fill" x="220" y="110" width="380" height="70"/>
   <text x="235" y="130" class="b">SvGestureRecognizer · state machine</text>
   <text x="235" y="148" class="dim">tracks finger count, timing, movement, hold;</text>
   <text x="235" y="166" class="dim">tap, pan, pinch, rotation, long-press, slide</text>
-  <line class="flow" x1="410" y1="190" x2="410" y2="225" marker-end="url(#agr)"/>
+  <line class="flow" x1="410" y1="180" x2="410" y2="225" marker-end="url(#agr)"/>
   <text x="425" y="212" class="dim">when gesture conditions are met</text>
-  <rect class="fill" x="220" y="225" width="380" height="64"/>
+  <rect class="fill" x="220" y="225" width="380" height="70"/>
   <text x="235" y="245" class="b">SvGestureManager · singleton</text>
   <text x="235" y="263" class="dim">arbitrates competing gestures;</text>
   <text x="235" y="281" class="dim">cancels conflicts on same / ancestor views</text>
-  <line class="flow" x1="410" y1="305" x2="410" y2="340" marker-end="url(#agr)"/>
+  <line class="flow" x1="410" y1="295" x2="410" y2="340" marker-end="url(#agr)"/>
   <text x="425" y="327" class="dim">if accepted</text>
-  <rect class="fill" x="220" y="340" width="380" height="82"/>
+  <rect class="fill" x="220" y="340" width="380" height="88"/>
   <text x="235" y="360" class="b">Delegate messages to view</text>
   <text x="235" y="378" class="dim">onGestureBegin → onGestureMove → onGestureComplete</text>
   <text x="235" y="396" class="dim">(or onGestureCancelled if interrupted)</text>
   <text x="235" y="414" class="dim">e.g. onPanBegin, onPinchMove, onTapComplete</text>
-  <line class="flow" x1="410" y1="440" x2="410" y2="475" marker-end="url(#agr)"/>
-  <rect class="fill" x="290" y="475" width="240" height="28"/>
-  <text x="305" y="495" class="b">View handler runs</text>
+  <line class="flow" x1="410" y1="428" x2="410" y2="475" marker-end="url(#agr)"/>
+  <rect class="fill" x="220" y="475" width="380" height="34"/>
+  <text x="235" y="495" class="b">View handler runs</text>
 </svg>
 
 ## Available Gestures
@@ -1652,22 +1772,22 @@ The browser's native keyboard handling has two gaps that matter for an applicati
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="46"/>
-  <text x="305" y="40" class="b">keydown event</text>
-  <text x="305" y="58" class="dim">key: "A", modifiers: Shift held</text>
-  <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#akf)"/>
-  <rect class="fill" x="220" y="115" width="380" height="64"/>
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
+  <text x="235" y="40" class="b">keydown event</text>
+  <text x="235" y="58" class="dim">key: "A", modifiers: Shift held</text>
+  <line class="flow" x1="410" y1="72" x2="410" y2="115" marker-end="url(#akf)"/>
+  <rect class="fill" x="220" y="115" width="380" height="70"/>
   <text x="235" y="135" class="b">SvKeyboard · singleton</text>
   <text x="235" y="153" class="dim">tracks currently pressed keys + modifiers;</text>
   <text x="235" y="171" class="dim">builds modifier-aware method name</text>
-  <line class="flow" x1="410" y1="200" x2="410" y2="235" marker-end="url(#akf)"/>
+  <line class="flow" x1="410" y1="185" x2="410" y2="235" marker-end="url(#akf)"/>
   <text x="425" y="222" class="dim">"onShiftAKeyDown"</text>
-  <rect class="fill" x="220" y="235" width="380" height="64"/>
+  <rect class="fill" x="220" y="235" width="380" height="70"/>
   <text x="235" y="255" class="b">Responder chain (SvResponderDomView)</text>
   <text x="235" y="273" class="dim">first responder (focused view) receives event;</text>
   <text x="235" y="291" class="dim">nextKeyView controls Tab-order routing</text>
-  <line class="flow" x1="410" y1="320" x2="410" y2="355" marker-end="url(#akf)"/>
-  <rect class="fill" x="220" y="355" width="380" height="46"/>
+  <line class="flow" x1="410" y1="305" x2="410" y2="355" marker-end="url(#akf)"/>
+  <rect class="fill" x="220" y="355" width="380" height="52"/>
   <text x="235" y="375" class="b">view.onShiftAKeyDown(event)</text>
   <text x="235" y="393" class="dim">view-specific handler runs</text>
   <text x="410" y="445" text-anchor="middle" class="dim">Views handle specific combos by implementing the named method; no modifier-flag parsing required.</text>
@@ -1761,36 +1881,36 @@ this.addWeakTimeout(() => this.fadeOut(), 300);
       <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="350" height="320"/>
+  <rect class="box" x="40" y="20" width="350" height="302"/>
   <text x="55" y="42" class="b">addTimeout · strong</text>
   <text x="55" y="62" class="dim">closure pins the object alive</text>
-  <rect class="fill" x="55" y="85" width="320" height="46"/>
+  <rect class="fill" x="55" y="85" width="320" height="52"/>
   <text x="70" y="105" class="b">Browser timer queue</text>
   <text x="70" y="123" class="dim">held by the JS engine</text>
-  <line class="strong" x1="215" y1="140" x2="215" y2="170" marker-end="url(#at)"/>
+  <line class="strong" x1="215" y1="137" x2="215" y2="170" marker-end="url(#at)"/>
   <text x="227" y="162" class="dim">strong ref</text>
-  <rect class="fill" x="55" y="170" width="320" height="46"/>
+  <rect class="fill" x="55" y="170" width="320" height="52"/>
   <text x="70" y="190" class="b">Callback closure</text>
   <text x="70" y="208" class="dim">captures the object directly</text>
-  <line class="strong" x1="215" y1="225" x2="215" y2="255" marker-end="url(#at)"/>
+  <line class="strong" x1="215" y1="222" x2="215" y2="255" marker-end="url(#at)"/>
   <text x="227" y="247" class="dim">strong ref</text>
-  <rect class="fill" x="55" y="255" width="320" height="46"/>
+  <rect class="fill" x="55" y="255" width="320" height="52"/>
   <text x="70" y="275" class="b">Object</text>
   <text x="70" y="293" class="dim">pinned; cannot be collected</text>
-  <rect class="box" x="430" y="20" width="350" height="320"/>
+  <rect class="box" x="430" y="20" width="350" height="302"/>
   <text x="445" y="42" class="b">addWeakTimeout · GC-friendly</text>
   <text x="445" y="62" class="dim">weak link breaks the chain</text>
-  <rect class="fill" x="445" y="85" width="320" height="46"/>
+  <rect class="fill" x="445" y="85" width="320" height="52"/>
   <text x="460" y="105" class="b">Browser timer queue</text>
   <text x="460" y="123" class="dim">held by the JS engine</text>
-  <line class="strong" x1="605" y1="140" x2="605" y2="170" marker-end="url(#at)"/>
+  <line class="strong" x1="605" y1="137" x2="605" y2="170" marker-end="url(#at)"/>
   <text x="617" y="162" class="dim">strong ref</text>
-  <rect class="fill" x="445" y="170" width="320" height="46"/>
+  <rect class="fill" x="445" y="170" width="320" height="52"/>
   <text x="460" y="190" class="b">Closure</text>
   <text x="460" y="208" class="dim">holds only WeakRef + Symbol</text>
-  <line class="weak" x1="605" y1="225" x2="605" y2="255" marker-end="url(#atw)"/>
+  <line class="weak" x1="605" y1="222" x2="605" y2="255" marker-end="url(#atw)"/>
   <text x="617" y="247" class="dim">weak ref</text>
-  <rect class="fill" x="445" y="255" width="320" height="46"/>
+  <rect class="fill" x="445" y="255" width="320" height="52"/>
   <text x="460" y="275" class="b">Object</text>
   <text x="460" y="293" class="dim">collectable; timer becomes no-op</text>
   <text x="410" y="370" text-anchor="middle" class="dim">The weak link between closure and object breaks the reference chain that would otherwise pin the object alive.</text>
@@ -3628,11 +3748,11 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="64"/>
+  <rect class="fill" x="220" y="20" width="380" height="70"/>
   <text x="235" y="40" class="b">SvApp</text>
   <text x="235" y="58" class="dim">top-level application; holds model + userInterface</text>
   <text x="235" y="76" class="dim">SvWebUI · SvCliUI · SvHeadlessUI implementations</text>
-  <line class="flow" x1="410" y1="100" x2="410" y2="125"/>
+  <line class="flow" x1="410" y1="90" x2="410" y2="155"/>
   <line class="flow" x1="130" y1="125" x2="690" y2="125"/>
   <line class="flow" x1="130" y1="125" x2="130" y2="155" marker-end="url(#aio)"/>
   <line class="flow" x1="410" y1="125" x2="410" y2="155" marker-end="url(#aio)"/>
@@ -3640,7 +3760,7 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
   <rect class="box" x="30" y="155" width="200" height="180"/>
   <text x="45" y="177" class="b">UI layer</text>
   <text x="45" y="197" class="dim">SvUserInterface root</text>
-  <rect class="fill" x="45" y="220" width="170" height="100"/>
+  <rect class="fill" x="45" y="220" width="170" height="106"/>
   <text x="60" y="240" class="b">SvNodeView tree</text>
   <text x="60" y="258" class="dim">each view holds one node;</text>
   <text x="60" y="276" class="dim">multiple views may share</text>
@@ -3649,7 +3769,7 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
   <rect class="box" x="310" y="155" width="200" height="180"/>
   <text x="325" y="177" class="b">Model layer</text>
   <text x="325" y="197" class="dim">SvModel : SvStorableNode</text>
-  <rect class="fill" x="325" y="220" width="170" height="100"/>
+  <rect class="fill" x="325" y="220" width="170" height="106"/>
   <text x="340" y="240" class="b">Domain SvNode graph</text>
   <text x="340" y="258" class="dim">root of persistent state;</text>
   <text x="340" y="276" class="dim">all data shapes are slots</text>
@@ -3658,7 +3778,7 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
   <rect class="box" x="590" y="155" width="200" height="180"/>
   <text x="605" y="177" class="b">Storage layer</text>
   <text x="605" y="197" class="dim">SvPersistentObjectPool</text>
-  <rect class="fill" x="605" y="220" width="170" height="100"/>
+  <rect class="fill" x="605" y="220" width="170" height="106"/>
   <text x="620" y="240" class="b">IndexedDB pool</text>
   <text x="620" y="258" class="dim">observes mutations via</text>
   <text x="620" y="276" class="dim">notifications; batches</text>
@@ -3948,7 +4068,7 @@ Because STRVCT generates the UI from annotated model nodes, the same machinery c
 
 Both work in any STRVCT application without per-node setup.
 
-<svg viewBox="0 0 820 380" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 390" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -3962,21 +4082,21 @@ Both work in any STRVCT application without per-node setup.
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="46"/>
-  <text x="305" y="40" class="b">Option-click a tile</text>
-  <text x="305" y="58" class="dim">on any node in the running app</text>
-  <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#ains)"/>
-  <rect class="fill" x="220" y="115" width="380" height="64"/>
-  <text x="235" y="135" class="b">Inspector node generated on demand</text>
-  <text x="235" y="153" class="dim">framework walks the target's slot metadata;</text>
-  <text x="235" y="171" class="dim">one field tile per slot whose canInspect() is true</text>
-  <line class="flow" x1="410" y1="195" x2="410" y2="230" marker-end="url(#ains)"/>
-  <rect class="fill" x="220" y="230" width="380" height="82"/>
-  <text x="235" y="250" class="b">Field tiles open in the next column</text>
-  <text x="235" y="268" class="dim">slot name · current value · type-aware editor;</text>
-  <text x="235" y="286" class="dim">edits write through to the live object,</text>
-  <text x="235" y="304" class="dim">persistence and view sync follow automatically</text>
-  <text x="410" y="365" text-anchor="middle" class="dim">Option-Shift-D toggles developer mode globally, revealing nodes that applications hide from end users.</text>
+  <rect class="fill" x="220" y="20" width="380" height="88"/>
+  <text x="235" y="40" class="b">Option-click a tile</text>
+  <text x="235" y="58" class="dim">on any node in the running app</text>
+  <line class="flow" x1="410" y1="108" x2="410" y2="133" marker-end="url(#ains)"/>
+  <rect class="fill" x="220" y="133" width="380" height="88"/>
+  <text x="235" y="153" class="b">Inspector node generated on demand</text>
+  <text x="235" y="171" class="dim">framework walks the target's slot metadata;</text>
+  <text x="235" y="189" class="dim">one field tile per slot whose canInspect() is true</text>
+  <line class="flow" x1="410" y1="221" x2="410" y2="246" marker-end="url(#ains)"/>
+  <rect class="fill" x="220" y="246" width="380" height="88"/>
+  <text x="235" y="266" class="b">Field tiles open in the next column</text>
+  <text x="235" y="284" class="dim">slot name · current value · type-aware editor;</text>
+  <text x="235" y="302" class="dim">edits write through to the live object,</text>
+  <text x="235" y="320" class="dim">persistence and view sync follow automatically</text>
+  <text x="220" y="370" class="dim">Option-Shift-D toggles developer mode globally, revealing nodes that applications hide from end users.</text>
 </svg>
 
 ## Option-Click: Inspect a Tile
@@ -4110,22 +4230,22 @@ The system is designed around three principles:
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="46"/>
-  <text x="305" y="40" class="b">Model display text</text>
-  <text x="305" y="58" class="dim">title, subtitle, slot labels</text>
-  <line class="flow" x1="410" y1="75" x2="410" y2="110" marker-end="url(#ai18n)"/>
-  <rect class="fill" x="220" y="110" width="380" height="64"/>
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
+  <text x="235" y="40" class="b">Model display text</text>
+  <text x="235" y="58" class="dim">title, subtitle, slot labels</text>
+  <line class="flow" x1="410" y1="72" x2="410" y2="110" marker-end="url(#ai18n)"/>
+  <rect class="fill" x="220" y="110" width="380" height="70"/>
   <text x="235" y="130" class="b">Model-to-view boundary</text>
   <text x="235" y="148" class="dim">single point where all UI text passes through;</text>
   <text x="235" y="166" class="dim">translation hook applies here for every model class</text>
-  <line class="flow" x1="410" y1="185" x2="410" y2="220" marker-end="url(#ai18n)"/>
-  <rect class="fill" x="220" y="220" width="380" height="64"/>
+  <line class="flow" x1="410" y1="180" x2="410" y2="220" marker-end="url(#ai18n)"/>
+  <rect class="fill" x="220" y="220" width="380" height="70"/>
   <text x="235" y="240" class="b">SvI18n cache (per-language IndexedDB)</text>
   <text x="235" y="258" class="dim">smart filter: skips numbers, URLs, emails, codes;</text>
   <text x="235" y="276" class="dim">cache hit → return immediately</text>
-  <line class="flow" x1="410" y1="300" x2="410" y2="335" marker-end="url(#ai18n)"/>
+  <line class="flow" x1="410" y1="290" x2="410" y2="335" marker-end="url(#ai18n)"/>
   <text x="425" y="322" class="dim">cache miss</text>
-  <rect class="fill" x="220" y="335" width="380" height="64"/>
+  <rect class="fill" x="220" y="335" width="380" height="70"/>
   <text x="235" y="355" class="b">Batch · dedupe · AI translation</text>
   <text x="235" y="373" class="dim">requests grouped by context, debounced,</text>
   <text x="235" y="391" class="dim">sent as a single call; result cached</text>
@@ -4681,37 +4801,37 @@ The boot process has three phases: load the boot loader, load all resources via 
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="740" height="130"/>
+  <rect class="box" x="40" y="20" width="740" height="117"/>
   <text x="55" y="42" class="b">1. Initial Bootstrap</text>
-  <rect class="fill" x="55" y="70" width="345" height="46"/>
+  <rect class="fill" x="55" y="70" width="345" height="52"/>
   <text x="70" y="90" class="b">Browser loads boot loader</text>
   <text x="70" y="108" class="dim">single script tag entry point</text>
-  <rect class="fill" x="420" y="70" width="345" height="46"/>
+  <rect class="fill" x="420" y="70" width="345" height="52"/>
   <text x="435" y="90" class="b">Core boot files</text>
   <text x="435" y="108" class="dim">Object, Promise, IndexedDB, HashCache, ResourceManager</text>
-  <line class="flow" x1="410" y1="150" x2="410" y2="180" marker-end="url(#abs)"/>
+  <line class="flow" x1="410" y1="137" x2="410" y2="180" marker-end="url(#abs)"/>
   <rect class="box" x="40" y="180" width="740" height="214"/>
   <text x="55" y="202" class="b">2. Resource Loading</text>
   <text x="55" y="220" class="dim">ResourceManager.shared().setupAndRun()</text>
-  <rect class="fill" x="55" y="235" width="710" height="30"/>
+  <rect class="fill" x="55" y="235" width="710" height="34"/>
   <text x="70" y="255" class="dim">Load _index.json: resource metadata + content hashes</text>
-  <rect class="fill" x="55" y="273" width="710" height="30"/>
+  <rect class="fill" x="55" y="273" width="710" height="34"/>
   <text x="70" y="293" class="dim">Check HashCache: skip downloads for unchanged content</text>
-  <rect class="fill" x="55" y="311" width="710" height="30"/>
+  <rect class="fill" x="55" y="311" width="710" height="34"/>
   <text x="70" y="331" class="dim">Download _cam.json.zip (compressed bundle) on cache miss</text>
-  <rect class="fill" x="55" y="349" width="710" height="30"/>
+  <rect class="fill" x="55" y="349" width="710" height="34"/>
   <text x="70" y="369" class="dim">Evaluate CSS sequentially, then JS in dependency order; filter env-inappropriate files</text>
   <line class="flow" x1="410" y1="394" x2="410" y2="424" marker-end="url(#abs)"/>
   <rect class="box" x="40" y="424" width="740" height="214"/>
   <text x="55" y="446" class="b">3. App Creation</text>
   <text x="55" y="464" class="dim">SvApp.loadAndRunShared()</text>
-  <rect class="fill" x="55" y="479" width="710" height="30"/>
+  <rect class="fill" x="55" y="479" width="710" height="34"/>
   <text x="70" y="499" class="dim">Open persistent store; load root object from store</text>
-  <rect class="fill" x="55" y="517" width="710" height="30"/>
+  <rect class="fill" x="55" y="517" width="710" height="34"/>
   <text x="70" y="537" class="dim">Pause schedulers; setupModel(); setupUi()</text>
-  <rect class="fill" x="55" y="555" width="710" height="30"/>
+  <rect class="fill" x="55" y="555" width="710" height="34"/>
   <text x="70" y="575" class="dim">appDidInit fires: post notification, unhide root view, handle URL params</text>
-  <rect class="fill" x="55" y="593" width="710" height="30"/>
+  <rect class="fill" x="55" y="593" width="710" height="34"/>
   <text x="70" y="613" class="dim">Resume schedulers</text>
   <text x="410" y="675" text-anchor="middle" class="dim">Each phase completes before the next; application code runs only after every class and resource is available.</text>
 </svg>
@@ -5686,35 +5806,35 @@ A node is not a UI component. It's a model object that declares its data (via [s
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="50"/>
+  <rect class="fill" x="220" y="20" width="380" height="54"/>
   <text x="240" y="42" class="b">SvNode</text>
   <text x="240" y="60" class="dim">subnodes, parent / owner</text>
   <line class="flow" x1="410" y1="70" x2="410" y2="90" marker-end="url(#an)"/>
-  <rect class="fill" x="220" y="90" width="380" height="50"/>
+  <rect class="fill" x="220" y="90" width="380" height="54"/>
   <text x="240" y="112" class="b">SvTitledNode</text>
   <text x="240" y="130" class="dim">title, subtitle, note, ARIA, path navigation</text>
   <line class="flow" x1="410" y1="140" x2="410" y2="160" marker-end="url(#an)"/>
-  <rect class="fill" x="220" y="160" width="380" height="50"/>
+  <rect class="fill" x="220" y="160" width="380" height="54"/>
   <text x="240" y="182" class="b">SvTranslatableNode</text>
   <text x="240" y="200" class="dim">per-node i18n translation cache</text>
   <line class="flow" x1="410" y1="210" x2="410" y2="230" marker-end="url(#an)"/>
-  <rect class="fill" x="220" y="230" width="380" height="50"/>
+  <rect class="fill" x="220" y="230" width="380" height="54"/>
   <text x="240" y="252" class="b">SvInspectableNode</text>
   <text x="240" y="270" class="dim">inspector tiles generated from slot metadata</text>
   <line class="flow" x1="410" y1="280" x2="410" y2="300" marker-end="url(#an)"/>
-  <rect class="fill" x="220" y="300" width="380" height="50"/>
+  <rect class="fill" x="220" y="300" width="380" height="54"/>
   <text x="240" y="322" class="b">SvViewableNode</text>
   <text x="240" y="340" class="dim">view class selection, layout direction, tile prefs</text>
   <line class="flow" x1="410" y1="350" x2="410" y2="370" marker-end="url(#an)"/>
-  <rect class="fill" x="220" y="370" width="380" height="50"/>
+  <rect class="fill" x="220" y="370" width="380" height="54"/>
   <text x="240" y="392" class="b">SvStyledNode</text>
   <text x="240" y="410" class="dim">theme class name</text>
   <line class="flow" x1="410" y1="420" x2="410" y2="440" marker-end="url(#an)"/>
-  <rect class="fill" x="220" y="440" width="380" height="50"/>
+  <rect class="fill" x="220" y="440" width="380" height="54"/>
   <text x="240" y="462" class="b">SvStorableNode</text>
   <text x="240" y="480" class="dim">persistence, dirty tracking, mutation notifications</text>
   <line class="flow" x1="410" y1="490" x2="410" y2="510" marker-end="url(#an)"/>
-  <rect class="fill" x="220" y="510" width="380" height="50"/>
+  <rect class="fill" x="220" y="510" width="380" height="54"/>
   <text x="240" y="532" class="b">SvSummaryNode</text>
   <text x="240" y="550" class="dim">summary format · base for most application classes</text>
   <text x="410" y="590" text-anchor="middle" class="dim">Each layer adds one capability; application classes typically extend SvSummaryNode.</text>
@@ -6057,26 +6177,26 @@ Some internal framework events — like storage-layer slot propagation — need 
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="40" y="100" width="160" height="46"/>
-  <text x="55" y="120" class="b">Caller</text>
-  <text x="55" y="138" class="dim">broadcast("name1", arg)</text>
-  <line class="flow" x1="200" y1="130" x2="280" y2="130" marker-end="url(#abc)"/>
-  <rect class="box" x="280" y="20" width="280" height="220"/>
+  <rect class="fill" x="40" y="105" width="160" height="52"/>
+  <text x="55" y="125" class="b">Caller</text>
+  <text x="55" y="143" class="dim">broadcast("name1", arg)</text>
+  <line class="flow" x1="200" y1="131" x2="280" y2="131" marker-end="url(#abc)"/>
+  <rect class="box" x="280" y="20" width="280" height="222"/>
   <text x="295" y="42" class="b">SvBroadcaster</text>
   <text x="295" y="62" class="dim">synchronous · no queue · no dedup</text>
   <text x="420" y="125" text-anchor="middle" class="dim">immediate dispatch</text>
-  <text x="420" y="145" text-anchor="middle" class="dim">to matching listeners</text>
-  <line class="flow" x1="560" y1="75" x2="620" y2="75" marker-end="url(#abc)"/>
-  <line class="flow" x1="560" y1="205" x2="620" y2="205" marker-end="url(#abc)"/>
-  <rect class="fill" x="620" y="50" width="160" height="46"/>
+  <text x="420" y="143" text-anchor="middle" class="dim">to matching listeners</text>
+  <line class="flow" x1="560" y1="76" x2="620" y2="76" marker-end="url(#abc)"/>
+  <line class="flow" x1="560" y1="216" x2="620" y2="216" marker-end="url(#abc)"/>
+  <rect class="fill" x="620" y="50" width="160" height="52"/>
   <text x="635" y="70" class="b">Listener X</text>
   <text x="635" y="88" class="dim">listens for "name1"</text>
-  <rect class="fill" x="620" y="115" width="160" height="46"/>
-  <text x="635" y="135" class="b">Listener Y</text>
-  <text x="635" y="153" class="dim">listens for "name2"</text>
-  <rect class="fill" x="620" y="180" width="160" height="46"/>
-  <text x="635" y="200" class="b">Listener Z</text>
-  <text x="635" y="218" class="dim">listens for "name1"</text>
+  <rect class="fill" x="620" y="120" width="160" height="52"/>
+  <text x="635" y="140" class="b">Listener Y</text>
+  <text x="635" y="158" class="dim">listens for "name2"</text>
+  <rect class="fill" x="620" y="190" width="160" height="52"/>
+  <text x="635" y="210" class="b">Listener Z</text>
+  <text x="635" y="228" class="dim">listens for "name1"</text>
 </svg>
 
 ## Usage
@@ -6133,42 +6253,43 @@ Notifications are queued and dispatched at the end of the event loop, so multipl
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="180" height="260"/>
-  <text x="55" y="42" class="b">Senders</text>
-  <rect class="fill" x="55" y="65" width="150" height="46"/>
-  <text x="70" y="85" class="b">SvNode A</text>
-  <text x="70" y="103" class="dim">post by name</text>
-  <rect class="fill" x="55" y="135" width="150" height="46"/>
-  <text x="70" y="155" class="b">SvNode B</text>
-  <text x="70" y="173" class="dim">post by name</text>
-  <rect class="fill" x="55" y="205" width="150" height="46"/>
-  <text x="70" y="225" class="b">SvNode C</text>
-  <text x="70" y="243" class="dim">post by name</text>
-  <line class="flow" x1="220" y1="150" x2="270" y2="150" marker-end="url(#anc)"/>
-  <text x="245" y="140" text-anchor="middle" class="dim">post</text>
-  <rect class="box" x="270" y="20" width="280" height="260"/>
-  <text x="285" y="42" class="b">NotificationCenter</text>
-  <text x="285" y="62" class="dim">queued, deduplicated</text>
-  <rect class="fill" x="285" y="80" width="250" height="28"/>
-  <text x="300" y="100" class="dim">name · sender</text>
-  <rect class="fill" x="285" y="130" width="250" height="28"/>
-  <text x="300" y="150" class="dim">name · sender</text>
-  <rect class="fill" x="285" y="180" width="250" height="28"/>
-  <text x="300" y="200" class="dim">name · sender</text>
-  <text x="410" y="250" text-anchor="middle" class="dim">drains at end of event loop</text>
-  <line class="flow" x1="550" y1="150" x2="600" y2="150" marker-end="url(#anc)"/>
-  <text x="575" y="140" text-anchor="middle" class="dim">dispatch</text>
-  <rect class="box" x="600" y="20" width="180" height="260"/>
-  <text x="615" y="42" class="b">Observers</text>
-  <rect class="fill" x="615" y="65" width="150" height="46"/>
-  <text x="630" y="85" class="b">View X</text>
-  <text x="630" y="103" class="dim">handler(note)</text>
-  <rect class="fill" x="615" y="135" width="150" height="46"/>
-  <text x="630" y="155" class="b">View Y</text>
-  <text x="630" y="173" class="dim">handler(note)</text>
-  <rect class="fill" x="615" y="205" width="150" height="46"/>
-  <text x="630" y="225" class="b">View Z</text>
-  <text x="630" y="243" class="dim">handler(note)</text>
+  <rect class="box" x="70" y="20" width="180" height="252"/>
+  <text x="85" y="42" class="b">Senders</text>
+  <rect class="fill" x="85" y="65" width="150" height="52"/>
+  <text x="100" y="85" class="b">SvNode A</text>
+  <text x="100" y="103" class="dim">post by name</text>
+  <rect class="fill" x="85" y="135" width="150" height="52"/>
+  <text x="100" y="155" class="b">SvNode B</text>
+  <text x="100" y="173" class="dim">post by name</text>
+  <rect class="fill" x="85" y="205" width="150" height="52"/>
+  <text x="100" y="225" class="b">SvNode C</text>
+  <text x="100" y="243" class="dim">post by name</text>
+  <line class="flow" x1="250" y1="146" x2="320" y2="146" marker-end="url(#anc)"/>
+  <text x="285" y="138" text-anchor="middle" class="dim">post</text>
+  <rect class="box" x="320" y="20" width="180" height="252"/>
+  <text x="335" y="42" class="b">NotificationCenter</text>
+  <text x="335" y="62" class="dim">queued, deduplicated</text>
+  <rect class="fill" x="335" y="80" width="150" height="34"/>
+  <text x="350" y="100" class="dim">name · sender</text>
+  <rect class="fill" x="335" y="122" width="150" height="34"/>
+  <text x="350" y="142" class="dim">name · sender</text>
+  <rect class="fill" x="335" y="164" width="150" height="34"/>
+  <text x="350" y="184" class="dim">name · sender</text>
+  <text x="335" y="220" class="dim">drains at end</text>
+  <text x="335" y="238" class="dim">of event loop</text>
+  <line class="flow" x1="500" y1="146" x2="570" y2="146" marker-end="url(#anc)"/>
+  <text x="535" y="138" text-anchor="middle" class="dim">dispatch</text>
+  <rect class="box" x="570" y="20" width="180" height="252"/>
+  <text x="585" y="42" class="b">Observers</text>
+  <rect class="fill" x="585" y="65" width="150" height="52"/>
+  <text x="600" y="85" class="b">View X</text>
+  <text x="600" y="103" class="dim">handler(note)</text>
+  <rect class="fill" x="585" y="135" width="150" height="52"/>
+  <text x="600" y="155" class="b">View Y</text>
+  <text x="600" y="173" class="dim">handler(note)</text>
+  <rect class="fill" x="585" y="205" width="150" height="52"/>
+  <text x="600" y="225" class="b">View Z</text>
+  <text x="600" y="243" class="dim">handler(note)</text>
 </svg>
 
 ## Posting Notifications
@@ -6305,24 +6426,24 @@ Slot change hooks centralize this. When a slot value changes, the framework auto
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="46"/>
+  <rect class="fill" x="290" y="20" width="240" height="52"/>
   <text x="305" y="40" class="b">slot setter</text>
   <text x="305" y="58" class="dim">obj.setName("foo")</text>
-  <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#asch)"/>
+  <line class="flow" x1="410" y1="72" x2="410" y2="115" marker-end="url(#asch)"/>
   <text x="425" y="100" class="dim">if value changed</text>
-  <rect class="fill" x="290" y="115" width="240" height="46"/>
+  <rect class="fill" x="290" y="115" width="240" height="52"/>
   <text x="305" y="135" class="b">didUpdateSlot fires</text>
   <text x="305" y="153" class="dim">per-slot hook + general hook</text>
-  <line class="flow" x1="410" y1="175" x2="410" y2="200"/>
+  <line class="flow" x1="410" y1="167" x2="410" y2="200"/>
   <line class="flow" x1="230" y1="200" x2="590" y2="200"/>
   <line class="flow" x1="230" y1="200" x2="230" y2="225" marker-end="url(#asch)"/>
   <line class="flow" x1="590" y1="200" x2="590" y2="225" marker-end="url(#asch)"/>
-  <rect class="fill" x="80" y="225" width="300" height="82"/>
+  <rect class="fill" x="80" y="225" width="300" height="88"/>
   <text x="95" y="245" class="b">if slot.shouldStoreSlot() is true</text>
   <text x="95" y="263" class="dim">didMutate() marks object dirty;</text>
   <text x="95" y="281" class="dim">persistence layer commits</text>
   <text x="95" y="299" class="dim">at end of event loop</text>
-  <rect class="fill" x="440" y="225" width="300" height="82"/>
+  <rect class="fill" x="440" y="225" width="300" height="88"/>
   <text x="455" y="245" class="b">if slot.syncsToView() is true</text>
   <text x="455" y="263" class="dim">posts onUpdatedNode notification;</text>
   <text x="455" y="281" class="dim">observing views schedule</text>
@@ -6413,30 +6534,30 @@ The notification center uses `SvSyncScheduler` internally for its own dispatch, 
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="350" height="295"/>
+  <rect class="box" x="40" y="20" width="350" height="264"/>
   <text x="55" y="42" class="b">Incoming requests</text>
   <text x="55" y="62" class="dim">multiple calls, any order</text>
-  <rect class="fill" x="55" y="80" width="320" height="33"/>
+  <rect class="fill" x="55" y="80" width="320" height="39"/>
   <text x="70" y="105" class="dim">A.syncToView  (priority 2)</text>
-  <rect class="fill" x="55" y="130" width="320" height="33"/>
+  <rect class="fill" x="55" y="130" width="320" height="39"/>
   <text x="70" y="155" class="dim">B.syncFromView  (priority 0)</text>
-  <rect class="fill" x="55" y="180" width="320" height="33"/>
+  <rect class="fill" x="55" y="180" width="320" height="39"/>
   <text x="70" y="205" class="dim">A.syncToView  (priority 2)  · duplicate, ignored</text>
-  <rect class="fill" x="55" y="230" width="320" height="33"/>
+  <rect class="fill" x="55" y="230" width="320" height="39"/>
   <text x="70" y="255" class="dim">M.commit  (priority 1)</text>
   <line class="flow" x1="390" y1="170" x2="430" y2="170" marker-end="url(#ass)"/>
   <text x="410" y="160" text-anchor="middle" class="dim">drain</text>
-  <rect class="box" x="430" y="20" width="350" height="295"/>
+  <rect class="box" x="430" y="20" width="350" height="259"/>
   <text x="445" y="42" class="b">Drain (end of event loop)</text>
   <text x="445" y="62" class="dim">deduplicated, in priority order</text>
-  <rect class="fill" x="445" y="80" width="320" height="33"/>
+  <rect class="fill" x="445" y="80" width="320" height="39"/>
   <text x="460" y="105" class="dim">1. B.syncFromView()  · priority 0</text>
-  <rect class="fill" x="445" y="130" width="320" height="33"/>
+  <rect class="fill" x="445" y="130" width="320" height="39"/>
   <text x="460" y="155" class="dim">2. M.commit()  · priority 1</text>
-  <rect class="fill" x="445" y="180" width="320" height="33"/>
+  <rect class="fill" x="445" y="180" width="320" height="39"/>
   <text x="460" y="205" class="dim">3. A.syncToView()  · priority 2</text>
-  <text x="605" y="255" text-anchor="middle" class="dim">each (target, method) pair</text>
-  <text x="605" y="275" text-anchor="middle" class="dim">runs exactly once per loop</text>
+  <text x="445" y="243" class="dim">each (target, method) pair</text>
+  <text x="445" y="261" class="dim">runs exactly once per loop</text>
 </svg>
 
 ## Scheduling Actions
@@ -6579,27 +6700,27 @@ Strvct's local persistence stores serialized object graphs in IndexedDB via `SvP
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
   </style>
-  <rect class="box" x="40" y="20" width="350" height="185"/>
+  <rect class="box" x="40" y="20" width="350" height="159"/>
   <text x="55" y="42" class="b">Collection Sync</text>
-  <rect class="fill" x="55" y="60" width="320" height="46"/>
+  <rect class="fill" x="55" y="60" width="320" height="52"/>
   <text x="70" y="80" class="b">manifest.json</text>
   <text x="70" y="98" class="dim">subnodeIds + item metadata</text>
-  <rect class="fill" x="55" y="130" width="100" height="28"/>
+  <rect class="fill" x="55" y="130" width="100" height="34"/>
   <text x="70" y="150" class="dim">item-1.json</text>
-  <rect class="fill" x="165" y="130" width="100" height="28"/>
+  <rect class="fill" x="165" y="130" width="100" height="34"/>
   <text x="180" y="150" class="dim">item-2.json</text>
-  <rect class="fill" x="275" y="130" width="100" height="28"/>
+  <rect class="fill" x="275" y="130" width="100" height="34"/>
   <text x="290" y="150" class="dim">item-3.json</text>
-  <rect class="box" x="430" y="20" width="350" height="185"/>
+  <rect class="box" x="430" y="20" width="350" height="159"/>
   <text x="445" y="42" class="b">Pool Sync</text>
-  <rect class="fill" x="445" y="60" width="320" height="46"/>
+  <rect class="fill" x="445" y="60" width="320" height="52"/>
   <text x="460" y="80" class="b">snapshot.json</text>
   <text x="460" y="98" class="dim">complete object graph</text>
-  <rect class="fill" x="445" y="130" width="100" height="28"/>
+  <rect class="fill" x="445" y="130" width="100" height="34"/>
   <text x="460" y="150" class="dim">wal-001.json</text>
-  <rect class="fill" x="555" y="130" width="100" height="28"/>
+  <rect class="fill" x="555" y="130" width="100" height="34"/>
   <text x="570" y="150" class="dim">wal-002.json</text>
-  <rect class="fill" x="665" y="130" width="100" height="28"/>
+  <rect class="fill" x="665" y="130" width="100" height="34"/>
   <text x="680" y="150" class="dim">wal-003.json</text>
 </svg>
 
@@ -6818,10 +6939,10 @@ The solution uses a **dual-database architecture** with hash-based references be
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="350" height="255"/>
+  <rect class="box" x="40" y="20" width="350" height="229"/>
   <text x="55" y="42" class="b">SvObjectPool</text>
   <text x="55" y="62" class="dim">sync · structured records</text>
-  <rect class="fill" x="55" y="80" width="320" height="148"/>
+  <rect class="fill" x="55" y="80" width="320" height="154"/>
   <text x="70" y="115" class="b">UoCharacter</text>
   <text x="70" y="150" class="dim">name: "Sarah"</text>
   <text x="70" y="185" class="dim">level: 5</text>
@@ -6829,10 +6950,10 @@ The solution uses a **dual-database architecture** with hash-based references be
   <line class="flow" x1="390" y1="170" x2="430" y2="170" marker-end="url(#abp)"/>
   <text x="410" y="160" text-anchor="middle" class="dim">lookup</text>
   <text x="410" y="186" text-anchor="middle" class="dim">by hash</text>
-  <rect class="box" x="430" y="20" width="350" height="255"/>
+  <rect class="box" x="430" y="20" width="350" height="229"/>
   <text x="445" y="42" class="b">SvBlobPool</text>
   <text x="445" y="62" class="dim">async · content-addressable</text>
-  <rect class="fill" x="445" y="80" width="320" height="148"/>
+  <rect class="fill" x="445" y="80" width="320" height="154"/>
   <text x="460" y="115" class="b">a3f9c4…</text>
   <text x="460" y="150" class="dim">⟨ binary bytes ⟩</text>
   <text x="460" y="185" class="dim">size: 384 KB</text>
@@ -7088,7 +7209,7 @@ Strvct's persistence system stores object graphs in the browser's IndexedDB. Rat
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="190" y="20" width="440" height="100"/>
+  <rect class="box" x="190" y="20" width="440" height="15"/>
   <text x="205" y="42" class="b">Node Graph</text>
   <line class="edge" x1="240" y1="65" x2="310" y2="90"/>
   <line class="edge" x1="240" y1="65" x2="380" y2="65"/>
@@ -7104,23 +7225,23 @@ Strvct's persistence system stores object graphs in the browser's IndexedDB. Rat
   <circle cx="560" cy="65" r="8" class="fill"/>
   <line class="flow" x1="410" y1="106" x2="410" y2="150" marker-end="url(#alp)"/>
   <text x="425" y="135" class="dim">current node</text>
-  <rect class="fill" x="190" y="150" width="440" height="46"/>
+  <rect class="fill" x="190" y="150" width="440" height="52"/>
   <text x="205" y="170" class="b">SvStorableNode</text>
   <text x="205" y="188" class="dim">your node class; slot setters hook into the persistence system</text>
-  <line class="flow" x1="410" y1="225" x2="410" y2="255" marker-end="url(#alp)"/>
+  <line class="flow" x1="410" y1="202" x2="410" y2="255" marker-end="url(#alp)"/>
   <text x="420" y="245" class="dim">didUpdateSlot marks object dirty</text>
-  <rect class="fill" x="190" y="255" width="440" height="46"/>
+  <rect class="fill" x="190" y="255" width="440" height="52"/>
   <text x="205" y="275" class="b">SvObjectPool</text>
   <text x="205" y="293" class="dim">in-memory cache; tracks dirty objects, serializes to JSON</text>
-  <line class="flow" x1="410" y1="330" x2="410" y2="360" marker-end="url(#alp)"/>
+  <line class="flow" x1="410" y1="307" x2="410" y2="360" marker-end="url(#alp)"/>
   <text x="420" y="350" class="dim">commit at end of event loop</text>
-  <rect class="fill" x="190" y="360" width="440" height="46"/>
+  <rect class="fill" x="190" y="360" width="440" height="52"/>
   <text x="205" y="380" class="b">SvPersistentAtomicMap</text>
   <text x="205" y="398" class="dim">IndexedDB wrapper; in-memory cache, batched writes</text>
-  <line class="flow" x1="410" y1="435" x2="410" y2="465" marker-end="url(#alp)"/>
+  <line class="flow" x1="410" y1="412" x2="410" y2="465" marker-end="url(#alp)"/>
   <text x="420" y="455" class="dim">atomic transaction</text>
-  <rect class="box" x="190" y="465" width="440" height="55"/>
-  <text x="410" y="498" text-anchor="middle" class="b">IndexedDB</text>
+  <rect class="box" x="190" y="465" width="440" height="42"/>
+  <text x="205" y="489" class="b">IndexedDB</text>
 </svg>
 
 - **`SvObjectPool`** — Manages an in-memory cache of objects indexed by persistent unique IDs (puuids). Tracks dirty objects and handles serialization, deserialization, and garbage collection.
@@ -9946,33 +10067,33 @@ Two things often surprise newcomers: the auto-generated setter **type-checks val
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="100"/>
+  <rect class="fill" x="220" y="20" width="380" height="106"/>
   <text x="235" y="40" class="b">Slot</text>
   <text x="235" y="58" class="dim">declared in initPrototypeSlots() via newSlot();</text>
   <text x="235" y="76" class="dim">carries metadata: type, default, storage flags,</text>
   <text x="235" y="94" class="dim">view sync, inspector config, validation, weakness</text>
   <text x="235" y="112" class="dim">getter slotName() / setter setSlotName() auto-installed</text>
-  <line class="flow" x1="410" y1="130" x2="410" y2="155"/>
+  <line class="flow" x1="410" y1="126" x2="410" y2="185"/>
   <line class="flow" x1="120" y1="155" x2="700" y2="155"/>
   <line class="flow" x1="120" y1="155" x2="120" y2="185" marker-end="url(#as)"/>
-  <line class="flow" x1="265" y1="155" x2="265" y2="185" marker-end="url(#as)"/>
-  <line class="flow" x1="410" y1="155" x2="410" y2="185" marker-end="url(#as)"/>
-  <line class="flow" x1="555" y1="155" x2="555" y2="185" marker-end="url(#as)"/>
+  <line class="flow" x1="265" y1="126" x2="265" y2="185" marker-end="url(#as)"/>
+  <line class="flow" x1="410" y1="126" x2="410" y2="185" marker-end="url(#as)"/>
+  <line class="flow" x1="555" y1="126" x2="555" y2="185" marker-end="url(#as)"/>
   <line class="flow" x1="700" y1="155" x2="700" y2="185" marker-end="url(#as)"/>
-  <rect class="fill" x="40" y="185" width="160" height="82"/>
+  <rect class="fill" x="40" y="185" width="160" height="88"/>
   <text x="55" y="205" class="b">UI</text>
   <text x="55" y="223" class="dim">auto-generates forms,</text>
   <text x="55" y="241" class="dim">field editors, inspector</text>
   <text x="55" y="259" class="dim">tiles</text>
-  <rect class="fill" x="185" y="185" width="160" height="64"/>
+  <rect class="fill" x="185" y="185" width="160" height="70"/>
   <text x="200" y="205" class="b">Storage</text>
   <text x="200" y="223" class="dim">persists slots flagged</text>
   <text x="200" y="241" class="dim">shouldStoreSlot</text>
-  <rect class="fill" x="330" y="185" width="160" height="64"/>
+  <rect class="fill" x="330" y="185" width="160" height="70"/>
   <text x="345" y="205" class="b">Notifications</text>
   <text x="345" y="223" class="dim">setter posts on</text>
   <text x="345" y="241" class="dim">syncsToView</text>
-  <rect class="fill" x="475" y="185" width="160" height="64"/>
+  <rect class="fill" x="475" y="185" width="160" height="70"/>
   <text x="490" y="205" class="b">Validation</text>
   <text x="490" y="223" class="dim">runtime type check;</text>
   <text x="490" y="241" class="dim">min/max/enum</text>
@@ -10290,7 +10411,7 @@ This page covers the key concepts: the domain model, storage, UI synchronization
   <rect class="box" x="30" y="20" width="200" height="160"/>
   <text x="45" y="42" class="b">UI</text>
   <text x="45" y="62" class="dim">SvNodeView hierarchy</text>
-  <rect class="fill" x="45" y="80" width="170" height="82"/>
+  <rect class="fill" x="45" y="80" width="170" height="88"/>
   <text x="60" y="100" class="b">Views</text>
   <text x="60" y="118" class="dim">observe a node's slots;</text>
   <text x="60" y="136" class="dim">created lazily on navigation;</text>
@@ -10298,7 +10419,7 @@ This page covers the key concepts: the domain model, storage, UI synchronization
   <rect class="box" x="310" y="20" width="200" height="160"/>
   <text x="325" y="42" class="b">Model</text>
   <text x="325" y="62" class="dim">SvNode graph</text>
-  <rect class="fill" x="325" y="80" width="170" height="82"/>
+  <rect class="fill" x="325" y="80" width="170" height="88"/>
   <text x="340" y="100" class="b">Domain objects</text>
   <text x="340" y="118" class="dim">slots, subnodes,</text>
   <text x="340" y="136" class="dim">annotations;</text>
@@ -10306,7 +10427,7 @@ This page covers the key concepts: the domain model, storage, UI synchronization
   <rect class="box" x="590" y="20" width="200" height="160"/>
   <text x="605" y="42" class="b">Storage</text>
   <text x="605" y="62" class="dim">SvPersistentObjectPool</text>
-  <rect class="fill" x="605" y="80" width="170" height="82"/>
+  <rect class="fill" x="605" y="80" width="170" height="88"/>
   <text x="620" y="100" class="b">IndexedDB</text>
   <text x="620" y="118" class="dim">monitors mutations;</text>
   <text x="620" y="136" class="dim">bundles per-loop changes</text>
@@ -11254,7 +11375,7 @@ No. The choice is load-bearing rather than stylistic.
 
 ## Why not TypeScript?
 
-Integration cost. STRVCT's content-addressable build and in-browser source-level debugging (via eval with sourceURL) work cleanly with plain JavaScript. Adding a TS compile step while preserving content-hashed caching and step-through debugging looked like meaningful work for uncertain gain, especially given that slot annotations already carry type information at runtime and serve most of the same validation and documentation roles. The option remains open for the future, but it's not currently a priority.
+STRVCT is designed for large client-side projects, with hundreds of model classes loaded in the browser. At that scale, traditional web package systems become too slow, which is why the framework uses a content-hashed caching build instead of standard ES modules. TypeScript would add its own transpiler and type-checker pass on top of that, and getting source-level debugging to work cleanly with both the eval-based loading and a TS pipeline is non-trivial. Slot annotations already carry runtime type information that serves most of TypeScript's validation and documentation roles, so the integration cost looked high relative to the benefit. It's left as potential future work.
 
 ## How does persistence work?
 
@@ -11303,6 +11424,10 @@ MIT-licensed, and the entire codebase is readable: plain JavaScript, no transpil
 **Origins:** STRVCT began as internal infrastructure, not as a framework project. The earliest code was written in 2016 as part of an application called bitmarkets.js — Miller columns, a node hierarchy, and slot-based persistence — and was carried into a second unrelated application, voluntary.app, starting in 2017. The framework code was progressively separated from application code and extracted into its own repository, strvct.net, in 2020. It has since grown to include the object pool persistence system, gestures and drag-and-drop, content-addressable builds, cloud sync, and internationalization. The [Timeline](../Timeline/) has the full list of milestones.
 
 **Public presence:** The project has not been publicly marketed or announced. Its only public presence is the GitHub repository and links from the author's GitHub and Twitter profile subtitles. It is not a commercial product, has no funding or sponsoring organization, and is developed as a personal framework — used in production by [undreamedof.ai](https://undreamedof.ai).
+
+## How do you pronounce STRVCT?
+
+Like "struct" — as in *structure*. The V is stylized; the pronunciation is the same.
 
 ## How does it work with AI-assisted development?
 

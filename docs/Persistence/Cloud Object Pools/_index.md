@@ -14,27 +14,27 @@ Strvct's local persistence stores serialized object graphs in IndexedDB via `SvP
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
   </style>
-  <rect class="box" x="40" y="20" width="350" height="185"/>
+  <rect class="box" x="40" y="20" width="350" height="159"/>
   <text x="55" y="42" class="b">Collection Sync</text>
-  <rect class="fill" x="55" y="60" width="320" height="46"/>
+  <rect class="fill" x="55" y="60" width="320" height="52"/>
   <text x="70" y="80" class="b">manifest.json</text>
   <text x="70" y="98" class="dim">subnodeIds + item metadata</text>
-  <rect class="fill" x="55" y="130" width="100" height="28"/>
+  <rect class="fill" x="55" y="130" width="100" height="34"/>
   <text x="70" y="150" class="dim">item-1.json</text>
-  <rect class="fill" x="165" y="130" width="100" height="28"/>
+  <rect class="fill" x="165" y="130" width="100" height="34"/>
   <text x="180" y="150" class="dim">item-2.json</text>
-  <rect class="fill" x="275" y="130" width="100" height="28"/>
+  <rect class="fill" x="275" y="130" width="100" height="34"/>
   <text x="290" y="150" class="dim">item-3.json</text>
-  <rect class="box" x="430" y="20" width="350" height="185"/>
+  <rect class="box" x="430" y="20" width="350" height="159"/>
   <text x="445" y="42" class="b">Pool Sync</text>
-  <rect class="fill" x="445" y="60" width="320" height="46"/>
+  <rect class="fill" x="445" y="60" width="320" height="52"/>
   <text x="460" y="80" class="b">snapshot.json</text>
   <text x="460" y="98" class="dim">complete object graph</text>
-  <rect class="fill" x="445" y="130" width="100" height="28"/>
+  <rect class="fill" x="445" y="130" width="100" height="34"/>
   <text x="460" y="150" class="dim">wal-001.json</text>
-  <rect class="fill" x="555" y="130" width="100" height="28"/>
+  <rect class="fill" x="555" y="130" width="100" height="34"/>
   <text x="570" y="150" class="dim">wal-002.json</text>
-  <rect class="fill" x="665" y="130" width="100" height="28"/>
+  <rect class="fill" x="665" y="130" width="100" height="34"/>
   <text x="680" y="150" class="dim">wal-003.json</text>
 </svg>
 

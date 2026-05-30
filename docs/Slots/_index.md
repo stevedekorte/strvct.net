@@ -22,33 +22,33 @@ Two things often surprise newcomers: the auto-generated setter **type-checks val
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="100"/>
+  <rect class="fill" x="220" y="20" width="380" height="106"/>
   <text x="235" y="40" class="b">Slot</text>
   <text x="235" y="58" class="dim">declared in initPrototypeSlots() via newSlot();</text>
   <text x="235" y="76" class="dim">carries metadata: type, default, storage flags,</text>
   <text x="235" y="94" class="dim">view sync, inspector config, validation, weakness</text>
   <text x="235" y="112" class="dim">getter slotName() / setter setSlotName() auto-installed</text>
-  <line class="flow" x1="410" y1="130" x2="410" y2="155"/>
+  <line class="flow" x1="410" y1="126" x2="410" y2="185"/>
   <line class="flow" x1="120" y1="155" x2="700" y2="155"/>
   <line class="flow" x1="120" y1="155" x2="120" y2="185" marker-end="url(#as)"/>
-  <line class="flow" x1="265" y1="155" x2="265" y2="185" marker-end="url(#as)"/>
-  <line class="flow" x1="410" y1="155" x2="410" y2="185" marker-end="url(#as)"/>
-  <line class="flow" x1="555" y1="155" x2="555" y2="185" marker-end="url(#as)"/>
+  <line class="flow" x1="265" y1="126" x2="265" y2="185" marker-end="url(#as)"/>
+  <line class="flow" x1="410" y1="126" x2="410" y2="185" marker-end="url(#as)"/>
+  <line class="flow" x1="555" y1="126" x2="555" y2="185" marker-end="url(#as)"/>
   <line class="flow" x1="700" y1="155" x2="700" y2="185" marker-end="url(#as)"/>
-  <rect class="fill" x="40" y="185" width="160" height="82"/>
+  <rect class="fill" x="40" y="185" width="160" height="88"/>
   <text x="55" y="205" class="b">UI</text>
   <text x="55" y="223" class="dim">auto-generates forms,</text>
   <text x="55" y="241" class="dim">field editors, inspector</text>
   <text x="55" y="259" class="dim">tiles</text>
-  <rect class="fill" x="185" y="185" width="160" height="64"/>
+  <rect class="fill" x="185" y="185" width="160" height="70"/>
   <text x="200" y="205" class="b">Storage</text>
   <text x="200" y="223" class="dim">persists slots flagged</text>
   <text x="200" y="241" class="dim">shouldStoreSlot</text>
-  <rect class="fill" x="330" y="185" width="160" height="64"/>
+  <rect class="fill" x="330" y="185" width="160" height="70"/>
   <text x="345" y="205" class="b">Notifications</text>
   <text x="345" y="223" class="dim">setter posts on</text>
   <text x="345" y="241" class="dim">syncsToView</text>
-  <rect class="fill" x="475" y="185" width="160" height="64"/>
+  <rect class="fill" x="475" y="185" width="160" height="70"/>
   <text x="490" y="205" class="b">Validation</text>
   <text x="490" y="223" class="dim">runtime type check;</text>
   <text x="490" y="241" class="dim">min/max/enum</text>

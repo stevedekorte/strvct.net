@@ -9,6 +9,7 @@
 - [Comparing to React](/docs/Comparing%20to%20React/): A guide for React developers exploring Strvct — what's different, what's similar, and when each approach makes more sense.
 - [Diagrams](/docs/Diagrams/): Architectural sketches of the Strvct framework. Working drafts; not yet placed in their final locations within the docs.
 - [Annotations](/docs/Diagrams/Annotations/)
+- [Diagram Conventions](/docs/Diagrams/Conventions/): Style and layout rules for the SVG diagrams used throughout the Strvct docs.
 - [Layers](/docs/Diagrams/Layers/)
 - [Persistence Pipeline](/docs/Diagrams/Persistence%20Pipeline/)
 - [View ↔ Model ↔ Storage Syncing](/docs/Diagrams/Sync%20Flow/)

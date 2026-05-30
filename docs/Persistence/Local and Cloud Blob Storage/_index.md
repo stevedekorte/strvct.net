@@ -53,10 +53,10 @@ The solution uses a **dual-database architecture** with hash-based references be
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="350" height="255"/>
+  <rect class="box" x="40" y="20" width="350" height="229"/>
   <text x="55" y="42" class="b">SvObjectPool</text>
   <text x="55" y="62" class="dim">sync · structured records</text>
-  <rect class="fill" x="55" y="80" width="320" height="148"/>
+  <rect class="fill" x="55" y="80" width="320" height="154"/>
   <text x="70" y="115" class="b">UoCharacter</text>
   <text x="70" y="150" class="dim">name: "Sarah"</text>
   <text x="70" y="185" class="dim">level: 5</text>
@@ -64,10 +64,10 @@ The solution uses a **dual-database architecture** with hash-based references be
   <line class="flow" x1="390" y1="170" x2="430" y2="170" marker-end="url(#abp)"/>
   <text x="410" y="160" text-anchor="middle" class="dim">lookup</text>
   <text x="410" y="186" text-anchor="middle" class="dim">by hash</text>
-  <rect class="box" x="430" y="20" width="350" height="255"/>
+  <rect class="box" x="430" y="20" width="350" height="229"/>
   <text x="445" y="42" class="b">SvBlobPool</text>
   <text x="445" y="62" class="dim">async · content-addressable</text>
-  <rect class="fill" x="445" y="80" width="320" height="148"/>
+  <rect class="fill" x="445" y="80" width="320" height="154"/>
   <text x="460" y="115" class="b">a3f9c4…</text>
   <text x="460" y="150" class="dim">⟨ binary bytes ⟩</text>
   <text x="460" y="185" class="dim">size: 384 KB</text>

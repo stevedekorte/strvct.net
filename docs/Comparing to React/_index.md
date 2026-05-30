@@ -12,7 +12,7 @@ React and Strvct solve the same fundamental problem — keeping a UI in sync wit
 
 They represent genuinely different philosophies about where developer effort should go.
 
-<svg viewBox="0 0 820 460" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 410" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -26,41 +26,41 @@ They represent genuinely different philosophies about where developer effort sho
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="350" height="420"/>
-  <text x="55" y="42" class="b">React</text>
-  <text x="55" y="62" class="dim">view library</text>
-  <rect class="fill" x="55" y="85" width="320" height="118"/>
-  <text x="70" y="105" class="b">You write</text>
-  <text x="70" y="123" class="dim">Components (JSX)</text>
-  <text x="70" y="141" class="dim">State management</text>
-  <text x="70" y="159" class="dim">Routing</text>
-  <text x="70" y="177" class="dim">Persistence</text>
-  <text x="70" y="195" class="dim">Styling, i18n, etc.</text>
-  <rect class="fill" x="55" y="245" width="320" height="100"/>
-  <text x="70" y="265" class="b">Framework provides</text>
-  <text x="70" y="283" class="dim">DOM reconciliation</text>
-  <text x="70" y="301" class="dim">Component lifecycle</text>
-  <text x="70" y="319" class="dim">Hooks</text>
-  <text x="70" y="337" class="dim">Re-render scheduling</text>
-  <text x="215" y="400" text-anchor="middle" class="dim">flexible runtime: SPA, SSR,</text>
-  <text x="215" y="418" text-anchor="middle" class="dim">static, hybrid</text>
-  <rect class="box" x="430" y="20" width="350" height="420"/>
-  <text x="445" y="42" class="b">Strvct</text>
-  <text x="445" y="62" class="dim">naked objects framework</text>
-  <rect class="fill" x="445" y="85" width="320" height="100"/>
-  <text x="460" y="105" class="b">You write</text>
-  <text x="460" y="123" class="dim">Domain model (SvNode classes)</text>
-  <text x="460" y="141" class="dim">Slot annotations</text>
-  <text x="460" y="159" class="dim">Action methods</text>
-  <text x="460" y="177" class="dim">Custom views (only when needed)</text>
-  <rect class="fill" x="445" y="245" width="320" height="100"/>
-  <text x="460" y="265" class="b">Framework provides</text>
-  <text x="460" y="283" class="dim">UI generation from model</text>
-  <text x="460" y="301" class="dim">Persistence (IndexedDB + cloud)</text>
-  <text x="460" y="319" class="dim">Navigation, i18n, accessibility</text>
-  <text x="460" y="337" class="dim">Inspector, debug tools</text>
-  <text x="605" y="400" text-anchor="middle" class="dim">local-first runtime;</text>
-  <text x="605" y="418" text-anchor="middle" class="dim">offline by default, cloud sync optional</text>
+  <rect class="box" x="90" y="20" width="290" height="370"/>
+  <text x="105" y="42" class="b">React</text>
+  <text x="105" y="62" class="dim">view library</text>
+  <rect class="fill" x="105" y="85" width="260" height="124"/>
+  <text x="120" y="105" class="b">You write</text>
+  <text x="120" y="123" class="dim">Components (JSX)</text>
+  <text x="120" y="141" class="dim">State management</text>
+  <text x="120" y="159" class="dim">Routing</text>
+  <text x="120" y="177" class="dim">Persistence</text>
+  <text x="120" y="195" class="dim">Styling, i18n, etc.</text>
+  <rect class="fill" x="105" y="224" width="260" height="106"/>
+  <text x="120" y="244" class="b">Framework provides</text>
+  <text x="120" y="262" class="dim">DOM reconciliation</text>
+  <text x="120" y="280" class="dim">Component lifecycle</text>
+  <text x="120" y="298" class="dim">Hooks</text>
+  <text x="120" y="316" class="dim">Re-render scheduling</text>
+  <text x="105" y="354" class="dim">flexible runtime: SPA, SSR,</text>
+  <text x="105" y="372" class="dim">static, hybrid</text>
+  <rect class="box" x="440" y="20" width="290" height="370"/>
+  <text x="455" y="42" class="b">Strvct</text>
+  <text x="455" y="62" class="dim">naked objects framework</text>
+  <rect class="fill" x="455" y="85" width="260" height="106"/>
+  <text x="470" y="105" class="b">You write</text>
+  <text x="470" y="123" class="dim">Domain model (SvNode classes)</text>
+  <text x="470" y="141" class="dim">Slot annotations</text>
+  <text x="470" y="159" class="dim">Action methods</text>
+  <text x="470" y="177" class="dim">Custom views (only when needed)</text>
+  <rect class="fill" x="455" y="206" width="260" height="106"/>
+  <text x="470" y="226" class="b">Framework provides</text>
+  <text x="470" y="244" class="dim">UI generation from model</text>
+  <text x="470" y="262" class="dim">Persistence (IndexedDB + cloud)</text>
+  <text x="470" y="280" class="dim">Navigation, i18n, accessibility</text>
+  <text x="470" y="298" class="dim">Inspector, debug tools</text>
+  <text x="455" y="336" class="dim">local-first runtime;</text>
+  <text x="455" y="354" class="dim">offline by default, cloud sync optional</text>
 </svg>
 
 ## Architecture

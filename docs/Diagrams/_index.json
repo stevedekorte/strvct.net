@@ -10,7 +10,8 @@
         "Annotations",
         "Sync Flow",
         "View Resolution",
-        "Persistence Pipeline"
+        "Persistence Pipeline",
+        "Conventions"
       ]
     }
   ]

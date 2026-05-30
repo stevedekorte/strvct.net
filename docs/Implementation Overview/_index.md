@@ -23,11 +23,11 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="64"/>
+  <rect class="fill" x="220" y="20" width="380" height="70"/>
   <text x="235" y="40" class="b">SvApp</text>
   <text x="235" y="58" class="dim">top-level application; holds model + userInterface</text>
   <text x="235" y="76" class="dim">SvWebUI · SvCliUI · SvHeadlessUI implementations</text>
-  <line class="flow" x1="410" y1="100" x2="410" y2="125"/>
+  <line class="flow" x1="410" y1="90" x2="410" y2="155"/>
   <line class="flow" x1="130" y1="125" x2="690" y2="125"/>
   <line class="flow" x1="130" y1="125" x2="130" y2="155" marker-end="url(#aio)"/>
   <line class="flow" x1="410" y1="125" x2="410" y2="155" marker-end="url(#aio)"/>
@@ -35,7 +35,7 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
   <rect class="box" x="30" y="155" width="200" height="180"/>
   <text x="45" y="177" class="b">UI layer</text>
   <text x="45" y="197" class="dim">SvUserInterface root</text>
-  <rect class="fill" x="45" y="220" width="170" height="100"/>
+  <rect class="fill" x="45" y="220" width="170" height="106"/>
   <text x="60" y="240" class="b">SvNodeView tree</text>
   <text x="60" y="258" class="dim">each view holds one node;</text>
   <text x="60" y="276" class="dim">multiple views may share</text>
@@ -44,7 +44,7 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
   <rect class="box" x="310" y="155" width="200" height="180"/>
   <text x="325" y="177" class="b">Model layer</text>
   <text x="325" y="197" class="dim">SvModel : SvStorableNode</text>
-  <rect class="fill" x="325" y="220" width="170" height="100"/>
+  <rect class="fill" x="325" y="220" width="170" height="106"/>
   <text x="340" y="240" class="b">Domain SvNode graph</text>
   <text x="340" y="258" class="dim">root of persistent state;</text>
   <text x="340" y="276" class="dim">all data shapes are slots</text>
@@ -53,7 +53,7 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
   <rect class="box" x="590" y="155" width="200" height="180"/>
   <text x="605" y="177" class="b">Storage layer</text>
   <text x="605" y="197" class="dim">SvPersistentObjectPool</text>
-  <rect class="fill" x="605" y="220" width="170" height="100"/>
+  <rect class="fill" x="605" y="220" width="170" height="106"/>
   <text x="620" y="240" class="b">IndexedDB pool</text>
   <text x="620" y="258" class="dim">observes mutations via</text>
   <text x="620" y="276" class="dim">notifications; batches</text>

@@ -22,36 +22,36 @@ This is a direct consequence of the naked objects architecture. In a conventiona
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="350" height="320"/>
+  <rect class="box" x="40" y="20" width="350" height="289"/>
   <text x="55" y="42" class="b">Slot annotations</text>
   <text x="55" y="62" class="dim">declared once in initPrototypeSlots()</text>
-  <rect class="fill" x="55" y="80" width="320" height="28"/>
+  <rect class="fill" x="55" y="80" width="320" height="34"/>
   <text x="70" y="100" class="dim">slot.description()</text>
-  <rect class="fill" x="55" y="125" width="320" height="28"/>
+  <rect class="fill" x="55" y="125" width="320" height="34"/>
   <text x="70" y="145" class="dim">slot.isReadOnly()</text>
-  <rect class="fill" x="55" y="170" width="320" height="28"/>
+  <rect class="fill" x="55" y="170" width="320" height="34"/>
   <text x="70" y="190" class="dim">slot.isRequired()</text>
-  <rect class="fill" x="55" y="215" width="320" height="28"/>
+  <rect class="fill" x="55" y="215" width="320" height="34"/>
   <text x="70" y="235" class="dim">slot.slotType()</text>
-  <rect class="fill" x="55" y="260" width="320" height="28"/>
+  <rect class="fill" x="55" y="260" width="320" height="34"/>
   <text x="70" y="280" class="dim">slot.minimum() · slot.maximum()</text>
   <line class="flow" x1="390" y1="97" x2="430" y2="97" marker-end="url(#aac)"/>
   <line class="flow" x1="390" y1="142" x2="430" y2="142" marker-end="url(#aac)"/>
   <line class="flow" x1="390" y1="187" x2="430" y2="187" marker-end="url(#aac)"/>
   <line class="flow" x1="390" y1="232" x2="430" y2="232" marker-end="url(#aac)"/>
   <line class="flow" x1="390" y1="277" x2="430" y2="277" marker-end="url(#aac)"/>
-  <rect class="box" x="430" y="20" width="350" height="320"/>
+  <rect class="box" x="430" y="20" width="350" height="289"/>
   <text x="445" y="42" class="b">ARIA attributes</text>
   <text x="445" y="62" class="dim">emitted by the framework's ~15 view classes</text>
-  <rect class="fill" x="445" y="80" width="320" height="28"/>
+  <rect class="fill" x="445" y="80" width="320" height="34"/>
   <text x="460" y="100" class="dim">aria-description</text>
-  <rect class="fill" x="445" y="125" width="320" height="28"/>
+  <rect class="fill" x="445" y="125" width="320" height="34"/>
   <text x="460" y="145" class="dim">aria-readonly</text>
-  <rect class="fill" x="445" y="170" width="320" height="28"/>
+  <rect class="fill" x="445" y="170" width="320" height="34"/>
   <text x="460" y="190" class="dim">aria-required</text>
-  <rect class="fill" x="445" y="215" width="320" height="28"/>
+  <rect class="fill" x="445" y="215" width="320" height="34"/>
   <text x="460" y="235" class="dim">role  (button, list, ...)</text>
-  <rect class="fill" x="445" y="260" width="320" height="28"/>
+  <rect class="fill" x="445" y="260" width="320" height="34"/>
   <text x="460" y="280" class="dim">aria-valuemin · aria-valuemax</text>
   <text x="410" y="370" text-anchor="middle" class="dim">The same annotations also generate JSON Schema for AI tool calls; one declaration drives accessibility, validation, and AI integration.</text>
 </svg>

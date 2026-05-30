@@ -27,38 +27,38 @@ Views manage their listeners through `SvListenerDomView`, which maintains a map 
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="46"/>
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
   <text x="235" y="40" class="b">SvListenerDomView</text>
   <text x="235" y="58" class="dim">manages a map of listeners; lazy creation, automatic cleanup</text>
-  <line class="flow" x1="410" y1="75" x2="410" y2="105"/>
+  <line class="flow" x1="410" y1="72" x2="410" y2="135"/>
   <line class="flow" x1="160" y1="105" x2="660" y2="105"/>
   <line class="flow" x1="160" y1="105" x2="160" y2="135" marker-end="url(#ael)"/>
   <line class="flow" x1="410" y1="105" x2="410" y2="135" marker-end="url(#ael)"/>
   <line class="flow" x1="660" y1="105" x2="660" y2="135" marker-end="url(#ael)"/>
-  <rect class="fill" x="60" y="135" width="200" height="82"/>
+  <rect class="fill" x="60" y="135" width="200" height="88"/>
   <text x="75" y="155" class="b">SvMouseListener</text>
   <text x="75" y="173" class="dim">mousedown, mouseup,</text>
   <text x="75" y="191" class="dim">mouseover, mouseleave,</text>
   <text x="75" y="209" class="dim">click, dblclick, contextmenu</text>
-  <rect class="fill" x="310" y="135" width="200" height="46"/>
+  <rect class="fill" x="310" y="135" width="200" height="52"/>
   <text x="325" y="155" class="b">SvKeyboardListener</text>
   <text x="325" y="173" class="dim">keydown, keyup, input</text>
-  <rect class="fill" x="560" y="135" width="200" height="64"/>
+  <rect class="fill" x="560" y="135" width="200" height="70"/>
   <text x="575" y="155" class="b">SvTouchListener</text>
   <text x="575" y="173" class="dim">touchstart, touchmove,</text>
   <text x="575" y="191" class="dim">touchend, touchcancel</text>
-  <line class="flow" x1="160" y1="240" x2="160" y2="280" marker-end="url(#ael)"/>
+  <line class="flow" x1="160" y1="223" x2="160" y2="280" marker-end="url(#ael)"/>
   <line class="flow" x1="410" y1="240" x2="410" y2="280" marker-end="url(#ael)"/>
   <line class="flow" x1="660" y1="240" x2="660" y2="280" marker-end="url(#ael)"/>
   <rect class="box" x="60" y="280" width="200" height="60"/>
-  <text x="160" y="305" text-anchor="middle" class="dim">view.onMouseDown(event)</text>
-  <text x="160" y="325" text-anchor="middle" class="dim">view.onClick(event), ...</text>
+  <text x="75" y="304" class="dim">view.onMouseDown(event)</text>
+  <text x="75" y="322" class="dim">view.onClick(event), ...</text>
   <rect class="box" x="310" y="280" width="200" height="60"/>
-  <text x="410" y="305" text-anchor="middle" class="dim">view.onKeyDown(event)</text>
-  <text x="410" y="325" text-anchor="middle" class="dim">view.onKeyUp(event)</text>
+  <text x="325" y="304" class="dim">view.onKeyDown(event)</text>
+  <text x="325" y="322" class="dim">view.onKeyUp(event)</text>
   <rect class="box" x="560" y="280" width="200" height="60"/>
-  <text x="660" y="305" text-anchor="middle" class="dim">view.onTouchStart(event)</text>
-  <text x="660" y="325" text-anchor="middle" class="dim">view.onTouchMove(event)</text>
+  <text x="575" y="304" class="dim">view.onTouchStart(event)</text>
+  <text x="575" y="322" class="dim">view.onTouchMove(event)</text>
   <text x="410" y="370" text-anchor="middle" class="dim">Each listener registers lazily on first use and cleans up automatically when the view is removed.</text>
 </svg>
 
