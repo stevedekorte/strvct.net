@@ -238,6 +238,20 @@
     }
 
     /**
+     * Owner-gated deletion of an entire scope-root (e.g. a promoted
+     * multiplayer session). deleteSubtree refuses scope-roots; this is
+     * the dedicated path. Removes the scope-root node + descendants, its
+     * _members/_invites subcollections (so collection-group membership
+     * discovery stops re-adopting it), the real-time channel data, and
+     * the scope's storage payload.
+     * @param {string} scopeRootId
+     * @returns {Promise<{ok:true, deletedNodes:number}>}
+     */
+    async deleteScope (scopeRootId) {
+        return this.callFunction("delete-scope", { scopeRootId });
+    }
+
+    /**
      * Cross-scope copy or move.
      * @param {Object} args
      * @param {string} args.srcId

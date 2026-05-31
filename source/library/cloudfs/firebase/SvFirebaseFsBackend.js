@@ -326,6 +326,18 @@
         return firebase.database().ref("requests/" + sessionId);
     }
 
+    /**
+     * One-shot read of the HAEB session ACL record /sessions/{sessionId}
+     * ({ hostUid, memberUids }). Returns null if it doesn't exist. The
+     * read rule for /sessions is `auth != null`, so any signed-in user
+     * can pre-flight a join with this (e.g. to detect a stale/unknown
+     * session before subscribing to /events).
+     */
+    async readSessionRecord (sessionId) {
+        const snap = await firebase.database().ref("sessions/" + sessionId).once("value");
+        return snap.exists() ? snap.val() : null;
+    }
+
     _seqKey (seq) {
         return String(seq).padStart(12, "0");
     }
