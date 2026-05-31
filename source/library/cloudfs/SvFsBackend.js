@@ -252,6 +252,19 @@
     }
 
     /**
+     * A member removes themselves from a scope (guest "leave session").
+     * Removes the caller's own _members row + RTDB ACL/liveness entries
+     * server-side (admin SDK), so it works even for stale scopes whose
+     * /sessions record is missing. The caller can only remove their own
+     * membership (uid is taken from the verified auth token).
+     * @param {string} scopeRootId
+     * @returns {Promise<{ok:true, memberRemoved:boolean}>}
+     */
+    async leaveScope (scopeRootId) {
+        return this.callFunction("leave-scope", { scopeRootId });
+    }
+
+    /**
      * Cross-scope copy or move.
      * @param {Object} args
      * @param {string} args.srcId
