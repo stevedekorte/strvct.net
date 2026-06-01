@@ -1526,7 +1526,12 @@
     deleteNodeAndNavigateToParent () {
         const parentNode = this.parentNode();
         this.delete();
-        parentNode.postOnRequestNavigateToNode();
+        // An already-detached/orphaned node has no parent to navigate to.
+        // Still perform the delete (above), just skip the navigation
+        // rather than throwing on a null parent.
+        if (parentNode && typeof parentNode.postOnRequestNavigateToNode === "function") {
+            parentNode.postOnRequestNavigateToNode();
+        }
         return this;
     }
 
