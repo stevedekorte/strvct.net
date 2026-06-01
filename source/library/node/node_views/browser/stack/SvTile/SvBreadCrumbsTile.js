@@ -672,7 +672,7 @@
     watchPathNodes () {
         this.unwatchPathNodes();
         const nodes = this.pathNodes();
-        console.log("[BreadCrumbs] watchPathNodes: watching " + nodes.length + " nodes: " + nodes.map(n => n.svTypeId()).join(", "));
+        this.isDebugging() && console.log("[BreadCrumbs] watchPathNodes: watching " + nodes.length + " nodes: " + nodes.map(n => n.svTypeId()).join(", "));
         nodes.forEach(node => {
             const obs = this.watchSender(node);
             this.crumbObservations().push(obs);
