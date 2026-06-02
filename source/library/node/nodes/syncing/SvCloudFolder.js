@@ -257,7 +257,15 @@
     // ---------------------------------------------------------------- removeSubnode → pending cloud delete
 
     removeSubnode (aSubnode) {
-        if (aSubnode && aSubnode.cloudFsNodeId) {
+        // Queue a cloud delete for the removed child UNLESS it deletes its own
+        // cloud node. A self-deleting child (handlesOwnCloudDelete() === true,
+        // e.g. one whose delete() runs its own asyncDeleteFromCloud — and may
+        // need a scope-aware delete the generic deleteNode can't do) would
+        // otherwise be deleted twice (here AND by the child). It would also be
+        // wrongly deleted on a NON-delete removal such as replaceSubnodeWith,
+        // since this fires for every removal, not just user deletes.
+        const selfDeletes = aSubnode && typeof aSubnode.handlesOwnCloudDelete === "function" && aSubnode.handlesOwnCloudDelete();
+        if (aSubnode && aSubnode.cloudFsNodeId && !selfDeletes) {
             const nodeId = aSubnode.cloudFsNodeId();
             if (nodeId) {
                 if (!this._pendingCloudDeletes) this._pendingCloudDeletes = new Set();
