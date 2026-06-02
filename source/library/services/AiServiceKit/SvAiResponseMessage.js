@@ -22,7 +22,12 @@
             const slot = this.newSlot("request", null);
             slot.setAllowsNullValue(true);
             slot.setLabel("request");
-            slot.setShouldStoreSlot(true); // TODO: set to false when not debugging
+            // Do NOT persist the AI request. It's a transient object holding
+            // the full request body + bodyJson (the entire composed prompt +
+            // conversation) — ~660KB per response in a real session — and the
+            // response content is already on this message. (This was the
+            // "TODO: set to false when not debugging".)
+            slot.setShouldStoreSlot(false);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("SvAiRequest");
             slot.setCanInspect(true);
