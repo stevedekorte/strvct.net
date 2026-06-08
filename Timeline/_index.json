@@ -57,7 +57,8 @@
         {"date": "2026-03", "title": "Battery Aware", "subtitle": "Battery level monitoring for performance throttling detection"},
         {"date": "2026-04", "title": "AI Image Editor", "subtitle": "Gemini-based image editing and scaling class hierarchy"},
         {"date": "2026-04", "title": "Accessibility", "subtitle": "Automatic ARIA roles, labels, states, and landmarks derived from model annotations and view classes"},
-        {"date": "2026-04", "title": "Public Cloud", "subtitle": "SvPublicCloudSource for serving shared content via Firebase Storage manifests"}
+        {"date": "2026-04", "title": "Public Cloud", "subtitle": "SvPublicCloudSource for serving shared content via Firebase Storage manifests"},
+        {"date": "2026-05", "title": "Cloud Documents", "subtitle": "Read/write cloud filesystem with lease-based document sessions, write-ahead-log JSON-patch deltas, and abort-and-resync conflict handling"}
       ]
     }
   ]

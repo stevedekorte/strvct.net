@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-STRVCT implements the naked objects pattern for JavaScript. You write domain model classes with annotated properties — the framework automatically generates the user interface, handles persistence, and keeps everything synchronized.
+STRVCT implements the naked objects pattern for JavaScript. You write domain model classes with annotated properties and the framework dynamically generates the user interface as it's being used, handles persistence, and keeps everything synchronized.
 
 See also: /llms.txt (curated index) and /sitemap.xml.
 
@@ -15,7 +15,7 @@ A naked objects framework for JavaScript with automatic UI generation, persisten
 
 ## About
 
-STRVCT implements the [naked objects](http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf) pattern for JavaScript. You write domain model classes with annotated properties — the framework automatically generates the user interface, handles persistence, and keeps everything synchronized.
+STRVCT implements the [naked objects](http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf) pattern for JavaScript. You write domain model classes with annotated properties and the framework dynamically generates the user interface as it's being used, handles persistence, and keeps everything synchronized.
 
 The model layer is completely independent of the UI, allowing the same application code to run in a browser, on a command line, or headlessly in Node.js for testing and server-side processing.
 
@@ -11511,3 +11511,4 @@ Key milestones from the first commit through present day Framework architecture,
 - **2026-04** — AI Image Editor: Gemini-based image editing and scaling class hierarchy
 - **2026-04** — Accessibility: Automatic ARIA roles, labels, states, and landmarks derived from model annotations and view classes
 - **2026-04** — Public Cloud: SvPublicCloudSource for serving shared content via Firebase Storage manifests
+- **2026-05** — Cloud Documents: Read/write cloud filesystem with lease-based document sessions, write-ahead-log JSON-patch deltas, and abort-and-resync conflict handling
