@@ -1119,6 +1119,9 @@
 
     descriptiveErrorMessage (prefix = "") {
         const json = {
+            method: (typeof this.method === "function") ? this.method() : undefined,
+            url: this.url(),
+            requestId: (typeof this.requestId === "function") ? this.requestId() : undefined,
             status: this.readableStatus(),
             readyState: this.readableReadyState(),
             error: this.error()?.message,

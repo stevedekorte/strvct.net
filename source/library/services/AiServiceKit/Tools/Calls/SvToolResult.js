@@ -236,7 +236,7 @@ See schema for the particular tool call (whose name is in the toolName property)
      * @returns {Object} JSON representation
      * @category Serialization
      */
-    serializeToJson (filterName, pathComponents = []) {
+    serializeToJson (/*filterName, pathComponents = []*/) {
         return {
             _type: this.svType(),
             toolName: this.toolName(),
@@ -255,7 +255,7 @@ See schema for the particular tool call (whose name is in the toolName property)
      * @returns {SvToolResult} This instance
      * @category Serialization
      */
-    deserializeFromJson (json, filterName, pathComponents = []) {
+    deserializeFromJson (json /*, filterName, pathComponents = []*/) {
         if (json.toolName !== undefined) {
             this.setToolName(json.toolName);
         }
