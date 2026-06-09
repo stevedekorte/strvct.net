@@ -71,7 +71,7 @@
             slot.setSyncsToView(true);
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
-            slot.setActionMethodName("asyncPullFromCloudByHash");
+            slot.setActionMethodName("asyncForcePullFromCloudByHash");
         }
 
         // auto-sync to cloud after local storage
@@ -268,7 +268,36 @@
 
     // --- pull from cloud ---
 
-    async asyncPullFromCloudByHash () {
+    // Session-scoped set of content hashes confirmed missing everywhere (a
+    // definitive 404 / object-not-found). Re-fetching a definitively-missing
+    // blob on every render floods the network + console and can stall callers
+    // (e.g. a generateImage tool call) on retry-limit-exceeded — which can hang
+    // the AI response that's waiting on that blocking tool call. We remember the
+    // miss and short-circuit until reload or a forceRetry. Transient failures
+    // (network / retry-limit / status 0) are NOT cached, so they stay retryable.
+    static missingHashes () {
+        if (!this._missingHashes) { this._missingHashes = new Set(); }
+        return this._missingHashes;
+    }
+
+    errorIsDefinitiveNotFound (error) {
+        if (!error) { return false; }
+        const code = error.code || "";
+        if (code === "storage/object-not-found") { return true; }
+        if (code === "storage/retry-limit-exceeded" || code === "storage/canceled") { return false; }
+        const msg = (error.message || "").toLowerCase();
+        // Transient — keep retryable.
+        if (/retry-limit|network|timed out|timeout|aborted|status: 0|request failed/.test(msg)) { return false; }
+        // Definitive — won't resolve by retrying.
+        if (/object-not-found|not found|\b404\b|\b403\b/.test(msg)) { return true; }
+        return false; // unknown → treat as transient (safer to allow retry)
+    }
+
+    async asyncForcePullFromCloudByHash () {
+        return this.asyncPullFromCloudByHash(true);
+    }
+
+    async asyncPullFromCloudByHash (forceRetry = false) {
         if (this.blobValue()) {
             return this.blobValue();
         }
@@ -276,15 +305,27 @@
         if (!hash) {
             return null; // no hash to pull from cloud
         }
+        // Skip a hash already confirmed missing (unless the caller forces it).
+        if (!forceRetry && SvCloudBlobNode.missingHashes().has(hash)) {
+            return null;
+        }
         try {
             const blob = await SvApp.shared().asyncBlobForHash(hash);
             if (blob) {
                 this.setBlobValue(blob);
                 this.setHasInCloud(true);
+                SvCloudBlobNode.missingHashes().delete(hash); // it exists after all
             }
             return this.blobValue();
         } catch (error) {
-            console.warn("SvCloudBlobNode: Failed to pull blob from cloud (hash: " + hash.slice(0, 12) + "...):", error.message);
+            if (this.errorIsDefinitiveNotFound(error)) {
+                if (!SvCloudBlobNode.missingHashes().has(hash)) {
+                    SvCloudBlobNode.missingHashes().add(hash);
+                    console.warn("SvCloudBlobNode: blob not in cloud (won't re-fetch this session unless forced) hash: " + hash.slice(0, 12) + "...");
+                }
+            } else {
+                console.warn("SvCloudBlobNode: transient failure pulling blob (will retry) hash: " + hash.slice(0, 12) + "...:", error.message);
+            }
             return null;
         }
     }
@@ -306,7 +347,7 @@
         };
     }
 
-    async asyncBlobValue () {
+    async asyncBlobValue (forceRetry = false) {
         const blob = await this.blobValue();
         if (blob) {
             return blob;
@@ -316,16 +357,26 @@
         if (hash) {
             assert(hash.length === 64, "hash length is not 64 excepted for hex sha256");
 
+            // A hash already confirmed missing won't be on local disk or in the
+            // cloud — short-circuit so a re-render doesn't re-run the lookup chain.
+            if (!forceRetry && SvCloudBlobNode.missingHashes().has(hash)) {
+                return null;
+            }
+
             const localBlob = await this.asyncReadFromLocalStorage();
             if (localBlob) {
                 return localBlob;
             }
 
-            const cloudBlob = await this.asyncPullFromCloudByHash();
+            const cloudBlob = await this.asyncPullFromCloudByHash(forceRetry);
             if (cloudBlob) {
                 return cloudBlob;
             }
-            console.warn(this.logPrefix() + " asyncBlobValue: blob not found anywhere for " + hash.substring(0, 12) + "...");
+            // asyncPullFromCloudByHash logs once when it confirms a miss; only
+            // warn here for the not-yet-classified (e.g. transient) case.
+            if (!SvCloudBlobNode.missingHashes().has(hash)) {
+                console.warn(this.logPrefix() + " asyncBlobValue: blob not found anywhere for " + hash.substring(0, 12) + "...");
+            }
         }
 
         return null;
