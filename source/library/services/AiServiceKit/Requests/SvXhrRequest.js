@@ -884,20 +884,24 @@
 
                 console.warn(this.logPrefix(), "HTTP error:", fullStatus, "URL:", this.url());
 
-                // Try to extract an error message from the response
-                const xhr = this.xhr();
-                const contentType = xhr.getResponseHeader("Content-Type");
+                // Try to extract an error message from the response — but only for
+                // text-based responses. For blob/arraybuffer responseTypes the body
+                // isn't readable as text (responseText() returns a placeholder like
+                // "[Binary blob data]"), so attempting to JSON/XML-parse it throws.
                 let errorMessage = fullStatus;
-
-                if (contentType && contentType.includes("application/json")) {
-                    const errorMessageInJson = this.responseJsonError();
-                    if (errorMessageInJson) {
-                        errorMessage = errorMessageInJson + ". (json.error) " + fullStatus;
-                    }
-                } else if (contentType && contentType.includes("text/xml")) {
-                    const errorMessageInXml = this.responseXmlError();
-                    if (errorMessageInXml) {
-                        errorMessage = errorMessageInXml + ". (xml.error) " + fullStatus;
+                const isTextResponse = this.responseType() === "" || this.responseType() === "text";
+                if (isTextResponse) {
+                    const contentType = this.xhr().getResponseHeader("Content-Type");
+                    if (contentType && contentType.includes("application/json")) {
+                        const errorMessageInJson = this.responseJsonError();
+                        if (errorMessageInJson) {
+                            errorMessage = errorMessageInJson + ". (json.error) " + fullStatus;
+                        }
+                    } else if (contentType && contentType.includes("text/xml")) {
+                        const errorMessageInXml = this.responseXmlError();
+                        if (errorMessageInXml) {
+                            errorMessage = errorMessageInXml + ". (xml.error) " + fullStatus;
+                        }
                     }
                 }
 
