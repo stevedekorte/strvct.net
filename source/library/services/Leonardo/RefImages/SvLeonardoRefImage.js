@@ -543,4 +543,17 @@
     }
 
 
+    /**
+   * @description SvXhrRequest delegate hook — without it an xhr-level
+   * error/timeout throws an uncaught descriptive error instead of being
+   * recorded on this node. (Same gap as SvOpenAiTtsRequest had.)
+   * @param {SvXhrRequest} xhrRequest
+   * @param {Error} error
+   * @category Error Handling
+   */
+    onRequestError (xhrRequest, error) {
+        this.setError((error && error.message) || String(error)); // error slot is a String
+        console.warn(this.logPrefix(), "ref image request failed:", error && error.message);
+    }
+
 }.initThisClass());

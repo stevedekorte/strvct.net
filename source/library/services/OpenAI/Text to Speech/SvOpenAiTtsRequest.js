@@ -457,4 +457,28 @@
         this.setError(error);
     }
 
+    /**
+   * @description SvXhrRequest delegate hook. Without this, an xhr-level
+   * error/timeout finds no handler and SvXhrRequest throws an uncaught
+   * descriptive error (surfacing the window error panel) instead of the
+   * error flowing up to the TTS session, which degrades gracefully
+   * (skips the segment and continues the queue).
+   * @param {SvXhrRequest} xhrRequest
+   * @param {Error} error
+   * @category Error Handling
+   */
+    onRequestError (xhrRequest, error) {
+        this.onError(error);
+    }
+
+    /**
+   * @description SvXhrRequest delegate hook for timeouts (sent before
+   * onRequestError; defined so the message is considered handled).
+   * @param {SvXhrRequest} xhrRequest
+   * @param {Error} error
+   * @category Error Handling
+   */
+    onRequestTimeout (/*xhrRequest, error*/) {
+    }
+
 }.initThisClass());

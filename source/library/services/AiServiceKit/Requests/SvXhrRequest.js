@@ -1016,12 +1016,17 @@
 
     // --- retry helpers ---
 
+    // NOTE: not yet wired to any error path — kept correct for future use.
+    // (Was dead AND broken: referenced undefined vars and the max-retries
+    // predicate below was inverted, so if ever called it would only have
+    // retried AFTER retries were exhausted, then thrown a ReferenceError.)
     retryIfApplicable () {
         if (this.shouldAutoRetryForCurrentError() && !this.hasExceededMaxRetries()) {
-            this.retryWithDelay(this.currentRetryDelaySeconds());
-            const ts = SvTimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
-            e.message = "retrying in " + ts;
+            const seconds = this.currentRetryDelaySeconds();
+            this.retryWithDelay(seconds);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -1036,7 +1041,7 @@
     }
 
     hasExceededMaxRetries () {
-        return this.retryCount() < this.maxRetries();
+        return this.retryCount() >= this.maxRetries();
     }
 
     currentRetryDelaySeconds () {
