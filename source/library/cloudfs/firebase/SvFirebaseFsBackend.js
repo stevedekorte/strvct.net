@@ -285,26 +285,6 @@
 
     // ---------------------------------------------------------------- multiplayer subcollections
 
-    _scopeCol (rootId, name) {
-        return this.nodeRef(rootId).collection(name);
-    }
-
-    watchMetaDoc (rootId, docId, onSnap, onErr) {
-        return this._scopeCol(rootId, "_meta").doc(docId).onSnapshot(
-            (snap) => onSnap(snap.exists ? snap.data() : null),
-            (err) => { if (onErr) onErr(err); else console.error("[SvFirebaseFsBackend] watchMetaDoc error:", err); }
-        );
-    }
-
-    async getMetaDoc (rootId, docId) {
-        const snap = await this._scopeCol(rootId, "_meta").doc(docId).get();
-        return snap.exists ? snap.data() : null;
-    }
-
-    async setMetaDoc (rootId, docId, data) {
-        await this._scopeCol(rootId, "_meta").doc(docId).set(data);
-    }
-
     // ---------------------------------------------------------------- HAEB event bus (RTDB-backed)
     //
     // The host-authoritative event bus lives in RTDB as three top-level trees

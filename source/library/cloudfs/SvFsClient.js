@@ -77,20 +77,7 @@
         this.listenerPool().release(handle);
     }
 
-    // ---------------------------------------------------------------- multiplayer subcollections
-
-    /**
-     * Pool-managed watch on `/Nodes/{rootId}/_meta/{docId}`.
-     * @param {string} rootId
-     * @param {string} docId
-     * @param {function(Object|null):void} onSnap
-     * @param {function(Error):void} [onErr]
-     * @returns {Object} listener-pool handle (release via `unwatch`)
-     */
-    watchMetaDoc (rootId, docId, onSnap, onErr) {
-        const unsubscribe = this.backend().watchMetaDoc(rootId, docId, onSnap, onErr);
-        return this.listenerPool().acquire({ label: "meta:" + rootId + "/" + docId, unsubscribe });
-    }
+    // ---------------------------------------------------------------- multiplayer liveness
 
     /**
      * Pool-managed watch on the HAEB liveness roster `/live/{sessionId}/*`.

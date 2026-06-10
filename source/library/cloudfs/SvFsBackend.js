@@ -302,43 +302,6 @@
         });
     }
 
-    // ---------------------------------------------------------------- multiplayer subcollections
-
-    /**
-     * Watch a single doc under `/Nodes/{rootId}/_meta/{docId}` (typically
-     * `_meta/activity` or `_meta/seq`).
-     * @param {string} _rootId
-     * @param {string} _docId
-     * @param {function(Object|null):void} _onSnap
-     * @param {function(Error):void} [_onErr]
-     * @returns {function():void} unsubscribe
-     */
-    watchMetaDoc (/*_rootId, _docId, _onSnap, _onErr*/) {
-        throw this.notImplementedError("watchMetaDoc");
-    }
-
-    /**
-     * One-shot read of `/Nodes/{rootId}/_meta/{docId}`.
-     * @param {string} _rootId
-     * @param {string} _docId
-     * @returns {Promise<Object|null>}
-     */
-    async getMetaDoc (/*_rootId, _docId*/) {
-        throw this.notImplementedError("getMetaDoc");
-    }
-
-    /**
-     * Write `/Nodes/{rootId}/_meta/{docId}` (host-only at the rule layer).
-     * @param {string} _rootId
-     * @param {string} _docId
-     * @param {Object} _data
-     * @returns {Promise<void>}
-     */
-    async setMetaDoc (/*_rootId, _docId, _data*/) {
-        throw this.notImplementedError("setMetaDoc");
-    }
-
-
     // ---------------------------------------------------------------- membership discovery
 
     /**
