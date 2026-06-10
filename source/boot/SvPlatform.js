@@ -182,11 +182,25 @@ class SvPlatform extends Object {
         if (SvPlatform.isNodePlatform()) {
             return;
         }
-        // in browser, we can wait for the next render
+        // Double rAF resolves after the next paint — but rAF never fires
+        // when the page can't paint: headless browsers, and hidden /
+        // backgrounded tabs (Chrome suspends rAF entirely while
+        // document.hidden). App boot awaits this, so without a fallback
+        // the app hangs forever when opened in a background tab. Race a
+        // timeout: painting pages resolve via rAF within ~2 frames; the
+        // timeout only wins when no paint is coming.
         return new Promise(resolve => {
+            let done = false;
+            const finish = () => {
+                if (!done) {
+                    done = true;
+                    resolve();
+                }
+            };
             requestAnimationFrame(() => {
-                requestAnimationFrame(resolve); // Resolves after the paint
+                requestAnimationFrame(finish); // Resolves after the paint
             });
+            setTimeout(finish, document.hidden ? 50 : 500);
         });
     }
 
