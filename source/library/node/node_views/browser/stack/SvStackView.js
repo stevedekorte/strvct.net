@@ -118,6 +118,18 @@
             const slot = this.newSlot("nodeToStackCache", null);
             slot.setSlotType("Map");
         }
+
+        /**
+         * @member {Number} additionalContentWidth
+         * @description Width (in px) consumed by non-nav content hosted inside
+         * this stack view (e.g. a docked side panel added as an extra flex
+         * child). Included in sumOfNavWidths() so column compaction makes room
+         * for it, exactly as it would for another column.
+         */
+        {
+            const slot = this.newSlot("additionalContentWidth", 0);
+            slot.setSlotType("Number");
+        }
     }
 
     init () {
@@ -168,11 +180,30 @@
     */
 
     /**
+     * @description The SvNavView class (or subclass) to use for this stack's navView.
+     * Subclasses can override to customize navigation column behavior.
+     * @returns {Class} The nav view class.
+     */
+    navViewClass () {
+        return SvNavView;
+    }
+
+    /**
+     * @description The SvStackView class (or subclass) to use for child stacks
+     * created when a node is selected. Subclasses override this so their
+     * children propagate the same stack behavior (e.g. SvAccordionStackView).
+     * @returns {Class} The stack view class.
+     */
+    childStackViewClass () {
+        return SvStackView;
+    }
+
+    /**
      * @description Sets up the navigation view for this stack.
      * @returns {SvStackView} The stack view.
      */
     setupNavView () {
-        const v = SvNavView.clone();
+        const v = this.navViewClass().clone();
         v.setStackView(this);
         this.setNavView(v);
         this.addSubview(v);
@@ -781,6 +812,8 @@
             const next = current.nextStackView();
             if (next) {
                 current = next;
+            } else {
+                break;
             }
         }
         return current;
@@ -827,7 +860,8 @@
         //   as if they are part of the same Miller Column.
 
         const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
-        const w = verticalNavViews.sum(nv => nv.targetWidth());
+        let w = verticalNavViews.sum(nv => nv.targetWidth());
+        w += this.stackViewSubchain().sum(sv => sv.additionalContentWidth());
         return w;
 
         /*
@@ -1084,7 +1118,7 @@
         if (!sv) {
             // what if node is null now and set *after* this?
             // things like a path change can alter node?
-            sv = SvStackView.clone().setNode(aNode);
+            sv = this.childStackViewClass().clone().setNode(aNode);
             if (this.isCaching()) {
                 sv.beginCaching();
             }

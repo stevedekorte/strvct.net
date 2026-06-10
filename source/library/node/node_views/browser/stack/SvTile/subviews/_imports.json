@@ -2,5 +2,6 @@
     "SvTileNoteView.js",
     "SvTileNoteButtonView.js",
     "SvTileSubtitleView.js",
-    "SvTileTitleView.js"
+    "SvTileTitleView.js",
+    "SvTileBadgeView.js"
 ]

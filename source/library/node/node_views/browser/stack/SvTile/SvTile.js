@@ -432,6 +432,9 @@
             // Accessibility: mark as current and move focus
             this.setAriaCurrent(this.ariaCurrent());
             this.element().focus();
+            if (this.markAttentionSeenIfNeeded) {
+                this.markAttentionSeenIfNeeded(); // see SvTile_attention category
+            }
         } else {
             //this.setShouldShowFlash(true)
             this.setLastSelectionDate(null);
@@ -515,6 +518,9 @@
         }
         this.updateSubviews();
         this.syncOrientation();
+        if (this.syncAttentionFromNode) {
+            this.syncAttentionFromNode(); // see SvTile_attention category
+        }
         return this;
     }
 
