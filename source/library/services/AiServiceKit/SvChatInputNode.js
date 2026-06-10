@@ -121,8 +121,15 @@
    * @param {Object} valueView - The view object
    * @category Event Handling
    */
-    onDidEditValue (/*valueView*/) {
-        this.conversation().onChatEditValue(this.value());
+    onDidEditValue (valueView) {
+        // Read the LIVE view value, not this.value(): onDidEdit only
+        // SCHEDULES the view->node sync before calling this hook, so the
+        // node's own value lags one edit behind. Reading the stale value
+        // meant the final deletion reported the previous (non-empty) text
+        // — typing-draft delete-all never fired and the "<name>: …"
+        // placeholder stuck on every other participant's screen.
+        const v = (valueView && typeof valueView.value === "function") ? valueView.value() : this.value();
+        this.conversation().onChatEditValue(v);
     }
 
     /**
