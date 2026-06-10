@@ -268,16 +268,37 @@
 
     // --- pull from cloud ---
 
-    // Session-scoped set of content hashes confirmed missing everywhere (a
-    // definitive 404 / object-not-found). Re-fetching a definitively-missing
-    // blob on every render floods the network + console and can stall callers
-    // (e.g. a generateImage tool call) on retry-limit-exceeded — which can hang
-    // the AI response that's waiting on that blocking tool call. We remember the
-    // miss and short-circuit until reload or a forceRetry. Transient failures
-    // (network / retry-limit / status 0) are NOT cached, so they stay retryable.
+    // Session-scoped map of content hash → timestamp of the last definitive
+    // miss (404 / object-not-found). Re-fetching a missing blob on every
+    // render floods the network + console and can stall callers (e.g. a
+    // generateImage tool call) on retry-limit-exceeded — which can hang the
+    // AI response waiting on that blocking tool call.
+    //
+    // But "missing" is NOT always permanent: in multiplayer the host uploads
+    // a finished image's blob moments after (or seconds before) the envelope
+    // referencing it reaches guests, and a guest that pulls inside that
+    // window gets a definitive 404 for a blob that exists shortly after.
+    // A permanent cache turned that race into "images never render for
+    // clients". So misses expire after a TTL: the flood becomes at most one
+    // probe per TTL per hash, and late-arriving blobs heal on their own.
+    // Transient failures (network / retry-limit / status 0) are never cached.
+    static missingHashTtlMs () {
+        return 60000;
+    }
+
     static missingHashes () {
-        if (!this._missingHashes) { this._missingHashes = new Set(); }
+        if (!this._missingHashes) { this._missingHashes = new Map(); } // hash → last-miss ms timestamp
         return this._missingHashes;
+    }
+
+    static hashIsMarkedMissing (hash) {
+        const missedAt = this.missingHashes().get(hash);
+        if (missedAt === undefined) { return false; }
+        if (Date.now() - missedAt > this.missingHashTtlMs()) {
+            this.missingHashes().delete(hash); // expired — retryable again
+            return false;
+        }
+        return true;
     }
 
     errorIsDefinitiveNotFound (error) {
@@ -305,8 +326,8 @@
         if (!hash) {
             return null; // no hash to pull from cloud
         }
-        // Skip a hash already confirmed missing (unless the caller forces it).
-        if (!forceRetry && SvCloudBlobNode.missingHashes().has(hash)) {
+        // Skip a hash that missed recently (unless the caller forces it).
+        if (!forceRetry && SvCloudBlobNode.hashIsMarkedMissing(hash)) {
             return null;
         }
         try {
@@ -320,9 +341,9 @@
         } catch (error) {
             if (this.errorIsDefinitiveNotFound(error)) {
                 if (!SvCloudBlobNode.missingHashes().has(hash)) {
-                    SvCloudBlobNode.missingHashes().add(hash);
-                    console.warn("SvCloudBlobNode: blob not in cloud (won't re-fetch this session unless forced) hash: " + hash.slice(0, 12) + "...");
+                    console.warn("SvCloudBlobNode: blob not in cloud (won't re-fetch for " + (SvCloudBlobNode.missingHashTtlMs() / 1000) + "s unless forced) hash: " + hash.slice(0, 12) + "...");
                 }
+                SvCloudBlobNode.missingHashes().set(hash, Date.now());
             } else {
                 console.warn("SvCloudBlobNode: transient failure pulling blob (will retry) hash: " + hash.slice(0, 12) + "...:", error.message);
             }
