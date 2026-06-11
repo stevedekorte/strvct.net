@@ -92,8 +92,9 @@
     setupCss () {
         SvWebDocument.shared().addStyleSheetString(`
             .SvStatusBarTileRow {
+                /* the tile contentView already carries the theme's horizontal
+                   padding, so the bar aligns flush with the title above it */
                 flex-basis: 100%;
-                padding: 0 0.8em;
                 box-sizing: border-box;
             }
 
@@ -130,7 +131,7 @@
                 font-size: 80%;
                 line-height: 1.3;
                 opacity: 0.6;
-                padding: 6px 0.8em 0.5em;
+                padding-top: 6px;
                 box-sizing: border-box;
                 white-space: nowrap;
                 overflow: hidden;
@@ -215,7 +216,7 @@
         const percent = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
 
         this.barFillView().setWidthPercentage(percent);
-        this.noteView().setString(Math.round(value) + " / " + Math.round(max));
+        this.showNoteView();
 
         this.syncBarRole();
         this.syncBarSubtitle();
@@ -226,6 +227,24 @@
         this.setLastBarValue(value);
 
         return this;
+    }
+
+    /**
+     * @description The "value / max" note. Composed here (not written
+     * imperatively in syncFromNode) so the framework's updateSubviews →
+     * showNoteView path — which runs on selection changes — never wipes it.
+     * @category UI
+     */
+    showNoteView () {
+        super.showNoteView();
+        const nodeNote = this.getFromNodeDelegate("note");
+        if (nodeNote === null || nodeNote === undefined || nodeNote === "") {
+            const rawValue = this.getFromNodeDelegate("barValue");
+            const rawMax = this.getFromNodeDelegate("barMaxValue");
+            const value = typeof (rawValue) === "number" ? rawValue : 0;
+            const max = typeof (rawMax) === "number" ? rawMax : 0;
+            this.noteView().setString(Math.round(value) + " / " + Math.round(max));
+        }
     }
 
     /**

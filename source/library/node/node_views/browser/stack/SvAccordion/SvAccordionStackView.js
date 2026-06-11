@@ -174,6 +174,20 @@
         nav.removeElementClassName("SvAccordionLayer-active");
         nav.appendElementClassName("SvAccordionLayer-behind");
 
+        // re-sync the pushed layer's nav (header/footer, e.g. a chat input's
+        // auto-height) once the slide-in transition lands — content measured
+        // while the layer was offscreen can size itself wrong
+        this.addWeakTimeout(() => {
+            const child = this.nextStackView();
+            if (child && child.navView && child.navView()) {
+                child.navView().syncOrientation();
+                const footer = child.navView().footerView();
+                if (footer && footer.syncFromNode) {
+                    footer.syncFromNode();
+                }
+            }
+        }, 350, "accordionPostPushSync");
+
         return this;
     }
 

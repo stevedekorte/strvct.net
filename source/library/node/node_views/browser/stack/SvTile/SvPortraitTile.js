@@ -58,7 +58,9 @@
         pv.setMinAndMaxWidth(40);
         pv.setMinAndMaxHeight(40);
         pv.setCssProperty("align-self", "center");
-        pv.setMarginLeft("0.8em");
+        // the contentView already carries the theme's horizontal padding;
+        // only a gap between the portrait and the text column is needed
+        pv.setMarginRight("0.75em");
         pv.setBackgroundSize("cover");
         pv.setBackgroundPosition("center");
         pv.setBorder("1px solid rgba(255, 255, 255, 0.1)");
