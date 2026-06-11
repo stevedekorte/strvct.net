@@ -33,6 +33,14 @@
         const valueView = this.valueView();
         const isFocused = valueView && typeof valueView.isFocused === "function" && valueView.isFocused();
         if (isFocused && node && !node._forceValueViewSync) {
+            const nodeValue = this.visibleValue();
+            const viewValue = (typeof valueView.value === "function") ? valueView.value() : null;
+            if (nodeValue !== viewValue) {
+                // Without the guard this write would have replaced the
+                // editor's innerHTML mid-typing — text near-identical but
+                // caret collapsed to position 0.
+                console.log(this.logPrefix(), "skipped focused value sync (node lags view by", Math.abs(String(viewValue || "").length - String(nodeValue || "").length), "chars)");
+            }
             if (valueView.setIsEditable && node.valueIsEditable) {
                 valueView.setIsEditable(node.valueIsEditable());
             }
