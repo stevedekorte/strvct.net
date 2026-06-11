@@ -179,8 +179,14 @@
         this.setBarSubtitleView(sub);
         cv.addSubview(sub);
 
-        // the value reads right-aligned, flush with the bar's right edge
-        this.bottomContentArea().setJustifyContent("flex-end");
+        // the bar is labeled through a single composed string ("Health: 8 / 40")
+        // rendered by the note view, which every sync path re-asserts — the
+        // separate title view proved unreliable (translation sync can blank it)
+        this.topContentArea().hideDisplay();
+        const noteArea = this.bottomContentArea();
+        noteArea.setFlexGrow(1);
+        noteArea.setJustifyContent("flex-start");
+        this.noteView().setTextAlign("left");
 
         return this;
     }
@@ -218,12 +224,6 @@
             return this;
         }
 
-        // the label matters on a status bar; re-assert it if any sync
-        // path (e.g. pending translation) left the title empty
-        if (this.titleView().innerText().length === 0 && node.title()) {
-            this.titleView().setString(node.title());
-        }
-
         const rawValue = this.getFromNodeDelegate("barValue");
         const rawMax = this.getFromNodeDelegate("barMaxValue");
         const value = typeof (rawValue) === "number" ? rawValue : 0;
@@ -258,7 +258,9 @@
             const rawMax = this.getFromNodeDelegate("barMaxValue");
             const value = typeof (rawValue) === "number" ? rawValue : 0;
             const max = typeof (rawMax) === "number" ? rawMax : 0;
-            this.noteView().setString(Math.round(value) + " / " + Math.round(max));
+            const node = this.node();
+            const label = (node && node.title && node.title()) ? node.title() + ": " : "";
+            this.noteView().setString(label + Math.round(value) + " / " + Math.round(max));
         }
     }
 
