@@ -91,11 +91,19 @@
 
     setupCss () {
         SvWebDocument.shared().addStyleSheetString(`
+            .SvStatusBarTileContent {
+                /* center the wrapped rows (title/value, bar, subtitle) as a
+                   group within the tile — as a class so the theme's style
+                   pass can't overwrite it */
+                align-content: center;
+            }
+
             .SvStatusBarTileRow {
                 /* the tile contentView already carries the theme's horizontal
                    padding, so the bar aligns flush with the title above it */
                 flex-basis: 100%;
                 box-sizing: border-box;
+                margin-top: 0.5em;
             }
 
             .SvStatusBarTileTrack {
@@ -150,7 +158,7 @@
 
         const cv = this.contentView();
         cv.setFlexWrap("wrap");
-        cv.setCssProperty("align-content", "center");
+        cv.appendElementClassName("SvStatusBarTileContent");
 
         const row = SvDomView.clone().setElementClassName("SvStatusBarTileRow");
         this.setBarRowView(row);
@@ -208,6 +216,12 @@
         const node = this.node();
         if (!node) {
             return this;
+        }
+
+        // the label matters on a status bar; re-assert it if any sync
+        // path (e.g. pending translation) left the title empty
+        if (this.titleView().innerText().length === 0 && node.title()) {
+            this.titleView().setString(node.title());
         }
 
         const rawValue = this.getFromNodeDelegate("barValue");
