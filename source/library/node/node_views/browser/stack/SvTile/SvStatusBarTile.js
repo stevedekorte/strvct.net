@@ -171,7 +171,8 @@
         this.setBarSubtitleView(sub);
         cv.addSubview(sub);
 
-        this.noteView().setFontFamily("var(--SvTile-technical-font, inherit)");
+        // the value reads right-aligned, flush with the bar's right edge
+        this.bottomContentArea().setJustifyContent("flex-end");
 
         return this;
     }

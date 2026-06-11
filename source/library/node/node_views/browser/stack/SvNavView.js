@@ -173,6 +173,10 @@
             const v = SvTileContainer.clone();
             v.setBorderBottom(borderStyle);
             v.setBackgroundColor(backgroundColor);
+            // hug content: never grow into the scroll area's free space
+            // (otherwise an empty conversation renders a huge header/footer)
+            v.setFlexGrow(0);
+            v.setFlexShrink(0);
             this.setHeaderView(v);
             this.addSubview(v);
         }
@@ -184,6 +188,8 @@
             const v = SvTileContainer.clone();
             v.setBorderTop(borderStyle);
             v.setBackgroundColor(backgroundColor);
+            v.setFlexGrow(0);
+            v.setFlexShrink(0);
             this.setFooterView(v);
             this.addSubview(v);
         }

@@ -216,6 +216,9 @@
         const nodePath = crumbView.info().shallowCopy();
         nodePath.shift(); // selectNodePathArray expects the path *after* the stack's own node
         stack.selectNodePathArray(nodePath);
+        // popping to root unselects without firing a path-change note,
+        // so rebuild the crumbs explicitly
+        this.scheduleMethod("setupPathViews");
         return this;
     }
 
