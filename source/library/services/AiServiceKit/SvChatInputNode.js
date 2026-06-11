@@ -163,6 +163,11 @@
         const v = this.value();
         this.conversation().onChatInputValue(v);
         this.setValue("");
+        // The input view is still focused after Enter; the tile's focused
+        // guard (SvChatInputTile.syncValueFromNode) would normally refuse
+        // to overwrite a focused editor — this one-shot flag authorizes
+        // the post-send clear.
+        this._forceValueViewSync = true;
         this.scheduleSyncToView();
     }
 
