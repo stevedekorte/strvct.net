@@ -100,10 +100,11 @@
 
             .SvStatusBarTileRow {
                 /* the tile contentView already carries the theme's horizontal
-                   padding, so the bar aligns flush with the title above it */
+                   padding, so the bar aligns flush with the label above it;
+                   label→bar spacing matches a tile's title→subtitle rhythm */
                 flex-basis: 100%;
                 box-sizing: border-box;
-                margin-top: 0.5em;
+                margin-top: 0.75em;
             }
 
             .SvStatusBarTileTrack {
