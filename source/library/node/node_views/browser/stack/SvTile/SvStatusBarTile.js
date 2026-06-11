@@ -92,21 +92,22 @@
     setupCss () {
         SvWebDocument.shared().addStyleSheetString(`
             .SvStatusBarTileContent {
-                /* center the wrapped rows (title/value, bar, subtitle) as a
-                   group within the tile — as a class so the theme's style
-                   pass can't overwrite it */
-                align-content: center;
+                /* as a class so the theme's style pass can't overwrite it.
+                   NOTE: the titled-tile content areas carry flex 'order', so
+                   the rendered stack is bar → subtitle → label; rows are
+                   pinned explicitly rather than centered as a group */
+                align-content: flex-start;
             }
 
             .SvStatusBarTileRow {
                 /* the tile contentView already carries the theme's horizontal
-                   padding, so the bar aligns flush with the label above it.
-                   The bar sits at the label's baseline like an underline; the
-                   bar→subtitle gap below matches a normal tile's
-                   title-baseline→subtitle spacing (~15px) */
+                   padding, so the bar aligns flush with the label below it.
+                   bar→label gap matches a tile's title-baseline→subtitle
+                   spacing (~15px) */
                 flex-basis: 100%;
                 box-sizing: border-box;
-                margin-top: 0.35em;
+                margin-top: 10px;
+                margin-bottom: 7px;
             }
 
             .SvStatusBarTileTrack {
@@ -142,8 +143,7 @@
                 font-size: 80%;
                 line-height: 1.3;
                 opacity: 0.6;
-                /* padding-top is set inline in init() — 13px keeps the subtitle in
-                   place as the bar rises; gap ≈ title-baseline→subtitle (~15px) */
+                order: 2; /* below the label (which the titled-tile areas put at order 1) */
                 box-sizing: border-box;
                 white-space: nowrap;
                 overflow: hidden;
@@ -179,7 +179,7 @@
 
         const sub = SvTextView.clone();
         sub.setElementClassName("SvStatusBarTileSubtitle");
-        sub.setPaddingTop("13px"); // inline: SvTextView's own padding would override the class rule
+        sub.setPaddingTop("6px"); // inline: SvTextView's own padding would override the class rule
         sub.hideDisplay();
         this.setBarSubtitleView(sub);
         cv.addSubview(sub);
