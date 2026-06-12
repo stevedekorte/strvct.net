@@ -70,12 +70,15 @@
         }
 
         /**
-         * @member {SvFlexDomView} otherView
-         * @description The view that is displayed when this stack is not selected.
+         * @member {SvDetailView} detailView
+         * @description The always-present container owning everything past the
+         * nav column: the child stack / inspector for the current selection
+         * (its childStackView — the old otherView) and, when the stack's node
+         * answers nodeCompanionNode(), a companion panel.
          */
         {
-            const slot = this.newSlot("otherView", null);
-            slot.setSlotType("SvFlexDomView");
+            const slot = this.newSlot("detailView", null);
+            slot.setSlotType("SvDetailView");
         }
 
         /**
@@ -136,7 +139,7 @@
         this.setOverflow("hidden");
 
         this.setupNavView();
-        this.setupOtherView();
+        this.setupDetailView();
 
         //this.setBorder("1px dashed white");
 
@@ -183,17 +186,22 @@
      * @description Sets up the other view for this stack.
      * @returns {SvStackView} The stack view.
      */
-    setupOtherView () {
-        const v = SvFlexDomView.clone();
-        v.setFlexGrow(1);
-        v.setFlexShrink(1);
-        v.setFlexDirection("column");
-        v.setWidth("100%");
-        v.setHeight("100%");
-        this.setOtherView(v);
+    setupDetailView () {
+        const v = SvDetailView.clone();
+        v.setStackView(this);
+        this.setDetailView(v);
         this.addSubview(v);
         this.clearOtherView();
         return this;
+    }
+
+    /**
+     * @description The container hosting the child stack / inspector for the
+     * current selection — the detail view's childStackView (the old otherView).
+     * @returns {SvFlexDomView} The container view.
+     */
+    otherView () {
+        return this.detailView().childStackView();
     }
 
     // --- direction ---
@@ -221,6 +229,7 @@
             throw new Error("unimplmented direction '" + d + "'");
         }
         this.navView().syncOrientation();
+        this.detailView().syncOrientation(d);
     }
 
     /**
@@ -296,6 +305,7 @@
         this.syncOrientation();
         //this.navView().syncFromNodeNow();
         this.syncFromNavSelection();
+        this.detailView().syncCompanionFromNode(this.node());
 
         //this.setupColumnGroupColors();
         //this.fitColumns();
@@ -324,6 +334,8 @@
      * @returns {SvStackView} The stack view.
      */
     setOtherViewContent (v) {
+        this.detailView().setHasStackContent(true);
+
         const ov = this.otherView();
         ov.setFlexBasis(null);
         ov.setFlexGrow(1);
@@ -350,6 +362,8 @@
      * @returns {SvStackView} The stack view.
      */
     clearOtherView () {
+        this.detailView().setHasStackContent(false);
+
         const ov = this.otherView();
         ov.setFlexBasis("0px");
         ov.setFlexGrow(0);
@@ -671,20 +685,21 @@
      * @returns {SvStackView} The previous stack view.
      */
     previousStackView () {
-        // this stackView -> otherView -> previousStackView
-        const otherView = this.parentView();
-        if (otherView) {
-            const previousStackView = otherView.parentView();
-            if (previousStackView && previousStackView.previousStackView) {
-                //if (previousStackView.isSubclassOf(SvStackView)) {
-                return previousStackView;
+        // walk up the view parent chain to the nearest ancestor stack view
+        // (this stack -> childStackView container -> SvDetailView -> previous stack),
+        // stopping at stack-boundary views (e.g. an SvBrowserView root) so stack
+        // chains never cross browser boundaries — an embedded browser's stacks
+        // must not see an outer browser's stacks as ancestors
+        let v = this.parentView();
+        while (v) {
+            if (v.isStackBoundaryView && v.isStackBoundaryView()) {
+                return null;
             }
+            if (v.previousStackView) { // duck-type: another SvStackView
+                return v;
+            }
+            v = v.parentView();
         }
-        /*
-        if (p && p.previousStackView) {
-            return p.parentView();
-        }
-        */
         return null;
     }
 
@@ -734,6 +749,7 @@
      */
     updateCompaction () {
         this.compactNavAsNeeded();
+        this.detailView().updateCompanionLayout();
         return this;
     }
 
@@ -835,7 +851,9 @@
         //   as if they are part of the same Miller Column.
 
         const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
-        const w = verticalNavViews.sum(nv => nv.targetWidth());
+        let w = verticalNavViews.sum(nv => nv.targetWidth());
+        // companions reserve space in the row exactly as another column would
+        w += this.stackViewSubchain().sum(sv => sv.detailView().companionReservedWidth());
         return w;
 
         /*

@@ -1,5 +1,6 @@
 [
     "SvStackView.js",
+    "SvDetailView.js",
     "SvNavView.js",
     "SvScrollView.js",
     "SvScrollToBottomButton.js",
@@ -7,6 +8,6 @@
     "SvScrollContentView.js",
     "SvTilesView/_imports.json",
     "SvTile/_imports.json",
-    "SvTileContainer.js"
+    "SvTileContainer.js",
+    "SvCompanion/_imports.json"
 ]
-

@@ -2511,6 +2511,20 @@
       }
       */
 
+    /**
+     * @description Optional protocol: the node that roots this node's companion
+     * panel — a persistent panel shown alongside (or, in vertical orientations,
+     * beneath) this node's navigation content while it is selected. Read by
+     * SvDetailView (same idiom as headerNode()/footerNode() in SvNavView).
+     * A method rather than a stored slot because implementors typically compute
+     * the value (e.g. walk to an owner and return one of its nodes).
+     * @returns {SvNode|null} The companion root node, or null for no companion.
+     * @category UI
+     */
+    nodeCompanionNode () {
+        return null;
+    }
+
     hasHeaderOrFooter () {
         return this.footerNode() !== null || this.headerNode() !== null;
     }

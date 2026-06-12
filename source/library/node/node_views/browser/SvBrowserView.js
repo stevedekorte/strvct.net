@@ -153,6 +153,17 @@
         return false;
     }
 
+    /**
+     * @description Stack chains never cross browser boundaries: an embedded
+     * browser's stacks must not see an outer browser's stacks as ancestors.
+     * Checked by SvStackView.previousStackView()'s parent walk.
+     * @returns {boolean} true
+     * @category Navigation
+     */
+    isStackBoundaryView () {
+        return true;
+    }
+
     // --- path change bubbling (see SvStackView.didChangePath) ---
 
     /**
