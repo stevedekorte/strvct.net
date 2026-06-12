@@ -7,7 +7,6 @@
     "SvTile_styling.js",
     "SvTitledTile.js",
     "SvTextNodeTile.js",
-    "SvBreadCrumbsTile.js",
     "SvHeaderTile.js",
     "subviews/_imports.json",
     "field_tiles/_imports.json"

@@ -79,7 +79,6 @@
         //this.setupSubnodes();
         this.states().setupAsDefault();
         this.children().addSubnode(SvThemeClass.clone().setTitle("SvHeaderTile"));
-        this.children().addSubnode(SvThemeClass.clone().setTitle("SvBreadCrumbsTile"));
         return this;
     }
 

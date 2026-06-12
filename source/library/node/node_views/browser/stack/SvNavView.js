@@ -121,11 +121,30 @@
      * @returns {number} The calculated target width
      * @category Layout
      */
+    /**
+     * @description The width available to this nav view's stack chain — the
+     * root stack's container width (so embedded browsers size to their
+     * container, not the window). Falls back to the window width when the
+     * view isn't laid out yet.
+     * @returns {number} The available width in px.
+     * @category Layout
+     */
+    availableNavWidth () {
+        const stackView = this.stackView();
+        if (stackView) {
+            const w = stackView.topViewWidth();
+            if (w > 0) {
+                return w;
+            }
+        }
+        return SvWebBrowserWindow.shared().width();
+    }
+
     targetWidth () {
         const defaultWidth = 270;
         if (this.node()) {
             const minWidth = this.node().nodeMinTileWidth();
-            const maxWidth = SvWebBrowserWindow.shared().width() - 1;
+            const maxWidth = this.availableNavWidth() - 1;
             let w = defaultWidth;
             w = Math.max(defaultWidth, minWidth);
             w = Math.min(w, maxWidth);
@@ -173,6 +192,10 @@
             const v = SvTileContainer.clone();
             v.setBorderBottom(borderStyle);
             v.setBackgroundColor(backgroundColor);
+            // hug content: never grow into the scroll area's free space
+            // (otherwise an empty conversation renders a huge header/footer)
+            v.setFlexGrow(0);
+            v.setFlexShrink(0);
             this.setHeaderView(v);
             this.addSubview(v);
         }
@@ -184,6 +207,8 @@
             const v = SvTileContainer.clone();
             v.setBorderTop(borderStyle);
             v.setBackgroundColor(backgroundColor);
+            v.setFlexGrow(0);
+            v.setFlexShrink(0);
             this.setFooterView(v);
             this.addSubview(v);
         }
@@ -324,9 +349,9 @@
         this.setFlexShrink(0);
 
         const targetW = this.targetWidth();
-        const windowW = SvWebBrowserWindow.shared().width();
+        const availableW = this.availableNavWidth();
 
-        if (targetW >= windowW) {
+        if (targetW >= availableW) {
             this.setMinWidth("17em");
             this.setWidth("100%");
             this.setMaxWidth("100%");
@@ -529,20 +554,20 @@
     }
 
     /**
-     * @description Updates the width constraints based on window size
+     * @description Updates the width constraints based on the available container width
      * @category Layout
      */
     updateWidthForWindow () {
         if (this.isVertical()) {
             const targetW = this.targetWidth();
-            const windowW = SvWebBrowserWindow.shared().width();
+            const availableW = this.availableNavWidth();
             const isLastNavView = this.stackView() && !this.stackView().nextStackView();
 
-            if (targetW >= windowW) {
+            if (targetW >= availableW) {
                 this.setMinWidth("17em");
                 this.setWidth("100%");
                 this.setMaxWidth("100%");
-            } else if (isLastNavView && windowW < targetW * 2) {
+            } else if (isLastNavView && availableW < targetW * 2) {
                 // Last visible nav view + viewport between 1x and 2x targetWidth: fill the slack
                 this.setMinWidth("17em");
                 this.setWidth("100%");

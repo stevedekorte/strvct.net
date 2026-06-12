@@ -598,7 +598,13 @@
      * @returns {SvStackView} The stack view.
      */
     didChangePath () {
-        this.onStackViewPathChangeNote().post();
+        this.onStackViewPathChangeNote().post(); // legacy global note, kept for app-level consumers
+
+        // structural scoping: bubble up the view parent chain; the first
+        // SvBrowserView ancestor handles this (breadcrumbs, browser-scoped
+        // note) and returns true to stop propagation, so navigation inside
+        // an embedded browser never reaches an outer one
+        this.tellParentViews("childUpdatedNavPath", this);
         return this;
     }
 
@@ -781,6 +787,8 @@
             const next = current.nextStackView();
             if (next) {
                 current = next;
+            } else {
+                break; // no next — current is the bottom (loop never exited before)
             }
         }
         return current;

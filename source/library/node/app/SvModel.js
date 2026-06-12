@@ -30,7 +30,8 @@
 
     finalInit () {
         super.finalInit();
-        this.setNodeTileClassName("SvBreadCrumbsTile");
+        // (the model used to render as an SvBreadCrumbsTile inside the synthetic
+        // breadcrumb wrapper; the breadcrumb bar is now a view owned by SvBrowserView)
     }
 
     async afterAppDidInit () {

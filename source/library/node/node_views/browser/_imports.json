@@ -1,5 +1,6 @@
 [
     "_css.css",
     "stack/_imports.json",
+    "SvBreadCrumbsView.js",
     "SvBrowserView.js"
 ]
