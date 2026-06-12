@@ -12,8 +12,10 @@
     initPrototypeSlots_streaming () {
 
         // --- streaming ---
+        // These were previously duplicated in SvAiParsedResponseMessage.initPrototypeSlots
+        // because initThisCategory silently skipped category slot installation
+        // (see Object_categorySupport). Now that the gate is fixed, they live here.
 
-        /*
         {
             const slot = this.newSlot("htmlStreamReader", null);
             slot.setSlotType("SvHtmlStreamReader");
@@ -30,7 +32,6 @@
             slot.setIsSubnodeField(false);
             slot.setActionMethodName("processStreamContent");
         }
-      */
 
     }
 

@@ -342,8 +342,15 @@
         let catName = nameParts[1];
         let parentProto = parentClass.prototype;
 
-        // Setup category prototype if needed (adds category slots to existing slot maps)
-        if (Object.hasOwn(parentProto, "setupCategoryPrototype")) {
+        // Setup category prototype if needed (adds category slots to existing slot maps).
+        // NOTE: setupCategoryPrototype is *inherited* from Object.prototype (defined in
+        // Object_boot), so an own-property check on the parent prototype always fails and
+        // would silently skip initPrototypeSlots_<categoryName> / initPrototype_<categoryName>
+        // for every category. Instead, call it whenever the parent prototype has slot maps
+        // (i.e. is an initThisClass'd class). Native-type categories (Array, String, ...)
+        // and boot-time categories that load before Object_boot have no _slotsMap and are
+        // skipped, as before.
+        if (typeof (parentProto.setupCategoryPrototype) === "function" && Object.hasOwn(parentProto, "_slotsMap")) {
             parentProto.setupCategoryPrototype(catName);
         }
 

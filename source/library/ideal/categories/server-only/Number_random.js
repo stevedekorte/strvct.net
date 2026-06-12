@@ -7,7 +7,8 @@
  * @description Extended Number class with additional random utility methods.
  */
 
-import { crypto } from "crypto";
+// crypto is a global in both browsers and Node 19+; the CAM loader cannot
+// evaluate ES import statements, so no import here.
 
 (class Number_random extends Number {
 

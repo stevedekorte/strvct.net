@@ -66,23 +66,8 @@
         // ------------------------------
 
         // --- streaming ---
-
-        {
-            const slot = this.newSlot("htmlStreamReader", null);
-            slot.setSlotType("SvHtmlStreamReader");
-        }
-
-        {
-            const slot = this.newSlot("processStreamContentAction", null);
-            slot.setInspectorPath("");
-            slot.setCanInspect(true);
-            slot.setLabel("Process Stream Content");
-            slot.setSyncsToView(true);
-            slot.setDuplicateOp("duplicate");
-            slot.setSlotType("Action");
-            slot.setIsSubnodeField(false);
-            slot.setActionMethodName("processStreamContent");
-        }
+        // streaming slots (htmlStreamReader, processStreamContentAction) are declared
+        // by the SvAiParsedResponseMessage_streaming category via initPrototypeSlots_streaming
 
         // --- voice narration ---
 

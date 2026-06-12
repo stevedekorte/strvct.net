@@ -29,6 +29,13 @@
      * @returns {string} The boot path.
      */
     static bootPath () {
+        // Follow SvBootLoader's (overridable) boot path so standalone boots —
+        // e.g. headless tests run from the strvct root — can relocate it.
+        // Defaults to the submodule layout ("strvct/source/boot").
+        const bootLoader = SvGlobals.globals().SvBootLoader;
+        if (bootLoader && bootLoader._bootPath) {
+            return bootLoader._bootPath + "/";
+        }
         return "strvct/source/boot/";
     }
 
