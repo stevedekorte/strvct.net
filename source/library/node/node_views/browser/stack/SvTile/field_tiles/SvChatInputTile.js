@@ -68,6 +68,16 @@
         v.setIsMultiline(true);
         v.setDoesInput(true);
 
+        // Clear the editor synchronously on Enter (afterEnter, right after
+        // the message is committed via didInput → onValueInput → send).
+        // Previously the only clear was send()'s setValue("") + a SCHEDULED
+        // model→view sync; the focused guard (syncValueFromNode above)
+        // skips value writes while the input is focused, so that scheduled
+        // clear was unreliable — the input often kept the just-sent text.
+        // doesClearOnReturn is the framework's purpose-built, synchronous,
+        // focus-independent clear for exactly this case.
+        v.setDoesClearOnReturn(true);
+
         v.setDoesHoldFocusOnReturn(true);
         v.setMinHeight("fit-content");
         //v.setDoesInput(true);
