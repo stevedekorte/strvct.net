@@ -385,6 +385,50 @@
 
     }
 
+    // --- app lifecycle (routed from the environment layer) ---
+    //
+    // The environment (SvWebUserInterface for browsers, SvHeadlessUserInterface
+    // for headless) translates its concrete signals — DOM events, process
+    // signals — into these calls. SvApp fans them out to the model (and is the
+    // natural place to notify other participants later). Keeping the routing
+    // here means the model stays environment-agnostic.
+
+    /**
+     * @description Connectivity restored.
+     * @category Lifecycle
+     */
+    onAppDidGoOnline () {
+        this.model().onAppDidGoOnline();
+        return this;
+    }
+
+    /**
+     * @description Connectivity lost.
+     * @category Lifecycle
+     */
+    onAppDidGoOffline () {
+        this.model().onAppDidGoOffline();
+        return this;
+    }
+
+    /**
+     * @description The app is being backgrounded.
+     * @category Lifecycle
+     */
+    onAppWillSuspend () {
+        this.model().onAppWillSuspend();
+        return this;
+    }
+
+    /**
+     * @description The app is about to terminate.
+     * @returns {Boolean} true to request that termination be blocked.
+     * @category Lifecycle
+     */
+    onAppWillTerminate () {
+        return this.model().onAppWillTerminate() === true;
+    }
+
     /**
      * @description Sets the name of the app
      * @param {string} aString - The new name
