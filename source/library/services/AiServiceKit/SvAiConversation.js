@@ -465,7 +465,13 @@
    * @category Message Filtering
    */
     incompleteMessages () { // TODO: rename to incompleteMessagesRequiringCompletionBeforeUserResponse()
-        return this.messagesRequiringCompletionBeforeUserResponse().select(m => !m.isComplete());
+        // An errored message is TERMINAL — it will never reach completion, so it
+        // must not gate user input. Without this, a failed AI response (network
+        // error, 401, timeout, etc.) leaves the message permanently incomplete,
+        // which keeps acceptsChatInput() false forever: the chat input stays
+        // disabled (and Enter is cancelled, so it neither sends nor clears) until
+        // a reload rebuilds the conversation without the in-flight errored message.
+        return this.messagesRequiringCompletionBeforeUserResponse().select(m => !m.isComplete() && !m.hasError());
     }
 
     /**
