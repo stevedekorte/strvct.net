@@ -133,6 +133,18 @@
         }
 
         /**
+         * @member {Promise} userInterfaceReadyPromise - resolves with the
+         * userInterface once it is ready to navigate (or, headless, once the
+         * environment reports no navigable UI). Created up front so awaiting
+         * after readiness resolves immediately.
+         * @category Initialization
+         */
+        {
+            const slot = this.newSlot("userInterfaceReadyPromise", null);
+            slot.setFinalInitProto(Promise);
+        }
+
+        /**
          * @member {Boolean} developerMode - Whether the developer mode is enabled
          * @category State Management
          */
@@ -383,6 +395,40 @@
 
     appInitCompleted () {
 
+    }
+
+    // --- user interface readiness ---
+
+    /**
+     * @description A promise that resolves with the userInterface once it is
+     * ready to navigate — or, in a headless run, once the environment reports
+     * there is no navigable UI (resolves with the headless UI, whose
+     * providesNavigation() is false). Awaiting after readiness resolves
+     * immediately. Use this instead of polling or retrying:
+     *     const ui = await SvApp.shared().promiseUserInterfaceReady();
+     *     if (ui.providesNavigation()) { ... }
+     * @returns {Promise<SvUserInterface>}
+     * @category Lifecycle
+     */
+    promiseUserInterfaceReady () {
+        return this.userInterfaceReadyPromise();
+    }
+
+    /**
+     * @description Called by the environment layer when the UI is ready to
+     * navigate (browser: SvBrowserView after its root column is materialized;
+     * headless: SvHeadlessUserInterface once init is done). Idempotent —
+     * resolves the promise once.
+     * @returns {SvApp}
+     * @category Lifecycle
+     */
+    markUserInterfaceReady () {
+        if (this._userInterfaceReadyMarked) {
+            return this;
+        }
+        this._userInterfaceReadyMarked = true;
+        this.userInterfaceReadyPromise().callResolveFunc(this.userInterface());
+        return this;
     }
 
     // --- app lifecycle (routed from the environment layer) ---

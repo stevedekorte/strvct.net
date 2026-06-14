@@ -17,6 +17,12 @@
     }
 
     async afterAppDidInit () {
+        // No browser view to materialize, so report UI readiness here. The
+        // promise resolves with this (providesNavigation() === false), so code
+        // awaiting promiseUserInterfaceReady() unblocks and skips navigation.
+        if (this.app()) {
+            this.app().markUserInterfaceReady();
+        }
         return this;
     }
 

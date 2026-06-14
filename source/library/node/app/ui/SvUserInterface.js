@@ -64,6 +64,18 @@
         return this;
     }
 
+    /**
+     * @description Whether this UI can fulfill navigation requests. False here
+     * (the base / headless case); a navigable UI like SvWebUserInterface
+     * overrides to true. Lets code awaiting promiseUserInterfaceReady() know
+     * whether to issue navigation.
+     * @returns {Boolean}
+     * @category Navigation
+     */
+    providesNavigation () {
+        return false;
+    }
+
     assertCanRun () {
         // override in subclasses with any checks that need to be done before running
         return true;

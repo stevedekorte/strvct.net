@@ -44,6 +44,16 @@
     }
 
     /**
+     * @description A web UI navigates (it has a browser/stack view), so code
+     * awaiting promiseUserInterfaceReady() should issue navigation.
+     * @returns {Boolean}
+     * @category Navigation
+     */
+    providesNavigation () {
+        return true;
+    }
+
+    /**
      * @description Translates browser lifecycle/connectivity events into the
      * app's environment-agnostic lifecycle calls (SvApp.onApp*). This is the
      * browser environment layer — DOM events live here, never in the model.

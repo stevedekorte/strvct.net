@@ -4805,6 +4805,23 @@ this.postNoteNamed("onRequestUserAlert", {
 
 `SvUserInterface` observes `onRequestUserAlert` and calls `presentUserAlert(info)`. `SvWebUserInterface` opens an `SvPanelView`; the base (headless) implementation logs it. The presenting view reference stays in the UI layer, never in the model that posted the alert.
 
+## UI Readiness
+
+UI-dependent work (e.g. posting a navigation request) should **wait** for the UI rather than poll or retry. The app exposes a promise that resolves once the UI is ready to navigate — or, headless, once the environment reports there is no navigable UI:
+
+```javascript
+const ui = await SvApp.shared().promiseUserInterfaceReady();
+if (ui.providesNavigation()) {
+    // safe to navigate, e.g. post "onRequestSelectNodePath"
+}
+```
+
+- Resolves with the `userInterface()`. `providesNavigation()` is `true` for a web UI, `false` headless — so the same model code skips UI-only work when there's no navigable UI.
+- The promise is created up front, so awaiting **after** readiness resolves immediately.
+- **Browser:** `SvBrowserView` calls `SvApp.markUserInterfaceReady()` once its root column is materialized (the genuine "ready to navigate" point). **Headless:** `SvHeadlessUserInterface` marks it after init.
+
+This replaces DOM polling / retry loops in models: await the promise, then post the request once.
+
 
 ---
 

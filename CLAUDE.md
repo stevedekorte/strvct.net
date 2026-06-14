@@ -32,6 +32,15 @@ STRVCT is a **naked objects** framework. The entire UI is auto-generated from th
 
 This boundary is load-bearing for the framework's automatic-UI claim. Treat any model file `import` or reference that touches view classes / browser globals as a bug.
 
+## Platform Abstraction (swappable UIs)
+
+Use the naked-objects pattern as much as possible, and keep STRVCT **between the app and the UI platform** — so the same app can run under different UIs (a web DOM UI, a terminal UI, or headless) by swapping the user-interface implementation, not the app. Keep platform assumptions out of app and model code:
+
+- **App code targets STRVCT, not the browser.** Reach the UI platform only through framework abstractions (`SvUserInterface` / `SvWebUserInterface` / `SvHeadlessUserInterface`, `SvDomView`, `SvWebBrowserWindow`, …) so an alternate UI (e.g. terminal) can be dropped in. Don't hardcode platform behavior where the framework provides an abstraction.
+- **Consume platform events through the STRVCT event system — never raw listeners.** DOM / window / document / mouse / keyboard and app-lifecycle events flow through the framework's event listeners (`SvWindowListener`, `SvDocumentListener`, `SvMouseListener`, …), which dispatch synchronously to delegate methods and/or post notifications. Do **not** call `addEventListener` directly in app or model code — that bypasses the abstraction and pins the app to one platform.
+- **React to app lifecycle via environment-agnostic hooks.** Models override `SvModel` lifecycle hooks (`onAppDidGoOnline` / `onAppDidGoOffline`, `onAppWillSuspend`, `onAppWillTerminate`) routed through `SvApp`; the environment layer translates concrete signals (browser events, headless `SIGTERM`/`SIGINT`) into them. The same model code then works under any UI and headless. See `docs/Lifecycle/App Lifecycle`.
+- **Wait on UI readiness — don't poll.** When model code needs the UI ready (e.g. to post a navigation request), `await SvApp.shared().promiseUserInterfaceReady()` and check `ui.providesNavigation()`. Never poll the DOM or retry. Headless resolves with a non-navigable UI, so the code cleanly skips UI-only work.
+
 ## Core Features
 
 ### Class Definition

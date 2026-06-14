@@ -264,6 +264,13 @@
      */
     moveToBase () {
         this.selectNodePathArray([]);
+        // The root column is now materialized, so the main browser can fulfill
+        // navigation requests. Signal app-level UI readiness once (SvApp
+        // dedups) so model code awaiting promiseUserInterfaceReady() can post
+        // navigation without polling. Only the global-nav browser signals.
+        if (this.handlesGlobalNavRequests() && typeof SvApp !== "undefined" && SvApp.hasShared()) {
+            SvApp.shared().markUserInterfaceReady();
+        }
         return this;
     }
 
