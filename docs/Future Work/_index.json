@@ -4,23 +4,60 @@
   "content": [
     {
       "type": "ContentCards",
+      "title": "Slots & Initialization",
       "columns": 3,
       "items": [
         "Async Final Initialization",
         "Lazy Slots",
-        "Promise-Wrapped Slots",
+        "Promise-Wrapped Slots"
+      ]
+    },
+    {
+      "type": "ContentCards",
+      "title": "Schema, Protocols & Data",
+      "columns": 3,
+      "items": [
         "JSON Schema",
         "Complete Protocols",
+        "Graph Database"
+      ]
+    },
+    {
+      "type": "ContentCards",
+      "title": "Capabilities",
+      "columns": 3,
+      "items": [
         "Capabilities & Permissions",
+        "Emergent Capabilities"
+      ]
+    },
+    {
+      "type": "ContentCards",
+      "title": "Views & Navigation",
+      "columns": 3,
+      "items": [
         "Tile Views",
         "Tile Container Views",
-        "Emergent Capabilities",
-        "Case Studies",
-        "Accessibility Testing & Tuning",
-        "Browser Cleanup",
-        "Cleanup Notes",
         "Async Navigation",
-        "Graph Database"
+        "Browser Cleanup"
+      ]
+    },
+    {
+      "type": "ContentCards",
+      "title": "Code Health",
+      "columns": 3,
+      "items": [
+        "Naked Objects Issues",
+        "Cleanup Notes"
+      ]
+    },
+    {
+      "type": "ContentCards",
+      "title": "Quality & Studies",
+      "columns": 3,
+      "items": [
+        "Accessibility Testing & Tuning",
+        "Case Studies"
       ]
     }
   ]
