@@ -73,7 +73,14 @@
         this.setElementClassName("SvDetailView");
         this.setDisplay("flex");
         this.setFlexDirection("row");
-        this.setOverflow("visible"); // the companion's overlay mode extends past its strip
+        // Overlay is retired, so the detail view no longer needs to let content
+        // extend past it — clip instead, so nothing spills past the window.
+        this.setOverflow("hidden");
+        // As a flex item in the stack row, allow shrinking below the content's
+        // intrinsic width (default min-width:auto would refuse, so a wide child
+        // — the narration content — pushes the detail view, and thus the docked
+        // companion, past the window edge).
+        this.setMinWidth("0px");
         this.setHeight("100%");
 
         const container = SvFlexDomView.clone();
@@ -82,6 +89,7 @@
         container.setFlexDirection("column");
         container.setHeight("100%");
         container.setOverflow("hidden");
+        container.setMinWidth("0px"); // shrink to leave room for a docked companion (no overlap/overflow)
         this.setChildStackView(container);
         this.addSubview(container);
 
