@@ -270,12 +270,16 @@
         this.applyMode();
 
         const detail = this.parentView();
-        if (detail && detail.updateCompanionLayout) {
-            detail.updateCompanionLayout();
-        }
         const stack = (detail && detail.stackView) ? detail.stackView() : null;
-        if (stack && stack.rootStackView) {
-            stack.rootStackView().updateCompactionChain();
+        if (stack && stack.updateCompactionChain) {
+            // Recompact from the companion's own stack (its deepest point) so
+            // the reservation change propagates UP through every ancestor stack
+            // via tellParentViews. Calling on the ROOT alone only recompacts the
+            // top and leaves the columns around the companion untouched — which
+            // is why the layout didn't visibly recompact on tab tap.
+            stack.bottomStackView().updateCompactionChain();
+        } else if (detail && detail.updateCompanionLayout) {
+            detail.updateCompanionLayout();
         }
         return this;
     }
