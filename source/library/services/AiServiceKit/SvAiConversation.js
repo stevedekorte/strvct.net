@@ -44,6 +44,18 @@
         }
 
         /**
+     * @member {Boolean} hasShownNoChatModelWarning - one-shot guard so the
+     * "no chatModel — using default" fallback warning logs at most once per
+     * conversation instead of on every chatModel() access.
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("hasShownNoChatModelWarning", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+        }
+
+        /**
      * @member {SvAiResponseMessage} responseMsgClass - Class for response messages
      * @category Configuration
      */
