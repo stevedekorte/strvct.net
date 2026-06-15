@@ -143,15 +143,6 @@
 
         this.updateOuterFlex();
         this.updateCompanionLayout();
-
-        // Companion creation/change must make the columns reserve room for it
-        // (even the collapsed tab), the same way a tab tap does — otherwise on a
-        // narrow window the freshly-created tab gets pushed off the edge because
-        // the columns were already compacted to fill the width without it.
-        // Scheduled (not synchronous) to run after this syncFromNode pass.
-        if (this.companionView() && this.stackView()) {
-            this.stackView().scheduleMethod("updateCompactionChain");
-        }
         return this;
     }
 
