@@ -134,7 +134,7 @@
     onTapComplete (/*aGesture*/) {
         const companion = this.companionView();
         if (companion) {
-            companion.toggleOverlay();
+            companion.toggleExpanded();
         }
         return this;
     }

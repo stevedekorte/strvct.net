@@ -7,20 +7,22 @@
  * @extends SvNodeView
  * @classdesc A self-contained collapsible companion panel. Its node is the
  * companion root (from the owning stack node's nodeCompanionNode()); it owns
- * its content view and its collapse tab, and manages the docked / tab /
- * overlay state machine internally — from the outside (SvDetailView) it is one
- * child whose width animates between panel width, tab width, and zero.
+ * its content view and its collapse tab, and manages the docked / tab state
+ * machine internally — from the outside (SvDetailView) it is one child whose
+ * width animates between panel width and tab width.
  *
  *     SvCompanionView (node = nodeCompanionNode())
  *     ├── contentView   ← the node's view (nodeViewClassName, default SvBrowserView)
  *     └── tabView (SvCompanionTabView)  ← collapsed form: title label + badge
  *
  * Modes:
- *   - docked:  enough space → fixed-size flex child, content visible
- *   - tab:     not enough → collapses to the tab strip (title + badge)
- *   - overlay: tab tapped → stays at tab width while the content view
- *     positions absolutely off its own inner edge, over the neighboring
- *     content; neither the detail view nor the stack knows overlay is showing
+ *   - docked:  fixed-size flex child in normal flow, content visible. The
+ *     columns compact to make room (companionReservedWidth feeds compaction).
+ *   - tab:     collapses to the tab strip (title + badge); content not shown.
+ *
+ * The companion is always in normal flow — it NEVER floats over neighboring
+ * content. Tapping the tab pins it docked (userExpanded); the columns compact
+ * to fit rather than the panel overlapping them.
  *
  * The state machine is axis-independent: edge "right" docks the panel at the
  * right (vertical tab strip); edge "bottom" docks it beneath (horizontal tab).
@@ -56,12 +58,24 @@
         }
 
         /**
-         * @member {String} mode - "docked" | "tab" | "overlay"
+         * @member {String} mode - "docked" | "tab"
          * @category State
          */
         {
             const slot = this.newSlot("mode", "tab");
             slot.setSlotType("String");
+        }
+
+        /**
+         * @member {Boolean} userExpanded - the user tapped the tab to pin the
+         * companion open. While true the companion stays docked (taking real
+         * layout space) regardless of auto space arbitration; it never floats
+         * over neighboring content.
+         * @category State
+         */
+        {
+            const slot = this.newSlot("userExpanded", false);
+            slot.setSlotType("Boolean");
         }
 
         /**
@@ -96,10 +110,10 @@
         super.init();
         this.setElementClassName("SvCompanionView");
         this.setDisplay("flex");
-        this.setPosition("relative"); // positioning context for the overlay content
+        this.setPosition("relative");
         this.setFlexGrow(0);
         this.setFlexShrink(0);
-        this.setOverflow("visible"); // the overlay content extends past the tab strip
+        this.setOverflow("hidden"); // content stays within the panel; never floats over neighbors
         this.setBackgroundColor("var(--SvCompanion-bg, rgba(255, 255, 255, 0.03))");
 
         const tab = SvCompanionTabView.clone();
@@ -221,6 +235,16 @@
      * @category Layout
      */
     setAvailableLength (availableLength) {
+        // User-pinned open: stay docked regardless of auto arbitration. The
+        // reserved width feeds column compaction, so the columns make room —
+        // the companion never floats over them.
+        if (this.userExpanded()) {
+            if (this.mode() !== "docked") {
+                this.setMode("docked");
+                this.applyMode();
+            }
+            return this;
+        }
         const canDock = availableLength >= this.preferredLength();
         if (canDock && this.mode() !== "docked") {
             this.setMode("docked");
@@ -233,17 +257,26 @@
     }
 
     /**
-     * @description Toggles the slide-over overlay while collapsed (tab tap).
+     * @description Tab tap: toggle the companion open (docked) or collapsed
+     * (tab). Docked takes real layout space and the columns compact to fit —
+     * the companion never overlaps neighboring content. Asks the owning detail
+     * view + stack to re-arbitrate so the reservation takes effect.
      * @returns {SvCompanionView} The current instance.
      * @category Layout
      */
-    toggleOverlay () {
-        if (this.mode() === "overlay") {
-            this.setMode("tab");
-        } else if (this.mode() === "tab") {
-            this.setMode("overlay");
-        }
+    toggleExpanded () {
+        this.setUserExpanded(!this.userExpanded());
+        this.setMode(this.userExpanded() ? "docked" : "tab");
         this.applyMode();
+
+        const detail = this.parentView();
+        if (detail && detail.updateCompanionLayout) {
+            detail.updateCompanionLayout();
+        }
+        const stack = (detail && detail.stackView) ? detail.stackView() : null;
+        if (stack && stack.rootStackView) {
+            stack.rootStackView().updateCompactionChain();
+        }
         return this;
     }
 
@@ -273,6 +306,9 @@
         tab.setIsVerticalTab(vertical);
 
         if (mode === "docked") {
+            // In normal flow: a fixed-size flex child. The columns compact to
+            // make room (companionReservedWidth feeds compaction) — it never
+            // floats over neighboring content.
             tab.hideDisplay();
             if (content) {
                 content.unhideDisplay();
@@ -280,38 +316,20 @@
                 content.setZIndex(null);
                 content.setWidth("100%");
                 content.setHeight("100%");
+                content.setLeft(null);
                 content.setRight(null);
                 content.setBottom(null);
                 content.setTop(null);
                 content.setBoxShadow(null);
+                content.setMinAndMaxWidth(null);
+                content.setMinAndMaxHeight(null);
             }
         } else {
+            // tab: collapsed to the strip; content is not shown at all (no
+            // slide-over overlay — the companion must never overlap).
             tab.unhideDisplay();
             if (content) {
-                if (mode === "overlay") {
-                    // slide over the neighboring content, anchored off our inner edge;
-                    // the tab strip stays visible and clickable to close
-                    content.unhideDisplay();
-                    content.setPosition("absolute");
-                    content.setZIndex(15);
-                    content.setBackgroundColor("var(--SvCompanion-bg, #1a1a1a)");
-                    content.setBoxShadow("0 0 20px rgba(0, 0, 0, 0.5)");
-                    if (vertical) {
-                        content.setTop("0px");
-                        content.setHeight("100%");
-                        content.setRight("100%"); // content's right edge at the tab's left edge
-                        content.setBottom(null);
-                        content.setMinAndMaxWidth(this.preferredLength());
-                    } else {
-                        content.setLeft("0px");
-                        content.setWidth("100%");
-                        content.setBottom("100%"); // content's bottom edge at the tab's top edge
-                        content.setRight(null);
-                        content.setMinAndMaxHeight(this.preferredLength());
-                    }
-                } else {
-                    content.hideDisplay();
-                }
+                content.hideDisplay();
             }
         }
 
