@@ -200,8 +200,8 @@
      * @category Navigation
      */
     selectNodePathArray (nodePathArray) {
-        this.stackView().selectNodePathArray(nodePathArray);
-        return this;
+        // returns true if the path resolved, false if a tile in it wasn't found
+        return this.stackView().selectNodePathArray(nodePathArray);
     }
 
     /**
@@ -313,11 +313,39 @@
     onRequestSelectNodePath (aNote) {
         const path = aNote.info();
         if (Array.isArray(path) && path.length > 0) {
-            const nodePath = path.shallowCopy();
-            if (nodePath.first() === this.node()) {
-                nodePath.shift(); // tolerate absolute paths that include the root node
-            }
-            this.selectNodePathArray(nodePath);
+            this._pendingSelectPath = path;
+            this._pendingSelectAttempt = 0;
+            this.trySelectPendingPath();
+        }
+        return this;
+    }
+
+    /**
+     * @description Attempts the pending select-path; if a tile in it isn't
+     * materialized yet (selectNodePathArray returns false), retries on the next
+     * scheduler cycle, bounded. This replaces the old model-side DOM-polling
+     * retry: the target tile (e.g. the "My Sessions" link) can post-date the
+     * UI becoming ready since the root column renders on a scheduled cycle, and
+     * a single post would otherwise be lost. View-side and driven by the
+     * resolve result, not a render guess.
+     * @returns {SvBrowserView}
+     * @category Navigation
+     */
+    trySelectPendingPath () {
+        const path = this._pendingSelectPath;
+        if (!path) {
+            return this;
+        }
+        const nodePath = path.shallowCopy();
+        if (nodePath.first() === this.node()) {
+            nodePath.shift(); // tolerate absolute paths that include the root node
+        }
+        const resolved = this.selectNodePathArray(nodePath);
+        if (resolved === false && this._pendingSelectAttempt < 12) {
+            this._pendingSelectAttempt += 1;
+            this.scheduleMethod("trySelectPendingPath");
+        } else {
+            this._pendingSelectPath = null;
         }
         return this;
     }
