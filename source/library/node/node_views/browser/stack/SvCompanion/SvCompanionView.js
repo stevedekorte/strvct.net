@@ -235,6 +235,7 @@
      * @category Layout
      */
     setAvailableLength (availableLength) {
+        const before = this.mode();
         // User-pinned open: stay docked regardless of auto arbitration. The
         // reserved width feeds column compaction, so the columns make room —
         // the companion never floats over them.
@@ -243,7 +244,7 @@
                 this.setMode("docked");
                 this.applyMode();
             }
-            return this;
+            return before !== this.mode();
         }
         const canDock = availableLength >= this.preferredLength();
         if (canDock && this.mode() !== "docked") {
@@ -253,7 +254,7 @@
             this.setMode("tab");
             this.applyMode();
         }
-        return this;
+        return before !== this.mode(); // report mode change for the compaction fixed point
     }
 
     /**
@@ -269,18 +270,15 @@
         this.setMode(this.userExpanded() ? "docked" : "tab");
         this.applyMode();
 
-        // Recompact this companion's stack and its ancestors WITHIN the same
-        // embedded browser so the session's columns make room for the docked
-        // companion. stackViewSuperChain() walks via previousStackView(), which
-        // stops at the browser boundary - so unlike updateCompactionChain (which
-        // uses the unbounded tellParentViews) it never crosses into the outer
-        // app stack. Crossing it was the bug: that outer stack, blind to this
-        // nested reservation, uncollapsed its nav and pushed the companion off
-        // the right edge on expand.
+        // Recompact this companion's OWN browser chain to a fixed point. It is
+        // bounded (rootStackView/stackViewSubchain stop at the browser
+        // boundary), so the session's columns make room for the docked
+        // companion without disturbing the outer app stack — the cross-boundary
+        // uncollapse bug can't recur.
         const detail = this.parentView();
         const stack = (detail && detail.stackView) ? detail.stackView() : null;
-        if (stack && stack.stackViewSuperChain) {
-            stack.stackViewSuperChain().forEach((sv) => sv.updateCompaction());
+        if (stack && stack.recompactBrowserChain) {
+            stack.recompactBrowserChain();
         } else if (detail && detail.updateCompanionLayout) {
             detail.updateCompanionLayout();
         }

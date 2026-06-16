@@ -183,23 +183,24 @@
         const companion = this.companionView();
         const stack = this.stackView();
         if (!companion || !stack) {
-            return this;
+            return false;
         }
 
+        let changed = false;
         if (companion.isVerticalEdge()) {
             const total = stack.topViewWidth();
             const othersWidth = stack.rootStackView().sumOfNavWidths() - companion.currentReservedLength();
-            companion.setAvailableLength(total - othersWidth);
+            changed = companion.setAvailableLength(total - othersWidth);
         } else {
             // bottom edge: size against the detail view's own height
             const h = this.element().clientHeight;
             if (h > 0) {
-                companion.setAvailableLength(h - 200); // leave room for the content above
+                changed = companion.setAvailableLength(h - 200); // leave room for the content above
             }
         }
 
         this.updateOuterFlex();
-        return this;
+        return changed; // drives the stack's recompactBrowserChain fixed point
     }
 
     didUpdateSlotHasStackContent (/*oldValue, newValue*/) {

@@ -53,7 +53,6 @@
         more manageable. For example, the source tilesView needs to remember where the dragged item was when returning to it.
 
 
- 
  */
 
 (class SvStackView extends SvNodeView {
@@ -324,7 +323,7 @@
         }
         */
         // TODO: change so only top stack view registers for resize
-        this.updateCompaction();
+        this.recompactBrowserChain();
         return this;
     }
 
@@ -735,22 +734,55 @@
     }
 
     /**
-     * @description Updates the compaction chain.
+     * @description Recompacts the whole stack chain of THIS browser. Delegates
+     * to recompactBrowserChain — kept as the public name existing callers use.
+     * (Was: updateCompaction() + tellParentViews("updateCompaction"), which
+     * propagated UPWARD via the raw view chain and so crossed embedded-browser
+     * boundaries into outer stacks — the cause of the companion-toggle nav
+     * uncollapse. Compaction is per-browser, so the chain must be bounded.)
      * @returns {SvStackView} The stack view.
      */
     updateCompactionChain () {
-        this.updateCompaction();
-        this.tellParentViews("updateCompaction");
+        this.recompactBrowserChain();
+        return this;
     }
 
     /**
-     * @description Updates the compaction.
+     * @description Recompacts this browser's stack chain to a fixed point.
+     * Iterates the BOUNDED chain (rootStackView().stackViewSubchain(), which
+     * stops at the browser boundary) calling updateCompaction() until nothing
+     * changes — needed because a companion docking/undocking changes the width
+     * budget and can require a column that was already visited to (un)collapse.
+     * Bounded iteration guards against any oscillation. Browser-scoped by
+     * construction: it cannot touch an outer browser's columns.
      * @returns {SvStackView} The stack view.
      */
-    updateCompaction () {
-        this.compactNavAsNeeded();
-        this.detailView().updateCompanionLayout();
+    recompactBrowserChain () {
+        const chain = this.rootStackView().stackViewSubchain();
+        let changed = true;
+        let guard = 0;
+        while (changed && guard < 5) {
+            changed = false;
+            guard += 1;
+            chain.forEach((sv) => {
+                if (sv.updateCompaction && sv.updateCompaction()) {
+                    changed = true;
+                }
+            });
+        }
         return this;
+    }
+
+    /**
+     * @description Compacts this single stack level: collapses/expands its nav
+     * along its axis and resolves its companion's docked/tab state.
+     * @returns {Boolean} true if this level's collapse or companion state
+     * changed (drives the recompactBrowserChain fixed point).
+     */
+    updateCompaction () {
+        const navChanged = this.compactNavAsNeeded();
+        const companionChanged = this.detailView().updateCompanionLayout();
+        return navChanged || companionChanged;
     }
 
     /*
@@ -899,6 +931,7 @@
         if (this.direction() === "right") {
             //console.log("SvStackView " + this.node().title() + " compactNavAsNeeded");
 
+            const wasCollapsed = this.navView().isCollapsed();
             const maxWidth = this.topViewWidth(); // our subviews need to fit into this width
 
             // Calculate the sum WITHOUT this nav view
@@ -928,6 +961,8 @@
 
             // Update SvNavView width constraints for window size
             this.navView().updateWidthForWindow();
+
+            return wasCollapsed !== this.navView().isCollapsed();
         } else {
             //console.log(" X '" + this.node().title()); // + "' skip " + this.direction());
         }
