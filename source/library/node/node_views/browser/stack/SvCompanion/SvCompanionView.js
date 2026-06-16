@@ -269,16 +269,16 @@
         this.setMode(this.userExpanded() ? "docked" : "tab");
         this.applyMode();
 
+        // Re-size the companion within its OWN detail view only. Do NOT trigger
+        // a stack compaction chain here: updateCompactionChain propagates via
+        // tellParentViews across the embedded-browser boundary into the outer
+        // app stack, which — not accounting for this nested companion's
+        // reservation — uncollapses the outer nav and pushes the companion off
+        // the right edge. The narration reflows to make room via flex
+        // (SvDetailView/childStackView min-width:0), the same as the
+        // auto-docked path, without disturbing the outer columns.
         const detail = this.parentView();
-        const stack = (detail && detail.stackView) ? detail.stackView() : null;
-        if (stack && stack.updateCompactionChain) {
-            // Recompact from the companion's own stack (its deepest point) so
-            // the reservation change propagates UP through every ancestor stack
-            // via tellParentViews. Calling on the ROOT alone only recompacts the
-            // top and leaves the columns around the companion untouched — which
-            // is why the layout didn't visibly recompact on tab tap.
-            stack.bottomStackView().updateCompactionChain();
-        } else if (detail && detail.updateCompanionLayout) {
+        if (detail && detail.updateCompanionLayout) {
             detail.updateCompanionLayout();
         }
         return this;
