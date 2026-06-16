@@ -269,16 +269,19 @@
         this.setMode(this.userExpanded() ? "docked" : "tab");
         this.applyMode();
 
-        // Re-size the companion within its OWN detail view only. Do NOT trigger
-        // a stack compaction chain here: updateCompactionChain propagates via
-        // tellParentViews across the embedded-browser boundary into the outer
-        // app stack, which — not accounting for this nested companion's
-        // reservation — uncollapses the outer nav and pushes the companion off
-        // the right edge. The narration reflows to make room via flex
-        // (SvDetailView/childStackView min-width:0), the same as the
-        // auto-docked path, without disturbing the outer columns.
+        // Recompact this companion's stack and its ancestors WITHIN the same
+        // embedded browser so the session's columns make room for the docked
+        // companion. stackViewSuperChain() walks via previousStackView(), which
+        // stops at the browser boundary - so unlike updateCompactionChain (which
+        // uses the unbounded tellParentViews) it never crosses into the outer
+        // app stack. Crossing it was the bug: that outer stack, blind to this
+        // nested reservation, uncollapsed its nav and pushed the companion off
+        // the right edge on expand.
         const detail = this.parentView();
-        if (detail && detail.updateCompanionLayout) {
+        const stack = (detail && detail.stackView) ? detail.stackView() : null;
+        if (stack && stack.stackViewSuperChain) {
+            stack.stackViewSuperChain().forEach((sv) => sv.updateCompaction());
+        } else if (detail && detail.updateCompanionLayout) {
             detail.updateCompanionLayout();
         }
         return this;
