@@ -198,13 +198,11 @@
         const node = this.node();
         const tab = this.tabView();
         if (!node) {
-            tab.setTitle("");
             tab.setBadge(false, null);
             return this;
         }
 
-        tab.setTitle(node.title ? node.title() : "");
-
+        // No title on the tab (the strip is too narrow) — only the badge.
         const shouldBadge = (node.nodeViewShouldBadge && node.nodeViewShouldBadge() === true);
         const badgeTitle = (shouldBadge && node.nodeViewBadgeTitle) ? node.nodeViewBadgeTitle() : null;
         tab.setBadge(shouldBadge, badgeTitle);
@@ -329,6 +327,13 @@
                 content.setMinAndMaxWidth(null);
                 content.setMinAndMaxHeight(null);
             }
+            // The embedded content (an SvBrowserView) may have first laid out
+            // its columns while we were a tab — i.e. hidden / zero-width — so
+            // its nav compacted to nothing and stayed blank until a window
+            // resize re-ran compaction. Now that we're docked at a real width,
+            // re-run its compaction next cycle (once the flex layout has given
+            // it width) so the content shows without needing a manual resize.
+            this.scheduleMethod("relayoutDockedContent");
         } else {
             // tab: collapsed to the strip; content is not shown at all (no
             // slide-over overlay — the companion must never overlap).
@@ -338,6 +343,26 @@
             }
         }
 
+        return this;
+    }
+
+    /**
+     * @description Re-runs the embedded content browser's compaction now that
+     * the companion is docked at a real width, so a content view that first
+     * laid out while hidden (blank columns) renders without a manual resize.
+     * No-op unless the content is a browser with a recompactable stack.
+     * @returns {SvCompanionView} The current instance.
+     * @category Layout
+     */
+    relayoutDockedContent () {
+        if (this.mode() !== "docked") {
+            return this;
+        }
+        const content = this.contentView();
+        const stack = (content && content.stackView) ? content.stackView() : null;
+        if (stack && stack.recompactBrowserChain) {
+            stack.recompactBrowserChain();
+        }
         return this;
     }
 

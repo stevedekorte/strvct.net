@@ -6,8 +6,10 @@
 /** * @class SvCompanionTabView
  * @extends SvFlexDomView
  * @classdesc The collapsed form of an SvCompanionView: a thin tab hugging the
- * edge the companion collapsed toward, showing the companion node's title and
- * an attention badge. Tapping it toggles the companion's overlay mode.
+ * edge the companion collapsed toward. It shows only a chevron affordance
+ * (pointing the way the panel expands) plus an attention badge — deliberately
+ * no title, since the strip is too narrow to render one legibly. Tapping it
+ * toggles the companion open.
  *
  * Colors can be themed via CSS variables:
  *
@@ -28,7 +30,7 @@
         }
 
         /**
-         * @member {SvTextView} labelView - shows the companion node's title
+         * @member {SvTextView} labelView - shows a chevron affordance (no title)
          * @category UI
          */
         {
@@ -69,11 +71,12 @@
         this.turnOffUserSelect();
 
         const label = SvTextView.clone();
-        label.setFontSize("0.8em");
+        label.setFontSize("1em");
         label.setWhiteSpace("nowrap");
         label.setPointerEvents("none");
         this.setLabelView(label);
         this.addSubview(label);
+        this.syncLabelOrientation(); // sets the chevron glyph for the current edge
 
         const badge = SvBadgeView.clone();
         badge.setPosition("absolute");
@@ -97,18 +100,18 @@
         return this;
     }
 
+    /**
+     * @description Sets the chevron glyph to point the way the panel expands:
+     * a right/left-edge (vertical) tab expands inward (◀), a bottom-edge
+     * (horizontal) tab expands upward (▲). No writing-mode rotation — it's a
+     * single glyph, not text.
+     * @returns {SvCompanionTabView} The current instance.
+     * @category Display
+     */
     syncLabelOrientation () {
         const label = this.labelView();
-        if (this.isVerticalTab()) {
-            label.setCssProperty("writing-mode", "vertical-rl");
-        } else {
-            label.setCssProperty("writing-mode", null);
-        }
-        return this;
-    }
-
-    setTitle (aString) {
-        this.labelView().setString(aString ? aString : "");
+        label.setCssProperty("writing-mode", null);
+        label.setString(this.isVerticalTab() ? "◂" : "▴"); // ◂ / ▴
         return this;
     }
 
