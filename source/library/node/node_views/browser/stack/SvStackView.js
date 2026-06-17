@@ -951,7 +951,14 @@
             //const thisWidth = this.navView().targetWidth();
             //const cw = this.navView().clientWidth();
 
-            if (sum < maxWidth) {
+            // The content fill nav (e.g. the narration) must never fully
+            // collapse to display:none — it is the column the user is looking at.
+            // When space is tight it shrinks via flex (flexGrow/shrink + min-width
+            // 0, see SvNavView), so a docked companion squeezes it rather than
+            // hiding it (which would leave the companion stranded with dead space).
+            const isFillNav = this.navView().shouldCurrentlyFillAvailble
+                && this.navView().shouldCurrentlyFillAvailble();
+            if (isFillNav || sum < maxWidth) {
                 this.navView().uncollapse();
                 //console.log(" -> '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum " + sum + " < win " + maxWidth); // + " UNCOLLAPSE " + this.direction());
             } else {
