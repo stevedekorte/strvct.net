@@ -351,13 +351,20 @@
         const targetW = this.targetWidth();
         const availableW = this.availableNavWidth();
 
-        if (targetW >= availableW) {
+        if (this.shouldCurrentlyFillAvailble()) {
+            // Fill the leftover width by actually flexing: grow into the slack the
+            // stack row leaves after its detail view (which may host a companion)
+            // takes its share, and shrink rather than overflow when the row is
+            // tight. width:null + flexGrow:0 would only size to content — leaving
+            // dead space when wide and overrunning a docked companion when narrow.
+            this.setFlexGrow(1);
+            this.setFlexShrink(1);
+            this.setMinWidth("0px");
+            this.setWidth(null);
+            this.setMaxWidth(null);
+        } else if (targetW >= availableW) {
             this.setMinWidth("17em");
             this.setWidth("100%");
-            this.setMaxWidth("100%");
-        } else if (this.shouldCurrentlyFillAvailble()) {
-            this.setMinWidth("17em");
-            this.setWidth(null);
             this.setMaxWidth("100%");
         } else {
             this.setMinAndMaxWidth(targetW);
@@ -559,6 +566,18 @@
      */
     updateWidthForWindow () {
         if (this.isVertical()) {
+            if (this.shouldCurrentlyFillAvailble()) {
+                // A fill nav always flexes (see makeOrientationRight): grow into
+                // the slack after a sibling companion's share, shrink to fit.
+                // Never width:100% here — that would overrun a docked companion.
+                this.setFlexGrow(1);
+                this.setFlexShrink(1);
+                this.setMinWidth("0px");
+                this.setWidth(null);
+                this.setMaxWidth(null);
+                return this;
+            }
+
             const targetW = this.targetWidth();
             const availableW = this.availableNavWidth();
             const isLastNavView = this.stackView() && !this.stackView().nextStackView();
@@ -572,7 +591,7 @@
                 this.setMinWidth("17em");
                 this.setWidth("100%");
                 this.setMaxWidth("100%");
-            } else if (!this.shouldCurrentlyFillAvailble()) {
+            } else {
                 this.setMinAndMaxWidth(targetW);
             }
         }
