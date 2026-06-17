@@ -6,8 +6,10 @@
 /** * @class SvCompanionTabView
  * @extends SvFlexDomView
  * @classdesc The collapsed form of an SvCompanionView: a thin tab hugging the
- * edge the companion collapsed toward, showing the companion node's title and
- * an attention badge. Tapping it toggles the companion's overlay mode.
+ * edge the companion collapsed toward. It shows only a chevron affordance
+ * (pointing the way the panel expands) plus an attention badge — deliberately
+ * no title, since the strip is too narrow to render one legibly. Tapping it
+ * toggles the companion open.
  *
  * Colors can be themed via CSS variables:
  *
@@ -28,7 +30,7 @@
         }
 
         /**
-         * @member {SvTextView} labelView - shows the companion node's title
+         * @member {SvTextView} labelView - shows a chevron affordance (no title)
          * @category UI
          */
         {
@@ -47,11 +49,23 @@
 
         /**
          * @member {Boolean} isVerticalTab - true when the companion docks at a
-         * left/right edge (the label renders vertically); false for top/bottom edges
+         * left/right edge (the caret points left/right); false for top/bottom
+         * edges (the caret points up/down)
          * @category Layout
          */
         {
             const slot = this.newSlot("isVerticalTab", true);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+         * @member {Boolean} companionIsDocked - true when the companion is open
+         * (the caret offers to collapse it); false when collapsed (the caret
+         * offers to expand it)
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("companionIsDocked", false);
             slot.setSlotType("Boolean");
         }
     }
@@ -69,11 +83,12 @@
         this.turnOffUserSelect();
 
         const label = SvTextView.clone();
-        label.setFontSize("0.8em");
+        label.setFontSize("1em");
         label.setWhiteSpace("nowrap");
         label.setPointerEvents("none");
         this.setLabelView(label);
         this.addSubview(label);
+        this.syncCaret(); // sets the caret glyph for the current edge/state
 
         const badge = SvBadgeView.clone();
         badge.setPosition("absolute");
@@ -93,22 +108,33 @@
     }
 
     didUpdateSlotIsVerticalTab (/*oldValue, newValue*/) {
-        this.syncLabelOrientation();
+        this.syncCaret();
         return this;
     }
 
-    syncLabelOrientation () {
+    didUpdateSlotCompanionIsDocked (/*oldValue, newValue*/) {
+        this.syncCaret();
+        return this;
+    }
+
+    /**
+     * @description Sets the caret glyph to point the way a tap moves the panel:
+     * when docked it offers to collapse (push toward the edge: ▸ for a side
+     * dock, ▾ for a bottom dock); when collapsed it offers to expand (pull away
+     * from the edge: ◂ / ▴). A single glyph, no writing-mode rotation.
+     * @returns {SvCompanionTabView} The current instance.
+     * @category Display
+     */
+    syncCaret () {
         const label = this.labelView();
+        label.setCssProperty("writing-mode", null);
+        let glyph;
         if (this.isVerticalTab()) {
-            label.setCssProperty("writing-mode", "vertical-rl");
+            glyph = this.companionIsDocked() ? "▸" : "◂";
         } else {
-            label.setCssProperty("writing-mode", null);
+            glyph = this.companionIsDocked() ? "▾" : "▴";
         }
-        return this;
-    }
-
-    setTitle (aString) {
-        this.labelView().setString(aString ? aString : "");
+        label.setString(glyph);
         return this;
     }
 

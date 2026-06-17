@@ -16,13 +16,17 @@
  *     └── tabView (SvCompanionTabView)  ← collapsed form: title label + badge
  *
  * Modes:
- *   - docked:  fixed-size flex child in normal flow, content visible. The
- *     columns compact to make room (companionReservedWidth feeds compaction).
- *   - tab:     collapses to the tab strip (title + badge); content not shown.
+ *   - docked:  content visible beside a thin caret strip (the tab), in normal
+ *     flow. The columns compact to make room (companionReservedWidth feeds
+ *     compaction). The strip's caret collapses the panel.
+ *   - tab:     just the caret strip; content not shown. The caret expands it.
+ *   - hidden:  nothing shown (the window is too narrow for even the strip), so
+ *     the content column gets the full width.
  *
  * The companion is always in normal flow — it NEVER floats over neighboring
- * content. Tapping the tab pins it docked (userExpanded); the columns compact
- * to fit rather than the panel overlapping them.
+ * content. Tapping the tab pins docked/tab (userMode); the columns compact to
+ * fit rather than the panel overlapping them. A too-narrow window forces hidden
+ * regardless of the pin.
  *
  * The state machine is axis-independent: edge "right" docks the panel at the
  * right (vertical tab strip); edge "bottom" docks it beneath (horizontal tab).
@@ -58,7 +62,9 @@
         }
 
         /**
-         * @member {String} mode - "docked" | "tab"
+         * @member {String} mode - "docked" | "tab" | "hidden". docked = content
+         * shown beside a thin collapse strip; tab = just the strip (a caret to
+         * expand); hidden = nothing shown (window too narrow even for the strip).
          * @category State
          */
         {
@@ -67,15 +73,15 @@
         }
 
         /**
-         * @member {Boolean} userExpanded - the user tapped the tab to pin the
-         * companion open. While true the companion stays docked (taking real
-         * layout space) regardless of auto space arbitration; it never floats
-         * over neighboring content.
+         * @member {String} userMode - the user's pinned preference set by tapping
+         * the tab: "docked", "tab", or null (auto-arbitrate from available space).
+         * A pin survives resizes; only a too-narrow window (→ hidden) overrides it.
          * @category State
          */
         {
-            const slot = this.newSlot("userExpanded", false);
-            slot.setSlotType("Boolean");
+            const slot = this.newSlot("userMode", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
         }
 
         /**
@@ -198,13 +204,11 @@
         const node = this.node();
         const tab = this.tabView();
         if (!node) {
-            tab.setTitle("");
             tab.setBadge(false, null);
             return this;
         }
 
-        tab.setTitle(node.title ? node.title() : "");
-
+        // No title on the tab (the strip is too narrow) — only the badge.
         const shouldBadge = (node.nodeViewShouldBadge && node.nodeViewShouldBadge() === true);
         const badgeTitle = (shouldBadge && node.nodeViewBadgeTitle) ? node.nodeViewBadgeTitle() : null;
         tab.setBadge(shouldBadge, badgeTitle);
@@ -224,63 +228,70 @@
      * @category Layout
      */
     currentReservedLength () {
-        return this.mode() === "docked" ? this.preferredLength() : this.tabLength();
+        const mode = this.mode();
+        if (mode === "docked") {
+            return this.preferredLength();
+        }
+        if (mode === "tab") {
+            return this.tabLength();
+        }
+        return 0; // hidden
     }
 
     /**
      * @description Called by the owning SvDetailView with the space available
-     * to the companion along the dock axis. Decides docked vs tab.
+     * to the companion along the dock axis (the window minus the content
+     * column's own claim — see SvDetailView.updateCompanionLayout). Resolves the
+     * three-state mode: too little room → hidden (even the tab is dropped so the
+     * content gets the full width); a user pin wins inside the viable range;
+     * otherwise auto docks when the panel fits and tabs when it doesn't.
      * @param {Number} availableLength The available space in px.
-     * @returns {SvCompanionView} The current instance.
+     * @returns {Boolean} true if the mode changed (drives the compaction fixed point).
      * @category Layout
      */
     setAvailableLength (availableLength) {
-        // User-pinned open: stay docked regardless of auto arbitration. The
-        // reserved width feeds column compaction, so the columns make room —
-        // the companion never floats over them.
-        if (this.userExpanded()) {
-            if (this.mode() !== "docked") {
-                this.setMode("docked");
-                this.applyMode();
-            }
-            return this;
+        const before = this.mode();
+        let mode;
+        if (availableLength < this.tabLength()) {
+            mode = "hidden"; // too narrow — hide the panel AND its tab
+        } else if (this.userMode() === "docked") {
+            mode = "docked";
+        } else if (this.userMode() === "tab") {
+            mode = "tab";
+        } else {
+            mode = (availableLength >= this.preferredLength()) ? "docked" : "tab";
         }
-        const canDock = availableLength >= this.preferredLength();
-        if (canDock && this.mode() !== "docked") {
-            this.setMode("docked");
-            this.applyMode();
-        } else if (!canDock && this.mode() === "docked") {
-            this.setMode("tab");
+        if (mode !== before) {
+            this.setMode(mode);
             this.applyMode();
         }
-        return this;
+        return mode !== before; // report mode change for the compaction fixed point
     }
 
     /**
-     * @description Tab tap: toggle the companion open (docked) or collapsed
-     * (tab). Docked takes real layout space and the columns compact to fit —
-     * the companion never overlaps neighboring content. Asks the owning detail
-     * view + stack to re-arbitrate so the reservation takes effect.
+     * @description Tab tap: pin the companion open (docked) or collapsed (tab),
+     * the opposite of its current state. Docked takes real layout space and the
+     * columns compact to fit — the companion never overlaps neighboring content.
+     * Asks the owning detail view + stack to re-arbitrate so the reservation
+     * takes effect.
      * @returns {SvCompanionView} The current instance.
      * @category Layout
      */
     toggleExpanded () {
-        this.setUserExpanded(!this.userExpanded());
-        this.setMode(this.userExpanded() ? "docked" : "tab");
+        const willDock = this.mode() !== "docked";
+        this.setUserMode(willDock ? "docked" : "tab");
+        this.setMode(willDock ? "docked" : "tab");
         this.applyMode();
 
-        // Recompact this companion's stack and its ancestors WITHIN the same
-        // embedded browser so the session's columns make room for the docked
-        // companion. stackViewSuperChain() walks via previousStackView(), which
-        // stops at the browser boundary - so unlike updateCompactionChain (which
-        // uses the unbounded tellParentViews) it never crosses into the outer
-        // app stack. Crossing it was the bug: that outer stack, blind to this
-        // nested reservation, uncollapsed its nav and pushed the companion off
-        // the right edge on expand.
+        // Recompact this companion's OWN browser chain to a fixed point. It is
+        // bounded (rootStackView/stackViewSubchain stop at the browser
+        // boundary), so the session's columns make room for the docked
+        // companion without disturbing the outer app stack — the cross-boundary
+        // uncollapse bug can't recur.
         const detail = this.parentView();
         const stack = (detail && detail.stackView) ? detail.stackView() : null;
-        if (stack && stack.stackViewSuperChain) {
-            stack.stackViewSuperChain().forEach((sv) => sv.updateCompaction());
+        if (stack && stack.recompactBrowserChain) {
+            stack.recompactBrowserChain();
         } else if (detail && detail.updateCompanionLayout) {
             detail.updateCompanionLayout();
         }
@@ -298,8 +309,19 @@
         const tab = this.tabView();
         const content = this.contentView();
 
-        // size along the dock axis
-        const length = (mode === "docked") ? this.preferredLength() : this.tabLength();
+        // The tab hugs the dock edge (right for a side dock, bottom otherwise),
+        // so the content sits before it in flow order.
+        this.setFlexDirection(vertical ? "row" : "column");
+        if (content) {
+            content.setOrder(0);
+        }
+        tab.setOrder(1);
+        tab.setIsVerticalTab(vertical);
+        tab.setCompanionIsDocked(mode === "docked");
+
+        // size of the whole companion along the dock axis
+        const length = (mode === "docked") ? this.preferredLength()
+            : (mode === "tab") ? this.tabLength() : 0;
         if (vertical) {
             this.setMinAndMaxWidth(length);
             this.setMinAndMaxHeight(null);
@@ -310,36 +332,92 @@
             this.setWidth("100%");
         }
 
-        tab.setIsVerticalTab(vertical);
+        if (mode === "hidden") {
+            // Too narrow: drop the panel and its tab entirely so the content
+            // column gets the full width.
+            tab.hideDisplay();
+            if (content) {
+                content.hideDisplay();
+            }
+            return this;
+        }
+
+        // The tab is a persistent control in both docked and tab modes: a thin
+        // fixed strip on the dock edge whose caret expands (when a tab) or
+        // collapses (when docked) the panel.
+        tab.unhideDisplay();
+        tab.setFlexGrow(mode === "tab" ? 1 : 0); // fills the strip when alone; fixed beside content when docked
+        tab.setFlexShrink(0);
+        if (vertical) {
+            tab.setMinAndMaxWidth(this.tabLength());
+            tab.setMinAndMaxHeight(null);
+            tab.setHeight("100%");
+        } else {
+            tab.setMinAndMaxHeight(this.tabLength());
+            tab.setMinAndMaxWidth(null);
+            tab.setWidth("100%");
+        }
 
         if (mode === "docked") {
-            // In normal flow: a fixed-size flex child. The columns compact to
-            // make room (companionReservedWidth feeds compaction) — it never
-            // floats over neighboring content.
-            tab.hideDisplay();
             if (content) {
                 content.unhideDisplay();
                 content.setPosition("relative");
                 content.setZIndex(null);
-                content.setWidth("100%");
-                content.setHeight("100%");
+                content.setFlexGrow(1);
+                content.setFlexShrink(1);
                 content.setLeft(null);
                 content.setRight(null);
                 content.setBottom(null);
                 content.setTop(null);
                 content.setBoxShadow(null);
-                content.setMinAndMaxWidth(null);
-                content.setMinAndMaxHeight(null);
+                if (vertical) {
+                    content.setWidth(null);
+                    content.setHeight("100%");
+                    content.setMinWidth("0px"); // shrink so the fixed tab keeps its strip
+                    content.setMaxWidth(null);
+                    content.setMinAndMaxHeight(null);
+                } else {
+                    content.setHeight(null);
+                    content.setWidth("100%");
+                    content.setMinHeight("0px");
+                    content.setMaxHeight(null);
+                    content.setMinAndMaxWidth(null);
+                }
             }
+            // The embedded content (an SvBrowserView) may have first laid out
+            // its columns while we were a tab — i.e. hidden / zero-width — so
+            // its nav compacted to nothing and stayed blank until a window
+            // resize re-ran compaction. Now that we're docked at a real width,
+            // re-run its compaction next cycle (once the flex layout has given
+            // it width) so the content shows without needing a manual resize.
+            this.scheduleMethod("relayoutDockedContent");
         } else {
-            // tab: collapsed to the strip; content is not shown at all (no
-            // slide-over overlay — the companion must never overlap).
-            tab.unhideDisplay();
+            // tab only: content not shown (never a slide-over overlay).
             if (content) {
                 content.hideDisplay();
             }
         }
 
+        return this;
+    }
+
+    /**
+     * @description Re-runs the embedded content browser's compaction now that
+     * the companion is docked at a real width, so a content view that first
+     * laid out while hidden (blank columns) renders without a manual resize.
+     * No-op unless the content is a browser with a recompactable stack.
+     * @returns {SvCompanionView} The current instance.
+     * @category Layout
+     */
+    relayoutDockedContent () {
+        if (this.mode() !== "docked") {
+            return this;
+        }
+        const content = this.contentView();
+        const stack = (content && content.stackView) ? content.stackView() : null;
+        if (stack && stack.recompactBrowserChain) {
+            stack.recompactBrowserChain();
+        }
         return this;
     }
 
