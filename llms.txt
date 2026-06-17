@@ -80,6 +80,7 @@
 - [Technical Overview](/docs/Technical%20Overview/): High-level architecture and key concepts of the Strvct framework.
 - [Views](/docs/Views/): The view layer: auto-generated UI, custom views, and programmatic styling.
 - [Auto-Generated Views](/docs/Views/Auto-Generated%20Views/): How the view layer connects to model nodes, synchronizes state, and provides navigation — without writing any view code.
+- [Companion View](/docs/Views/Companion%20View/): A persistent panel docked alongside a node's navigation — content beside the columns, collapsing to a thin tab or out of sight as the viewport narrows.
 - [Custom Views](/docs/Views/Custom%20Views/): How to create custom view classes when the auto-generated UI doesn't fit.
 - [Programmatic Styling](/docs/Views/Programmatic%20Styling/): Named CSS methods, the chainable API, and why STRVCT avoids CSS files.
 - [Responsive](/docs/Views/Responsive/): How the view layer adapts the master-detail composition to different viewport sizes without per-screen layout code.
