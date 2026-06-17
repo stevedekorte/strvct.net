@@ -188,9 +188,18 @@
 
         let changed = false;
         if (companion.isVerticalEdge()) {
+            // Space the companion may claim = the window minus this stack's own
+            // content column (the fill nav, e.g. the narration). Intermediate
+            // nav columns to the left collapse to display:none (0 width) under
+            // compaction, so they don't reserve anything here — only the content
+            // column's target width is a hard claim. This is deliberately
+            // non-circular (independent of the current collapse state), so the
+            // companion's docked/tab/hidden decision and the column compaction
+            // converge instead of oscillating.
             const total = stack.topViewWidth();
-            const othersWidth = stack.rootStackView().sumOfNavWidths() - companion.currentReservedLength();
-            changed = companion.setAvailableLength(total - othersWidth);
+            const navView = stack.navView();
+            const contentClaim = navView ? navView.targetWidth() : 0;
+            changed = companion.setAvailableLength(total - contentClaim);
         } else {
             // bottom edge: size against the detail view's own height
             const h = this.element().clientHeight;

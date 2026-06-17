@@ -49,11 +49,23 @@
 
         /**
          * @member {Boolean} isVerticalTab - true when the companion docks at a
-         * left/right edge (the label renders vertically); false for top/bottom edges
+         * left/right edge (the caret points left/right); false for top/bottom
+         * edges (the caret points up/down)
          * @category Layout
          */
         {
             const slot = this.newSlot("isVerticalTab", true);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+         * @member {Boolean} companionIsDocked - true when the companion is open
+         * (the caret offers to collapse it); false when collapsed (the caret
+         * offers to expand it)
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("companionIsDocked", false);
             slot.setSlotType("Boolean");
         }
     }
@@ -76,7 +88,7 @@
         label.setPointerEvents("none");
         this.setLabelView(label);
         this.addSubview(label);
-        this.syncLabelOrientation(); // sets the chevron glyph for the current edge
+        this.syncCaret(); // sets the caret glyph for the current edge/state
 
         const badge = SvBadgeView.clone();
         badge.setPosition("absolute");
@@ -96,22 +108,33 @@
     }
 
     didUpdateSlotIsVerticalTab (/*oldValue, newValue*/) {
-        this.syncLabelOrientation();
+        this.syncCaret();
+        return this;
+    }
+
+    didUpdateSlotCompanionIsDocked (/*oldValue, newValue*/) {
+        this.syncCaret();
         return this;
     }
 
     /**
-     * @description Sets the chevron glyph to point the way the panel expands:
-     * a right/left-edge (vertical) tab expands inward (◀), a bottom-edge
-     * (horizontal) tab expands upward (▲). No writing-mode rotation — it's a
-     * single glyph, not text.
+     * @description Sets the caret glyph to point the way a tap moves the panel:
+     * when docked it offers to collapse (push toward the edge: ▸ for a side
+     * dock, ▾ for a bottom dock); when collapsed it offers to expand (pull away
+     * from the edge: ◂ / ▴). A single glyph, no writing-mode rotation.
      * @returns {SvCompanionTabView} The current instance.
      * @category Display
      */
-    syncLabelOrientation () {
+    syncCaret () {
         const label = this.labelView();
         label.setCssProperty("writing-mode", null);
-        label.setString(this.isVerticalTab() ? "◂" : "▴"); // ◂ / ▴
+        let glyph;
+        if (this.isVerticalTab()) {
+            glyph = this.companionIsDocked() ? "▸" : "◂";
+        } else {
+            glyph = this.companionIsDocked() ? "▾" : "▴";
+        }
+        label.setString(glyph);
         return this;
     }
 
