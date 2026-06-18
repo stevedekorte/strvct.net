@@ -39,6 +39,23 @@
         }
 
         /**
+         * @member {String} linkLabel
+         * @description An explicit display label for the link, independent of the
+         * linked node's own title. When set (non-empty), title() returns it; this
+         * lets a link present a fixed label (e.g. a "Character" tab) while still
+         * navigating into its target. Null by default (fall back to the linked
+         * node's title). Note: the inherited `title` slot can't be used for this —
+         * it carries a placeholder value on link instances.
+         * @category Link Management
+         */
+        {
+            const slot = this.newSlot("linkLabel", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setSyncsToView(true);
+        }
+
+        /**
          * @member {boolean} willDuplicateLinkedObject
          * @description Indicates if the linked object should be duplicated when this node is duplicated
          * @category Link Management
@@ -144,12 +161,18 @@
     }
 
     /**
-     * @description Gets the title of the node
-     * @returns {string} The title of the linked node, or the unlinkedTitle
-     * slot value if no node is linked
+     * @description Gets the title of the node. An explicitly-set own title wins
+     * (so a link can present a fixed label, e.g. a "Character" tab pointing at a
+     * specific character); otherwise it falls back to the linked node's title,
+     * then the unlinkedTitle when nothing is linked.
+     * @returns {string} The display title.
      * @category Node Information
      */
     title () {
+        const label = this.linkLabel();
+        if (typeof label === "string" && label.length > 0) {
+            return label; // an explicit link label wins (e.g. a "Character" tab)
+        }
         const ln = this.linkedNode();
         if (ln) {
             return ln.title();

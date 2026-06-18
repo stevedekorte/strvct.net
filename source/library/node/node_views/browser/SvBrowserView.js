@@ -258,12 +258,30 @@
     }
 
     /**
-     * @description Moves the view to the base state (no selection; the root column shows).
+     * @description Moves the view to the base state. Normally that's no
+     * selection (just the root column). A root node may opt into showing its
+     * first child by default — `nodeViewShouldAutoSelectFirstSubnode()` — e.g. a
+     * tab-strip node (horizontal) that wants its first tab's content shown
+     * beneath it rather than a bare strip. The selection goes through the bounded
+     * pending-path retry, so it lands even if the root column isn't materialized
+     * on the first cycle.
      * @returns {SvBrowserView} The current SvBrowserView instance.
      * @category Navigation
      */
     moveToBase () {
-        this.selectNodePathArray([]);
+        const node = this.node();
+        const subnodes = (node && node.subnodes) ? node.subnodes() : [];
+        if (node && node.nodeViewShouldAutoSelectFirstSubnode
+            && node.nodeViewShouldAutoSelectFirstSubnode() && subnodes.length > 0) {
+            const first = subnodes.first();
+            // tiles navigate by nodeTileLink(), so a link tile's path uses its target
+            const target = (first.nodeTileLink && first.nodeTileLink()) ? first.nodeTileLink() : first;
+            this._pendingSelectPath = [target];
+            this._pendingSelectAttempt = 0;
+            this.trySelectPendingPath();
+        } else {
+            this.selectNodePathArray([]);
+        }
         // The root column is now materialized, so the main browser can fulfill
         // navigation requests. Signal app-level UI readiness once (SvApp
         // dedups) so model code awaiting promiseUserInterfaceReady() can post
