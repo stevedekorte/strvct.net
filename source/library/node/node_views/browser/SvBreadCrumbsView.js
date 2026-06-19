@@ -88,6 +88,9 @@
                 color: var(--SvBreadCrumbs-separator-color, rgba(255, 255, 255, 0.3));
                 padding: 0 0.5em;
                 white-space: nowrap;
+                /* the "›" glyph sits low in its line box; flex centering aligns the
+                   box, not the glyph, so nudge it up to the optical center */
+                transform: translateY(-0.08em);
             }
         `);
     }
