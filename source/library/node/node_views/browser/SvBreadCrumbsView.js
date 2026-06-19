@@ -60,6 +60,13 @@
 
     setupCss () {
         SvWebDocument.shared().addStyleSheetString(`
+            .SvBreadCrumbsView {
+                scrollbar-width: none; /* Firefox: hide the horizontal scrollbar */
+            }
+            .SvBreadCrumbsView::-webkit-scrollbar {
+                display: none; /* WebKit: hide the horizontal scrollbar */
+            }
+
             .SvBreadCrumbLabel {
                 font-size: 0.9em;
                 color: var(--SvBreadCrumbs-color, rgba(255, 255, 255, 0.5));
@@ -108,7 +115,12 @@
         this.setPaddingLeft("1em");
         this.setPaddingRight("1em");
         this.setBorderBottom("1px solid var(--SvBreadCrumbs-border-color, #333)");
-        this.setOverflow("hidden");
+        // Scroll horizontally when the path is wider than the bar (e.g. a deep
+        // path in a narrow companion panel) rather than squishing each crumb
+        // into an unreadable fragment. The scrollbar is hidden via CSS; the bar
+        // auto-scrolls to the current (last) crumb in setupPathViews.
+        this.setCssProperty("overflow-x", "auto");
+        this.setCssProperty("overflow-y", "hidden");
         this.setWhiteSpace("nowrap");
         this.turnOffUserSelect();
 
@@ -176,6 +188,21 @@
             this.addSubview(this.crumbViewForNode(node, i, pathNodes));
         });
 
+        this.scheduleMethod("scrollToCurrentCrumb");
+        return this;
+    }
+
+    /**
+     * @description Scrolls the bar to its end so the current (last) crumb is
+     * visible when the path overflows a narrow bar. No-op when everything fits.
+     * @returns {SvBreadCrumbsView} The current instance.
+     * @category Layout
+     */
+    scrollToCurrentCrumb () {
+        const e = this.element();
+        if (e) {
+            e.scrollLeft = e.scrollWidth;
+        }
         return this;
     }
 
@@ -204,6 +231,7 @@
         v.setDisplay("inline-block");
         v.setWidth("fit-content");
         v.setHeight("fit-content");
+        v.setFlexShrink(0); // keep full labels; the bar scrolls rather than squishing crumbs
         v.setPaddingLeft("0em");
         v.setPaddingRight("0em");
         v.titleView().setPaddingLeft("0em");
@@ -251,6 +279,7 @@
         const v = SvTextView.clone();
         v.setElementClassName("SvBreadCrumbSeparator");
         v.setString(this.separatorString());
+        v.setFlexShrink(0); // keep separators full-size; the bar scrolls instead
         return v;
     }
 
