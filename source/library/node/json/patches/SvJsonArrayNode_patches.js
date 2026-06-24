@@ -244,11 +244,9 @@
      * @category JSON Patch
      */
     childNodeForSegment (segment) {
-        const index = this.validateArrayIndex(segment, "navigate");
-
-        if (index === -1) {
+        if (segment === "-") {
             throw new SvJsonPatchError(
-                "Cannot navigate to append position '/-'",
+                "Cannot navigate to the append position '/-'.",
                 null,
                 [segment],
                 segment,
@@ -256,10 +254,10 @@
             );
         }
 
-        const arrayLength = this.subnodes().length;
-        if (index >= arrayLength) {
+        const child = this.subnodeForJsonId(segment);
+        if (!child) {
             throw new SvJsonPatchError(
-                `Array index ${index} is out of bounds. Array has ${arrayLength} elements (valid indices: 0-${arrayLength - 1})`,
+                `No array item with jsonId '${segment}'. Array items are addressed by their stable jsonId (shown in getClientState), not by position.`,
                 null,
                 [segment],
                 segment,
@@ -267,53 +265,36 @@
             );
         }
 
-        return this.subnodes().at(index);
+        return child;
     }
 
     /**
-     * @description Validates an array index string and returns the numeric index.
-     * @param {string} indexString - The index as a string.
-     * @param {string} operation - The operation being performed (for error messages).
-     * @returns {number} The validated index (-1 for "/-" append).
+     * @description Resolves an immediate array item by its stable jsonId.
+     * @param {string} jsonId - The item's jsonId.
+     * @returns {SvNode|undefined} The matching item node (pointer-unwrapped), or undefined.
      * @category JSON Patch
      */
-    validateArrayIndex (indexString, operation = "access", fullOperation = null) {
-        if (indexString === "-") {
-            if (operation !== "add") {
-                throw new SvJsonPatchError(
-                    `Cannot ${operation} using '/-' path. Use '/-' only with 'add' operations.`,
-                    fullOperation,
-                    fullOperation ? this.parsePathSegments(fullOperation.path) : [indexString],
-                    indexString,
-                    this
-                );
-            }
-            return -1; // Special return value for append
+    subnodeForJsonId (jsonId) {
+        return this.subnodes().detectAndReturnValue(sn => {
+            const node = (sn.isKindOf && sn.isKindOf(SvPointerField)) ? sn.nodeTileLink() : sn;
+            return (node.jsonId && node.jsonId() === jsonId) ? node : undefined;
+        });
+    }
+
+    /**
+     * @description Returns the JSON value with any client-supplied jsonId removed,
+     * so the server mints a fresh, unique id on add.
+     * @param {*} value - The JSON value.
+     * @returns {*} The value without a jsonId.
+     * @category JSON Patch
+     */
+    jsonWithoutId (value) {
+        if (value && typeof value === "object" && !Array.isArray(value) && "jsonId" in value) {
+            const v = { ...value };
+            delete v.jsonId;
+            return v;
         }
-
-        const index = parseInt(indexString);
-
-        if (isNaN(index)) {
-            throw new SvJsonPatchError(
-                `Array index '${indexString}' is not a valid number. Array operations require numeric indices (0, 1, 2, etc.) or '-' for append.`,
-                fullOperation,
-                fullOperation ? this.parsePathSegments(fullOperation.path) : [indexString],
-                indexString,
-                this
-            );
-        }
-
-        if (index < 0) {
-            throw new SvJsonPatchError(
-                `Array index ${index} is negative. Array indices must be >= 0.`,
-                fullOperation,
-                fullOperation ? this.parsePathSegments(fullOperation.path) : [indexString],
-                indexString,
-                this
-            );
-        }
-
-        return index;
+        return value;
     }
 
     /**
@@ -353,24 +334,19 @@
      * @category JSON Patch
      */
     addDirectly (key, value, operation = null) {
-        try {
-            const index = this.validateArrayIndex(key, "add", operation);
-            const newNode = this.newSubnodeForJson(value);
-
-            if (index === -1) {
-                this.addSubnode(newNode);
-                return this;
-            }
-
-            if (index > this.subnodes().length) {
-                throw new Error(`Cannot add to array: index ${index} is beyond array end (length: ${this.subnodes().length}). Use index ${this.subnodes().length} or '/-' to append`);
-            }
-
-            this.addSubnodeAt(newNode, index);
-            return this;
-        } catch (error) {
-            throw new Error(`Add operation failed: ${error.message}`);
+        if (key !== "-") {
+            throw new SvJsonPatchError(
+                `Cannot add to an array at '${key}'. Append new items with '/-'; the server assigns each a stable jsonId. Existing items are addressed by jsonId for replace/remove.`,
+                operation,
+                operation ? this.parsePathSegments(operation.path) : [key],
+                key,
+                this
+            );
         }
+        // Strip any client-supplied jsonId so finalInit mints a fresh, unique one.
+        const newNode = this.newSubnodeForJson(this.jsonWithoutId(value));
+        this.addSubnode(newNode);
+        return this;
     }
 
     /**
@@ -380,29 +356,16 @@
      * @category JSON Patch
      */
     removeDirectly (key, operation = null) {
-        const index = this.validateArrayIndex(key, "remove", operation);
-
-        if (index === -1) {
+        const node = this.subnodeForJsonId(key);
+        if (!node) {
             throw new SvJsonPatchError(
-                "Cannot remove using '/-' path. Specify a valid array index (0, 1, 2, etc.)",
+                `Cannot remove: no array item with jsonId '${key}'. Items are addressed by their stable jsonId.`,
                 operation,
                 operation ? this.parsePathSegments(operation.path) : null,
                 key,
                 this
             );
         }
-
-        if (index >= this.subnodes().length) {
-            throw new SvJsonPatchError(
-                `Cannot remove from array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
-                operation,
-                operation ? this.parsePathSegments(operation.path) : null,
-                key,
-                this
-            );
-        }
-
-        const node = this.subnodes().at(index);
         this.removeSubnode(node);
         return this;
     }
@@ -415,27 +378,22 @@
      * @category JSON Patch
      */
     replaceDirectly (key, value, operation = null) {
-        const index = this.validateArrayIndex(key, "replace", operation);
-
-        if (index === -1) {
+        const oldNode = this.subnodeForJsonId(key);
+        if (!oldNode) {
             throw new SvJsonPatchError(
-                "Cannot replace using '/-' path. Specify a valid array index (0, 1, 2, etc.)",
+                `Cannot replace: no array item with jsonId '${key}'. Items are addressed by their stable jsonId; append new items with '/-'.`,
                 operation,
                 operation ? this.parsePathSegments(operation.path) : null,
                 key,
                 this
             );
         }
-
-        if (index >= this.subnodes().length) {
-            // Auto-convert replace to add when the target index doesn't exist yet
-            // This handles a common AI pattern of using replace on an empty or shorter array
-            console.warn("[JsonPatch] Handled error: replace op at index " + index + " is out of bounds (array length: " + this.subnodes().length + "), converting to add");
-            return this.addDirectly(key, value, operation);
+        // Preserve the item's jsonId so its address stays stable across a replace.
+        const json = this.jsonWithoutId(value);
+        if (json && typeof json === "object" && !Array.isArray(json)) {
+            json.jsonId = oldNode.jsonId();
         }
-
-        const newNode = this.newSubnodeForJson(value);
-        const oldNode = this.subnodes().at(index);
+        const newNode = this.newSubnodeForJson(json);
         this.replaceSubnodeWith(oldNode, newNode);
         return this;
     }
@@ -481,11 +439,10 @@
      * @category JSON Patch
      */
     testDirectly (key, expectedValue, operation = null) {
-        const index = this.validateArrayIndex(key, "test", operation);
-
-        if (index === -1) {
+        const node = this.subnodeForJsonId(key);
+        if (!node) {
             throw new SvJsonPatchError(
-                "Cannot test using '/-' path. Specify a valid array index (0, 1, 2, etc.)",
+                `Cannot test: no array item with jsonId '${key}'.`,
                 operation,
                 operation ? this.parsePathSegments(operation.path) : null,
                 key,
@@ -493,19 +450,7 @@
             );
         }
 
-        if (index >= this.subnodes().length) {
-            throw new SvJsonPatchError(
-                `Cannot test array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
-                operation,
-                operation ? this.parsePathSegments(operation.path) : null,
-                key,
-                this
-            );
-        }
-
-        const node = this.subnodes().at(index);
         const actualValue = node.asJson();
-
         if (JSON.stringify(actualValue) !== JSON.stringify(expectedValue)) {
             throw new SvJsonPatchError(
                 `Test failed: expected ${JSON.stringify(expectedValue)} but got ${JSON.stringify(actualValue)}`,
