@@ -270,7 +270,12 @@
     pushUrlHash (aString) {
         if (this.urlHash() !== aString) {
             const hash = encodeURI(aString);
-            const newUrl = `${window.location.pathname}#${hash}`;
+            // Preserve the query string. Omitting window.location.search here
+            // dropped params like ?invite={token} the moment the app navigated
+            // to its default page during boot — before app code could read them
+            // (e.g. UoApp.afterAppDidInit captures ?invite=). Hash navigation
+            // within the SPA must not discard query params.
+            const newUrl = `${window.location.pathname}${window.location.search}#${hash}`;
             history.pushState(null, "", newUrl);
         }
         return this;
