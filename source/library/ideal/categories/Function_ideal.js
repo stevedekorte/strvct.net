@@ -473,6 +473,22 @@ Function.prototype.isBlockingTool = function () {
     return this.getMetaProperty("isBlockingTool") !== false; // assume it's blocking as that is safer
 };
 
+// Externally Completed Tool - if true, the tool call is settled by an external/user
+// action (e.g. rollRequest waits for the user to roll the dice) rather than by the
+// tool method itself. Such a call may legitimately sit in the "calling" state for an
+// unbounded time, so SvToolCall's stuck-call watchdog must NOT auto-error it.
+// Defaults to false (the tool is expected to settle itself promptly).
+
+Function.prototype.setIsExternallyCompletedTool = function (aBool) {
+    assert(Type.isBoolean(aBool));
+    this.setMetaProperty("isExternallyCompletedTool", aBool);
+    return this;
+};
+
+Function.prototype.isExternallyCompletedTool = function () {
+    return this.getMetaProperty("isExternallyCompletedTool") === true;
+};
+
 // Tool Call Timing - when to make the tool call (on stream, on completion, on narration)
 
 Function.prototype.setToolTiming = function (timing) {

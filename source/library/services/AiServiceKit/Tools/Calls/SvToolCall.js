@@ -382,6 +382,7 @@ Example Tool call format:
     }
 
     onToolCallCompleted () { // complete does not imply success or failure
+        this.clearTimeoutNamed("stuckCallWatchdog"); // settled — disarm the watchdog (no-op if already fired/never armed)
         this.setEndTime(new Date());
         console.log(this.logPrefix() + "Tool call '" + this.identifierDescription() + "' completed in " + this.secondsToComplete() + "s");
     }
@@ -627,6 +628,7 @@ Example Tool call format:
 
         try {
             this.setStatus("calling");
+            this.armStuckCallWatchdogIfNeeded();
 
             let toolTarget = this.toolTarget();
             let methodName = this.toolDefinition().name();
@@ -650,9 +652,22 @@ Example Tool call format:
 
             // note: we don't use the return value, instead we rely on the tool method to call setCallResult() or handleCallError() when the result is ready.
             if (isAsync) {
-                await method.apply(toolTarget, [this]);
+                await method.apply(toolTarget, [this]); // a rejection here is caught by the outer try/catch
             } else {
-                method.apply(toolTarget, [this]);
+                // A non-async tool method may kick off async work and return a
+                // promise. If that promise rejects, the outer try/catch (which has
+                // already returned) never sees it — leaving a blocking call stuck
+                // at "calling" forever and the chat input disabled. Route the
+                // rejection to handleCallError so it settles as a normal
+                // completed-with-error result the AI can react to.
+                const result = method.apply(toolTarget, [this]);
+                if (result && typeof result.then === "function") {
+                    result.then(undefined, (e) => {
+                        if (!this.isCompleted()) {
+                            this.handleCallError(Type.isError(e) ? e : new Error(String(e)));
+                        }
+                    });
+                }
             }
 
             // NOTES:
@@ -674,6 +689,35 @@ Example Tool call format:
             console.error("---- TOOLCALL ERROR: ", e, " Error making tool call: " + this.toolDefinition().name());
             this.handleCallError(e);
         }
+    }
+
+    // --- stuck-call watchdog ---
+
+    // A blocking tool call gates acceptsChatInput() until it settles (success or
+    // error). Tools are trusted to settle themselves via setCallResult() /
+    // handleCallError(), but a hang, a logic bug, or an unobserved async rejection
+    // would leave the call stuck at "calling" and the chat input dead with no
+    // recovery. This watchdog force-errors a still-"calling" blocking call after a
+    // generous timeout, settling it as a normal completed-with-error result.
+    // Tools completed by an external/user action (rollRequest waits for the user
+    // to roll) opt out via setIsExternallyCompletedTool(true) — their "calling"
+    // wait is legitimate and unbounded, so we must not auto-error them.
+    stuckCallTimeoutMs () {
+        return 60 * 1000;
+    }
+
+    armStuckCallWatchdogIfNeeded () {
+        const method = this.toolDefinition() && this.toolDefinition().toolMethod();
+        if (!method) return;
+        if (!method.isBlockingTool()) return;
+        if (method.isExternallyCompletedTool()) return;
+        this.addTimeout(() => {
+            if (this.isCalling()) {
+                const secs = this.stuckCallTimeoutMs() / 1000;
+                console.warn(this.logPrefix(), "stuck-call watchdog: '" + this.identifierDescription() + "' never settled after " + secs + "s — force-erroring so the chat input recovers");
+                this.handleCallError(new Error("Tool call '" + this.identifierDescription() + "' did not complete within " + secs + "s and was timed out."));
+            }
+        }, this.stuckCallTimeoutMs(), "stuckCallWatchdog");
     }
 
     newToolResult () {
