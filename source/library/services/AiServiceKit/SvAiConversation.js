@@ -548,6 +548,38 @@
         return true;
     }
 
+    /**
+     * Diagnostic: a human-readable description of why chat input is currently
+     * gated, or null when it is accepted. The view (chat input) asks for this
+     * when a send is refused so we can see what we're waiting on instead of a
+     * silent lock-up. Model-side fact — aggregates the assistant tool kit's
+     * pending blocking calls and any messages still requiring completion; the
+     * view does not compute the reason itself.
+     * @returns {String|null}
+     * @category State
+     */
+    chatInputBlockingReason () {
+        if (this.acceptsChatInput()) {
+            return null;
+        }
+        const reasons = [];
+        const toolDesc = this.assistantToolKit().waitingOnDescription();
+        if (toolDesc) {
+            reasons.push("blocking tool call(s): " + toolDesc);
+        }
+        const incomplete = this.incompleteMessages();
+        if (incomplete.length > 0) {
+            const types = incomplete.map(m => (typeof m.svType === "function" ? m.svType() : "message"));
+            reasons.push(incomplete.length + " incomplete message(s): " + types.join(", "));
+        }
+        if (reasons.length === 0) {
+            // acceptsChatInput() is false but neither known gate explains it —
+            // itself a useful signal (a subclass override or an unaccounted gate).
+            return "input gated but no blocking tool calls or incomplete messages found (check acceptsChatInput overrides)";
+        }
+        return reasons.join("; ");
+    }
+
     /* --- Client State --- */
 
 

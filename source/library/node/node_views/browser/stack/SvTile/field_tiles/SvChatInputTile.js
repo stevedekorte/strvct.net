@@ -31,6 +31,23 @@
     syncValueFromNode () {
         const node = this.node();
         const valueView = this.valueView();
+
+        // Debug: when the chat input is gated, log what the model says we're
+        // waiting on — so an input that "locks up" reports its reason instead of
+        // silently disabling. The model owns the reason
+        // (node.valueInputBlockingReason -> conversation.chatInputBlockingReason);
+        // the view only reads + logs it. De-duped against the last logged reason
+        // so we capture the full trace (including the reason CHANGING while still
+        // disabled, e.g. AI-streaming -> pending roll) without per-sync spam.
+        // Lives here (not the generic SvFieldTile) because this tile's focused
+        // guard below can return before super runs.
+        if (node && typeof node.valueInputBlockingReason === "function") {
+            const reason = node.acceptsValueInput && node.acceptsValueInput() ? null : node.valueInputBlockingReason();
+            if (reason && reason !== this._lastLoggedInputBlockReason) {
+                console.log(this.logPrefix(), "chat input disabled — waiting on:", reason);
+            }
+            this._lastLoggedInputBlockReason = reason;
+        }
         const isFocused = valueView && typeof valueView.isFocused === "function" && valueView.isFocused();
         if (isFocused && node && !node._forceValueViewSync) {
             const nodeValue = this.visibleValue();
