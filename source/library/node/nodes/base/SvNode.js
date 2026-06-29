@@ -473,6 +473,19 @@
             const oldNode = this._parentNode;
             this._parentNode = aNode;
             this.didUpdateSlotParentNode(oldNode, aNode);
+
+            // Orphan detection. A node going parented -> null is EITHER a
+            // transient detach during a reparent (re-added the same event loop,
+            // e.g. drag-drop's removeFromParentNode + setSubnodes, or a
+            // replaceSubnodeWith) OR a genuine orphan (left dangling while a
+            // bound view / in-flight async loop still references it — the
+            // stale-orphan bug class). Defer a check to the end of the event
+            // loop; if it's still parentless then, the reparent didn't happen
+            // and it's an orphan. The root is born null and never transitions
+            // here, so it never schedules.
+            if (aNode === null && oldNode !== null) {
+                this.scheduleMethod("checkForOrphan");
+            }
         }
         return this;
     }
@@ -485,6 +498,25 @@
      */
     didUpdateSlotParentNode (/*oldValue, newValue*/) {
         // for subclasses to override
+    }
+
+    /**
+     * @description End-of-event-loop orphan check, scheduled by setParentNode
+     * when this node's parent transitions to null. If the node was re-homed
+     * during the loop (reparent / replaceSubnodeWith readd) its parent is
+     * non-null here and we do nothing. If it is STILL parentless, the reparent
+     * never happened: the node is an orphan that something may still be holding
+     * (a bound view, an in-flight loop). Surface it loudly and post
+     * `nodeBecameOrphan` so a bound view/observer can react (rebind, navigate
+     * away, error). Model announces the fact; the view decides what to do.
+     * @category Lifecycle
+     */
+    checkForOrphan () {
+        if (this.parentNode() !== null) {
+            return; // re-homed this event loop (reparent / replace-then-readd) — not an orphan
+        }
+        console.warn(this.svDebugId() + " became an orphan — parentNode is still null at end of the event loop (not re-homed by a reparent). A bound view or in-flight reference may now be dangling.");
+        this.postNoteNamed("nodeBecameOrphan");
     }
 
     /**
