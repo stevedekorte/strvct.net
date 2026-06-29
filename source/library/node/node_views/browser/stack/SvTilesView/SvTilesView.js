@@ -264,11 +264,16 @@
         }
         */
 
-        /*
-        if (this.selectedTiles().length === 0) {
-            //this.didChangeNavSelection(); // TODO: is this right?
-        }
-        */
+        // NOTE: We intentionally do NOT collapse the downstream column here when a sync
+        // leaves this column with no selection. An empty selection is ambiguous: it can
+        // mean "nothing was ever selected" (leave the nav alone) or "the selected node
+        // was just destroyed" (collapse). Firing didChangeNavSelection() on every empty
+        // sync can't tell these apart and over-collapses — which is why this was disabled.
+        // The destroyed-selected-node case is instead handled precisely by
+        // SvStackView.nodeBecameOrphan(), which keys off the model's nodeBecameOrphan note
+        // (a real parentNode->null transition), so it collapses only when the selected
+        // node is actually gone.
+        // if (this.selectedTiles().length === 0) { this.didChangeNavSelection(); }
         return this;
     }
 
