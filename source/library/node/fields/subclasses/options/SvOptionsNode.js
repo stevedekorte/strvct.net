@@ -455,12 +455,15 @@
 
     prepareToAccess () {
         super.prepareToAccess();
-        /*
+        // Re-evaluate a closure-backed options field each time it is accessed so
+        // it self-heals when its (possibly async) source populates after the
+        // first build. This is a no-op unless the computed items actually
+        // differ from the last synced set (see validItemsMatch + setupSubnodes),
+        // so it no longer causes the rebuild churn that previously required this
+        // block to be disabled.
         if (this.validItemsClosure()) {
-            console.log(this.logPrefix() + " prepareToAccess() callingsetupSubnodes () because validItemsClosure is set");
             this.setupSubnodes();
         }
-        */
         return this;
     }
 
@@ -480,19 +483,20 @@
      */
     computedValidItems () {
         const context = this.target();
-        if (this.validItems()) {
-            return this.validItems();
-        } else if (this.validItemsClosure()) {
-            return this.validItemsClosure()(context);
-        }
-
-        /*
+        // Closure-first (matches this class's documented contract): a
+        // validItemsClosure is a LIVE source, so re-evaluate it every time.
+        // This lets a field backed by an asynchronously-populated source
+        // (e.g. a cloud-loaded catalog) reflect the data once it arrives,
+        // instead of being permanently locked to the first — possibly empty —
+        // result that got cached into _validItems on the initial build. The
+        // stored validItems() is retained only as the "last synced" snapshot
+        // for validItemsMatch(). Fields without a closure keep using the
+        // static validItems().
         if (this.validItemsClosure()) {
             return this.validItemsClosure()(context);
         } else if (this.validItems()) {
             return this.validItems();
         }
-        */
         return null;
     }
 
@@ -567,7 +571,27 @@
     validItemsMatch () {
         const computedValidItems = this.computedValidItems();
         const validItems = this.validItems();
-        return Type.valuesAreEqual(computedValidItems, validItems);
+        if (computedValidItems === validItems) {
+            return true;
+        }
+        if (!computedValidItems || !validItems || computedValidItems.length !== validItems.length) {
+            return false;
+        }
+        // Compare by the value-bearing / displayed fields rather than by array
+        // or dict identity. A validItemsClosure returns a FRESH array of fresh
+        // dicts on every call, so an identity-based compare here is always
+        // false — which would make setupSubnodes() wipe-and-rebuild the option
+        // column on every didUpdateNode bubble (the "picker closes while open"
+        // churn that previously forced closure re-evaluation to be disabled).
+        // A structural compare rebuilds only when the options actually change.
+        for (let i = 0; i < computedValidItems.length; i++) {
+            const a = this.itemForValue(computedValidItems[i]);
+            const b = this.itemForValue(validItems[i]);
+            if (a.value !== b.value || a.label !== b.label || a.subtitle !== b.subtitle) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

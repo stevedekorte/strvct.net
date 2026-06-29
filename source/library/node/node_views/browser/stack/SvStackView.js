@@ -540,6 +540,39 @@
         return true;
     }
 
+    /**
+     * @description Handler for the model's `nodeBecameOrphan` note — posted by SvNode
+     * when a node's parentNode goes null and is still null at end of the event loop
+     * (i.e. it was removed/replaced, not re-homed). This routes here automatically:
+     * every SvNodeView's nodeObservation watches *all* notes from its node (sender,
+     * no name filter), and the notification center dispatches to a method named after
+     * the note. Only SvStackView defines this method, so only the nav columns react;
+     * every other SvNodeView receives the note and harmlessly finds no handler.
+     *
+     * This stack view is the column bound to the now-orphaned node, so we treat it as
+     * if that node's selection in the parent column went away: ask the previous column
+     * to re-derive from its (now orphan-free) selection, which folds this column and
+     * everything to the right of it up. This is the precise replacement for the
+     * disabled empty-selection collapse in SvTilesView.syncFromNode (see the note
+     * there) — keying off a real parent->null transition instead of an ambiguous
+     * empty selection.
+     * @param {SvNotification} aNote - The nodeBecameOrphan notification.
+     * @returns {SvStackView} The stack view.
+     * @category Navigation
+     */
+    nodeBecameOrphan (aNote) {
+        const prev = this.previousStackView();
+        if (prev) {
+            prev.didChangeNavSelection();
+        } else {
+            // Root column's node orphaned: there is nothing to collapse back to, and
+            // removing the root view would blank the whole UI. Surface it and leave the
+            // view in place rather than guess a destructive recovery.
+            console.warn(this.svDebugId() + " root stack view's node became an orphan; leaving view in place.");
+        }
+        return this;
+    }
+
     // --- set path titles ----
 
     /**

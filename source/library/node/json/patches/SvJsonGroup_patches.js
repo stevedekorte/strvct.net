@@ -278,7 +278,7 @@
    */
     childNodeForSegment (segment) {
         if (this.shouldStoreSubnodes()) {
-            const subnode = this.subnodeWithTitle(segment);
+            const subnode = this.firstSubnodeWithTitle(segment);
             if (!subnode) {
                 const pathString = this.nodePathString() + "/" + segment;
                 const errorMessage = "JSON Patch Error: invalid path: " + pathString + " - missing subnode";
@@ -417,7 +417,7 @@
    */
     removeDirectly (key) {
         if (this.shouldStoreSubnodes()) {
-            const subnode = this.subnodeWithTitle(key);
+            const subnode = this.firstSubnodeWithTitle(key);
             if (!subnode) {
                 const availableKeys = this.subnodes().map(sn => sn.title()).join(", ");
                 throw new Error(`Cannot remove property '${key}': not found. Available properties: [${availableKeys}]`);
@@ -449,13 +449,29 @@
    */
     replaceDirectly (key, value) {
         if (this.shouldStoreSubnodes()) {
-            const existingSubnode = this.subnodeWithTitle(key);
+            const existingSubnode = this.firstSubnodeWithTitle(key);
             if (!existingSubnode) {
                 const availableKeys = this.subnodes().map(sn => sn.title()).join(", ");
                 throw new Error(`Cannot replace property '${key}': not found. Available properties: [${availableKeys}]`);
             }
 
+            // Prefer an IN-PLACE update when the class is unchanged: deserialize
+            // the new value INTO the existing subnode instead of swapping a fresh
+            // one in. Preserves object identity (bound views / SvModelReferences
+            // stay valid), merges nested subnodes by jsonId, and doesn't orphan
+            // the old node — mirrors SvJsonArrayNode_patches.replaceDirectly.
+            // (createNodeForValue determines the class for an untyped value, so we
+            // build it to compare, then reuse it only on a real class change.)
             const newNode = this.createNodeForValue(value);
+            if (existingSubnode.thisClass && newNode.thisClass
+                && existingSubnode.thisClass() === newNode.thisClass()
+                && typeof existingSubnode.deserializeFromJson === "function") {
+                existingSubnode.deserializeFromJson(value, undefined, []);
+                existingSubnode.setTitle(key); // title is the key, not part of the value — re-assert it
+                return this;
+            }
+
+            // Class actually changed — swap.
             newNode.setTitle(key);
             this.replaceSubnodeWith(existingSubnode, newNode);
             return this;
@@ -518,7 +534,7 @@
         let actualValue;
 
         if (this.shouldStoreSubnodes()) {
-            const subnode = this.subnodeWithTitle(key);
+            const subnode = this.firstSubnodeWithTitle(key);
             if (!subnode) {
                 throw new Error(`Test failed: property '${key}' not found`);
             }
@@ -595,15 +611,21 @@
    * @category JSON Patch
    */
     createNodeForValue (value) {
-    // This will need to be implemented based on the value type
-    // For now, use the existing JSON node creation logic
         if (Type.isArray(value)) {
             const arrayNode = SvJsonArrayNode.clone();
             arrayNode.setJson(value);
             return arrayNode;
         } else if (Type.isObject(value)) {
-            const objectNode = JsonGroup.clone();
-            objectNode.setJson(value);
+            // Honor the value's declared _type so a typed object keeps its concrete
+            // class (needed for the same-class in-place check in replaceDirectly and
+            // so an added object isn't silently downgraded to a generic group).
+            const typeClass = (value && value._type) ? SvGlobals.get(value._type) : null;
+            const objectNode = (typeClass || SvJsonGroup).clone();
+            if (typeof objectNode.deserializeFromJson === "function") {
+                objectNode.deserializeFromJson(value, undefined, []);
+            } else {
+                objectNode.setJson(value);
+            }
             return objectNode;
         } else {
             // Primitive value - create appropriate field node
@@ -624,7 +646,7 @@
             // Direct access on this node
             const key = pathSegments[0];
             if (this.shouldStoreSubnodes()) {
-                const subnode = this.subnodeWithTitle(key);
+                const subnode = this.firstSubnodeWithTitle(key);
                 return subnode ? subnode.asJson() : null;
             } else {
                 const slot = this.getSlot(key);
@@ -646,7 +668,7 @@
         } else {
             // Object node
             if (targetNode.shouldStoreSubnodes()) {
-                const subnode = targetNode.subnodeWithTitle(key);
+                const subnode = targetNode.firstSubnodeWithTitle(key);
                 return subnode ? subnode.asJson() : null;
             } else {
                 const slot = targetNode.getSlot(key);

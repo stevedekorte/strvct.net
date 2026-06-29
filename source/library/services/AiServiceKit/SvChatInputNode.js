@@ -142,6 +142,19 @@
     }
 
     /**
+   * Diagnostic: why this input is currently refusing input (acceptsValueInput()
+   * is false), or null when it accepts. Delegates to the conversation, which owns
+   * the gating decision; the field tile reads this to log what we're waiting on at
+   * the moment it disables the input.
+   * @returns {String|null} - The blocking reason, or null if input is accepted.
+   * @category Input
+   */
+    valueInputBlockingReason () {
+        const c = this.conversation();
+        return (c && typeof c.chatInputBlockingReason === "function") ? c.chatInputBlockingReason() : null;
+    }
+
+    /**
    * Handle the value input event
    * @param {Object} changedView - The changed view object
    * @category Event Handling

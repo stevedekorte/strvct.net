@@ -190,6 +190,27 @@ The following formats will be used for tool calls and responses:
         return isBlocked;
     }
 
+    /**
+     * Human-readable description of the blocking tool calls still preventing
+     * user chat input, or null if none are pending. Model-side fact, surfaced
+     * for diagnostics by the conversation when the chat input is gated.
+     * @returns {String|null}
+     * @category State
+     */
+    waitingOnDescription () {
+        const calls = this.blockingCalls();
+        if (calls.length === 0) {
+            return null;
+        }
+        const parts = calls.map(c => {
+            const name = (typeof c.toolName === "function" && c.toolName()) ? c.toolName() : "tool";
+            const status = (typeof c.status === "function") ? c.status() : "?";
+            const id = (typeof c.callId === "function" && c.callId()) ? c.callId() : null;
+            return name + (id ? " (" + id + ")" : "") + " [" + status + "]";
+        });
+        return parts.join(", ");
+    }
+
     canSendResponsesNow () {
         const hasBlockers = this.hasUncompletedBlockingToolCalls();
         const aiIsResponding = this.conversation().hasActiveResponses();

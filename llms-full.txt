@@ -5426,7 +5426,7 @@ The naked objects pattern proposed that user interfaces could be generated direc
 
 We argue that the usability gap was not inevitable: the design space for presenting structured information is narrower than the software industry assumes, and a small set of composable primitives (tiles, tile stacks, and recursively nested master-detail views) covers it. The argument is grounded in HCI research on mental models, information foraging, and Gestalt principles of perceptual organization, which together explain why a deliberately constrained UI grammar turns uniformity into an asset rather than a constraint.
 
-We present Strvct, an open-source JavaScript framework implementing this approach. Centralizing the model-to-view pipeline yields structural consequences (an AI-operable domain model, automatic responsive design, headless testability, and annotation-driven persistence with cloud sync) that conventional component frameworks must pay for per-screen. A production application built on Strvct, undreamedof.ai, comprises ~90 domain classes with roughly 90% auto-generated views; only three custom views were needed, all for inherently graphical components.
+We present Strvct, an open-source JavaScript framework implementing this approach. Centralizing the model-to-view pipeline yields structural consequences — an AI-operable domain model, automatic responsive design, headless testability, and annotation-driven persistence with cloud sync — that conventional component frameworks must pay for per-screen, and it points toward further directions the same centralization would make tractable, such as runtime AI-extensibility and a narrowed UI trust boundary. A production application built on Strvct, undreamedof.ai, comprises ~90 domain classes with roughly 90% auto-generated views; only two custom views remain, both for inherently graphical components (a 3D dice roller and a battle map).
 
 ## 1. Introduction
 
@@ -5484,7 +5484,7 @@ This convergence is not coincidence; it is grounded in decades of HCI and cognit
 
 The design space is narrow because human cognition is narrow in how it organizes and navigates information; what feels like creative freedom in traditional UI design is often accidental complexity layered on these fundamental constraints. Bespoke UI developers are already converging on the same patterns, unconsciously and inconsistently: the variation between hand-crafted interfaces is largely superficial, with different visual styling, different spacing, and different component libraries sitting atop the same underlying spatial logic.
 
-The practical consequence: if the design space is narrow, a framework that applies the conventions uniformly may produce interfaces that are not merely acceptable but *preferable* to a patchwork of bespoke screens, because users can rely on consistent navigation throughout. The framework's limitation (it cannot produce arbitrary layouts) is actually an advantage, because arbitrary layouts are precisely what creates inconsistency.
+The practical consequence invites two claims that are worth keeping apart, because they are not equally strong. The first is a **coverage claim**: most informational interfaces decompose into tiles, stacks, and master-detail views, so a framework restricted to those primitives can express them. This claim is about counts of domain classes, which the case study (§8) measures directly. The second is a **preference claim**: applying the conventions uniformly is not merely sufficient but *preferable* to a patchwork of bespoke screens, because users can rely on consistent navigation throughout, and the framework's inability to produce arbitrary layouts removes precisely the freedom that creates inconsistency. This is the headline, and it is the weaker of the two: it rests on a judgment of *value*, not a count, and we do not measure it here. The two should not be allowed to substitute for each other. A small percentage of UI *code* spent on bespoke screens (which we can show) does not by itself establish a small percentage of UI *value* lost by generating them (which we cannot).
 
 ### Scope and Counterexamples
 
@@ -5495,7 +5495,13 @@ The narrow design space covers a large and important class of applications, but 
 - **Real-time media and games.** Video editors, 3D renderers, audio workstations, and games (as in our own case study, where dice rolling and the battle map required custom views).
 - **Highly unusual workflows.** Interfaces that demand non-hierarchical navigation, complex state machines with many transient modes, or domain-specific interaction metaphors (e.g., timeline-based video editing or node-based programming).
 
-In our production case study (§8), fewer than 10% of domain classes required custom view code (3 of ~90); the rest were generated automatically and felt natural to users. We believe this ratio is representative for many enterprise, productivity, and data-management applications, but we do not claim universality.
+In our production case study (§8), fewer than 10% of domain classes required custom view code (2 of ~90); the rest were generated automatically and felt natural to users. We believe this ratio is representative for many enterprise, productivity, and data-management applications, but we do not claim universality.
+
+**The narrowness is partly true by construction.** We scoped dashboards, canvases, games, and timeline editors *out* and then declared the remainder narrow, so some of the narrowness is definitional rather than discovered, and an honest reading must say so. The defense is not that the scoping is unbiased but that the class scoped *in* is large and economically central: the navigation and editing shells of email, social, commerce, productivity, line-of-business, and administrative software, which are the surfaces where most users spend most of their time. A claim that is true-by-construction about a marginal class would be uninteresting; the same claim about the bulk of everyday informational software is not. We state the framing explicitly so it does the work in the open rather than silently.
+
+**Residue: product or periphery?** Every real application leaves some surface that does not conform; the existence of a residue is never in question. The useful test is whether the residue is the *product* or the *periphery*. The navigation shell (lists, drill-downs, inspectors, settings) is master-detail almost everywhere and is rarely what a product is valued for; the differentiator is often the one non-conforming surface: the feed-ranking view, the editor canvas, the map, the chart. Consumer products frequently concentrate disproportionate value in a few such surfaces even when those are a small fraction of total screen count. This bounds the narrow-space claim precisely: it covers the shell, which is most of the screens, but says nothing about how much of a given product's *value* lives in the residue.
+
+**The pointer analogy, and its honest limit.** The computer mouse won not by being universal but by owning the bulk-of-value tasks (selection, direct manipulation, navigation) while ceding a permanent residue (text entry, keyboard shortcuts). "You can't do everything with a mouse" was true and never counted against it, because the part it could not do was not the point of the tasks it was used for. Generated UIs are in the same position: "not universal" was wrongly deployed as "not valuable." But the analogy also marks the boundary honestly. "You can't do everything with X" *is* decisive exactly when the part X cannot do is the whole point: a generated UI is the wrong tool for a competitive-programming editor or a node-based shader graph, where the bespoke surface *is* the product. So the question is never whether a residue exists but, again, whether it is product or periphery.
 
 **Deliberate trade-off.** Refusing to support arbitrary layouts yields structural consequences a more general system loses: consistency, responsiveness, AI interoperability, and near-zero view-layer maintenance. Applications mostly inside the narrow space gain dramatically lower maintenance cost and higher consistency; those dominated by adversarial cases are better served by traditional component frameworks.
 
@@ -5614,7 +5620,9 @@ Nesting master-detail views with varying orientations produces navigation struct
   </div>
 </div>
 
-This composability is the key insight. Rather than implementing a fixed set of application templates, the framework provides building blocks that compose to produce appropriate layouts for each part of the domain model. The Miller Column pattern [3] has been used since NeXTSTEP for file browsing; our contribution is making it recursive, orientation-flexible, and self-composing based on model annotations.
+This composability is the key insight. Rather than implementing a fixed set of application templates, the framework provides building blocks that compose to produce appropriate layouts for each part of the domain model.
+
+There is real-world evidence for the underlying thesis that predates this paper by years. Recursive, auto-collapsing master-detail is now the dominant navigation pattern on phones, watches, and other small screens: settings apps, mail clients, and file browsers that show a single column at a time and push or pop columns as the user drills in and backs out. That is precisely the narrow-viewport collapse behavior described in §4.3, arrived at independently by platform designers. The significant point is that small viewports do not merely *permit* the narrow grammar; they *enforce* it. There is no room for bespoke per-screen layout on a watch face, so designers converge on the master-detail collapse whether or not they would choose it on a desktop. The pattern's prevalence on the most constrained devices is evidence that the design space is narrow where it is most tested. The Miller Column pattern [3] itself has been used since NeXTSTEP for file browsing; our contribution is therefore not discovering the pattern but making it recursive (columns nest vertically or horizontally), orientation-flexible (each level chooses its own orientation), and the *generated default*, composed from model annotations rather than hand-built per screen.
 
 ### 4.5 Examples
 
@@ -5735,49 +5743,55 @@ Model and view layers communicate through a deferred, deduplicated notification 
 
 ## 7. Structural Consequences
 
-When the framework controls the entire pipeline from model annotation to rendered view, capabilities that would otherwise cost per-component effort fall out of the architecture. The capabilities below are not surprises; they are downstream consequences of one structural fact: the framework has complete knowledge of the domain model and controls the single point where model data flows to the UI. Some are demonstrated in the production case study; others are architectural affordances, and we mark these explicitly rather than claim them as measured outcomes.
+When the framework controls the entire pipeline from model annotation to rendered view, capabilities that would otherwise cost per-component effort fall out of the architecture. The capabilities below are not surprises; they are downstream consequences of one structural fact: the framework has complete knowledge of the domain model and controls the single point where model data flows to the UI. Some are demonstrated in the production case study; others are architectural affordances; and two (§7.2 and §7.3) are forward-looking directions the architecture invites rather than features we have built. We mark each explicitly rather than claim it as a measured outcome.
 
 ### 7.1 AI-Operable Domain Model
 
-The same annotations that drive UI generation make the domain model legible and operable to AI agents. The original naked objects pattern eliminated the translation layer between model and UI; the same annotations now eliminate it between model and AI.
+The same annotations that drive UI generation make the domain model operable to AI agents, and operable *within the runtime* rather than merely legible to a bolted-on assistant. A schema for any object is derived from its slot metadata; edits arrive as JSON patches and are applied to the live object graph through the same setters, type checks, notifications, and sync passes a human edit takes, so there is no separate AI-facing surface to drift out of sync. This is the eliminate-the-translation-layer thesis applied a second time: naked objects removed the layer between model and view, and the same annotation bridge removes it between model and agent.
 
-A schema for any object is derived from its slot metadata. Edits are expressed as JSON patches against that schema, validated through the same setters and type checks that govern human edits. A single pair of tools, *schema-fetch* and *apply-patch*, covers the entire domain regardless of the number of editable classes. Rejected patches carry the schema of the offending slot in the rejection payload, turning the type system into the agent's error-recovery channel: the agent self-corrects without re-fetching context.
+A single pair of tools, *schema-fetch* and *apply-patch*, covers the entire domain regardless of how many classes are editable, and a rejected patch carries the offending slot's schema so the agent self-corrects without re-fetching context. This contrasts with the prevailing pattern for AI tool use (function calling, Model Context Protocol, OpenAPI specs), where each editable surface needs a hand-authored tool, schema, and error path and the surface area grows linearly with the model. Here it is constant, and a new domain class is AI-operable the moment it is declared.
 
-For example, an AI assistant in undreamedof.ai can be told "increase the barbarian's strength by 2 and add a healing potion to their inventory." The agent fetches the character schema, constructs a patch, and applies it; validation feedback flows back through the same code path a human edit would take, and the change propagates through the same notification pipeline.
+### 7.2 AI Extensibility (Proposed)
 
-This contrasts with the prevailing pattern for AI tool use (function calling, Model Context Protocol, OpenAPI tool specs), where each editable surface requires a hand-authored tool, schema document, and error path, and the surface area grows linearly with the model. Here it is constant.
+Operability moves an agent *within* a fixed space of types; the same architecture suggests an as-yet-unbuilt affordance that would *enlarge* it. Because every layer reads from slot annotations rather than per-type code, an agent could declare a new model class at runtime and have it become a full citizen immediately (navigable, editable, storable, synced, translatable, and itself AI-operable) with no build step — turning *write the model, get the app* into *the running app writes its own model*. We have not built this; the case study exercises operability over existing types only.
 
-Characters, campaigns, and sessions are edited interchangeably by users (through generated tiles) and by AI assistants (through patch tools). New domain classes are AI-operable the moment they are declared.
+It also raises an unsolved problem: minting types lets the agent mint the type contract itself. A safe form would need a **declared, immutable floor** of types and invariants the runtime AI may build on but not alter, with the annotation bridge as the natural seam — the security side of which §7.3 sketches.
 
-### 7.2 Automatic Responsive Design
+### 7.3 Security (Proposed)
+
+If runtime AI-extensibility (§7.2) is built, deriving views from trusted framework code also suggests a security advantage. View code is the least confinable surface in a browser (it touches the DOM and carries origin authority); model objects are not. An untrusted extension would then supply **data and metadata, never DOM-touching code**, so "extending the UI" becomes "extending the model," confinable like anything else — the layer naked objects eliminates was not only a maintenance cost but an attack surface.
+
+Making this safe would need two primitives we have not built: **isolation** (runtime-created code runs in a web worker with no ambient access) and **authority** (capabilities — an object gets only the references it is granted, which lets the *immutable floor* of §7.2 be expressed as the set of capabilities the runtime declines to grant). Two limits would remain: the protection is only as wide as the derivation reaches (a genuine custom view reopens the hole), and the rendering path becomes a concentrated trust root that must output-encode all model data. Capability discipline is also hard to retrofit. We present this as a clear path, not a solved problem.
+
+### 7.4 Automatic Responsive Design
 
 Because layout flows from model annotations rather than screen-specific CSS, the interface adapts to viewport size without per-view breakpoints. The recursive master-detail chain collapses when the viewport narrows, a breadcrumb bar preserves the navigation path, and the same composition scales from desktop to mobile with no per-screen responsive code. Responsive behavior is paid once at the primitive level, not per screen.
 
-### 7.3 Accessibility as an Architectural Affordance
+### 7.5 Accessibility as an Architectural Affordance
 
 Because every interactive surface is generated from the same few primitives, accessibility is paid once at the primitive level rather than per screen. Focus order, keyboard traversal, drill-in, and back-out belong to tiles and tile stacks; the slot metadata that drives type checking can also generate ARIA roles and constraints; the node hierarchy supplies landmarks and breadcrumb structure. In a conventional framework, accessibility is a per-component obligation that scales with screen count and routinely lapses; here it cannot lapse selectively. Fixing it once fixes it everywhere. We have not validated the resulting interface against the full WCAG checklist or with screen-reader users, and report this as an architectural property rather than a measured outcome.
 
-### 7.4 Transparent Internationalization
+### 7.6 Transparent Internationalization
 
 All UI text flows from slot annotations through a single rendering pipeline, so translation is injected at the model-to-view boundary without per-component translation calls or extraction tools; new classes are translatable by default. Centralization also makes AI-powered translation tractable: the framework enumerates translatable strings by walking class prototypes, and slot-level context annotations travel with each string to give the translator domain-appropriate terminology. Adding a language becomes a configuration change rather than a translation project. As with accessibility, full multi-language deployment and right-to-left layouts have not yet been validated in production; the architectural surface exists.
 
-### 7.5 Transparent Persistence and Cloud Sync
+### 7.7 Transparent Persistence and Cloud Sync
 
 Because the framework owns the complete object graph and understands its structure through annotations, persistence splits transparently into two strategies: a synchronous object pool for the model graph, so the UI is immediately responsive, and an asynchronous content-addressable blob store for large binary resources, so they never block rendering. The same structural knowledge enables transparent cloud synchronization: the framework knows what changed, which blobs are referenced, and how to reconcile state. The developer annotates what should persist; the framework decides how and when.
 
-### 7.6 Content-Addressable Resource Loading
+### 7.8 Content-Addressable Resource Loading
 
 The build system produces a content-addressable bundle keyed by content hash. Unchanged resources are never re-downloaded across deployments, and identical content across paths is stored only once: caching granularity that path-based bundlers cannot achieve. End-to-end control of the resource pipeline is the same structural fact that drives the other consequences in this section.
 
-### 7.7 Built-in Inspector and Developer Mode
+### 7.9 Built-in Inspector and Developer Mode
 
 Because every node carries enough slot metadata to drive its own UI, the same metadata also drives a generic inspector (a view that exposes any node's slots directly as editable fields, reachable on any tile through a single modifier-click). A complementary developer-mode toggle lets applications reveal subnodes normally hidden from end users, so the same navigation pipeline serves as a debug surface. In a conventional framework, debug tooling means custom inspectors per type and a parallel description of model shape, growing linearly with the model. Here, it is a free consequence of the model-to-view pipeline already covering every object.
 
-### 7.8 Cross-Window and Cross-App Drag-and-Drop
+### 7.10 Cross-Window and Cross-App Drag-and-Drop
 
 Because every tile is generated from the same view classes, drag-and-drop works uniformly across the application in two modes that share the same gesture. A **copy** drag serializes the source node to JSON (with its sub-object pool inlined) and delivers it via the declared MIME types, so it extends naturally across browser windows, to and from the desktop, and to and from other applications that exchange those types. A **reference** drag transfers a persistent node UUID for moving or linking within the application without copying contents. Both modes are type-safe: the receiving side validates against the same slot metadata that drives form validation and AI patches. In a conventional framework, drag interop requires per-class handlers, per-screen serialization formats, and ad-hoc validation on receipt, and the cost scales with the number of draggable objects; here it is free at the primitive level. (Cross-window reference drags, where a second client resolves the UUID against shared state, are a natural extension but are not yet implemented.)
 
-### 7.9 Headless Execution and Testability
+### 7.11 Headless Execution and Testability
 
 Because model classes hold no references to views or browser globals, the same domain code runs unchanged under Node.js. Tests instantiate the model, drive it through action methods, and assert against slot values without a DOM. The notification system, persistence, and patch validation all operate without rendering, so behaviors that would normally require browser automation against a real DOM reduce to direct model assertions. The model/view separation that makes auto-generation possible is the same separation that makes the model headlessly executable: one architectural choice serves both ends.
 
@@ -5789,15 +5803,17 @@ Strvct has been used to build undreamedof.ai, an AI-powered virtual tabletop for
 | --- | ---: | ---: |
 | Character system | ~30 | 0 |
 | Campaign system | ~20 | 1 (map) |
-| Session system | ~25 | 2 (chat, 3D dice) |
+| Session system | ~25 | 1 (3D dice) |
 | AI integration | ~15 | 0 |
-| **Total** | **~90** | **3** |
+| **Total** | **~90** | **2** |
 
 Fewer than 10% of classes required custom view code; the remainder (character sheets, campaign hierarchies, settings panels, administrative interfaces) use auto-generated tiles and master-detail views exclusively. The domain is non-trivial: character sheets have deeply nested hierarchies (character → ability scores → individual scores → modifiers), campaigns contain recursive location trees, and the session system maintains real-time state across multiple connected clients. The default primitives produce navigable, usable interfaces throughout.
 
 **Scenario: AI-driven character creation.** A user asks an AI assistant to populate a character sheet. The assistant calls the same patch tools used internally; the same setters validate; the UI updates through the same notification system used for direct edits. Adding a new character property requires a single slot declaration; the UI, the AI tool surface, the persistence layer, and the translation enumeration all pick it up without further code. In a component framework, the same change would touch the model, a form component, an AI tool spec, and a serializer.
 
-The custom views that were needed fall into the category identified in §3 as outside the narrow design space: a chat interface, a 3D dice roller, and a map view, all inherently graphical, domain-specific components that cannot be derived from model annotations. Their existence does not undermine the approach; it confirms that the boundary between auto-generated and bespoke views falls where predicted.
+The custom views that remain fall into the category identified in §3 as outside the narrow design space: a 3D dice roller and a battle map, both inherently graphical, domain-specific components that cannot be derived from model annotations. Their existence does not undermine the approach; it confirms that the boundary between auto-generated and bespoke views falls where predicted.
+
+**The count is a pipeline-stage metric, not a fixed residue.** The number moved while this work was underway, which is itself informative. The chat interface was originally a custom view; it has since been generalized into the framework as reusable message-list and input tiles, dropping the case study from three custom views to two. This reflects a recurring workflow: write a custom view, recognize the general pattern inside it, then promote that pattern into the framework. Chat was always the borderline case (a message list with a header and a footer input is master-detail-plus-footer wearing domain-specific styling), so its absorption is unsurprising in hindsight. The implication should be stated plainly rather than presented as a clean result. "Two of ~90" is not a measurement of an essential residue; it is a count of what has not been generalized *yet*, and it therefore depends partly on developer effort and skill, which reinforces the single-developer caveat below. It also makes the narrow-space hypothesis benignly self-fulfilling: as patterns are recognized and promoted, the residue grinds down toward a graphical floor (WebGL, canvas) almost regardless of where the "true" boundary between essential and accidental custom views lies. The honest open question is empirical, and one application cannot answer it: is there a hard floor well above zero (a class of non-graphical surfaces that genuinely resist generalization), or does the residue keep shrinking toward the graphical minimum as effort is applied? The dice roller and the battle map are almost certainly below any such floor; whether anything non-graphical sits above it remains unknown.
 
 This is an existence proof, not generalization: one application, one primary developer. The claim it supports is feasibility, not optimality.
 
@@ -5805,9 +5821,11 @@ This is an existence proof, not generalization: one application, one primary dev
 
 **Naked objects implementations.** Apache Isis (now Apache Causeway) [2] is the most mature naked objects framework, providing automatic UI generation for Java domain models with both a web UI (Wicket viewer) and a REST API. JMatter [4] implemented naked objects for Java Swing. Both use form-and-table UI strategies and target enterprise/administrative use cases. Strvct differs in its UI strategy (composable spatial primitives rather than forms and tables) and its target (end-user applications rather than internal tools).
 
-**Model-driven UI generation.** The broader field of model-driven development has produced approaches like IFML [5] (Interaction Flow Modeling Language) and UsiXML, which use abstract UI models to generate interfaces. These typically require separate UI models in addition to domain models, a layer of specification that naked objects explicitly eliminates. Strvct's approach is closer to naked objects in that the domain model itself, annotated with metadata, is the only specification needed.
+**Model-based and automatic UI generation.** A long line of model-based user-interface development (MBUID) generates interfaces from abstract specifications: IFML [5] (Interaction Flow Modeling Language) and UsiXML [6] are representative, deriving concrete interfaces from explicit UI models. These typically require a separate UI model layered on top of the domain model, a specification that naked objects explicitly eliminates by treating the annotated domain model as the only source. More pointed for our central hypothesis is the adaptive-generation line, above all SUPPLE [7] (Gajos & Weld), which casts interface generation as a constrained optimization over device, task, and user, and demonstrates that *usable* interfaces (not merely complete ones) can be produced automatically. SUPPLE is the sharpest prior pressure-test of the narrow-design-space claim: it shows automatic generation reaching usability through search over a flexible space, whereas we argue that a *small fixed* grammar of spatial primitives already covers the informational design space, so the generation problem is one of composition rather than optimization. The two are complementary readings of the same evidence (that good interfaces can be derived); our specific contribution is the claim that the covering vocabulary is small and that uniformity over it is an asset.
 
-**Miller Columns.** The column-based navigation pattern was introduced in NeXTSTEP and popularized by macOS Finder [3]. It provides spatial continuity when browsing hierarchical data. Strvct extends this pattern by making it recursive (columns can nest vertically or horizontally), orientation-flexible (each level can choose its own orientation), and self-composing (the layout is determined by model annotations rather than application code).
+**Concept design and legible software.** Jackson's *concept design* [8] (*The Essence of Software*) and the recent Meng & Jackson, *What You See Is What It Does* [9], pursue a structure-first, legibility-oriented program adjacent to ours: software organized around a small set of independent, reusable concepts whose behavior is directly inspectable. We share the premise that legibility and consistency follow from constraining structure rather than decorating it, and these are the nearest neighbors in the same venue. The difference in emphasis is the locus of the constraint: concept design constrains the *behavioral* decomposition of a system into concepts, while the narrow-design-space hypothesis constrains the *presentational* vocabulary and then derives the interface from it. The two are composable in principle, concept-structured behavior rendered through a derived, uniform presentation.
+
+**Miller Columns.** The column-based navigation pattern was introduced in NeXTSTEP and popularized by macOS Finder [3]. It provides spatial continuity when browsing hierarchical data. Its subsequent dominance on small-screen platforms, where a single column is shown at a time and columns are pushed and popped on drill-in and back-out, is independent evidence that the grammar is narrow where it is most constrained (§4.4). Strvct extends this pattern by making it recursive (columns can nest vertically or horizontally), orientation-flexible (each level can choose its own orientation), and self-composing (the layout is determined by model annotations rather than application code).
 
 **Component frameworks.** The dominant approach to modern UI development (React, Vue, Svelte) addresses the same cost problem as low-code, but at a different layer: rather than eliminating view code, they make it cheaper to write. Component libraries (shadcn, MUI, Ant Design) reduce per-screen effort further by providing reusable building blocks. But the view tree still exists, must be authored, and must be kept in sync with the model. Adding a property still requires editing a form component, a validator, a serializer, and possibly a translation file. Naked objects, properly executed, eliminates the view tree as an authored artifact entirely. It is derived. This is the structural difference no component library closes.
 
@@ -5821,7 +5839,13 @@ This is an existence proof, not generalization: one application, one primary dev
 
 Hand-crafted interfaces may appear more polished early in an application's life, when the number of screens is small and each can receive individual design attention. But as the domain model grows, the cost of maintaining bespoke screens grows with it, while inconsistencies accumulate. At some point (the crossover point), a consistent, automatically generated interface produces a better user experience than a patchwork of hand-crafted screens, because the user can rely on uniform navigation throughout the application.
 
-The composable primitive approach shifts this crossover point earlier by improving the quality of the generated interface. The undreamedof.ai case study suggests the crossover may occur sooner than expected: at ~90 domain classes, auto-generated views were not merely acceptable but preferred for 90% of the interface, because they provided consistent navigation and interaction patterns that would have been difficult to maintain across hand-crafted screens.
+The composable primitive approach shifts this crossover point earlier by improving the quality of the generated interface. The undreamedof.ai case study suggests the crossover may occur sooner than expected: at ~90 domain classes, roughly 90% of views were generated automatically and, in the primary developer's assessment, gave more consistent navigation than hand-crafted screens would have. That is a coverage result; whether end users *prefer* the uniform interface is the separate preference claim of §3, which this case study does not measure.
+
+### Adoption versus Coverage
+
+A coverage result and an adoption result are not the same thing, and the distinction governs how this paper's central claim should be read. Everything in §3 and §8 argues *coverage*: the patterns fit most informational UIs. But the reason naked objects stalled for twenty-five years was never that the patterns failed to fit; prior implementations already produced complete, correct interfaces. The binding constraint is **switch cost**. The pointer analogy (§3) is strong on coverage but misleading on adoption: the mouse carried a near-zero relearning tax, whereas adopting a derived-UI framework means giving up the React ecosystem, the component-library commons, and fine-grained per-screen control. "Most UIs fit the patterns" can be entirely true and still not produce pointer-style adoption, because the quantity being weighed is not coverage but the cost of leaving.
+
+**The economic lever.** The one force that changes the *adoption* arithmetic rather than the *coverage* arithmetic is the shift to agent-mediated development. When an LLM is a routine co-editor of application state, the bespoke-UI path acquires a new recurring obligation: it must also expose, document, and keep in sync a tool surface for every mutable type, a cost that grows with the model and rots against it as the model changes. A derived architecture pays that cost once, structurally, because the tool surface *is* the model (§7.1). This reframes the value proposition from one that is easy to resist ("consistent UIs and lower view-maintenance") to one that is hard for React-plus-bespoke to match without converging on the same architecture: *natively agent-operable, and stays that way for free*. We present this as the decisive lever precisely because it is the first argument that targets the constraint that actually bound adoption, rather than re-arguing coverage.
 
 ### Strengths
 
@@ -5861,7 +5885,7 @@ The naked objects pattern has offered a compelling proposition for twenty-five y
 
 The gap is closable because the design space is narrow. A small set of composable primitives (tiles, tile stacks, and recursively nested master-detail views) covers the navigational and editing patterns shared by most informational applications, and the same annotation system that drives the UI drives persistence, synchronization, AI tool surfaces, and translation without per-layer coordination. Strvct demonstrates this in a production application of ~90 domain classes with roughly 90% of views auto-generated and custom views only where the narrow-space hypothesis predicts.
 
-We close with a prediction. The pressure that may finally push naked objects past its twenty-five-year stall is not aesthetic but economic. As AI agents become routine co-editors of application state, the cost of keeping a bespoke UI synchronized with a model that an LLM can rewrite at any moment will exceed the cost of generating the UI from the model in the first place. The applications that survive this transition will be the ones whose UI is a projection of their model, not an authored artifact running alongside it.
+We close with a prediction. The pressure that may finally push naked objects past its twenty-five-year stall is not aesthetic but economic, and it bears on the constraint that actually bound adoption (switch cost) rather than on coverage. As AI agents become routine co-editors of application state, the cost of keeping a bespoke UI synchronized with a model that an LLM can rewrite at any moment, and of maintaining a separate agent-facing tool surface for every mutable type, will exceed the cost of generating both UI and tool surface from the model in the first place. The applications that survive this transition will be the ones whose UI is a projection of their model, not an authored artifact running alongside it.
 
 ## References
 
@@ -5874,6 +5898,38 @@ We close with a prediction. The pressure that may finally push naked objects pas
 [4] Arteaga, J. M. *JMatter: A Naked Objects Framework for Java Swing.* http://jmatter.org/
 
 [5] Brambilla, M., & Fraternali, P. (2014). Interaction Flow Modeling Language. In *Proceedings of the 23rd International Conference on World Wide Web (WWW '14 Companion).* ACM.
+
+[6] Limbourg, Q., Vanderdonckt, J., Michotte, B., Bouillon, L., & López-Jaquero, V. (2005). UsiXML: A Language Supporting Multi-path Development of User Interfaces. In *Engineering Human Computer Interaction and Interactive Systems (EHCI-DSVIS 2004),* LNCS 3425, Springer.
+
+[7] Gajos, K., & Weld, D. S. (2004). SUPPLE: Automatically Generating User Interfaces. In *Proceedings of the 9th International Conference on Intelligent User Interfaces (IUI '04).* ACM. See also Gajos, K. Z., Weld, D. S., & Wobbrock, J. O. (2010). Automatically generating personalized user interfaces with Supple. *Artificial Intelligence,* 174(12–13), 910–950.
+
+[8] Jackson, D. (2021). *The Essence of Software: Why Concepts Matter for Great Design.* Princeton University Press.
+
+[9] Meng, E., & Jackson, D. (2025). What You See Is What It Does: A Structural Pattern for Legible Software. In *Proceedings of Onward! 2025 (SPLASH).* ACM.
+
+### Works cited by author and year
+
+Gentner, D., & Stevens, A. L. (Eds.). (1983). *Mental Models.* Lawrence Erlbaum Associates.
+
+Koffka, K. (1935). *Principles of Gestalt Psychology.* Harcourt, Brace & World.
+
+Nielsen, J. (1994). Enhancing the Explanatory Power of Usability Heuristics. In *Proceedings of CHI '94.* ACM. See also Nielsen, J. "10 Usability Heuristics for User Interface Design," Nielsen Norman Group.
+
+Nielsen, J. (2006). F-Shaped Pattern for Reading Web Content (original eyetracking research). Nielsen Norman Group. https://www.nngroup.com/articles/f-shaped-pattern-reading-web-content-discovered/
+
+Norman, D. A. (1988). *The Design of Everyday Things.* Basic Books.
+
+Pernice, K. (2017). F-Shaped Pattern of Reading on the Web: Misunderstood, But Still Relevant (Even on Mobile). Nielsen Norman Group. https://www.nngroup.com/articles/f-shaped-pattern-reading-web-content/
+
+Wertheimer, M. (1923). Untersuchungen zur Lehre von der Gestalt II. *Psychologische Forschung,* 4, 301–350. (Translated as "Laws of Organization in Perceptual Forms.")
+
+### Software and platforms cited
+
+React. Meta Open Source. https://react.dev/ — Vue.js. https://vuejs.org/ — Svelte. https://svelte.dev/
+
+shadcn/ui. https://ui.shadcn.com/ — MUI (Material UI). https://mui.com/ — Ant Design. https://ant.design/
+
+Retool. https://retool.com/ — Appsmith. https://www.appsmith.com/ — OutSystems. https://www.outsystems.com/
 
 
 ---

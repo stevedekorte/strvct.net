@@ -375,6 +375,18 @@
                 await Promise.all(childNodes.map(async (child) => {
                     const stableId = this.cloudFsChildIdFromNodeId(child.id());
                     if (!stableId) return;
+                    // local-wins-while-dirty: never let a from-cloud apply
+                    // overwrite a local child that has unsaved local changes. The
+                    // live local instance is the fresher source of truth and will
+                    // push to cloud via the to-cloud path — this is the symmetric
+                    // counterpart of isChildCloudSyncable() (which gates to-cloud).
+                    // Overwriting a dirty/in-use child also tends to orphan live
+                    // references to it (bound UI tiles, in-flight async work) when
+                    // the subclass swaps instances on apply.
+                    const localChild = this.childWithCloudStableId(stableId);
+                    if (localChild && localChild.needsCloudSync && localChild.needsCloudSync()) {
+                        return;
+                    }
                     try {
                         await this.asyncApplyChildFromCloud(stableId, child);
                     } catch (e) {
