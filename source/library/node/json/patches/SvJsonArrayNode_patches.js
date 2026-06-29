@@ -434,8 +434,30 @@
             return this.addDirectly(key, value, operation);
         }
 
-        const newNode = this.newSubnodeForJson(value);
         const oldNode = this.subnodes().at(index);
+
+        // Prefer an IN-PLACE update: when the element's class is unchanged,
+        // deserialize the new value INTO the existing node rather than building a
+        // replacement and swapping it in. This preserves the node's object
+        // identity, so bound views / SvModelReferences to it stay valid, nested
+        // subnodes merge by jsonId (no churn), and we don't orphan the old node
+        // (the stale-orphan class). The full-load deserializeFromJson path
+        // already merges arrays this way by jsonId; this brings the JSON-Patch
+        // "replace" op in line with it. Addressing stays positional (the index);
+        // only the WRITE becomes in-place.
+        const valueClass = (value && value._type)
+            ? SvGlobals.get(value._type)
+            : (this.subnodeClasses().length === 1 ? this.subnodeClasses().first() : null);
+        const sameClass = valueClass && oldNode.thisClass && oldNode.thisClass() === valueClass;
+
+        if (sameClass && typeof oldNode.deserializeFromJson === "function") {
+            oldNode.deserializeFromJson(value, undefined, []);
+            return this;
+        }
+
+        // Class actually changed (polymorphic element replaced with a different
+        // type), or the element can't deserialize-into-self — fall back to a swap.
+        const newNode = this.newSubnodeForJson(value);
         this.replaceSubnodeWith(oldNode, newNode);
         return this;
     }
