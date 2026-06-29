@@ -762,9 +762,8 @@ Midjourney
 
         for (const [slotName, parameterName] of parameterMap) {
             const value = this[slotName].apply(this);
-            const slot = this.thisPrototype().slotNamed(slotName);
-            const defaultValue = slot.initValue();
-            if (!Type.isNullOrUndefined(value) && value !== defaultValue) {
+            // Send every set parameter; skip only an unset (null) value such as seed.
+            if (!Type.isNullOrUndefined(value)) {
                 s += parameterName + " " + value + " ";
             }
         }
