@@ -128,10 +128,10 @@
                 { value: "4:3", label: "4:3" },
                 { value: "3:4", label: "3:4" },
                 { value: "3:2", label: "3:2" },
-                { value: "2:3", label: "2:3 (Default)" },
-                { value: "1:1", label: "1:1" },
+                { value: "2:3", label: "2:3" },
+                { value: "1:1", label: "1:1 (Default)" },
             ];
-            const slot = this.newSlot("aspectRatio", "2:3");
+            const slot = this.newSlot("aspectRatio", "1:1");
             slot.setInspectorPath("Settings");
             slot.setLabel("Aspect Ratio");
             slot.setShouldStoreSlot(true);
@@ -160,7 +160,7 @@
                 { value: 600, label: "600" },
                 { value: 700, label: "700 (Maximum MJ influence)" },
             ];
-            const slot = this.newSlot("stylize", 500); // 100 makes it stand out too much against the background
+            const slot = this.newSlot("stylize", 100);
             slot.setSlotType("Number");
             slot.setInspectorPath("Settings");
             slot.setLabel("Stylize");
