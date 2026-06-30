@@ -164,7 +164,7 @@
         //doc.setFontFamily("BarlowCondensed");
         //doc.setFontWeight("medium");
 
-        //doc.setFontSize("18px");
+        doc.setFontSize("20px"); // app's authoritative base font size (sets inline style on <body>)
         //doc.setLineHeight(1.3);
     }
 
