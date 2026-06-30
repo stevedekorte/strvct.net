@@ -10,11 +10,16 @@
 /**
  * @class SvImagineProImagePrompt
  * @extends SvSummaryNode
- * @classdesc Represents an ImaginePro image prompt for generating images using Midjourney via ImaginePro API.
+ * @classdesc Represents a Midjourney image prompt (sent via the MJ-API gateway).
  *
- * IMPORTANT: This implementation ONLY supports Midjourney V7 or later versions.
- * We do NOT support V6 or earlier versions. All prompts will be sent with --v 7 flag.
- * Omnireference uses V7's --oref and --ow parameters (not V6's --cref/--cw).
+ * The Midjourney version is controlled by the `version` slot, which is EMPTY
+ * by default — no `--v` flag is sent, so the service uses its current default.
+ * App callers set the version explicitly (e.g. "8.1").
+ *
+ * Character/scene references are passed as native Midjourney "image prompts"
+ * (bare image URLs at the front of the prompt) via `extraImagesNode`. The
+ * older V7 omnireference channel (`--oref`/`--ow`) is still implemented but is
+ * no longer used by the app scene path.
  */
 
 (class SvImagineProImagePrompt extends SvSummaryNode {
@@ -92,6 +97,33 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
             slot.setValidValues(["midjourney"]);
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("key: value");
+        }
+
+        /**
+         * @member {string} version
+         * @description The Midjourney version flag value. Empty = emit no --v
+         * flag (the service uses its current default). App callers set this
+         * explicitly (e.g. "8.1"). See composeVersionPrompt().
+         * @category Configuration
+         */
+        {
+            const validItems = [
+                { value: "", label: "(service default)" },
+                { value: "7", label: "7" },
+                { value: "8", label: "8" },
+                { value: "8.1", label: "8.1" }
+            ];
+            const slot = this.newSlot("version", "");
+            slot.setInspectorPath("Settings");
+            slot.setLabel("Version");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setValidItems(validItems);
+            slot.setValidValuesArePermissive(true);
             slot.setIsSubnodeField(true);
             slot.setSummaryFormat("key: value");
         }
@@ -771,16 +803,29 @@ Midjourney
     }
 
     async asyncComposeExtraImagesPrompt () {
+        // Native Midjourney "image prompts": bare image URLs at the front of
+        // the prompt. The image weight (--iw) is a single overall value and is
+        // emitted once in the parameters section by composeImageWeightPrompt().
         const extraImageUrls = await this.extraImagesNode().subnodes().promiseParallelMap(async svImageNode => {
             const url = await svImageNode.asyncPublicUrl();
             this.assertPublicUrl(url, "Extra image");
             return url;
         });
-        let prompt = extraImageUrls.join(" ");
-        if (extraImageUrls.length === 1) {
-            prompt += "--iw " + this.extraImagesWeight();
+        return extraImageUrls.join(" ");
+    }
+
+    composeImageWeightPrompt () {
+        // --iw applies to all image prompts as a single overall weight.
+        if (this.extraImagesNode().subnodes().length > 0) {
+            return "--iw " + this.extraImagesWeight();
         }
-        return prompt;
+        return "";
+    }
+
+    composeVersionPrompt () {
+        // Empty version => emit no --v flag (let the service use its default).
+        const v = this.version() ? String(this.version()).trim() : "";
+        return v.length > 0 ? "--v " + v : "";
     }
 
     async asyncComposeOrefPrompt () {
@@ -850,7 +895,8 @@ Midjourney
         parts.push(await this.asyncComposeSrefPrompt());
 
         parts.push(this.composeOptionalParametersPrompt());
-        parts.push(" --v 7"); // IMPORTANT: We require Midjourney V7
+        parts.push(this.composeImageWeightPrompt());
+        parts.push(this.composeVersionPrompt());
 
         const fullPrompt = parts.join(" ");
         console.log("composeFullPrompt: [\n" + fullPrompt + "\n]");
