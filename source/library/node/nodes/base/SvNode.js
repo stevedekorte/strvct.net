@@ -515,7 +515,11 @@
         if (this.parentNode() !== null) {
             return; // re-homed this event loop (reparent / replace-then-readd) — not an orphan
         }
-        console.warn(this.svDebugId() + " became an orphan — parentNode is still null at end of the event loop (not re-homed by a reparent). A bound view or in-flight reference may now be dangling.");
+        // Debug-only: this fires on every deliberate permanent removal too
+        // (expired conditions, options rebuilds, deleted messages), and the
+        // check can't tell those from a genuine leak. Re-enable via
+        // isDebugging when hunting the stale-orphan bug class.
+        this.isDebugging() && console.warn(this.svDebugId() + " became an orphan — parentNode is still null at end of the event loop (not re-homed by a reparent). A bound view or in-flight reference may now be dangling.");
         this.postNoteNamed("nodeBecameOrphan");
     }
 
