@@ -72,6 +72,31 @@
         }
 
         /**
+         * @member {SvDomView} anchoredSubview - The subview the anchor is pinned to.
+         * While set, content mutations re-pin scrollTop to this subview's current
+         * offsetTop so layout changes (image loads, tile re-syncs, scrollTop
+         * clamping after transient DOM shrink) can't drift the viewport away
+         * from the anchored message. Cleared when the user scrolls manually
+         * or the anchor disengages.
+         * @category State
+         */
+        {
+            const slot = this.newSlot("anchoredSubview", null);
+            slot.setSlotType("SvDomView");
+        }
+
+        /**
+         * @member {Number} expectedScrollTop - The scrollTop we last set
+         * programmatically while anchored. If a scroll event arrives with a
+         * different value, the user moved the viewport and re-pinning stops.
+         * @category State
+         */
+        {
+            const slot = this.newSlot("expectedScrollTop", null);
+            slot.setSlotType("Number");
+        }
+
+        /**
          * @member {SvScrollToBottomButton} scrollToBottomButton - Floating button shown when not at bottom
          * @category UI
          */
@@ -204,10 +229,42 @@
         if (this.isAnchored() && this.isAtBottom()) {
             //console.log("[AnchorScroll] onScroll: user reached bottom, disengaging anchor");
             this.setIsAnchored(false);
+            this.stopRepinning();
             this.clearAnchorPadding();
+        } else if (this.isRepinning()) {
+            // A scroll position we didn't set means the user moved the
+            // viewport — stop re-pinning so mutations can't yank them back.
+            // (Anchor mode itself stays engaged: auto-scroll remains
+            // suppressed until they reach the bottom.)
+            const delta = Math.abs(this.element().scrollTop - this.expectedScrollTop());
+            if (delta > this.computeScrollTolerance()) {
+                //console.log("[AnchorScroll] onScroll: user scroll detected (delta " + delta + "), stop re-pinning");
+                this.stopRepinning();
+            }
         }
         this.updateScrollTracking();
         this.updateScrollToBottomButton();
+    }
+
+    /**
+     * @description Whether the anchor is actively re-pinning to a subview.
+     * @returns {Boolean} True when anchored with a live re-pin target.
+     * @category State
+     */
+    isRepinning () {
+        return this.isAnchored() && this.anchoredSubview() !== null && this.expectedScrollTop() !== null;
+    }
+
+    /**
+     * @description Stops re-pinning the anchored subview. Anchor mode
+     * (auto-scroll suppression) is unaffected.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category State
+     */
+    stopRepinning () {
+        this.setAnchoredSubview(null);
+        this.setExpectedScrollTop(null);
+        return this;
     }
 
     /**
@@ -221,9 +278,63 @@
                 this.immediatelyScrollToBottom();
                 this.setWasAtBottom(true);
                 this.setLastScrollHeight(this.clientHeight());
+            } else if (this.isRepinning()) {
+                this.repinAnchor();
             }
             this.updateScrollToBottomButton();
         }
+    }
+
+    /**
+     * @description Re-pins the scroll position to the anchored subview's
+     * current offsetTop. Content mutations (streaming tokens, image loads,
+     * tile re-syncs) move the anchored message's layout position while
+     * scrollTop stays a fixed pixel value — and a transient DOM shrink can
+     * clamp scrollTop far away. Only re-pins while the scroll position is
+     * still where we last put it (i.e. the user hasn't scrolled).
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
+     */
+    repinAnchor () {
+        const e = this.element();
+        // Only correct if the position is still ours. A user scroll between
+        // events shows up here as a mismatch — leave their position alone
+        // (onScroll will stop re-pinning shortly anyway). Exception: a
+        // browser clamp after a transient DOM shrink lands exactly at the
+        // scroll limit, below where we pinned — that's not the user, so
+        // correct it. (This mutation callback runs as a microtask, before
+        // the clamp's scroll event task, so onScroll won't misread the
+        // clamped position as the user reaching the bottom.)
+        const tolerance = this.computeScrollTolerance();
+        const positionIsOurs = Math.abs(e.scrollTop - this.expectedScrollTop()) <= tolerance;
+        const wasClamped = e.scrollTop < this.expectedScrollTop() &&
+            e.scrollTop >= e.scrollHeight - e.clientHeight - tolerance;
+        if (!positionIsOurs && !wasClamped) {
+            return this;
+        }
+
+        let subview = this.anchoredSubview();
+        if (!subview.element().isConnected) {
+            // The tile was torn down and re-created by a view sync — re-resolve
+            // the new tile for the same node, or give up if it's gone.
+            const node = subview.node ? subview.node() : null;
+            const contentView = this.contentView();
+            subview = (node && contentView && contentView.subviewForNode) ? contentView.subviewForNode(node) : null;
+            if (!subview) {
+                //console.log("[AnchorScroll] repinAnchor: anchored subview gone, stop re-pinning");
+                this.stopRepinning();
+                return this;
+            }
+            this.setAnchoredSubview(subview);
+        }
+
+        const targetTop = subview.element().offsetTop;
+        if (e.scrollTop !== targetTop) {
+            //console.log("[AnchorScroll] repinAnchor: correcting scrollTop", e.scrollTop, "->", targetTop);
+            e.scrollTop = targetTop;
+        }
+        this.setExpectedScrollTop(e.scrollTop); // read back — may be clamped
+        return this;
     }
 
     /**
@@ -339,6 +450,7 @@
         if (this.isAnchored()) {
             //console.log("[AnchorScroll] scrollToBottomSmooth: disengaging anchor");
             this.setIsAnchored(false);
+            this.stopRepinning();
             this.clearAnchorPadding();
         }
         this.element().scrollTo({
@@ -373,9 +485,12 @@
             this.element().scrollTop = aSubview.element().offsetTop;
             //console.log("[AnchorScroll]   set scrollTop to:", aSubview.element().offsetTop,
             //    "scrollHeight:", this.element().scrollHeight, "clientHeight:", viewportHeight);
+            this.setAnchoredSubview(aSubview);
+            this.setExpectedScrollTop(this.element().scrollTop); // read back — may be clamped
         } else {
             // No anchor target — scroll to top
             this.element().scrollTop = 0;
+            this.stopRepinning();
         }
         // Engage anchor mode — suppresses wasAtBottom from being flipped
         // to true by transient layout changes during view syncs.

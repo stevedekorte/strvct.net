@@ -293,9 +293,13 @@
         response.setSpeakerName(this.conversation().aiSpeakerName());
 
         // Anchor scroll on the user's message (this) so it stays visible
-        // while the response streams below it
+        // while the response streams below it. Skip messages the user can't
+        // see (e.g. tool-call results) — in developer mode their tiles exist,
+        // so anchoring on one moves the scroll position for no visible reason.
         //console.log("[AnchorScroll] SvAiMessage.requestResponse() calling requestAnchorOnMessage");
-        this.conversation().requestAnchorOnMessage(this);
+        if (this.isVisibleToUser()) {
+            this.conversation().requestAnchorOnMessage(this);
+        }
 
         try {
             // asyncMakeRequest returns a Promise — the surrounding
