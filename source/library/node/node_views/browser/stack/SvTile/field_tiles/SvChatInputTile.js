@@ -61,6 +61,17 @@
             if (valueView.setIsEditable && node.valueIsEditable) {
                 valueView.setIsEditable(node.valueIsEditable());
             }
+            // CRITICAL: also refresh whether Enter can submit. The focused guard
+            // returns before super.syncValueFromNode(), which is the only other place
+            // that calls setCanHitEnter(). Without this, once the input holds focus
+            // (it does after you send a message and throughout the AI reply), the
+            // gate re-opening on completion never restores Enter — the input is
+            // model-ready (acceptsChatInput() === true) but permanently can't send
+            // until a reload. Unlike the value sync, this doesn't touch the editor's
+            // text/caret, so it's safe inside the focus guard.
+            if (valueView.setCanHitEnter && node.acceptsValueInput) {
+                valueView.setCanHitEnter(node.acceptsValueInput());
+            }
             return this;
         }
         if (node) {

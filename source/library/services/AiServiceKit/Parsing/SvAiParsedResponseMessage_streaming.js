@@ -87,14 +87,26 @@
             return;
         }
 
-        if (this.htmlStreamReader()) {
-            // if there was an error, have we already shutdown the reader?
-            this.htmlStreamReader().endHtmlStream();
+        // CRITICAL: the HTML/sentence-stream finalization below can throw on
+        // malformed or unclosed tags in the AI output — parser().end() closing
+        // dangling elements, or a tag handler (sendStreamTag -> roll/sheet/image
+        // processing) throwing as the last nodes pop. If it throws here, the
+        // exception is swallowed by the delegate-dispatch event wrapper and
+        // super.onStreamEnd() — which calls setIsComplete(true) — is never reached.
+        // The message then stays permanently incomplete and the chat input is gated
+        // forever (the "input dead after a response" wedge). Finalization cleanup
+        // must NOT block completion: log any error and complete the message anyway.
+        try {
+            if (this.htmlStreamReader()) {
+                this.htmlStreamReader().endHtmlStream();
+            }
+            this.shutdownSentenceReader();
+        } catch (e) {
+            console.error(this.logPrefix ? this.logPrefix() : "[SvAiParsedResponseMessage]",
+                "onStreamEnd finalization threw — completing the message anyway so input doesn't wedge:",
+                e && e.message, e && e.stack);
+            try { this.shutdownSentenceReader(); } catch (e2) { /* best effort */ }
         }
-        //console.log("onStreamEnd request.fullContent() = [" + request.fullContent() + "]");
-        //this.updateContent(request.fullContent())
-        //this.sendDelegateMessage("onMessageUpdate");
-        this.shutdownSentenceReader();
 
         super.onStreamEnd(request);
     }
