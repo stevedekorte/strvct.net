@@ -382,7 +382,13 @@
 
         // Use SvGeminiRequest for proper authentication, proxy handling, and error handling
         const request = SvGeminiRequest.clone();
-        request.setChatModel(SvServices.shared().geminiService().defaultChatModel());
+        // Vision eval is high-volume, low-difficulty — pin the flash-lite
+        // tier instead of riding defaultChatModel(), which is whatever sits
+        // FIRST in the service catalog and silently upgrades when the list
+        // is reordered (it had drifted to 3.1 Pro Preview, ~8x the price).
+        const service = SvServices.shared().geminiService();
+        const evalModel = service.models().subnodes().detect(m => m.modelName() === "gemini-3.1-flash-lite-preview") || service.defaultChatModel();
+        request.setChatModel(evalModel);
         request.setBodyJson(bodyJson);
         request.setIsStreaming(false); // We want the complete response, not streaming
         request.setTimeoutPeriodInMs(30 * 60 * 1000); // 30 minutes for vision API (can be slow)
