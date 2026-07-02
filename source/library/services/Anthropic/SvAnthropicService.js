@@ -29,6 +29,36 @@
     modelsJson () {
         return [
             {
+                "name": "claude-sonnet-5",
+                "title": "Claude Sonnet 5",
+                "subtitle": "",
+                "inputTokenLimit": 1000000,
+                "notes": "Adaptive-thinking model family: temperature/top_p/top_k are not supported (400 if set). Effort defaults to high.",
+                "outputTokenLimit": 128000,
+                "supportsTemperature": false,
+                "supportsTopP": false
+            },
+            {
+                "name": "claude-fable-5",
+                "title": "Claude Fable 5",
+                "subtitle": "",
+                "inputTokenLimit": 1000000,
+                "notes": "Most capable Anthropic model ($10/$50 per MTok). Thinking is always on (never send a thinking param). temperature/top_p/top_k not supported. Safety classifiers can return stop_reason 'refusal'. Requires 30-day data retention at the org level.",
+                "outputTokenLimit": 128000,
+                "supportsTemperature": false,
+                "supportsTopP": false
+            },
+            {
+                "name": "claude-opus-4-8",
+                "title": "Claude Opus 4.8",
+                "subtitle": "",
+                "inputTokenLimit": 1000000,
+                "notes": "Adaptive-thinking model family: temperature/top_p/top_k are not supported (400 if set).",
+                "outputTokenLimit": 128000,
+                "supportsTemperature": false,
+                "supportsTopP": false
+            },
+            {
                 "name": "claude-opus-4-7",
                 "title": "Claude Opus 4.7",
                 "subtitle": "",
