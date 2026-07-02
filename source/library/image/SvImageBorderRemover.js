@@ -272,6 +272,29 @@
         });
     }
 
+    /**
+     * @description Removes any detected border from an SvImageNode's blob,
+     * in place. Returns true if a border was found and the node's image was
+     * replaced with the cropped version, false if left untouched.
+     * @param {SvImageNode} imageNode
+     * @param {string} [mimeType="image/jpeg"]
+     * @param {number} [quality=0.92]
+     * @returns {Promise<boolean>}
+     * @category Cropping
+     */
+    async asyncCropImageNodeInPlace (imageNode, mimeType = "image/jpeg", quality = 0.92) {
+        const dataUrl = await imageNode.asyncDataUrl();
+        if (!dataUrl) {
+            return false;
+        }
+        const croppedDataUrl = await this.asyncCroppedDataUrlFromDataUrl(dataUrl, mimeType, quality);
+        if (croppedDataUrl === dataUrl) {
+            return false; // no border found; original untouched
+        }
+        imageNode.setBlobFromDataURL(croppedDataUrl);
+        return true;
+    }
+
     asyncImageFromDataUrl (dataUrl) {
         return new Promise((resolve, reject) => {
             const img = new Image();

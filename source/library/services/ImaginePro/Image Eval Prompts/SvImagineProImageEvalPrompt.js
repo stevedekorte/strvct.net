@@ -54,6 +54,19 @@
             slot.setCanEditInspection(false);
         }
 
+        // Remove white/black borders from generated images before they are
+        // evaluated, so a bordered-but-strong image competes on its actual
+        // content (and the stored best image is the cropped one).
+        {
+            const slot = this.newSlot("shouldRemoveBorders", true);
+            slot.setSlotType("Boolean");
+            slot.setLabel("Remove Borders");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+        }
+
         {
             const slot = this.newSlot("evaluateAction", null);
             slot.setInspectorPath("");
@@ -126,6 +139,20 @@
             // setup image evaluators - pass imageNode directly, no SvImage intermediary
             for (const fileToDownload of this.allResultImages()) {
                 await fileToDownload.asyncFetchIfNeeded();
+                if (this.shouldRemoveBorders()) {
+                    // Crop BEFORE scoring so the evaluator judges what players
+                    // would see, and before the blob is stored/copied anywhere
+                    // downstream (content-addressed hashes must be of the
+                    // cropped bytes). A failed crop never blocks evaluation.
+                    try {
+                        const didCrop = await SvImageBorderRemover.clone().asyncCropImageNodeInPlace(fileToDownload.imageNode());
+                        if (didCrop) {
+                            this.appendStatus("Removed border from a generated image.");
+                        }
+                    } catch (error) {
+                        console.warn(this.logPrefix(), "border removal failed (continuing with original image):", error.message);
+                    }
+                }
                 const evaluator = this.imageEvaluators().add();
                 evaluator.setSvImage(fileToDownload.imageNode());
                 evaluator.setImageGenPrompt(this.prompt());
