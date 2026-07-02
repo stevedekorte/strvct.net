@@ -173,6 +173,13 @@
     /**
      * @description Records a target at a LOD (MAX-LOD merged) and adds its
      * strict ancestors to the ancestor set.
+     *
+     * Ancestors are found by walking DOWN from the root through the same
+     * JSON-visible child topology the emission walk uses — NOT via
+     * parentNode(), which reflects UI/ownership wiring and does not reliably
+     * chain slot-held values back to the session root. (A parentNode-based
+     * closure silently produced a bare root handle for deep targets: the
+     * root never learned it was an ancestor.)
      * @category Resolution
      */
     addTarget (node, lod) {
@@ -180,15 +187,15 @@
         const existing = map.get(node);
         map.set(node, existing === undefined ? lod : this.thisClass().maxLod(existing, lod));
 
-        let parent = node.parentNode ? node.parentNode() : null;
         const root = this.root();
-        while (parent) {
-            this.ancestorSet().add(parent);
-            if (parent === root) {
-                break;
-            }
-            parent = parent.parentNode ? parent.parentNode() : null;
+        if (node === root) {
+            return;
         }
+        const chain = root.lensPathToDescendant(node);
+        if (chain === null) {
+            throw new Error("lens: node '" + (node.jsonId ? node.jsonId() : node.svType()) + "' resolved but is not reachable in the JSON-visible tree under this root — it may only be referenced (not contained) here. Select a containing node instead.");
+        }
+        chain.forEach(ancestor => this.ancestorSet().add(ancestor));
     }
 
     // --- emission-walk queries (O(1), consulted per node) ---

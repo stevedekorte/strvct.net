@@ -188,6 +188,27 @@ function testLens () {
     check(Array.isArray(crypt4.sublocations) && crypt4.sublocations.length === 2 && crypt4.sublocations[0]._lod === "handle",
         "level-2 sublocations listed as handles with titles (scene-pickable)");
 
+    console.log("\nAncestors via topology, not parentNode (app slot-shape regression)");
+    // In the real app, slot-held values don't reliably chain parentNode()
+    // back to the session root — a parentNode-based ancestor closure
+    // silently returned a bare root handle for deep targets. Break the
+    // chain deliberately and confirm the topology-based closure still works.
+    const t2 = buildTree();
+    const campaign2 = t2.root.descendantWithJsonId("camp-1");
+    campaign2._parentNode = null; // sever the UI/ownership chain
+    const deep = SvClientStateLens.fromJson({
+        select: [{ nodes: ["loc-tomb"], lod: "full" }],
+        default: "handle"
+    }, t2.root);
+    const view5 = t2.root.serializeWithLens(deep, "omit", 0);
+    check(view5.campaign !== undefined && typeof view5.campaign === "object",
+        "root still carries the campaign branch with a severed parentNode chain");
+    const locs5 = view5.campaign.locations;
+    check(Array.isArray(locs5) && locs5[0] && Array.isArray(locs5[0].sublocations),
+        "carrier chain reaches through locations to sublocations");
+    check(locs5[0].sublocations.some(x => typeof x === "object" && x._lod === undefined),
+        "deep target emitted at full through the carrier chain");
+
     console.log("\nLens errors are self-describing");
     let err = null;
     try {

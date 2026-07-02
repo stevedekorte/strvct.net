@@ -52,6 +52,46 @@
     }
 
     /**
+     * @description The child nodes the lens walk can descend into from this
+     * node. Base: none (leaves). Groups/arrays override. This defines the
+     * ONE topology used by both ancestor resolution and emission, so a
+     * resolvable target is always emittable.
+     * @returns {Array} child nodes
+     * @category Lens
+     */
+    lensChildNodes () {
+        return [];
+    }
+
+    /**
+     * @description Depth-first search for `target` through the JSON-visible
+     * child topology. Returns the chain of nodes from this node (inclusive)
+     * down to but excluding the target, or null if unreachable.
+     * @param {SvJsonIdNode} target
+     * @param {WeakSet} [visited]
+     * @returns {Array|null}
+     * @category Lens
+     */
+    lensPathToDescendant (target, visited = new WeakSet()) {
+        if (visited.has(this)) {
+            return null;
+        }
+        visited.add(this);
+        for (const child of this.lensChildNodes()) {
+            if (child === target) {
+                return [this];
+            }
+            if (child && child.lensPathToDescendant) {
+                const sub = child.lensPathToDescendant(target, visited);
+                if (sub !== null) {
+                    return [this].concat(sub);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * @description Serializes this node under a lens. Base implementation for
      * leaf-ish nodes (fields, dictionaries, custom-serializer classes reached
      * directly): omit → absent; handle → handle dict; summary/full → normal
@@ -148,6 +188,15 @@
         return dict;
     }
 
+    lensChildNodes () {
+        if (this.isKindOf(SvField)) {
+            return []; // fields are leaves
+        }
+        return this.lensChildEntries()
+            .map(([, value]) => value)
+            .filter(v => v && typeof v === "object" && v.isKindOf && v.isKindOf(SvNode));
+    }
+
     /**
      * @description [key, value] pairs of this group's JSON-visible children —
      * schema slots, or titled subnodes for shouldStoreSubnodes groups
@@ -225,6 +274,10 @@
  * pruned siblings are counted, never silent.
  */
 (class SvJsonArrayNode_lens extends SvJsonArrayNode {
+
+    lensChildNodes () {
+        return this.subnodes();
+    }
 
     lensHandleJson () {
         const dict = {
