@@ -285,6 +285,11 @@
    * @category Actions
    */
     requestResponse () {
+        if (!this.canRequestResponse()) {
+            // e.g. party chat (isVisibleToAi false): logged and shared with
+            // other participants, but never drives the AI loop.
+            return null;
+        }
         this.conversation().assertNoUncompletedBlockingToolCalls();
 
 
