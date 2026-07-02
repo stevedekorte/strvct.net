@@ -131,7 +131,7 @@ function testLens () {
         ],
         default: "handle"
     }, root);
-    const view = root.serializeWithLens(floor, "omit", Infinity);
+    const view = root.serializeWithLens(floor, "omit", 0);
     check(Array.isArray(view.party) && view.party.length === 2 && typeof view.party[0] === "object" && view.party[0]._lod === undefined,
         "party @ full: real array, members not abridged");
     check(view.campaign._lod === "summary", "campaign @ summary carries _lod marker");
@@ -174,6 +174,19 @@ function testLens () {
         "pruned sibling (hall) shows as '+1 more' count, not silence");
     check(tombOut !== undefined && tombOut._lod === undefined, "tomb itself is full (MAX-LOD beats the omit region)");
     check(tomb.jsonId() === "loc-tomb", "sanity: tomb id");
+
+    console.log("\nSummary depth propagation (session-start lens shape)");
+    const breadth = SvClientStateLens.fromJson({
+        select: [{ under: "/campaign/locations", lod: "summary", depth: 2 }],
+        default: "omit"
+    }, root);
+    const view4 = root.serializeWithLens(breadth, "omit", 0);
+    const locs4 = view4.campaign.locations;
+    check(Array.isArray(locs4), "locations scope root emits as array");
+    const crypt4 = locs4[0];
+    check(crypt4 && crypt4._lod === "summary", "level-1 location is a summary, not a handle (depth propagates)");
+    check(Array.isArray(crypt4.sublocations) && crypt4.sublocations.length === 2 && crypt4.sublocations[0]._lod === "handle",
+        "level-2 sublocations listed as handles with titles (scene-pickable)");
 
     console.log("\nLens errors are self-describing");
     let err = null;

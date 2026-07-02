@@ -124,9 +124,12 @@
         }
 
         // summary, or depth-bounded full: project from the schema slots.
+        // depth propagates the CURRENT lod (full or summary) that many
+        // container levels before degrading children to handles — e.g.
+        // {under: X, lod: "summary", depth: 2} summarizes two levels deep.
         visitedSet.add(this);
-        const childLod = (lod === "full" && depthRemaining > 0) ? "full" : "handle";
-        const childDepth = (lod === "full") ? depthRemaining - 1 : 0;
+        const childLod = (depthRemaining > 0) ? lod : "handle";
+        const childDepth = Math.max(0, depthRemaining - 1);
 
         const dict = {};
         this.lensChildEntries().forEach(([key, value]) => {
@@ -263,8 +266,8 @@
         }
 
         visitedSet.add(this);
-        const childLod = (lod === "full" && depthRemaining > 0) ? "full" : "handle";
-        const childDepth = (lod === "full") ? depthRemaining - 1 : 0;
+        const childLod = (depthRemaining > 0) ? lod : "handle";
+        const childDepth = Math.max(0, depthRemaining - 1);
 
         const results = [];
         this.subnodes().forEach((sn, index) => {
