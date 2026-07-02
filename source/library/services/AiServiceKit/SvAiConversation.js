@@ -646,7 +646,10 @@
             let sawNewestGetClientState = false;
             for (let index = messages.length - 1; index >= 1; index--) { // skip index 0 (may be a system message)
                 const m = messages[index];
-                const withinRecentWindow = (index >= messages.length - 20);
+                // Window is small (6, was 20) so the region of the transcript
+                // that gets rewritten each turn — which invalidates the prompt
+                // cache from that depth — stays confined to the tail.
+                const withinRecentWindow = (index >= messages.length - 6);
                 m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
                     if (content.includes("getClientState") || content.includes("patchClientState")) {
                         const json = JSON.parse(content);

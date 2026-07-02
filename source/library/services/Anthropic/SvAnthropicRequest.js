@@ -186,7 +186,14 @@
             // example {"type": "message_start", "message": {"id": "msg_1nZdL29xx5MUA1yADyHTEsnR8uuvGzszyY", "type": "message", "role": "assistant", "content": [],
             // "model": "claude-3-opus-20240229, "stop_reason": null, "stop_sequence": null, "usage": {"input_tokens": 25, "output_tokens": 1}}}
             if (json.message.usage) {
-                this.setUsageInputTokenCount(json.message.usage.input_tokens);
+                const usage = json.message.usage;
+                this.setUsageInputTokenCount(usage.input_tokens);
+                // Cache telemetry: a persistently-zero cache_read on repeated
+                // requests means a silent prefix invalidator is at work
+                // (something varying per-request before the breakpoints).
+                console.log(this.logPrefix() + " prompt cache — read: " + (usage.cache_read_input_tokens || 0) +
+                    ", written: " + (usage.cache_creation_input_tokens || 0) +
+                    ", uncached input: " + (usage.input_tokens || 0));
             }
         } else if (type === "content_block_start") {
             // Adaptive-thinking models (Sonnet 5 / Fable 5 / Opus 4.7+) stream

@@ -194,6 +194,58 @@
         }
         */
 
+        this.applyPromptCaching(bodyJson);
+
+        return this;
+    }
+
+    /**
+   * @description Adds Anthropic prompt-cache breakpoints (cache_control) to
+   * the outbound body. Purely structural — derives boundaries from the
+   * generic {system, messages} shape, no app/game knowledge:
+   *
+   *   1. End of the system prompt (large and fixed for the whole session,
+   *      so it caches once and reads at ~0.1x thereafter).
+   *   2. Last content block of the FINAL message — advanced every request,
+   *      so each turn writes only the new tail beyond the longest matched
+   *      prefix and reads everything before it from cache.
+   *   3. Last block of a message ~6 back — lookback insurance: a breakpoint
+   *      only searches 20 content blocks backwards for a prior cache entry,
+   *      and long tool-heavy turns can exceed that.
+   *
+   * 3 markers of Anthropic's 4-per-request budget. Providers with automatic
+   * prefix caching (Gemini, OpenAI) need none of this — which is why it
+   * lives here and not in the shared AiServiceKit layer.
+   * @param {Object} bodyJson
+   * @category Request Handling
+   */
+    applyPromptCaching (bodyJson) {
+        const marker = { type: "ephemeral" };
+
+        if (Type.isString(bodyJson.system) && bodyJson.system.length > 0) {
+            bodyJson.system = [{ type: "text", text: bodyJson.system, "cache_control": marker }];
+        }
+
+        const messages = bodyJson.messages;
+        if (!Type.isArray(messages) || messages.length === 0) {
+            return this;
+        }
+
+        const markMessage = (m) => {
+            if (Type.isString(m.content)) {
+                if (m.content.length === 0) {
+                    return; // empty blocks are rejected by the API
+                }
+                m.content = [{ type: "text", text: m.content, "cache_control": marker }];
+            } else if (Type.isArray(m.content) && m.content.length > 0) {
+                m.content[m.content.length - 1]["cache_control"] = marker;
+            }
+        };
+
+        markMessage(messages[messages.length - 1]);
+        if (messages.length > 6) {
+            markMessage(messages[messages.length - 6]);
+        }
         return this;
     }
 
