@@ -1905,7 +1905,15 @@
      * @returns {string} The debug type ID.
      */
     svDebugId () {
-        return this.svTypeId() + " '" + this.title() + "'";
+        // Debug descriptions get built mid-sync, when a node's slots can be
+        // transiently inconsistent (e.g. a cloud projection merge applies
+        // slots one at a time) — a title() that throws there would detonate
+        // the sync/debug machinery, so fall back to the type id instead.
+        try {
+            return this.svTypeId() + " '" + this.title() + "'";
+        } catch (e) {
+            return this.svTypeId() + " (title error: " + e.message + ")";
+        }
     }
 
     // ----
