@@ -243,6 +243,39 @@
      * @returns {Object} The child node.
      * @category JSON Patch
      */
+    /**
+     * @description A short, AI-facing listing of this array's elements —
+     * `[0] "Crypt of Alatar" (jsonId: loc-3f2)` — appended to bounds
+     * errors so the AI sees what the array actually holds, not just its
+     * length. This is what lets a model correct a flat-vs-nested path
+     * mistake in one shot (e.g. one container location whose rooms live
+     * under its `sublocations`), instead of re-deriving the structure
+     * from memory. Capped so huge arrays stay cheap.
+     * @returns {string}
+     * @category JSON Patch
+     */
+    elementsSummaryString () {
+        const maxListed = 10;
+        const subnodes = this.subnodes();
+        if (subnodes.length === 0) {
+            return "Array is empty.";
+        }
+        const lines = subnodes.slice(0, maxListed).map((node, i) => {
+            let s = "[" + i + "]";
+            if (typeof node.title === "function" && node.title()) {
+                s += " \"" + node.title() + "\"";
+            }
+            if (typeof node.jsonId === "function" && node.jsonId()) {
+                s += " (jsonId: " + node.jsonId() + ")";
+            }
+            return s;
+        });
+        if (subnodes.length > maxListed) {
+            lines.push("+" + (subnodes.length - maxListed) + " more");
+        }
+        return "Array elements: " + lines.join(", ");
+    }
+
     childNodeForSegment (segment) {
         const index = this.validateArrayIndex(segment, "navigate");
 
@@ -259,7 +292,7 @@
         const arrayLength = this.subnodes().length;
         if (index >= arrayLength) {
             throw new SvJsonPatchError(
-                `Array index ${index} is out of bounds. Array has ${arrayLength} elements (valid indices: 0-${arrayLength - 1})`,
+                `Array index ${index} is out of bounds. Array has ${arrayLength} elements (valid indices: 0-${arrayLength - 1}). ${this.elementsSummaryString()}`,
                 null,
                 [segment],
                 segment,
@@ -363,7 +396,7 @@
             }
 
             if (index > this.subnodes().length) {
-                throw new Error(`Cannot add to array: index ${index} is beyond array end (length: ${this.subnodes().length}). Use index ${this.subnodes().length} or '/-' to append`);
+                throw new Error(`Cannot add to array: index ${index} is beyond array end (length: ${this.subnodes().length}). Use index ${this.subnodes().length} or '/-' to append. ${this.elementsSummaryString()}`);
             }
 
             this.addSubnodeAt(newNode, index);
@@ -394,7 +427,7 @@
 
         if (index >= this.subnodes().length) {
             throw new SvJsonPatchError(
-                `Cannot remove from array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
+                `Cannot remove from array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1}). ${this.elementsSummaryString()}`,
                 operation,
                 operation ? this.parsePathSegments(operation.path) : null,
                 key,
@@ -517,7 +550,7 @@
 
         if (index >= this.subnodes().length) {
             throw new SvJsonPatchError(
-                `Cannot test array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
+                `Cannot test array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1}). ${this.elementsSummaryString()}`,
                 operation,
                 operation ? this.parsePathSegments(operation.path) : null,
                 key,
