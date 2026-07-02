@@ -632,28 +632,40 @@
         const json = this.clientStateJson();
 
         if (json) {
-            //const tagMap = this.clientStateTagMap();
-            //const lastMessage = messages.last();
-
-            // modify the content of all messages except the last 20
-            const messagesToModify = messages.slice(0, -20);
-            messagesToModify.forEachKV((index, m) => {
-                if (index === 0) {
-                    return; // skip the first message (might be a system message)
-                }
-                // find all the tool-call-result tags which are for getClientState or patchClientState
-                // and replace them with a note that they were removed
+            // getClientState: keep ONLY the newest result, at any age.
+            // Each query is a complete replacement view (the prompts instruct
+            // the AI to request everything it currently needs in one lens),
+            // so older results are redundant snapshots — and, since patches
+            // may have landed in between, potentially contradictory ones.
+            // Keeping the newest FOREVER (the old 20-message window stripped
+            // it too, leaving the AI stateless after a quiet stretch) means
+            // there is always exactly one coherent world view in context.
+            //
+            // patchClientState: results are tiny (null on success) but recent
+            // errors matter — keep the 20-message window behavior for those.
+            let sawNewestGetClientState = false;
+            for (let index = messages.length - 1; index >= 1; index--) { // skip index 0 (may be a system message)
+                const m = messages[index];
+                const withinRecentWindow = (index >= messages.length - 20);
                 m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
                     if (content.includes("getClientState") || content.includes("patchClientState")) {
                         const json = JSON.parse(content);
-                        if (json.toolName === "getClientState" || json.toolName === "patchClientState") {
+                        if (json.toolName === "getClientState") {
+                            if (!sawNewestGetClientState) {
+                                sawNewestGetClientState = true; // newest survives, whatever its age
+                                return content;
+                            }
+                            json.result = "result removed — superseded by your most recent getClientState (each query returns your complete current view; re-query if you need something no longer visible)";
+                            return JSON.stableStringifyWithStdOptions(json, null, 2);
+                        }
+                        if (json.toolName === "patchClientState" && !withinRecentWindow) {
                             json.result = "result removed to save tokens";
                             return JSON.stableStringifyWithStdOptions(json, null, 2);
                         }
                     }
                     return content;
                 });
-            });
+            }
         }
 
         return messages;
