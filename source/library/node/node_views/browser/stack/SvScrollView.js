@@ -72,27 +72,28 @@
         }
 
         /**
-         * @member {SvDomView} anchoredSubview - The subview the anchor is pinned to.
-         * While set, content mutations re-pin scrollTop to this subview's current
-         * offsetTop so layout changes (image loads, tile re-syncs, scrollTop
-         * clamping after transient DOM shrink) can't drift the viewport away
-         * from the anchored message. Cleared when the user scrolls manually
-         * or the anchor disengages.
+         * @member {SvNode} viewportRefNode - The node of the tile that was at
+         * the top of the viewport at the last scroll event. After every content
+         * mutation (while not at the bottom), scrollTop is restored so this
+         * tile keeps its viewport position — which makes the reading position
+         * immune to layout changes elsewhere: images completing above, tile
+         * re-syncs tearing DOM down and back up, and browser scrollTop clamps
+         * after transient shrinks. Tracked by NODE (not tile) so a re-created
+         * tile still resolves.
          * @category State
          */
         {
-            const slot = this.newSlot("anchoredSubview", null);
-            slot.setSlotType("SvDomView");
+            const slot = this.newSlot("viewportRefNode", null);
+            slot.setSlotType("SvNode");
         }
 
         /**
-         * @member {Number} expectedScrollTop - The scrollTop we last set
-         * programmatically while anchored. If a scroll event arrives with a
-         * different value, the user moved the viewport and re-pinning stops.
+         * @member {Number} viewportRefOffset - The reference tile's offset from
+         * the viewport top (tile offsetTop - scrollTop) at the last scroll event.
          * @category State
          */
         {
-            const slot = this.newSlot("expectedScrollTop", null);
+            const slot = this.newSlot("viewportRefOffset", 0);
             slot.setSlotType("Number");
         }
 
@@ -194,6 +195,18 @@
                 this.updateScrollTracking();
                 this.contentView().startContentMutationObserverIfNeeded();
                 this.setupScrollToBottomButton();
+
+                // TEMP diagnostic for chat scroll jumps — programmatic focus()
+                // scrolls the focused element into view natively, without any
+                // scroll API call our other logging could catch
+                if (!this._scrollDebugFocusListener) {
+                    this._scrollDebugFocusListener = (event) => {
+                        const t = event.target;
+                        console.log("[ScrollDebug] focusin inside scroll view: <" + t.tagName.toLowerCase() + "> class='" +
+                            String(t.className).slice(0, 80) + "'\n" + new Error().stack.split("\n").slice(2, 7).join("\n"));
+                    };
+                    this.element().addEventListener("focusin", this._scrollDebugFocusListener);
+                }
             }
         }
     }
@@ -225,45 +238,136 @@
      * @category Event Handling
      */
     onScroll (/*event*/) {
-        // If anchored and user has scrolled to the bottom, disengage anchor mode
-        if (this.isAnchored() && this.isAtBottom()) {
+        // TEMP diagnostic for chat scroll jumps — logs any scroll event that
+        // moved more than a screenful since the last one
+        {
+            const e = this.element();
+            const last = this._scrollDebugLastTop;
+            if (last !== undefined && Math.abs(e.scrollTop - last) > e.clientHeight) {
+                console.log("[ScrollDebug] " + this.svTypeId() + " JUMP " + last + " -> " + e.scrollTop +
+                    " (scrollHeight " + e.scrollHeight + ", clientHeight " + e.clientHeight +
+                    ", isAnchored " + this.isAnchored() +
+                    ", refNode " + (this.viewportRefNode() ? this.viewportRefNode().svTypeId() : "null") +
+                    ", wasAtBottom " + this.wasAtBottom() + ")");
+            }
+            this._scrollDebugLastTop = e.scrollTop;
+        }
+
+        // If anchored and user has scrolled to the bottom, disengage anchor mode.
+        // Not during a teardown window — an emptied scroller falsely reads as
+        // "at bottom" when the browser clamps scrollTop.
+        if (this.isAnchored() && this.isAtBottom() && !this.isInTransientTeardown()) {
             //console.log("[AnchorScroll] onScroll: user reached bottom, disengaging anchor");
             this.setIsAnchored(false);
-            this.stopRepinning();
             this.clearAnchorPadding();
-        } else if (this.isRepinning()) {
-            // A scroll position we didn't set means the user moved the
-            // viewport — stop re-pinning so mutations can't yank them back.
-            // (Anchor mode itself stays engaged: auto-scroll remains
-            // suppressed until they reach the bottom.)
-            const delta = Math.abs(this.element().scrollTop - this.expectedScrollTop());
-            if (delta > this.computeScrollTolerance()) {
-                //console.log("[AnchorScroll] onScroll: user scroll detected (delta " + delta + "), stop re-pinning");
-                this.stopRepinning();
-            }
         }
+        this.updateViewportRef();
         this.updateScrollTracking();
         this.updateScrollToBottomButton();
     }
 
     /**
-     * @description Whether the anchor is actively re-pinning to a subview.
-     * @returns {Boolean} True when anchored with a live re-pin target.
-     * @category State
-     */
-    isRepinning () {
-        return this.isAnchored() && this.anchoredSubview() !== null && this.expectedScrollTop() !== null;
-    }
-
-    /**
-     * @description Stops re-pinning the anchored subview. Anchor mode
-     * (auto-scroll suppression) is unaffected.
+     * @description Records which tile is currently at the top of the viewport
+     * and its offset, as the reference for keeping the reading position stable
+     * across content mutations. Called on every scroll event (user, browser
+     * scroll-anchoring adjustments, clamps, and our own restores alike) — the
+     * most recent scroll position is by definition the position to preserve.
+     * Skipped while the current reference tile is missing from the DOM (a view
+     * re-sync mid-teardown, or the clamp that shrink causes) so a transient
+     * state can't overwrite a good reference before restore runs.
      * @returns {SvScrollView} The SvScrollView instance.
      * @category State
      */
-    stopRepinning () {
-        this.setAnchoredSubview(null);
-        this.setExpectedScrollTop(null);
+    /**
+     * @description True while the reference tile is absent from the DOM but its
+     * node still exists in the model — i.e. a view re-sync has torn tiles down
+     * and not yet rebuilt them. In that window the scroller's geometry is
+     * meaningless (an emptied scroller reads as "at bottom"), so scroll-state
+     * bookkeeping must not trust it. A node deleted from the model is NOT
+     * transient: the reference is cleared and normal behavior resumes.
+     * @returns {Boolean} Whether a transient teardown is in progress.
+     * @category State
+     */
+    isInTransientTeardown () {
+        const refNode = this.viewportRefNode();
+        const contentView = this.contentView();
+        if (!refNode || !contentView || !contentView.subviewForNode) {
+            return false;
+        }
+        const tile = contentView.subviewForNode(refNode);
+        if (tile && tile.element().isConnected) {
+            return false;
+        }
+        if (refNode.parentNode && !refNode.parentNode()) {
+            // actually deleted from the model — not a teardown window
+            this.setViewportRefNode(null);
+            return false;
+        }
+        return true;
+    }
+
+    updateViewportRef () {
+        const contentView = this.contentView();
+        if (!contentView || !this.sticksToBottom()) {
+            return this;
+        }
+
+        if (this.isInTransientTeardown()) {
+            // keep the existing reference until tiles are rebuilt
+            return this;
+        }
+
+        const scrollTop = this.element().scrollTop;
+        const tiles = contentView.subviews();
+        for (let i = 0; i < tiles.length; i++) {
+            const te = tiles[i].element();
+            if (te.offsetTop + te.offsetHeight > scrollTop + 1) {
+                if (tiles[i].node) {
+                    this.setViewportRefNode(tiles[i].node());
+                    this.setViewportRefOffset(te.offsetTop - scrollTop);
+                }
+                break;
+            }
+        }
+        return this;
+    }
+
+    /**
+     * @description Restores the scroll position so the reference tile (the one
+     * at the top of the viewport at the last scroll event) keeps its viewport
+     * offset. Called after content mutations while not at the bottom. This is
+     * what keeps the reading position stable when layout changes elsewhere —
+     * an image finishing above, tiles being torn down and re-created by a view
+     * sync, or the browser clamping scrollTop after a transient shrink. When
+     * the browser's native scroll anchoring already compensated correctly this
+     * computes the same value and is a no-op.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
+     */
+    restoreViewportPosition () {
+        const refNode = this.viewportRefNode();
+        const contentView = this.contentView();
+        if (!refNode || !contentView || !contentView.subviewForNode) {
+            return this;
+        }
+
+        const tile = contentView.subviewForNode(refNode);
+        if (!tile || !tile.element().isConnected) {
+            // The reference tile is gone right now (teardown in progress, or
+            // the message was deleted). Keep the reference — if the tile is
+            // re-created, the next mutation restores against it.
+            return this;
+        }
+
+        const e = this.element();
+        const targetTop = tile.element().offsetTop - this.viewportRefOffset();
+        const clampedTarget = Math.max(0, Math.min(targetTop, e.scrollHeight - e.clientHeight));
+        if (Math.abs(e.scrollTop - clampedTarget) > 1) {
+            // TEMP diagnostic for chat scroll jumps
+            console.log("[ScrollDebug] " + this.svTypeId() + ".restoreViewportPosition() " + e.scrollTop + " -> " + clampedTarget +
+                " (ref " + refNode.svTypeId() + " offset " + this.viewportRefOffset() + ")");
+            e.scrollTop = clampedTarget;
+        }
         return this;
     }
 
@@ -278,63 +382,13 @@
                 this.immediatelyScrollToBottom();
                 this.setWasAtBottom(true);
                 this.setLastScrollHeight(this.clientHeight());
-            } else if (this.isRepinning()) {
-                this.repinAnchor();
+            } else {
+                // Reading somewhere above the bottom — keep the viewport
+                // stable relative to the content the user is looking at.
+                this.restoreViewportPosition();
             }
             this.updateScrollToBottomButton();
         }
-    }
-
-    /**
-     * @description Re-pins the scroll position to the anchored subview's
-     * current offsetTop. Content mutations (streaming tokens, image loads,
-     * tile re-syncs) move the anchored message's layout position while
-     * scrollTop stays a fixed pixel value — and a transient DOM shrink can
-     * clamp scrollTop far away. Only re-pins while the scroll position is
-     * still where we last put it (i.e. the user hasn't scrolled).
-     * @returns {SvScrollView} The SvScrollView instance.
-     * @category Scrolling
-     */
-    repinAnchor () {
-        const e = this.element();
-        // Only correct if the position is still ours. A user scroll between
-        // events shows up here as a mismatch — leave their position alone
-        // (onScroll will stop re-pinning shortly anyway). Exception: a
-        // browser clamp after a transient DOM shrink lands exactly at the
-        // scroll limit, below where we pinned — that's not the user, so
-        // correct it. (This mutation callback runs as a microtask, before
-        // the clamp's scroll event task, so onScroll won't misread the
-        // clamped position as the user reaching the bottom.)
-        const tolerance = this.computeScrollTolerance();
-        const positionIsOurs = Math.abs(e.scrollTop - this.expectedScrollTop()) <= tolerance;
-        const wasClamped = e.scrollTop < this.expectedScrollTop() &&
-            e.scrollTop >= e.scrollHeight - e.clientHeight - tolerance;
-        if (!positionIsOurs && !wasClamped) {
-            return this;
-        }
-
-        let subview = this.anchoredSubview();
-        if (!subview.element().isConnected) {
-            // The tile was torn down and re-created by a view sync — re-resolve
-            // the new tile for the same node, or give up if it's gone.
-            const node = subview.node ? subview.node() : null;
-            const contentView = this.contentView();
-            subview = (node && contentView && contentView.subviewForNode) ? contentView.subviewForNode(node) : null;
-            if (!subview) {
-                //console.log("[AnchorScroll] repinAnchor: anchored subview gone, stop re-pinning");
-                this.stopRepinning();
-                return this;
-            }
-            this.setAnchoredSubview(subview);
-        }
-
-        const targetTop = subview.element().offsetTop;
-        if (e.scrollTop !== targetTop) {
-            //console.log("[AnchorScroll] repinAnchor: correcting scrollTop", e.scrollTop, "->", targetTop);
-            e.scrollTop = targetTop;
-        }
-        this.setExpectedScrollTop(e.scrollTop); // read back — may be clamped
-        return this;
     }
 
     /**
@@ -403,6 +457,12 @@
             // from re-engaging auto-scroll.
             return this;
         }
+        if (this.isInTransientTeardown()) {
+            // Tiles are torn down mid-sync: the emptied scroller reads as
+            // "at bottom", which would make the rebuild stick-to-bottom
+            // instead of restoring the reading position.
+            return this;
+        }
         if (this.wasAtBottom() !== this.isAtBottom()) {
             this.setWasAtBottom(this.isAtBottom());
         }
@@ -450,7 +510,6 @@
         if (this.isAnchored()) {
             //console.log("[AnchorScroll] scrollToBottomSmooth: disengaging anchor");
             this.setIsAnchored(false);
-            this.stopRepinning();
             this.clearAnchorPadding();
         }
         this.element().scrollTo({
@@ -483,14 +542,22 @@
             }
 
             this.element().scrollTop = aSubview.element().offsetTop;
-            //console.log("[AnchorScroll]   set scrollTop to:", aSubview.element().offsetTop,
-            //    "scrollHeight:", this.element().scrollHeight, "clientHeight:", viewportHeight);
-            this.setAnchoredSubview(aSubview);
-            this.setExpectedScrollTop(this.element().scrollTop); // read back — may be clamped
+            // TEMP diagnostic for chat scroll jumps
+            console.log("[ScrollDebug] " + this.svTypeId() + ".anchorOnSubview(" + aSubview.svTypeId() + ")" +
+                " offsetTop " + aSubview.element().offsetTop +
+                " -> scrollTop " + this.element().scrollTop +
+                " (scrollHeight " + this.element().scrollHeight + ", clientHeight " + viewportHeight +
+                ", offsetParent " + (aSubview.element().offsetParent === this.element() ? "scrollView" : (aSubview.element().offsetParent ? aSubview.element().offsetParent.className : "null")) + ")");
+            // Seed the viewport reference to the anchored tile so mutations
+            // keep it pinned even before the next scroll event.
+            if (aSubview.node) {
+                this.setViewportRefNode(aSubview.node());
+                this.setViewportRefOffset(0);
+            }
         } else {
             // No anchor target — scroll to top
             this.element().scrollTop = 0;
-            this.stopRepinning();
+            this.setViewportRefNode(null);
         }
         // Engage anchor mode — suppresses wasAtBottom from being flipped
         // to true by transient layout changes during view syncs.
