@@ -151,8 +151,12 @@
                 line = this.readNextXhrLine();
             }
         } catch (error) {
+            console.error(this.svType() + " readXhrLines error:", error);
             this.onError(error);
-            this.xhrPromise().callRejectFunc(new Error(error));
+            // Progress events can fire again after an earlier rejection
+            // (stream error → abort → buffered lines still delivered);
+            // rejecting a settled promise would assert.
+            this.xhrPromise().callRejectFuncIfPending(Error.normalizeError(error));
         }
     }
 
@@ -185,9 +189,22 @@
                 this.setUsageInputTokenCount(json.message.usage.input_tokens);
             }
         } else if (type === "content_block_start") {
-            this.onNewContent(json.content_block.text);
+            // Adaptive-thinking models (Sonnet 5 / Fable 5 / Opus 4.7+) stream
+            // "thinking" and "redacted_thinking" blocks with no .text — only
+            // text blocks carry user-visible content. Appending undefined
+            // corrupted fullContent ("...undefined...") and broke the
+            // downstream tag parser.
+            const block = json.content_block;
+            if (block.type === "text" || block.type === undefined) {
+                this.onNewContent(block.text ?? "");
+            }
+            // thinking / redacted_thinking / tool_use blocks: no visible text
         } else if (type === "content_block_delta") {
-            this.onNewContent(json.delta.text);
+            const delta = json.delta;
+            if (delta.type === "text_delta" || delta.type === undefined) {
+                this.onNewContent(delta.text ?? "");
+            }
+            // thinking_delta / signature_delta / input_json_delta: not visible text
         } else if (type === "content_block_stop") {
             // nothing to do?
             // example: {"type": "content_block_stop", "index": 0}

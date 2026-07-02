@@ -162,8 +162,11 @@
                 this.jsonStreamReader().onStreamJson(newText);
             }
         } catch (error) {
+            console.error(this.svType() + " readXhrLines error:", error);
             this.onError(error);
-            this.xhrPromise().callRejectFunc(new Error(error));
+            // See SvAnthropicRequest.readXhrLines — progress events can fire
+            // after an earlier rejection; rejecting a settled promise asserts.
+            this.xhrPromise().callRejectFuncIfPending(Error.normalizeError(error));
         }
     }
     /**

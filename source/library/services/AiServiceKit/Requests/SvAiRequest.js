@@ -897,7 +897,7 @@
         console.error(this.logPrefix(), "onRequestError:", error);
         this.onError(error);
         this.sendDelegateMessage("onStreamEnd");
-        this.xhrPromise().callRejectFunc(error);
+        this.xhrPromise().callRejectFuncIfPending(error);
     }
 
 
@@ -911,7 +911,9 @@
         this.setStatus("aborted");
         this.sendDelegateMessage("onStreamEnd");
         //this.sendDelegateMessage("onStreamAbort");
-        this.xhrPromise().callRejectFunc(new Error("aborted"));
+        // An abort frequently follows an error that already rejected
+        // (e.g. a stream "error" event handler calls abort()).
+        this.xhrPromise().callRejectFuncIfPending(new Error("aborted"));
     }
 
     /**
