@@ -1,5 +1,10 @@
 # STRVCT Framework Guide
 
+When **reviewing changes or PRs** to this framework, also read `REVIEW.md`
+(repo root): design altitude, capability-vs-state gating, retroactive slot
+defaults, view re-creation tolerance, async/timing hazards, and the evidence
+bar for framework changes.
+
 ## Framework Overview
 
 - Naked objects pattern implementation for JavaScript
