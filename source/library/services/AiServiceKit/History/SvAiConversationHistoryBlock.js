@@ -48,6 +48,7 @@
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setIsInJsonSchema(true);
+            slot.setIsRequired(false); // optional on pushHistory; absent means no subtitle
             slot.setIsInCloudJson(true);
             slot.setCanInspect(true);
             slot.setCanEditInspection(true);

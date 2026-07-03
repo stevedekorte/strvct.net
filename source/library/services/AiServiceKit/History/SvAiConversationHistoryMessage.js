@@ -33,6 +33,7 @@
             slot.setAllowsNullValue(true);
             slot.setShouldStoreSlot(true);
             slot.setIsInJsonSchema(true);
+            slot.setIsRequired(false); // some source messages have no speaker
             slot.setIsInCloudJson(true);
             slot.setIsSubnodeField(true); // visible when navigating into a copy (debug/monitoring)
             slot.setCanInspect(true);
