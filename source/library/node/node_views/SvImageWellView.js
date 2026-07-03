@@ -68,11 +68,14 @@
         }
         SvWebDocument.shared().addStyleSheetString(`
             @keyframes SvImageWellShimmer {
-                0% { transform: translateX(-180%) rotate(20deg); }
-                100% { transform: translateX(280%) rotate(20deg); }
+                0%   { transform: translateX(-160%) skewX(-14deg); opacity: 0; }
+                12%  { opacity: 1; }
+                88%  { opacity: 1; }
+                100% { transform: translateX(160%) skewX(-14deg); opacity: 0; }
             }
             .SvImageWellShimmerSheen {
-                animation: SvImageWellShimmer 1.4s ease-in-out infinite;
+                animation: SvImageWellShimmer 2.1s linear infinite;
+                will-change: transform, opacity;
             }
         `);
         this.setDidInstallShimmerCss(true);
@@ -709,7 +712,11 @@
         if (!this.frontLayerView()) {
             const v = this.newLayerView();
             v.setOpacity(0);
-            v.setTransition("opacity " + this.fadeSeconds() + "s");
+            // Transition opacity, blur and scale together so the final reveal is
+            // a focus-pull crossfade (see setFinalDataUrl), not an opacity-only
+            // fade of an already-sharp image.
+            const s = this.fadeSeconds();
+            v.setTransition("opacity " + s + "s, filter " + s + "s, transform " + s + "s");
             v.setZIndex(1);
             this.setFrontLayerView(v);
             this.addSubview(v);
@@ -791,14 +798,16 @@
     }
 
     /**
-     * @description Sets the sharp final (front layer) image data URL and
-     * crossfades it in. The opacity flip is deferred (after a forced style
-     * flush) so the CSS transition reliably animates even when the final
-     * arrives through a scheduler-driven sync in the same frame the layer is
-     * configured. While the front fades in, the blurred back layer's blur
-     * animates to 0 so the reveal reads as the blur dissolving; the back layer
-     * is dropped once the crossfade completes. Shimmer/progress are removed once
-     * the final image is present.
+     * @description Sets the sharp final (front layer) image data URL and reveals
+     * it with a focus-pull crossfade: the final image starts blurred, slightly
+     * scaled up and transparent, then animates opacity 0→1, blur → 0 and scale →
+     * 1 simultaneously, so the image and its blur transition together (rather
+     * than a sharp image snapping in over the preview). The deferred flip (after
+     * a forced style flush) makes the CSS transition run reliably even when the
+     * final arrives in the same frame the layer is configured. The blurred
+     * preview stays fully opaque underneath during the reveal — so the reserved
+     * box never shows through — and is removed once the crossfade completes.
+     * Shimmer/progress are removed once the final image is present.
      * @param {String|null} dataUrl - The data URL, or null to clear.
      * @returns {SvImageWellView}
      * @category Progressive Loading
@@ -812,14 +821,16 @@
             const front = this.frontLayer();
             front.setBackgroundImage("url(\"" + dataUrl + "\")");
             front.setOpacity(0);
-            front.element().offsetHeight; // force style flush so the opacity flip transitions
+            front.setFilter("blur(" + this.blurRadiusPx() + "px)"); // start blurred, matching the preview
+            front.setTransform("scale(1.06)"); // hide blurred edges bleeding past the box
+            front.element().offsetHeight; // force style flush so the transitions run
             this.addWeakTimeout(() => {
+                // Fade in while sharpening and settling — image + blur as one.
                 front.setOpacity(1);
-                if (this.backLayerView()) {
-                    this.backLayerView().setFilter("blur(0px)"); // blur dissolves under the fade
-                }
+                front.setFilter("blur(0px)");
+                front.setTransform("scale(1)");
             }, 16);
-            // After the crossfade completes, drop the now-hidden blurred layer.
+            // After the crossfade completes, drop the now-hidden blurred preview.
             this.addWeakTimeout(() => {
                 this.clearBackLayer();
             }, this.fadeDurationMs() + 100);
@@ -918,14 +929,16 @@
         v.setOverflow("hidden");
         v.setPointerEvents("none");
         v.turnOffUserSelect();
-        // Inner sheen band that translates across the box.
+        // Inner sheen band: a full-height, soft-edged gradient strip that the
+        // keyframes slant (skewX) and glide across the box at a steady (linear)
+        // pace, fading in and out at the extremes so it never pops at the edges.
         const sheen = SvFlexDomView.clone();
         sheen.setPosition("absolute");
-        sheen.setTop("-50%");
-        sheen.setBottom("-50%");
-        sheen.setWidth("60%");
+        sheen.setTop("0px");
+        sheen.setBottom("0px");
         sheen.setLeft("0px");
-        sheen.setBackgroundImage("linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%)");
+        sheen.setWidth("45%");
+        sheen.setBackgroundImage("linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.13) 50%, rgba(255,255,255,0) 100%)");
         sheen.setElementClassName("SvImageWellShimmerSheen"); // drives the SvImageWellShimmer animation
         v.addSubview(sheen);
         this.setShimmerView(v);
