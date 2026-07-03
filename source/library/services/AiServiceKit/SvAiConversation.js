@@ -140,6 +140,21 @@
             slot.setCanInspect(true);
         }
 
+        /**
+     * @member {SvAiConversationHistory} history - The push-ordered stack of filed episodes
+     * (see pushHistory). NOT a subnode — the conversation's subnodes are its messages.
+     * @category History
+     */
+        {
+            const slot = this.newSlot("history", null);
+            slot.setSlotType("SvAiConversationHistory");
+            slot.setFinalInitProto(SvAiConversationHistory);
+            slot.setShouldStoreSlot(true);
+            slot.setIsInCloudJson(true);
+            slot.setCanInspect(true);
+            slot.setInspectorPath(this.svType());
+        }
+
         this.initPrototypeToolSlots();
     }
 
@@ -181,8 +196,19 @@
     }
 
     initPrototypeToolSlots () { // no super initPrototypeToolSlots() because we are not an assistable JSON group?
-    // placeholder for subclasses to override
         assert(this.isPrototype(), "initPrototypeToolSlots() should only be called on a prototype");
+
+        {
+            const tool = this.methodNamed("pushHistory");
+            tool.setDescription("Files the settled conversation buffer (everything since the last push) as one titled history episode. The filed messages leave your visible transcript once a newer episode supersedes them, replaced by a one-line record marker; the record itself stays queryable — expand it anytime with getClientState {under: <its jsonId>, lod: \"full\"}. Give records meaningful titles: they are your only index into the past.");
+            tool.addParameter("title", "string", "Short episode title, named for what the episode was (e.g. the location just departed).");
+            tool.addParameter("subtitle", "string", "OPTIONAL. One line on what happened — outcomes, open threads, notable changes.");
+            tool.setReturnTypes(["null"]);
+            tool.setIsToolable(true);
+            tool.setIsSilentSuccess(true);
+            tool.setIsSilentError(false);
+            tool.setCallsOnCompletionTool(true);
+        }
     }
 
     jsonHistoryString () {
@@ -619,6 +645,111 @@
             return delegate.asRootJsonSchemaString();
         }
         return null;
+    }
+
+    // --- history filing (pushHistory tool) ---
+
+    /**
+   * @description Tool: files the settled unfiled buffer as one titled history
+   * episode. Copies (not moves) — the original message nodes stay in the
+   * conversation untouched (the user's transcript keeps showing everything);
+   * they just gain a filedToHistoryBlockId marker that the AI-visible
+   * composition collapses to the block's handle marker once a newer block
+   * supersedes it (see composeJsonHistory).
+   * @param {SvToolCall} toolCall
+   * @category History
+   */
+    pushHistory (toolCall) {
+        try {
+            const title = toolCall.parametersDict().title;
+            const subtitle = toolCall.parametersDict().subtitle;
+            if (!Type.isString(title) || title.trim().length === 0) {
+                throw new Error("pushHistory: a non-empty title is required");
+            }
+
+            const candidates = [];
+            for (const m of this.messages()) {
+                if (m.role() === "system") {
+                    continue; // the system prompt is not part of any episode
+                }
+                if (m.filedToHistoryBlockId && m.filedToHistoryBlockId()) {
+                    continue; // already filed in an earlier push
+                }
+                if (!m.isVisibleToAi || !m.isVisibleToAi()) {
+                    continue; // private/UI-only (e.g. party chat) — never copy into AI-queryable history
+                }
+                if (!m.isComplete() && !m.hasError()) {
+                    break; // unsettled — stop here so filed blocks stay contiguous
+                }
+                candidates.push(m);
+            }
+
+            if (candidates.length === 0) {
+                throw new Error("pushHistory: nothing to file — no settled messages since the last push");
+            }
+
+            const block = this.history().newBlockWithTitleAndSubtitle(title, subtitle);
+            candidates.forEach(m => {
+                block.addCopyOfMessage(m);
+                m.setFiledToHistoryBlockId(block.jsonId());
+            });
+            console.log(this.logPrefix(), "pushHistory filed " + candidates.length + " messages as '" + title + "' (" + block.jsonId() + ")");
+            toolCall.setCallResult(null);
+        } catch (error) {
+            toolCall.setCallError(error);
+        }
+    }
+
+    /**
+   * @description Composes the AI-visible json history from message nodes,
+   * collapsing filed episodes: messages filed to a superseded block emit
+   * nothing individually — one handle-dict marker per block appears in their
+   * place. The NEWEST filed block stays inline (one-episode lookback), so
+   * {current buffer + previous episode} is always in full view. Markers are
+   * regenerated from block state on every pass — nothing marker-shaped is
+   * stored.
+   * @param {Array} messages - The visible message nodes, in order.
+   * @returns {Array} Array of {role, content} dicts for the request.
+   * @category History
+   */
+    composeJsonHistory (messages) {
+        const history = this.history();
+        const newestBlock = (history && history.newestBlock) ? history.newestBlock() : null;
+        if (!newestBlock) {
+            return messages.map(m => m.messagesJson()); // nothing filed yet
+        }
+        const emittedBlockIds = new Set();
+        const out = [];
+        messages.forEach(m => {
+            const blockId = (m.filedToHistoryBlockId ? m.filedToHistoryBlockId() : null);
+            if (blockId && blockId !== newestBlock.jsonId()) {
+                if (!emittedBlockIds.has(blockId)) {
+                    emittedBlockIds.add(blockId);
+                    const block = history.blockWithJsonId(blockId);
+                    if (block) {
+                        out.push(this.historyMarkerJsonForBlock(block));
+                    }
+                }
+                return; // superseded episode — collapsed into its marker
+            }
+            out.push(m.messagesJson());
+        });
+        return out;
+    }
+
+    /**
+   * @description The {role, content} dict marking a filed episode in the
+   * AI-visible history: the block's lens handle (jsonId, title, subtitle,
+   * count) wrapped in a history-record tag. Expanding it back is an ordinary
+   * getClientState expand-by-id on the jsonId.
+   * @param {SvAiConversationHistoryBlock} block
+   * @returns {Object}
+   * @category History
+   */
+    historyMarkerJsonForBlock (block) {
+        const roleName = this.service() ? this.service().serviceRoleNameForRole("user") : "user";
+        const content = "<history-record>\n" + JSON.stableStringifyWithStdOptions(block.lensHandleJson(), null, 2) + "\n</history-record>";
+        return { role: roleName, content: content };
     }
 
     /**

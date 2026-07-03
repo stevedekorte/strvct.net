@@ -11,6 +11,7 @@
     "Composer/_imports.json",
     "Tools/_imports.json",
     "Parsing/_imports.json",
+    "History/_imports.json",
     "SvAiConversation.js",
     "SvAiConversations.js",
     "SvAiService.js"
