@@ -4,8 +4,8 @@
 /** * @class SvImageWellFieldTile
  * @extends SvFieldTile
  * @classdesc Represents an image well field tile in the browser stack.
- 
- 
+
+
  */
 
 "use strict";
@@ -90,6 +90,26 @@
     }
 
     /**
+     * @description True if the node opts into the progressive well protocol.
+     * Feature-detected: the node may not implement these methods at all (e.g. a
+     * bare SvImageNode acting as its own field does NOT extend SvImageWellField),
+     * so every access is guarded — never assume the methods exist. Progressive
+     * mode engages only when the node implements the protocol AND reports either
+     * a non-null aspect ratio or that it is working.
+     * @returns {Boolean}
+     * @category Synchronization
+     */
+    nodeIsProgressive () {
+        const field = this.node();
+        if (!field || !field.imageWellAspectRatio) {
+            return false;
+        }
+        const aspect = field.imageWellAspectRatio();
+        const working = field.imageWellIsWorking ? field.imageWellIsWorking() : false;
+        return aspect != null || working;
+    }
+
+    /**
      * @description Synchronizes the tile from the node.
      * @returns {SvImageWellFieldTile} The synchronized instance.
      * @category Synchronization
@@ -105,11 +125,16 @@
         // handle other details
         this.imageWellView().setIsEditable(field.valueIsEditable());
 
-        // Hide the value view if we're still generating (showing dots in key)
-        if (field.keyIsComplete && !field.keyIsComplete()) {
-            this.valueViewContainer().setDisplay("none");
+        if (this.nodeIsProgressive()) {
+            this.syncProgressiveFromNode();
         } else {
-            this.valueViewContainer().setDisplay("");
+            // ORIGINAL non-progressive path — byte-for-byte as before.
+            // Hide the value view if we're still generating (showing dots in key)
+            if (field.keyIsComplete && !field.keyIsComplete()) {
+                this.valueViewContainer().setDisplay("none");
+            } else {
+                this.valueViewContainer().setDisplay("");
+            }
         }
 
         // handle image values
@@ -118,7 +143,57 @@
         return this;
     }
 
+    /**
+     * @description Progressive-mode sync: feed the reserved-box aspect ratio,
+     * working flag, progress and per-node blur into the well, and keep the well
+     * visible during work. The base tile / SvFieldTile hides the value view
+     * while !keyIsComplete / !valueIsVisible; for a progressive well we want the
+     * reserved box shown throughout so it never renders a blank tile. On a model
+     * error, collapse the box so the surrounding error-status text lays out
+     * normally.
+     * @returns {SvImageWellFieldTile}
+     * @category Synchronization
+     */
+    syncProgressiveFromNode () {
+        const field = this.node();
+        const well = this.imageWellView();
+
+        // On failure: tear the reserved box down entirely and fall back to base
+        // error-status text — no lingering empty frame.
+        if (field.error && field.error()) {
+            if (well.setAspectRatioString) {
+                well.setAspectRatioString(null);
+            }
+            return this;
+        }
+
+        // Keep the reserved box visible throughout work.
+        this.valueViewContainer().setDisplay("");
+        well.setIsDisplayHidden(false);
+
+        if (well.setBlurRadiusPx && field.imageWellBlurRadiusPx) {
+            const blur = field.imageWellBlurRadiusPx();
+            if (blur != null) {
+                well.setBlurRadiusPx(blur);
+            }
+        }
+        if (well.setAspectRatioString) {
+            well.setAspectRatioString(field.imageWellAspectRatio());
+        }
+        if (well.setIsWorking) {
+            well.setIsWorking(field.imageWellIsWorking ? field.imageWellIsWorking() : false);
+        }
+        if (well.setProgress) {
+            well.setProgress(field.imageWellProgress ? field.imageWellProgress() : null);
+        }
+        return this;
+    }
+
     async asyncSyncFromNode () {
+        if (this.nodeIsProgressive()) {
+            return await this.asyncSyncProgressiveFromNode();
+        }
+
         const imageWellView = this.imageWellView();
         const field = this.node();
         let value = field.value();
@@ -135,6 +210,71 @@
             value = null;
         }
         imageWellView.setImageDataUrl(value);
+        return this;
+    }
+
+    /**
+     * @description Progressive-mode async sync: resolves the preview + final
+     * data URLs and feeds them to the well's layers (crossfade). The base
+     * single-image path (setImageDataUrl → removeAllSubviews) is skipped so it
+     * can't destroy the stacked layers on every sync.
+     * @returns {SvImageWellFieldTile}
+     * @category Synchronization
+     */
+    async asyncSyncProgressiveFromNode () {
+        const well = this.imageWellView();
+        const field = this.node();
+
+        // Preview (blurred back layer).
+        let previewUrl = null;
+        try {
+            const previewValue = field.imageWellPreviewValue ? field.imageWellPreviewValue() : null;
+            if (previewValue && previewValue.asyncDataUrl) {
+                previewUrl = await previewValue.asyncDataUrl();
+            }
+        } catch (error) {
+            console.warn("SvImageWellFieldTile: failed to load preview image:", error.message);
+            previewUrl = null;
+        }
+        if (well.setPreviewDataUrl) {
+            well.setPreviewDataUrl(previewUrl);
+        }
+
+        // Final (sharp front layer) — same value()/asyncDataUrl path as base.
+        let finalUrl = null;
+        try {
+            const value = field.value();
+            if (value && value.asyncDataUrl) {
+                finalUrl = await value.asyncDataUrl();
+            } else if (typeof value === "string" && value.length > 0) {
+                finalUrl = value;
+            }
+        } catch (error) {
+            console.warn("SvImageWellFieldTile: failed to load final image:", error.message);
+            finalUrl = null;
+        }
+        if (well.setFinalDataUrl) {
+            well.setFinalDataUrl(finalUrl);
+        }
+
+        return this;
+    }
+
+    /**
+     * @description Syncs the value from the node. For progressive nodes the base
+     * path (setValue → setImageDataUrl → removeAllSubviews) is skipped because it
+     * would destroy the well's stacked preview/final layers on every sync; the
+     * progressive image plumbing flows through asyncSyncProgressiveFromNode()
+     * instead. Non-progressive nodes get unchanged base behavior.
+     * @returns {SvImageWellFieldTile} The synchronized instance.
+     * @category Synchronization
+     */
+    syncValueFromNode () {
+        if (!this.nodeIsProgressive()) {
+            return super.syncValueFromNode();
+        }
+        const node = this.node();
+        this.valueView().setIsEditable(node.valueIsEditable());
         return this;
     }
 
