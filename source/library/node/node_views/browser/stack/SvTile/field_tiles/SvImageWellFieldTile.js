@@ -225,20 +225,12 @@
         const well = this.imageWellView();
         const field = this.node();
 
-        // Preview (blurred back layer).
-        let previewUrl = null;
-        try {
-            const previewValue = field.imageWellPreviewValue ? field.imageWellPreviewValue() : null;
-            if (previewValue && previewValue.asyncDataUrl) {
-                previewUrl = await previewValue.asyncDataUrl();
-            }
-        } catch (error) {
-            console.warn("SvImageWellFieldTile: failed to load preview image:", error.message);
-            previewUrl = null;
-        }
-        if (well.setPreviewDataUrl) {
-            well.setPreviewDataUrl(previewUrl);
-        }
+        // Apply the FINAL before the PREVIEW. At completion the node reports a
+        // final image AND a null preview in the same sync pass; if we cleared
+        // the preview first it would rip the blurred backdrop out from under the
+        // slowly-fading-in final (a flash of the empty box). Setting the final
+        // first lets setPreviewDataUrl(null) see a final in progress and keep the
+        // backdrop — the final reveal removes it once its crossfade completes.
 
         // Final (sharp front layer) — same value()/asyncDataUrl path as base.
         let finalUrl = null;
@@ -255,6 +247,21 @@
         }
         if (well.setFinalDataUrl) {
             well.setFinalDataUrl(finalUrl);
+        }
+
+        // Preview (blurred back layer).
+        let previewUrl = null;
+        try {
+            const previewValue = field.imageWellPreviewValue ? field.imageWellPreviewValue() : null;
+            if (previewValue && previewValue.asyncDataUrl) {
+                previewUrl = await previewValue.asyncDataUrl();
+            }
+        } catch (error) {
+            console.warn("SvImageWellFieldTile: failed to load preview image:", error.message);
+            previewUrl = null;
+        }
+        if (well.setPreviewDataUrl) {
+            well.setPreviewDataUrl(previewUrl);
         }
 
         return this;

@@ -802,7 +802,15 @@
                 }, 16);
             }
         } else {
-            this.clearBackLayer();
+            // Preview cleared. Keep the visible blurred layer as a backdrop while
+            // a final image is present/revealing (setFinalDataUrl removes it once
+            // its crossfade completes) or while still working (a final is
+            // imminent) — clearing it now would flash the empty box under the
+            // slowly-fading-in final. Only clear outright when nothing else will.
+            this._previewDataUrl = null;
+            if (!this._finalDataUrl && !this._isWorking) {
+                this.clearBackLayer();
+            }
         }
         this.updateBackgroundFill();
         this.raiseOverlays(); // keep shimmer/progress above the preview
