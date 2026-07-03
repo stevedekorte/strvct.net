@@ -68,14 +68,21 @@
         }
         SvWebDocument.shared().addStyleSheetString(`
             @keyframes SvImageWellShimmer {
-                0%   { transform: translateX(-160%) skewX(-14deg); opacity: 0; }
-                12%  { opacity: 1; }
-                88%  { opacity: 1; }
-                100% { transform: translateX(160%) skewX(-14deg); opacity: 0; }
+                0%   { background-position: 0% 50%; }
+                100% { background-position: 100% 50%; }
             }
             .SvImageWellShimmerSheen {
-                animation: SvImageWellShimmer 2.1s linear infinite;
-                will-change: transform, opacity;
+                background-image: linear-gradient(115deg,
+                    rgba(255,255,255,0) 0%,
+                    rgba(255,255,255,0) 34%,
+                    rgba(255,255,255,0.07) 44%,
+                    rgba(255,255,255,0.13) 50%,
+                    rgba(255,255,255,0.07) 56%,
+                    rgba(255,255,255,0) 66%,
+                    rgba(255,255,255,0) 100%);
+                background-size: 250% 250%;
+                animation: SvImageWellShimmer 3.4s ease-in-out infinite alternate;
+                will-change: background-position;
             }
         `);
         this.setDidInstallShimmerCss(true);
@@ -125,6 +132,16 @@
          */
         {
             const slot = this.newSlot("fadeDurationMs", 1000);
+            slot.setSlotType("Number");
+        }
+        /**
+         * @member {Number} finalFadeDurationMs - Duration (ms) of the final
+         * image's focus-pull reveal (opacity + blur + scale). Longer than the
+         * preview fade so the sharp image arrives gently rather than popping in.
+         * @category Progressive Loading
+         */
+        {
+            const slot = this.newSlot("finalFadeDurationMs", 1800);
             slot.setSlotType("Number");
         }
         /**
@@ -521,6 +538,15 @@
     }
 
     /**
+     * @description The final-image reveal duration in seconds, from finalFadeDurationMs.
+     * @returns {Number} The final reveal duration in seconds.
+     * @category Progressive Loading
+     */
+    finalFadeSeconds () {
+        return this.finalFadeDurationMs() / 1000;
+    }
+
+    /**
      * @description Parses a "w:h" string into a numeric [w, h] pair, or null.
      * @param {String} str - The aspect-ratio string.
      * @returns {Array|null} [w, h] or null if unparseable.
@@ -714,9 +740,11 @@
             v.setOpacity(0);
             // Transition opacity, blur and scale together so the final reveal is
             // a focus-pull crossfade (see setFinalDataUrl), not an opacity-only
-            // fade of an already-sharp image.
-            const s = this.fadeSeconds();
-            v.setTransition("opacity " + s + "s, filter " + s + "s, transform " + s + "s");
+            // fade of an already-sharp image. Uses the longer finalFadeSeconds
+            // and an ease-in-out curve so the image eases in gently rather than
+            // popping over the preview.
+            const s = this.finalFadeSeconds();
+            v.setTransition("opacity " + s + "s ease-in-out, filter " + s + "s ease-in-out, transform " + s + "s ease-in-out");
             v.setZIndex(1);
             this.setFrontLayerView(v);
             this.addSubview(v);
@@ -830,10 +858,10 @@
                 front.setFilter("blur(0px)");
                 front.setTransform("scale(1)");
             }, 16);
-            // After the crossfade completes, drop the now-hidden blurred preview.
+            // After the reveal completes, drop the now-hidden blurred preview.
             this.addWeakTimeout(() => {
                 this.clearBackLayer();
-            }, this.fadeDurationMs() + 100);
+            }, this.finalFadeDurationMs() + 100);
             // The final image is here: stop working indicators.
             this.removeShimmer();
             this.removeProgressBar();
@@ -929,16 +957,16 @@
         v.setOverflow("hidden");
         v.setPointerEvents("none");
         v.turnOffUserSelect();
-        // Inner sheen band: a full-height, soft-edged gradient strip that the
-        // keyframes slant (skewX) and glide across the box at a steady (linear)
-        // pace, fading in and out at the extremes so it never pops at the edges.
+        // Full-bleed sheen: a large, soft diagonal highlight that drifts (and
+        // gently reverses) across the whole box via background-position, so it
+        // reads as flowing light rather than a band with edges marching past.
+        // The gradient + animation live in the SvImageWellShimmerSheen class.
         const sheen = SvFlexDomView.clone();
         sheen.setPosition("absolute");
         sheen.setTop("0px");
         sheen.setBottom("0px");
         sheen.setLeft("0px");
-        sheen.setWidth("45%");
-        sheen.setBackgroundImage("linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.13) 50%, rgba(255,255,255,0) 100%)");
+        sheen.setRight("0px");
         sheen.setElementClassName("SvImageWellShimmerSheen"); // drives the SvImageWellShimmer animation
         v.addSubview(sheen);
         this.setShimmerView(v);
