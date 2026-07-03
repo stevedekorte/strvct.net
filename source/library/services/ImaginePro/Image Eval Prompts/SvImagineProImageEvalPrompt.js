@@ -95,6 +95,11 @@
     async generate () {
         await this.start();
         if (!this.error()) {
+            // The grid images all arrive together at poll-DONE (before Gemini
+            // evaluation). Announce them so owners can show a preview of the
+            // first image while evaluation runs. Progress-style hook: owners
+            // may ignore it.
+            this.notifyOwners("onImagePromptFirstImages", [this]);
             if (this.shouldEval()) {
                 await this.asyncEvaluateImages();
             }

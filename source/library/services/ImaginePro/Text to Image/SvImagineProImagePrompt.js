@@ -160,6 +160,7 @@
                 { value: "4:3", label: "4:3" },
                 { value: "3:4", label: "3:4" },
                 { value: "3:2", label: "3:2" },
+                { value: "5:3", label: "5:3" },
                 { value: "2:3", label: "2:3" },
                 { value: "1:1", label: "1:1 (Default)" },
             ];
@@ -1051,6 +1052,23 @@ Midjourney
 
     allResultImages () {
         return this.generations().subnodes().map(generation => generation.images().subnodes()).flat();
+    }
+
+    /**
+     * @description Returns the SvImageNode for the first available grid image,
+     * fetching its bytes if needed. Used to show a preview before evaluation
+     * picks the winner. Returns null if no grid image is available.
+     * @returns {Promise<SvImageNode|null>} The first grid image node, or null.
+     * @category Results
+     */
+    async asyncFirstResultImageNode () {
+        const fileToDownload = this.allResultImages().first();
+        if (!fileToDownload) {
+            return null;
+        }
+        fileToDownload.setRefererUrl(this.thisClass().endpointBase());
+        await fileToDownload.asyncFetchIfNeeded();
+        return fileToDownload.imageNode();
     }
 
     async asyncAllResultImageNodes () {
