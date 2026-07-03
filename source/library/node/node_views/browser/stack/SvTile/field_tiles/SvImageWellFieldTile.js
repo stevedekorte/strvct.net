@@ -145,7 +145,7 @@
 
     /**
      * @description Progressive-mode sync: feed the reserved-box aspect ratio,
-     * working flag, progress and per-node blur into the well, and keep the well
+     * working flag and per-node blur into the well, and keep the well
      * visible during work. The base tile / SvFieldTile hides the value view
      * while !keyIsComplete / !valueIsVisible; for a progressive well we want the
      * reserved box shown throughout so it never renders a blank tile. On a model
@@ -182,9 +182,6 @@
         }
         if (well.setIsWorking) {
             well.setIsWorking(field.imageWellIsWorking ? field.imageWellIsWorking() : false);
-        }
-        if (well.setProgress) {
-            well.setProgress(field.imageWellProgress ? field.imageWellProgress() : null);
         }
         return this;
     }

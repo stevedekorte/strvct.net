@@ -142,14 +142,14 @@
     //
     // These methods let a node opt this well into progressive rendering: an
     // aspect-ratio-reserved box that shows a shimmer while working, an optional
-    // blurred preview image, an optional determinate progress bar, and a
-    // crossfade to the final image. They are DATA ONLY — a node supplies an
-    // aspect string, booleans, numbers and image nodes; it never references a
-    // view. Every method defaults to "off" so existing wells are unchanged: the
-    // tile only engages progressive mode when a node returns a non-null aspect
-    // ratio or reports it is working (see SvImageWellFieldTile). Nodes that do
-    // not implement these methods (e.g. a bare SvImageNode acting as its own
-    // field) take the original single-image path.
+    // blurred preview image, and a crossfade to the final image. They are DATA
+    // ONLY — a node supplies an aspect string, booleans, numbers and image
+    // nodes; it never references a view. Every method defaults to "off" so
+    // existing wells are unchanged: the tile only engages progressive mode when
+    // a node returns a non-null aspect ratio or reports it is working (see
+    // SvImageWellFieldTile). Nodes that do not implement these methods (e.g. a
+    // bare SvImageNode acting as its own field) take the original single-image
+    // path.
 
     /**
      * @description Progressive protocol (opt-in): the target aspect ratio for
@@ -181,16 +181,6 @@
      */
     imageWellIsWorking () {
         return false;
-    }
-
-    /**
-     * @description Progressive protocol (opt-in): determinate progress as a
-     * number in [0, 1], or null for indeterminate (shimmer). Defaults to null.
-     * @returns {Number|null} Progress in [0, 1], or null.
-     * @category Progressive Loading
-     */
-    imageWellProgress () {
-        return null;
     }
 
     /**

@@ -27,8 +27,6 @@
  *                   to opacity 1 when set;
  *   - shimmer     = a diagonal sheen sweeping across the box while working with
  *                   indeterminate progress;
- *   - progress    = a slim determinate progress bar shown only when a numeric
- *                   progress in [0, 1] is supplied.
  *
  * The box height is reserved with the padding-top percentage technique rather
  * than CSS `aspect-ratio`: the layers are position:absolute, so an intrinsic
@@ -38,7 +36,7 @@
  *
  * The view reads nothing from the model directly; it is driven entirely by the
  * setters the field tile calls (setAspectRatioString / setIsWorking /
- * setProgress / setPreviewDataUrl / setFinalDataUrl). The view owns ALL
+ * setPreviewDataUrl / setFinalDataUrl). The view owns ALL
  * blur / shimmer / animation decisions — a node only supplies data.
  */
 
@@ -174,15 +172,6 @@
             slot.setSlotType("Boolean");
         }
         /**
-         * @member {Number} progress - Determinate progress in [0, 1], or null
-         * for indeterminate (shimmer).
-         * @category Progressive Loading
-         */
-        {
-            const slot = this.newSlot("progress", null);
-            slot.setSlotType("Number");
-        }
-        /**
          * @member {SvFlexDomView} backLayerView - Current (topmost) blurred preview layer.
          * @category Progressive Loading
          */
@@ -216,22 +205,6 @@
          */
         {
             const slot = this.newSlot("shimmerView", null);
-            slot.setSlotType("SvFlexDomView");
-        }
-        /**
-         * @member {SvFlexDomView} progressTrackView - The determinate progress bar track.
-         * @category Progressive Loading
-         */
-        {
-            const slot = this.newSlot("progressTrackView", null);
-            slot.setSlotType("SvFlexDomView");
-        }
-        /**
-         * @member {SvFlexDomView} progressFillView - The determinate progress bar fill.
-         * @category Progressive Loading
-         */
-        {
-            const slot = this.newSlot("progressFillView", null);
             slot.setSlotType("SvFlexDomView");
         }
         /**
@@ -626,7 +599,6 @@
         this.clearBackLayer();
         this.clearFrontLayer();
         this.removeShimmer();
-        this.removeProgressBar();
         this.setPaddingTop("0px");
         this.setHeight("0px");
         this.setBorderRadius("0px");
@@ -644,20 +616,6 @@
     setIsWorking (aBool) {
         this._isWorking = aBool;
         this.updateBackgroundFill();
-        this.updateShimmer();
-        return this;
-    }
-
-    /**
-     * @description Sets determinate progress in [0, 1], or null for
-     * indeterminate. Refreshes the progress bar and shimmer.
-     * @param {Number|null} aNumber - Progress in [0, 1], or null.
-     * @returns {SvImageWellView}
-     * @category Progressive Loading
-     */
-    setProgress (aNumber) {
-        this._progress = aNumber;
-        this.updateProgressBar();
         this.updateShimmer();
         return this;
     }
@@ -813,7 +771,7 @@
             }
         }
         this.updateBackgroundFill();
-        this.raiseOverlays(); // keep shimmer/progress above the preview
+        this.raiseOverlays(); // keep shimmer above the preview
         return this;
     }
 
@@ -843,7 +801,7 @@
      * final arrives in the same frame the layer is configured. The blurred
      * preview stays fully opaque underneath during the reveal — so the reserved
      * box never shows through — and is removed once the crossfade completes.
-     * Shimmer/progress are removed once the final image is present.
+     * The shimmer is removed once the final image is present.
      * @param {String|null} dataUrl - The data URL, or null to clear.
      * @returns {SvImageWellView}
      * @category Progressive Loading
@@ -872,7 +830,6 @@
             }, this.finalFadeDurationMs() + 100);
             // The final image is here: stop working indicators.
             this.removeShimmer();
-            this.removeProgressBar();
         } else if (this.frontLayerView()) {
             this.frontLayerView().setBackgroundImage(null);
             this.frontLayerView().setOpacity(0);
@@ -918,12 +875,12 @@
 
     /**
      * @description True when the shimmer should be shown: enabled, working, no
-     * final image yet, and progress is indeterminate (null).
+     * final image yet.
      * @returns {Boolean}
      * @category Progressive Loading
      */
     shouldShowShimmer () {
-        return !!(this.shimmerEnabled() && this._isWorking && !this._finalDataUrl && this._progress == null);
+        return !!(this.shimmerEnabled() && this._isWorking && !this._finalDataUrl);
     }
 
     /**
@@ -996,82 +953,10 @@
         return this;
     }
 
-    // --- Determinate progress bar ---
-
     /**
-     * @description Adds/updates or removes the slim determinate progress bar to
-     * match the current progress value (shown only when progress != null).
-     * @returns {SvImageWellView}
-     * @category Progressive Loading
-     */
-    updateProgressBar () {
-        if (this._progress == null || this._finalDataUrl) {
-            this.removeProgressBar();
-            return this;
-        }
-        this.ensureProgressBar();
-        const clamped = Math.max(0, Math.min(1, this._progress));
-        this.progressFillView().setWidth((clamped * 100) + "%");
-        return this;
-    }
-
-    /**
-     * @description Lazily builds the slim, unobtrusive determinate progress bar
-     * pinned to the bottom edge of the box (a faint track with a lighter fill).
-     * zIndex 3 keeps it above the shimmer and layers. Ignores pointer events.
-     * @returns {SvFlexDomView}
-     * @category Progressive Loading
-     */
-    ensureProgressBar () {
-        if (this.progressTrackView()) {
-            return this.progressTrackView();
-        }
-        const track = SvFlexDomView.clone();
-        track.setPosition("absolute");
-        track.setLeft("0px");
-        track.setRight("0px");
-        track.setBottom("0px");
-        track.setHeight("3px");
-        track.setZIndex(3);
-        track.setBackgroundColor("rgba(255, 255, 255, 0.12)");
-        track.setPointerEvents("none");
-        track.turnOffUserSelect();
-
-        const fill = SvFlexDomView.clone();
-        fill.setPosition("absolute");
-        fill.setLeft("0px");
-        fill.setTop("0px");
-        fill.setBottom("0px");
-        fill.setWidth("0%");
-        fill.setBackgroundColor("rgba(255, 255, 255, 0.75)");
-        fill.setTransition("width 0.3s ease");
-        track.addSubview(fill);
-
-        this.setProgressFillView(fill);
-        this.setProgressTrackView(track);
-        this.addSubview(track);
-        return track;
-    }
-
-    /**
-     * @description Removes the determinate progress bar if present.
-     * @returns {SvImageWellView}
-     * @category Progressive Loading
-     */
-    removeProgressBar () {
-        const track = this.progressTrackView();
-        if (track) {
-            this.removeSubview(track);
-            this.setProgressTrackView(null);
-            this.setProgressFillView(null);
-        }
-        return this;
-    }
-
-    /**
-     * @description Re-adds the shimmer and progress overlays after image layers
-     * were (re)added, so they always stack above the images. No-op when the
-     * overlays aren't currently shown.
+     * @description Re-adds the shimmer overlay after image layers were (re)added,
+     * so it always stacks above the images. No-op when the overlay isn't
+     * currently shown.
      * @returns {SvImageWellView}
      * @category Progressive Loading
      */
@@ -1080,11 +965,6 @@
         if (shimmer) {
             this.removeSubview(shimmer);
             this.addSubview(shimmer);
-        }
-        const track = this.progressTrackView();
-        if (track) {
-            this.removeSubview(track);
-            this.addSubview(track);
         }
         return this;
     }
