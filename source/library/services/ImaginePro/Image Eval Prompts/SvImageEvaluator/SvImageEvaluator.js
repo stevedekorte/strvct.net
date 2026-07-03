@@ -280,6 +280,7 @@
         - 1.0 = essential (the main subject, or a defining attribute)
         - 0.5 = moderate (supporting elements)
         - near 0.0 = minor detail
+       Camera viewpoint/framing directives in the prompt (e.g. "following shot", "seen from behind", "aerial view", "close-up") are ALWAYS essential — importance 1.0. Score such an item 0.0 if the image contradicts the requested viewpoint (e.g. subjects facing the camera when a rear/following view was requested).
        The overall score is an importance-weighted average, so importance controls how much each item affects the result.
 
     4. Assign each checklist item a score (between 0.0 and 1.0) based on if it is present and correctly depicted.
