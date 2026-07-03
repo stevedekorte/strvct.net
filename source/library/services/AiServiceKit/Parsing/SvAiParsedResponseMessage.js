@@ -280,16 +280,42 @@
     // ----------------------------------------------------------------
 
     handleNodeTags () {
+        const orphanedToolCallTags = [];
         this.content().walkDom((node) => {
             const tagName = node.tagName;
             if (tagName) { // text nodes don't have tag names
                 const parentTagNames = Element_getAllParentNodes(node).map((n) => n.tagName);
                 const shouldHandle = tagName.includes("-");
                 const shouldIgnore = this.tagsToIgnoreInsideSet().intersection(new Set(parentTagNames)).size > 0;
-                if (shouldHandle && !shouldIgnore) {
+
+                // DOM tagNames are uppercase, so match ignored ancestors
+                // case-insensitively (the shouldIgnore intersection above
+                // predates this and is left as-is)
+                const ignoredAncestor = parentTagNames
+                    .map((n) => String(n).toLowerCase())
+                    .find((n) => this.tagsToIgnoreInsideSet().has(n));
+
+                if (tagName.toLowerCase() === "tool-call" && ignoredAncestor) {
+                    // A tool call inside <think>/<scene-description> is never
+                    // executed, but silently dropping it leaves the AI waiting
+                    // forever on a call that was never registered. Collect it
+                    // and report it back after the walk (after the walk so
+                    // top-level copies of the same call register first and
+                    // duplicates can be detected).
+                    orphanedToolCallTags.push({ tagText: node.textContent, contextTagName: ignoredAncestor });
+                } else if (shouldHandle && !shouldIgnore) {
                     const text = node.textContent;
                     this.sendCompleteTag(tagName, text);
                 }
+            }
+        });
+
+        orphanedToolCallTags.forEach((orphan) => {
+            const delegate = this.tagDelegate();
+            if (delegate && delegate.respondsTo("onOrphanedToolCallTag")) {
+                delegate.onOrphanedToolCallTag(orphan.tagText, this, orphan.contextTagName);
+            } else {
+                console.warn(this.svType() + ".handleNodeTags() found a tool-call inside <" + orphan.contextTagName + "> but the tag delegate doesn't respond to onOrphanedToolCallTag");
             }
         });
     }

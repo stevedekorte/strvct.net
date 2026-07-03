@@ -686,6 +686,26 @@
         this.assistantToolKit().handleToolCallTagFromMessage(innerTagString, aMessage);
     }
 
+    /**
+     * @description Handles a tool-call tag found inside an ignored block (e.g.
+     * <think>) — sent by SvAiParsedResponseMessage at message completion. The
+     * call is never executed; it either settles as an error the AI can react
+     * to, or attaches a warning to the registered duplicate. See
+     * SvToolCalls.handleOrphanedToolCallTagFromMessage.
+     * @param {string} innerTagString - The tool call JSON string.
+     * @param {SvAiResponseMessage} aMessage - The message the tag was found in.
+     * @param {string} contextTagName - The ignored ancestor tag name (e.g. "think").
+     * @category Tool Calls
+     */
+    onOrphanedToolCallTag (innerTagString, aMessage, contextTagName) {
+        assert(aMessage);
+        // Mirror/client conversations never drive tool calls locally
+        if (typeof this.shouldProcessToolCalls === "function" && !this.shouldProcessToolCalls()) {
+            return;
+        }
+        this.assistantToolKit().handleOrphanedToolCallTagFromMessage(innerTagString, aMessage, contextTagName);
+    }
+
     assertNoUncompletedBlockingToolCalls () {
         const tk = this.assistantToolKit();
         if (tk) {

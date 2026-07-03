@@ -205,6 +205,26 @@ Example Tool call format:
             slot.setShouldStoreSlot(true);
         }
 
+        {
+            const slot = this.newSlot("warning", null);
+            slot.setDescription("A warning to include with the result — for issues that didn't fail the call (e.g. a duplicate copy of this call was found inside a <think> block).");
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setShouldJsonArchive(false);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(true);
+        }
+
+        {
+            const slot = this.newSlot("sourceContextTagName", null);
+            slot.setDescription("When set (e.g. 'think'), this tool call's tag was found inside that (ignored) block instead of at the top level of the response — it is reported back to the AI but never executed.");
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setShouldJsonArchive(false);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(true);
+        }
+
         // start time slot
         {
             const slot = this.newSlot("startTime", null);
@@ -550,6 +570,13 @@ Example Tool call format:
         e.name = "ToolCallParseError";
         e.extraMessage = "Error parsing tool call JSON. Please fix the call string and try again.";
 
+        if (this.sourceContextTagName()) {
+            const ctx = this.sourceContextTagName();
+            e.extraMessage = "NOTE: this tool call was found inside a <" + ctx + "> block — tool calls inside <" + ctx +
+                "> are never executed. Emit tool calls at the top level of your response, after the closing </" + ctx + "> tag. " +
+                e.extraMessage;
+        }
+
         if (toolName !== undefined) {
         // lets get the tool definition schema so we can remind the AI of the expected format
             const toolDefinition = this.toolDefinitionForToolName(toolName);
@@ -725,7 +752,29 @@ Example Tool call format:
         r.setCallId(this.callId());
         r.setToolName(this.toolName());
         r.setToolCall(this);
+        if (this.warning()) {
+            r.setWarning(this.warning());
+        }
         return r;
+    }
+
+    /**
+     * @description Attaches a warning to this call. Warnings ride back to the AI
+     * inside the call's tool-call-result (for issues that don't fail the call,
+     * e.g. a duplicate copy of the call found inside a <think> block). If the
+     * result already exists (call settled, response not yet sent), the warning
+     * is copied onto it directly.
+     * @param {string} warningText - The warning to add.
+     * @returns {SvToolCall} This instance.
+     * @category Results
+     */
+    addWarning (warningText) {
+        const combined = this.warning() ? (this.warning() + "\n" + warningText) : warningText;
+        this.setWarning(combined);
+        if (this.toolResult()) {
+            this.toolResult().setWarning(combined);
+        }
+        return this;
     }
 
     handleCallSuccess (resultValue) {

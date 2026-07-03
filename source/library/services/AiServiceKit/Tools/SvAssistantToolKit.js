@@ -92,6 +92,10 @@
         this.toolCalls().handleToolCallTagFromMessage(innerTagString, aMessage);
     }
 
+    handleOrphanedToolCallTagFromMessage (innerTagString, aMessage, contextTagName) {
+        this.toolCalls().handleOrphanedToolCallTagFromMessage(innerTagString, aMessage, contextTagName);
+    }
+
     formatsPrompt () {
         return `### Formats
 

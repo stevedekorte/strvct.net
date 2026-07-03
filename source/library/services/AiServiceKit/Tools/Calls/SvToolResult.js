@@ -125,6 +125,18 @@ See schema for the particular tool call (whose name is in the toolName property)
             slot.setShouldStoreSlot(true);
         }
 
+        {
+            const slot = this.newSlot("warning", null);
+            slot.setDescription("A warning about the call that did not cause it to fail — e.g. a duplicate copy of the call was found inside a <think> block and ignored. Correct the described issue in future calls.");
+            slot.setSlotType("String");
+            slot.setIsSubnodeField(true);
+            slot.setAllowsNullValue(true);
+            slot.setShouldJsonArchive(true);
+            slot.setIsInJsonSchema(true);
+            slot.setIsRequired(false);
+            slot.setShouldStoreSlot(true);
+        }
+
         // ---- END SvToolResult JSON schema ----
 
         {
