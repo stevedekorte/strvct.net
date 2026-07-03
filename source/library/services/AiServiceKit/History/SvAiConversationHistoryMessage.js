@@ -34,6 +34,9 @@
             slot.setShouldStoreSlot(true);
             slot.setIsInJsonSchema(true);
             slot.setIsInCloudJson(true);
+            slot.setIsSubnodeField(true); // visible when navigating into a copy (debug/monitoring)
+            slot.setCanInspect(true);
+            slot.setInspectorPath(this.svType());
         }
 
         /**
@@ -47,6 +50,9 @@
             slot.setShouldStoreSlot(true);
             slot.setIsInJsonSchema(true);
             slot.setIsInCloudJson(true);
+            slot.setIsSubnodeField(true); // visible when navigating into a copy (debug/monitoring)
+            slot.setCanInspect(true);
+            slot.setInspectorPath(this.svType());
         }
 
         /**
@@ -61,6 +67,8 @@
             slot.setShouldStoreSlot(true);
             slot.setIsInJsonSchema(false);
             slot.setIsInCloudJson(true);
+            slot.setCanInspect(true); // provenance — inspector only, not a nav tile
+            slot.setInspectorPath(this.svType());
         }
     }
 

@@ -34,6 +34,9 @@
             slot.setShouldStoreSlot(true);
             slot.setIsInJsonSchema(true);
             slot.setIsInCloudJson(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(true);
+            slot.setInspectorPath(this.svType());
         }
 
         /**
@@ -46,6 +49,9 @@
             slot.setShouldStoreSlot(true);
             slot.setIsInJsonSchema(true);
             slot.setIsInCloudJson(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(true);
+            slot.setInspectorPath(this.svType());
         }
 
         /**
