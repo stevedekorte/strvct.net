@@ -337,7 +337,10 @@
      * @returns {SvCssColor} The current background color.
      */
     currentBackgroundCssColor () {
-        const bg = this.navView().computedBackgroundColor();
+        // navView() is null for tiles hosted outside a nav column — fall
+        // back to this tile's own computed background.
+        const navView = this.navView();
+        const bg = navView ? navView.computedBackgroundColor() : this.computedBackgroundColor();
         return SvCssColor.clone().setCssColorString(bg);
     }
 

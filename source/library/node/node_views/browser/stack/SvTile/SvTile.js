@@ -27,7 +27,6 @@
     See lookedUpStyles method.
 
 
- 
  */
 
 (class SvTile extends SvNodeView {
@@ -395,11 +394,14 @@
     }
 
     /**
-     * @description Gets the nav view.
-     * @returns {SvNavView} The nav view.
+     * @description Gets the nav view, or null when the tile is not hosted in
+     * a tiles-view column (e.g. a chat input tile living in a chat view) —
+     * callers must tolerate null.
+     * @returns {SvNavView|null} The nav view.
      */
     navView () {
-        return this.column().navView();
+        const column = this.column();
+        return column ? column.navView() : null;
     }
 
     // ----
