@@ -211,6 +211,71 @@ function testHistory () {
     check(reminder.includes(String(conv.unfiledSettledMessageCount())), "reminder carries the backlog count");
 }
 
+function toolResultDict (toolName, result) {
+    const payload = { callId: "c-" + Math.floor(result.length * 7 + toolName.length), toolName, result, status: "success" };
+    return { role: "user", content: "<tool-call-result>\n" + JSON.stringify(payload, null, 2) + "\n</tool-call-result>" };
+}
+
+function testResultRetention () {
+    console.log("\nPer-tool result retention policies (onFilterJsonHistory)");
+    const conv = newConversation();
+    conv.prepareForFirstAccess(); // registers conversation tools (pushHistory) in toolDefinitions
+
+    const method = conv.pushHistory;
+    const priorPolicy = method.resultRetentionPolicy();
+    check(priorPolicy === "keep", "default policy is keep");
+
+    // keep: results untouched at any depth
+    let messages = [
+        { role: "system", content: "You are the GM." },
+        toolResultDict("pushHistory", "OLD"),
+        { role: "user", content: "filler 1" },
+        toolResultDict("pushHistory", "NEW"),
+        { role: "user", content: "filler 2" }
+    ];
+    conv.onFilterJsonHistory(messages);
+    check(messages[1].content.includes("OLD") && messages[3].content.includes("NEW"), "keep: all results intact");
+
+    // keep-newest-only: only the newest survives, older superseded with the note
+    method.setResultRetentionPolicy("keep-newest-only");
+    method.setResultRetentionNote("superseded — call again");
+    messages = [
+        { role: "system", content: "You are the GM." },
+        toolResultDict("pushHistory", "OLD"),
+        { role: "user", content: "filler 1" },
+        toolResultDict("pushHistory", "NEW"),
+        { role: "user", content: "filler 2" }
+    ];
+    conv.onFilterJsonHistory(messages);
+    check(!messages[1].content.includes("OLD") && messages[1].content.includes("superseded — call again"),
+        "keep-newest-only: older result stripped with the tool's note");
+    check(messages[3].content.includes("NEW"), "keep-newest-only: newest survives at any depth");
+
+    // recent-window:N — results older than the last N messages stripped
+    method.setResultRetentionPolicy("recent-window:2");
+    messages = [
+        { role: "system", content: "You are the GM." },
+        toolResultDict("pushHistory", "OLD"),
+        { role: "user", content: "filler 1" },
+        toolResultDict("pushHistory", "NEW"),
+        { role: "user", content: "filler 2" }
+    ];
+    conv.onFilterJsonHistory(messages);
+    check(!messages[1].content.includes("OLD"), "recent-window: aged-out result stripped");
+    check(messages[3].content.includes("NEW"), "recent-window: result within the window survives");
+
+    // unknown tool names pass through untouched
+    messages = [
+        { role: "system", content: "You are the GM." },
+        toolResultDict("someUnregisteredTool", "PRECIOUS"),
+        { role: "user", content: "filler" }
+    ];
+    conv.onFilterJsonHistory(messages);
+    check(messages[1].content.includes("PRECIOUS"), "unregistered tool results untouched (default keep)");
+
+    method.setResultRetentionPolicy("keep"); // restore for any later checks
+}
+
 // --- main --------------------------------------------------------------------
 
 async function main () {
@@ -219,6 +284,7 @@ async function main () {
     console.log("Booted.\n");
 
     testHistory();
+    testResultRetention();
 
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);

@@ -237,6 +237,39 @@ Function.prototype.resultReminderMethodName = function () {
     return v === undefined ? null : v;
 };
 
+// result retention policy - how long this tool's RESULTS stay in the
+// AI-visible history (see SvAiConversation.onFilterJsonHistory):
+//   "keep" (default)   - never stripped (events: rolls, images)
+//   "keep-newest-only" - only the newest result survives, at any age
+//                        (complete-view snapshots like getClientState)
+//   "recent-window:N"  - results older than the last N messages are stripped
+// Stripped results have json.result replaced by resultRetentionNote (or a
+// generic note); the tool CALL stays visible in the assistant text.
+
+Function.prototype.setResultRetentionPolicy = function (aString) {
+    assert(Type.isString(aString));
+    assert(aString === "keep" || aString === "keep-newest-only" || aString.startsWith("recent-window:"),
+        "invalid result retention policy '" + aString + "'");
+    this.setMetaProperty("resultRetentionPolicy", aString);
+    return this;
+};
+
+Function.prototype.resultRetentionPolicy = function () {
+    const v = this.getMetaProperty("resultRetentionPolicy");
+    return v === undefined ? "keep" : v;
+};
+
+Function.prototype.setResultRetentionNote = function (aString) {
+    assert(Type.isString(aString));
+    this.setMetaProperty("resultRetentionNote", aString);
+    return this;
+};
+
+Function.prototype.resultRetentionNote = function () {
+    const v = this.getMetaProperty("resultRetentionNote");
+    return v === undefined ? null : v;
+};
+
 // json schema for tool call use
 
 Function.prototype.jsonSchemaForParameter = function (parameter, refSet) {

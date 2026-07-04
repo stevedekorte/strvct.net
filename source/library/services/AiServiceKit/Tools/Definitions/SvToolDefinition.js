@@ -211,14 +211,6 @@
     return method.isSilentSuccess();
   }
 
-  resultReminderMethodName () {
-    const method = this.toolMethod();
-    if (!method) {
-      return null;
-    }
-    return method.resultReminderMethodName();
-  }
-
   returns () {
     const method = this.toolMethod();
     if (!method) {
@@ -229,6 +221,24 @@
  */
 
     // --- end pass through to method info ---
+
+    // Live pass-throughs to method-level tool metadata (the block above is
+    // historical commented-out code — do NOT add new delegates inside it).
+
+    resultReminderMethodName () {
+        const method = this.toolMethod();
+        return method ? method.resultReminderMethodName() : null;
+    }
+
+    resultRetentionPolicy () {
+        const method = this.toolMethod();
+        return method ? method.resultRetentionPolicy() : "keep";
+    }
+
+    resultRetentionNote () {
+        const method = this.toolMethod();
+        return method ? method.resultRetentionNote() : null;
+    }
 
     /*
   toolJsonDescription (refSet = new Set()) { // tool definition info

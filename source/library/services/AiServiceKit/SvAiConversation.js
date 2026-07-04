@@ -805,55 +805,75 @@
     }
 
     /**
-   * @description Filters the JSON history of messages.
+   * @description Filters the JSON history of messages by each tool's declared
+   * RESULT RETENTION POLICY (Function_ideal: setResultRetentionPolicy on the
+   * tool method; read via the tool definition):
+   *
+   *   "keep" (default)   — results are never stripped (events: rolls, images).
+   *   "keep-newest-only" — only the newest result survives, at ANY age
+   *                        (complete-view snapshots — older ones are redundant
+   *                        and, post-patches, potentially contradictory; the
+   *                        newest survives forever so the AI is never stateless).
+   *   "recent-window:N"  — results older than the last N messages are stripped
+   *                        (recent errors matter, old successes don't; keep N
+   *                        small so the rewritten region stays confined to the
+   *                        tail for the prompt cache).
+   *
+   * Stripping replaces json.result with the tool's setResultRetentionNote (or
+   * a generic note); the CALL stays visible in the assistant text, so what
+   * happened is never lost — only the payload.
    * @param {Array} messages - The messages to filter.
    * @returns {Array} The filtered messages.
    * @category Session State
    */
-
     onFilterJsonHistory (messages) {
-        const json = this.clientStateJson();
-
-        if (json) {
-            // getClientState: keep ONLY the newest result, at any age.
-            // Each query is a complete replacement view (the prompts instruct
-            // the AI to request everything it currently needs in one lens),
-            // so older results are redundant snapshots — and, since patches
-            // may have landed in between, potentially contradictory ones.
-            // Keeping the newest FOREVER (the old 20-message window stripped
-            // it too, leaving the AI stateless after a quiet stretch) means
-            // there is always exactly one coherent world view in context.
-            //
-            // patchClientState: results are tiny (null on success) but recent
-            // errors matter — keep the 20-message window behavior for those.
-            let sawNewestGetClientState = false;
-            for (let index = messages.length - 1; index >= 1; index--) { // skip index 0 (may be a system message)
-                const m = messages[index];
-                // Window is small (6, was 20) so the region of the transcript
-                // that gets rewritten each turn — which invalidates the prompt
-                // cache from that depth — stays confined to the tail.
-                const withinRecentWindow = (index >= messages.length - 6);
-                m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
-                    if (content.includes("getClientState") || content.includes("patchClientState")) {
-                        const json = JSON.parse(content);
-                        if (json.toolName === "getClientState") {
-                            if (!sawNewestGetClientState) {
-                                sawNewestGetClientState = true; // newest survives, whatever its age
-                                return content;
-                            }
-                            json.result = "result removed — superseded by your most recent getClientState (each query returns your complete current view; re-query if you need something no longer visible)";
-                            return JSON.stableStringifyWithStdOptions(json, null, 2);
-                        }
-                        if (json.toolName === "patchClientState" && !withinRecentWindow) {
-                            json.result = "result removed to save tokens";
-                            return JSON.stableStringifyWithStdOptions(json, null, 2);
-                        }
-                    }
-                    return content;
-                });
-            }
+        const toolDefinitions = this.assistantToolKit() ? this.assistantToolKit().toolDefinitions() : null;
+        if (!toolDefinitions) {
+            return messages;
         }
-
+        const seenNewestOfTool = new Set();
+        for (let index = messages.length - 1; index >= 1; index--) { // skip index 0 (may be a system message)
+            const m = messages[index];
+            m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
+                let resultJson;
+                try {
+                    resultJson = JSON.parse(content);
+                } catch (parseError) { // eslint-disable-line no-unused-vars
+                    return content; // not a JSON result payload — leave it alone
+                }
+                const toolName = resultJson ? resultJson.toolName : null;
+                if (!toolName) {
+                    return content;
+                }
+                const toolDef = toolDefinitions.toolDefinitionWithName(toolName);
+                const policy = (toolDef && toolDef.resultRetentionPolicy) ? toolDef.resultRetentionPolicy() : "keep";
+                if (!policy || policy === "keep") {
+                    return content;
+                }
+                if (policy === "keep-newest-only") {
+                    if (!seenNewestOfTool.has(toolName)) {
+                        seenNewestOfTool.add(toolName); // newest survives, whatever its age
+                        return content;
+                    }
+                } else if (policy.startsWith("recent-window:")) {
+                    const windowSize = parseInt(policy.split(":")[1], 10);
+                    if (!(windowSize > 0)) {
+                        console.warn(this.logPrefix(), "invalid recent-window retention policy '" + policy + "' on tool '" + toolName + "' — keeping result");
+                        return content;
+                    }
+                    if (index >= messages.length - windowSize) {
+                        return content; // still within the window
+                    }
+                } else {
+                    console.warn(this.logPrefix(), "unknown result retention policy '" + policy + "' on tool '" + toolName + "' — keeping result");
+                    return content;
+                }
+                const note = (toolDef && toolDef.resultRetentionNote && toolDef.resultRetentionNote())
+                    || "result removed to save tokens (results of this tool are retained only briefly; call it again if needed)";
+                resultJson.result = note;
+                return JSON.stableStringifyWithStdOptions(resultJson, null, 2);
+            });
+        }
         return messages;
     }
 
