@@ -127,6 +127,10 @@
 
     async asyncJustSetBlobValue (blob) { // private method, don't call directly, use asyncSetBlobValue instead
         this.setBlobValue(blob);
+        // We only reach here when the existing hash did NOT match these bytes
+        // (asyncSetBlobValue checked) — null it so asyncValueHash() computes a
+        // true hash instead of early-returning the stale cache.
+        this.setValueHash(null);
         await this.asyncValueHash(); // compute the hash
         await this.asyncWriteToLocalStorage();
         return this;
@@ -177,12 +181,39 @@
 
     didUpdateSlotBlobValue (oldBlobValue, newBlobValue) {
         if (newBlobValue !== null) {
-            // Clear hash when blob changes - it will be recomputed on next access
-            this.asyncWriteToLocalStorage();
+            // Recompute the hash from the NEW bytes, then write — sequenced.
+            // The previous behavior fired the write and the recompute in
+            // parallel (and both compute paths early-return a cached hash),
+            // so a node whose valueHash belonged to different bytes (e.g. a
+            // cloud-provided hash) stored the new blob under its true hash
+            // but verified under the stale one: "blob from pool is null".
+            this.asyncOnBlobValueChanged(); // can't await in a slot hook
+        }
+    }
 
-            //this.setValueHash(null); // need to be careful - we might already have the correct hash
-            this.asyncComputeValueHash(); // can't await here
-            // NOTE: we might run into race conditions here if the blob is updated before the hash is computed
+    /**
+     * @description Sequenced reaction to the blob bytes changing: computes the
+     * hash of the CURRENT bytes directly (bypassing the cached-hash
+     * early-returns, which are only valid when the hash already matches the
+     * bytes), updates valueHash, then writes to local storage. Skips stale
+     * passes if the blob changed again mid-computation.
+     * @returns {Promise} resolves when hash + local write are complete.
+     * @category Blob Storage
+     */
+    async asyncOnBlobValueChanged () {
+        try {
+            const blob = this.blobValue();
+            if (!blob) {
+                return;
+            }
+            const hash = await blob.asyncHexSha256();
+            if (this.blobValue() !== blob) {
+                return; // the blob changed again while hashing — that change's own pass owns the update
+            }
+            this.setValueHash(hash);
+            await this.asyncWriteToLocalStorage();
+        } catch (error) {
+            console.warn(this.svTypeId() + ".asyncOnBlobValueChanged() failed: " + (error && error.message));
         }
     }
 
@@ -219,13 +250,26 @@
         try {
             const blob = this.blobValue();
             if (blob) {
-                await this.defaultStore().blobPool().asyncStoreBlob(blob);
-                const hash = await this.valueHash();
-                this.isDebugging() && console.log("[SvBlobNode] locally stored blob with hash:", hash);
-                assert(hash !== null, "hash is null");
+                // asyncStoreBlob returns the hash the bytes were actually
+                // stored under — verify with THAT, not with valueHash, which
+                // can be stale for the current bytes (a cloud-provided hash,
+                // or a hash recompute still in flight).
+                const storedHash = await this.defaultStore().blobPool().asyncStoreBlob(blob);
+                this.isDebugging() && console.log("[SvBlobNode] locally stored blob with hash:", storedHash);
 
-                const blobFromPool = await this.defaultStore().blobPool().asyncGetBlob(hash);
-                assert(blobFromPool !== null, "blob from pool is null");
+                const nodeHash = this.valueHash();
+                if (nodeHash !== null && nodeHash !== storedHash) {
+                    // Self-diagnosing: the node claims an identity its bytes
+                    // don't have. Not fatal here (the bytes are safely stored
+                    // and the hook's recompute will reconcile), but anything
+                    // that recorded nodeHash (cloud JSON, references) points
+                    // at bytes that don't exist.
+                    console.warn(this.svTypeId() + ".asyncWriteToLocalStorage() valueHash " + nodeHash +
+                        " != stored blob hash " + storedHash + " — valueHash is stale for the current bytes");
+                }
+
+                const blobFromPool = await this.defaultStore().blobPool().asyncGetBlob(storedHash);
+                assert(blobFromPool !== null, "blob from pool is null for just-stored hash " + storedHash);
             }
             this.asyncWriteToLocalStoragePromise().callResolveFunc(null);
         } catch (error) {
@@ -317,7 +361,7 @@
 
     async asyncValueHash () {
         if (this.valueHash()) {
-            return this.valueHash(); // assume it's already computed (as we null it when the blob value changes)
+            return this.valueHash(); // cached; kept in sync with the bytes by asyncOnBlobValueChanged()
         }
 
         // compute and store the hash
@@ -330,7 +374,7 @@
 
     async asyncComputeValueHash () {
         if (this.valueHash()) {
-            return this.valueHash(); // assume it's already computed (as we null it when the blob value changes)
+            return this.valueHash(); // cached; kept in sync with the bytes by asyncOnBlobValueChanged()
         }
 
         const blob = this.blobValue();
