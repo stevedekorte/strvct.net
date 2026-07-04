@@ -200,7 +200,7 @@
 
         {
             const tool = this.methodNamed("pushHistory");
-            tool.setDescription("Files the settled conversation buffer (everything since the last push) as one titled history episode. The filed messages leave your visible transcript once a newer episode supersedes them, replaced by a one-line record marker; the record itself stays queryable — expand it anytime with getClientState {under: <its jsonId>, lod: \"full\"}. Give records meaningful titles: they are your only index into the past.");
+            tool.setDescription("Files the settled conversation buffer (everything since the last push) as one titled history episode. The filed messages leave your visible transcript once a newer episode supersedes them, replaced by a one-line record marker; the record itself stays queryable — expand it anytime with a one-off queryClientState peek {select: [{under: <its jsonId>, lod: \"full\"}], default: \"omit\"} — your standing view is untouched. Give records meaningful titles: they are your only index into the past.");
             tool.addParameter("title", "string", "Short episode title, named for what the episode was (e.g. the location just departed).");
             tool.addParameter("subtitle", "string", "OPTIONAL. One line on what happened — outcomes, open threads, notable changes.");
             tool.setReturnTypes(["null"]);
