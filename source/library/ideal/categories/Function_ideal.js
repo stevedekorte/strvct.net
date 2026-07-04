@@ -219,6 +219,24 @@ Function.prototype.isSilentError = function () {
     return this.getMetaProperty("isSilentError") === true;
 };
 
+// result reminder - name of a method (on the tool target) called with the
+// tool call when a call succeeds; a non-empty string return is attached to
+// the result as an advisory `reminder` (see SvToolResult). Declared as a
+// method NAME (not a static string) so the note can depend on runtime
+// state — e.g. "file your history now" only when there is an unfiled
+// backlog and the call actually changed the view.
+
+Function.prototype.setResultReminderMethodName = function (aName) {
+    assert(Type.isString(aName));
+    this.setMetaProperty("resultReminderMethodName", aName);
+    return this;
+};
+
+Function.prototype.resultReminderMethodName = function () {
+    const v = this.getMetaProperty("resultReminderMethodName");
+    return v === undefined ? null : v;
+};
+
 // json schema for tool call use
 
 Function.prototype.jsonSchemaForParameter = function (parameter, refSet) {

@@ -746,6 +746,50 @@
     }
 
     /**
+   * @description Count of AI-visible, settled, non-system messages not yet
+   * filed to a history block — the unfiled backlog that filing reminders
+   * key on.
+   * @returns {Number}
+   * @category History
+   */
+    unfiledSettledMessageCount () {
+        return this.messages().filter(m =>
+            m.role() !== "system"
+            && (m.isVisibleToAi ? m.isVisibleToAi() : true)
+            && (m.isComplete() || m.hasError())
+            && !(m.filedToHistoryBlockId && m.filedToHistoryBlockId())
+        ).length;
+    }
+
+    /**
+   * @description Minimum unfiled backlog before historyFilingReminderIfNeeded
+   * speaks up — below this, the live buffer is presumed to be one scene.
+   * @returns {Number}
+   * @category History
+   */
+    historyFilingReminderFloor () {
+        return 6;
+    }
+
+    /**
+   * @description An advisory filing reminder when the unfiled backlog
+   * warrants one, else null. Designed for tool definitions'
+   * resultReminderMethodName (see Function_ideal) — attach it to the result
+   * of a tool call that marks an episode boundary (e.g. a view/state query
+   * made on a scene change), so the reminder arrives at exactly the moment
+   * the AI should file.
+   * @returns {string|null}
+   * @category History
+   */
+    historyFilingReminderIfNeeded () {
+        const count = this.unfiledSettledMessageCount();
+        if (count < this.historyFilingReminderFloor()) {
+            return null;
+        }
+        return "REMINDER: " + count + " settled messages are not yet filed to history. If your latest actions closed out one or more episodes, file each completed episode now with pushHistory (title + subtitle). If nothing has concluded yet, continue normally.";
+    }
+
+    /**
    * @description The {role, content} dict marking a filed episode in the
    * AI-visible history: the block's lens handle (jsonId, title, subtitle,
    * count) wrapped in a history-record tag. Expanding it back is an ordinary

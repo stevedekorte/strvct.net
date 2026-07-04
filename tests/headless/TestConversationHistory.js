@@ -199,6 +199,16 @@ function testHistory () {
     const call4 = newToolCall({ subtitle: "no title given" });
     conv.pushHistory(call4);
     check(call4.error !== null && call4.error.message.includes("title"), "missing title reports an error");
+
+    console.log("\nFiling reminder keys on the unfiled backlog");
+    check(conv.unfiledSettledMessageCount() === 1, "one unfiled settled message after pushes");
+    check(conv.historyFilingReminderIfNeeded() === null, "below the floor: no reminder");
+    for (let i = 0; i < 6; i++) {
+        addMessage(conv, "user", "Aria", "Filler exchange " + i);
+    }
+    const reminder = conv.historyFilingReminderIfNeeded();
+    check(reminder !== null && reminder.includes("pushHistory"), "past the floor: reminder present and actionable");
+    check(reminder.includes(String(conv.unfiledSettledMessageCount())), "reminder carries the backlog count");
 }
 
 // --- main --------------------------------------------------------------------

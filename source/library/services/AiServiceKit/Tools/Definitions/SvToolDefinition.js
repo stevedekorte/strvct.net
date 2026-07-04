@@ -211,6 +211,14 @@
     return method.isSilentSuccess();
   }
 
+  resultReminderMethodName () {
+    const method = this.toolMethod();
+    if (!method) {
+      return null;
+    }
+    return method.resultReminderMethodName();
+  }
+
   returns () {
     const method = this.toolMethod();
     if (!method) {
