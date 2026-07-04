@@ -708,21 +708,29 @@
    * {current buffer + previous episode} is always in full view. Markers are
    * regenerated from block state on every pass — nothing marker-shaped is
    * stored.
+   *
+   * options.collapseNewestBlock (default false): suspend the lookback and
+   * collapse the newest filed block to its marker too — the context-pressure
+   * escape valve (a fresh push normally reclaims no tokens because the new
+   * block stays inline; near the context limit that luxury is suspended so
+   * filing gives immediate relief).
    * @param {Array} messages - The visible message nodes, in order.
+   * @param {Object} [options]
    * @returns {Array} Array of {role, content} dicts for the request.
    * @category History
    */
-    composeJsonHistory (messages) {
+    composeJsonHistory (messages, options = {}) {
         const history = this.history();
         const newestBlock = (history && history.newestBlock) ? history.newestBlock() : null;
         if (!newestBlock) {
             return messages.map(m => m.messagesJson()); // nothing filed yet
         }
+        const inlineBlockId = options.collapseNewestBlock ? null : newestBlock.jsonId();
         const emittedBlockIds = new Set();
         const out = [];
         messages.forEach(m => {
             const blockId = (m.filedToHistoryBlockId ? m.filedToHistoryBlockId() : null);
-            if (blockId && blockId !== newestBlock.jsonId()) {
+            if (blockId && blockId !== inlineBlockId) {
                 if (!emittedBlockIds.has(blockId)) {
                     emittedBlockIds.add(blockId);
                     const block = history.blockWithJsonId(blockId);

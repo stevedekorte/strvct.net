@@ -175,6 +175,13 @@ function testHistory () {
     const composed3 = conv.composeJsonHistory(conv.messages().filter(m => m.isVisibleToAi()));
     check(markerContents(composed3)[0].includes("The Crypt, Renamed"), "marker reflects a later block rename");
 
+    console.log("\ncollapseNewestBlock suspends the lookback (context-pressure valve)");
+    const composedC = conv.composeJsonHistory(conv.messages().filter(m => m.isVisibleToAi()), { collapseNewestBlock: true });
+    const markersC = markerContents(composedC);
+    check(markersC.length === 2, "both blocks collapse to markers");
+    check(!composedC.some(m => m.content === m6.content()), "newest block's contents no longer inline");
+    check(composedC.some(m => m.content === "You are the GM."), "system message still present");
+
     console.log("\nDrill-in: blocks are lens-expandable by jsonId");
     check(conv.history().blockWithJsonId(block1.jsonId()) === block1, "blockWithJsonId resolves");
     const handle = block1.lensHandleJson();
