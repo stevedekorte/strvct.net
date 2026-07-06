@@ -5424,9 +5424,9 @@ Also available as a [PDF](compiled/Closing_the_Usability_Gap_in_Naked_Objects.pd
 
 The naked objects pattern promised to generate user interfaces directly from domain models, eliminating bespoke UI code while keeping interface and business logic consistent. The promise is largely unfulfilled. The cause was not automatic generation but its output: generic forms, tables, and menus that lacked the spatial organization and navigational fluency users expect.
 
-The gap was avoidable. The design space for presenting structured information is narrower than the software industry assumes. A few composable primitives — tiles, tile stacks, and recursively nested master-detail views — cover it. HCI research on mental models, information foraging, and Gestalt perception explains why a deliberately constrained UI grammar turns uniformity into an asset.
+The gap was avoidable. The design space for presenting structured information is narrower than the software industry assumes, and a few composable primitives — tiles, tile stacks, and master-detail views — cover it. The load-bearing primitive is a **recursive, orientation-flexible master-detail view generated as the default**: Miller columns that nest to arbitrary depth, let each level choose its own orientation, collapse automatically on narrow viewports, and are composed from model annotations rather than hand-built per screen. HCI research on mental models, information foraging, and Gestalt perception explains why a deliberately constrained UI grammar turns uniformity into an asset.
 
-We present Strvct, an open-source JavaScript framework built on this idea. Centralizing the model-to-view pipeline yields capabilities that conventional component frameworks pay for per screen: an AI-operable domain model, automatic responsive design, headless testability, and annotation-driven persistence with cloud sync. The same centralization points toward further directions, such as runtime AI-extensibility and a narrowed UI trust boundary. A production application, undreamedof.ai, comprises ~90 domain classes with roughly 90% auto-generated views. Only two custom views remain, both for inherently graphical components: a 3D dice roller and a battle map.
+We present Strvct, an open-source JavaScript framework built on this idea. Centralizing the model-to-view pipeline yields capabilities that conventional component frameworks pay for per screen: automatic responsive design, headless testability, and annotation-driven persistence with cloud sync. It also makes the domain model natively operable by AI agents — the same annotations that generate the UI expose a constant-size tool surface that never drifts out of sync with the model — which, as agents become routine co-editors of application state, is the economic lever most likely to move naked objects past its twenty-five-year stall. A production application, undreamedof.ai, comprises ~90 domain classes with roughly 90% auto-generated views. Only two custom views remain, both for inherently graphical components: a 3D dice roller and a battle map.
 
 ## 1. Introduction
 
@@ -5434,7 +5434,7 @@ Most application frameworks treat the user interface as a separate engineering p
 
 Naked objects [1] proposed a different path: expose domain objects directly to users and generate the interface automatically. Developers write only the domain model; the UI follows. Consistency is guaranteed, because there is no separate representation to fall out of sync — the interface always reflects the model's actual state and shape.
 
-Pawson and Matthews described the pattern in 2000. Several frameworks have implemented it, most notably Apache Isis (now Apache Causeway) for Java [2]. These implementations proved the core thesis: automatic UI generation from domain models is feasible and produces functionally complete interfaces. Yet adoption stayed confined to internal tools, administrative interfaces, and prototypes.
+Pawson and Matthews described the pattern in 2002 [1]. Several frameworks have implemented it, most notably Apache Isis (now Apache Causeway) for Java [2]. These implementations proved the core thesis: automatic UI generation from domain models is feasible and produces functionally complete interfaces. Yet adoption stayed confined to internal tools, administrative interfaces, and prototypes.
 
 The reason is perceptual, not technical. Generated interfaces — generic forms for objects, tables for collections, menus for navigation — are correct and complete but *feel wrong*. They lack spatial hierarchy, navigational depth, and responsive behavior. They resemble database administration tools, not the applications people use daily. This usability gap, not any limit of the underlying pattern, has held naked objects back.
 
@@ -5444,11 +5444,11 @@ This paper describes how to close the usability gap. We argue the design space f
 
 The contributions are:
 
-1. The *narrow design space* hypothesis: informational UIs converge on a small set of spatial conventions, making uniform application of those conventions an asset rather than a constraint.
-2. A small set of composable primitives — tiles, tile stacks, and recursively nested master-detail views — that we claim covers this space.
+1. The **recursive, orientation-flexible, generated master-detail view** as the primitive that closes the usability gap. Miller columns have navigated hierarchies since NeXTSTEP; our contribution is making them *recursive* (columns nest to arbitrary depth), *orientation-flexible* (each level chooses vertical or horizontal), *auto-collapsing* (the chain folds to a breadcrumb on narrow viewports), and the *generated default* (composed from model annotations, not hand-built per screen). This is the mechanism that turns "correct but form-like" generated UIs into ones with the spatial hierarchy and navigational depth users expect.
+2. The *narrow design space* hypothesis: informational UIs converge on a small set of spatial conventions, making uniform application of those conventions an asset rather than a constraint — and making a small fixed grammar of primitives (tiles, tile stacks, and the recursive master-detail view above) sufficient to cover the space.
 3. An annotation system in which independent framework layers (UI, persistence, sync, AI, i18n) read metadata from the same slot declarations without coordinating.
-4. A working framework, Strvct, implementing the approach.
-5. A production application, undreamedof.ai, in which roughly 90% of views across ~90 domain classes are auto-generated.
+4. A **natively AI-operable domain model** as a demonstrated consequence of that annotation system: a single pair of tools covers every editable class, so the agent-facing tool surface is constant in the size of the model rather than growing linearly with it.
+5. A working framework, Strvct, and a production application, undreamedof.ai, in which roughly 90% of views across ~90 domain classes are auto-generated.
 
 ## 2. The Usability Gap
 
@@ -5735,6 +5735,7 @@ The slot system makes automatic UI and storage possible. Rather than raw instanc
 - **View synchronization**: triggers view updates when the value changes.
 - **Subnode relationship**: controls whether the value appears in the object's navigable hierarchy.
 - **Editability**: determines whether the property can be modified through the UI.
+- **Inspectability**: exposes the slot to the generic inspector for debugging, independently of whether it appears in the normal navigable hierarchy.
 - **Auto-initialization**: specifies a class to instantiate if no value was loaded from storage.
 - **Translation context**: provides semantic context for AI-powered translation.
 
@@ -5756,7 +5757,9 @@ Model and view communicate through a deferred, deduplicated notification system.
 
 When the framework controls the entire pipeline from model annotation to rendered view, capabilities that would otherwise cost per-component effort fall out of the architecture. These capabilities are not surprises. They are downstream consequences of one structural fact: the framework has complete knowledge of the domain model and controls the single point where model data flows to the UI.
 
-We mark each capability's status explicitly. Some are demonstrated in the case study; some are architectural affordances; and two (§7.2 and §7.3) are forward-looking directions the architecture invites rather than features we have built.
+We mark each capability's status explicitly, and group the subsections accordingly: those **demonstrated** in the case study (§7.1–7.7), those that are **architectural affordances** the design provides but we have not externally validated (§7.8–7.9), and two **proposed** directions the architecture invites but we have not built (§7.10–7.11).
+
+#### Demonstrated in the case study
 
 ### 7.1 AI-Operable Domain Model
 
@@ -5764,48 +5767,27 @@ The same annotations that drive UI generation make the domain model operable to 
 
 A single pair of tools — *schema-fetch* and *apply-patch* — covers the entire domain, regardless of how many classes are editable. A rejected patch carries the offending slot's schema, so the agent self-corrects without re-fetching context. This contrasts with the prevailing pattern for AI tool use — function calling, Model Context Protocol, OpenAPI specs — where each editable surface needs a hand-authored tool, schema, and error path, and the surface area grows linearly with the model. Here it is constant, and a new domain class is AI-operable the moment it is declared.
 
-### 7.2 AI Extensibility (Proposed)
+### 7.2 Headless Execution and Testability
 
-Operability moves an agent *within* a fixed space of types. The same architecture suggests an as-yet-unbuilt affordance that would *enlarge* it. Because every layer reads from slot annotations rather than per-type code, an agent could declare a new model class at runtime and have it become a full citizen immediately — navigable, editable, storable, synced, translatable, and itself AI-operable — with no build step. This turns *write the model, get the app* into *the running app writes its own model*. We have not built this; the case study exercises operability over existing types only.
+Model classes hold no references to views or browser globals, so the same domain code runs unchanged under Node.js. Tests instantiate the model, drive it through action methods, and assert against slot values without a DOM. The notification system, persistence, and patch validation all operate without rendering, so behaviors that would normally require browser automation against a real DOM reduce to direct model assertions. The model/view separation that makes auto-generation possible is the same separation that makes the model headlessly executable: one architectural choice serves both ends.
 
-It also raises an unsolved problem: minting types lets the agent mint the type contract itself. A safe form would need a **declared, immutable floor** of types and invariants the runtime AI may build on but not alter, with the annotation bridge as the natural seam. §7.3 sketches the security side.
-
-### 7.3 Security (Proposed)
-
-If runtime AI-extensibility (§7.2) is built, deriving views from trusted framework code also suggests a security advantage. View code is the least confinable surface in a browser: it touches the DOM and carries origin authority. Model objects do not. An untrusted extension would then supply **data and metadata, never DOM-touching code**, so "extending the UI" becomes "extending the model" — confinable like anything else. The layer naked objects eliminates was not only a maintenance cost but an attack surface.
-
-Making this safe would need two primitives we have not built:
-
-- **Isolation**: runtime-created code runs in a web worker with no ambient access.
-- **Authority**: capabilities — an object gets only the references it is granted, which lets the *immutable floor* of §7.2 be expressed as the set of capabilities the runtime declines to grant.
-
-Two limits would remain. The protection is only as wide as the derivation reaches; a genuine custom view reopens the hole. And the rendering path becomes a concentrated trust root that must output-encode all model data. Capability discipline is also hard to retrofit. We present this as a clear path, not a solved problem.
-
-### 7.4 Automatic Responsive Design
-
-Layout flows from model annotations, not screen-specific CSS, so the interface adapts to viewport size without per-view breakpoints. The recursive master-detail chain collapses when the viewport narrows, a breadcrumb bar preserves the navigation path, and the same composition scales from desktop to mobile with no per-screen code. Responsive behavior is paid once at the primitive level, not per screen.
-
-### 7.5 Accessibility as an Architectural Affordance
-
-Every interactive surface is generated from the same few primitives, so accessibility is paid once at the primitive level. Focus order, keyboard traversal, drill-in, and back-out belong to tiles and tile stacks. The slot metadata that drives type checking can also generate ARIA roles and constraints. The node hierarchy supplies landmarks and breadcrumb structure. In a conventional framework, accessibility is a per-component obligation that scales with screen count and routinely lapses. Here it cannot lapse selectively: fixing it once fixes it everywhere. We have not validated the result against the full WCAG checklist or with screen-reader users, and report this as an architectural property, not a measured outcome.
-
-### 7.6 Transparent Internationalization
-
-All UI text flows from slot annotations through a single rendering pipeline, so translation is injected at the model-to-view boundary with no per-component translation calls or extraction tools. New classes are translatable by default. Centralization also makes AI-powered translation tractable: the framework enumerates translatable strings by walking class prototypes, and slot-level context annotations travel with each string to give the translator domain-appropriate terminology. Adding a language becomes a configuration change, not a translation project. As with accessibility, full multi-language deployment and right-to-left layouts are not yet validated in production; the architectural surface exists.
-
-### 7.7 Transparent Persistence and Cloud Sync
+### 7.3 Transparent Persistence and Cloud Sync
 
 The framework owns the complete object graph and understands its structure through annotations, so persistence splits transparently into two strategies: a synchronous object pool for the model graph, keeping the UI immediately responsive, and an asynchronous content-addressable blob store for large binary resources, so they never block rendering. The same structural knowledge enables transparent cloud synchronization: the framework knows what changed, which blobs are referenced, and how to reconcile state. The developer annotates what should persist; the framework decides how and when.
 
-### 7.8 Content-Addressable Resource Loading
+### 7.4 Content-Addressable Resource Loading
 
 The build system produces a content-addressable bundle keyed by content hash. Unchanged resources are never re-downloaded across deployments, and identical content across paths is stored only once — caching granularity that path-based bundlers cannot achieve. End-to-end control of the resource pipeline is the same structural fact that drives the other consequences in this section.
 
-### 7.9 Built-in Inspector and Developer Mode
+### 7.5 Automatic Responsive Design
 
-Every node carries enough slot metadata to drive its own UI, so the same metadata also drives a generic inspector: a view that exposes any node's slots directly as editable fields, reachable on any tile through a single modifier-click. A complementary developer-mode toggle lets applications reveal subnodes normally hidden from end users, so the same navigation pipeline serves as a debug surface. In a conventional framework, debug tooling means custom inspectors per type and a parallel description of model shape, growing linearly with the model. Here it is a free consequence of the model-to-view pipeline already covering every object.
+Layout flows from model annotations, not screen-specific CSS, so the interface adapts to viewport size without per-view breakpoints. The recursive master-detail chain collapses when the viewport narrows, a breadcrumb bar preserves the navigation path, and the same composition scales from desktop to mobile with no per-screen code. Responsive behavior is paid once at the primitive level, not per screen.
 
-### 7.10 Cross-Window and Cross-App Drag-and-Drop
+### 7.6 Built-in Inspector and Developer Mode
+
+Every node carries enough slot metadata to drive its own UI, so the same metadata also drives a generic inspector: a view that exposes a node's slots directly as editable fields, reachable on any tile through a single modifier-click (option-click). Which slots appear is itself an annotation — a per-slot inspectability flag read by the inspector exactly as the persistence layer reads the storage flag and the UI layer reads editability — so a slot can be hidden from the ordinary navigable hierarchy yet still reachable for debugging. A complementary developer-mode toggle reveals subnodes normally hidden from end users, so the same navigation pipeline serves as a debug surface. In a conventional framework, debug tooling means custom inspectors per type and a parallel description of model shape, growing linearly with the model. Here it is a free consequence of the model-to-view pipeline already covering every object, and the inspector is simply one more independent reader of the annotation bridge (§6.2).
+
+### 7.7 Cross-Window and Cross-App Drag-and-Drop
 
 Every tile is generated from the same view classes, so drag-and-drop works uniformly across the application in two modes that share one gesture:
 
@@ -5814,9 +5796,34 @@ Every tile is generated from the same view classes, so drag-and-drop works unifo
 
 Both modes are type-safe: the receiving side validates against the same slot metadata that drives form validation and AI patches. In a conventional framework, drag interop requires per-class handlers, per-screen serialization formats, and ad-hoc validation on receipt, and the cost scales with the number of draggable objects. Here it is free at the primitive level. (Cross-window reference drags, where a second client resolves the UUID against shared state, are a natural extension but not yet implemented.)
 
-### 7.11 Headless Execution and Testability
+#### Architectural affordances (not externally validated)
 
-Model classes hold no references to views or browser globals, so the same domain code runs unchanged under Node.js. Tests instantiate the model, drive it through action methods, and assert against slot values without a DOM. The notification system, persistence, and patch validation all operate without rendering, so behaviors that would normally require browser automation against a real DOM reduce to direct model assertions. The model/view separation that makes auto-generation possible is the same separation that makes the model headlessly executable: one architectural choice serves both ends.
+### 7.8 Accessibility
+
+Every interactive surface is generated from the same few primitives, so accessibility is paid once at the primitive level. Focus order, keyboard traversal, drill-in, and back-out belong to tiles and tile stacks. The slot metadata that drives type checking can also generate ARIA roles and constraints. The node hierarchy supplies landmarks and breadcrumb structure. In a conventional framework, accessibility is a per-component obligation that scales with screen count and routinely lapses. Here it cannot lapse selectively: fixing it once fixes it everywhere. We have not validated the result against the full WCAG checklist or with screen-reader users, and report this as an architectural property, not a measured outcome.
+
+### 7.9 Transparent Internationalization
+
+All UI text flows from slot annotations through a single rendering pipeline, so translation is injected at the model-to-view boundary with no per-component translation calls or extraction tools. New classes are translatable by default. Centralization also makes AI-powered translation tractable: the framework enumerates translatable strings by walking class prototypes, and slot-level context annotations travel with each string to give the translator domain-appropriate terminology. Adding a language becomes a configuration change, not a translation project. As with accessibility, full multi-language deployment and right-to-left layouts are not yet validated in production; the architectural surface exists.
+
+#### Proposed directions (not built)
+
+### 7.10 AI Extensibility
+
+Operability moves an agent *within* a fixed space of types. The same architecture suggests an as-yet-unbuilt affordance that would *enlarge* it. Because every layer reads from slot annotations rather than per-type code, an agent could declare a new model class at runtime and have it become a full citizen immediately — navigable, editable, storable, synced, translatable, and itself AI-operable — with no build step. This turns *write the model, get the app* into *the running app writes its own model*. We have not built this; the case study exercises operability over existing types only.
+
+It also raises an unsolved problem: minting types lets the agent mint the type contract itself. A safe form would need a **declared, immutable floor** of types and invariants the runtime AI may build on but not alter, with the annotation bridge as the natural seam. §7.11 sketches the security side.
+
+### 7.11 Security
+
+If runtime AI-extensibility (§7.10) is built, deriving views from trusted framework code also suggests a security advantage. View code is the least confinable surface in a browser: it touches the DOM and carries origin authority. Model objects do not. An untrusted extension would then supply **data and metadata, never DOM-touching code**, so "extending the UI" becomes "extending the model" — confinable like anything else. The layer naked objects eliminates was not only a maintenance cost but an attack surface.
+
+Making this safe would need two primitives we have not built:
+
+- **Isolation**: runtime-created code runs in a web worker with no ambient access.
+- **Authority**: capabilities — an object gets only the references it is granted, which lets the *immutable floor* of §7.10 be expressed as the set of capabilities the runtime declines to grant.
+
+Two limits would remain. The protection is only as wide as the derivation reaches; a genuine custom view reopens the hole. And the rendering path becomes a concentrated trust root that must output-encode all model data. Capability discipline is also hard to retrofit. We present this as a clear path, not a solved problem.
 
 ## 8. Case Study: undreamedof.ai
 
@@ -5918,7 +5925,7 @@ We close with a prediction. The pressure that may finally push naked objects pas
 
 [2] Apache Software Foundation. *Apache Causeway* (formerly Apache Isis). https://causeway.apache.org/
 
-[3] Becker, N. (2005). Miller Columns. Wikipedia. https://en.wikipedia.org/wiki/Miller_columns
+[3] Miller Columns. *Wikipedia.* https://en.wikipedia.org/wiki/Miller_columns (navigation pattern introduced in NeXTSTEP, c. 1989, and popularized by macOS Finder).
 
 [4] Arteaga, J. M. *JMatter: A Naked Objects Framework for Java Swing.* http://jmatter.org/
 

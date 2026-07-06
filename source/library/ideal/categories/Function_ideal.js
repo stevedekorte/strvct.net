@@ -479,7 +479,11 @@ Function.prototype.paramsSchema = function (refSet) {
         const paramDict = parameters[key];
         const dict = {};
         paramsSchema.properties[key] = dict;
-        const isJsonType = ["null", "array", "string", "object"].includes(paramDict.type);
+        // All JSON Schema primitive type names are inlined; anything else is
+        // treated as a class reference. This list was previously missing
+        // number/integer/boolean, so a tool parameter declared "number" fell
+        // through to refTypeName and asserted "missing referenced class".
+        const isJsonType = ["null", "array", "string", "object", "number", "integer", "boolean"].includes(paramDict.type);
         if (isJsonType) {
             dict["type"] = paramDict.type;
         } else {

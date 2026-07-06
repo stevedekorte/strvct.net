@@ -52,6 +52,17 @@
             slot.setSlotType("SvObservation");
             slot.setAllowsNullValue(true);
         }
+
+        /**
+         * @member {SvButtonView} backButtonView - "←" shown at the left edge
+         * while compaction is hiding leading crumbs; navigates one level up.
+         * @category Compaction
+         */
+        {
+            const slot = this.newSlot("backButtonView", null);
+            slot.setSlotType("SvButtonView");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     initPrototype () {
@@ -123,10 +134,10 @@
         this.setPaddingLeft("1em");
         this.setPaddingRight("1em");
         this.setBorderBottom("1px solid var(--SvBreadCrumbs-border-color, #333)");
-        // Scroll horizontally when the path is wider than the bar (e.g. a deep
-        // path in a narrow companion panel) rather than squishing each crumb
-        // into an unreadable fragment. The scrollbar is hidden via CSS; the bar
-        // auto-scrolls to the current (last) crumb in setupPathViews.
+        // A too-wide path COMPACTS (updateCompaction hides leading crumbs
+        // behind a back button) rather than squishing crumbs into unreadable
+        // fragments. overflow-x:auto (scrollbar hidden via CSS) remains only
+        // as a fallback for a single crumb wider than the whole bar.
         this.setCssProperty("overflow-x", "auto");
         this.setCssProperty("overflow-y", "hidden");
         this.setWhiteSpace("nowrap");
@@ -137,7 +148,23 @@
 
         this.setLanguageChangeObs(SvNotificationCenter.shared().newObservation().setName("svI18nLanguageChanged").setObserver(this).startWatching());
 
+        // Re-compact when the bar itself resizes — the companion panel docks/
+        // undocks and columns change width without any window resize, so a
+        // window-level hook isn't enough.
+        this._resizeObserver = new ResizeObserver(() => {
+            this.scheduleMethod("updateCompaction");
+        });
+        this._resizeObserver.observe(this.element());
+
         return this;
+    }
+
+    prepareToRetire () {
+        if (this._resizeObserver) {
+            this._resizeObserver.disconnect();
+            this._resizeObserver = null;
+        }
+        return super.prepareToRetire();
     }
 
     /**
@@ -197,6 +224,11 @@
         }
         this._lastRenderedPathNodes = renderedNodes;
 
+        // Back button sits at the left edge; compaction unhides it only while
+        // leading crumbs are hidden (see updateCompaction).
+        this.setBackButtonView(this.newBackButton());
+        this.addSubview(this.backButtonView());
+
         let isFirst = true;
         let renderedIndex = 0;
         pathNodes.forEach((node, i) => {
@@ -213,21 +245,94 @@
             this.addSubview(this.crumbViewForNode(node, i, pathNodes, isSettled));
         });
 
-        this.scheduleMethod("scrollToCurrentCrumb");
+        this.scheduleMethod("updateCompaction");
         return this;
     }
 
     /**
-     * @description Scrolls the bar to its end so the current (last) crumb is
-     * visible when the path overflows a narrow bar. No-op when everything fits.
+     * @description Compacts the path to fit the bar's width: hides leading
+     * crumb/separator pairs (never the current crumb) until the remainder
+     * fits, showing the back button while anything is hidden. Runs after
+     * every rebuild and on every bar resize (ResizeObserver). When everything
+     * fits, all crumbs show and the back button hides. The overflow-x:auto
+     * scroll remains only as a fallback for the degenerate case of a single
+     * crumb wider than the bar.
      * @returns {SvBreadCrumbsView} The current instance.
      * @category Layout
      */
-    scrollToCurrentCrumb () {
+    updateCompaction () {
         const e = this.element();
-        if (e) {
-            e.scrollLeft = e.scrollWidth;
+        const views = this.subviews();
+        const back = this.backButtonView();
+        if (!e || !e.isConnected || !back || views.length < 2) {
+            return this;
         }
+
+        // Start from everything visible (back included, so its width counts
+        // while we decide what to hide).
+        views.forEach(v => v.unhideDisplay());
+
+        // Subview order: [back, crumb, sep, crumb, sep, …, currentCrumb].
+        // Hide leading (crumb, separator) pairs left-to-right until the rest
+        // fits. The current crumb (last subview) is never hidden.
+        let didHide = false;
+        let i = 1;
+        while (e.scrollWidth > e.clientWidth && i < views.length - 1) {
+            views[i].hideDisplay(); // crumb
+            if (i + 1 < views.length - 1) {
+                views[i + 1].hideDisplay(); // its trailing separator
+            }
+            didHide = true;
+            i += 2;
+        }
+
+        if (!didHide) {
+            back.hideDisplay();
+        }
+
+        // Fallback for a single crumb wider than the bar: keep its tail visible.
+        e.scrollLeft = e.scrollWidth;
+        return this;
+    }
+
+    /**
+     * @description Creates the "←" back button shown while leading crumbs are
+     * compacted away. Clicking navigates one level up (the crumb before the
+     * current one), matching the retired SvBreadCrumbsTile behavior.
+     * @returns {SvButtonView} The back button view.
+     * @category View Creation
+     */
+    newBackButton () {
+        const v = SvButtonView.clone();
+        v.setDisplay("inline-block");
+        v.setWidth("fit-content");
+        v.setHeight("fit-content");
+        v.setFlexShrink(0);
+        v.setPaddingLeft("0em");
+        v.setPaddingRight("0em");
+        v.titleView().setPaddingLeft("0em");
+        v.titleView().setPaddingRight("0.5em");
+        v.titleView().setElementClassName("SvBreadCrumbLabel");
+        v.setTitle("←");
+        v.setTarget(this);
+        v.setAction("onClickBackButton");
+        return v;
+    }
+
+    /**
+     * @description Navigates one level up from the current crumb.
+     * @returns {SvBreadCrumbsView} The current instance.
+     * @category Event Handling
+     */
+    onClickBackButton () {
+        const browser = this.browserView();
+        const pathNodes = this.pathNodes();
+        if (!browser || !browser.stackView() || pathNodes.length < 2) {
+            return this;
+        }
+        // selectNodePathArray expects the path after the stack's own root node
+        browser.stackView().selectNodePathArray(pathNodes.slice(1, pathNodes.length - 1));
+        this.scheduleMethod("setupPathViews");
         return this;
     }
 
