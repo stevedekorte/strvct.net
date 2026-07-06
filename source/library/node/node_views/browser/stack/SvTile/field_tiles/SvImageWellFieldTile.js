@@ -34,7 +34,18 @@
      * @category Initialization
      */
     initPrototypeSlots () {
-
+        /**
+         * @member {Number} progressiveSyncEpoch - Monotonic token bumped at the
+         * start of each progressive async sync pass. After awaiting the image
+         * data URLs, a pass compares the current epoch to the one it claimed and
+         * bails if a newer pass has started — so a stale pass can never re-apply
+         * image data over newer state.
+         * @category Synchronization
+         */
+        {
+            const slot = this.newSlot("progressiveSyncEpoch", 0);
+            slot.setSlotType("Number");
+        }
     }
 
     /**
@@ -208,9 +219,17 @@
 
     /**
      * @description Progressive-mode async sync: resolves the preview + final
-     * data URLs and feeds them to the well's layers (crossfade). The base
+     * data URLs and feeds them to the well as one idempotent pass. The base
      * single-image path (setImageDataUrl → removeAllSubviews) is skipped so it
      * can't destroy the stacked layers on every sync.
+     *
+     * A sequence guard makes overlapping passes safe: each pass claims a fresh
+     * epoch up front, and after awaiting the (independent, so Promise.all'd)
+     * image data URLs it re-checks the epoch and bails if a newer pass has
+     * started — so a completion sync landing inside an earlier pass's await can
+     * never let the stale pass re-install a layer over the newer state. The
+     * FINAL-before-PREVIEW ordering is no longer load-bearing here: it lives
+     * inside well.applyProgressiveImageData().
      * @returns {SvImageWellFieldTile}
      * @category Synchronization
      */
@@ -225,46 +244,64 @@
             return this;
         }
 
-        // Apply the FINAL before the PREVIEW. At completion the node reports a
-        // final image AND a null preview in the same sync pass; if we cleared
-        // the preview first it would rip the blurred backdrop out from under the
-        // slowly-fading-in final (a flash of the empty box). Setting the final
-        // first lets setPreviewDataUrl(null) see a final in progress and keep the
-        // backdrop — the final reveal removes it once its crossfade completes.
+        this.setProgressiveSyncEpoch(this.progressiveSyncEpoch() + 1);
+        const epoch = this.progressiveSyncEpoch();
 
-        // Final (sharp front layer) — same value()/asyncDataUrl path as base.
-        let finalUrl = null;
+        // Resolve final + preview concurrently (independent); application order
+        // is enforced inside the well.
+        const [finalUrl, previewUrl] = await Promise.all([
+            this.asyncResolveFinalUrl(),
+            this.asyncResolvePreviewUrl()
+        ]);
+
+        if (this.progressiveSyncEpoch() !== epoch) {
+            return this; // a newer pass superseded this one mid-await
+        }
+
+        if (well.applyProgressiveImageData) {
+            well.applyProgressiveImageData(finalUrl, previewUrl);
+        }
+        return this;
+    }
+
+    /**
+     * @description Resolves the FINAL image data URL from the node's value —
+     * same value()/asyncDataUrl path as the base single-image sync.
+     * @returns {Promise<String|null>} The data URL, or null.
+     * @category Synchronization
+     */
+    async asyncResolveFinalUrl () {
         try {
-            const value = field.value();
+            const value = this.node().value();
             if (value && value.asyncDataUrl) {
-                finalUrl = await value.asyncDataUrl();
-            } else if (typeof value === "string" && value.length > 0) {
-                finalUrl = value;
+                return await value.asyncDataUrl();
+            }
+            if (typeof value === "string" && value.length > 0) {
+                return value;
             }
         } catch (error) {
             console.warn("SvImageWellFieldTile: failed to load final image:", error.message);
-            finalUrl = null;
         }
-        if (well.setFinalDataUrl) {
-            well.setFinalDataUrl(finalUrl);
-        }
+        return null;
+    }
 
-        // Preview (blurred back layer).
-        let previewUrl = null;
+    /**
+     * @description Resolves the PREVIEW (blurred back layer) data URL from the
+     * node's imageWellPreviewValue().
+     * @returns {Promise<String|null>} The data URL, or null.
+     * @category Synchronization
+     */
+    async asyncResolvePreviewUrl () {
         try {
+            const field = this.node();
             const previewValue = field.imageWellPreviewValue ? field.imageWellPreviewValue() : null;
             if (previewValue && previewValue.asyncDataUrl) {
-                previewUrl = await previewValue.asyncDataUrl();
+                return await previewValue.asyncDataUrl();
             }
         } catch (error) {
             console.warn("SvImageWellFieldTile: failed to load preview image:", error.message);
-            previewUrl = null;
         }
-        if (well.setPreviewDataUrl) {
-            well.setPreviewDataUrl(previewUrl);
-        }
-
-        return this;
+        return null;
     }
 
     /**
@@ -294,6 +331,17 @@
         const field = this.node();
 
         field.setKey(this.keyView().value());
+
+        if (this.nodeIsProgressive()) {
+            // Progressive wells are display-driven FROM the node: finals flow
+            // through the front layer, not setImageDataUrl, so the well's
+            // imageDataUrl() is null. Writing it back would clobber the node's
+            // value. Never write back for progressive nodes (the base
+            // removeAllSubviews drop/edit path is likewise inert here — such
+            // nodes report valueIsEditable() false, and willRemoveSubview keeps
+            // the well's layer slots consistent if a wipe ever happens).
+            return this;
+        }
 
         if (field.valueIsEditable()) {
             const dataUrl = this.imageWellView().imageDataUrl();

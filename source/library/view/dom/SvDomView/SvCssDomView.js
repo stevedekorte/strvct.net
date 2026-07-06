@@ -551,7 +551,7 @@
     // inset
 
     setInset (s) {
-        this.setCssProperty("position", s);
+        this.setCssProperty("inset", s);
         return this;
     }
 

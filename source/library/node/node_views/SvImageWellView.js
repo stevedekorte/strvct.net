@@ -46,48 +46,6 @@
 (class SvImageWellView extends SvNodeView {
 
     /**
-     * @description Injects the shimmer @keyframes once per document. Guarded by
-     * a class slot so repeated view construction doesn't append duplicate style
-     * elements (addStyleSheetString is not idempotent).
-     * @category Initialization
-     */
-    static initClass () {
-        this.newClassSlot("didInstallShimmerCss", false);
-    }
-
-    /**
-     * @description Installs the shimmer keyframes stylesheet exactly once.
-     * @returns {SvImageWellView} The class.
-     * @category Styling
-     */
-    static installShimmerCssIfNeeded () {
-        if (this.didInstallShimmerCss()) {
-            return this;
-        }
-        SvWebDocument.shared().addStyleSheetString(`
-            @keyframes SvImageWellShimmer {
-                0%   { background-position: 0% 50%; }
-                100% { background-position: 100% 50%; }
-            }
-            .SvImageWellShimmerSheen {
-                background-image: linear-gradient(115deg,
-                    rgba(255,255,255,0) 0%,
-                    rgba(255,255,255,0) 34%,
-                    rgba(255,255,255,0.07) 44%,
-                    rgba(255,255,255,0.13) 50%,
-                    rgba(255,255,255,0.07) 56%,
-                    rgba(255,255,255,0) 66%,
-                    rgba(255,255,255,0) 100%);
-                background-size: 250% 250%;
-                animation: SvImageWellShimmer 3.4s ease-in-out infinite alternate;
-                will-change: background-position;
-            }
-        `);
-        this.setDidInstallShimmerCss(true);
-        return this;
-    }
-
-    /**
      * @description Initializes prototype slots for the SvImageWellView.
      * @category Initialization
      */
@@ -239,6 +197,52 @@
             const slot = this.newSlot("witnessedProgress", false);
             slot.setSlotType("Boolean");
         }
+    }
+
+    /**
+     * @description Installs the shimmer stylesheet once at class-init time,
+     * reusing the SvBadgeView.setupCss() idiom (initPrototype runs once per
+     * class). addStyleSheetString is a no-op off-browser, so this is safe to
+     * call headlessly — no runtime guard slot needed.
+     * @category Initialization
+     */
+    initPrototype () {
+        this.setupCss();
+    }
+
+    /**
+     * @description Injects the shimmer @keyframes and sheen class. The sheen is
+     * an oversized diagonal band that sweeps via translateX rather than
+     * background-position, so the animation runs on the compositor (GPU) instead
+     * of forcing per-frame paints.
+     * @returns {SvImageWellView} The current instance.
+     * @category Styling
+     */
+    setupCss () {
+        SvWebDocument.shared().addStyleSheetString(`
+            @keyframes SvImageWellShimmer {
+                0%   { transform: translateX(-55%); }
+                100% { transform: translateX(55%); }
+            }
+            .SvImageWellShimmerSheen {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: -50%;
+                right: -50%;
+                background-image: linear-gradient(115deg,
+                    rgba(255,255,255,0) 0%,
+                    rgba(255,255,255,0) 34%,
+                    rgba(255,255,255,0.07) 44%,
+                    rgba(255,255,255,0.13) 50%,
+                    rgba(255,255,255,0.07) 56%,
+                    rgba(255,255,255,0) 66%,
+                    rgba(255,255,255,0) 100%);
+                animation: SvImageWellShimmer 3.4s ease-in-out infinite alternate;
+                will-change: transform;
+            }
+        `);
+        return this;
     }
 
     /**
@@ -506,8 +510,23 @@
     willRemoveSubview (aSubview) {
         super.willRemoveSubview(aSubview);
 
+        // Null any slot that referenced the removed view so a subview wipe (the
+        // base path's removeAllSubviews, or applyFailedState) can never leave a
+        // dangling reference to a detached layer. Mirrors the imageView() case.
         if (aSubview === this.imageView()) {
             this.setImageView(null);
+        }
+        if (aSubview === this.backLayerView()) {
+            this.setBackLayerView(null);
+        }
+        if (aSubview === this.outgoingBackLayerView()) {
+            this.setOutgoingBackLayerView(null);
+        }
+        if (aSubview === this.frontLayerView()) {
+            this.setFrontLayerView(null);
+        }
+        if (aSubview === this.shimmerView()) {
+            this.setShimmerView(null);
         }
         return this;
     }
@@ -612,7 +631,7 @@
      * any progressive layers/overlays first (there are normally none in natural
      * mode; defensive against a box→natural transition). Unlike the failed
      * teardown, this does NOT hide the well — it leaves room for the natural
-     * image (setFinalDataUrl renders it via the base single-image path).
+     * image (applyFinalDataUrl renders it via the base single-image path).
      * @returns {SvImageWellView}
      * @category Progressive Loading
      */
@@ -659,6 +678,36 @@
     }
 
     /**
+     * @description The single explicit render state, derived from the well's own
+     * slots, so presentation reads one source of truth instead of re-deriving it
+     * from scattered slot cross-checks. One of:
+     *   "natural"  - no reserved box (null aspect); final renders at natural size
+     *   "revealed" - a final image is present
+     *   "preview"  - a blurred preview is showing while work continues
+     *   "working"  - working with nothing to show yet
+     *   "idle"     - nothing to show
+     * The FAILED terminal is driven by the node flag via applyFailedState(),
+     * which clears every slot, so this reports "idle" once torn down.
+     * @returns {String} The render state.
+     * @category Progressive Loading
+     */
+    renderState () {
+        if (this.parsedAspectRatio(this.aspectRatioString()) === null) {
+            return "natural";
+        }
+        if (this.finalDataUrl()) {
+            return "revealed";
+        }
+        if (this.previewDataUrl()) {
+            return "preview";
+        }
+        if (this.isWorking()) {
+            return "working";
+        }
+        return "idle";
+    }
+
+    /**
      * @description Reflects the working flag: a faint fill while there's no
      * image yet, transparent otherwise; also refreshes the shimmer overlay.
      * @param {Boolean} aBool - Whether work is in progress.
@@ -666,6 +715,9 @@
      * @category Progressive Loading
      */
     setIsWorking (aBool) {
+        if (aBool === this._isWorking) {
+            return this;
+        }
         this._isWorking = aBool;
         if (aBool) {
             // We're about to display a non-terminal state (faint fill + shimmer),
@@ -679,13 +731,12 @@
 
     /**
      * @description Applies the faint placeholder fill only while working with no
-     * image yet; transparent otherwise.
+     * image yet ("working" render state); transparent otherwise.
      * @returns {SvImageWellView}
      * @category Progressive Loading
      */
     updateBackgroundFill () {
-        const hasAnyImage = !!(this._previewDataUrl || this._finalDataUrl);
-        if (this._isWorking && !hasAnyImage) {
+        if (this.renderState() === "working") {
             this.setBackgroundColor("rgba(255, 255, 255, 0.05)");
         } else {
             this.setBackgroundColor("transparent");
@@ -701,20 +752,32 @@
     newLayerView () {
         const v = SvFlexDomView.clone();
         v.setPosition("absolute");
-        // Stretch to fill the well's padding box via all four offsets. The box
-        // reserves its height with padding-top (content-height is 0), so a
-        // layer sized with height:100% would collapse to 0 — top/bottom/left/
-        // right:0 stretch it to the full padded box instead. NOTE: don't use
-        // setInset — in this framework it (mis)maps to the `position` property.
-        v.setTop("0px");
-        v.setLeft("0px");
-        v.setRight("0px");
-        v.setBottom("0px");
+        // Fill the well's padding box. The box reserves its height with
+        // padding-top (content-height is 0), so a layer sized with height:100%
+        // would collapse to 0 — inset:0 stretches it to the full padded box.
+        v.setInset("0px");
         v.makeBackgroundCover();
         v.makeBackgroundCentered();
         v.makeBackgroundNoRepeat();
         v.turnOffUserSelect();
         return v;
+    }
+
+    /**
+     * @description The shared "force the transition to run" idiom: reading the
+     * view's offsetHeight flushes the just-set starting style so the browser
+     * commits it before the flip, then the change is applied on the next tick so
+     * the CSS transition actually animates (even when the layer was created in
+     * the same frame). Used by every layer fade-in / focus-pull reveal.
+     * @param {Function} aFunc - The style change to apply after the flush.
+     * @param {SvDomView} aView - The view whose layout to flush.
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    flushStyleThen (aFunc, aView) {
+        aView.element().offsetHeight; // force style flush so the transition runs
+        this.addWeakTimeout(aFunc, 16);
+        return this;
     }
 
     /**
@@ -754,7 +817,7 @@
             const v = this.newLayerView();
             v.setOpacity(0);
             // Transition opacity, blur and scale together so the final reveal is
-            // a focus-pull crossfade (see setFinalDataUrl), not an opacity-only
+            // a focus-pull crossfade (see applyFinalDataUrl), not an opacity-only
             // fade of an already-sharp image. Uses the longer finalFadeSeconds
             // and an ease-in-out curve so the image eases in gently rather than
             // popping over the preview.
@@ -779,59 +842,46 @@
      * @returns {SvImageWellView}
      * @category Progressive Loading
      */
-    setPreviewDataUrl (dataUrl) {
-        if (dataUrl === this._previewDataUrl) {
+    applyPreviewDataUrl (dataUrl) {
+        if (dataUrl === this.previewDataUrl()) {
             return this;
         }
-        const hadImage = !!this._previewDataUrl;
-        this._previewDataUrl = dataUrl;
+        this.setPreviewDataUrl(dataUrl);
         if (dataUrl) {
             // Installing a blurred preview is a non-terminal state this view is
             // displaying, so a later final reveal is a transition it witnessed.
             this.setWitnessedProgress(true);
-            if (hadImage) {
-                // Crossfade: fade a new blurred layer in over the outgoing one.
-                this.removeOutgoingBackLayer();
-                const oldLayer = this.backLayerView();
-                this.setOutgoingBackLayerView(oldLayer); // stays opaque underneath
-                const newLayer = this.newPreviewLayerForUrl(dataUrl); // opacity 0, above oldLayer
-                this.setBackLayerView(newLayer);
-                newLayer.element().offsetHeight; // force style flush so the transition runs
-                this.addWeakTimeout(() => {
-                    if (this.backLayerView() === newLayer) {
-                        newLayer.setOpacity(1);
-                    }
-                }, 16);
-                // Remove the outgoing layer only after the incoming fade completes.
-                this.addWeakTimeout(() => {
-                    if (this.outgoingBackLayerView() === oldLayer) {
-                        this.removeOutgoingBackLayer();
-                    }
-                }, this.fadeDurationMs() + 100);
-            } else {
-                // First image: fade up from the faint working fill.
-                const newLayer = this.newPreviewLayerForUrl(dataUrl);
-                this.setBackLayerView(newLayer);
-                newLayer.element().offsetHeight; // force style flush so the transition runs
-                this.addWeakTimeout(() => {
-                    if (this.backLayerView() === newLayer) {
-                        newLayer.setOpacity(1);
-                    }
-                }, 16);
-            }
+            // Crossfade the new blurred layer in over the outgoing one (which
+            // stays opaque underneath and is removed once the incoming fade
+            // completes, so the box never shows through). removeOutgoingBackLayer
+            // is null-safe, so the very first image takes this same path with no
+            // previous layer.
+            this.removeOutgoingBackLayer();
+            const oldLayer = this.backLayerView();
+            this.setOutgoingBackLayerView(oldLayer); // null on first image
+            const newLayer = this.newPreviewLayerForUrl(dataUrl); // opacity 0, above oldLayer
+            this.setBackLayerView(newLayer);
+            this.flushStyleThen(() => {
+                if (this.backLayerView() === newLayer) {
+                    newLayer.setOpacity(1);
+                }
+            }, newLayer);
+            this.addWeakTimeout(() => {
+                if (this.outgoingBackLayerView() === oldLayer) {
+                    this.removeOutgoingBackLayer();
+                }
+            }, this.fadeDurationMs() + 100);
         } else {
             // Preview cleared. Keep the visible blurred layer as a backdrop while
-            // a final image is present/revealing (setFinalDataUrl removes it once
-            // its crossfade completes) or while still working (a final is
+            // a final image is present/revealing (applyFinalDataUrl removes it
+            // once its crossfade completes) or while still working (a final is
             // imminent) — clearing it now would flash the empty box under the
             // slowly-fading-in final. Only clear outright when nothing else will.
-            this._previewDataUrl = null;
-            if (!this._finalDataUrl && !this._isWorking) {
+            if (!this.finalDataUrl() && !this.isWorking()) {
                 this.clearBackLayer();
             }
         }
         this.updateBackgroundFill();
-        this.raiseOverlays(); // keep shimmer above the preview
         return this;
     }
 
@@ -852,6 +902,54 @@
     }
 
     /**
+     * @description One idempotent render pass for the two progressive image
+     * inputs. Applies the final and preview in the single always-correct order
+     * (final first), so callers need not order their inputs — see the inline
+     * note for why.
+     * @param {String|null} finalUrl - The sharp final image data URL, or null.
+     * @param {String|null} previewUrl - The blurred preview data URL, or null.
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    applyProgressiveImageData (finalUrl, previewUrl) {
+        // ONE idempotent render pass for the two image inputs. The final is
+        // applied before the preview so a preview-clear arriving in the same pass
+        // (completion reports a final AND a null preview together) sees a final
+        // in progress and keeps the blurred backdrop until the reveal completes,
+        // instead of flashing the empty box. Callers therefore need not order
+        // their inputs — the one load-bearing ordering rule lives here.
+        this.applyFinalDataUrl(finalUrl);
+        this.applyPreviewDataUrl(previewUrl);
+        return this;
+    }
+
+    /**
+     * @description Renders the final image into the front layer as a real
+     * <img> element (object-fit: cover, filling the layer) rather than a CSS
+     * background-image, so the final keeps native media affordances — right-click
+     * "Save image as…", drag-out, and mobile long-press-save. The reveal still
+     * animates on the LAYER (opacity / blur / scale), so the <img> itself needs
+     * no transition.
+     * @param {String} dataUrl - The final image data URL.
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    setFrontLayerImageUrl (dataUrl) {
+        const layer = this.frontLayer();
+        layer.removeAllSubviews(); // drop any prior <img>
+        const image = new Image();
+        image.src = dataUrl;
+        const imgView = SvFlexDomView.clone().setElement(image);
+        imgView.setPosition("absolute");
+        imgView.setInset("0px");
+        imgView.setWidth("100%");
+        imgView.setHeight("100%");
+        imgView.setObjectFit("cover");
+        layer.addSubview(imgView);
+        return this;
+    }
+
+    /**
      * @description Sets the sharp final (front layer) image data URL and reveals
      * it with a focus-pull crossfade: the final image starts blurred, slightly
      * scaled up and transparent, then animates opacity 0→1, blur → 0 and scale →
@@ -866,7 +964,7 @@
      * @returns {SvImageWellView}
      * @category Progressive Loading
      */
-    setFinalDataUrl (dataUrl) {
+    applyFinalDataUrl (dataUrl) {
         // Natural-size terminal: no reserved box (null aspect ratio). Render the
         // final via the base single-image path — an SvImageView that sizes to
         // the image — exactly as a non-progressive well would. No reserved box,
@@ -875,17 +973,17 @@
         // the aspect slot).
         if (this.parsedAspectRatio(this.aspectRatioString()) === null) {
             this.setImageDataUrl(dataUrl);
-            this._finalDataUrl = dataUrl;
+            this.setFinalDataUrl(dataUrl);
             return this;
         }
 
-        if (dataUrl === this._finalDataUrl) {
+        if (dataUrl === this.finalDataUrl()) {
             return this;
         }
-        this._finalDataUrl = dataUrl;
+        this.setFinalDataUrl(dataUrl);
         if (dataUrl) {
             const front = this.frontLayer();
-            front.setBackgroundImage("url(\"" + dataUrl + "\")");
+            this.setFrontLayerImageUrl(dataUrl);
             if (!this.witnessedProgress()) {
                 // Cold completion: this view never displayed a placeholder for
                 // this content (late join, reload, scroll-back through recreated
@@ -905,22 +1003,27 @@
                 front.setOpacity(0);
                 front.setFilter("blur(" + this.blurRadiusPx() + "px)"); // start blurred, matching the preview
                 front.setTransform("scale(1.06)"); // hide blurred edges bleeding past the box
-                front.element().offsetHeight; // force style flush so the transitions run
-                this.addWeakTimeout(() => {
+                const revealedOverLayer = this.backLayerView();
+                this.flushStyleThen(() => {
                     // Fade in while sharpening and settling — image + blur as one.
                     front.setOpacity(1);
                     front.setFilter("blur(0px)");
                     front.setTransform("scale(1)");
-                }, 16);
-                // After the reveal completes, drop the now-hidden blurred preview.
+                }, front);
+                // After the reveal completes, drop the preview we revealed over.
+                // Re-validate first: a newer preview installed during the reveal
+                // replaces backLayerView(), and must be left in place (otherwise
+                // this stale timer would delete it).
                 this.addWeakTimeout(() => {
-                    this.clearBackLayer();
+                    if (this.backLayerView() === revealedOverLayer) {
+                        this.clearBackLayer();
+                    }
                 }, this.finalFadeDurationMs() + 100);
                 // The final image is here: stop working indicators.
                 this.removeShimmer();
             }
         } else if (this.frontLayerView()) {
-            this.frontLayerView().setBackgroundImage(null);
+            this.frontLayerView().removeAllSubviews(); // drop the <img>
             this.frontLayerView().setOpacity(0);
         }
         this.updateBackgroundFill();
@@ -941,7 +1044,7 @@
             this.setBackLayerView(null);
         }
         this.removeOutgoingBackLayer();
-        this._previewDataUrl = null;
+        this.setPreviewDataUrl(null);
         return this;
     }
 
@@ -956,20 +1059,25 @@
             this.removeSubview(v);
             this.setFrontLayerView(null);
         }
-        this._finalDataUrl = null;
+        this.setFinalDataUrl(null);
         return this;
     }
 
     // --- Shimmer overlay ---
 
     /**
-     * @description True when the shimmer should be shown: enabled, working, no
-     * final image yet.
+     * @description True when the shimmer should be shown: enabled and in a
+     * non-terminal render state (working with nothing yet, or a preview showing
+     * while work continues). A final image ("revealed") stops it.
      * @returns {Boolean}
      * @category Progressive Loading
      */
     shouldShowShimmer () {
-        return !!(this.shimmerEnabled() && this._isWorking && !this._finalDataUrl);
+        if (!this.shimmerEnabled()) {
+            return false;
+        }
+        const state = this.renderState();
+        return state === "working" || state === "preview";
     }
 
     /**
@@ -1000,28 +1108,19 @@
         if (this.shimmerView()) {
             return this.shimmerView();
         }
-        SvImageWellView.installShimmerCssIfNeeded();
         const v = SvFlexDomView.clone();
         v.setPosition("absolute");
-        v.setTop("0px");
-        v.setLeft("0px");
-        v.setRight("0px");
-        v.setBottom("0px");
+        v.setInset("0px");
         v.setZIndex(2);
-        v.setOverflow("hidden");
+        v.setOverflow("hidden"); // clips the oversized sheen band
         v.setPointerEvents("none");
         v.turnOffUserSelect();
-        // Full-bleed sheen: a large, soft diagonal highlight that drifts (and
-        // gently reverses) across the whole box via background-position, so it
-        // reads as flowing light rather than a band with edges marching past.
-        // The gradient + animation live in the SvImageWellShimmerSheen class.
+        // Full-bleed sheen: a large, soft diagonal highlight that sweeps (and
+        // gently reverses) across the whole box, reading as flowing light. Its
+        // geometry (an oversized band), gradient and translateX animation all
+        // live in the SvImageWellShimmerSheen class (see setupCss).
         const sheen = SvFlexDomView.clone();
-        sheen.setPosition("absolute");
-        sheen.setTop("0px");
-        sheen.setBottom("0px");
-        sheen.setLeft("0px");
-        sheen.setRight("0px");
-        sheen.setElementClassName("SvImageWellShimmerSheen"); // drives the SvImageWellShimmer animation
+        sheen.setElementClassName("SvImageWellShimmerSheen");
         v.addSubview(sheen);
         this.setShimmerView(v);
         this.addSubview(v);
@@ -1038,22 +1137,6 @@
         if (v) {
             this.removeSubview(v);
             this.setShimmerView(null);
-        }
-        return this;
-    }
-
-    /**
-     * @description Re-adds the shimmer overlay after image layers were (re)added,
-     * so it always stacks above the images. No-op when the overlay isn't
-     * currently shown.
-     * @returns {SvImageWellView}
-     * @category Progressive Loading
-     */
-    raiseOverlays () {
-        const shimmer = this.shimmerView();
-        if (shimmer) {
-            this.removeSubview(shimmer);
-            this.addSubview(shimmer);
         }
         return this;
     }

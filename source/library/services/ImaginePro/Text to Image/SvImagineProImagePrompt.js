@@ -1055,6 +1055,21 @@ Midjourney
     }
 
     /**
+     * @description Sets the endpoint referer on a result file, fetches its bytes
+     * if not already loaded, and returns its SvImageNode. Shared by the
+     * first-result and all-results paths so the referer/fetch/unwrap sequence
+     * can't drift between them.
+     * @param {SvFileToDownload} fileToDownload - The result file to resolve.
+     * @returns {Promise<SvImageNode>} The fetched image node.
+     * @category Results
+     */
+    async asyncImageNodeForResultFile (fileToDownload) {
+        fileToDownload.setRefererUrl(this.thisClass().endpointBase());
+        await fileToDownload.asyncFetchIfNeeded();
+        return fileToDownload.imageNode();
+    }
+
+    /**
      * @description Returns the SvImageNode for the first available grid image,
      * fetching its bytes if needed. Used to show a preview before evaluation
      * picks the winner. Returns null if no grid image is available.
@@ -1066,24 +1081,19 @@ Midjourney
         if (!fileToDownload) {
             return null;
         }
-        fileToDownload.setRefererUrl(this.thisClass().endpointBase());
-        await fileToDownload.asyncFetchIfNeeded();
-        return fileToDownload.imageNode();
+        return await this.asyncImageNodeForResultFile(fileToDownload);
     }
 
     async asyncAllResultImageNodes () {
-        const allFilesToDownload = this.generations().subnodes().map(gen => {
-            return gen.images().subnodes();
-        }).flat();
+        const allFilesToDownload = this.allResultImages();
 
         assert(allFilesToDownload.length > 0, "no files to download");
 
+        const imageNodes = [];
         for (const fileToDownload of allFilesToDownload) {
-            fileToDownload.setRefererUrl(this.thisClass().endpointBase());
-            await fileToDownload.asyncFetchIfNeeded();
+            imageNodes.push(await this.asyncImageNodeForResultFile(fileToDownload));
         }
-
-        return allFilesToDownload.map(fileToDownload => fileToDownload.imageNode());
+        return imageNodes;
     }
 
     async resultImageUrlData () {
