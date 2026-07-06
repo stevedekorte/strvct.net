@@ -76,6 +76,14 @@
                 animation: SvBreadCrumbFadeIn 0.3s ease-in-out;
             }
 
+            /* Crumbs whose node was already visible before the path change:
+               the rebuild recreates every element, so without this the whole
+               path would blink on each navigation — only genuinely NEW
+               segments should fade in. */
+            .SvBreadCrumbLabel.settled {
+                animation: none;
+            }
+
             .SvBreadCrumbLabel:hover {
                 color: var(--SvBreadCrumbs-current-color, rgba(255, 255, 255, 0.85));
             }
@@ -175,7 +183,22 @@
 
         const pathNodes = this.pathNodes();
 
+        // The rebuild recreates every crumb element, which would replay the
+        // fade-in animation on the WHOLE path. Diff the rendered segments
+        // against the previous render (by node identity) and mark the common
+        // prefix "settled" so only the segments that actually changed fade in.
+        const renderedNodes = pathNodes.filter((node) => this.titleForNode(node) !== "");
+        const previousNodes = this._lastRenderedPathNodes || [];
+        let settledCount = 0;
+        while (settledCount < renderedNodes.length
+            && settledCount < previousNodes.length
+            && renderedNodes[settledCount] === previousNodes[settledCount]) {
+            settledCount++;
+        }
+        this._lastRenderedPathNodes = renderedNodes;
+
         let isFirst = true;
+        let renderedIndex = 0;
         pathNodes.forEach((node, i) => {
             const title = this.titleForNode(node);
             if (title === "") {
@@ -185,7 +208,9 @@
                 this.addSubview(this.newSeparatorView());
             }
             isFirst = false;
-            this.addSubview(this.crumbViewForNode(node, i, pathNodes));
+            const isSettled = (renderedIndex < settledCount);
+            renderedIndex++;
+            this.addSubview(this.crumbViewForNode(node, i, pathNodes, isSettled));
         });
 
         this.scheduleMethod("scrollToCurrentCrumb");
@@ -221,10 +246,11 @@
      * @param {SvNode} node The node.
      * @param {number} i The index within the path.
      * @param {Array} pathNodes The full path.
+     * @param {boolean} [isSettled] True when this node was already visible before the path change — suppresses the fade-in.
      * @returns {SvButtonView} The crumb view.
      * @category View Creation
      */
-    crumbViewForNode (node, i, pathNodes) {
+    crumbViewForNode (node, i, pathNodes, isSettled = false) {
         const isCurrent = (i === pathNodes.length - 1);
 
         const v = SvButtonView.clone();
@@ -238,7 +264,7 @@
         v.titleView().setPaddingRight("0em");
         v.titleView().setOverflow("hidden");
         v.titleView().setTextOverflow("ellipsis");
-        v.titleView().setElementClassName("SvBreadCrumbLabel" + (isCurrent ? " current" : ""));
+        v.titleView().setElementClassName("SvBreadCrumbLabel" + (isCurrent ? " current" : "") + (isSettled ? " settled" : ""));
         v.setTitle(this.titleForNode(node));
 
         if (!isCurrent) {
