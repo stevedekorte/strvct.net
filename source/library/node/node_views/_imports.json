@@ -3,6 +3,7 @@
     "SvNodeView.js",
     "SvNodeView_accessibility.js",
     "SvCoachableView.js",
+    "SvImageWellProgressiveProtocol.js",
     "SvImageWellView.js",
     "SvImageView.js",
     "SvVideoWellView.js",

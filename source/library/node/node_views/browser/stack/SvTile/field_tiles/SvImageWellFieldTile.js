@@ -90,23 +90,22 @@
     }
 
     /**
-     * @description True if the node opts into the progressive well protocol.
-     * Feature-detected: the node may not implement these methods at all (e.g. a
-     * bare SvImageNode acting as its own field does NOT extend SvImageWellField),
-     * so every access is guarded — never assume the methods exist. Progressive
-     * mode engages only when the node implements the protocol AND reports either
-     * a non-null aspect ratio or that it is working.
+     * @description True if the node opts into progressive rendering. This is a
+     * STABLE CAPABILITY check — conformance to SvImageWellProgressiveProtocol is
+     * declared once (via addProtocol) and never changes for a node's lifetime —
+     * NOT a check of mutable runtime state. Gating on live state (e.g. "aspect
+     * != null || working") re-decides the code path per sync: a well could flip
+     * from the progressive path into the destructive single-image path
+     * (setImageDataUrl → removeAllSubviews) mid-generation and tear down its own
+     * layers. Keying off the protocol keeps a node on exactly one path forever.
+     * A node that doesn't conform (a plain SvImageWellField, or a bare
+     * SvImageNode acting as its own field) takes the original single-image path.
      * @returns {Boolean}
      * @category Synchronization
      */
     nodeIsProgressive () {
         const field = this.node();
-        if (!field || !field.imageWellAspectRatio) {
-            return false;
-        }
-        const aspect = field.imageWellAspectRatio();
-        const working = field.imageWellIsWorking ? field.imageWellIsWorking() : false;
-        return aspect != null || working;
+        return !!(field && field.conformsToProtocol && field.conformsToProtocol(SvImageWellProgressiveProtocol));
     }
 
     /**
@@ -144,13 +143,17 @@
     }
 
     /**
-     * @description Progressive-mode sync: feed the reserved-box aspect ratio,
-     * working flag and per-node blur into the well, and keep the well
-     * visible during work. The base tile / SvFieldTile hides the value view
-     * while !keyIsComplete / !valueIsVisible; for a progressive well we want the
-     * reserved box shown throughout so it never renders a blank tile. On a model
-     * error, collapse the box so the surrounding error-status text lays out
-     * normally.
+     * @description Progressive-mode sync: feed the reserved-box aspect ratio and
+     * working flag into the well, and keep the well visible during work. The
+     * base tile / SvFieldTile hides the value view while !keyIsComplete /
+     * !valueIsVisible; for a progressive well we want the reserved box shown
+     * throughout so it never renders a blank tile.
+     *
+     * On the FAILED terminal (imageWellHasFailed — a cloud-durable flag, unlike
+     * the host-only `error` slot, so guests see it too) the well is torn down:
+     * shimmer stopped, preview/final layers cleared and the reserved box
+     * collapsed, so no permanent blank spacer remains and the field's key/error
+     * text lays out normally.
      * @returns {SvImageWellFieldTile}
      * @category Synchronization
      */
@@ -158,11 +161,10 @@
         const field = this.node();
         const well = this.imageWellView();
 
-        // On failure: tear the reserved box down entirely and fall back to base
-        // error-status text — no lingering empty frame.
-        if (field.error && field.error()) {
-            if (well.setAspectRatioString) {
-                well.setAspectRatioString(null);
+        if (field.imageWellHasFailed && field.imageWellHasFailed()) {
+            this.valueViewContainer().setDisplay("");
+            if (well.applyFailedState) {
+                well.applyFailedState();
             }
             return this;
         }
@@ -171,12 +173,6 @@
         this.valueViewContainer().setDisplay("");
         well.setIsDisplayHidden(false);
 
-        if (well.setBlurRadiusPx && field.imageWellBlurRadiusPx) {
-            const blur = field.imageWellBlurRadiusPx();
-            if (blur != null) {
-                well.setBlurRadiusPx(blur);
-            }
-        }
         if (well.setAspectRatioString) {
             well.setAspectRatioString(field.imageWellAspectRatio());
         }
@@ -221,6 +217,13 @@
     async asyncSyncProgressiveFromNode () {
         const well = this.imageWellView();
         const field = this.node();
+
+        // Failed terminal: the (sync) syncProgressiveFromNode already tore the
+        // well down. Don't resolve/re-apply preview or final images — that would
+        // rebuild the very layers applyFailedState() just cleared.
+        if (field.imageWellHasFailed && field.imageWellHasFailed()) {
+            return this;
+        }
 
         // Apply the FINAL before the PREVIEW. At completion the node reports a
         // final image AND a null preview in the same sync pass; if we cleared

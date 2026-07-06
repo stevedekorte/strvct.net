@@ -16,10 +16,10 @@
  * In addition to the plain single-image behavior (setImageDataUrl / child
  * SvImageView), this view can render an aspect-ratio-reserved box that reveals
  * content progressively. The field tile engages this mode only when the node
- * opts in via the progressive protocol on SvImageWellField (a non-null aspect
- * ratio or a "working" flag); otherwise the well behaves byte-for-byte as
- * before. In progressive mode the box contains up to two absolutely-positioned,
- * stacked layers plus optional overlays:
+ * conforms to SvImageWellProgressiveProtocol (a stable, opt-in capability);
+ * otherwise the well behaves byte-for-byte as before. In progressive mode the
+ * box contains up to two absolutely-positioned, stacked layers plus optional
+ * overlays:
  *
  *   - back layer  = a blurred preview image (e.g. a first/low-res image), shown
  *                   while work continues;
@@ -222,6 +222,22 @@
         {
             const slot = this.newSlot("finalDataUrl", null);
             slot.setSlotType("String");
+        }
+        /**
+         * @member {Boolean} witnessedProgress - Whether THIS view instance has
+         * actually displayed a non-terminal (working / shimmer / preview) state.
+         * Views are created lazily and torn down freely, so a view may be built
+         * with the final image already available (late join, reload, scroll-back
+         * through recreated history) — it never witnessed the generation, so the
+         * final must appear with NO reveal animation. Only a view that passed
+         * through a placeholder plays the focus-pull reveal. Reset per instance
+         * (default false); animation is a property of a transition the view saw,
+         * not of a state that already existed.
+         * @category Progressive Loading
+         */
+        {
+            const slot = this.newSlot("witnessedProgress", false);
+            slot.setSlotType("Boolean");
         }
     }
 
@@ -543,8 +559,9 @@
 
     /**
      * @description Sets the target aspect-ratio string and (re)configures the
-     * box. Passing null collapses the reservation and restores plain base
-     * behavior (used for the error-teardown path).
+     * box. A "w:h" string reserves an aspect-ratio box; null means no reserved
+     * box — the final image (if any) then renders at its natural size (see
+     * restoreNaturalBox / setFinalDataUrl).
      * @param {String|null} str - A "w:h" string, or null.
      * @returns {SvImageWellView}
      * @category Progressive Loading
@@ -558,7 +575,7 @@
         if (wh) {
             this.applyAspectRatioBox(wh[0], wh[1]);
         } else {
-            this.collapseAspectRatioBox();
+            this.restoreNaturalBox();
         }
         return this;
     }
@@ -589,18 +606,53 @@
     }
 
     /**
-     * @description Tears the reserved box down: drops all layers/overlays and
-     * restores the well to a zero-height, transparent, non-reserving state so
-     * the base (or the surrounding error-status text) lays out normally.
+     * @description Drops the reserved-box reservation and restores natural
+     * sizing so a final image can size the well to its own intrinsic aspect
+     * (the "shown" terminal for a node that supplies no aspect ratio). Clears
+     * any progressive layers/overlays first (there are normally none in natural
+     * mode; defensive against a box→natural transition). Unlike the failed
+     * teardown, this does NOT hide the well — it leaves room for the natural
+     * image (setFinalDataUrl renders it via the base single-image path).
      * @returns {SvImageWellView}
      * @category Progressive Loading
      */
-    collapseAspectRatioBox () {
+    restoreNaturalBox () {
         this.clearBackLayer();
         this.clearFrontLayer();
         this.removeShimmer();
         this.setPaddingTop("0px");
+        this.autoFitParentWidth();
+        this.autoFitChildHeight(); // relative + fit-content, so a natural image sizes the well
+        this.setMinHeight("0px");
+        this.setMinHeightPx(0);
+        this.setBorder("none");
+        this.setBackgroundColor("transparent");
+        return this;
+    }
+
+    /**
+     * @description The FAILED terminal: generation ended in failure or was
+     * interrupted. Stops the shimmer, clears every image layer (preview, final)
+     * and the base image view, and collapses the reserved box to a zero-height,
+     * transparent, borderless spacer so no blank frame lingers and the field's
+     * key/error text lays out normally. Idempotent — safe to call on every sync
+     * while the node reports failure.
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    applyFailedState () {
+        this.setIsWorking(false);
+        this.clearBackLayer();
+        this.clearFrontLayer();
+        this.removeShimmer();
+        if (this.imageView()) {
+            this.removeSubview(this.imageView()); // willRemoveSubview nulls the slot
+        }
+        this.setPaddingTop("0px");
         this.setHeight("0px");
+        this.setMinHeight("0px");
+        this.setMinHeightPx(0);
+        this.setBorder("none");
         this.setBorderRadius("0px");
         this.setBackgroundColor("transparent");
         return this;
@@ -615,6 +667,11 @@
      */
     setIsWorking (aBool) {
         this._isWorking = aBool;
+        if (aBool) {
+            // We're about to display a non-terminal state (faint fill + shimmer),
+            // so a later final reveal is a transition this view witnessed.
+            this.setWitnessedProgress(true);
+        }
         this.updateBackgroundFill();
         this.updateShimmer();
         return this;
@@ -729,6 +786,9 @@
         const hadImage = !!this._previewDataUrl;
         this._previewDataUrl = dataUrl;
         if (dataUrl) {
+            // Installing a blurred preview is a non-terminal state this view is
+            // displaying, so a later final reveal is a transition it witnessed.
+            this.setWitnessedProgress(true);
             if (hadImage) {
                 // Crossfade: fade a new blurred layer in over the outgoing one.
                 this.removeOutgoingBackLayer();
@@ -807,6 +867,18 @@
      * @category Progressive Loading
      */
     setFinalDataUrl (dataUrl) {
+        // Natural-size terminal: no reserved box (null aspect ratio). Render the
+        // final via the base single-image path — an SvImageView that sizes to
+        // the image — exactly as a non-progressive well would. No reserved box,
+        // no crossfade, no animation. This is the plain "shown" state for a node
+        // that supplies no aspect ratio (e.g. a completed message that predates
+        // the aspect slot).
+        if (this.parsedAspectRatio(this.aspectRatioString()) === null) {
+            this.setImageDataUrl(dataUrl);
+            this._finalDataUrl = dataUrl;
+            return this;
+        }
+
         if (dataUrl === this._finalDataUrl) {
             return this;
         }
@@ -814,22 +886,39 @@
         if (dataUrl) {
             const front = this.frontLayer();
             front.setBackgroundImage("url(\"" + dataUrl + "\")");
-            front.setOpacity(0);
-            front.setFilter("blur(" + this.blurRadiusPx() + "px)"); // start blurred, matching the preview
-            front.setTransform("scale(1.06)"); // hide blurred edges bleeding past the box
-            front.element().offsetHeight; // force style flush so the transitions run
-            this.addWeakTimeout(() => {
-                // Fade in while sharpening and settling — image + blur as one.
+            if (!this.witnessedProgress()) {
+                // Cold completion: this view never displayed a placeholder for
+                // this content (late join, reload, scroll-back through recreated
+                // history), so there is no transition to animate — snap the final
+                // in at full opacity, no blur, no timers. Disable the layer's
+                // transition so the 0→1 flip doesn't animate.
+                front.setTransition("none");
                 front.setOpacity(1);
                 front.setFilter("blur(0px)");
                 front.setTransform("scale(1)");
-            }, 16);
-            // After the reveal completes, drop the now-hidden blurred preview.
-            this.addWeakTimeout(() => {
                 this.clearBackLayer();
-            }, this.finalFadeDurationMs() + 100);
-            // The final image is here: stop working indicators.
-            this.removeShimmer();
+                this.removeShimmer();
+            } else {
+                // Witnessed a placeholder → focus-pull reveal: start blurred,
+                // scaled up and transparent, then animate opacity 0→1, blur → 0
+                // and scale → 1 together.
+                front.setOpacity(0);
+                front.setFilter("blur(" + this.blurRadiusPx() + "px)"); // start blurred, matching the preview
+                front.setTransform("scale(1.06)"); // hide blurred edges bleeding past the box
+                front.element().offsetHeight; // force style flush so the transitions run
+                this.addWeakTimeout(() => {
+                    // Fade in while sharpening and settling — image + blur as one.
+                    front.setOpacity(1);
+                    front.setFilter("blur(0px)");
+                    front.setTransform("scale(1)");
+                }, 16);
+                // After the reveal completes, drop the now-hidden blurred preview.
+                this.addWeakTimeout(() => {
+                    this.clearBackLayer();
+                }, this.finalFadeDurationMs() + 100);
+                // The final image is here: stop working indicators.
+                this.removeShimmer();
+            }
         } else if (this.frontLayerView()) {
             this.frontLayerView().setBackgroundImage(null);
             this.frontLayerView().setOpacity(0);
