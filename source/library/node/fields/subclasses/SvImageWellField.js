@@ -7,8 +7,8 @@
  * @extends SvField
  * @classdesc Represents an image well field in the application.
  * This class handles image-related operations and supports specific mime types.
- 
- 
+
+
  */
 
 (class SvImageWellField extends SvField {
@@ -137,5 +137,11 @@
     setValue (value) {
         super.setValue(value);
     }
+
+    // A plain image-well field does NOT conform to SvImageWellProgressiveProtocol
+    // and therefore takes the original single-image path in SvImageWellFieldTile.
+    // Nodes that want progressive rendering (reserved box, shimmer, blurred
+    // preview, crossfade) opt in by conforming to the protocol and implementing
+    // its data-only methods.
 
 }).initThisClass();

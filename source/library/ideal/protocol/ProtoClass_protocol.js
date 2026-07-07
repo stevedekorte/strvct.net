@@ -54,12 +54,19 @@
     // Ensure protocol is a subclass of Protocol.
         assert(protocol.isClass() && protocol.isKindOf(Protocol), "Protocol " + protocol + " is not a subclass of Protocol");
 
-        // Add protocol to set of protocols.
-        if (this.methodsConformToProtocol(protocol)) {
-            this.protocols().add(protocol);
-        } else {
-            throw new Error("Protocol " + protocol + " not found in " + this);
+        if (!this.methodsConformToProtocol(protocol)) {
+            const missing = protocol.protocolMethodNames().filter(name => typeof (this[name]) !== "function");
+            throw new Error(this.svType() + " does not conform to protocol " + protocol.svType() + " — missing: " + missing.join(", "));
         }
+
+        // The protocols slot default is a single Set shared by every prototype
+        // that hasn't set its own, so mutating it would mark the entire class
+        // tree as conforming. Copy-on-write an own set first (seeded with any
+        // protocols inherited from ancestor classes).
+        if (!Object.hasOwn(this, "_protocols")) {
+            this.setProtocols(new Set(this.protocols()));
+        }
+        this.protocols().add(protocol);
 
         protocol.addImplementer(this.thisClass());
     }
@@ -70,17 +77,17 @@
     * @category Protocol Analysis
     */
     allProtocolMethodNames () {
-        return this.protocols().allSlotsMap().valuesArray().map(slot => slot.name()).unique();
+        return this.protocols().valuesArray().map(protocol => protocol.protocolMethodNames()).flat().unique();
     }
 
     /**
     * @method methodsConformToProtocol
     * @param {Protocol} protocol
-    * @returns {Array}
+    * @returns {Boolean} True if this object implements every method the protocol declares.
     * @category Protocol Analysis
     */
     methodsConformToProtocol (protocol) {
-        return this.protocols().allSlotsMap().valuesArray().select(slot => slot.conformsToProtocol(protocol));
+        return protocol.protocolMethodNames().every(name => typeof (this[name]) === "function");
     }
 
     /**

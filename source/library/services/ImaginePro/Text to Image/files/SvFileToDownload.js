@@ -108,6 +108,15 @@
             slot.setCanEditInspection(false);
         }
 
+        // so concurrent asyncFetchIfNeeded() callers share one in-flight download
+        // instead of racing (and clobbering) each other's writes to imageNode.
+        {
+            const slot = this.newSlot("fetchPromise", null);
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Promise");
+            slot.setIsSubnodeField(false);
+        }
+
         // retry method
         {
             const slot = this.newSlot("asyncFetchAction", null);
@@ -165,7 +174,14 @@
    * @category Status
    */
     hasLoaded () {
-        return this.imageNode().hasImage();
+        const node = this.imageNode();
+        // Treat an in-memory blob as loaded even before its content hash finishes
+        // computing. setBlobFromDataURL() sets the blob synchronously but derives
+        // valueHash via a fire-and-forget digest, so hasImage() (which keys off
+        // valueHash/publicUrl) briefly reports false while the bytes are already
+        // present. Without this a concurrent fetch would re-download and clobber
+        // the blob during that window.
+        return node.hasImage() || node.hasBlobValue();
     }
 
     /**
@@ -297,9 +313,31 @@
         return await this.fetch();
     }
 
+    /**
+   * @description Fetches the image only if it isn't already loaded, deduping
+   * concurrent callers onto a single in-flight download. Without the dedupe two
+   * overlapping callers could each start a fetch (or one could early-return from
+   * fetch()'s isLoading guard before the bytes actually land), racing their
+   * writes to the shared imageNode. The promise is cleared on settle so a failed
+   * fetch can be retried.
+   * @returns {Promise<void>}
+   * @category Loading
+   */
     async asyncFetchIfNeeded () {
-        if (!this.hasLoaded()) {
-            await this.asyncFetch();
+        if (this.hasLoaded()) {
+            return;
+        }
+
+        if (this.fetchPromise()) {
+            return this.fetchPromise();
+        }
+
+        const promise = this.asyncFetch();
+        this.setFetchPromise(promise);
+        try {
+            await promise;
+        } finally {
+            this.setFetchPromise(null);
         }
     }
 

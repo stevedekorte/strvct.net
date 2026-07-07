@@ -29,7 +29,7 @@
 * - conflicts with the instance method namespace (somewhat avoided by only looking at instance methods up to the Protocol class's instance methods)
 *
 
- 
+
  */
 
 
@@ -43,7 +43,7 @@
     */
     static initThisProtocol () {
     // check to make sure the class name ends with "Protocol"
-        assert(this.className().endsWith("Protocol"), "Protocol class name must end with 'Protocol'");
+        assert(this.svType().endsWith("Protocol"), "Protocol class name must end with 'Protocol'");
 
         this.initThisClass();
     }
@@ -82,6 +82,27 @@
     */
     static assertValueIsProtocolClass (aProtocol) {
         assert(aProtocol.isClass() && aProtocol.isKindOf(Protocol), "aProtocol must be a Protocol class");
+    }
+
+    /**
+    * @description The instance method names this protocol declares — the class's own
+    * prototype methods plus those inherited from ancestor protocols, up to but not
+    * including the Protocol class itself (the inheritance rule in the classdesc).
+    * @returns {Array} The declared protocol method names.
+    * @category Query
+    */
+    static protocolMethodNames () {
+        const names = new Set();
+        let proto = this.prototype;
+        while (proto && proto !== Protocol.prototype) {
+            Object.getOwnPropertyNames(proto).forEach((name) => {
+                if (name !== "constructor" && typeof (proto[name]) === "function") {
+                    names.add(name);
+                }
+            });
+            proto = Object.getPrototypeOf(proto);
+        }
+        return Array.from(names);
     }
 
     /**
