@@ -171,7 +171,13 @@
      * @category Interaction
      */
     disableTilesViewUntilTimeout (ms) {
-        this.navView().disablePointerEventsUntilTimeout(ms);
+        // Tiles hosted outside a nav column (e.g. the chat input tile in a
+        // chat view) have no nav view — a cancelled slide there has no
+        // column pointer-events to suspend.
+        const navView = this.navView();
+        if (navView) {
+            navView.disablePointerEventsUntilTimeout(ms);
+        }
         this.setPointerEvents("none");
     }
 

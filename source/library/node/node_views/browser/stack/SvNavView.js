@@ -515,7 +515,7 @@
     shouldShowClickToAddView () {
         const node = this.node();
         if (node) {
-            return node.nodeCanAddSubnode() && node.subnodesCount() === 0;
+            return node.offersUserEdit(node.nodeCanAddSubnode()) && node.subnodesCount() === 0; // folds in the editability cascade
         }
         return false;
     }

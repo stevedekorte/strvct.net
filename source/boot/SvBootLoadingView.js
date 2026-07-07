@@ -15,6 +15,7 @@ class SvBootLoadingView extends Object {
         super();
         this._isClosing = false;
         this._hasInitialized = false;
+        this._hasCreatedOrFound = false;
         this._currentBarRatio = 0;
         this._updateCount = 0;
         this._maxUpdateCount = 9;
@@ -73,7 +74,85 @@ class SvBootLoadingView extends Object {
    * @category Lifecycle
    * @description Initializes the loading view with a fade-in animation.
    */
+    /**
+   * @method createElementIfAbsent
+   * @category DOM
+   * @description Injects the framework-default loading view markup when the
+   * host page did not provide a #loadingView of its own. Style knobs are CSS
+   * custom properties, so a host page can customize with a small :root
+   * declaration and gets the defaults otherwise:
+   *
+   *   --sv-boot-font-family     (default: sans-serif)
+   *   --sv-boot-text-color      (default: white)
+   *   --sv-boot-bar-width       (default: 8em)
+   *   --sv-boot-bar-height      (default: 0.5em)
+   *   --sv-boot-bar-radius      (default: 0.25em; 0 = square edges)
+   *   --sv-boot-bar-color       (default: white)
+   *   --sv-boot-bar-track-color (default: #666)
+   *
+   * NOTE: a custom font-family only renders during boot if the host page
+   * makes the font available at boot time (preload + @font-face in its own
+   * HTML) — the framework's font resources load later in the boot.
+   *
+   * Legacy path: a host page may instead provide its own #loadingView
+   * markup entirely; it is used untouched. Runs at most once, so a closed
+   * loading view is never re-injected by late setTitle/setBarRatio calls.
+   */
+    createElementIfAbsent () {
+        if (this._hasCreatedOrFound || !SvPlatform.isBrowserPlatform()) {
+            return this;
+        }
+        if (this.element()) {
+            this._hasCreatedOrFound = true; // host page provided its own markup
+            return this;
+        }
+        if (!document.body) {
+            return this; // too early — retried on the next update call
+        }
+        this._hasCreatedOrFound = true;
+
+        const style = document.createElement("style");
+        style.id = "loadingViewStyle";
+        style.textContent = [
+            "#loadingView {",
+            "    position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: auto;",
+            "    width: 320px; height: 120px;",
+            "    display: flex; flex-direction: column; align-items: center; justify-content: center;",
+            "    text-align: center;",
+            "    font-family: var(--sv-boot-font-family, sans-serif);",
+            "    color: var(--sv-boot-text-color, white);",
+            "    opacity: 0; background: none; border: 0; z-index: 9999;",
+            "}",
+            "#loadingViewTitle { display: flex; justify-content: center; align-items: center; padding: 0; margin-bottom: 1em; }",
+            "#loadingViewBarTrack {",
+            "    display: block; padding: 0;",
+            "    width: var(--sv-boot-bar-width, 8em);",
+            "    height: var(--sv-boot-bar-height, 0.5em);",
+            "    border-radius: var(--sv-boot-bar-radius, 0.25em);",
+            "    background-color: var(--sv-boot-bar-track-color, #666);",
+            "    overflow: hidden;",
+            "}",
+            "#innerLoadingView {",
+            "    background-color: var(--sv-boot-bar-color, white);",
+            "    border-radius: var(--sv-boot-bar-radius, 0.25em);",
+            "    height: 100%; width: 0;",
+            "    transition: width 0.3s linear;",
+            "}",
+            "#loadingViewSubtitle { display: flex; justify-content: center; align-items: center; padding: 0; margin-top: 1em; opacity: 0.1; min-height: 1em; line-height: 1.3; }"
+        ].join("\n");
+        document.head.appendChild(style);
+
+        const view = document.createElement("div");
+        view.id = "loadingView";
+        view.innerHTML = "<div id=\"loadingViewTitle\">Loading</div>" +
+            "<div id=\"loadingViewBarTrack\"><div id=\"innerLoadingView\"></div></div>" +
+            "<div id=\"loadingViewSubtitle\"></div>";
+        document.body.appendChild(view);
+        return this;
+    }
+
     initializeFadeIn () {
+        this.createElementIfAbsent();
         if (this._hasInitialized || !this.isAvailable()) {
             return;
         }
@@ -222,7 +301,9 @@ class SvBootLoadingView extends Object {
         const v = Math.round(100 * r) / 100;
         if (v !== this._currentBarRatio) {
             this._currentBarRatio = v;
-            barElement.style.width = 10 * v + "em";
+            // Percentage of the track, so bar geometry customization
+            // (--sv-boot-bar-width etc.) can never break the fill math.
+            barElement.style.width = (100 * v) + "%";
         }
         //console.log("setBarRatio", v);
         return this;

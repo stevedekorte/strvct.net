@@ -270,7 +270,20 @@
        - Settings/environments (e.g., "in a forest", "at sunset", "underwater")
        - Compositional elements (e.g., "in the foreground", "surrounded by", "facing left")
     
-    2. Assign each checklist item a score (between 0.0 and 1.0) based on if it is present and correctly depicted.
+    2. ALWAYS add these two checklist items, regardless of the generation prompt, each with an importance of 1.0 (essential):
+       - "image is not a depiction of a photo/painting/image on a wall, easel, or other surface — it is just the picture content itself"
+         (score 1.0 if the image is simply the scene/content itself; score 0.0 if the image depicts a photo, painting, or picture as a physical object within a scene, e.g. hanging on a wall or standing on an easel)
+       - "image has no frame or border"
+         (score 1.0 if the image content extends to all edges; score 0.0 if there is a frame, border, matte, or letterboxing around the content)
+
+    3. Assign each checklist item an importance (between 0.0 and 1.0) indicating how critical it is to the prompt:
+        - 1.0 = essential (the main subject, or a defining attribute)
+        - 0.5 = moderate (supporting elements)
+        - near 0.0 = minor detail
+       Camera viewpoint/framing directives in the prompt (e.g. "following shot", "seen from behind", "aerial view", "close-up") are ALWAYS essential — importance 1.0. Score such an item 0.0 if the image contradicts the requested viewpoint (e.g. subjects facing the camera when a rear/following view was requested).
+       The overall score is an importance-weighted average, so importance controls how much each item affects the result.
+
+    4. Assign each checklist item a score (between 0.0 and 1.0) based on if it is present and correctly depicted.
         - A score of 0.0 is given if the item is not present.
         - A score between 0.0 and 1.0 is given if it is present but not correctly depicted.
         - A score of 1.0 is given if it is present and correctly depicted.
@@ -282,11 +295,13 @@
         {
             "itemName": "glowing effect on sword",
             "score": 0.7,
+            "importance": 0.8,
             "reasoning": "The glowing effect on the sword is present but the color is incorrect."
         },
         {
             "itemName": "birds in background",
             "score": 0.0,
+            "importance": 0.2,
             "reasoning": "The birds are not present in the image."
         }
     ]`;
@@ -368,7 +383,13 @@
 
         // Use SvGeminiRequest for proper authentication, proxy handling, and error handling
         const request = SvGeminiRequest.clone();
-        request.setChatModel(SvServices.shared().geminiService().defaultChatModel());
+        // Vision eval is high-volume, low-difficulty — pin the flash-lite
+        // tier instead of riding defaultChatModel(), which is whatever sits
+        // FIRST in the service catalog and silently upgrades when the list
+        // is reordered (it had drifted to 3.1 Pro Preview, ~8x the price).
+        const service = SvServices.shared().geminiService();
+        const evalModel = service.models().subnodes().detect(m => m.modelName() === "gemini-3.1-flash-lite-preview") || service.defaultChatModel();
+        request.setChatModel(evalModel);
         request.setBodyJson(bodyJson);
         request.setIsStreaming(false); // We want the complete response, not streaming
         request.setTimeoutPeriodInMs(30 * 60 * 1000); // 30 minutes for vision API (can be slow)

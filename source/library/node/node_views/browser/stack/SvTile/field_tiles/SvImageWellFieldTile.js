@@ -132,8 +132,8 @@
 
         this.applyStyles(); // normally this would happen in updateSubviews
 
-        // handle other details
-        this.imageWellView().setIsEditable(field.valueIsEditable());
+        // handle other details (nodeValueIsEditable folds in the editability cascade)
+        this.imageWellView().setIsEditable(this.nodeValueIsEditable());
 
         if (this.nodeIsProgressive()) {
             this.syncProgressiveFromNode();
@@ -317,8 +317,7 @@
         if (!this.nodeIsProgressive()) {
             return super.syncValueFromNode();
         }
-        const node = this.node();
-        this.valueView().setIsEditable(node.valueIsEditable());
+        this.valueView().setIsEditable(this.nodeValueIsEditable());
         return this;
     }
 
@@ -343,7 +342,7 @@
             return this;
         }
 
-        if (field.valueIsEditable()) {
+        if (this.nodeValueIsEditable()) { // cascade included: read-only-in-context wells never write back
             const dataUrl = this.imageWellView().imageDataUrl();
             const value = field.value();
 

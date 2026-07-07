@@ -159,6 +159,48 @@
     }
 
     /**
+     * Batch existence check: which of these hashes does the cloud
+     * already have? Lets callers skip shipping bytes for known blobs.
+     * Server-side also clears tombstones on the existing ones
+     * ("still referenced; don't reap").
+     *
+     * @param {string[]} hashes  "sha256:<64 hex>" each
+     * @returns {Promise<{existing:string[], missing:string[]}>}
+     */
+    async hasBlobs (hashes) {
+        return this.callFunction("has-blobs", { hashes });
+    }
+
+    /**
+     * Mint a short-lived signed PUT URL for a blob the cloud doesn't
+     * have yet. Returns `{exists:true}` (no URL) when the blob is
+     * already present.
+     *
+     * @param {Object} args
+     * @param {string} args.hash         "sha256:<64 hex>"
+     * @param {string} args.scopeRootId
+     * @param {string} [args.mimeType]
+     * @returns {Promise<{hash:string, exists:boolean, uploadUrl?:string, contentType?:string}>}
+     */
+    async blobUploadUrl (args) {
+        return this.callFunction("blob-upload-url", args);
+    }
+
+    /**
+     * After a direct PUT, ask the server to verify the object's bytes
+     * hash to the claimed value and create the blob's metadata doc.
+     *
+     * @param {Object} args
+     * @param {string} args.hash
+     * @param {string} args.scopeRootId
+     * @param {string} [args.mimeType]
+     * @returns {Promise<{hash:string, bytes:number, created:boolean}>}
+     */
+    async finalizeBlob (args) {
+        return this.callFunction("finalize-blob", args);
+    }
+
+    /**
      * Resolve a public/auth-readable URL for a blob hash. Default
      * implementation expects a backend-provided convention
      * (e.g., GCS public-read URL).

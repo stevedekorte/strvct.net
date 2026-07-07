@@ -219,6 +219,57 @@ Function.prototype.isSilentError = function () {
     return this.getMetaProperty("isSilentError") === true;
 };
 
+// result reminder - name of a method (on the tool target) called with the
+// tool call when a call succeeds; a non-empty string return is attached to
+// the result as an advisory `reminder` (see SvToolResult). Declared as a
+// method NAME (not a static string) so the note can depend on runtime
+// state — e.g. "file your history now" only when there is an unfiled
+// backlog and the call actually changed the view.
+
+Function.prototype.setResultReminderMethodName = function (aName) {
+    assert(Type.isString(aName));
+    this.setMetaProperty("resultReminderMethodName", aName);
+    return this;
+};
+
+Function.prototype.resultReminderMethodName = function () {
+    const v = this.getMetaProperty("resultReminderMethodName");
+    return v === undefined ? null : v;
+};
+
+// result retention policy - how long this tool's RESULTS stay in the
+// AI-visible history (see SvAiConversation.onFilterJsonHistory):
+//   "keep" (default)   - never stripped (events: rolls, images)
+//   "keep-newest-only" - only the newest result survives, at any age
+//                        (complete-view snapshots like getClientState)
+//   "recent-window:N"  - results older than the last N messages are stripped
+// Stripped results have json.result replaced by resultRetentionNote (or a
+// generic note); the tool CALL stays visible in the assistant text.
+
+Function.prototype.setResultRetentionPolicy = function (aString) {
+    assert(Type.isString(aString));
+    assert(aString === "keep" || aString === "keep-newest-only" || aString.startsWith("recent-window:"),
+        "invalid result retention policy '" + aString + "'");
+    this.setMetaProperty("resultRetentionPolicy", aString);
+    return this;
+};
+
+Function.prototype.resultRetentionPolicy = function () {
+    const v = this.getMetaProperty("resultRetentionPolicy");
+    return v === undefined ? "keep" : v;
+};
+
+Function.prototype.setResultRetentionNote = function (aString) {
+    assert(Type.isString(aString));
+    this.setMetaProperty("resultRetentionNote", aString);
+    return this;
+};
+
+Function.prototype.resultRetentionNote = function () {
+    const v = this.getMetaProperty("resultRetentionNote");
+    return v === undefined ? null : v;
+};
+
 // json schema for tool call use
 
 Function.prototype.jsonSchemaForParameter = function (parameter, refSet) {
@@ -428,7 +479,11 @@ Function.prototype.paramsSchema = function (refSet) {
         const paramDict = parameters[key];
         const dict = {};
         paramsSchema.properties[key] = dict;
-        const isJsonType = ["null", "array", "string", "object"].includes(paramDict.type);
+        // All JSON Schema primitive type names are inlined; anything else is
+        // treated as a class reference. This list was previously missing
+        // number/integer/boolean, so a tool parameter declared "number" fell
+        // through to refTypeName and asserted "missing referenced class".
+        const isJsonType = ["null", "array", "string", "object", "number", "integer", "boolean"].includes(paramDict.type);
         if (isJsonType) {
             dict["type"] = paramDict.type;
         } else {

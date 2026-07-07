@@ -5,5 +5,6 @@
     "SvJsonDictionaryNode.js",
     "SvJsonGroup.js",
     "SvSyncableJsonGroup.js",
-    "patches/_imports.json"
+    "patches/_imports.json",
+    "lens/_imports.json"
 ]

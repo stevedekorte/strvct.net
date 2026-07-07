@@ -242,6 +242,38 @@
     }
 
     /**
+ * @method callResolveFuncIfPending
+ * @description Like callResolveFunc, but a no-op if the promise has already
+ * settled. Use on paths that can legitimately fire after settlement (abort
+ * handlers, repeated stream-progress events) where a double-settle is a
+ * race, not a bug worth asserting on.
+ * @param {...*} args - Arguments to pass to the resolve function.
+ * @returns {*} The result of the resolve function, or undefined if settled.
+ * @category Resolution
+ */
+    callResolveFuncIfPending (...args) {
+        if (this.isCompleted()) {
+            return undefined;
+        }
+        return this.callResolveFunc(...args);
+    }
+
+    /**
+ * @method callRejectFuncIfPending
+ * @description Like callRejectFunc, but a no-op if the promise has already
+ * settled. See callResolveFuncIfPending.
+ * @param {...*} args - Arguments to pass to the reject function.
+ * @returns {*} The result of the reject function, or undefined if settled.
+ * @category Resolution
+ */
+    callRejectFuncIfPending (...args) {
+        if (this.isCompleted()) {
+            return undefined;
+        }
+        return this.callRejectFunc(...args);
+    }
+
+    /**
  * @method callRejectFunc
  * @description Calls the reject function of the promise with variable arguments.
  * If no reject function exists (e.g., promise not created via Promise.clone()),

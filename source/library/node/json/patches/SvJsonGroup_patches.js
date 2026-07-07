@@ -281,7 +281,8 @@
             const subnode = this.firstSubnodeWithTitle(segment);
             if (!subnode) {
                 const pathString = this.nodePathString() + "/" + segment;
-                const errorMessage = "JSON Patch Error: invalid path: " + pathString + " - missing subnode";
+                const availableKeys = this.subnodes().map(sn => sn.title()).join(", ");
+                const errorMessage = "JSON Patch Error: invalid path: " + pathString + " - missing subnode. Available keys: [" + availableKeys + "]";
                 console.error(errorMessage);
                 throw new Error(errorMessage);
             }
@@ -290,7 +291,8 @@
             const slot = this.getSlot(segment);
             if (!slot) {
                 const pathString = this.nodePathString() + "/" + segment;
-                const errorMessage = "JSON Patch Error: invalid path: " + pathString + " - missing slot";
+                const availableSlots = this.thisClass().jsonSchemaSlots().map(slot => slot.name()).join(", ");
+                const errorMessage = "JSON Patch Error: invalid path: " + pathString + " - missing slot. Available keys: [" + availableSlots + "]";
                 console.error(errorMessage);
                 throw new Error(errorMessage);
             }

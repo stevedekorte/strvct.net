@@ -64,6 +64,28 @@
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
         }
+
+        {
+            const slot = this.newSlot("runtimeEventReports", null);
+            slot.setFinalInitProto(SvRuntimeEventReports);
+            slot.setShouldJsonArchive(false);
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(true);
+        }
+
+        {
+            // loop-guard state: coalesceKey -> consecutive drains that included it.
+            // Session-local diagnostics, not persisted.
+            const slot = this.newSlot("runtimeEventGuardCounts", null);
+            slot.setSlotType("Map");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+            slot.setIsSubnodeField(false);
+            slot.setCanEditInspection(false);
+            slot.setIsInJsonSchema(false);
+        }
     }
 
     initPrototype () {
@@ -86,10 +108,16 @@
         this.toolCalls().setAssistantToolKit(this);
         this.failedToolCalls().setTitle("Failed Tool Call Errors");
         this.successfulToolCalls().setTitle("Successful Tool Calls");
+        this.runtimeEventReports().setAssistantToolKit(this);
+        this.setRuntimeEventGuardCounts(new Map());
     }
 
     handleToolCallTagFromMessage (innerTagString, aMessage) {
         this.toolCalls().handleToolCallTagFromMessage(innerTagString, aMessage);
+    }
+
+    handleOrphanedToolCallTagFromMessage (innerTagString, aMessage, contextTagName) {
+        this.toolCalls().handleOrphanedToolCallTagFromMessage(innerTagString, aMessage, contextTagName);
     }
 
     formatsPrompt () {
@@ -253,22 +281,135 @@ The following formats will be used for tool calls and responses:
         });
     }
 
-    async sendCompletedToolCallResponses () {
-        let completedCalls = this.toolCalls().completedCalls();
-        let uncompletedBlockingToolCalls = this.blockingCalls();
-        let activeResponses = this.conversation().activeResponses();
+    // --- runtime event reports ---
+    // The engine→AI feedback queue: events with no owning tool call (response
+    // handling exceptions, player edits, roster changes, housekeeping) are
+    // queued as SvRuntimeEventReport instances and drained into the same
+    // invisible user message as tool-call results. Enqueuing never sends;
+    // timing and gating belong entirely to sendCompletedToolCallResponses.
+    // See docs: Plans/Runtime Event Reports.
 
-        if (activeResponses.length === 0 && completedCalls.length > 0 && uncompletedBlockingToolCalls.length === 0) {
+    maxConsecutiveRuntimeEventSends () {
+        return 3;
+    }
 
-            assert(uncompletedBlockingToolCalls.length === 0, "sendCompletedToolCallResponses() called when there are uncompleted blocking tool calls: " + uncompletedBlockingToolCalls.map(c => c.toolDefinition().name()).join(", "));
+    /**
+     * @description Creates an unqueued report stamped with this kit's context.
+     * Configure it (setType/setInfo/setImmediacy) then pass it to
+     * addRuntimeEventReport. Creation does not enqueue — coalescing needs the
+     * configured report.
+     * @returns {SvRuntimeEventReport}
+     * @category Runtime Events
+     */
+    newRuntimeEventReport () {
+        const report = SvRuntimeEventReport.clone();
+        report.setConversation(this.conversation());
+        report.setTimestamp(Date.now());
+        return report;
+    }
 
-            if (this.completedCallsRequiringResponse().length > 0) {
-                assert(activeResponses.length === 0, "sendCompletedToolCallResponses() called when there are active ai responses: " + activeResponses.map(r => r.messageId()).join(", "));
+    /**
+     * @description Coalesces the report against the queue and enqueues it.
+     * Never sends. A wakeAI report schedules the send gate, so an idle kit
+     * initiates a turn; nextTurn reports ride whatever message next goes out.
+     * Mirror/client conversations (shouldProcessToolCalls false) never queue.
+     * @param {SvRuntimeEventReport} report
+     * @returns {SvRuntimeEventReport|null} the pending report, or null if gated/suppressed
+     * @category Runtime Events
+     */
+    addRuntimeEventReport (report) {
+        if (!this._shouldProcessToolCalls()) {
+            return null;
+        }
 
+        // the factory stamps these; stamp here too so a directly-cloned report isn't broken
+        if (report.conversation() === null) {
+            report.setConversation(this.conversation());
+        }
+        if (report.timestamp() === null) {
+            report.setTimestamp(Date.now());
+        }
 
-                const content = this.composeResponseForToolCalls(completedCalls);
-                this.newCallResponseMessage("Tool Call Results", content);
+        // loop guard: a wakeAI report can ping-pong (report -> AI re-runs ->
+        // same event recurs). After N consecutive drains containing the same
+        // coalesceKey, stop reporting instead of spinning.
+        const key = report.coalesceKey();
+        const consecutiveSends = this.runtimeEventGuardCounts().get(key) || 0;
+        if (consecutiveSends >= this.maxConsecutiveRuntimeEventSends()) {
+            console.error(this.logPrefix(), "runtime event report suppressed after " + consecutiveSends + " consecutive sends (likely a report/response loop): " + key);
+            return null;
+        }
+
+        const pendingReport = this.runtimeEventReports().addReport(report);
+        if (pendingReport.isWakeAI()) {
+            this.scheduleMethod("sendCompletedToolCallResponses", 0);
+        }
+        return pendingReport;
+    }
+
+    /**
+     * @description Convenience for the engine-internal exception source:
+     * wraps a caught Error into a wakeAI responseProcessingError report.
+     * @param {Error} error
+     * @param {Object} [info] - extra occurrence/attribution fields (tag, phase, excerpt, source, ...)
+     * @returns {SvRuntimeEventReport|null}
+     * @category Runtime Events
+     */
+    addRuntimeError (error, info = {}) {
+        const report = this.newRuntimeEventReport();
+        report.setType("responseProcessingError");
+        report.setImmediacy("wakeAI");
+        const message = (error && error.message) ? error.message : String(error);
+        report.setInfo(Object.assign({ message: message }, info));
+        return this.addRuntimeEventReport(report);
+    }
+
+    updateRuntimeEventGuard (drainedReports) {
+        const counts = this.runtimeEventGuardCounts();
+        const sentKeys = new Set(drainedReports.map(r => r.coalesceKey()));
+        Array.from(counts.keys()).forEach((key) => {
+            if (!sentKeys.has(key)) {
+                counts.delete(key); // streak broken — a send went out without this event recurring
             }
+        });
+        sentKeys.forEach((key) => {
+            counts.set(key, (counts.get(key) || 0) + 1);
+        });
+    }
+
+    // --- sending ---
+
+    async sendCompletedToolCallResponses () {
+        const completedCalls = this.toolCalls().completedCalls();
+        const uncompletedBlockingToolCalls = this.blockingCalls();
+        const activeResponses = this.conversation().activeResponses();
+
+        if (activeResponses.length !== 0 || uncompletedBlockingToolCalls.length !== 0) {
+            // we wait for all blocking tool calls (e.g. patches, etc.) to complete before sending the completed tool call responses
+            // user responses should also be blocked until all blocking tool calls are complete
+            return;
+        }
+
+        const callsNeedingResponse = this.completedCallsRequiringResponse();
+        // a message goes out for tool results needing a response, or for a
+        // wakeAI runtime event report; nextTurn reports never initiate a send —
+        // they ride along when a message is going out anyway
+        const willSendMessage = callsNeedingResponse.length > 0 || this.runtimeEventReports().hasWakeReports();
+
+        if (willSendMessage) {
+            const parts = [];
+            if (callsNeedingResponse.length > 0) {
+                parts.push(this.composeResponseForToolCalls(completedCalls));
+            }
+            const drainedReports = this.runtimeEventReports().pendingReports();
+            drainedReports.forEach(r => parts.push(r.composeRuntimeEventBlock()));
+            this.runtimeEventReports().removeReports(drainedReports);
+            this.updateRuntimeEventGuard(drainedReports);
+            const speakerName = callsNeedingResponse.length > 0 ? "Tool Call Results" : "Runtime Events";
+            this.newCallResponseMessage(speakerName, parts.join("\n\n"));
+        }
+
+        if (completedCalls.length > 0) {
             this.toolCalls().removeCalls(completedCalls);
 
             const failedCalls = completedCalls.filter((toolCall) => toolCall.hasError());
@@ -280,7 +421,7 @@ The following formats will be used for tool calls and responses:
 
     newCallResponseMessage (speakerName, content) {
         const m = this.conversation().newUserMessage();
-        m.setSpeakerName("Tool Call Results");
+        m.setSpeakerName(speakerName || "Tool Call Results");
         m.setContent(content);
         m.setIsVisibleToUser(false);
         assert(!m.isVisibleToUser(), "Tool call results should not be visible to user");

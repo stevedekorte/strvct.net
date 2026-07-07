@@ -70,6 +70,26 @@
         }
 
         /**
+     * @member {String} filedToHistoryBlockId - jsonId of the SvAiConversationHistoryBlock
+     * this message was filed into by pushHistory, or null if unfiled. A projection
+     * marker only: the message stays in the conversation (and the user's transcript);
+     * the AI-visible composition collapses filed messages to the block's marker once
+     * a newer block supersedes it. NOT in the json schema — message slots in the
+     * schema leak into tool-call schemas (see the isTyping/rollRequest bug).
+     * @category History
+     */
+        {
+            const slot = this.newSlot("filedToHistoryBlockId", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setInspectorPath(this.svType());
+            slot.setIsInJsonSchema(false);
+            slot.setIsInCloudJson(true);
+        }
+
+        /**
      * @member {Action} requestResponseAction - Action for requesting a response.
      * @category Actions
      */
@@ -285,6 +305,11 @@
    * @category Actions
    */
     requestResponse () {
+        if (!this.canRequestResponse()) {
+            // e.g. party chat (isVisibleToAi false): logged and shared with
+            // other participants, but never drives the AI loop.
+            return null;
+        }
         this.conversation().assertNoUncompletedBlockingToolCalls();
 
 
@@ -293,9 +318,13 @@
         response.setSpeakerName(this.conversation().aiSpeakerName());
 
         // Anchor scroll on the user's message (this) so it stays visible
-        // while the response streams below it
+        // while the response streams below it. Skip messages the user can't
+        // see (e.g. tool-call results) — in developer mode their tiles exist,
+        // so anchoring on one moves the scroll position for no visible reason.
         //console.log("[AnchorScroll] SvAiMessage.requestResponse() calling requestAnchorOnMessage");
-        this.conversation().requestAnchorOnMessage(this);
+        if (this.isVisibleToUser()) {
+            this.conversation().requestAnchorOnMessage(this);
+        }
 
         try {
             // asyncMakeRequest returns a Promise — the surrounding

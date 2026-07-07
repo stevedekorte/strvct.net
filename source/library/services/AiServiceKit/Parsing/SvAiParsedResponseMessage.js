@@ -214,7 +214,21 @@
         const textMethodName = "on" + phase + "_" + this.convertTagToCamelCase(tagName) + "_TagText";
         if (this.tagDelegate().respondsTo(textMethodName)) {
             console.log("tagDelegate calling method: " + textMethodName);
-            return this.tagDelegate()[textMethodName](tagText, this);
+            // One catch site covers every tag handler (app delegates included):
+            // without it a handler exception becomes an unhandled promise
+            // rejection (this call is not awaited by the parser) and the AI
+            // continues on a false premise.
+            try {
+                return await this.tagDelegate()[textMethodName](tagText, this);
+            } catch (error) {
+                console.error(this.svType() + ".promiseSendDelegateTag() " + textMethodName + " threw:", error);
+                this.reportRuntimeError(error, {
+                    tag: tagName,
+                    phase: phase.toLowerCase(),
+                    excerpt: String(tagText).clipWithEllipsis(200)
+                });
+                return undefined;
+            }
         } else if (tagName.includes("-")) { // only warn if it has a dash as it's a special tag
             if (ignoreMissingMethodsForTags.includes(tagName)) {
                 // we can ignore missing methods for this tag
@@ -265,31 +279,71 @@
         return note;
     }
 
-    reportErrorToAi (errorMessage) {
-        console.warn(this.svType() + ".reportErrorToAi(\"" + errorMessage + "\")");
-
-        if (this.conversation().assistantToolKit) {
-        // the assistant tool kit will send the error message after the AI's current response is complete
-            const assistantToolKit = this.conversation().assistantToolKit();
-            assistantToolKit.newCallResponseMessage("Error", errorMessage);
+    /**
+     * @description Queues a runtime event report for an error the engine hit
+     * while handling this response. Delivery is deferred to the tool kit's
+     * send gate (after the current response settles), coalesced with any
+     * pending tool results — safe to call from inside a streaming callback.
+     * @param {Error} error
+     * @param {Object} [info] - occurrence/attribution fields (tag, phase, excerpt, source, ...)
+     * @category Error Handling
+     */
+    reportRuntimeError (error, info = {}) {
+        const conversation = this.conversation();
+        if (conversation && conversation.assistantToolKit) {
+            conversation.assistantToolKit().addRuntimeError(error, info);
         } else {
-            throw new Error("missing conversation.assistantToolKit");
+            console.warn(this.svType() + ".reportRuntimeError() no assistantToolKit to report to — dropping: " + (error && error.message));
         }
+    }
+
+    reportErrorToAi (errorMessage) {
+        // legacy name — now rides the runtime event report queue instead of
+        // creating an invisible message immediately (which was ungated and
+        // uncoalesced: it fired mid-stream while a response was still active)
+        console.warn(this.svType() + ".reportErrorToAi(\"" + errorMessage + "\")");
+        this.reportRuntimeError(new Error(errorMessage), { source: "responseTagHandling" });
     }
 
     // ----------------------------------------------------------------
 
     handleNodeTags () {
+        const orphanedToolCallTags = [];
         this.content().walkDom((node) => {
             const tagName = node.tagName;
             if (tagName) { // text nodes don't have tag names
                 const parentTagNames = Element_getAllParentNodes(node).map((n) => n.tagName);
                 const shouldHandle = tagName.includes("-");
                 const shouldIgnore = this.tagsToIgnoreInsideSet().intersection(new Set(parentTagNames)).size > 0;
-                if (shouldHandle && !shouldIgnore) {
+
+                // DOM tagNames are uppercase, so match ignored ancestors
+                // case-insensitively (the shouldIgnore intersection above
+                // predates this and is left as-is)
+                const ignoredAncestor = parentTagNames
+                    .map((n) => String(n).toLowerCase())
+                    .find((n) => this.tagsToIgnoreInsideSet().has(n));
+
+                if (tagName.toLowerCase() === "tool-call" && ignoredAncestor) {
+                    // A tool call inside <think>/<scene-description> is never
+                    // executed, but silently dropping it leaves the AI waiting
+                    // forever on a call that was never registered. Collect it
+                    // and report it back after the walk (after the walk so
+                    // top-level copies of the same call register first and
+                    // duplicates can be detected).
+                    orphanedToolCallTags.push({ tagText: node.textContent, contextTagName: ignoredAncestor });
+                } else if (shouldHandle && !shouldIgnore) {
                     const text = node.textContent;
                     this.sendCompleteTag(tagName, text);
                 }
+            }
+        });
+
+        orphanedToolCallTags.forEach((orphan) => {
+            const delegate = this.tagDelegate();
+            if (delegate && delegate.respondsTo("onOrphanedToolCallTag")) {
+                delegate.onOrphanedToolCallTag(orphan.tagText, this, orphan.contextTagName);
+            } else {
+                console.warn(this.svType() + ".handleNodeTags() found a tool-call inside <" + orphan.contextTagName + "> but the tag delegate doesn't respond to onOrphanedToolCallTag");
             }
         });
     }

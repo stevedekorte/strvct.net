@@ -639,6 +639,22 @@
         //this.logDebug(`API Request - model: ${this.chatModel().title()}, url: ${apiUrl}, headers:`, JSON.stringify(requestOptions.headers, null, 2));
         this.logDebug(`API Request - model: ${this.chatModel().title()}, url: ${apiUrl}`);
 
+        // Estimated input token count for this request. Measured over the
+        // COMPACT body JSON (system prompt + messages + tool specs) at
+        // chars/4 — the same heuristic as SvAiMessage.tokenCount(). The wire
+        // body is pretty-printed, so it isn't used for the estimate (the
+        // indentation would inflate it). Actual usage arrives in the
+        // response's usage block; this shows the cost BEFORE sending.
+        {
+            const compactLength = JSON.stringify(this.bodyJson()).length;
+            const estTokens = Math.round(compactLength / 4);
+            const msgCount = (this.bodyJson() && this.bodyJson().messages) ? this.bodyJson().messages.length : "?";
+            console.log(this.logPrefix(), "AI request — model: " + this.chatModel().title() +
+                ", messages: " + msgCount +
+                ", est. input tokens: ~" + estTokens.toLocaleString() +
+                (this.isContinuation() ? " [continuation]" : ""));
+        }
+
         if (!this.isContinuation()) {
             this.setFullContent("");
         }
@@ -897,7 +913,7 @@
         console.error(this.logPrefix(), "onRequestError:", error);
         this.onError(error);
         this.sendDelegateMessage("onStreamEnd");
-        this.xhrPromise().callRejectFunc(error);
+        this.xhrPromise().callRejectFuncIfPending(error);
     }
 
 
@@ -911,7 +927,9 @@
         this.setStatus("aborted");
         this.sendDelegateMessage("onStreamEnd");
         //this.sendDelegateMessage("onStreamAbort");
-        this.xhrPromise().callRejectFunc(new Error("aborted"));
+        // An abort frequently follows an error that already rejected
+        // (e.g. a stream "error" event handler calls abort()).
+        this.xhrPromise().callRejectFuncIfPending(new Error("aborted"));
     }
 
     /**

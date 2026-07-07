@@ -56,6 +56,21 @@
         this.setupHtmlStreamReader();
         this.htmlStreamReader().beginHtmlStream();
         this.setContent("");
+        this._orphanedToolCallTags = [];
+    }
+
+    /**
+     * @description Tool-call tags found inside ignored blocks (e.g. <think>)
+     * during streaming — collected here and reported at stream end. Lazy plain
+     * ivar (not a slot): transient per-stream parser state, like the reader.
+     * @returns {Array} The collected orphaned tool call tag records.
+     * @category Streaming
+     */
+    orphanedToolCallTags () {
+        if (!this._orphanedToolCallTags) {
+            this._orphanedToolCallTags = [];
+        }
+        return this._orphanedToolCallTags;
     }
 
     onStreamData (request, newContent) {
@@ -105,7 +120,31 @@
             console.error(this.logPrefix ? this.logPrefix() : "[SvAiParsedResponseMessage]",
                 "onStreamEnd finalization threw — completing the message anyway so input doesn't wedge:",
                 e && e.message, e && e.stack);
-            try { this.shutdownSentenceReader(); } catch (e2) { /* best effort */ }
+            try { this.shutdownSentenceReader(); } catch (shutdownError) { /* best effort */ } // eslint-disable-line no-unused-vars
+            // the AI should hear its output was broken (malformed/unclosed
+            // tags), not just the console — queued, so it rides the
+            // settlement flush after super.onStreamEnd completes the message
+            this.reportRuntimeError(e, { source: "streamFinalization" });
+        }
+
+        // Report tool calls that were emitted inside ignored blocks (e.g.
+        // <think>) — never executed, but the AI must hear back (an error on
+        // the orphan's own callId, or a warning on the registered duplicate)
+        // or it waits forever on a call that never registered. Done after
+        // finalization so all top-level calls have registered for dedup.
+        try {
+            this.orphanedToolCallTags().forEach((orphan) => {
+                const delegate = this.tagDelegate();
+                if (delegate && delegate.respondsTo("onOrphanedToolCallTag")) {
+                    delegate.onOrphanedToolCallTag(orphan.tagText, this, orphan.contextTagName);
+                } else {
+                    console.warn(this.svType() + ".onStreamEnd() found a tool-call inside <" + orphan.contextTagName + "> but the tag delegate doesn't respond to onOrphanedToolCallTag");
+                }
+            });
+            this._orphanedToolCallTags = [];
+        } catch (e) {
+            console.error(this.logPrefix ? this.logPrefix() : "[SvAiParsedResponseMessage]",
+                "orphaned tool-call reporting threw — completing the message anyway:", e && e.message);
         }
 
         super.onStreamEnd(request);
@@ -141,7 +180,8 @@
             const nodeTag = streamNode.name().toLowerCase();
             const text = streamNode.textContent().trim();
 
-            const shouldIgnore = streamNode.detectAncestor(node => this.tagsToIgnoreInsideSet().has(node.name()));;
+            const ignoredAncestor = streamNode.detectAncestor(node => this.tagsToIgnoreInsideSet().has(node.name()));
+            const shouldIgnore = ignoredAncestor;
             //this.postNoteNamed("onHtmlStreamReaderPopNodeNote").setInfo({ tagName: nodeTag, textContent: streamNode.textContent() }); // clear any progress notes
 
             // NOTE: some of these are handled incrementally, some are not.
@@ -153,7 +193,19 @@
             //   This might make conflicting changes to the session state for sheet updates.
 
             if (shouldIgnore) {
-                // ignore these
+                if (nodeTag === "tool-call") {
+                    // A tool call inside <think>/<scene-description> is never
+                    // executed, but silently dropping it leaves the AI waiting
+                    // forever on a call that never registered. Collect it and
+                    // report at stream end (after any top-level copies of the
+                    // same call have registered, so duplicates can be detected
+                    // and warned instead of double-reported).
+                    this.orphanedToolCallTags().push({
+                        tagText: text,
+                        contextTagName: ignoredAncestor.name()
+                    });
+                }
+                // otherwise ignore these
             } else {
                 this.sendStreamTag(nodeTag, text);
                 /*

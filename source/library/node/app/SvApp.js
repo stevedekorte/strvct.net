@@ -271,16 +271,75 @@
         return SvGlobals.get(className);
     }
 
+    /**
+     * @description The localStorage key for the clear-on-boot request flag.
+     * @returns {string}
+     * @category Data Management
+     */
+    static clearStoreOnBootKey () {
+        return "SvApp_clearStoreOnBoot";
+    }
+
+    /**
+     * @description Request that the NEXT boot deletes the app's persistent
+     * stores (object pool + blob pool) before opening them. Used by logout
+     * flows on shared browsers: deleting at boot — before any connection is
+     * open — avoids IndexedDB's blocked-deletion race entirely. The caller
+     * reloads the page after setting this. Content caches (CAM/hash cache,
+     * localStorage) are NOT touched — only account/game data stores.
+     * @category Data Management
+     */
+    static requestClearStoreOnBoot () {
+        if (typeof localStorage !== "undefined") {
+            localStorage.setItem(this.clearStoreOnBootKey(), "1");
+        }
+    }
+
+    /**
+     * @description Clears the app's account/game data stores (object pool
+     * contents + blob pool) on the LIVE connections — used by logout so
+     * nothing readable remains in IndexedDB before the user walks away from
+     * a shared machine. Logout is rare and exceptional, so thoroughness
+     * beats speed here. Content caches (CAM/hash cache, localStorage) are
+     * untouched. Callers should also requestClearStoreOnBoot() as a backstop
+     * for any records a stray in-flight write re-persists before navigation.
+     * @category Data Management
+     */
+    async asyncClearGameDataStores () {
+        await this.store().promiseDeleteAll();
+        await SvBlobPool.shared().asyncClear();
+    }
+
+    /**
+     * @description Consumes the clear-on-boot flag (returns whether it was set).
+     * @returns {boolean}
+     * @category Data Management
+     */
+    static consumeClearStoreOnBootFlag () {
+        if (typeof localStorage === "undefined") {
+            return false;
+        }
+        const key = this.clearStoreOnBootKey();
+        const isSet = localStorage.getItem(key) === "1";
+        if (isSet) {
+            localStorage.removeItem(key);
+        }
+        return isSet;
+    }
+
     async initAndOpenStore () {
         SvBootLoadingView.shared().setSubtitle("opening data store");
 
         this.setStore(this.defaultStore());
         this.store().setName(this.svType()); // name of the database
 
-        let clearFirst = false; // SvPlatform.isNodePlatform())
+        const clearFirst = this.thisClass().consumeClearStoreOnBootFlag();
 
         if (clearFirst) {
+            SvBootLoadingView.shared().setSubtitle("clearing local data");
+            console.log(this.logPrefix(), "clear-on-boot requested (logout wipe): clearing object pool and blob pool");
             await this.clearStoreThenClose();
+            await SvBlobPool.shared().asyncClear();
         }
         await this.openStore();
     }

@@ -46,6 +46,17 @@
             slot.setDescription("The score of the item");
         }
 
+        // importance
+        {
+            const slot = this.newSlot("importance", 1);
+            slot.setSlotType("Number");
+            slot.setLabel("Importance");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDescription("How much weight this item carries in the overall score (0.0 = minor detail, 1.0 = essential)");
+        }
+
         // reasoning
         {
             const slot = this.newSlot("reasoning", "");
@@ -83,6 +94,7 @@
             //_type: this.thisClass().svType(),
             itemName: this.itemName(),
             score: this.score(),
+            importance: this.importance(),
             reasoning: this.reasoning()
         };
     }
@@ -94,6 +106,8 @@
 
         this.setItemName(dict.itemName);
         this.setScore(Number(dict.score));
+        // Tolerate a missing importance (older data, or the model omitting it) — weight fully
+        this.setImportance(Type.isNumber(dict.importance) ? Number(dict.importance) : 1);
         this.setReasoning(dict.reasoning);
         return this;
     }

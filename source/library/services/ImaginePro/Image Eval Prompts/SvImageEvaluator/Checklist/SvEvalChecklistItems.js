@@ -40,7 +40,13 @@
     }
 
     score () {
-        const score = this.subnodes().map(item => item.score()).sum() / this.subnodes().length;
+        // Importance-weighted average, so essential items (importance 1.0)
+        // move the score more than minor details (importance near 0.0)
+        const totalWeight = this.subnodes().map(item => item.importance()).sum();
+        if (totalWeight === 0) {
+            return 0;
+        }
+        const score = this.subnodes().map(item => item.score() * item.importance()).sum() / totalWeight;
         return score.toFixed(2).asNumber();
     }
 

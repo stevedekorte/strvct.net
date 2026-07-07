@@ -1085,10 +1085,11 @@
         this.setDidAbort(true);
         this.setStatus("aborted");
         this.sendDelegateMessage("onRequestAbort");
-        this.xhrPromise().callRejectFunc(new Error("aborted"));
+        // Abort often follows an error that already settled these promises.
+        this.xhrPromise().callRejectFuncIfPending(new Error("aborted"));
 
         // Also resolve the completion promise when aborted
-        this.completionPromise().callResolveFunc();
+        this.completionPromise().callResolveFuncIfPending();
     }
 
     /**

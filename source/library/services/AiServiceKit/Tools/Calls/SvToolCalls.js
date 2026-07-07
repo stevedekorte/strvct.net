@@ -107,6 +107,90 @@
         return toolCall;
     }
 
+    /**
+     * @description Handles a tool-call tag found inside an ignored block
+     * (e.g. <think>) — the model shouldn't emit tool calls there, but when it
+     * does we must not leave it hanging on a call that never registered.
+     * NEVER executes the call. Instead:
+     *   - a duplicate of an already-registered call (same callId, or same
+     *     toolName+parameters) attaches a warning to the real call's result;
+     *   - a call whose response was already sent is dropped (can't amend it);
+     *   - otherwise the call settles immediately as completed-with-error on
+     *     its own callId, telling the AI to re-emit it outside the block
+     *     (parse errors settle through the normal parse-error path, with the
+     *     inside-<think> context prepended via sourceContextTagName).
+     * @param {string} innerTagString - The tool call JSON string.
+     * @param {SvAiResponseMessage} aMessage - The message the tag was found in.
+     * @param {string} contextTagName - The ignored ancestor tag name (e.g. "think").
+     * @returns {SvToolCall|null} The settled or warned call, or null if dropped.
+     * @category Tool Calls
+     */
+    handleOrphanedToolCallTagFromMessage (innerTagString, aMessage, contextTagName) {
+        this.assertHasAssistantToolKit();
+        const ctx = contextTagName || "think";
+
+        const toolCall = SvToolCall.clone();
+        toolCall.setToolCalls(this);
+        toolCall.setMessage(aMessage);
+        toolCall.setSourceContextTagName(ctx);
+        toolCall.handleCallString(innerTagString); // a parse error settles it with the context-prefixed parse error
+
+        if (!toolCall.hasError()) {
+            // response already sent for this callId? Nothing useful to amend — drop.
+            const tk = this.assistantToolKit();
+            const respondedPools = [tk.successfulToolCalls(), tk.failedToolCalls()];
+            const alreadyResponded = respondedPools.some((pool) => pool && pool.toolCallWithId(toolCall.callId()));
+            if (alreadyResponded) {
+                console.warn(this.logPrefix(), "orphaned <" + ctx + "> copy of already-responded call " + toolCall.callId() + " — dropping");
+                return null;
+            }
+
+            // duplicate of a registered (pending or completed-unsent) call → warn on the real one
+            const existing = this.toolCallWithId(toolCall.callId()) || this.toolCallMatchingCall(toolCall);
+            if (existing) {
+                existing.addWarning("WARNING: a copy of this tool call (callId \"" + toolCall.callId() + "\") was also found inside your <" + ctx +
+                    "> block and was ignored. NEVER place tool calls inside <" + ctx + "> — always emit them at the top level of your response.");
+                console.warn(this.logPrefix(), "orphaned <" + ctx + "> duplicate of call " + toolCall.callId() + " — warned on the registered call");
+                return existing;
+            }
+
+            // resolve the tool definition when we can (for schema context in the
+            // result), but never execute
+            if (toolCall.toolName()) {
+                const toolDef = this.toolDefinitionWithName(toolCall.toolName());
+                if (toolDef) {
+                    toolCall.setToolDefinition(toolDef);
+                }
+            }
+
+            toolCall.handleCallError(new Error("This tool call was found inside a <" + ctx + "> block and was NOT executed — tool calls inside <" + ctx +
+                "> are ignored. If you intended to make this call, re-emit it at the top level of your response, after the closing </" + ctx + "> tag."));
+        }
+
+        this.addSubnode(toolCall); // keep it around so its error response gets sent
+        this.onToolCallAdded(toolCall);
+        return toolCall;
+    }
+
+    /**
+     * @description Finds a registered call with the same toolName and identical
+     * parameters as the given call (a re-drafted duplicate with a new callId).
+     * @param {SvToolCall} aToolCall - The call to match against.
+     * @returns {SvToolCall|null} The matching registered call, if any.
+     * @category Tool Calls
+     */
+    toolCallMatchingCall (aToolCall) {
+        if (!aToolCall.callJson()) {
+            return null;
+        }
+        const name = aToolCall.toolName();
+        const paramsString = JSON.stableStringifyWithStdOptions(aToolCall.parametersDict());
+        return this.subnodes().find((tc) => tc !== aToolCall &&
+            tc.toolName() === name &&
+            tc.callJson() &&
+            JSON.stableStringifyWithStdOptions(tc.parametersDict()) === paramsString) || null;
+    }
+
     onToolCallAdded (toolCall) {
         this.assistantToolKit().onToolCallAdded(toolCall);
     }

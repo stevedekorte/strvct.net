@@ -205,6 +205,36 @@ Example Tool call format:
             slot.setShouldStoreSlot(true);
         }
 
+        {
+            const slot = this.newSlot("warning", null);
+            slot.setDescription("A warning to include with the result — for issues that didn't fail the call (e.g. a duplicate copy of this call was found inside a <think> block).");
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setShouldJsonArchive(false);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(true);
+        }
+
+        {
+            const slot = this.newSlot("reminder", null);
+            slot.setDescription("An advisory action reminder to include with the result — e.g. a housekeeping step the tool implementation knows is due at this moment (see SvToolResult.reminder).");
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setShouldJsonArchive(false);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(true);
+        }
+
+        {
+            const slot = this.newSlot("sourceContextTagName", null);
+            slot.setDescription("When set (e.g. 'think'), this tool call's tag was found inside that (ignored) block instead of at the top level of the response — it is reported back to the AI but never executed.");
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setShouldJsonArchive(false);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(true);
+        }
+
         // start time slot
         {
             const slot = this.newSlot("startTime", null);
@@ -550,6 +580,13 @@ Example Tool call format:
         e.name = "ToolCallParseError";
         e.extraMessage = "Error parsing tool call JSON. Please fix the call string and try again.";
 
+        if (this.sourceContextTagName()) {
+            const ctx = this.sourceContextTagName();
+            e.extraMessage = "NOTE: this tool call was found inside a <" + ctx + "> block — tool calls inside <" + ctx +
+                "> are never executed. Emit tool calls at the top level of your response, after the closing </" + ctx + "> tag. " +
+                e.extraMessage;
+        }
+
         if (toolName !== undefined) {
         // lets get the tool definition schema so we can remind the AI of the expected format
             const toolDefinition = this.toolDefinitionForToolName(toolName);
@@ -725,7 +762,80 @@ Example Tool call format:
         r.setCallId(this.callId());
         r.setToolName(this.toolName());
         r.setToolCall(this);
+        if (this.warning()) {
+            r.setWarning(this.warning());
+        }
+        if (this.reminder()) {
+            r.setReminder(this.reminder());
+        }
         return r;
+    }
+
+    /**
+     * @description Attaches a warning to this call. Warnings ride back to the AI
+     * inside the call's tool-call-result (for issues that don't fail the call,
+     * e.g. a duplicate copy of the call found inside a <think> block). If the
+     * result already exists (call settled, response not yet sent), the warning
+     * is copied onto it directly.
+     * @param {string} warningText - The warning to add.
+     * @returns {SvToolCall} This instance.
+     * @category Results
+     */
+    addWarning (warningText) {
+        const combined = this.warning() ? (this.warning() + "\n" + warningText) : warningText;
+        this.setWarning(combined);
+        if (this.toolResult()) {
+            this.toolResult().setWarning(combined);
+        }
+        return this;
+    }
+
+    /**
+     * @description Attaches an advisory action reminder to this call — rides
+     * back to the AI inside the tool-call-result's `reminder` field. Usually
+     * set declaratively via the tool definition's resultReminderMethodName
+     * (evaluated in handleCallSuccess), but tool implementations may also
+     * call it directly for conditional, mid-call advisories.
+     * @param {string} reminderText - The reminder to add.
+     * @returns {SvToolCall} This instance.
+     * @category Results
+     */
+    addReminder (reminderText) {
+        const combined = this.reminder() ? (this.reminder() + "\n" + reminderText) : reminderText;
+        this.setReminder(combined);
+        if (this.toolResult()) {
+            this.toolResult().setReminder(combined);
+        }
+        return this;
+    }
+
+    /**
+     * @description If the tool definition declares a resultReminderMethodName,
+     * call it on the tool target with this call and attach any non-empty
+     * string it returns. Advisory only — a provider error must never fail a
+     * successful call.
+     * @category Results
+     */
+    applyDeclaredResultReminder () {
+        try {
+            const toolDef = this.toolDefinition();
+            const methodName = toolDef && toolDef.resultReminderMethodName ? toolDef.resultReminderMethodName() : null;
+            if (!methodName) {
+                return;
+            }
+            const target = toolDef.toolTarget();
+            const method = target ? target[methodName] : null;
+            if (!method) {
+                console.warn("[SvToolCall] resultReminderMethodName '" + methodName + "' not found on tool target for '" + this.toolName() + "'");
+                return;
+            }
+            const text = method.call(target, this);
+            if (Type.isString(text) && text.trim().length > 0) {
+                this.addReminder(text);
+            }
+        } catch (e) {
+            console.warn("[SvToolCall] result reminder provider failed for '" + this.toolName() + "':", e && e.message);
+        }
     }
 
     handleCallSuccess (resultValue) {
@@ -737,6 +847,8 @@ Example Tool call format:
         }
 
         this.setStatus("completed");
+
+        this.applyDeclaredResultReminder();
 
         const r = this.newToolResult();
         r.setResult(resultValue);

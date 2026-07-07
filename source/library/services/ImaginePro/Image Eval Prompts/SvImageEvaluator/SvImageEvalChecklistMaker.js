@@ -59,7 +59,7 @@
          */
         {
             //const chatModelNames = SvServices.shared().chatModelNames();
-            const slot = this.newSlot("evaluationModel", "gemini-2.5-flash-lite"); // cheap and fastest
+            const slot = this.newSlot("evaluationModel", "gemini-3.1-flash-lite-preview"); // cheap and fastest — must exist in BOTH the client Gemini catalog and the proxy pricing list (previous pin gemini-2.5-flash-lite is commented out of the client catalog)
             slot.setSlotType("String");
             slot.setLabel("Evaluation Model");
             slot.setIsSubnodeField(false);

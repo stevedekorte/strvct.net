@@ -118,7 +118,7 @@
     addIfPossible () {
         const node = this.node();
 
-        if (node.nodeCanAddSubnode()) {
+        if (node.offersUserEdit(node.nodeCanAddSubnode())) { // folds in the editability cascade
             const newNode = node.add();
             if (newNode) {
                 this.syncFromNode();

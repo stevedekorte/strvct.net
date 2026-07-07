@@ -27,7 +27,6 @@
     See lookedUpStyles method.
 
 
- 
  */
 
 (class SvTile extends SvNodeView {
@@ -395,11 +394,14 @@
     }
 
     /**
-     * @description Gets the nav view.
-     * @returns {SvNavView} The nav view.
+     * @description Gets the nav view, or null when the tile is not hosted in
+     * a tiles-view column (e.g. a chat input tile living in a chat view) —
+     * callers must tolerate null.
+     * @returns {SvNavView|null} The nav view.
      */
     navView () {
-        return this.column().navView();
+        const column = this.column();
+        return column ? column.navView() : null;
     }
 
     // ----
@@ -715,8 +717,11 @@
      * @returns {boolean} Whether the tile can be deleted.
      */
     canDelete () {
-        if (this.node()) {
-            return this.node().canDelete();
+        const node = this.node();
+        if (node) {
+            // offersUserEdit folds in the editability cascade — a read-only
+            // subtree must not offer deletion (see docs/Plans/Editability Cascade)
+            return node.offersUserEdit(node.canDelete());
         }
         return false;
     }

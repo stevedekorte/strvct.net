@@ -19,6 +19,17 @@
         //const needsRefocus = focusedElement !== this.element();
         // console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollToTop() needsRefocus = ", needsRefocus)
 
+        // TEMP diagnostic for chat scroll jumps — only logs when this call moves
+        // the viewport by more than a screenful (routine stick-to-bottom is silent)
+        {
+            const e = this.element();
+            const distanceFromBottom = e.scrollHeight - (e.scrollTop + e.clientHeight);
+            if (distanceFromBottom > e.clientHeight) {
+                console.log("[ScrollDebug] " + this.svTypeId() + ".immediatelyScrollToBottom() jumping " + distanceFromBottom + "px to bottom\n" +
+                    new Error().stack.split("\n").slice(2, 8).join("\n"));
+            }
+        }
+
         //this.setScrollTop(this.scrollHeight() + "px")
         this.element().scrollTop = this.element().scrollHeight;
 
@@ -133,6 +144,10 @@
         if (this.isScrolledIntoView()) {
             return false;
         }
+
+        // TEMP diagnostic for chat scroll jumps
+        console.log("[ScrollDebug] " + this.svTypeId() + ".scrollIntoView()\n" +
+            new Error().stack.split("\n").slice(2, 8).join("\n"));
 
         const focusedView = SvWebBrowserWindow.shared().activeDomView();
         //console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollIntoView() needsRefocus = ", focusedView !== this)

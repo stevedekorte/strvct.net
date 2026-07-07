@@ -35,6 +35,16 @@
             const slot = this.newSlot("listenerPool", null);
             slot.setSlotType("SvFsListenerPool");
         }
+        {
+            // Bare-hex hashes confirmed present in the cloud blob store
+            // (via a successful upload or a has-blobs check). Lets repeat
+            // saves skip both the bytes AND the existence round-trip.
+            // App-lifetime cache: content-addressed blobs never change,
+            // and deletion (tombstone reaping) is rare enough that a
+            // stale entry just means one redundant envelope-heal fetch.
+            const slot = this.newSlot("cloudKnownBlobHashes", null);
+            slot.setSlotType("Set");
+        }
     }
 
     initPrototype () {
@@ -43,6 +53,7 @@
     init () {
         super.init();
         this.setListenerPool(SvFsListenerPool.shared());
+        this.setCloudKnownBlobHashes(new Set());
         return this;
     }
 
@@ -110,12 +121,65 @@
     }
 
     /**
+     * Record that the cloud is known to hold a blob (bare hex or
+     * `sha256:<hex>` accepted). Future uploads/filters skip it.
+     * @param {string} hash
+     */
+    noteCloudHasBlobHash (hash) {
+        const bareHash = (hash || "").replace(/^sha256:/, "");
+        if (bareHash) {
+            this.cloudKnownBlobHashes().add(bareHash);
+        }
+    }
+
+    /** @param {string} hash @returns {boolean} */
+    cloudIsKnownToHaveBlobHash (hash) {
+        const bareHash = (hash || "").replace(/^sha256:/, "");
+        return this.cloudKnownBlobHashes().has(bareHash);
+    }
+
+    /**
+     * Given a collection of hashes (bare hex or `sha256:<hex>`), return
+     * the bare-hex subset the cloud does NOT have. Hashes already in the
+     * known-set are skipped without a network call; the rest go through
+     * one batched `has-blobs` request, whose "existing" results are
+     * remembered. Typical steady-state cost for a save: zero requests.
+     *
+     * @param {Iterable<string>} hashes
+     * @returns {Promise<string[]>} bare-hex hashes missing from the cloud
+     */
+    async asyncFilterHashesMissingInCloud (hashes) {
+        const known = this.cloudKnownBlobHashes();
+        const unknown = [];
+        for (const h of hashes) {
+            const bareHash = (h || "").replace(/^sha256:/, "");
+            if (bareHash && !known.has(bareHash)) {
+                unknown.push(bareHash);
+            }
+        }
+        if (unknown.length === 0) {
+            return [];
+        }
+        const result = await this.backend().hasBlobs(unknown.map(h => "sha256:" + h));
+        const existing = (result && result.existing) || [];
+        existing.forEach(h => this.noteCloudHasBlobHash(h));
+        return ((result && result.missing) || []).map(h => h.replace(/^sha256:/, ""));
+    }
+
+    /**
      * Upload a blob already cached in the local `SvBlobPool` to the
-     * cloud-nodes content-addressable store. Idempotent: the server
-     * function fast-paths if `/Blobs/{hash}` already exists.
+     * cloud-nodes content-addressable store. Idempotent: skipped
+     * client-side when the hash is in the known-set, and the server
+     * fast-paths if `/Blobs/{hash}` already exists.
+     *
+     * Transport: tries the direct-to-Storage path first (signed PUT URL
+     * + finalize — raw bytes, no base64, no function double-hop) and
+     * falls back to the legacy base64 `upload-blob` function on any
+     * failure, so a broken signed-URL environment degrades to the old
+     * behavior instead of losing the blob.
      *
      * Local hashes from `SvBlobPool` are bare hex; the cloud-nodes
-     * function expects `sha256:<hex>` — this helper adds the prefix
+     * functions expect `sha256:<hex>` — this helper adds the prefix
      * if the caller passes a bare hex hash.
      *
      * @param {Object} args
@@ -126,17 +190,81 @@
      *          null if the local pool has no blob for the hash
      */
     async asyncUploadLocalBlob (args) {
-        const localPool = SvBlobPool.shared();
         const bareHash = (args.hash || "").replace(/^sha256:/, "");
+        const fullHash = "sha256:" + bareHash;
+
+        if (this.cloudIsKnownToHaveBlobHash(bareHash)) {
+            return { ok: true, hash: fullHash, created: false };
+        }
+
+        const localPool = SvBlobPool.shared();
         const localBlob = await localPool.asyncGetBlob(bareHash);
         if (!localBlob) return null;
-        const arrayBuffer = await localBlob.arrayBuffer();
-        const base64 = SvFsClient._arrayBufferToBase64(arrayBuffer);
-        return this.backend().uploadBlob({
-            hash: "sha256:" + bareHash,
-            fileData: base64,
-            scopeRootId: args.scopeRootId,
-            mimeType: args.mimeType || localBlob.type || "application/octet-stream"
+        const mimeType = args.mimeType || localBlob.type || "application/octet-stream";
+
+        let result = null;
+        try {
+            // null result = server said the environment can't take a
+            // direct PUT (e.g. Storage emulator) — quiet legacy fallback.
+            result = await this.asyncDirectUploadBlob({
+                fullHash,
+                blob: localBlob,
+                scopeRootId: args.scopeRootId,
+                mimeType
+            });
+        } catch (directError) {
+            console.warn("SvFsClient: direct blob upload failed (" + (directError && directError.message) +
+                "); falling back to base64 upload for " + bareHash.slice(0, 12) + "...");
+        }
+        if (!result) {
+            const arrayBuffer = await localBlob.arrayBuffer();
+            const base64 = SvFsClient._arrayBufferToBase64(arrayBuffer);
+            result = await this.backend().uploadBlob({
+                hash: fullHash,
+                fileData: base64,
+                scopeRootId: args.scopeRootId,
+                mimeType
+            });
+        }
+        this.noteCloudHasBlobHash(bareHash);
+        return result;
+    }
+
+    /**
+     * Direct-to-Storage upload: mint a signed PUT URL, PUT the raw
+     * bytes, then finalize (server verifies the hash and creates the
+     * blob's metadata doc). Returns null when the server flags the
+     * environment as legacy-only (Storage emulator); throws on any
+     * step failing. Either way the caller falls back to base64.
+     * @private-ish (used by asyncUploadLocalBlob)
+     */
+    async asyncDirectUploadBlob ({ fullHash, blob, scopeRootId, mimeType }) {
+        const urlResult = await this.backend().blobUploadUrl({
+            hash: fullHash,
+            scopeRootId,
+            mimeType
+        });
+        if (urlResult && urlResult.exists) {
+            return { ok: true, hash: fullHash, created: false };
+        }
+        if (urlResult && urlResult.useLegacy) {
+            return null;
+        }
+        if (!urlResult || !urlResult.uploadUrl) {
+            throw new Error("blob-upload-url returned no URL");
+        }
+        const putResponse = await fetch(urlResult.uploadUrl, {
+            method: "PUT",
+            headers: { "Content-Type": urlResult.contentType || mimeType },
+            body: blob
+        });
+        if (!putResponse.ok) {
+            throw new Error("signed PUT failed: " + putResponse.status + " " + putResponse.statusText);
+        }
+        return this.backend().finalizeBlob({
+            hash: fullHash,
+            scopeRootId,
+            mimeType
         });
     }
 

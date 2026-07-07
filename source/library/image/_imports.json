@@ -1,4 +1,5 @@
 [
     "SvImageMosaic.js",
-    "SvImageMosaics.js"
+    "SvImageMosaics.js",
+    "SvImageBorderRemover.js"
 ]

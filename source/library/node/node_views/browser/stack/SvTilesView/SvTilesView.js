@@ -323,7 +323,7 @@
     duplicateSelectedTile () {
         const node = this.node();
         const tile = this.selectedTile();
-        const canAdd = node.nodeCanAddSubnode();
+        const canAdd = node.offersUserEdit(node.nodeCanAddSubnode()); // folds in the editability cascade
         if (tile && canAdd) {
             const canCopy = !Type.isNullOrUndefined(tile.node().copy);
             if (canCopy) {

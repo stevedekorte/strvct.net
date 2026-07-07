@@ -288,9 +288,14 @@
     jsonHistory () {
     // subclasses can override this to modify the history sent with the request
         const messages = this.visiblePreviousMessages();
-        let jsonHistory = messages.map(m => m.messagesJson());
-        if (this.conversation().onFilterJsonHistory) {
-            jsonHistory = this.conversation().onFilterJsonHistory(jsonHistory);
+        const conversation = this.conversation();
+        // AI conversations collapse filed history episodes to their markers
+        // (see SvAiConversation.composeJsonHistory); plain conversations map 1:1.
+        let jsonHistory = conversation.composeJsonHistory
+            ? conversation.composeJsonHistory(messages)
+            : messages.map(m => m.messagesJson());
+        if (conversation.onFilterJsonHistory) {
+            jsonHistory = conversation.onFilterJsonHistory(jsonHistory);
         }
         return jsonHistory;
     }

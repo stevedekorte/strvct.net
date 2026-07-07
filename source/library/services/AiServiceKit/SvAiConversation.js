@@ -140,6 +140,21 @@
             slot.setCanInspect(true);
         }
 
+        /**
+     * @member {SvAiConversationHistory} history - The push-ordered stack of filed episodes
+     * (see pushHistory). NOT a subnode — the conversation's subnodes are its messages.
+     * @category History
+     */
+        {
+            const slot = this.newSlot("history", null);
+            slot.setSlotType("SvAiConversationHistory");
+            slot.setFinalInitProto(SvAiConversationHistory);
+            slot.setShouldStoreSlot(true);
+            slot.setIsInCloudJson(true);
+            slot.setCanInspect(true);
+            slot.setInspectorPath(this.svType());
+        }
+
         this.initPrototypeToolSlots();
     }
 
@@ -181,8 +196,19 @@
     }
 
     initPrototypeToolSlots () { // no super initPrototypeToolSlots() because we are not an assistable JSON group?
-    // placeholder for subclasses to override
         assert(this.isPrototype(), "initPrototypeToolSlots() should only be called on a prototype");
+
+        {
+            const tool = this.methodNamed("pushHistory");
+            tool.setDescription("Files the settled conversation buffer (everything since the last push) as one titled history episode. The filed messages leave your visible transcript once a newer episode supersedes them, replaced by a one-line record marker; the record itself stays queryable — expand it anytime with a one-off queryClientState peek {select: [{under: <its jsonId>, lod: \"full\"}], default: \"omit\"} — your standing view is untouched. Give records meaningful titles: they are your only index into the past.");
+            tool.addParameter("title", "string", "Short episode title, named for what the episode was (e.g. the location just departed).");
+            tool.addParameter("subtitle", "string", "OPTIONAL. One line on what happened — outcomes, open threads, notable changes.");
+            tool.setReturnTypes(["null"]);
+            tool.setIsToolable(true);
+            tool.setIsSilentSuccess(true);
+            tool.setIsSilentError(false);
+            tool.setCallsOnCompletionTool(true);
+        }
     }
 
     jsonHistoryString () {
@@ -621,41 +647,233 @@
         return null;
     }
 
+    // --- history filing (pushHistory tool) ---
+
     /**
-   * @description Filters the JSON history of messages.
+   * @description Tool: files the settled unfiled buffer as one titled history
+   * episode. Copies (not moves) — the original message nodes stay in the
+   * conversation untouched (the user's transcript keeps showing everything);
+   * they just gain a filedToHistoryBlockId marker that the AI-visible
+   * composition collapses to the block's handle marker once a newer block
+   * supersedes it (see composeJsonHistory).
+   * @param {SvToolCall} toolCall
+   * @category History
+   */
+    pushHistory (toolCall) {
+        try {
+            const title = toolCall.parametersDict().title;
+            const subtitle = toolCall.parametersDict().subtitle;
+            if (!Type.isString(title) || title.trim().length === 0) {
+                throw new Error("pushHistory: a non-empty title is required");
+            }
+
+            const candidates = [];
+            for (const m of this.messages()) {
+                if (m.role() === "system") {
+                    continue; // the system prompt is not part of any episode
+                }
+                if (m.filedToHistoryBlockId && m.filedToHistoryBlockId()) {
+                    continue; // already filed in an earlier push
+                }
+                if (!m.isVisibleToAi || !m.isVisibleToAi()) {
+                    continue; // private/UI-only (e.g. party chat) — never copy into AI-queryable history
+                }
+                if (!m.isComplete() && !m.hasError()) {
+                    break; // unsettled — stop here so filed blocks stay contiguous
+                }
+                candidates.push(m);
+            }
+
+            if (candidates.length === 0) {
+                throw new Error("pushHistory: nothing to file — no settled messages since the last push");
+            }
+
+            const block = this.history().newBlockWithTitleAndSubtitle(title, subtitle);
+            candidates.forEach(m => {
+                block.addCopyOfMessage(m);
+                m.setFiledToHistoryBlockId(block.jsonId());
+            });
+            console.log(this.logPrefix(), "pushHistory filed " + candidates.length + " messages as '" + title + "' (" + block.jsonId() + ")");
+            toolCall.setCallResult(null);
+        } catch (error) {
+            toolCall.setCallError(error);
+        }
+    }
+
+    /**
+   * @description Composes the AI-visible json history from message nodes,
+   * collapsing filed episodes: messages filed to a superseded block emit
+   * nothing individually — one handle-dict marker per block appears in their
+   * place. The NEWEST filed block stays inline (one-episode lookback), so
+   * {current buffer + previous episode} is always in full view. Markers are
+   * regenerated from block state on every pass — nothing marker-shaped is
+   * stored.
+   *
+   * options.collapseNewestBlock (default false): suspend the lookback and
+   * collapse the newest filed block to its marker too — the context-pressure
+   * escape valve (a fresh push normally reclaims no tokens because the new
+   * block stays inline; near the context limit that luxury is suspended so
+   * filing gives immediate relief).
+   * @param {Array} messages - The visible message nodes, in order.
+   * @param {Object} [options]
+   * @returns {Array} Array of {role, content} dicts for the request.
+   * @category History
+   */
+    composeJsonHistory (messages, options = {}) {
+        const history = this.history();
+        const newestBlock = (history && history.newestBlock) ? history.newestBlock() : null;
+        if (!newestBlock) {
+            return messages.map(m => m.messagesJson()); // nothing filed yet
+        }
+        const inlineBlockId = options.collapseNewestBlock ? null : newestBlock.jsonId();
+        const emittedBlockIds = new Set();
+        const out = [];
+        messages.forEach(m => {
+            const blockId = (m.filedToHistoryBlockId ? m.filedToHistoryBlockId() : null);
+            if (blockId && blockId !== inlineBlockId) {
+                if (!emittedBlockIds.has(blockId)) {
+                    emittedBlockIds.add(blockId);
+                    const block = history.blockWithJsonId(blockId);
+                    if (block) {
+                        out.push(this.historyMarkerJsonForBlock(block));
+                    }
+                }
+                return; // superseded episode — collapsed into its marker
+            }
+            out.push(m.messagesJson());
+        });
+        return out;
+    }
+
+    /**
+   * @description Count of AI-visible, settled, non-system messages not yet
+   * filed to a history block — the unfiled backlog that filing reminders
+   * key on.
+   * @returns {Number}
+   * @category History
+   */
+    unfiledSettledMessageCount () {
+        return this.messages().filter(m =>
+            m.role() !== "system"
+            && (m.isVisibleToAi ? m.isVisibleToAi() : true)
+            && (m.isComplete() || m.hasError())
+            && !(m.filedToHistoryBlockId && m.filedToHistoryBlockId())
+        ).length;
+    }
+
+    /**
+   * @description Minimum unfiled backlog before historyFilingReminderIfNeeded
+   * speaks up — below this, the live buffer is presumed to be one scene.
+   * @returns {Number}
+   * @category History
+   */
+    historyFilingReminderFloor () {
+        return 6;
+    }
+
+    /**
+   * @description An advisory filing reminder when the unfiled backlog
+   * warrants one, else null. Designed for tool definitions'
+   * resultReminderMethodName (see Function_ideal) — attach it to the result
+   * of a tool call that marks an episode boundary (e.g. a view/state query
+   * made on a scene change), so the reminder arrives at exactly the moment
+   * the AI should file.
+   * @returns {string|null}
+   * @category History
+   */
+    historyFilingReminderIfNeeded () {
+        const count = this.unfiledSettledMessageCount();
+        if (count < this.historyFilingReminderFloor()) {
+            return null;
+        }
+        return "REMINDER: " + count + " settled messages are not yet filed to history. If your latest actions closed out one or more episodes, file each completed episode now with pushHistory (title + subtitle). If nothing has concluded yet, continue normally.";
+    }
+
+    /**
+   * @description The {role, content} dict marking a filed episode in the
+   * AI-visible history: the block's lens handle (jsonId, title, subtitle,
+   * count) wrapped in a history-record tag. Expanding it back is an ordinary
+   * getClientState expand-by-id on the jsonId.
+   * @param {SvAiConversationHistoryBlock} block
+   * @returns {Object}
+   * @category History
+   */
+    historyMarkerJsonForBlock (block) {
+        const roleName = this.service() ? this.service().serviceRoleNameForRole("user") : "user";
+        const content = "<history-record>\n" + JSON.stableStringifyWithStdOptions(block.lensHandleJson(), null, 2) + "\n</history-record>";
+        return { role: roleName, content: content };
+    }
+
+    /**
+   * @description Filters the JSON history of messages by each tool's declared
+   * RESULT RETENTION POLICY (Function_ideal: setResultRetentionPolicy on the
+   * tool method; read via the tool definition):
+   *
+   *   "keep" (default)   — results are never stripped (events: rolls, images).
+   *   "keep-newest-only" — only the newest result survives, at ANY age
+   *                        (complete-view snapshots — older ones are redundant
+   *                        and, post-patches, potentially contradictory; the
+   *                        newest survives forever so the AI is never stateless).
+   *   "recent-window:N"  — results older than the last N messages are stripped
+   *                        (recent errors matter, old successes don't; keep N
+   *                        small so the rewritten region stays confined to the
+   *                        tail for the prompt cache).
+   *
+   * Stripping replaces json.result with the tool's setResultRetentionNote (or
+   * a generic note); the CALL stays visible in the assistant text, so what
+   * happened is never lost — only the payload.
    * @param {Array} messages - The messages to filter.
    * @returns {Array} The filtered messages.
    * @category Session State
    */
-
     onFilterJsonHistory (messages) {
-        const json = this.clientStateJson();
-
-        if (json) {
-            //const tagMap = this.clientStateTagMap();
-            //const lastMessage = messages.last();
-
-            // modify the content of all messages except the last 20
-            const messagesToModify = messages.slice(0, -20);
-            messagesToModify.forEachKV((index, m) => {
-                if (index === 0) {
-                    return; // skip the first message (might be a system message)
+        const toolDefinitions = this.assistantToolKit() ? this.assistantToolKit().toolDefinitions() : null;
+        if (!toolDefinitions) {
+            return messages;
+        }
+        const seenNewestOfTool = new Set();
+        for (let index = messages.length - 1; index >= 1; index--) { // skip index 0 (may be a system message)
+            const m = messages[index];
+            m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
+                let resultJson;
+                try {
+                    resultJson = JSON.parse(content);
+                } catch (parseError) { // eslint-disable-line no-unused-vars
+                    return content; // not a JSON result payload — leave it alone
                 }
-                // find all the tool-call-result tags which are for getClientState or patchClientState
-                // and replace them with a note that they were removed
-                m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
-                    if (content.includes("getClientState") || content.includes("patchClientState")) {
-                        const json = JSON.parse(content);
-                        if (json.toolName === "getClientState" || json.toolName === "patchClientState") {
-                            json.result = "result removed to save tokens";
-                            return JSON.stableStringifyWithStdOptions(json, null, 2);
-                        }
-                    }
+                const toolName = resultJson ? resultJson.toolName : null;
+                if (!toolName) {
                     return content;
-                });
+                }
+                const toolDef = toolDefinitions.toolDefinitionWithName(toolName);
+                const policy = (toolDef && toolDef.resultRetentionPolicy) ? toolDef.resultRetentionPolicy() : "keep";
+                if (!policy || policy === "keep") {
+                    return content;
+                }
+                if (policy === "keep-newest-only") {
+                    if (!seenNewestOfTool.has(toolName)) {
+                        seenNewestOfTool.add(toolName); // newest survives, whatever its age
+                        return content;
+                    }
+                } else if (policy.startsWith("recent-window:")) {
+                    const windowSize = parseInt(policy.split(":")[1], 10);
+                    if (!(windowSize > 0)) {
+                        console.warn(this.logPrefix(), "invalid recent-window retention policy '" + policy + "' on tool '" + toolName + "' — keeping result");
+                        return content;
+                    }
+                    if (index >= messages.length - windowSize) {
+                        return content; // still within the window
+                    }
+                } else {
+                    console.warn(this.logPrefix(), "unknown result retention policy '" + policy + "' on tool '" + toolName + "' — keeping result");
+                    return content;
+                }
+                const note = (toolDef && toolDef.resultRetentionNote && toolDef.resultRetentionNote())
+                    || "result removed to save tokens (results of this tool are retained only briefly; call it again if needed)";
+                resultJson.result = note;
+                return JSON.stableStringifyWithStdOptions(resultJson, null, 2);
             });
         }
-
         return messages;
     }
 
@@ -669,6 +887,26 @@
     onStream_toolCall_TagText (innerTagString, aMessage) { // sent by SvAiParsedResponseMessage
         assert(aMessage);
         this.assistantToolKit().handleToolCallTagFromMessage(innerTagString, aMessage);
+    }
+
+    /**
+     * @description Handles a tool-call tag found inside an ignored block (e.g.
+     * <think>) — sent by SvAiParsedResponseMessage at message completion. The
+     * call is never executed; it either settles as an error the AI can react
+     * to, or attaches a warning to the registered duplicate. See
+     * SvToolCalls.handleOrphanedToolCallTagFromMessage.
+     * @param {string} innerTagString - The tool call JSON string.
+     * @param {SvAiResponseMessage} aMessage - The message the tag was found in.
+     * @param {string} contextTagName - The ignored ancestor tag name (e.g. "think").
+     * @category Tool Calls
+     */
+    onOrphanedToolCallTag (innerTagString, aMessage, contextTagName) {
+        assert(aMessage);
+        // Mirror/client conversations never drive tool calls locally
+        if (typeof this.shouldProcessToolCalls === "function" && !this.shouldProcessToolCalls()) {
+            return;
+        }
+        this.assistantToolKit().handleOrphanedToolCallTagFromMessage(innerTagString, aMessage, contextTagName);
     }
 
     assertNoUncompletedBlockingToolCalls () {

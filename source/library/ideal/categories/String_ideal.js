@@ -6,8 +6,8 @@
 /** * @class String_ideal
  * @extends String
  * @description Extended String class with additional utility methods.
- 
- 
+
+
  */
 
 (class String_ideal extends String {
@@ -905,6 +905,13 @@
      * @returns {string} The HTML string with replaced content
      */
     mapContentOfTagsWithName (tagName, replaceFunction) {
+        if (typeof DOMParser === "undefined") {
+            // Headless (Node) — no DOMParser. Regex fallback for simple,
+            // non-nested tags (sufficient for tool-call-result style tags);
+            // browser behavior is unchanged.
+            const re = new RegExp("(<" + tagName + "(?:\\s[^>]*)?>)([\\s\\S]*?)(</" + tagName + ">)", "gi");
+            return this.replace(re, (all, open, inner, close) => open + replaceFunction(inner) + close);
+        }
         const parser = new DOMParser();
         const doc = parser.parseFromString(this, "text/html");
 
