@@ -102,8 +102,8 @@
 
         this.applyStyles(); // normally this would happen in updateSubviews
 
-        // handle other details
-        this.imageWellView().setIsEditable(field.valueIsEditable());
+        // handle other details (nodeValueIsEditable folds in the editability cascade)
+        this.imageWellView().setIsEditable(this.nodeValueIsEditable());
 
         // Hide the value view if we're still generating (showing dots in key)
         if (field.keyIsComplete && !field.keyIsComplete()) {
@@ -148,7 +148,7 @@
 
         field.setKey(this.keyView().value());
 
-        if (field.valueIsEditable()) {
+        if (this.nodeValueIsEditable()) { // cascade included: read-only-in-context wells never write back
             const dataUrl = this.imageWellView().imageDataUrl();
             const value = field.value();
 

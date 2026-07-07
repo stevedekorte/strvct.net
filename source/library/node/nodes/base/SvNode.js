@@ -234,6 +234,25 @@
             slot.setDuplicateOp("copyValue");
         }
 
+        /**
+         * @member {Boolean|null} subtreeIsUserEditable - Cascading tri-state
+         * editability policy (see docs/Plans/Editability Cascade). null = no
+         * opinion (the parent chain decides); true/false = decide for this
+         * node's own fields AND its whole subtree (deeper nodes may
+         * re-override). Consult via effectiveUserEditability(), never read
+         * directly — the value is one link in a chain. Not stored: context
+         * (a session copy, a catalog for a non-editor) is re-established by
+         * whoever builds the tree.
+         * @category Editability
+         */
+        {
+            const slot = this.newSlot("subtreeIsUserEditable", null);
+            slot.setSlotType("Boolean");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+        }
+
         {
             const slot = this.newSlot("isVisible", true);
             slot.setSlotType("Boolean");
@@ -1914,6 +1933,46 @@
         } catch (e) {
             return this.svTypeId() + " (title error: " + e.message + ")";
         }
+    }
+
+    // --- editability cascade (see docs/Plans/Editability Cascade) ---
+
+    /**
+     * @description Resolves the cascading editability policy for this node:
+     * consult the node's OWN subtreeIsUserEditable (a node's fields are its
+     * children), then walk up parentNode()/ownerNode() until an ancestor has
+     * an opinion; an unopinionated chain defaults to true (all existing
+     * behavior preserved). This is a local-UI affordance — it makes the
+     * interface stop offering edits that won't be honored (a session's
+     * copied-in character, a catalog a non-editor can't save to). It is NOT
+     * authority: server rules and host mediation remain the write gate.
+     * @returns {Boolean} Whether user edits should be offered in this subtree.
+     * @category Editability
+     */
+    effectiveUserEditability () {
+        const v = this.subtreeIsUserEditable();
+        if (v !== null) {
+            return v;
+        }
+        const parent = this.parentNode() ? this.parentNode() : this.ownerNode();
+        if (parent && parent.effectiveUserEditability) {
+            return parent.effectiveUserEditability();
+        }
+        return true;
+    }
+
+    /**
+     * @description Convenience for view-side affordance checks: whether the
+     * given capability (e.g. canDelete(), nodeCanAddSubnode(),
+     * valueIsEditable()) should actually be OFFERED here, given the
+     * editability cascade. Views consult this instead of the raw slot so the
+     * model getters stay pure (duplicate/copy machinery reads them).
+     * @param {Boolean} rawCapability - The slot-level capability value.
+     * @returns {Boolean}
+     * @category Editability
+     */
+    offersUserEdit (rawCapability) {
+        return !!rawCapability && this.effectiveUserEditability();
     }
 
     // ----

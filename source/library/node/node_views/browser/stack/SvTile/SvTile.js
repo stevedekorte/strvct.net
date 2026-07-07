@@ -717,8 +717,11 @@
      * @returns {boolean} Whether the tile can be deleted.
      */
     canDelete () {
-        if (this.node()) {
-            return this.node().canDelete();
+        const node = this.node();
+        if (node) {
+            // offersUserEdit folds in the editability cascade — a read-only
+            // subtree must not offer deletion (see docs/Plans/Editability Cascade)
+            return node.offersUserEdit(node.canDelete());
         }
         return false;
     }

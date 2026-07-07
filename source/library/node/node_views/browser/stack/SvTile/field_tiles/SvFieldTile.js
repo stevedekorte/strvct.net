@@ -592,7 +592,7 @@
         if (override !== null) {
             return override;
         }
-        if (node.valueIsEditable && !node.valueIsEditable()) {
+        if (node.valueIsEditable && !this.nodeValueIsEditable()) {
             return true;
         }
         return false;
@@ -626,6 +626,24 @@
      * @description Syncs the value from the node.
      * @returns {SvFieldTile} The current instance.
      */
+    /**
+     * @description Whether the field's value should be OFFERED for editing
+     * here: the field's own valueIsEditable ANDed with the editability
+     * cascade (see docs/Plans/Editability Cascade) — a field inside a
+     * read-only-in-context subtree (a session's copied-in character, a
+     * catalog for a non-editor) renders read-only regardless of its slot.
+     * @returns {Boolean}
+     * @category Editability
+     */
+    nodeValueIsEditable () {
+        const node = this.node();
+        if (!node || !node.valueIsEditable) {
+            return false;
+        }
+        const raw = node.valueIsEditable();
+        return node.offersUserEdit ? node.offersUserEdit(raw) : raw;
+    }
+
     syncValueFromNode () {
         const node = this.node();
         const valueView = this.valueView();
@@ -633,7 +651,7 @@
         const newValue = this.visibleValue();
 
         valueView.setValue(newValue);
-        valueView.setIsEditable(node.valueIsEditable());
+        valueView.setIsEditable(this.nodeValueIsEditable());
         valueView.setIsDisplayHidden(!node.valueIsVisible());
 
         /*
@@ -665,7 +683,7 @@
         }
         */
 
-        if (node.valueIsEditable()) {
+        if (this.nodeValueIsEditable()) {
             //valueView.setColor(this.editableColor())
             valueView.setColor(this.currentColor());
             //valueView.setBorder("1px solid #444")
@@ -787,7 +805,7 @@
             node.setKey(keyValue);
         }
 
-        if (node.valueIsEditable()) {
+        if (this.nodeValueIsEditable()) { // cascade included: read-only-in-context fields never write view values back
             const candidateValue = this.valueViewValue();
             const error = node.validateValue(candidateValue);
 

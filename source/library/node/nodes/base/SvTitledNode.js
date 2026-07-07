@@ -545,4 +545,22 @@
         }
     }
 
+    /**
+     * @description Action info for the "New …" footer button — consult the
+     * editability cascade so a read-only-in-context subtree (a session's
+     * copied-in content, a catalog the account can't save to) never offers
+     * an add it can't honor. Note the nodeCanAddSubnode slot is deliberately
+     * false while a footer exists (see setupAddFooterNode), so the cascade
+     * is the whole gate here.
+     * @returns {Object} The action info.
+     * @category Editability
+     */
+    addSubnodeViaFooterNodeActionInfo () {
+        const offered = this.effectiveUserEditability();
+        return {
+            isEnabled: offered,
+            isVisible: offered
+        };
+    }
+
 }.initThisClass());
