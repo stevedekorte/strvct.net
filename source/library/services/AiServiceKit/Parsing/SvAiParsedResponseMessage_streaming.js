@@ -120,7 +120,11 @@
             console.error(this.logPrefix ? this.logPrefix() : "[SvAiParsedResponseMessage]",
                 "onStreamEnd finalization threw — completing the message anyway so input doesn't wedge:",
                 e && e.message, e && e.stack);
-            try { this.shutdownSentenceReader(); } catch (e2) { /* best effort */ }
+            try { this.shutdownSentenceReader(); } catch (shutdownError) { /* best effort */ } // eslint-disable-line no-unused-vars
+            // the AI should hear its output was broken (malformed/unclosed
+            // tags), not just the console — queued, so it rides the
+            // settlement flush after super.onStreamEnd completes the message
+            this.reportRuntimeError(e, { source: "streamFinalization" });
         }
 
         // Report tool calls that were emitted inside ignored blocks (e.g.
