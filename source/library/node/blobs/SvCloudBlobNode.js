@@ -368,6 +368,28 @@
         };
     }
 
+    /**
+     * @description Extends the base hook (which clears the stale cached blob on
+     * a non-null → different-non-null hash transition) to also reset the cloud
+     * bookkeeping that described the OLD content. Without this, a reused node
+     * keeps hasInCloud === true and a stale downloadUrl for the new hash, so
+     * schedulePushToCloud() would skip uploading the new bytes and asyncPublicUrl()
+     * would hand back a URL for the old content. Any in-flight push for the old
+     * bytes is abandoned. Uses the same both-non-null-and-different guard as the
+     * base, so asyncJustSetBlobValue()'s null-on-one-side sequence is untouched.
+     * @param {?string} oldValue - The previous hash (null if none).
+     * @param {?string} newValue - The new hash (null if cleared).
+     * @category Cloud Storage
+     */
+    didUpdateSlotValueHash (oldValue, newValue) {
+        super.didUpdateSlotValueHash(oldValue, newValue);
+        if (oldValue !== null && newValue !== null && oldValue !== newValue) {
+            this.setHasInCloud(false); // old content's cloud state does not describe the new hash
+            this.setDownloadUrl(null); // old content's URL
+            this.clearPushToCloudPromise(); // abandon any in-flight push of the old bytes
+        }
+    }
+
     async asyncBlobValue (forceRetry = false) {
         const blob = await this.blobValue();
         if (blob) {

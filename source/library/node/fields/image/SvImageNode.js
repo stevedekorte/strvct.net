@@ -186,6 +186,24 @@
     }
 
     /**
+     * @description Extends the base/cloud hooks (which clear the stale blob and
+     * cloud bookkeeping on a non-null → different-non-null hash transition) to
+     * also clear the cached publicUrl, which is defined on this subclass and
+     * points at the OLD content. asyncPublicUrl() will recompute it for the new
+     * hash on next access. Same both-non-null-and-different guard as the base,
+     * so the null-on-one-side authoring sequence is left untouched.
+     * @param {?string} oldValue - The previous hash (null if none).
+     * @param {?string} newValue - The new hash (null if cleared).
+     * @category Cloud Storage
+     */
+    didUpdateSlotValueHash (oldValue, newValue) {
+        super.didUpdateSlotValueHash(oldValue, newValue);
+        if (oldValue !== null && newValue !== null && oldValue !== newValue) {
+            this.setPublicUrl(null); // old content's URL — recomputed on next asyncPublicUrl()
+        }
+    }
+
+    /**
      * @description Handles the event when the node is edited.
      * @category Event Handling
      */
