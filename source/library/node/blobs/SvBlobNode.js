@@ -217,6 +217,31 @@
         }
     }
 
+    /**
+     * @description Slot hook fired whenever valueHash changes through any setter
+     * path — including in-place envelope / JSON deserialization, which routes
+     * through Slot.onInstanceSetValue() → setValueHash() → didUpdateSlot(). When
+     * the hash transitions between two DIFFERENT non-null values, this node's
+     * content identity changed underneath a reused instance (e.g. a node updated
+     * in place as its referenced content is swapped). The cached blobValue holds
+     * the OLD hash's bytes, so clear it; the next asyncBlobValue() then lazily
+     * re-loads the bytes for the new hash instead of returning stale bytes.
+     *
+     * The both-non-null-and-different guard is load-bearing: it deliberately
+     * leaves the fresh blob intact during asyncJustSetBlobValue()'s legitimate
+     * sequence (setBlobValue(blob) → setValueHash(null) → setValueHash(hash)),
+     * where each hash transition has a null on one side. It is also a no-op when
+     * the same hash is re-set (didUpdateSlot only fires on an actual change).
+     * @param {?string} oldValue - The previous hash (null if none).
+     * @param {?string} newValue - The new hash (null if cleared).
+     * @category Blob Storage
+     */
+    didUpdateSlotValueHash (oldValue, newValue) {
+        if (oldValue !== null && newValue !== null && oldValue !== newValue) {
+            this.setBlobValue(null); // stale: the cached bytes belong to oldValue's hash
+        }
+    }
+
     async asyncBlobValue () {
         const blob = this.blobValue();
         if (blob) {
