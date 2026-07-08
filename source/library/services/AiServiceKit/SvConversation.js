@@ -154,6 +154,24 @@
    */
     finalInit () {
         super.finalInit();
+        if (!this.slotIsPendingMaterialization("subnodes")) {
+            // when a subclass marks subnodes lazy, this wiring runs in
+            // didMaterializeSlot instead — the messages don't exist yet here
+            this.wireLoadedMessages();
+        }
+        this.setNodeCanAddSubnode(false);
+        //this.setNodeFillsRemainingWidth(true);
+        this.setNodeChildrenAlignment("flex-end");
+        this.setCanDelete(true);
+    }
+
+    /**
+   * @description Validates loaded messages and sets their conversation
+   * back-pointer. Called from finalInit (eager subnodes) or on
+   * materialization (lazy subnodes).
+   * @category Initialization
+   */
+    wireLoadedMessages () {
         try {
             // assert(this.subnodeClasses().length > 0, this.svType() + " has no subnode classes");
             this.messages().forEach(m => {
@@ -164,15 +182,25 @@
             });
         } catch (error) {
 
-            console.log(this.svType() + " finalInit error: " + error.message);
+            console.log(this.svType() + " wireLoadedMessages error: " + error.message);
             this.removeAllSubnodes();
         }
 
         this.messages().forEach(m => m.setConversation(this));
-        this.setNodeCanAddSubnode(false);
-        //this.setNodeFillsRemainingWidth(true);
-        this.setNodeChildrenAlignment("flex-end");
-        this.setCanDelete(true);
+    }
+
+    /**
+   * @description Lazy-slot materialization hook (see ProtoClass). When a
+   * subclass marks the subnodes slot lazy, the message wiring that finalInit
+   * skipped runs here, at first access.
+   * @param {Slot} aSlot - The slot that was materialized.
+   * @category Initialization
+   */
+    didMaterializeSlot (aSlot) {
+        super.didMaterializeSlot(aSlot);
+        if (aSlot.name() === "subnodes") {
+            this.wireLoadedMessages();
+        }
     }
 
     /**

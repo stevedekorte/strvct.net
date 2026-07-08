@@ -406,6 +406,35 @@
     }
 
     /**
+     * Hook called after a lazy slot's stored value is materialized on first
+     * access (see Slot.onInstanceMaterializeLazySlot). Runs AFTER the
+     * materialization write, with dirty-marking active — so per-class work
+     * deferred from finalInit (message wiring, hygiene passes) behaves like
+     * any other mutation. Dispatch on aSlot.name(); always call super.
+     * @param {Slot} aSlot - The slot that was materialized.
+     * @category Slot Hooks
+     */
+    didMaterializeSlot (/*aSlot*/) {
+    }
+
+    /**
+     * True when a lazy stored slot still holds its unmaterialized stub —
+     * i.e. the stored value exists but has not been loaded yet. Classes use
+     * this in finalInit to skip work that didMaterializeSlot will do later.
+     * @param {string} slotName - The slot name.
+     * @returns {boolean}
+     * @category Slot Hooks
+     */
+    slotIsPendingMaterialization (slotName) {
+        const slot = this.thisPrototype().slotNamed(slotName);
+        if (!slot || !slot.isLazy()) {
+            return false;
+        }
+        const raw = slot.onInstanceRawGetValue(this);
+        return (typeof(SvStoreRef) !== "undefined") && (raw instanceof SvStoreRef);
+    }
+
+    /**
      * Sets the type of the instance.
      * @param {string} aString - The type name.
      * @returns {ProtoClass} This instance.

@@ -350,6 +350,9 @@
      * @returns {SvNode} This instance.
      */
     setSubnodes (subnodes) {
+        if (this.slotIsPendingMaterialization("subnodes")) {
+            this.subnodes(); // materialize the stored array so copyFrom merges into it
+        }
         if (this._subnodes === null) {
             this._subnodes = subnodes;
         } else {
@@ -563,6 +566,9 @@
      * @returns {number} The number of subnodes.
      */
     subnodeCount () {
+        if (this.slotIsPendingMaterialization("subnodes")) {
+            return this.subnodes().length; // asking for the count is asking for the value
+        }
         return this._subnodes.length;
     }
 
@@ -1038,6 +1044,14 @@
      * @description Handle the reordering of subnodes.
      */
     onDidReorderSubnodes () {
+        if (this.slotIsPendingMaterialization("subnodes")) {
+            // A stale action from before the load parked the stub (init created
+            // a default array, scheduling this; loadFromRecord replaced it).
+            // Nothing to reorder — and materializing here would reschedule this
+            // same action mid-pass, tripping the scheduler's loop guard.
+            // Materialization re-fires didChangeSubnodeList anyway.
+            return;
+        }
         this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes());
     }
 

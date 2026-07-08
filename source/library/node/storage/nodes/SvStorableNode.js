@@ -160,6 +160,9 @@
      * @category Node Structure
      */
     subnodeCount () {
+        if (this.slotIsPendingMaterialization("subnodes")) {
+            return this.subnodes().length; // asking for the count is asking for the value
+        }
         if (!this._subnodes) {
             return this.lazySubnodeCount();
         }

@@ -1122,11 +1122,23 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             pool.didInitLoadingPids();
         }
 
+        // Clear the stub RAW before the setter write: didUpdateSlot hooks
+        // receive oldValue and assume its type (e.g. didUpdateSlotSubnodes
+        // calls oldValue.removeMutationObserver) — they must see the normal
+        // null → value load transition, never the stub.
+        this.onInstanceRawSetValue(anInstance, null);
+
         anInstance.setIsMaterializingLazySlot(true);
         try {
             this.onInstanceSetValue(anInstance, obj);
         } finally {
             anInstance.setIsMaterializingLazySlot(false);
+        }
+
+        // After the flag clears: hook edits (e.g. hygiene passes a class
+        // deferred from finalInit) are real mutations and mark dirty normally.
+        if (anInstance.didMaterializeSlot) {
+            anInstance.didMaterializeSlot(this);
         }
         return obj;
     }
@@ -1562,7 +1574,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const initProto = this._initProto;
 
         if (initProto) {
-            assert(!this.isLazy(), "isLazy is true for slot '" + this.name() + "' but initProto is set");
+            // initProto and isLazy compose: init creates the default for fresh
+            // instances; loadFromRecord raw-replaces it with a stub on stored ones.
             const obj = initProto.clone();
             this.onInstanceSetValue(anInstance, obj);
         } /*
