@@ -87,13 +87,31 @@
         toolCall.assertValidCall();
 
         if (!toolCall.hasError()) {
-            // check if the tool call id is already in the tool calls
-            const existingToolCall = this.toolCallWithId(toolCall.callId());
-            if (existingToolCall) {
-                // should we report an error to the assistant or user?
-                // maybe the LLM failed to create a unique id for the tool call
-                // or maybe the tool call is being repeated
-                return existingToolCall;
+            // callId collision — the model reused an id (numbering slip or a
+            // re-emit). NEVER swallow the call silently: a call the AI emitted
+            // that never produces a result wedges the conversation (the AI
+            // waits forever for it).
+            const registered = this.toolCallWithId(toolCall.callId());
+            const collision = registered || this.respondedToolCallWithId(toolCall.callId());
+            if (collision) {
+                if (registered && this.callsMatch(registered, toolCall)) {
+                    // Exact re-emit of a call that is still pending/unsent:
+                    // harmless repeat — warn on the real call's result.
+                    registered.addWarning("WARNING: you emitted this tool call (callId \"" + toolCall.callId() +
+                        "\") more than once; the duplicate copy was ignored. Emit each call exactly once and wait for its result.");
+                    console.warn(this.logPrefix(), "duplicate re-emit of call " + toolCall.callId() + " — warned on the registered call");
+                    return registered;
+                }
+                // A DIFFERENT call reusing the id, or a repeat of a call whose
+                // response was already sent: settle THIS call as an error so the
+                // AI receives a result for it and can re-emit with a fresh id.
+                const detail = this.callsMatch(collision, toolCall)
+                    ? "a tool call with callId \"" + toolCall.callId() + "\" already completed and its result was already sent to you"
+                    : "callId \"" + toolCall.callId() + "\" is already in use by a " + collision.toolName() + " call";
+                console.warn(this.logPrefix(), "callId collision on " + toolCall.callId() + " (" + toolCall.toolName() +
+                    " vs " + collision.toolName() + ") — settling the new call with an error");
+                toolCall.handleCallError(new Error(detail + ". This " + toolCall.toolName() +
+                    " call was NOT executed. Every tool call needs a UNIQUE callId — re-emit it with a new callId, continuing your sequential numbering."));
             }
         }
 
@@ -189,6 +207,45 @@
             tc.toolName() === name &&
             tc.callJson() &&
             JSON.stableStringifyWithStdOptions(tc.parametersDict()) === paramsString) || null;
+    }
+
+    /**
+     * @description Finds a call with the given callId whose response was
+     * already sent to the assistant (i.e. it lives in the toolkit's
+     * successful or failed pools rather than the pending pool).
+     * @param {string} callId - The callId to look up.
+     * @returns {SvToolCall|null}
+     * @category Tool Calls
+     */
+    respondedToolCallWithId (callId) {
+        const tk = this.assistantToolKit();
+        const pools = [tk.successfulToolCalls(), tk.failedToolCalls()];
+        for (const pool of pools) {
+            if (pool) {
+                const match = pool.toolCallWithId(callId);
+                if (match) {
+                    return match;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @description Whether two calls are the same call (same toolName and
+     * identical parameters). Used to distinguish a harmless re-emit from a
+     * callId collision between different calls.
+     * @param {SvToolCall} a
+     * @param {SvToolCall} b
+     * @returns {Boolean}
+     * @category Tool Calls
+     */
+    callsMatch (a, b) {
+        if (!a.callJson() || !b.callJson()) {
+            return false;
+        }
+        return a.toolName() === b.toolName() &&
+            JSON.stableStringifyWithStdOptions(a.parametersDict()) === JSON.stableStringifyWithStdOptions(b.parametersDict());
     }
 
     onToolCallAdded (toolCall) {
