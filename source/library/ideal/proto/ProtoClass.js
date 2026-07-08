@@ -375,11 +375,16 @@
         }
         {
             /**
-             * @member {Map} lazyRefsMap - A map of lazy references.
+             * @member {boolean} isMaterializingLazySlot - True while a lazy slot's
+             * stored value is being written through its setter on first access.
+             * SvStorableNode.didUpdateSlot consults this to skip didMutate():
+             * materialization is not a semantic change, so it must fire the
+             * normal update hooks (view sync) without marking the object dirty
+             * or notifying mutation observers.
              * @category Slots
              */
-            const slot = this.newSlot("lazyRefsMap", null);
-            slot.setSlotType("Map");
+            const slot = this.newSlot("isMaterializingLazySlot", false);
+            slot.setSlotType("Boolean");
         }
         {
             /**
@@ -398,18 +403,6 @@
             //slot.setSlotType("Map");
             Object.defineSlot(this, "_timeoutNameToIdMap", null);
         }
-    }
-
-    /**
-     * Gets the lazy references map.
-     * @returns {Map} The lazy references map.
-     * @category Slots
-     */
-    lazyRefsMap () {
-        if (!this._lazyRefsMap) {
-            this._lazyRefsMap = new Map();
-        }
-        return this._lazyRefsMap;
     }
 
     /**

@@ -108,7 +108,10 @@
 	        return this;
 	    }
 
-        if (aSlot.shouldStoreSlot()) {
+        if (aSlot.shouldStoreSlot() && !this.isMaterializingLazySlot()) {
+            // materializing a lazy slot's stored value is not a semantic change:
+            // update hooks (above) fire so views sync, but the object must not
+            // be marked dirty and mutation observers must not be notified
             //this.didMutate(aSlot.name())
             this.didMutate();
         }

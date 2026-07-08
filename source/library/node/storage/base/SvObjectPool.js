@@ -1840,12 +1840,31 @@
         // Collect blob hashes from ALL open pools, not just this one.
         // SubObjectPools (e.g. session pools) share the same SvBlobPool,
         // so their blob references must be included to prevent incorrect GC.
+        //
+        // Walks RECORDS, not instances: the previous implementation called
+        // objectForPid() on every stored pid, materializing the entire store
+        // just to ask each object for its blob hashes (which defeats slot lazy
+        // loading, and was O(all data) CPU on every blob collect). Blob hashes
+        // are hex sha256 strings, so scanning record JSON for 64-hex tokens is
+        // a conservative superset — a blob can never be wrongly deleted, at
+        // worst an unreferenced one survives until its referencing record is
+        // rewritten. ACTIVE instances are still asked directly, which covers
+        // hashes added since the last save.
         const hashesSet = new Set();
+        const hexHashRegex = /[0-9a-f]{64}/g;
         SvObjectPool.openPools().forEach(pool => {
-            pool.allObjects().forEach(obj => {
+            pool.kvMap().keysSet().forEach(pid => {
+                const recordString = pool.kvMap().at(pid);
+                if (Type.isString(recordString)) {
+                    const matches = recordString.match(hexHashRegex);
+                    if (matches) {
+                        matches.forEach(h => hashesSet.add(h));
+                    }
+                }
+            });
+            pool.activeObjects().forEachKV((pid, obj) => {
                 if (obj && obj.referencedBlobHashesSet) {
-                    const objBlobHashes = obj.referencedBlobHashesSet();
-                    hashesSet.addAll(objBlobHashes);
+                    hashesSet.addAll(obj.referencedBlobHashesSet());
                 }
             });
         });

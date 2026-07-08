@@ -181,17 +181,14 @@ const { ClassicLevel } = require("classic-level");
      * @param {string} key - The key to retrieve.
      * @returns {Promise<*>} - A promise that resolves to the value associated with the key.
      */
-    async promiseAt (key) {
-        await this.promiseOpen();
-
-        // ClassicLevel returns undefined for non-existent keys (no error thrown)
-        const value = await this.levelDb().get(key);
-
-        if (value === undefined) {
-            return undefined;
-        }
-
-        // LevelDB with 'buffer' encoding always returns Buffers
+    /**
+     * Decodes a stored LevelDB value back to its original form.
+     * LevelDB with 'buffer' encoding always returns Buffers; strings were
+     * written with a 4-byte marker prefix, binary data as raw bytes.
+     * @param {*} value - The raw value from LevelDB.
+     * @returns {string|ArrayBuffer|*} - The decoded value.
+     */
+    decodeStoredValue (value) {
         if (Buffer.isBuffer(value)) {
             // Check if it's a string (starts with our string marker)
             if (value.length >= 4 && value[0] === 0xFF && value[1] === 0xFE && value[2] === 0xFD && value[3] === 0xFC) {
@@ -202,8 +199,20 @@ const { ClassicLevel } = require("classic-level");
                 return value.buffer.slice(value.byteOffset, value.byteOffset + value.byteLength);
             }
         }
-
         return value;
+    }
+
+    async promiseAt (key) {
+        await this.promiseOpen();
+
+        // ClassicLevel returns undefined for non-existent keys (no error thrown)
+        const value = await this.levelDb().get(key);
+
+        if (value === undefined) {
+            return undefined;
+        }
+
+        return this.decodeStoredValue(value);
     }
 
     /**
@@ -270,7 +279,9 @@ const { ClassicLevel } = require("classic-level");
         const map = new Map();
         const iterator = this.levelDb().iterator();
         for await (const [key, value] of iterator) {
-            map.set(key, value);
+            // decode like promiseAt does — without this, a reopened store hands
+            // back raw marker-prefixed Buffers instead of the stored strings
+            map.set(key, this.decodeStoredValue(value));
         }
         return map;
     }

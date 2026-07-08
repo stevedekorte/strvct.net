@@ -1006,7 +1006,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     setupGetter () {
         if (this.ownsGetter()) {
-            Object.defineSlot(this.owner(), this.getterName(), this.autoGetter());
+            const getter = this.isLazy() ? this.lazySlotGetter() : this.autoGetter();
+            Object.defineSlot(this.owner(), this.getterName(), getter);
             this.setupPromiseWrapperIfNeeded();
         }
         return this;
@@ -1075,17 +1076,59 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         };
     }
 
-    autoLazyGetter () {
+    /**
+     * @category Getter
+     * @description Getter for lazy slots: identical to autoGetter until the
+     * slot holds an SvStoreRef stub (placed there by loadFromRecord), in which
+     * case it materializes the stored value on first access. Materialization
+     * is synchronous — the store's records map is fully in memory after open.
+     */
+    lazySlotGetter () {
         const slot = this;
-        return async function (arg) {
+        return function (arg) {
             assert(arg === undefined, "getter should not be called with arguments");
-            const pid = this[slot.privateNameLazyPid()];
-            if (pid) {
-                const obj = await this.defaultStore().asyncObjectForPid(pid);
-                return obj;
+            const v = this.getSlotValue(slot);
+            if (v && v instanceof SvStoreRef) {
+                return slot.onInstanceMaterializeLazySlot(this);
             }
-            return undefined;
+            return v;
         };
+    }
+
+    /**
+     * @category StoreRefs for lazy slots
+     * @description Resolves a lazy slot's SvStoreRef stub into the real stored
+     * object and writes it through the setter, so didUpdateSlot hooks and view
+     * sync fire like any other change — but with didMutate suppressed
+     * (materialization is not a semantic change; the object must not be marked
+     * dirty and mutation observers must not be notified).
+     */
+    onInstanceMaterializeLazySlot (anInstance) {
+        const storeRef = this.onInstanceRawGetValue(anInstance);
+        assert(storeRef instanceof SvStoreRef, "onInstanceMaterializeLazySlot called without a stub in slot '" + this.name() + "'");
+
+        // If this materialization initiates the load cycle (the common case:
+        // a getter touched after boot), drain the pool's loadingPids so
+        // didLoadFromStore runs on the subtree before we return — callers
+        // expect a fully-initialized value, not one whose finalization is
+        // scheduled for end-of-cycle. If we're already inside a load cycle
+        // (e.g. touched from another object's load), the outer drain owns it.
+        const pool = storeRef.store();
+        const initiatesLoadCycle = !pool.isFinalizing() && pool.loadingPids().count() === 0;
+
+        const obj = storeRef.unref(); // synchronous objectForPid — identity map preserves sameness
+
+        if (initiatesLoadCycle && !pool.isFinalizing() && pool.loadingPids().count() > 0) {
+            pool.didInitLoadingPids();
+        }
+
+        anInstance.setIsMaterializingLazySlot(true);
+        try {
+            this.onInstanceSetValue(anInstance, obj);
+        } finally {
+            anInstance.setIsMaterializingLazySlot(false);
+        }
+        return obj;
     }
 
     /**
@@ -1344,33 +1387,12 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     }
 
     /**
-     * @category StoreRefs for lazy slots
-     */
-    onInstanceSetValueRef (anInstance, aRef) {
-        anInstance.lazyRefsMap().set(this.name(), aRef);
-        return this;
-    }
-
-    /**
-     * @category StoreRefs for lazy slots
-     */
-    onInstanceGetValueRef (anInstance) {
-        return anInstance.lazyRefsMap().get(this.name());
-    }
-
-    privateNameLazyPid () {
-        return this.privateName() + "LazyPid"; // privateName begins with _
-    }
-
-    /**
      * @category Call Helpers
+     * @description Note on lazy slots: onInstanceGetValue goes through the
+     * getter, so copying a lazy slot materializes it first — copying is an
+     * explicit "I need the value" moment.
      */
     copyValueFromInstanceTo (anInstance, otherInstance) {
-        if (this.isLazy()) {
-            const k = this.privateNameLazyPid();
-            otherInstance[k] = anInstance[k];
-        }
-
         const v = this.onInstanceGetValue(anInstance);
         if (v !== undefined) {
             this.onInstanceSetValue(otherInstance, v);
@@ -1396,6 +1418,19 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     onInstanceFinalInitSlot (anInstance) {
         assert(this.slotType() !== null, " slotType is null for " + anInstance.svType() + "." + this.name());
+
+        if (this.isLazy() && (this.onInstanceRawGetValue(anInstance) instanceof SvStoreRef)) {
+            // The stored value is pending materialization. It counts as "loaded"
+            // here, so skip finalInitProto default-creation — and read only the
+            // RAW value above: the getter would materialize the whole subtree at
+            // boot, defeating the laziness.
+            assert(!this.isSubnode(), "lazy slot '" + this.name() + "' cannot be isSubnode — subnode slots need their value in the node graph at load time");
+            if (this.isSubnodeField()) {
+                assert(anInstance.shouldStoreSubnodes() === false, "error on slot definition '" + this.name() + "' subnode fields are not supported with shouldStoreSubnodes");
+                anInstance.addSubnodeFieldForSlot(this); // safe: fields read the value on view sync, not at creation
+            }
+            return;
+        }
 
         const finalInitProto = this.finalInitProtoClass(); //this._finalInitProto;
 
@@ -1526,11 +1561,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
         const initProto = this._initProto;
 
-
-        if (this.isLazy()) {
-            anInstance[this.privateNameLazyPid()] = undefined; // undefined indicates that the value is not yet loaded
-        }
-
         if (initProto) {
             assert(!this.isLazy(), "isLazy is true for slot '" + this.name() + "' but initProto is set");
             const obj = initProto.clone();
@@ -1551,33 +1581,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             newField.getValueFromTarget();
         }
         */
-    }
-
-    /**
-     * @category Call Helpers
-     */
-    onInstanceLoadRef (anInstance) {
-        const storeRef = this.onInstanceGetValueRef(anInstance);
-        if (storeRef) {
-
-            //console.warn(anInstance.svTypeId() + "." + this.name() + " [" + anInstance.title() + "] - loading storeRef");
-            //console.warn(anInstance.title() + " loading storeRef for " + this.name());
-            const obj = storeRef.unref();
-            /*
-            //console.warn("   loaded: " + obj.svType());
-            anInstance[this.privateName()] = obj; // is this safe? what about initialization?
-            //this.onInstanceSetValue(anInstance, obj);
-            this.onInstanceSetValueRef(anInstance, null);
-            */
-
-            const setter = anInstance[this.setterName()];
-            setter.apply(anInstance, [obj]); // WARNING: this may mark objects as dirty
-
-        } else {
-            //console.warn(anInstance.svTypeId() + " unable to load storeRef - not found");
-            //console.warn(anInstance.svTypeId() + ".shouldStoreSubnodes() = " + anInstance.shouldStoreSubnodes());
-            //throw new Error("");
-        }
     }
 
     /**

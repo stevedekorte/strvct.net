@@ -364,7 +364,12 @@
      */
     prepareValue (value) {
         if (typeof value === "string") {
-            return value;
+            // Same string marker SvIndexedDbFolder.promiseAtPut writes: LevelDB's
+            // "buffer" valueEncoding returns every value as a Buffer, so without
+            // the marker a read-back can't tell strings from binary and hands
+            // stored records back as ArrayBuffers.
+            const stringBuffer = Buffer.from(value, "utf8");
+            return Buffer.concat([Buffer.from([0xFF, 0xFE, 0xFD, 0xFC]), stringBuffer]);
         } else if (value instanceof ArrayBuffer) {
             // Convert ArrayBuffer to Buffer for LevelDB
             return Buffer.from(value);

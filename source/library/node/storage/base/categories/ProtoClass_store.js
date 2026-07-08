@@ -62,6 +62,17 @@
 
         this.allSlotsMap().forEachKV((slotName, slot) => {
             if (slot.shouldStoreSlotOnInstance(this)) {
+                if (slot.isLazy()) {
+                    // Read RAW: the getter would materialize the subtree just to
+                    // save it. An unmaterialized stub writes back its original
+                    // ref unchanged — a never-touched subtree round-trips a save
+                    // without ever being loaded.
+                    const rawValue = slot.onInstanceRawGetValue(this);
+                    if (rawValue instanceof SvStoreRef) {
+                        aRecord.entries.push([slotName, { "*": rawValue.pid() }]);
+                        return;
+                    }
+                }
                 const v = slot.onInstanceGetValue(this);
                 if (Type.isPromise(v)) {
                     throw new Error(this.svType() + " '" + slotName + "' slot is set to shouldStore, but contains a Promise value which cannot be stored");
@@ -117,15 +128,16 @@
                     // TODO: add something the schedule a didMutate?
                     console.warn("no setter for slot '" + slot.name() + "'?");
                 } else {
-                    if (slot.isLazy()) {
-                        debugger; // we don't support lazy slots yet
-                        // store the pid in _privateNameLazyPid for use on asyncGetter call
+                    if (slot.isLazy() && !Type.isNull(v) && v["*"] !== undefined) {
+                        // Lazy slot: don't unref (that would deserialize the whole
+                        // subtree). Park an SvStoreRef stub in the slot; the lazy
+                        // getter materializes it on first access. Raw set: the stub
+                        // isn't the slot's declared type, so it must bypass setter
+                        // validation and update hooks.
                         const pid = v["*"];
-                        assert(pid);
-                        this[slot.privateNameLazyPid()] = pid;
-                        //const storeRef = SvStoreRef.clone().setPid(pid).setStore(aStore);
-                        //console.log(this.svTypeId() + "." + slot.name() + " [" + this.title() + "] - setting up storeRef ");
-                        //slot.onInstanceSetValueRef(this, storeRef);
+                        assert(pid, this.svType() + " lazy slot '" + slot.name() + "' has a ref entry without a pid");
+                        const storeRef = SvStoreRef.clone().setPid(pid).setStore(aStore);
+                        slot.onInstanceRawSetValue(this, storeRef);
                     } else if (slot.slotType() === "JSON Object") {
                         if (Type.isString(v)) {
                             // properly serialized JSON object

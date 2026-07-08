@@ -377,10 +377,23 @@
         try {
             const recordsMap = this.store().kvMap().map();
             let bytes = 0;
+            const typeCounts = new Map();
+            const typeRegex = /"type":\s*"([^"]+)"/;
             recordsMap.forEach(v => {
-                bytes += (typeof(v) === "string") ? v.length : (v.byteLength || 0);
+                if (typeof(v) === "string") {
+                    bytes += v.length;
+                    const match = v.match(typeRegex);
+                    const typeName = match ? match[1] : "(untyped)";
+                    typeCounts.set(typeName, (typeCounts.get(typeName) || 0) + 1);
+                } else {
+                    bytes += (v && v.byteLength) || 0;
+                }
             });
             console.log("[SvBootPerf] store records: " + recordsMap.size + " (~" + Math.round(bytes / 1024) + "KB)");
+            const topTypes = Array.from(typeCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 20);
+            topTypes.forEach(([typeName, count]) => {
+                console.log("[SvBootPerf]   " + String(count).padStart(6) + "  " + typeName);
+            });
         } catch (e) {
             // diagnostic only — never break boot
         }
