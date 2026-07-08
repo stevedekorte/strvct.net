@@ -189,28 +189,16 @@
         if (h && SvGlobals.has("SvHashCache")) {
             const hc = SvHashCache.shared();
             //await hc.promiseClear(); // clear cache for now
-            const hasKey = await hc.promiseHasKey(h);
-            //const data = await hc.promiseAt(h); // this seems to be not returning undefined for some absent keys???
 
             if (this.path().split("/").includes("deferred")) {
                 console.log(this.logPrefix() + "loading a deferred resource: " + this.path());
             }
-            //if (data !== undefined) {
-            if (hasKey) {
-                // if hashcache is available and has data, use it
-                const data = await hc.promiseAt(h, this.path());
-                if (data === undefined) {
-                    console.warn(this.logPrefix() + "hashcache has undefined data for " + h + " " + this.path());
-                    console.log(this.logPrefix() + "load from network: " + this.path());
-                    return this.promiseJustLoad();
-                }
 
-                assert(data !== undefined, "hashcache has undefined data for " + h);
+            // Single read instead of a has-check followed by a get — each was
+            // its own IndexedDB transaction, doubling the per-resource cost.
+            const data = await hc.promiseAt(h, this.path());
+            if (data !== undefined) {
                 this._data = data;
-                if (!["js", "css", "woff2", "woff", "ttf", "otf"].includes(this.path().split(".").pop())) {
-                    //console.log(this.logPrefix() + "load from cache: " + this.path());
-
-                }
                 return this;
             } else {
                 // otherwise, load normally and cache result
@@ -227,7 +215,6 @@
                     console.error("error writing hash/value pair from path '" + this.path() + "' error: " + error.message);
                     throw error;
                 }
-                assert(await hc.promiseHasKey(h), "hashcache should now have key for " + this.resourceHash());
                 //console.log(this.logPrefix()+ " stored cache for ", this.resourceHash() + " " + this.path());
                 return this;
             }

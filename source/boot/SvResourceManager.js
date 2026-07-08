@@ -224,9 +224,11 @@
         const totalBytes = camEntries.reduce((sum, e) => sum + e.size, 0);
         let missingBytes = 0;
 
-        // Fetch all cached keys in a single IndexedDB call instead of
-        // checking each entry individually (avoids ~1900 separate transactions)
-        const cachedKeys = new Set(await hc.promiseAllKeys());
+        // Load the whole cache into memory with a single getAll() transaction.
+        // Boot-time reads (~1000 resources) are then served from memory instead
+        // of one IndexedDB transaction per key; released in onDone().
+        const warmMap = await hc.promiseWarmLoad();
+        const cachedKeys = new Set(warmMap.keys());
         this.bootPerfMark("cacheChecked");
 
         for (const entry of camEntries) {
@@ -265,12 +267,18 @@
                 // Store CAM content in memory for synchronous access
                 this._camContent = cam;
 
-                // Also store in SvHashCache for async access
-                const camKeys = Reflect.ownKeys(cam);
-                await camKeys.promiseParallelForEach(async (k) => {
-                    const v = cam[k];
-                    return SvHashCache.shared().promiseAtPut(k, v);
+                // Also store in SvHashCache for async access. One bulk transaction
+                // for just the missing entries — the CAM keys are the build's own
+                // content hashes, so no per-entry re-hash verification is needed.
+                const hc = SvHashCache.shared();
+                const cachedKeys = new Set(await hc.promiseAllKeys());
+                const missingEntries = new Map();
+                Reflect.ownKeys(cam).forEach((k) => {
+                    if (!cachedKeys.has(k)) {
+                        missingEntries.set(k, cam[k]);
+                    }
                 });
+                await hc.promiseBulkPut(missingEntries);
                 this.bootPerfMark("camStored");
                 this._promiseForLoadCam.callResolveFunc();
             } catch (error) {
@@ -481,6 +489,11 @@
      */
     onDone () {
         this.markPageLoadTime();
+        // Free the boot-time in-memory cache copy (~14MB); post-boot deferred
+        // resource loads go back to per-key IndexedDB reads.
+        if (SvGlobals.has("SvHashCache")) {
+            SvHashCache.shared().releaseWarmMap();
+        }
         this._promiseCompleted.callResolveFunc();
     }
 

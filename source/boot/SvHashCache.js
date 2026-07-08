@@ -24,6 +24,15 @@
         this.newSlot("weakMap", null);
         //this.newSlot("keyValidatorFunc", null);
         this.newSlot("valueValidatorFunc", null);
+
+        /**
+         * @member {Map|null} warmMap - Boot-time in-memory copy of the whole store,
+         * loaded with one getAll() transaction. While present, reads are served from
+         * memory instead of one-IndexedDB-transaction-per-key (which is very slow in
+         * Safari across ~1000 boot resources). Released after boot to free the memory.
+         * @category Storage
+         */
+        this.newSlot("warmMap", null);
     }
 
     /**
@@ -59,6 +68,32 @@
         return this;
     }
 
+    // --- boot warm map ---
+
+    /**
+     * @description Loads the entire store into an in-memory Map with a single
+     * getAll() transaction. Boot-time reads then come from memory. Call
+     * releaseWarmMap() when boot completes.
+     * @returns {Promise<Map>} - The warm map (hash → data).
+     * @category Data Retrieval
+     */
+    async promiseWarmLoad () {
+        if (!this.warmMap()) {
+            this.setWarmMap(await this.idb().promiseAsMap());
+        }
+        return this.warmMap();
+    }
+
+    /**
+     * @description Releases the boot-time in-memory copy of the store.
+     * Subsequent reads go back to per-key IndexedDB gets.
+     * @category Data Management
+     */
+    releaseWarmMap () {
+        this.setWarmMap(null);
+        return this;
+    }
+
     /**
      * @description Sets the path for the SvHashCache.
      * @param {string} aString - The path to set.
@@ -77,6 +112,9 @@
      * @category Query
      */
     promiseHasHash (hash) {
+        if (this.warmMap()) {
+            return Promise.resolve(this.warmMap().has(hash));
+        }
         return this.idb().promiseHasKey(hash);
     }
 
@@ -113,6 +151,9 @@
      */
     promiseHasKey (key) {
         //console.log(this.logPrefix(), "promiseHasKey(" + key + ")");
+        if (this.warmMap()) {
+            return Promise.resolve(this.warmMap().has(key));
+        }
         return this.idb().promiseHasKey(key);
     }
 
@@ -122,6 +163,9 @@
      * @category Query
      */
     promiseAllKeys () {
+        if (this.warmMap()) {
+            return Promise.resolve(Array.from(this.warmMap().keys()));
+        }
         return this.idb().promiseAllKeys();
     }
 
@@ -148,6 +192,16 @@
      */
     async promiseAt (hash, optionalPathForDebugging) {
         const idb = this.idb();
+
+        if (this.warmMap()) {
+            const warmValue = this.warmMap().get(hash);
+            if (warmValue !== undefined) {
+                return warmValue;
+            }
+            // The warm map is a full copy of the store, so a miss is a miss —
+            // no need to fall through to a per-key IndexedDB get.
+            return undefined;
+        }
 
         const weakMapValue = this.weakMapGet(hash);
         if (weakMapValue !== undefined) {
@@ -176,9 +230,14 @@
             returnData = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
         }
 
-        const dataHash = await this.promiseHashKeyForData(returnData);
-        if (dataHash !== hash) {
-            throw new Error("hash key does not match hash of value");
+        // Values are content-addressed and verified when written, so re-hashing
+        // every read buys nothing but CPU (it cost a full SHA-256 of every boot
+        // resource, every launch). Kept as a debugging check only.
+        if (this.isDebugging()) {
+            const dataHash = await this.promiseHashKeyForData(returnData);
+            if (dataHash !== hash) {
+                throw new Error("hash key does not match hash of value");
+            }
         }
 
         return returnData;
@@ -198,15 +257,21 @@
         const hasHash = await this.promiseHasHash(hash);
 
         if (hasHash) {
-            // Check if the existing data actually matches the hash key, if not, remove it
-            const existingData = await this.idb().promiseAt(hash);
-            const existingHash = await this.promiseHashKeyForData(existingData);
-            if (existingHash !== hash) {
-                console.warn(`Corrupted cache entry detected for key ${hash} - removing`);
-                await this.idb().promiseRemoveAt(hash);
-                // Continue to re-add with correct hash
+            // Content-addressed: an existing key means the value is already
+            // correct (verified when written), so no point in writing again.
+            // The old read-back-and-re-hash corruption check cost a get + a
+            // SHA-256 per entry; kept as a debugging check only.
+            if (this.isDebugging()) {
+                const existingData = await this.idb().promiseAt(hash);
+                const existingHash = await this.promiseHashKeyForData(existingData);
+                if (existingHash !== hash) {
+                    console.warn(`Corrupted cache entry detected for key ${hash} - removing`);
+                    await this.promiseRemoveAt(hash);
+                    // Continue to re-add with correct hash
+                } else {
+                    return;
+                }
             } else {
-                // we have this key and it's valid, so no point in writing
                 return;
             }
         }
@@ -233,10 +298,46 @@
         }
 
         const result = await this.idb().promiseAtPut(hash, data);
+        if (this.warmMap()) {
+            this.warmMap().set(hash, data);
+        }
         if (this.weakMap()) {
             this.weakMap().set(hash, data);
         }
         return result;
+    }
+
+    /**
+     * @description Writes many hash/value pairs in a single readwrite transaction,
+     * skipping per-entry existence checks and hash verification. Callers pass
+     * content whose keys were produced by the build's hasher (e.g. the CAM bundle),
+     * so per-entry re-hashing here would just repeat the build's work. Existing
+     * keys are overwritten with identical content (content-addressed), which is
+     * cheaper than checking for them first.
+     * @param {Map<string, string|ArrayBuffer>} entriesMap - hash → data.
+     * @returns {Promise<void>}
+     * @category Data Storage
+     */
+    async promiseBulkPut (entriesMap) {
+        if (entriesMap.size === 0) {
+            return;
+        }
+
+        await this.idb().promiseOpen();
+        const tx = this.idb().newTransaction();
+        tx.begin();
+        entriesMap.forEach((data, hash) => {
+            this.assertValidValue(data);
+            tx.atUpdate(hash, data);
+        });
+        await tx.promiseCommit();
+
+        if (this.warmMap()) {
+            entriesMap.forEach((data, hash) => this.warmMap().set(hash, data));
+        }
+        if (this.weakMap()) {
+            entriesMap.forEach((data, hash) => this.weakMap().set(hash, data));
+        }
     }
 
     /**
@@ -269,6 +370,9 @@
      */
     async promiseClear () {
         const result = await this.idb().promiseClear();
+        if (this.warmMap()) {
+            this.warmMap().clear();
+        }
         if (this.weakMap()) {
             this.weakMap().clear();
         }
@@ -295,6 +399,9 @@
      */
     async promiseRemoveAt (key) {
         const result = await this.idb().promiseRemoveAt(key);
+        if (this.warmMap()) {
+            this.warmMap().delete(key);
+        }
         if (this.weakMap()) {
             this.weakMap().delete(key);
         }
@@ -317,10 +424,14 @@
     }
 
     async promiseRemoveKeysNotInSet (keepKeySet) {
-        const currentKeys = await this.idb().promiseAllKeys();
+        const currentKeys = await this.promiseAllKeys();
         const currentKeysSet = new Set(currentKeys);
         // Use a more compatible approach than Set.difference()
         const keysToRemove = new Set([...currentKeysSet].filter(x => !keepKeySet.has(x)));
+
+        if (keysToRemove.size === 0) {
+            return;
+        }
 
         const tx = this.idb().newTransaction();
         tx.begin(); // Initialize the actual IndexedDB transaction
@@ -328,6 +439,13 @@
             tx.removeAt(key);
         });
         await tx.promiseCommit();
+
+        if (this.warmMap()) {
+            keysToRemove.forEach((key) => this.warmMap().delete(key));
+        }
+        if (this.weakMap()) {
+            keysToRemove.forEach((key) => this.weakMap().delete(key));
+        }
     }
 
     // -- url support ---
@@ -345,16 +463,11 @@
             throw new Error("this API requires a hash");
         }
 
-        const weakMapValue = this.weakMapGet(hash);
-        if (weakMapValue !== undefined) {
-            return weakMapValue;
-        }
-
-        const dataFromDb = await this.idb().promiseAt(hash);
-        if (typeof(dataFromDb) !== "undefined") {
+        const cachedData = await this.promiseAt(hash, url);
+        if (typeof(cachedData) !== "undefined") {
             // if we have the value, return it
-            this.assertValidValue(dataFromDb);
-            return dataFromDb;
+            this.assertValidValue(cachedData);
+            return cachedData;
         }
         console.log(this.logPrefix(), "no hachcache key '" + hash + "' '" + url + "'");
         // otherwise load it from url, store it, and then return it
