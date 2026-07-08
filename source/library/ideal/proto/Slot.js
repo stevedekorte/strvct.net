@@ -901,17 +901,18 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 if (value.isPrototype()) {
                     // assume this gets set after the copy if needed
                 }
-            } else if (slotName === "initProto") {
-                // ok to copy this
-            //} else if (!Type.isDeepJsonType(value)) {
+            } else if (Type.isClass(value)) {
+                // class-valued properties (initProto, finalInitProto, …) copy by
+                // reference. Must be checked BEFORE isDeepJsonType: stringifying
+                // a function returns undefined WITHOUT throwing, so classes pass
+                // that test and then blow up in deepCopyForValue — which made
+                // overrideSlot fail on any slot with a finalInitProto.
             } else {
                 if (Type.isDeepJsonType(value)) {
                     value = Type.deepCopyForValue(value);
                 } else {
                     // we'll use the value - but this may be dangerous!
-                    if (Type.isClass(value)) {
-                        // ok to copy value
-                    } else if (!Type.isUndefined(value)) {
+                    if (!Type.isUndefined(value)) {
                         throw new Error("copyFrom received a value that is not a class or undefined: " + Type.typeDescription(value));
                     }
                 }

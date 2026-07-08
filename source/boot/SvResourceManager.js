@@ -546,16 +546,27 @@
                 chunk.forEach(r => r.setDidEval(true));
             } catch (error) {
                 // Everything up to and including the cursor completed; the next
-                // file is the one that threw. Re-evaluate it individually so the
-                // error carries the real file's sourceURL, then propagate.
+                // file is the one that threw. Log the ORIGINAL error against
+                // that file, then try a per-file re-eval for a precise per-file
+                // sourceURL — but never let the re-eval MASK the original: a
+                // file that failed partway (e.g. after registering its class
+                // globally) fails the re-eval differently (redefine guard).
                 const lastCompleted = SvGlobals.get(cursorKey);
                 jsResources.slice(i, lastCompleted + 1).forEach(r => r.setDidEval(true));
                 const failed = jsResources[lastCompleted + 1];
                 if (failed && !failed.didEval()) {
-                    console.error(this.logPrefix(), "chunk " + chunkName + " failed at " + failed.path() + " — re-evaluating individually for a precise error");
-                    failed.eval(); // expected to rethrow with the file's own sourceURL
+                    console.error(this.logPrefix(), "chunk " + chunkName + " failed at " + failed.path() + ": " + error.message);
+                    try {
+                        failed.eval();
+                    } catch (reEvalError) {
+                        if (reEvalError.message !== error.message) {
+                            console.error(this.logPrefix(), "(re-eval of " + failed.path() + " failed differently — file partially executed; original error above is the real one):", reEvalError.message);
+                        } else {
+                            throw reEvalError; // same failure, now with per-file sourceURL
+                        }
+                    }
                 }
-                throw error; // if the re-eval somehow succeeded, still fail the boot honestly
+                throw error;
             }
             this.updateBar();
         }
