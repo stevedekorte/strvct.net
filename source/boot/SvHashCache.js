@@ -33,6 +33,13 @@
          * @category Storage
          */
         this.newSlot("warmMap", null);
+
+        /**
+         * @member {Promise|null} warmLoadPromise - Memoizes the in-flight warm
+         * load so concurrent callers share one getAll() transaction.
+         * @category Storage
+         */
+        this.newSlot("warmLoadPromise", null);
     }
 
     /**
@@ -77,11 +84,14 @@
      * @returns {Promise<Map>} - The warm map (hash → data).
      * @category Data Retrieval
      */
-    async promiseWarmLoad () {
-        if (!this.warmMap()) {
-            this.setWarmMap(await this.idb().promiseAsMap());
+    promiseWarmLoad () {
+        if (!this.warmLoadPromise()) {
+            this.setWarmLoadPromise(this.idb().promiseAsMap().then((map) => {
+                this.setWarmMap(map);
+                return map;
+            }));
         }
-        return this.warmMap();
+        return this.warmLoadPromise();
     }
 
     /**
@@ -91,6 +101,7 @@
      */
     releaseWarmMap () {
         this.setWarmMap(null);
+        this.setWarmLoadPromise(null);
         return this;
     }
 
@@ -369,6 +380,11 @@
      * @category Data Management
      */
     async promiseClear () {
+        if (this.warmLoadPromise()) {
+            // settle an in-flight warm load first so it can't populate the
+            // warm map with pre-clear content after we wipe the store
+            await this.warmLoadPromise();
+        }
         const result = await this.idb().promiseClear();
         if (this.warmMap()) {
             this.warmMap().clear();

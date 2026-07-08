@@ -105,6 +105,7 @@
      */
     init () {
         this._index = null;
+        this._indexHash = null;
         this._indexResources = null;
         this._idb = null;
         this._evalCount = 0;
@@ -128,6 +129,11 @@
      */
     async run () {
         this.onProgress("", 0);
+        // Start the single-transaction cache warm-load now so it overlaps the
+        // index fetch; promiseLoadCamIfNeeded awaits the same shared promise.
+        if (SvGlobals.has("SvHashCache")) {
+            SvHashCache.shared().promiseWarmLoad();
+        }
         await this.promiseLoadIndex();
         this.bootPerfMark("indexLoaded");
         await this.promiseLoadCamIfNeeded();
@@ -154,7 +160,27 @@
      */
     async promiseLoadIndex () {
         const path = "build/_index.json";
-        const resource = await SvUrlResource.with(path).promiseLoad();
+
+        // The index is ~half an MB and was re-fetched over the network every
+        // boot. The build writes a 64-byte sidecar hash file; fetching that
+        // first lets warm boots serve the index itself from the hash cache.
+        let resource = null;
+        if (SvGlobals.has("SvHashCache")) {
+            try {
+                const hashResource = await SvUrlResource.with(path + ".hash").promiseLoad();
+                const hash = hashResource.dataAsText().trim();
+                if (/^[0-9a-f]{64}$/.test(hash)) {
+                    this._indexHash = hash;
+                    resource = await SvUrlResource.clone().setPath(path).setResourceHash(hash).promiseLoad();
+                }
+            } catch (error) {
+                console.warn(this.logPrefix(), "index hash sidecar unavailable (" + error.message + ") — fetching index directly");
+            }
+        }
+        if (!resource) {
+            resource = await SvUrlResource.with(path).promiseLoad();
+        }
+
         this._index = resource.dataAsJson();
         this._indexResources = this._index.map((entry) => {
             const resource = SvUrlResource.clone().setPath(entry.path).setResourceHash(entry.hash);
@@ -247,6 +273,11 @@
         // Use ALL index entries (not just CAM-eligible) so non-CAM resources
         // (e.g. binary files cached after network fetch) aren't incorrectly evicted
         const validHashes = new Set(this._index.map(e => e.hash));
+        if (this._indexHash) {
+            // the cached copy of the index itself lives under its own hash —
+            // without this it would be evicted every boot
+            validHashes.add(this._indexHash);
+        }
         await hc.promiseRemoveKeysNotInSet(validHashes);
     }
 

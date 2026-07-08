@@ -166,14 +166,19 @@ class SvPlatform extends Object {
     }
 
     static async promiseReadyInBrowser () {
-    // Wrap the load event in a Promise
+        // Boot needs the parsed DOM (document.body for the loading view), not
+        // the window "load" event — waiting for "load" serialized boot behind
+        // every stylesheet, font, and synchronous script on the host page.
+        // readyState is "interactive" once parsing completes, which is when
+        // the (deferred) boot module scripts run — so this usually resolves
+        // immediately.
         await new Promise(resolve => {
-            if (document.readyState === "complete") {
+            if (document.readyState !== "loading") {
                 resolve();
             } else {
-                window.addEventListener("load", () => {
+                document.addEventListener("DOMContentLoaded", () => {
                     resolve();
-                });
+                }, { once: true });
             }
         });
     }
