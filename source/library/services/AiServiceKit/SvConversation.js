@@ -224,6 +224,12 @@
     onMessageComplete (aMsg) {
     //super.onMessageComplete(aMsg);
         this.chatInputNode().setValueIsEditable(true);
+        // The anchored exchange is over once a user-visible response finishes
+        // streaming — release the scroll anchor so normal stick-to-bottom /
+        // reading-position behavior resumes (a no-op when not anchored).
+        if (aMsg.isResponse && aMsg.isResponse() && aMsg.isVisibleToUser && aMsg.isVisibleToUser()) {
+            this.requestAnchorRelease();
+        }
         if (aMsg.error() === null) {
             //const pmsg = aMsg.previousMessage()
             /*
@@ -376,6 +382,19 @@
     requestAnchorOnMessage (aMessage) {
         //console.log("[AnchorScroll] SvConversation.requestAnchorOnMessage() posting requestAnchorScroll, target:", aMessage ? aMessage.svType() : "null");
         this.postNoteNamed("requestAnchorScroll", aMessage);
+    }
+
+    /**
+   * @description Posts a requestAnchorRelease notification asking the view to
+   * disengage anchor mode (without moving the scroll position). Posted when a
+   * user-visible response completes: the anchor exists to hold the reading
+   * position WHILE the response streams; holding it afterwards makes every
+   * later content mutation (e.g. a progressive image's preview frames) keep
+   * re-pinning the viewport to the anchor point, fighting the user's scrolling.
+   * @category Scrolling
+   */
+    requestAnchorRelease () {
+        this.postNoteNamed("requestAnchorRelease");
     }
 
     // --- enable / disable input ---

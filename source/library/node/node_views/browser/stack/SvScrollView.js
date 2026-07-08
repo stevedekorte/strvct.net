@@ -570,6 +570,31 @@
     }
 
     /**
+     * @description Disengages anchor mode without moving the scroll position:
+     * clears the anchor padding and lets normal stick-to-bottom /
+     * reading-position semantics resume. Called when the anchored exchange's
+     * response completes — the anchor exists to hold the reading position
+     * WHILE the response streams; holding it afterwards makes every later
+     * content mutation (e.g. a progressive image's preview frames) keep
+     * re-pinning the viewport to the anchor point, fighting the user's
+     * attempts to scroll down.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
+     */
+    releaseAnchor () {
+        if (!this.isAnchored()) {
+            return this;
+        }
+        // TEMP diagnostic for chat scroll jumps
+        console.log("[ScrollDebug] " + this.svTypeId() + ".releaseAnchor() scrollTop " + this.element().scrollTop);
+        this.setIsAnchored(false);
+        this.clearAnchorPadding();
+        this.updateScrollTracking();
+        this.updateScrollToBottomButton();
+        return this;
+    }
+
+    /**
      * @description Removes the anchor padding from the content view.
      * Called when the user scrolls to the bottom (re-engages auto-scroll)
      * so the extra padding doesn't leave empty space.

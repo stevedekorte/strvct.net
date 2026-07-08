@@ -90,6 +90,24 @@
         }
 
         /**
+     * @member {boolean} isRemotelyInitiated - True when this message was sent by
+     * a remote participant and materialized locally (e.g. a multiplayer host
+     * committing a guest's chat input from the bus). Gates the anchor-scroll in
+     * requestResponse: the "pin my message at the top while the response
+     * streams" UX belongs only to the device that sent the message — another
+     * player's action must not scroll THIS device's view. Live-only view
+     * concern: not stored, not archived, not in any schema.
+     * @category Message Properties
+     */
+        {
+            const slot = this.newSlot("isRemotelyInitiated", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+            slot.setIsInJsonSchema(false);
+            slot.setIsInCloudJson(false);
+        }
+
+        /**
      * @member {Action} requestResponseAction - Action for requesting a response.
      * @category Actions
      */
@@ -321,8 +339,11 @@
         // while the response streams below it. Skip messages the user can't
         // see (e.g. tool-call results) — in developer mode their tiles exist,
         // so anchoring on one moves the scroll position for no visible reason.
+        // Also skip remotely-initiated messages (a multiplayer guest's input
+        // materialized on the host): another player's action must not scroll
+        // this device's view.
         //console.log("[AnchorScroll] SvAiMessage.requestResponse() calling requestAnchorOnMessage");
-        if (this.isVisibleToUser()) {
+        if (this.isVisibleToUser() && !this.isRemotelyInitiated()) {
             this.conversation().requestAnchorOnMessage(this);
         }
 

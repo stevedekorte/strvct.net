@@ -34,6 +34,15 @@
             const slot = this.newSlot("anchorScrollObservation", null);
             slot.setSlotType("SvObservation");
         }
+
+        /**
+         * @member {SvObservation} anchorReleaseObservation - Observation for requestAnchorRelease notifications.
+         * @category Notification
+         */
+        {
+            const slot = this.newSlot("anchorReleaseObservation", null);
+            slot.setSlotType("SvObservation");
+        }
     }
 
     /**
@@ -49,6 +58,11 @@
         if (obs) {
             obs.stopWatching();
             this.setAnchorScrollObservation(null);
+        }
+        const releaseObs = this.anchorReleaseObservation();
+        if (releaseObs) {
+            releaseObs.stopWatching();
+            this.setAnchorReleaseObservation(null);
         }
         return this;
     }
@@ -94,6 +108,11 @@
                 oldObs.stopWatching();
                 this.setAnchorScrollObservation(null);
             }
+            const oldReleaseObs = this.anchorReleaseObservation();
+            if (oldReleaseObs) {
+                oldReleaseObs.stopWatching();
+                this.setAnchorReleaseObservation(null);
+            }
 
             if (aNode) {
                 if (aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
@@ -104,6 +123,7 @@
                 // Watch for anchor scroll requests from this node
                 const obs = this.watchForNoteFrom("requestAnchorScroll", aNode);
                 this.setAnchorScrollObservation(obs);
+                this.setAnchorReleaseObservation(this.watchForNoteFrom("requestAnchorRelease", aNode));
                 //console.log("[AnchorScroll] SvScrollContentView.setNode() watching requestAnchorScroll from:", aNode.svType());
             }
         }
@@ -144,6 +164,22 @@
             }
         }, 0);
 
+        return this;
+    }
+
+    /**
+     * Handles the requestAnchorRelease notification: the anchored exchange is
+     * over (its response finished streaming), so disengage anchor mode and let
+     * normal stick-to-bottom / reading-position semantics resume. Does not move
+     * the scroll position.
+     * @returns {SvScrollContentView} The current instance.
+     * @category Scrolling
+     */
+    requestAnchorRelease (/*aNote*/) {
+        const scrollView = this.scrollView();
+        if (scrollView && scrollView.releaseAnchor) {
+            scrollView.releaseAnchor();
+        }
         return this;
     }
 
