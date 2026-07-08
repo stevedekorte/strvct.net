@@ -13,6 +13,71 @@
  */
 
 
+/** * @class SvBootPerf
+ * @extends Object
+ * @description Records named timing marks across the boot sequence and prints
+ * one consolidated table when the app finishes initializing. Marks are stored
+ * as {name, t} pairs from performance.now() so the recorder works identically
+ * in the browser and headless Node (where performance may be a polyfill with
+ * only now()). Native performance.mark() entries are also emitted when
+ * available so the phases show up in browser profiler timelines.
+ */
+class SvBootPerf extends Object {
+
+    static _marks = [];
+    static _didReport = false;
+
+    static now () {
+        return (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+    }
+
+    static mark (name) {
+        this._marks.push({ name: name, t: this.now() });
+        if (typeof performance !== "undefined" && typeof performance.mark === "function") {
+            try {
+                performance.mark("boot." + name);
+            } catch (e) {
+                // timing must never break boot
+            }
+        }
+    }
+
+    static report () {
+        if (this._didReport || this._marks.length === 0) {
+            return;
+        }
+        this._didReport = true;
+
+        // In the browser performance.now() is already relative to page start,
+        // so the first row's "took" covers HTML parse + synchronous scripts.
+        // Under Node the polyfill returns epoch ms; rebase to the first mark.
+        const base = (this._marks[0].t > 1e9) ? this._marks[0].t : 0;
+
+        let prev = base;
+        const rows = this._marks.map((m) => {
+            const row = {
+                phase: m.name,
+                "took (ms)": Math.round(m.t - prev),
+                "at (ms)": Math.round(m.t - base)
+            };
+            prev = m.t;
+            return row;
+        });
+
+        const total = this._marks[this._marks.length - 1].t - base;
+        console.log("[SvBootPerf] boot completed in " + (Math.round(total / 100) / 10) + "s");
+        if (typeof console.table === "function") {
+            console.table(rows);
+        } else {
+            rows.forEach(r => console.log("[SvBootPerf] " + r.phase + " took " + r["took (ms)"] + "ms (at " + r["at (ms)"] + "ms)"));
+        }
+    }
+
+}
+
+SvGlobals.set("SvBootPerf", SvBootPerf);
+
+
 class SvBootLoader extends Object {
 
     static _files = [
@@ -62,7 +127,9 @@ class SvBootLoader extends Object {
     }
 
     static async asyncBegin () {
+        SvBootPerf.mark("bootModulesLoaded");
         await SvPlatform.promiseReady();
+        SvBootPerf.mark("pageReady");
 
         /*
         if (SvPlatform.isBrowserPlatform()) {
@@ -71,7 +138,9 @@ class SvBootLoader extends Object {
         }
         */
         await SvPlatform.asyncWaitForNextRender(); // let the background color get rendered first?
+        SvBootPerf.mark("firstRender");
         await StrvctFile.asyncLoadAndSequentiallyEvalPaths(this.fullPaths());
+        SvBootPerf.mark("bootFilesEvaled");
         await SvResourceManager.shared().setupAndRun();
     }
 

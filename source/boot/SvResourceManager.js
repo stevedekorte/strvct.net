@@ -129,9 +129,22 @@
     async run () {
         this.onProgress("", 0);
         await this.promiseLoadIndex();
+        this.bootPerfMark("indexLoaded");
         await this.promiseLoadCamIfNeeded();
+        this.bootPerfMark("camReady");
         await this.evalIndexResources();
         return this;
+    }
+
+    /**
+     * @category Performance Tracking
+     * @description Records a boot timing mark if the SvBootPerf recorder is present.
+     * @param {string} name - The mark name.
+     */
+    bootPerfMark (name) {
+        if (SvGlobals.has("SvBootPerf")) {
+            SvGlobals.get("SvBootPerf").mark(name);
+        }
     }
 
     /**
@@ -214,6 +227,7 @@
         // Fetch all cached keys in a single IndexedDB call instead of
         // checking each entry individually (avoids ~1900 separate transactions)
         const cachedKeys = new Set(await hc.promiseAllKeys());
+        this.bootPerfMark("cacheChecked");
 
         for (const entry of camEntries) {
             if (!cachedKeys.has(entry.hash)) {
@@ -246,6 +260,7 @@
                 const path = "build/_cam.json.zip";
                 const resource = await SvUrlResource.clone().setPath(path).promiseLoad();
                 const cam = resource.dataAsJson();
+                this.bootPerfMark("camDownloaded");
 
                 // Store CAM content in memory for synchronous access
                 this._camContent = cam;
@@ -256,6 +271,7 @@
                     const v = cam[k];
                     return SvHashCache.shared().promiseAtPut(k, v);
                 });
+                this.bootPerfMark("camStored");
                 this._promiseForLoadCam.callResolveFunc();
             } catch (error) {
                 console.error("❌ Error in promiseLoadCam:", error);
@@ -380,6 +396,7 @@
 
         const undeferredPromises = this.undeferredResources().map(r => r.promiseLoad());
         await Promise.all(undeferredPromises);
+        this.bootPerfMark("resourcesLoaded");
 
         /*
         // Load CSS resources in parallel
@@ -414,6 +431,7 @@
             //SvBootLoadingView.shared().setSubtitle(n + " / " + SvResourceManager.shared().updateUndeferredResourceCount());
             r.eval();
         });
+        this.bootPerfMark("resourcesEvaled");
         SvBootLoadingView.shared().setSubtitle("running app");
         console.log("\n--- Running App ---"); // _init.js has scheduled a timer to start the app when we return to event loop
         this.onDone();

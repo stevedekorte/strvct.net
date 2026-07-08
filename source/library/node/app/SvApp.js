@@ -359,6 +359,17 @@
      * @description Opens the store and runs the app
      * @category Initialization
      */
+    /**
+     * @description Records a boot timing mark if the SvBootPerf recorder is present.
+     * @param {string} name - The mark name.
+     * @category Performance Tracking
+     */
+    bootPerfMark (name) {
+        if (SvGlobals.has("SvBootPerf")) {
+            SvGlobals.get("SvBootPerf").mark(name);
+        }
+    }
+
     async openStore () {
         await this.store().promiseOpen();
         this.store().rootOrIfAbsentFromClosure(() => {
@@ -379,6 +390,7 @@
         }
         this.setModel(this.store().rootObject());
         this.model().setApp(this);
+        this.bootPerfMark("storeOpened");
         SvBootLoadingView.shared().setSubtitle("data store opened");
     }
 
@@ -402,8 +414,11 @@
         this.pauseReactiveSystem();
 
         await this.setupModel();
+        this.bootPerfMark("modelSetup");
         await this.setupUserInterfaceIfNeeded();
+        this.bootPerfMark("uiSetup");
         await this.appDidInit();
+        this.bootPerfMark("appDidInit");
 
         this.resumeReactiveSystem();
         SvBootLoadingView.shared().setSubtitle("app initialized");
@@ -448,12 +463,15 @@
     async afterAppDidInit () {
         this.model().afterAppDidInit();
         this.userInterface().afterAppDidInit();
+        this.bootPerfMark("afterAppDidInit");
         this.didInitPromise().callResolveFunc(this);
         this.scheduleMethodForNextCycle("appInitCompleted");
     }
 
     appInitCompleted () {
-
+        if (SvGlobals.has("SvBootPerf")) {
+            SvGlobals.get("SvBootPerf").report();
+        }
     }
 
     // --- user interface readiness ---
