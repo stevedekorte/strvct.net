@@ -531,12 +531,34 @@
     }
 
     /**
+     * Whether this source may delete cloud files it considers orphaned
+     * (present in cloud storage but absent from the local manifest).
+     * DEFAULT FALSE: "absent from this device's manifest" is not proof the
+     * file is unreferenced — multiplayer and shared catalogs reference the
+     * same cloud content from other accounts/devices, and a stale local
+     * manifest must never be able to delete shared bytes. Deliberate item
+     * deletions still sync (that path is explicit, not inference); only the
+     * inference-based orphan cleanup is gated. Subclasses that own their
+     * cloud folder exclusively may override to re-enable.
+     * @returns {Boolean}
+     * @category Storage
+     */
+    allowsCloudOrphanDeletes () {
+        return false;
+    }
+
+    /**
      * Deletes orphaned cloud files not in the manifest.
      * Call this periodically or after sync to clean up.
+     * No-op unless allowsCloudOrphanDeletes() returns true.
      * @returns {Promise<Array<String>>} Array of deleted item IDs
      * @category Storage
      */
     async asyncDeleteOrphanedCloudItems () {
+        if (!this.allowsCloudOrphanDeletes()) {
+            this.isDebugging() && console.log("[SvCloudSyncSource] orphan cleanup skipped — cloud orphan deletes disabled");
+            return [];
+        }
         const manifestIds = new Set(this.manifestSubnodeIds());
         const cloudIds = await this.asyncListCloudItemIds();
         const deletedIds = [];
