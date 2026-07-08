@@ -66,10 +66,14 @@ class SvBootPerf extends Object {
 
         const total = this._marks[this._marks.length - 1].t - base;
         console.log("[SvBootPerf] boot completed in " + (Math.round(total / 100) / 10) + "s");
+        // Prefixed per-row lines so a console filter on "SvBootPerf" shows the
+        // whole breakdown (console.table output doesn't match text filters).
+        const nameWidth = Math.max(...rows.map(r => r.phase.length));
+        rows.forEach(r => {
+            console.log("[SvBootPerf] " + r.phase.padEnd(nameWidth) + "  took " + String(r["took (ms)"]).padStart(6) + "ms  (at " + r["at (ms)"] + "ms)");
+        });
         if (typeof console.table === "function") {
             console.table(rows);
-        } else {
-            rows.forEach(r => console.log("[SvBootPerf] " + r.phase + " took " + r["took (ms)"] + "ms (at " + r["at (ms)"] + "ms)"));
         }
     }
 
