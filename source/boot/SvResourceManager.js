@@ -434,15 +434,94 @@
         const jsResources = this.jsResources().slice();
         // Now evaluate JS resources in sequence (order matters for dependencies)
         //await jsResources.promiseSerialTimeoutsForEach(async (r /*, index*/) => { // very slow this way!
-        await jsResources.promiseSerialForEach(async (r /*, index*/) => {
-            //this.updateBar();
-            //SvBootLoadingView.shared().setSubtitle(n + " / " + SvResourceManager.shared().updateUndeferredResourceCount());
-            r.eval();
-        });
+        if (this.shouldChunkJsEval()) {
+            this.evalJsResourcesInChunks(jsResources);
+        } else {
+            await jsResources.promiseSerialForEach(async (r /*, index*/) => {
+                //this.updateBar();
+                //SvBootLoadingView.shared().setSubtitle(n + " / " + SvResourceManager.shared().updateUndeferredResourceCount());
+                r.eval();
+            });
+        }
         this.bootPerfMark("resourcesEvaled");
         SvBootLoadingView.shared().setSubtitle("running app");
         console.log("\n--- Running App ---"); // _init.js has scheduled a timer to start the app when we return to event loop
         this.onDone();
+    }
+
+    /**
+     * @category Resource Evaluation
+     * @description Whether JS resources are evaluated in concatenated chunks
+     * (one eval per ~64 files) instead of one eval per file. Chunking removes
+     * the per-file eval/sourceURL-registration overhead (~840 files at boot)
+     * but costs per-file debugger mapping: breakpoints land in chunk pseudo-
+     * files instead of original paths. For a debugging session, load with
+     * ?perFileEval=1 or set localStorage.SvPerFileEval = "1".
+     * Node keeps per-file eval — it uses indirect global eval with different
+     * scoping semantics, and headless boot speed isn't the bottleneck.
+     * @returns {boolean}
+     */
+    shouldChunkJsEval () {
+        if (SvPlatform.isNodePlatform()) {
+            return false;
+        }
+        try {
+            if (new URLSearchParams(window.location.search).get("perFileEval") === "1") {
+                return false;
+            }
+            if (window.localStorage && localStorage.getItem("SvPerFileEval") === "1") {
+                return false;
+            }
+        } catch (e) {
+            // flag parsing must never break boot
+        }
+        return true;
+    }
+
+    /**
+     * @category Resource Evaluation
+     * @description Evaluates JS resources in load order as concatenated chunks.
+     * Each file is wrapped in an IIFE, which gives it the same isolation it has
+     * under per-file strict direct eval today: declarations don't leak between
+     * files, `this` is undefined, strictness is inherited. A cursor global is
+     * advanced after each file so that if a chunk throws, the failing file is
+     * re-evaluated individually — reproducing the error with its own per-file
+     * sourceURL for a precise report.
+     * @param {Array<SvUrlResource>} jsResources - Resources in dependency order.
+     */
+    evalJsResourcesInChunks (jsResources) {
+        const chunkSize = 64;
+        const cursorKey = "_bootEvalChunkCursor";
+
+        for (let i = 0; i < jsResources.length; i += chunkSize) {
+            const chunk = jsResources.slice(i, i + chunkSize);
+            const parts = chunk.map((r, j) => {
+                return "// ---- " + r.path() + " ----\n" +
+                    ";(function () {\n" + r.dataAsText() + "\n})();\n" +
+                    "SvGlobals.set(\"" + cursorKey + "\", " + (i + j) + ");\n";
+            });
+            const chunkIndex = Math.floor(i / chunkSize) + 1;
+            const chunkName = "_bootEvalChunks/chunk_" + chunkIndex + ".js";
+
+            SvGlobals.set(cursorKey, i - 1);
+            try {
+                evalStringFromSourceUrl(parts.join("\n"), chunkName);
+                chunk.forEach(r => r.setDidEval(true));
+            } catch (error) {
+                // Everything up to and including the cursor completed; the next
+                // file is the one that threw. Re-evaluate it individually so the
+                // error carries the real file's sourceURL, then propagate.
+                const lastCompleted = SvGlobals.get(cursorKey);
+                jsResources.slice(i, lastCompleted + 1).forEach(r => r.setDidEval(true));
+                const failed = jsResources[lastCompleted + 1];
+                if (failed && !failed.didEval()) {
+                    console.error(this.logPrefix(), "chunk " + chunkName + " failed at " + failed.path() + " — re-evaluating individually for a precise error");
+                    failed.eval(); // expected to rethrow with the file's own sourceURL
+                }
+                throw error; // if the re-eval somehow succeeded, still fail the boot honestly
+            }
+            this.updateBar();
+        }
     }
 
     countOfEvaledUndeferredResources () {
