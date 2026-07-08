@@ -383,6 +383,10 @@ class StrvctFile extends Object {
 
         await Promise.all(loadPromises);
 
+        if (SvGlobals.has("SvBootPerf")) {
+            SvGlobals.get("SvBootPerf").mark("bootFilesLoaded");
+        }
+
         // Evaluate files sequentially to maintain order
         files.forEach(file => {
             if (file.canUseInCurrentEnv()) {
