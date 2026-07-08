@@ -529,12 +529,12 @@
             const parts = chunk.map((r, j) => {
                 return "// ---- " + r.path() + " ----\n" +
                     ";(function () {\n" + r.dataAsText() + "\n})();\n" +
-                    "SvGlobals.set(\"" + cursorKey + "\", " + (i + j) + ");\n";
+                    "SvGlobals.update(\"" + cursorKey + "\", " + (i + j) + ");\n"; // update, not set — set() is define-once and throws on reassignment
             });
             const chunkIndex = Math.floor(i / chunkSize) + 1;
             const chunkName = "_bootEvalChunks/chunk_" + chunkIndex + ".js";
 
-            SvGlobals.set(cursorKey, i - 1);
+            SvGlobals.update(cursorKey, i - 1);
             try {
                 evalStringFromSourceUrl(parts.join("\n"), chunkName);
                 chunk.forEach(r => r.setDidEval(true));
