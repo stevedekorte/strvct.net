@@ -422,6 +422,16 @@
             const active = this.store().activeObjects().count();
             const records = this.store().kvMap().count();
             console.log("[SvBootPerf] instantiated at open: " + active + " of " + records + " records (" + (records - active) + " cold)");
+
+            // what's still eager — names the next lazy boundary
+            const typeCounts = new Map();
+            this.store().activeObjects().forEachKV((pid, obj) => {
+                const typeName = (obj && obj.svType) ? obj.svType() : "(unknown)";
+                typeCounts.set(typeName, (typeCounts.get(typeName) || 0) + 1);
+            });
+            Array.from(typeCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 15).forEach(([typeName, count]) => {
+                console.log("[SvBootPerf]   eager: " + String(count).padStart(6) + "  " + typeName);
+            });
         } catch (e) {
             // diagnostic only — never break boot
         }
