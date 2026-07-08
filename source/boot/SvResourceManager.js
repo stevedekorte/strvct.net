@@ -107,6 +107,7 @@
         this._index = null;
         this._indexHash = null;
         this._indexResources = null;
+        this._undeferredResources = null;
         this._idb = null;
         this._evalCount = 0;
         this._doneTime = null;
@@ -192,7 +193,12 @@
     }
 
     undeferredResources () {
-        return this._indexResources.filter(r => !r.canDefer());
+        // memoized — updateBar() calls this once per resource load, and the
+        // filter over the full index allocated a fresh array every call
+        if (!this._undeferredResources) {
+            this._undeferredResources = this._indexResources.filter(r => !r.canDefer());
+        }
+        return this._undeferredResources;
     }
 
     updateUndeferredResourceCount () {
