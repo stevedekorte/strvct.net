@@ -259,6 +259,7 @@
 
         this.userInterface().setApp(this);
         await this.userInterface().assertCanRun(); // e.g. check for other tabs
+        this.bootPerfMark("canRunChecked");
 
         await this.initAndOpenStore(); // will create model
         await this.setup();
@@ -372,6 +373,17 @@
 
     async openStore () {
         await this.store().promiseOpen();
+        this.bootPerfMark("storeRecordsRead");
+        try {
+            const recordsMap = this.store().kvMap().map();
+            let bytes = 0;
+            recordsMap.forEach(v => {
+                bytes += (typeof(v) === "string") ? v.length : (v.byteLength || 0);
+            });
+            console.log("[SvBootPerf] store records: " + recordsMap.size + " (~" + Math.round(bytes / 1024) + "KB)");
+        } catch (e) {
+            // diagnostic only — never break boot
+        }
         this.store().rootOrIfAbsentFromClosure(() => {
             return this.modelClass().clone();
         });
@@ -461,7 +473,11 @@
      * @category Lifecycle
      */
     async afterAppDidInit () {
+        // Time from the appDidInit mark to here is dominated by the resumed
+        // reactive system performing the initial view sync (first real render).
+        this.bootPerfMark("initialUiSync");
         this.model().afterAppDidInit();
+        this.bootPerfMark("modelAfterInit");
         this.userInterface().afterAppDidInit();
         this.bootPerfMark("afterAppDidInit");
         this.didInitPromise().callResolveFunc(this);
