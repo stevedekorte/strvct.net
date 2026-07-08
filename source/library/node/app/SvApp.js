@@ -416,6 +416,15 @@
         this.setModel(this.store().rootObject());
         this.model().setApp(this);
         this.bootPerfMark("storeOpened");
+        try {
+            // instantiated vs stored: the direct measure of lazy-slot adoption.
+            // (records − instantiated) ≈ how many objects stayed cold at boot.
+            const active = this.store().activeObjects().count();
+            const records = this.store().kvMap().count();
+            console.log("[SvBootPerf] instantiated at open: " + active + " of " + records + " records (" + (records - active) + " cold)");
+        } catch (e) {
+            // diagnostic only — never break boot
+        }
         SvBootLoadingView.shared().setSubtitle("data store opened");
     }
 
