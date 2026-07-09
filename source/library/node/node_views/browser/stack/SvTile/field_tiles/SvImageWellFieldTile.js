@@ -102,7 +102,7 @@
 
     /**
      * @description True if the node opts into progressive rendering. This is a
-     * STABLE CAPABILITY check — conformance to SvImageWellProgressiveProtocol is
+     * STABLE CAPABILITY check — conformance to SvProgressiveImageSourceProtocol is
      * declared once (via addProtocol) and never changes for a node's lifetime —
      * NOT a check of mutable runtime state. Gating on live state (e.g. "aspect
      * != null || working") re-decides the code path per sync: a well could flip
@@ -116,7 +116,7 @@
      */
     nodeIsProgressive () {
         const field = this.node();
-        return !!(field && field.conformsToProtocol && field.conformsToProtocol(SvImageWellProgressiveProtocol));
+        return !!(field && field.conformsToProtocol && field.conformsToProtocol(SvProgressiveImageSourceProtocol));
     }
 
     /**
@@ -160,7 +160,7 @@
      * !valueIsVisible; for a progressive well we want the reserved box shown
      * throughout so it never renders a blank tile.
      *
-     * On the FAILED terminal (imageWellHasFailed — a cloud-durable flag, unlike
+     * On the FAILED terminal (progressiveImageHasFailed — a cloud-durable flag, unlike
      * the host-only `error` slot, so guests see it too) the well is torn down:
      * shimmer stopped, preview/final layers cleared and the reserved box
      * collapsed, so no permanent blank spacer remains and the field's key/error
@@ -172,7 +172,7 @@
         const field = this.node();
         const well = this.imageWellView();
 
-        if (field.imageWellHasFailed && field.imageWellHasFailed()) {
+        if (field.progressiveImageHasFailed && field.progressiveImageHasFailed()) {
             this.valueViewContainer().setDisplay("");
             if (well.applyFailedState) {
                 well.applyFailedState();
@@ -185,10 +185,10 @@
         well.setIsDisplayHidden(false);
 
         if (well.setAspectRatioString) {
-            well.setAspectRatioString(field.imageWellAspectRatio());
+            well.setAspectRatioString(field.progressiveImageAspectRatio());
         }
         if (well.setIsWorking) {
-            well.setIsWorking(field.imageWellIsWorking ? field.imageWellIsWorking() : false);
+            well.setIsWorking(field.progressiveImageIsWorking ? field.progressiveImageIsWorking() : false);
         }
         return this;
     }
@@ -240,7 +240,7 @@
         // Failed terminal: the (sync) syncProgressiveFromNode already tore the
         // well down. Don't resolve/re-apply preview or final images — that would
         // rebuild the very layers applyFailedState() just cleared.
-        if (field.imageWellHasFailed && field.imageWellHasFailed()) {
+        if (field.progressiveImageHasFailed && field.progressiveImageHasFailed()) {
             return this;
         }
 
@@ -287,14 +287,14 @@
 
     /**
      * @description Resolves the PREVIEW (blurred back layer) data URL from the
-     * node's imageWellPreviewValue().
+     * node's progressiveImagePreviewValue().
      * @returns {Promise<String|null>} The data URL, or null.
      * @category Synchronization
      */
     async asyncResolvePreviewUrl () {
         try {
             const field = this.node();
-            const previewValue = field.imageWellPreviewValue ? field.imageWellPreviewValue() : null;
+            const previewValue = field.progressiveImagePreviewValue ? field.progressiveImagePreviewValue() : null;
             if (previewValue && previewValue.asyncDataUrl) {
                 return await previewValue.asyncDataUrl();
             }

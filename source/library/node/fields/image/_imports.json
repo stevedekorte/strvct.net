@@ -1,4 +1,5 @@
 [
+    "SvProgressiveImageSourceProtocol.js",
     "SvImageNode.js",
     "SvImagesNode.js"
 ]

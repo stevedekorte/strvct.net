@@ -138,7 +138,7 @@
         super.setValue(value);
     }
 
-    // A plain image-well field does NOT conform to SvImageWellProgressiveProtocol
+    // A plain image-well field does NOT conform to SvProgressiveImageSourceProtocol
     // and therefore takes the original single-image path in SvImageWellFieldTile.
     // Nodes that want progressive rendering (reserved box, shimmer, blurred
     // preview, crossfade) opt in by conforming to the protocol and implementing

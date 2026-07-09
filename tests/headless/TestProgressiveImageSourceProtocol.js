@@ -3,7 +3,7 @@
 "use strict";
 
 /**
- * Headless test: SvImageWellProgressiveProtocol capability gate.
+ * Headless test: SvProgressiveImageSourceProtocol capability gate.
  *
  * The progressive image-well render path is gated on stable protocol
  * conformance (declared once via addProtocol) instead of mutable runtime
@@ -58,13 +58,13 @@ async function boot () {
 function testProtocolClass () {
     console.log("\nProtocol class");
 
-    const protocol = SvGlobals.get("SvImageWellProgressiveProtocol");
+    const protocol = SvGlobals.get("SvProgressiveImageSourceProtocol");
     const Protocol = SvGlobals.get("Protocol");
-    check(!!protocol, "SvImageWellProgressiveProtocol loaded at boot");
+    check(!!protocol, "SvProgressiveImageSourceProtocol loaded at boot");
     check(protocol.isKindOf(Protocol), "is a Protocol subclass");
 
     const proto = protocol.prototype;
-    ["imageWellAspectRatio", "imageWellPreviewValue", "imageWellIsWorking", "imageWellHasFailed"].forEach((name) => {
+    ["progressiveImageAspectRatio", "progressiveImagePreviewValue", "progressiveImageIsWorking", "progressiveImageHasFailed"].forEach((name) => {
         check(typeof (proto[name]) === "function", "declares " + name);
     });
     check(typeof (proto.imageWellBlurRadiusPx) !== "function", "does NOT declare imageWellBlurRadiusPx (deliberately dropped)");
@@ -74,28 +74,28 @@ function testAdopter () {
     console.log("\nAdopter conformance");
 
     const SvNode = SvGlobals.get("SvNode");
-    const protocol = SvGlobals.get("SvImageWellProgressiveProtocol");
+    const protocol = SvGlobals.get("SvProgressiveImageSourceProtocol");
 
     let addProtocolError = null;
     try {
         (class TestProgressiveAdopter extends SvNode {
             initPrototype () {
-                this.addProtocol(SvImageWellProgressiveProtocol);
+                this.addProtocol(SvProgressiveImageSourceProtocol);
             }
 
-            imageWellAspectRatio () {
+            progressiveImageAspectRatio () {
                 return "5:3";
             }
 
-            imageWellPreviewValue () {
+            progressiveImagePreviewValue () {
                 return null;
             }
 
-            imageWellIsWorking () {
+            progressiveImageIsWorking () {
                 return false;
             }
 
-            imageWellHasFailed () {
+            progressiveImageHasFailed () {
                 return false;
             }
         }).initThisClass();
@@ -119,7 +119,7 @@ function testAdopter () {
 function testNoCrossPollution () {
     console.log("\nNo cross-pollution (protocols sets are per-class, not the shared slot default)");
 
-    const protocol = SvGlobals.get("SvImageWellProgressiveProtocol");
+    const protocol = SvGlobals.get("SvProgressiveImageSourceProtocol");
     const audioProtocol = SvGlobals.get("SvAudioClipDelegateProtocol");
     const audioQueueProto = SvGlobals.get("SvAudioQueue").prototype;
 
@@ -133,11 +133,11 @@ function testNoCrossPollution () {
 function testNonAdopters () {
     console.log("\nNon-adopters");
 
-    const protocol = SvGlobals.get("SvImageWellProgressiveProtocol");
+    const protocol = SvGlobals.get("SvProgressiveImageSourceProtocol");
 
     const field = SvGlobals.get("SvImageWellField").clone();
     check(field.conformsToProtocol(protocol) === false, "plain SvImageWellField conformsToProtocol → false (stays on legacy path)");
-    check(typeof (field.imageWellAspectRatio) !== "function", "SvImageWellField no longer carries dead default protocol methods");
+    check(typeof (field.progressiveImageAspectRatio) !== "function", "SvImageWellField no longer carries dead default protocol methods");
 
     const node = SvGlobals.get("SvNode").clone();
     check(node.conformsToProtocol(protocol) === false, "plain SvNode conformsToProtocol → false");
@@ -151,7 +151,7 @@ function testNonConformingAdopter () {
         (class TestBrokenAdopter extends SvGlobals.get("SvNode") {
             initPrototype () {
                 // deliberately missing all four protocol methods
-                this.addProtocol(SvImageWellProgressiveProtocol);
+                this.addProtocol(SvProgressiveImageSourceProtocol);
             }
         }).initThisClass();
     } catch (e) {
@@ -164,7 +164,7 @@ function testNonConformingAdopter () {
         console.log("  \x1b[33mi\x1b[0m addProtocol ENFORCES conformance (threw: " + addProtocolError.message + ")");
     } else {
         const broken = SvGlobals.get("TestBrokenAdopter").clone();
-        const conforms = broken.conformsToProtocol(SvGlobals.get("SvImageWellProgressiveProtocol"));
+        const conforms = broken.conformsToProtocol(SvGlobals.get("SvProgressiveImageSourceProtocol"));
         console.log("  \x1b[33mi\x1b[0m addProtocol is DECLARATIVE (no method check); conformsToProtocol → " + conforms);
     }
     passed++; // informational — always counts as a pass

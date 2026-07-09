@@ -16,7 +16,7 @@
  * In addition to the plain single-image behavior (setImageDataUrl / child
  * SvImageView), this view can render an aspect-ratio-reserved box that reveals
  * content progressively. The field tile engages this mode only when the node
- * conforms to SvImageWellProgressiveProtocol (a stable, opt-in capability);
+ * conforms to SvProgressiveImageSourceProtocol (a stable, opt-in capability);
  * otherwise the well behaves byte-for-byte as before. In progressive mode the
  * box contains up to two absolutely-positioned, stacked layers plus optional
  * overlays:
