@@ -332,12 +332,15 @@
                     }
                 }
             } else {
-                const errorMessage = "WARNING: " + this.svType() + ".setSlotsJson() did not find slot: " + k + " at path: " + jsonPathComponents.concat(k).join("/");
-                console.warn(errorMessage);
-                // also add the warning to the error log
-
-                throw new Error(errorMessage);
-
+                // Unknown key: WARN AND SKIP, never throw. Persisted JSON
+                // outlives the schema — a slot that was later removed or
+                // renamed (e.g. roundsRemaining after the Game Clock rework)
+                // must not retroactively brick every stored doc that carries
+                // the old key (this silently hid a whole catalog campaign),
+                // nor break cross-version multiplayer (new client reading an
+                // older host's JSON). Type errors on EXISTING slots still
+                // throw above — corrupt values stay loud; obsolete keys drop.
+                console.warn("WARNING: " + this.svType() + ".setSlotsJson() did not find slot: " + k + " at path: " + jsonPathComponents.concat(k).join("/") + " — skipping obsolete key");
             }
         });
         return this;
