@@ -90,13 +90,85 @@
     }
 
     /**
-     * @description visibilitychange → suspend when the tab is hidden.
+     * @description visibilitychange → suspend when the tab is hidden; when it
+     * becomes visible again, announce onAppDidBecomeActive (environment-
+     * agnostic name — models may observe it, e.g. to clear attention state,
+     * without knowing about tabs or documents).
      * @category Lifecycle
      */
     onDocumentVisibilityChange (/*event*/) {
-        if (typeof document !== "undefined" && document.visibilityState === "hidden") {
-            this.app().onAppWillSuspend();
+        if (typeof document === "undefined") {
+            return;
         }
+        if (document.visibilityState === "hidden") {
+            this.app().onAppWillSuspend();
+        } else if (document.visibilityState === "visible") {
+            SvNotificationCenter.shared().newNote().setSender(this).setName("onAppDidBecomeActive").post();
+        }
+    }
+
+    // --- user attention / notifications ---
+
+    /**
+     * @description Renders the attention count on the OS badge, favicon, and
+     * tab title (see SvAppBadge).
+     * @param {number} n - 0 clears.
+     * @category User Attention
+     */
+    setAttentionCount (n) {
+        SvAppBadge.shared().setCount(n);
+        return this;
+    }
+
+    /**
+     * @description Shows a desktop notification via the Notification API
+     * (permission-gated by SvWebBrowserNotifications, which queues until
+     * granted). Suppressed while the document is visible unless
+     * info.onlyWhenHidden === false — visibility is UI state, so the
+     * decision lives here, never in the model.
+     * @param {Object} info - { title, body, tag, onlyWhenHidden }
+     * @category User Attention
+     */
+    postUserNotification (info) {
+        const onlyWhenHidden = info.onlyWhenHidden !== false;
+        if (onlyWhenHidden && typeof document !== "undefined" && document.visibilityState === "visible") {
+            return this;
+        }
+        const note = SvWebBrowserNotifications.shared().newNote();
+        note.setTitle(info.title || this.app().name());
+        if (info.body) {
+            note.setBody(info.body);
+        }
+        note.setIcon("/apple-touch-icon.png");
+        note.onClick = () => {
+            try {
+                window.focus();
+            } catch (e) {
+                // focus is best-effort (browsers may deny it outside a gesture)
+            }
+        };
+        note.tryToPost();
+        return this;
+    }
+
+    /**
+     * @description Current Notification API permission state.
+     * @returns {string} "granted" | "denied" | "default" | "unsupported"
+     * @category User Attention
+     */
+    userNotificationsPermission () {
+        return (typeof Notification !== "undefined") ? Notification.permission : "unsupported";
+    }
+
+    /**
+     * @description Handles the onRequestUserNotificationsPermission note —
+     * posted (synchronously) from a model action so the user-gesture context
+     * reaches the browser permission prompt.
+     * @category User Attention
+     */
+    onRequestUserNotificationsPermission (/*aNote*/) {
+        SvWebBrowserNotifications.shared().requestPermission();
+        return this;
     }
 
     /**

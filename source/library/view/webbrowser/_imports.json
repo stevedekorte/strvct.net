@@ -5,6 +5,7 @@
     "SvWebBrowserWindow.js",
     "notifications/_imports.json",
     "SvWebDocument.js",
+    "SvAppBadge.js",
     "SvStyleSheet.js",
     "SvThrashDetector.js"
 ]

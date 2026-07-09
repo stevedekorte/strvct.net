@@ -31,6 +31,10 @@
         // layer (this object) presents it; the headless UI logs it, keeping
         // models headless-testable.
         this.watchForNote("onRequestUserAlert");
+        // Permission requests are note-posted (not called) so models never
+        // reference the UI; notification dispatch is synchronous, so a
+        // user-gesture context survives to the browser permission prompt.
+        this.watchForNote("onRequestUserNotificationsPermission");
         return this;
     }
 
@@ -61,6 +65,53 @@
         if (info.title) { parts.push(info.title); }
         if (info.message) { parts.push(info.message); }
         console.log("[UserAlert:" + level + "] " + parts.join(" — "));
+        return this;
+    }
+
+    // --- user attention / notifications (platform capabilities) ---
+    // Base implementations are headless-safe no-ops/logs, same pattern as
+    // presentUserAlert: models announce facts; only UI subclasses that have
+    // a real surface render them.
+
+    /**
+     * @description Renders "n things need the user's attention" on whatever
+     * badge surfaces the platform offers (OS app badge, favicon, tab title).
+     * Base: no-op.
+     * @param {number} n - 0 clears.
+     * @category User Attention
+     */
+    setAttentionCount (/*n*/) {
+        return this;
+    }
+
+    /**
+     * @description Shows a system notification if the platform supports it
+     * and the user has granted permission. Base: logs.
+     * @param {Object} info - { title, body, tag, onlyWhenHidden } —
+     * onlyWhenHidden defaults true (don't toast a tab the user is watching).
+     * @category User Attention
+     */
+    postUserNotification (info) {
+        console.log("[UserNotification] " + [info.title, info.body].filter(s => s).join(" — "));
+        return this;
+    }
+
+    /**
+     * @description Current notification permission: "granted" | "denied" |
+     * "default" | "unsupported".
+     * @returns {string}
+     * @category User Attention
+     */
+    userNotificationsPermission () {
+        return "unsupported";
+    }
+
+    /**
+     * @description Handles the onRequestUserNotificationsPermission note.
+     * Base: nothing to request.
+     * @category User Attention
+     */
+    onRequestUserNotificationsPermission (/*aNote*/) {
         return this;
     }
 
