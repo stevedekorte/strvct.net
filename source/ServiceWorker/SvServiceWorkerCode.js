@@ -1,47 +1,33 @@
+/**
+ * Service worker script (runs in the worker global scope, not the page).
+ *
+ * Deliberately minimal: NO fetch handler. A service worker with no fetch
+ * listener never intercepts requests — it cannot interfere with resource
+ * loading, wasm, web workers, or streaming responses by construction (and
+ * browsers skip service-worker startup entirely for fetches when no listener
+ * is registered, so there is no per-request cost). This registration exists
+ * as infrastructure for push notifications; if a caching/loader role is ever
+ * added, it must be a deliberate, narrowly-scoped fetch handler — the
+ * previous version's catch-all fetch handler answered any failed request
+ * (wasm, streamed AI responses, images) with a cached index.html.
+ *
+ * Push handlers (self.addEventListener("push" | "notificationclick")) get
+ * added here when the notifications feature lands.
+ */
 
-/*
-self.addEventListener("install", function(event) {
-    console.log("Installed sw.js", event);
-});
+"use strict";
 
-self.addEventListener("activate", function(event) {
-    console.log("Activated sw.js", event);
-});
-*/
+// Legacy cleanup: the earlier version of this file cached index.html under
+// this name; delete it so no stale copy lingers.
+const LEGACY_CACHE_NAMES = ["my-service-worker-cache-name"];
 
-
-// service-worker.js
-
-// Path is relative to the origin.
-const OFFLINE_PAGE_URL = "index.html";
-// We"ll add more URIs to this array later.
-const ASSETS_TO_BE_CACHED = [OFFLINE_PAGE_URL];
-
-self.addEventListener("install", event => {
+self.addEventListener("install", (event) => {
     event.waitUntil(
-        // The Cache API is domain specific and allows an app to create & name
-        // various caches it"ll use. This allows for better data organization.
-        // Under each named cache, we"ll add our key-value pairs.
-        caches.open("my-service-worker-cache-name").then((cache) => {
-            // addAll() hits (GET request) all the URIs in the array and caches
-            // the results, with the URIs as the keys.
-            cache.addAll(ASSETS_TO_BE_CACHED)
-                .then(() => console.log("Assets added to cache."))
-                .catch(err => console.log("Error while fetching assets", err));
-        })
+        Promise.all(LEGACY_CACHE_NAMES.map(name => caches.delete(name)))
+            .then(() => self.skipWaiting())
     );
 });
 
-self.addEventListener("fetch", (e) => {
-    // All requests made to the server will pass through here.
-    const response = fetch(e.request)
-        .then((response) => response)
-        // If one fails, return the offline page from the cache.
-        // caches.match doesn"t require the name of the specific
-        // cache in which the key is located. It just traverses all created
-        // by the current domain and fetches the first one.
-        .catch(() => caches.match(OFFLINE_PAGE_URL));
-
-    e.respondWith(response);
+self.addEventListener("activate", (/*event*/) => {
+    console.log("[SvServiceWorker] activated");
 });
-
