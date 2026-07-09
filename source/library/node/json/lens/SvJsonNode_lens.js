@@ -172,7 +172,7 @@
         const childDepth = Math.max(0, depthRemaining - 1);
 
         const dict = {};
-        this.lensChildEntries().forEach(([key, value]) => {
+        this.lensChildEntriesForLod(lod).forEach(([key, value]) => {
             const result = this.lensSerializeChild(value, lens, childLod, childDepth, pathComponents.concat(key), visitedSet);
             if (result !== undefined) {
                 dict[key] = result;
@@ -195,6 +195,30 @@
         return this.lensChildEntries()
             .map(([, value]) => value)
             .filter(v => v && typeof v === "object" && v.isKindOf && v.isKindOf(SvNode));
+    }
+
+    /**
+     * @description Child entries filtered by LOD: at "summary", a class that
+     * declares a curated emit set (static summarySlotNames()) emits only those
+     * entries — the fields a summary reader actually needs (the AI's
+     * verify-by-result read-back, ambient realm summaries). Full and
+     * depth-bounded-full always emit everything; a class with no declared set
+     * keeps the historical all-slots summary.
+     * @param {String} lod - The LOD being emitted ("summary" filters).
+     * @returns {Array} [key, value] pairs.
+     * @category Lens
+     */
+    lensChildEntriesForLod (lod) {
+        const entries = this.lensChildEntries();
+        if (lod !== "summary") {
+            return entries;
+        }
+        const names = this.thisClass().summarySlotNames();
+        if (!names) {
+            return entries;
+        }
+        const nameSet = new Set(names);
+        return entries.filter(([key]) => nameSet.has(key));
     }
 
     /**

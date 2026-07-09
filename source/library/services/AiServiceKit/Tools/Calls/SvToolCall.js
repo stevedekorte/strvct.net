@@ -926,6 +926,49 @@ Example Tool call format:
         return this;
     }
 
+    /**
+     * @description The standard way for a tool method to report a server-side
+     * invariant violation (the value validated structurally but is illegal —
+     * out of range, references a missing entity, breaks a game rule). Fixes
+     * the message shape so every invariant error tells the model the same
+     * four things: which field, what it sent, what would be legal, and what
+     * to do about it. Example:
+     *   toolCall.invariantError({ field: "targetNumber", given: 500,
+     *       legal: "1..30", hint: "use the DC from the check being made" });
+     * → "invalid 'targetNumber': got 500; legal: 1..30. Use the DC from the
+     *    check being made."
+     * @param {Object} spec - { field, given, legal, hint } (all optional but
+     *   at least one of field/legal/hint should be provided).
+     * @returns {SvToolCall}
+     * @category Tool Errors
+     */
+    invariantError (spec = {}) {
+        return this.setCallError(new Error(this.invariantErrorMessage(spec)));
+    }
+
+    /**
+     * @description Composes the standard invariant-violation message (pure —
+     * see invariantError for the shape rationale and an example).
+     * @param {Object} spec - { field, given, legal, hint }.
+     * @returns {String}
+     * @category Tool Errors
+     */
+    invariantErrorMessage ({ field, given, legal, hint } = {}) {
+        const parts = [];
+        parts.push(field ? ("invalid '" + field + "'") : "invariant violation");
+        if (given !== undefined) {
+            parts.push("got " + JSON.stringify(given));
+        }
+        if (legal !== undefined) {
+            parts.push("legal: " + legal);
+        }
+        let msg = parts.join("; ") + ".";
+        if (hint) {
+            msg += " " + hint.charAt(0).toUpperCase() + hint.slice(1) + (hint.endsWith(".") ? "" : ".");
+        }
+        return msg;
+    }
+
     // --- Extract callId from invalid JSON ---
 
     extractCallIdFromInvalidJson (invalidJsonString) {

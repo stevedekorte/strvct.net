@@ -1,0 +1,39 @@
+{
+  "$id": "SvToolCall",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "SvToolCall": {
+      "additionalProperties": false,
+      "description": "Generic format for Assistant API call to make an '\" + this.svType() + \"' tool call.\n    See schema for the particular tool call (whose name is in the toolName property) for the expected \"parameters\" property schema.",
+      "properties": {
+        "callId": {
+          "default": null,
+          "description": "A unique identifier for the call. The response will be tagged with this id.",
+          "pattern": "^call_\\d+$",
+          "type": "string"
+        },
+        "parameters": {
+          "default": {
+          },
+          "description": "JSON object of key/value parameters for the tool call.",
+          "type": "object"
+        },
+        "toolName": {
+          "default": null,
+          "description": "The name of the tool to call.",
+          "type": "string"
+        },
+        "toolNote": {
+          "default": "",
+          "description": "A note about the tool call which might contain info related to errors or retries. Purely for debugging purposes.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "toolName",
+        "callId"
+      ],
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "$id": "SvToolResult",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "SvToolResult": {
+      "additionalProperties": false,
+      "description": "Format for client to respond with a result a tool call. \nSee schema for the particular tool call (whose name is in the toolName property) for the expected \"result\" property schema.",
+      "properties": {
+        "callId": {
+          "default": "",
+          "description": "A unique identifier included in the tool call to which this is a response.",
+          "type": "string"
+        },
+        "error": {
+          "default": null,
+          "description": "An error message if the call failed.",
+          "type": "string"
+        },
+        "reminder": {
+          "default": null,
+          "description": "An advisory action reminder attached to this result (not an error or warning about the call itself) — act on it now if it applies, otherwise continue normally.",
+          "type": "string"
+        },
+        "result": {
+          "default": null,
+          "description": "A Json object containing the response to the tool call.",
+          "type": "object"
+        },
+        "status": {
+          "default": null,
+          "description": "A string describing the status of the call.",
+          "enum": [
+            "success",
+            "failure",
+            null
+          ],
+          "type": "string"
+        },
+        "toolName": {
+          "default": "",
+          "description": "The name of the tool that made the call.",
+          "type": "string"
+        },
+        "warning": {
+          "default": null,
+          "description": "A warning about the call that did not cause it to fail — e.g. a duplicate copy of the call was found inside a <think> block and ignored. Correct the described issue in future calls.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "toolName",
+        "callId",
+        "status"
+      ],
+      "type": "object"
+    }
+  }
+}

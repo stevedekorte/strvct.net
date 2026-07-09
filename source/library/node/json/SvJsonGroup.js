@@ -45,6 +45,23 @@
         this.setNodeCanEditTitle(false);
     }
 
+    // --- summary emission (lens) ---
+
+    /**
+     * @description The curated set of slot names a lens "summary" emits for
+     * this class, or null to emit every JSON-schema slot (the historical
+     * behavior). Override on large classes so a summary carries exactly the
+     * at-a-glance fields readers need — the AI's verify-by-result read-back
+     * after a mutation, ambient realm summaries — without a full re-query.
+     * The living recast of alwaysLoadedSlotNames (below): "the slots that
+     * matter when you aren't loading everything."
+     * @returns {Array<String>|null}
+     * @category Lens
+     */
+    static summarySlotNames () {
+        return null; // null → all schema slots; subclasses override to curate
+    }
+
     // --- lazy loading support ---
 
     static alwaysLoadedSlotNames () { // override on large json objects like Character, Location, etc.
