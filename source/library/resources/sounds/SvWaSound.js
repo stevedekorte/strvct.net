@@ -94,6 +94,21 @@
          * @type {Boolean}
          */
         {
+            /**
+             * @member {Boolean} skipIfNotReady - When true and this sound is
+             * queued on an SvAudioQueue, the queue SKIPS it (with a warning)
+             * if its data hasn't arrived by the time its turn comes, instead
+             * of holding the queue while a fetch completes. For sounds whose
+             * timing matters more than their delivery — e.g. narration sound
+             * effects fetched from a remote library: a late effect played out
+             * of position (or a paused narration) is worse than no effect.
+             * @category Playback
+             */
+            const slot = this.newSlot("skipIfNotReady", false);
+            slot.setSlotType("Boolean");
+        }
+
+        {
             const slot = this.newSlot("shouldPlayOnLoad", false);
             slot.setSlotType("Boolean");
         }
@@ -384,6 +399,18 @@
      */
     hasData () {
         return this.data() !== null;
+    }
+
+    /**
+     * @description Whether the sound can start playing without waiting on a
+     * fetch: its buffer is decoded, or its raw data has arrived (decode of an
+     * in-memory buffer is milliseconds — the wait worth skipping is a pending
+     * network fetch). Used with skipIfNotReady by SvAudioQueue.
+     * @returns {Boolean}
+     * @category Playback
+     */
+    isReadyToPlayNow () {
+        return this.hasDecoded() || this.hasData();
     }
 
     /**

@@ -202,6 +202,15 @@
    */
     async playSound (sound) {
     //this.pause();
+        // A skip-if-not-ready sound whose data hasn't arrived by its turn is
+        // SKIPPED, not waited for — sound.play() awaits its fetch+decode
+        // while currentSound holds the queue, so a slow remote fetch would
+        // otherwise pause everything queued behind it (e.g. narration).
+        if (sound.skipIfNotReady && sound.skipIfNotReady() && !sound.isReadyToPlayNow()) {
+            console.warn(this.logPrefix(), "skipping sound not ready at its turn:", sound.description());
+            this.processQueue();
+            return this;
+        }
         if (!this.isMuted()) {
             //sound.setData(audioBlob);
             sound.addDelegate(this);
