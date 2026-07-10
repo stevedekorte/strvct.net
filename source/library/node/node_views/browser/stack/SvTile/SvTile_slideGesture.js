@@ -106,13 +106,15 @@
      * @param {Object} slideGesture - The slide gesture object.
      * @category Gesture
      */
-    onSlideComplete (slideGesture) {
+    async onSlideComplete (slideGesture) {
         const d = slideGesture.distance();
         const isReadyToDelete  = d >= this._slideDeleteOffset;
 
         this.element().style.backgroundColor = "transparent";
 
-        if (isReadyToDelete) {
+        // Confirm (if the node declares it) BEFORE the slide-out animation,
+        // so a Cancel can snap the tile back instead of resurrecting it.
+        if (isReadyToDelete && await this.asyncConfirmDeleteIfNeeded()) {
             this.finishSlideAndDelete();
         } else {
             this.slideBack();
@@ -141,7 +143,7 @@
             this.setTouchRight(this.clientWidth());
             this.addWeakTimeout(() => {
                 this.cleanupSlide();
-                this.delete();
+                this.justDelete(); // confirmation already happened in onSlideComplete
             }, dt * 1000);
         }, 0);
     }

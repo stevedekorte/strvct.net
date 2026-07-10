@@ -727,11 +727,51 @@
     }
 
     /**
-     * @description Deletes the tile.
+     * @description User-affordance delete entry (close button, shift+backspace).
+     * Consults the node's user-delete confirmation declaration first. The
+     * slide gesture confirms earlier — before its slide-out animation — and
+     * calls justDelete() directly.
      */
     delete () {
         if (this.isDeleting()) {
             return; // already in progress (e.g., slide gesture + tap race)
+        }
+        this.asyncDeleteWithConfirmation();
+    }
+
+    async asyncDeleteWithConfirmation () {
+        const confirmed = await this.asyncConfirmDeleteIfNeeded();
+        if (confirmed) {
+            this.justDelete();
+        }
+    }
+
+    /**
+     * @description Shows the delete-confirmation panel if the node declares
+     * one (shouldConfirmUserDelete — its own declaration or its parent's
+     * shouldConfirmUserDeleteOfSubnodes). Resolves true to proceed.
+     * @returns {Promise<boolean>}
+     */
+    async asyncConfirmDeleteIfNeeded () {
+        const node = this.node();
+        if (!node || !node.shouldConfirmUserDelete() || !SvPlatform.isBrowserPlatform()) {
+            return true;
+        }
+        const panel = SvPanelView.clone().setTitle(null).setSubtitle(node.userDeleteConfirmSubtitle()).setOptionDicts([
+            { label: "Cancel", value: false },
+            { label: "Delete", value: true }
+        ]);
+        const result = await panel.asyncOpen();
+        return !!(result && result.value === true); // a dismissed panel counts as Cancel
+    }
+
+    /**
+     * @description Deletes the tile without confirmation. Internal — user
+     * affordances go through delete() / the slide gesture's confirm step.
+     */
+    justDelete () {
+        if (this.isDeleting()) {
+            return;
         }
         if (this.canDelete()) {
             this.setIsDeleting(true);

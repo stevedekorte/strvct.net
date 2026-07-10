@@ -1989,6 +1989,42 @@
         return !!rawCapability && this.effectiveUserEditability();
     }
 
+    /**
+     * @description Whether a USER-initiated delete affordance (tile swipe,
+     * close button, shift+backspace) must be confirmed via a panel before
+     * deleting this node. A node may override to declare it directly; by
+     * default it asks its parent, so a collection can request confirmation
+     * for all of its subnodes via shouldConfirmUserDeleteOfSubnodes().
+     * Programmatic delete() never consults this.
+     * @returns {Boolean}
+     * @category Editability
+     */
+    shouldConfirmUserDelete () {
+        const parent = this.parentNode();
+        return parent ? parent.shouldConfirmUserDeleteOfSubnodes() : false;
+    }
+
+    /**
+     * @description Collection-side declaration: whether user-initiated
+     * deletes of this node's subnodes require confirmation.
+     * @returns {Boolean}
+     * @category Editability
+     */
+    shouldConfirmUserDeleteOfSubnodes () {
+        return false;
+    }
+
+    /**
+     * @description The subtitle shown in the delete-confirmation panel.
+     * @returns {String}
+     * @category Editability
+     */
+    userDeleteConfirmSubtitle () {
+        const title = this.title();
+        const name = (title && String(title).length > 0) ? title : "this";
+        return "Delete '" + name + "'?";
+    }
+
     // ----
 
     /*
