@@ -73,6 +73,23 @@
         this.setFooterNode(this.chatInputNode());
     }
 
+    /**
+   * @description SvJsonArrayNode.prepareSubnode forces canDelete(true) on
+   * every added entry — the right default for inspector JSON arrays, wrong
+   * for a transcript: it made live-added chat messages swipe-deletable while
+   * the same messages after a reload (store rehydrate skips this path) were
+   * not. Messages are never user-deletable; programmatic delete()s (draft
+   * cleanup, history pruning) don't consult canDelete and are unaffected.
+   * @param {SvNode} aSubnode - The message being added.
+   * @returns {SvNode} The prepared subnode.
+   * @category Subnode Management
+   */
+    prepareSubnode (aSubnode) {
+        super.prepareSubnode(aSubnode);
+        aSubnode.setCanDelete(false);
+        return aSubnode;
+    }
+
     setupChatInputNode () {
         const f = SvChatInputNode.clone();
         f.setCanDelete(false);

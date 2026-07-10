@@ -130,7 +130,9 @@
     init () {
         super.init();
         this.setContent("");
-        this.setCanDelete(true);
+        // no setCanDelete(true) here: messages are never user-deletable
+        // (SvConversationMessage.finalInit and SvConversation.prepareSubnode
+        // both enforce false; a true here was dead code that read as intent)
         this.setIsVisibleToAi(true);
         this.setRole("assistant");
 
