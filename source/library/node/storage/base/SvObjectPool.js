@@ -95,6 +95,53 @@
 
     /**
      * @static
+     * @description Number of store passes (storeDirtyObjects) currently in
+     * progress across all pools. A counter rather than a boolean so nested or
+     * concurrent pools compose correctly. Since storeDirtyObjects() runs fully
+     * synchronously, this reliably brackets the entire pass.
+     * @returns {Number}
+     * @category Storing
+     */
+    static storingPassCount () {
+        return this._storingPassCount || 0;
+    }
+
+    /**
+     * @static
+     * @description True while any pool's storeDirtyObjects() pass is in
+     * progress. Model objects can consult this to tell an incidental mutation
+     * caused by serialization (getters read during recordForStore) apart from
+     * a genuine model change.
+     * @returns {Boolean}
+     * @category Storing
+     */
+    static isAnyPoolStoring () {
+        return this.storingPassCount() > 0;
+    }
+
+    /**
+     * @static
+     * @description Marks the beginning of a store pass. Called from
+     * storeDirtyObjects(). Always paired with endStoringPass() in a finally.
+     * @returns {void}
+     * @category Storing
+     */
+    static beginStoringPass () {
+        this._storingPassCount = this.storingPassCount() + 1;
+    }
+
+    /**
+     * @static
+     * @description Marks the end of a store pass.
+     * @returns {void}
+     * @category Storing
+     */
+    static endStoringPass () {
+        this._storingPassCount = this.storingPassCount() - 1;
+    }
+
+    /**
+     * @static
      * @description Notifies all open pools when an object's puuid changes.
      * This allows all pools tracking an object to update their internal mappings.
      * @param {Object} obj - The object whose puuid changed
@@ -982,41 +1029,51 @@
 
         let totalStoreCount = 0;
         this.setStoringPids(new Set());
+        SvObjectPool.beginStoringPass();
 
-        for (;;) { // easier to express clearly than do/while in this case
-            let thisLoopStoreCount = 0;
-            const dirtyBucket = this.dirtyObjects();
-            this.setDirtyObjects(new Map());
+        try {
+            for (;;) { // easier to express clearly than do/while in this case
+                let thisLoopStoreCount = 0;
+                const dirtyBucket = this.dirtyObjects();
+                this.setDirtyObjects(new Map());
 
-            dirtyBucket.forEachKV((puuid, obj) => {
-                //console.log("  storing pid " + puuid);
+                dirtyBucket.forEachKV((puuid, obj) => {
+                    //console.log("  storing pid " + puuid);
 
-                if (this.storingPids().has(puuid)) {
-                    const msg = "ERROR: attempt to double store " + obj.svTypeId();
-                    console.log(msg);
-                    throw new Error(msg);
+                    if (this.storingPids().has(puuid)) {
+                        const msg = "ERROR: attempt to double store " + obj.svTypeId();
+                        console.log(msg);
+                        throw new Error(msg);
+                    }
+
+                    this.storingPids().add(puuid);
+
+                    if (this._forcedDirtyObjectsSet && this._forcedDirtyObjectsSet.has(obj)) {
+                        this._forcedDirtyObjectsSet.delete(obj);
+                    }
+
+                    this.storeObject(obj);
+
+                    thisLoopStoreCount ++;
+                });
+
+                if (thisLoopStoreCount === 0) {
+                    break;
                 }
 
-                this.storingPids().add(puuid);
-
-                if (this._forcedDirtyObjectsSet && this._forcedDirtyObjectsSet.has(obj)) {
-                    this._forcedDirtyObjectsSet.delete(obj);
-                }
-
-                this.storeObject(obj);
-
-                thisLoopStoreCount ++;
-            });
-
-            if (thisLoopStoreCount === 0) {
-                break;
+                totalStoreCount += thisLoopStoreCount;
+                //this.logDebug(() => "totalStoreCount: " + totalStoreCount);
             }
-
-            totalStoreCount += thisLoopStoreCount;
-            //this.logDebug(() => "totalStoreCount: " + totalStoreCount);
+        } finally {
+            // Always clear the storing state, even if serialization threw
+            // mid-pass. Without this, an exception would leave storingPids
+            // populated forever, poisoning the pool: every later
+            // addDirtyObject() of an already-stored pid would raise a spurious
+            // double-store error.
+            SvObjectPool.endStoringPass();
+            this.setStoringPids(null);
         }
 
-        this.setStoringPids(null);
         return totalStoreCount;
     }
 

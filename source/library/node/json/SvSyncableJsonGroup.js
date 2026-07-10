@@ -307,7 +307,17 @@
         // — those align the timestamps deliberately and shouldn't be
         // immediately re-dirtied by their own slot setters.
         if (this.isFetched() && !this._suppressLocalModifiedTouch) {
-            this.touchLocalModified();
+            if (SvObjectPool.isAnyPoolStoring()) {
+                // Invariant: a didUpdateNode arriving during a store pass is a
+                // side effect of recordForStore reading this subtree's getters,
+                // not a real model change. touchLocalModified() writes the
+                // STORED localLastModified slot, which would re-dirty this
+                // object mid-pass and trip the pool's double-store guard. Skip
+                // the touch here and log the culprit getter so it can be found.
+                console.warn(this.svTypeId() + " didUpdateNode() fired during a store pass — skipping touchLocalModified() to avoid re-dirtying stored state mid-store. Stack:\n" + new Error().stack);
+            } else {
+                this.touchLocalModified();
+            }
         }
         return super.didUpdateNode();
     }
