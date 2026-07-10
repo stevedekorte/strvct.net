@@ -994,26 +994,62 @@
      * @returns {void}
      */
     async commitStoreDirtyObjects () {
-        this.logDebug("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
+        // SvSyncScheduler.processSets() invokes scheduled actions
+        // fire-and-forget: it does not await the promise this method returns.
+        // A second commit can therefore be scheduled and entered while this one
+        // is suspended at an await (promiseBegin / promiseCommit), which would
+        // interleave two kvMap transactions. Guard against re-entry: if a commit
+        // is already in flight, just bail. NOTE: we can't scheduleStore() here —
+        // when re-entered from the scheduler, isSyncingTargetAndMethod() is true
+        // for this exact target/method, so the call would silently no-op. The
+        // in-flight commit reschedules from its finally block instead, which
+        // runs in a later microtask where the scheduler is free again.
+        if (this._isCommitting) {
+            return;
+        }
 
-        if (this.hasDirtyObjects()) {
-            //console.log(this.svType() + " --- commitStoreDirtyObjects ---");
+        this._isCommitting = true;
+        try {
+            this.logDebug("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
 
-            //this.logDebug("--- commitStoreDirtyObjects begin ---");
-            await this.kvMap().promiseBegin();
-            const storeCount = this.storeDirtyObjects();
-            await this.kvMap().promiseCommit();
-            this.logDebug("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects");
-            this.logDebug("--- commitStoreDirtyObjects total objects: " + this.kvMap().count());
+            if (this.hasDirtyObjects()) {
+                //console.log(this.svType() + " --- commitStoreDirtyObjects ---");
 
-            //this.show("AFTER commitStoreDirtyObjects");
-
-            if (this._forcedDirtyObjectsSet) {
-                if (this._forcedDirtyObjectsSet.size !== 0) {
-                    this.scheduleStore();
-                } else {
-                    this._forcedDirtyObjectsSet = null;
+                //this.logDebug("--- commitStoreDirtyObjects begin ---");
+                await this.kvMap().promiseBegin();
+                let storeCount;
+                try {
+                    storeCount = this.storeDirtyObjects();
+                } catch (e) {
+                    // Self-heal the abandoned transaction: without this, a
+                    // throw mid-pass leaves the kvMap isInTx forever and every
+                    // later commit fails at promiseBegin.
+                    if (this.kvMap().isInTx()) {
+                        this.kvMap().revert();
+                    }
+                    throw e;
                 }
+                await this.kvMap().promiseCommit();
+                this.logDebug("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects");
+                this.logDebug("--- commitStoreDirtyObjects total objects: " + this.kvMap().count());
+
+                //this.show("AFTER commitStoreDirtyObjects");
+
+                if (this._forcedDirtyObjectsSet) {
+                    if (this._forcedDirtyObjectsSet.size !== 0) {
+                        this.scheduleStore();
+                    } else {
+                        this._forcedDirtyObjectsSet = null;
+                    }
+                }
+            }
+        } finally {
+            this._isCommitting = false;
+            // Pick up objects dirtied while this commit was in flight (their
+            // own scheduleStore calls may have been dropped by the re-entrancy
+            // guard above, or by the scheduler's isSyncing check).
+            if (this.hasDirtyObjects()) {
+                this.scheduleStore();
             }
         }
     }

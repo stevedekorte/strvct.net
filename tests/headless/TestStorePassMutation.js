@@ -176,6 +176,64 @@ async function testGenuineLoopStillTripsAndPoolRecovers () {
     check(SvObjectPool.isAnyPoolStoring() === false, "isAnyPoolStoring() false even after a throw");
 }
 
+async function testCommitReentrancyGuard () {
+    console.log("\nRe-entrancy guard: a concurrent commit does not interleave a second kvMap transaction");
+
+    const pool = newPool();
+    const group = makeSyncableGroup();
+    pool.addActiveObject(group);
+    pool.dirtyObjects().set(group.puuid(), group);
+
+    const kvMap = pool.kvMap();
+    let beginCount = 0;
+    let commitCount = 0;
+    let releaseCommit = null;
+    const commitGate = new Promise((resolve) => { releaseCommit = resolve; });
+
+    const realBegin = kvMap.promiseBegin.bind(kvMap);
+    const realCommit = kvMap.promiseCommit.bind(kvMap);
+    kvMap.promiseBegin = async function () {
+        beginCount++;
+        return realBegin();
+    };
+    kvMap.promiseCommit = async function () {
+        commitCount++;
+        if (commitCount === 1) {
+            await commitGate; // hang the first commit AFTER storeDirtyObjects() has run
+        }
+        return realCommit();
+    };
+
+    const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+    // First commit: begins, stores the group, then suspends inside promiseCommit.
+    const p1 = pool.commitStoreDirtyObjects();
+    await tick();
+
+    check(beginCount === 1, "first commit began exactly one transaction");
+    check(pool._isCommitting === true, "first commit is marked in-flight");
+
+    // A new object is dirtied while the first commit is suspended mid-transaction.
+    const late = makeSyncableGroup();
+    pool.addActiveObject(late);
+    pool.dirtyObjects().set(late.puuid(), late);
+
+    // Second commit attempt while the first is still in flight.
+    await pool.commitStoreDirtyObjects();
+    check(beginCount === 1, "second concurrent commit did NOT begin a second transaction");
+    check(!kvMap.hasKey(late.puuid()), "object dirtied during the in-flight commit not yet stored");
+
+    // Release the first commit and let it finish.
+    releaseCommit();
+    await p1;
+    check(pool._isCommitting === false, "in-flight flag cleared after the first commit completes");
+
+    // A follow-up commit stores the object that arrived during the in-flight commit.
+    await pool.commitStoreDirtyObjects();
+    check(beginCount === 2, "follow-up commit began a second transaction");
+    check(kvMap.hasKey(late.puuid()), "object dirtied during the in-flight commit is stored by the follow-up commit");
+}
+
 async function main () {
     console.log("TestStorePassMutation: booting strvct…");
     await boot();
@@ -186,6 +244,7 @@ async function main () {
 
     await testTouchSuppressedDuringStorePass();
     await testGenuineLoopStillTripsAndPoolRecovers();
+    await testCommitReentrancyGuard();
 
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);
