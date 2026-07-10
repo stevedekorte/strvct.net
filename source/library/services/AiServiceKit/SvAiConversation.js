@@ -318,18 +318,18 @@
     newAssistantMessage () {
         if (this.messagesRequiringCompletionBeforeUserResponse().length > 0) {
             this.messagesRequiringCompletionBeforeUserResponse();
-            debugger;
+            //debugger;
             throw new Error("newAssistantMessage() should not be called if there are messages requiring completion before user response");
         }
 
         if (!this.hasIncompleteAiResponseMessages()) {
             this.hasIncompleteAiResponseMessages();
-            debugger;
+            //debugger;
             throw new Error("newAssistantMessage() should not be called if there are incomplete ai response messages");
         }
 
         if (this.assistantToolKit() && !this.assistantToolKit().canSendResponsesNow()) {
-            debugger;
+            //debugger;
             this.assistantToolKit().canSendResponsesNow();
             throw new Error("newAssistantMessage() should not be called if the assistant tool kit cannot send responses now");
         }
@@ -916,7 +916,7 @@
                 let blockingCalls = tk.blockingCalls();
                 const blockingCallsString = blockingCalls.map(c => c.toolDefinition().name()).join(", ");
                 console.error("**ERROR**:", this.logPrefix(), "assertNoUncompletedBlockingToolCalls() called when there are uncompleted blocking tool calls: " + blockingCallsString);
-                debugger;
+                //debugger;
                 tk.hasUncompletedBlockingToolCalls();
             }
         }

@@ -54,7 +54,7 @@
         if (!assistantToolKit) {
             const msg = "Tool calls has an assistantToolKit slot that is null";
             console.error(msg);
-            debugger;
+            //debugger;
             throw new Error(msg);
         }
     }

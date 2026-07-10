@@ -297,7 +297,7 @@
             console.warn("2. the package build script was not run or the package was notproperly deployed");
             console.warn("Please clear your browser cache: DevTools > Application > Storage > Clear site data");
             const error = new Error("hash key does not match hash of value - please clear browser cache");
-            debugger;
+            //debugger;
             let testHash = await this.promiseHashKeyForData(hash);
             console.log("testHash", testHash);
             error.shouldClearBrowserCache = true;

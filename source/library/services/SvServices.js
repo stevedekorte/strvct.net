@@ -309,7 +309,7 @@
             console.log("--------------------------------");
             console.warn(this.logPrefix() + " chat model with name '" + name + "' not found in " + JSON.stringify(this.chatModelNames()));
             console.log("--------------------------------");
-            debugger;
+            //debugger;
         }
         return match;
     }

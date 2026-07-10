@@ -33,7 +33,7 @@
     static instanceForObject (anObject) {
         const instance = new this();
         instance.setJsonString(JSON.stringify(anObject));
-        debugger;
+        //debugger;
         return instance;
     }
 

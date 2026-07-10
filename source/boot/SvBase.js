@@ -277,7 +277,7 @@ const debugAssert = function (v, errorMessage) {
     if (!v) {
         const m = errorMessage ? errorMessage : "assert failed - false value";
         console.warn(m);
-        debugger;
+        //debugger;
         throw new Error(m);
     }
     return v;

@@ -247,7 +247,7 @@
             const aClass = this.subnodeClasses().first();
             aNode = aClass.clone().deserializeFromJson(json, filterName, jsonPathComponents);
         } else {
-            debugger; // should not happen
+            //debugger; // should not happen
             aNode = SvJsonNode.nodeForJson(json, jsonPathComponents);
         }
         return aNode;

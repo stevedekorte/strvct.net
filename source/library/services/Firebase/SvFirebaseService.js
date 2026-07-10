@@ -54,7 +54,7 @@
 
     addSubnode (subnode) {
         if (this.subnodes().length > 2) {
-            debugger;
+            //debugger;
         }
         super.addSubnode(subnode);
     }

@@ -304,7 +304,7 @@
 
     /*
     async fetchAndSetupModels () {
-        debugger;
+        //debugger;
         let info;
 
         try {
@@ -318,11 +318,11 @@
     }
 
     fetchModelsUrl () {
-        debugger;
+        //debugger;
         const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
         const url = baseUrl + "/app/info/" + this.svType() + ".json";
         console.log(this.logPrefix() + " fetchInfoUrl: " + url);
-        debugger;
+        //debugger;
         return url;
     }
 

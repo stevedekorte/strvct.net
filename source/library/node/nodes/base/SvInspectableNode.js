@@ -284,7 +284,7 @@
             if (!this.isSingleton()) {
                 console.warn("existing subnode field for slot '" + slot.name() + "' on node '" + this.svType() + "' - returning existing field");
                 console.warn("This may happen on a singleton as finalInit might be called again.");
-                debugger;
+                //debugger;
             }
             return existingField;
         }

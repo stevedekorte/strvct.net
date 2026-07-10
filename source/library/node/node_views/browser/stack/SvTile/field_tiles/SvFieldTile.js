@@ -408,7 +408,7 @@
     valueIsComplete () {
         const node = this.node();
         if (node && node.valueIsComplete) {
-            debugger;
+            //debugger;
             return node.valueIsComplete();
         }
         return true; // default to complete (no dots)

@@ -315,7 +315,7 @@
 
                 console.error(`Error reading subnodes for ${this.fullPath()}:`, error);
                 this.setError(error);
-                debugger;
+                //debugger;
                 throw error;
             } finally {
                 // Always clear the read promise when done

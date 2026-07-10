@@ -150,7 +150,7 @@
         this.setRequest(null); // yes, this will delete the request if it exists so be careful about resuming a broken request
         /*
         if (this.isComplete()) {
-            debugger;
+            //debugger;
             //this.completionPromise().callResolveFunc(this.content());
         }
         */
@@ -379,7 +379,7 @@
         super.onComplete(); // sends a delegate message
         if (this.completionPromise().isCompleted()) {
             console.log("completion promise is already completed");
-            debugger;
+            //debugger;
             return;
         }
         this.completionPromise().callResolveFunc();

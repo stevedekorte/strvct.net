@@ -171,12 +171,12 @@
     }
 
     value () {
-        debugger;
+        //debugger;
         return this.dataURL();
     }
 
     setValue (/*value*/) {
-        debugger;
+        //debugger;
         return this;
     }
 
@@ -196,7 +196,7 @@
     }
 
     setDataURL (/*dataURL*/) {
-        debugger;
+        //debugger;
         return this;
     }
 

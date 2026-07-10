@@ -197,7 +197,7 @@
     }
 
     setSubnodesJson (dict, filterName, jsonPathComponents = []) {
-        debugger; // not sure if this should be called anymore as we use JsonArrayNode for arrays
+        //debugger; // not sure if this should be called anymore as we use JsonArrayNode for arrays
         let keys = Object.keys(dict);
         keys = keys.filter(k => !k.startsWith("_")); // ignore _type and other internal keys
 
@@ -430,7 +430,7 @@
         const dict = {};
 
         if (this.shouldStoreSubnodes()) {
-            debugger; // is this needed?
+            //debugger; // is this needed?
             this.subnodes().filter(sn => sn.title() !== "jsonString").forEach(sn => { // jsonString is a field used for debugging to inspect the json
                 if (sn.serializeToJson) {
                     const result = sn.serializeToJson(filterName, jsonPathComponents.concat(sn.title()), visitedSet);
@@ -477,7 +477,7 @@
                         // Object without json method - skip to avoid circular reference issues
                         // This catches SvField and other objects that should have serializeToJson
                         console.warn("serializeToJson: skipping '" + Type.typeName(value) + "' object value on slot '" + slotName + "' as it's missing serializeToJson");
-                        debugger;
+                        //debugger;
                     }
                 }
             });
