@@ -178,7 +178,10 @@
         if (navView) {
             navView.disablePointerEventsUntilTimeout(ms);
         }
-        this.setPointerEvents("none");
+        // Must use the self-restoring form: a bare setPointerEvents("none")
+        // here left the tile permanently unselectable after any partial
+        // swipe that slid back (no code path ever re-enabled it).
+        this.disablePointerEventsUntilTimeout(ms);
     }
 
     /**
