@@ -234,6 +234,25 @@ async function testCommitReentrancyGuard () {
     check(kvMap.hasKey(late.puuid()), "object dirtied during the in-flight commit is stored by the follow-up commit");
 }
 
+async function testRevertDiscardsStagedAsyncWrites () {
+    console.log("\nSvAtomicMap.revert(): async writes staged by the reverted tx do not leak into the next commit");
+
+    const kv = newPool().kvMap();
+
+    await kv.promiseBegin();
+    kv.atPut("syncKey", "syncValue");
+    kv.appendAsyncWriteKvPromise(Promise.resolve(["asyncKey", "asyncValue"]));
+    kv.revert();
+    check(kv.isInTx() === false, "revert closes the transaction");
+    check(!kv.hasKey("syncKey"), "revert discards the synchronous write");
+
+    // A later, unrelated transaction must not pick up the reverted tx's
+    // staged async write (promiseCommit drains asyncWriteQueue).
+    await kv.promiseBegin();
+    await kv.promiseCommit();
+    check(!kv.hasKey("asyncKey"), "reverted tx's staged async write does not leak into the next commit");
+}
+
 async function main () {
     console.log("TestStorePassMutation: booting strvct…");
     await boot();
@@ -245,6 +264,7 @@ async function main () {
     await testTouchSuppressedDuringStorePass();
     await testGenuineLoopStillTripsAndPoolRecovers();
     await testCommitReentrancyGuard();
+    await testRevertDiscardsStagedAsyncWrites();
 
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);

@@ -142,6 +142,20 @@
 
     /**
      * @static
+     * @description Logs a warning (with a stack) that a stored-state mutation
+     * was suppressed because it arrived during a store pass — i.e. it was a
+     * side effect of recordForStore reading getters, not a real model change.
+     * The stack identifies the culprit getter so it can be fixed at the source.
+     * @param {Object} anObject - the object whose mutation was suppressed
+     * @returns {void}
+     * @category Storing
+     */
+    static warnStorePassMutation (anObject) {
+        console.warn(anObject.svTypeId() + " mutation suppressed during a store pass — serialization must not write stored state. Stack:\n" + new Error().stack);
+    }
+
+    /**
+     * @static
      * @description Notifies all open pools when an object's puuid changes.
      * This allows all pools tracking an object to update their internal mappings.
      * @param {Object} obj - The object whose puuid changed

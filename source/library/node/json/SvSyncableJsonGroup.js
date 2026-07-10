@@ -313,8 +313,8 @@
                 // not a real model change. touchLocalModified() writes the
                 // STORED localLastModified slot, which would re-dirty this
                 // object mid-pass and trip the pool's double-store guard. Skip
-                // the touch here and log the culprit getter so it can be found.
-                console.warn(this.svTypeId() + " didUpdateNode() fired during a store pass — skipping touchLocalModified() to avoid re-dirtying stored state mid-store. Stack:\n" + new Error().stack);
+                // the touch; the warn's stack identifies the culprit getter.
+                SvObjectPool.warnStorePassMutation(this);
             } else {
                 this.touchLocalModified();
             }
