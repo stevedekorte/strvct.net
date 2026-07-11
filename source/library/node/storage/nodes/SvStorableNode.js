@@ -108,11 +108,13 @@
 	        return this;
 	    }
 
-        if (aSlot.shouldStoreSlot() && !this.isMaterializingLazySlot()) {
-            // materializing a lazy slot's stored value is not a semantic change:
-            // update hooks (above) fire so views sync, but the object must not
-            // be marked dirty and mutation observers must not be notified
-            //this.didMutate(aSlot.name())
+        if (aSlot.shouldStoreSlot()) {
+            // NOTE: didMutate fires even during lazy-slot materialization —
+            // it is an honest "in-memory state changed" broadcast and other
+            // observers may care. The STORE's policy that materialization is
+            // not a store-relevant change lives with the store:
+            // SvObjectPool.onDidMutateObject consults
+            // Slot.isMaterializingAnyLazySlot() and declines to mark dirty.
             this.didMutate();
         }
 

@@ -808,6 +808,17 @@
      * @returns {void}
      */
     onDidMutateObject (anObject) {
+        // Store policy: a mutation arriving during lazy-slot materialization
+        // is not a store-relevant change — the store already holds exactly
+        // the value being written back into the slot, and any didMutate inside
+        // that synchronous window (on the materializing object OR an ancestor
+        // reached by the didUpdateNode bubble) was caused by it. The didMutate
+        // broadcast still fires (it's an honest "memory changed" signal; other
+        // observers may care) — the store just declines to mark dirty.
+        // See Slot.isMaterializingAnyLazySlot.
+        if (Slot.isMaterializingAnyLazySlot()) {
+            return;
+        }
         //if (anObject.hasDoneInit() && ) {
         if (this.hasActiveObject(anObject) && !this.isLoadingObject(anObject) && anObject.shouldStore()) {
             this.addDirtyObject(anObject);
