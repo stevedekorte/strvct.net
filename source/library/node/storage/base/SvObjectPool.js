@@ -808,17 +808,13 @@
      * @returns {void}
      */
     onDidMutateObject (anObject) {
-        // Store policy: a mutation arriving during lazy-slot materialization
-        // is not a store-relevant change — the store already holds exactly
-        // the value being written back into the slot, and any didMutate inside
-        // that synchronous window (on the materializing object OR an ancestor
-        // reached by the didUpdateNode bubble) was caused by it. The didMutate
-        // broadcast still fires (it's an honest "memory changed" signal; other
-        // observers may care) — the store just declines to mark dirty.
-        // See Slot.isMaterializingAnyLazySlot.
-        if (Slot.isMaterializingAnyLazySlot()) {
-            return;
-        }
+        // NOTE: no lazy-materialization filtering here. A blanket time-window
+        // skip would also drop mutations of objects GENUINELY created or
+        // changed by hooks during someone else's materialization — those must
+        // be stored. The materialization write-back echo is filtered at its
+        // precise source instead: the materializing instance's own didMutate
+        // (SvStorableNode.didMutate, per-instance flag) and the cross-object
+        // timestamp touch (SvSyncable*.touchLocalModified, global flag).
         //if (anObject.hasDoneInit() && ) {
         if (this.hasActiveObject(anObject) && !this.isLoadingObject(anObject) && anObject.shouldStore()) {
             this.addDirtyObject(anObject);

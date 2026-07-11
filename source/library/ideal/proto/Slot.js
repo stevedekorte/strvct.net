@@ -1101,14 +1101,18 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @category StoreRefs for lazy slots
      * @description True while any lazy slot's stub is being written back into
      * its slot (the setter call in onInstanceMaterializeLazySlot). During that
-     * synchronous window, every didUpdateSlot/didUpdateNode that fires —
-     * anywhere, at any depth of the bubble — was caused by the materialization
-     * (single-threaded JS: nothing else can run). Store-facing reactions
-     * consult this to stay neutral: materialization is NOT a mutation with
-     * respect to the store (the store already holds exactly the value being
-     * loaded), but it IS an event with respect to the UI (views must re-sync)
-     * — so view-facing hooks fire normally while SvObjectPool skips
-     * addDirtyObject and SvSyncable* skip the localLastModified touch.
+     * synchronous window, a didUpdateNode bubble can reach OBJECTS OTHER THAN
+     * the materializing one (ancestors up the parent chain), whose per-instance
+     * isMaterializingLazySlot flag is false — so cross-object echo filtering
+     * needs this globally visible signal (single-threaded JS attributes
+     * anything inside the window to the materialization). Consumers must
+     * filter NARROWLY: only side effects that are pure echoes of loading may
+     * consult this — currently just SvSyncable*.touchLocalModified (the cloud
+     * timestamp; loading is not a local modification). Dirty-marking is NOT
+     * filtered globally — objects genuinely created or changed by hooks during
+     * someone else's materialization must still be stored; the materializing
+     * instance's own write-back echo is filtered per-instance in
+     * SvStorableNode.didMutate instead.
      * A counter, not a boolean, so nested materializations (writing one value
      * can trigger a getter that materializes another) compose correctly.
      * @returns {Boolean}
@@ -1137,14 +1141,16 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @category StoreRefs for lazy slots
      * @description Resolves a lazy slot's SvStoreRef stub into the real stored
      * object and writes it through the setter, so didUpdateSlot hooks and view
-     * sync fire like any other change. Store-facing reactions are suppressed
-     * for the write-back window via the static materialization counter (see
-     * isMaterializingAnyLazySlot): didMutate still FIRES normally — mutation
-     * observers stay honest — but SvObjectPool declines to mark dirty, and
-     * SvSyncable groups decline to touch their cloud timestamp, because
-     * materialization is a no-op with respect to the store. Real load-time
-     * changes (finalInit repairs during unref, didMaterializeSlot hygiene)
-     * run OUTSIDE the bracket and dirty normally.
+     * sync fire like any other change. Materialization is a no-op with respect
+     * to the store but an event with respect to the UI, so exactly two echo
+     * filters apply during the write-back window: the materializing instance's
+     * own didMutate is skipped (per-instance flag, SvStorableNode.didMutate),
+     * and SvSyncable ancestors reached by the didUpdateNode bubble skip their
+     * localLastModified touch (static counter, see
+     * isMaterializingAnyLazySlot). Everything else — including objects
+     * genuinely created or changed by hooks inside the window — dirties and
+     * stores normally, as do real load-time changes (finalInit repairs during
+     * unref, didMaterializeSlot hygiene) which run OUTSIDE the bracket.
      */
     onInstanceMaterializeLazySlot (anInstance) {
         const storeRef = this.onInstanceRawGetValue(anInstance);

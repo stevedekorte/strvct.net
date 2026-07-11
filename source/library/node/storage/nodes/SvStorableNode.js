@@ -95,6 +95,29 @@
     }
 
     /**
+     * @description Mutation broadcast, filtered for the lazy-slot
+     * materialization write-back echo. While THIS instance's stub is being
+     * written back into its slot, its own state is exactly the stored state —
+     * broadcasting a mutation would mark it dirty for a change the store
+     * already has (and, mid-store-pass, trip the pool's double-store guard).
+     * Per-INSTANCE deliberately: objects genuinely created or changed by
+     * hooks during someone else's materialization must still broadcast and be
+     * stored — only the materializing object's own echo is filtered. The
+     * cross-object side effect (the didUpdateNode bubble touching an
+     * ancestor's cloud timestamp) is handled separately by
+     * SvSyncable*.touchLocalModified consulting the global
+     * Slot.isMaterializingAnyLazySlot().
+     * @param {string} [optionalSlotName]
+     * @category Mutation
+     */
+    didMutate (optionalSlotName) {
+        if (this.isMaterializingLazySlot()) {
+            return;
+        }
+        super.didMutate(optionalSlotName);
+    }
+
+    /**
      * @description Handles updates to slots.
      * @param {Object} aSlot - The slot being updated.
      * @param {*} oldValue - The old value of the slot.
@@ -109,12 +132,9 @@
 	    }
 
         if (aSlot.shouldStoreSlot()) {
-            // NOTE: didMutate fires even during lazy-slot materialization —
-            // it is an honest "in-memory state changed" broadcast and other
-            // observers may care. The STORE's policy that materialization is
-            // not a store-relevant change lives with the store:
-            // SvObjectPool.onDidMutateObject consults
-            // Slot.isMaterializingAnyLazySlot() and declines to mark dirty.
+            // the materialization write-back echo is filtered per-instance in
+            // this class's didMutate override, so all self-didMutate paths
+            // (this one, didChangeSubnodeList, …) share one guard
             this.didMutate();
         }
 

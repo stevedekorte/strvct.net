@@ -15,21 +15,21 @@
  *   - Materializing IS an event with respect to the UI — memory's shape
  *     changed, views must re-sync — so didUpdateNode still fires and bubbles.
  *
- * Mechanism under test:
- *   - Slot.isMaterializingAnyLazySlot(): a STATIC counter bracketing the
- *     setter write-back in onInstanceMaterializeLazySlot. Static because the
- *     side effects cross object boundaries (the bubble dirties ANCESTORS,
- *     whose per-instance isMaterializingLazySlot flag is false); a counter
- *     because materializations can nest. Single-threaded JS makes the
- *     attribution sound: anything that fires inside the synchronous window
- *     was caused by the materialization.
- *   - didMutate still FIRES normally (it is an honest "memory changed"
- *     broadcast); the STORE's policy lives at the receiver:
- *     SvObjectPool.onDidMutateObject declines addDirtyObject during
- *     materialization.
- *   - SvSyncableJsonGroup/SvSyncableArrayNode.touchLocalModified() are no-ops
- *     during materialization (the timestamp write is direct store-facing
- *     state; no receiver can intercept it).
+ * Mechanism under test — two narrowly-scoped echo filters:
+ *   - PER-INSTANCE: the materializing object's own didMutate is skipped
+ *     (SvStorableNode.didMutate + isMaterializingLazySlot) — its state IS the
+ *     stored state being written back. Deliberately per-instance so objects
+ *     genuinely CREATED or changed by hooks during someone else's
+ *     materialization still broadcast and get stored (a blanket time-window
+ *     filter at the pool would drop them — never-stored objects have no other
+ *     path into the store).
+ *   - GLOBAL: Slot.isMaterializingAnyLazySlot(), a STATIC counter bracketing
+ *     the setter write-back — needed because the didUpdateNode bubble reaches
+ *     ANCESTORS whose per-instance flag is false. Consulted ONLY by
+ *     SvSyncableJsonGroup/SvSyncableArrayNode.touchLocalModified() (loading is
+ *     not a local modification; the cloud timestamp must not move). A counter
+ *     because materializations can nest; single-threaded JS makes the
+ *     attribution sound.
  *   - A throwing setter restores the SvStoreRef stub (catch + rethrow), so a
  *     failed materialization is retryable instead of leaving the slot
  *     permanently null.
@@ -170,6 +170,46 @@ async function testMaterializationIsStoreNeutralButUiVisible () {
     check(doc.localLastModified() > timestampBaseline, "control: a genuine didUpdateNode still touches localLastModified");
 }
 
+async function testNewObjectCreatedDuringMaterializationStillStores () {
+    console.log("\nAn object genuinely CREATED by a hook during materialization is still dirtied and stored");
+
+    const pool = newPool();
+    const doc = TestLazyDocument.clone();
+
+    pool.addActiveObject(doc);
+    pool.addActiveObject(doc.section());
+    pool.dirtyObjects().set(doc.puuid(), doc);
+    pool.dirtyObjects().set(doc.section().puuid(), doc.section());
+    await pool.commitStoreDirtyObjects();
+
+    stubSectionSlot(pool, doc);
+    pool.dirtyObjects().clear();
+
+    // Hook side effect INSIDE the write-back window: create a brand-new
+    // stored object (a blanket time-window dirty filter would drop it — the
+    // store has never seen it, so its didMutate is its only path to being
+    // persisted).
+    let created = null;
+    const realHook = doc.didUpdateSlotSection.bind(doc);
+    doc.didUpdateSlotSection = function (oldValue, newValue) {
+        if (created === null) {
+            created = SvGlobals.get("SvJsonGroup").clone();
+            pool.addActiveObject(created);
+            created.didMutate(); // genuinely new state announcing itself
+        }
+        return realHook(oldValue, newValue);
+    };
+
+    doc.section(); // materialize
+
+    check(created !== null, "hook ran during materialization and created a new object");
+    check(pool.dirtyObjects().has(created.puuid()), "the NEW object was marked dirty despite the materialization window");
+    check(!pool.dirtyObjects().has(doc.puuid()), "…while the materializing doc's own write-back echo was still filtered");
+
+    await pool.commitStoreDirtyObjects();
+    check(pool.kvMap().hasKey(created.puuid()), "the new object was stored by the next commit");
+}
+
 async function testThrowingSetterRestoresStub () {
     console.log("\nA throwing setter restores the stub (failure is retryable, exception propagates)");
 
@@ -219,6 +259,7 @@ async function main () {
     defineTestClass();
 
     await testMaterializationIsStoreNeutralButUiVisible();
+    await testNewObjectCreatedDuringMaterializationStillStores();
     await testThrowingSetterRestoresStub();
 
     console.log("\n" + passed + " passed, " + failed + " failed");
