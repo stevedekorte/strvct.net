@@ -95,29 +95,6 @@
     }
 
     /**
-     * @description Mutation broadcast, filtered for the lazy-slot
-     * materialization write-back echo. While THIS instance's stub is being
-     * written back into its slot, its own state is exactly the stored state —
-     * broadcasting a mutation would mark it dirty for a change the store
-     * already has (and, mid-store-pass, trip the pool's double-store guard).
-     * Per-INSTANCE deliberately: objects genuinely created or changed by
-     * hooks during someone else's materialization must still broadcast and be
-     * stored — only the materializing object's own echo is filtered. The
-     * cross-object side effect (the didUpdateNode bubble touching an
-     * ancestor's cloud timestamp) is handled separately by
-     * SvSyncable*.touchLocalModified consulting the global
-     * Slot.isMaterializingAnyLazySlot().
-     * @param {string} [optionalSlotName]
-     * @category Mutation
-     */
-    didMutate (optionalSlotName) {
-        if (this.isMaterializingLazySlot()) {
-            return;
-        }
-        super.didMutate(optionalSlotName);
-    }
-
-    /**
      * @description Handles updates to slots.
      * @param {Object} aSlot - The slot being updated.
      * @param {*} oldValue - The old value of the slot.
@@ -131,10 +108,16 @@
 	        return this;
 	    }
 
-        if (aSlot.shouldStoreSlot()) {
-            // the materialization write-back echo is filtered per-instance in
-            // this class's didMutate override, so all self-didMutate paths
-            // (this one, didChangeSubnodeList, …) share one guard
+        if (aSlot.shouldStoreSlot() && !(oldValue instanceof SvStoreRef)) {
+            // An SvStoreRef → value transition is a lazy slot MATERIALIZING —
+            // a load, not an edit: the store already holds exactly the value
+            // being written back, so marking dirty would re-store known state
+            // (and, mid-store-pass, trip the pool's double-store guard). The
+            // classification is DERIVED from the transition itself (the
+            // SvStoreRef survives to the setter — see
+            // Slot.onInstanceMaterializeLazySlot), so genuinely new or changed
+            // objects during someone else's materialization still didMutate
+            // normally. Every other transition is a real edit and dirties.
             this.didMutate();
         }
 

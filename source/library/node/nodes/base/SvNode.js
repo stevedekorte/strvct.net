@@ -1751,7 +1751,12 @@
      * @returns {SvNode} This instance.
      */
     didUpdateSlotSubnodes (oldValue, newValue) {
-        if (oldValue) {
+        // An SvStoreRef oldValue means a lazy subnodes slot is MATERIALIZING
+        // (see Slot.onInstanceMaterializeLazySlot — the placeholder survives
+        // to the setter precisely so this transition is derivable). The
+        // placeholder was never observed, so there is nothing to remove.
+        const isMaterialization = (oldValue instanceof SvStoreRef);
+        if (oldValue && !isMaterialization) {
             oldValue.removeMutationObserver(this);
         }
 
@@ -1793,6 +1798,19 @@
         }
 
         this._subnodes.forEach(sn => sn.setParentNode(this)); // TODO: isn't this done elsewhere?
+
+        if (isMaterialization) {
+            // Materialization write-back: the assigned list IS the stored
+            // list. The UI half of didChangeSubnodeList still applies (views
+            // must render the loaded subnodes); the store half —
+            // didMutate("subnodes") — must not, because a load is not an
+            // edit. Inlines the UI half; keep in sync with
+            // didChangeSubnodeList.
+            this.scheduleMethod("onDidReorderSubnodes");
+            this.didUpdateNodeIfInitialized();
+            return this;
+        }
+
         this.didChangeSubnodeList(); // not handled automatically
         return this;
     }

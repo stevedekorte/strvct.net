@@ -375,19 +375,6 @@
         }
         {
             /**
-             * @member {boolean} isMaterializingLazySlot - True while a lazy slot's
-             * stored value is being written through its setter on first access.
-             * SvStorableNode.didUpdateSlot consults this to skip didMutate():
-             * materialization is not a semantic change, so it must fire the
-             * normal update hooks (view sync) without marking the object dirty
-             * or notifying mutation observers.
-             * @category Slots
-             */
-            const slot = this.newSlot("isMaterializingLazySlot", false);
-            slot.setSlotType("Boolean");
-        }
-        {
-            /**
              * @member {Set} protocols - A set of protocols.
              */
             const slot = this.newSlot("protocols", new Set());

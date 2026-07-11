@@ -805,9 +805,10 @@
     /**
      * @description handle the object did mutate event
      * @param {Object} anObject - the object that was mutated
+     * @param {String} slotName - the name of the slot that was mutated
      * @returns {void}
      */
-    onDidMutateObject (anObject) {
+    onDidMutateObject (anObject /* , slotName */) {
         // NOTE: no lazy-materialization filtering here. A blanket time-window
         // skip would also drop mutations of objects GENUINELY created or
         // changed by hooks during someone else's materialization — those must
