@@ -173,9 +173,13 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     setIsLazy (aBool) {
         this._isLazy = aBool;
-        if (aBool) {
-            this.setAllowsUndefinedValue(true); // we use undefined to indicate that the value is not yet loaded
-        }
+        // NOTE: an earlier lazy design used undefined as the "not yet loaded"
+        // marker and whitelisted it here via setAllowsUndefinedValue(true).
+        // The SvStoreRef placeholder replaced that design; the whitelist's
+        // only remaining effect was to let a FAILED materialization (e.g.
+        // unref() of a missing record returning undefined) write undefined
+        // into the slot silently. Undefined now fails validation like any
+        // other slot.
         return this;
     }
 
