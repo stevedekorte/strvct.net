@@ -215,6 +215,14 @@
         assert(this.actions().isEmpty());
         this.actions().merge(this.nextCycleActions());
         this.nextCycleActions().clear();
+        // Arm the timer for the merged actions: without this, an action
+        // scheduled ONLY via scheduleTargetAndMethodForNextCycle (e.g. a
+        // self-rescheduling retry like SvBrowserView.trySelectPendingPath)
+        // would sit in actions() until something else happened to schedule —
+        // potentially stalling forever on an otherwise idle page.
+        if (this.actions().size > 0) {
+            this.setTimeoutIfNeeded();
+        }
         return this;
     }
 

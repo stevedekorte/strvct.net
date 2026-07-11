@@ -361,7 +361,12 @@
         const resolved = this.selectNodePathArray(nodePath);
         if (resolved === false && this._pendingSelectAttempt < 12) {
             this._pendingSelectAttempt += 1;
-            this.scheduleMethod("trySelectPendingPath");
+            // MUST be the next-cycle variant: this retry runs AS a scheduled
+            // action, and scheduleMethod() of the same target+method from
+            // within its own processing trips the scheduler's LOOP DETECTED
+            // throw (seen in prod when deleting a session left the pending
+            // path unresolvable — the second consecutive failed resolve threw).
+            this.scheduleMethodForNextCycle("trySelectPendingPath");
         } else {
             this._pendingSelectPath = null;
         }
