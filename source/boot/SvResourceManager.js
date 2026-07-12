@@ -491,9 +491,16 @@
      * @description Whether JS resources are evaluated in concatenated chunks
      * (one eval per ~64 files) instead of one eval per file. Chunking removes
      * the per-file eval/sourceURL-registration overhead (~840 files at boot)
-     * but costs per-file debugger mapping: breakpoints land in chunk pseudo-
-     * files instead of original paths. For a debugging session, load with
-     * ?perFileEval=1 or set localStorage.SvPerFileEval = "1".
+     * but costs per-file source mapping: each chunk registers a single
+     * sourceURL (_bootEvalChunks/chunk_N.js), so debugger breakpoints AND
+     * runtime error-report stack traces land in chunk pseudo-files instead
+     * of original paths.
+     *
+     * DEFAULT: per-file eval (decision 2026-07-11) — proper debugging always
+     * wins over the eval-overhead saving. Chunking is OPT-IN for boot-perf
+     * measurement via ?chunkEval=1 or localStorage.SvChunkEval = "1", and
+     * should only become the default again once chunks carry real source
+     * maps that restore per-file mapping.
      * Node keeps per-file eval — it uses indirect global eval with different
      * scoping semantics, and headless boot speed isn't the bottleneck.
      * @returns {boolean}
@@ -503,16 +510,16 @@
             return false;
         }
         try {
-            if (new URLSearchParams(window.location.search).get("perFileEval") === "1") {
-                return false;
+            if (new URLSearchParams(window.location.search).get("chunkEval") === "1") {
+                return true;
             }
-            if (window.localStorage && localStorage.getItem("SvPerFileEval") === "1") {
-                return false;
+            if (window.localStorage && localStorage.getItem("SvChunkEval") === "1") {
+                return true;
             }
         } catch (e) {
             // flag parsing must never break boot
         }
-        return true;
+        return false;
     }
 
     /**
