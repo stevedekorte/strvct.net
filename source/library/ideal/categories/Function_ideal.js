@@ -295,6 +295,7 @@ Function.prototype.returnsJsonSchema = function (refSet) {
     this.returnTypes().forEach(type => {
         if (type.isCapitalized()) {
             const aClass = SvGlobals.globals()[type];
+            assert(aClass, "returnsJsonSchema: return type '" + type + "' is Capitalized so it must name a global class, but none exists — use a lowercase JSON-schema primitive (\"object\", \"string\", ...) or a real class name");
             //refSet.add(aClass); // needed or added by jsonSchemaRef
             oneOf.push(aClass.jsonSchemaRef(refSet));
         } else {
