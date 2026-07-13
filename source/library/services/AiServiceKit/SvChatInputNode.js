@@ -130,6 +130,11 @@
         // placeholder stuck on every other participant's screen.
         const v = (valueView && typeof valueView.value === "function") ? valueView.value() : this.value();
         this.conversation().onChatEditValue(v);
+        // The Enter gate can be CONTENT-dependent (acceptsChatInputForText —
+        // e.g. party-chat drafts are sendable while the AI is busy), so each
+        // edit re-evaluates it. The tile's focused-sync guard refreshes
+        // canHitEnter without touching the editor's text or caret.
+        this.scheduleSyncToView();
     }
 
     /**
@@ -138,7 +143,17 @@
    * @category Input
    */
     acceptsValueInput () {
-        return this.conversation() && this.conversation().acceptsChatInput();
+        const c = this.conversation();
+        if (!c) {
+            return false;
+        }
+        // Content-aware when the conversation supports it: some messages
+        // (e.g. party chat that never touches the AI loop) are sendable even
+        // while the AI is busy. The conversation owns that judgment.
+        if (typeof c.acceptsChatInputForText === "function") {
+            return c.acceptsChatInputForText(this.value());
+        }
+        return c.acceptsChatInput();
     }
 
     /**
@@ -174,7 +189,12 @@
    */
     send () {
         const v = this.value();
-        this.conversation().onChatInputValue(v);
+        const accepted = this.conversation().onChatInputValue(v);
+        if (accepted === false) {
+            // Refused (e.g. AI busy): keep the typed text so nothing is lost —
+            // the user can send it when the gate reopens.
+            return;
+        }
         this.setValue("");
         // The input view is still focused after Enter; the tile's focused
         // guard (SvChatInputTile.syncValueFromNode) would normally refuse

@@ -561,6 +561,18 @@
    * @returns {Boolean} True if it accepts chat input, false otherwise.
    * @category State
    */
+    /**
+   * @description Text-aware variant of acceptsChatInput: subclasses may allow
+   * certain message KINDS through while the AI is busy (e.g. party chat that
+   * never reaches the AI). Base ignores the text.
+   * @param {String} text - The draft message text.
+   * @returns {Boolean}
+   * @category State
+   */
+    acceptsChatInputForText (/*text*/) {
+        return this.acceptsChatInput();
+    }
+
     acceptsChatInput () {
         // we block user input until all blocking tool calls are complete
         if (this.assistantToolKit().hasUncompletedBlockingToolCalls()) {
