@@ -4,8 +4,6 @@
 /** * @class SvStoreRef
  * @extends Object
  * @classdesc SvStoreRef class for handling store references and persistent IDs.
- 
- 
  */
 
 (class SvStoreRef extends Object {
