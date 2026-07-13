@@ -873,6 +873,12 @@
         const puuid = anObject.puuid();
 
         if (this.isStoringObject(anObject)) {
+            // mutated AFTER being stored in the active commit pass. The old
+            // silent return DROPPED the change — in-memory state diverged
+            // from the stored record until the next genuine mutation. Defer
+            // the fresh state to the next commit instead (tripwire-logged;
+            // see deferDirtyObjectDuringStore).
+            this.deferDirtyObjectDuringStore(anObject, new Error().stack);
             return this;
         }
 
@@ -882,13 +888,64 @@
 
         if (!this.dirtyObjects().has(puuid)) {
             this.logDebug(() => "addDirtyObject(" + anObject.svTypeId() + ")");
-            if (this.storingPids() && this.storingPids().has(puuid)) {
-                throw new Error("attempt to double store? did object change after store? is there a loop?");
+            if (this.storingPids() !== null) {
+                // dirtied mid-pass but not yet stored this pass: legal (the
+                // pass stores it in a later loop), but if it turns out the
+                // object was ALREADY in the bucket being walked, the loop
+                // guard will flag it — capture the culprit's stack now so
+                // that report names the code that mutated during the store
+                this.midStoreDirtyStacks().set(puuid, new Error().stack);
             }
             this.dirtyObjects().set(puuid, anObject);
             this.scheduleStore();
         }
 
+        return this;
+    }
+
+    // --- mid-store mutation handling ---
+    // An object mutated during the synchronous store pass, after the pass
+    // already stored it, means its stored record is stale. The old behavior
+    // threw, aborting the WHOLE commit (every save that cycle lost) and
+    // surfacing as "attempt to double store <id>" with no clue WHO mutated.
+    // Now: tripwire-log the mutation-time stack (console.error → error
+    // reports) and re-queue the object for the next commit, which stores the
+    // fresh state. The log is the bug report — mutating during a store pass
+    // is still a defect to fix at the source; this just stops it from being
+    // a data-loss crash.
+
+    midStoreDirtyStacks () {
+        if (!this._midStoreDirtyStacks) {
+            this._midStoreDirtyStacks = new Map();
+        }
+        return this._midStoreDirtyStacks;
+    }
+
+    deferDirtyObjectDuringStore (anObject, dirtySourceStack) {
+        const puuid = anObject.puuid();
+        const stack = dirtySourceStack || this.midStoreDirtyStacks().get(puuid) || "(mutation-time stack not captured)";
+
+        // A serializer that mutates ITS OWN stored slots re-defers every
+        // commit forever (defer → next commit → same mutation → defer …).
+        // Cap consecutive defers per pid: give up loudly, keep the stale
+        // record (the pre-defer behavior), and break the commit loop. The
+        // counter resets when the object gets through a pass without
+        // re-deferring (see storeDirtyObjects).
+        if (!this._consecutiveDeferCounts) {
+            this._consecutiveDeferCounts = new Map();
+        }
+        const count = (this._consecutiveDeferCounts.get(puuid) || 0) + 1;
+        this._consecutiveDeferCounts.set(puuid, count);
+        if (count > 3) {
+            console.error(this.logPrefix() + "TRIPWIRE: " + anObject.svTypeId() + " re-mutated during " + count + " consecutive store passes — giving up on it (stored record stays stale) to break the commit loop. Something mutates this object every time it is serialized; fix that. Mutation-time stack:\n" + stack);
+            return this;
+        }
+
+        console.error(this.logPrefix() + "TRIPWIRE: " + anObject.svTypeId() + " was mutated during the store pass, after it was already stored this pass — deferring the fresh state to the next commit. Mutation-time stack:\n" + stack);
+        if (!this._deferredDirtyObjects) {
+            this._deferredDirtyObjects = new Map();
+        }
+        this._deferredDirtyObjects.set(puuid, anObject);
         return this;
     }
 
@@ -911,10 +968,13 @@
         if (this.storingPids() !== null) {
             // we might be in the middle of storing changes
             if (this.storingPids().has(anObject.puuid())) {
-                // looks like this object is already queued to be stored
-                this.logDebug(() => "forceAddDirtyObject(" + anObject.svTypeId() + ") already queued to be stored - skipping");
+                // already STORED this pass (storingPids holds stored pids,
+                // not queued ones) — the old silent skip dropped the change,
+                // leaving a stale record; defer to the next commit instead
+                this.deferDirtyObjectDuringStore(anObject, new Error().stack);
                 return this;
             }
+            this.midStoreDirtyStacks().set(anObject.puuid(), new Error().stack);
         }
         if (!this._forcedDirtyObjectsSet) {
             this._forcedDirtyObjectsSet = new Set();
@@ -1000,9 +1060,12 @@
                 //console.log("  storing pid " + puuid);
 
                 if (this.storingPids().has(puuid)) {
-                    const msg = "ERROR: attempt to double store " + obj.svTypeId();
-                    console.log(msg);
-                    throw new Error(msg);
+                    // already stored this pass, then mutated mid-pass (the
+                    // dirty happened before its store turn, so addDirtyObject
+                    // couldn't flag it) — defer the fresh state to the next
+                    // commit with the mutation-time stack captured at add time
+                    this.deferDirtyObjectDuringStore(obj, null);
+                    return;
                 }
 
                 this.storingPids().add(puuid);
@@ -1025,6 +1088,28 @@
         }
 
         this.setStoringPids(null);
+        this._midStoreDirtyStacks = null;
+
+        // pids that got through this pass WITHOUT re-deferring have settled —
+        // reset their consecutive-defer counters
+        if (this._consecutiveDeferCounts) {
+            this._consecutiveDeferCounts.keysArray().forEach((pid) => {
+                if (!this._deferredDirtyObjects || !this._deferredDirtyObjects.has(pid)) {
+                    this._consecutiveDeferCounts.delete(pid);
+                }
+            });
+        }
+
+        // objects mutated after their store this pass re-queue for the next
+        // commit, so their fresh state persists (their stored record is stale)
+        if (this._deferredDirtyObjects) {
+            this._deferredDirtyObjects.forEachKV((pid, obj) => {
+                this.dirtyObjects().set(pid, obj);
+            });
+            this._deferredDirtyObjects = null;
+            this.scheduleStore();
+        }
+
         return totalStoreCount;
     }
 
