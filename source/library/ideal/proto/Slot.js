@@ -55,6 +55,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("methodForUndefinedGet", null);
         this.simpleNewSlot("methodForOnFinalized", null);
         this.simpleNewSlot("methodForShouldStoreSlot", null);
+        this.simpleNewSlot("methodForFailedLazyLoad", null); // for lazy slots — see onInstanceFailedLazyLoad
         //this.simpleNewSlot("methodNameCache", null)
 
         // getter
@@ -167,6 +168,11 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * write-back — that transition means "this write is a load, not an edit"
      * (consumers derive store-neutrality from it). Treat an SvStoreRef
      * oldValue as "there was no previous live value".
+     * FAILURE semantics: if the record is missing from the pool, the getter
+     * returns null (or the owner's onFailedLazyLoadSlot<Name> hook fallback),
+     * the SvStoreRef stays in the slot (retry-on-next-access, rate-limited
+     * by a negative cache on the ref), and nothing is written through the
+     * setter. See onInstanceMaterializeLazySlot / onInstanceFailedLazyLoad.
      * @param {Boolean} aBool
      * @returns {Slot}
      * @category Lazy Loading
@@ -899,6 +905,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.setMethodForUndefinedGet("onUndefinedGet" + n); // for lazy slots
         this.setMethodForOnFinalized("onFinalizedSlot" + n); // for weak slots
         this.setMethodForShouldStoreSlot("shouldStoreSlot" + n); // for weak slots
+        this.setMethodForFailedLazyLoad("onFailedLazyLoadSlot" + n); // for lazy slots
         return this;
     }
 
@@ -1176,6 +1183,13 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const storeRef = this.onInstanceRawGetValue(anInstance);
         assert(storeRef instanceof SvStoreRef, "onInstanceMaterializeLazySlot called without an SvStoreRef in slot '" + this.name() + "'");
 
+        // Negative cache: a ref that failed recently declines to hit the pool
+        // again (UI sync hammers getters every render pass), but the owner
+        // hook still runs so a fallback doesn't flicker between accesses.
+        if (!storeRef.canAttemptNow()) {
+            return this.onInstanceFailedLazyLoad(anInstance, storeRef);
+        }
+
         // If this materialization initiates the load cycle (the common case:
         // a getter touched after boot), drain the pool's loadingPids so
         // didLoadFromStore runs on the subtree before we return — callers
@@ -1186,6 +1200,25 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const initiatesLoadCycle = !pool.isFinalizing() && pool.loadingPids().count() === 0;
 
         const obj = storeRef.unref(); // synchronous objectForPid — identity map preserves sameness
+
+        if (obj === undefined) {
+            // missingRecord: the pool has no record for this pid — a dangling
+            // ref (store GC or cloud-pool completeness bug upstream; the
+            // record may also arrive later via cloud sync). NEVER write the
+            // failure through the setter: the SvStoreRef stays in the slot,
+            // so the store keeps round-tripping the original pid (diagnostic
+            // breadcrumb, no silent self-heal) and the next access after the
+            // negative-cache window retries. A deserialize/setter THROW is
+            // handled differently by design: it propagates un-recorded and
+            // un-hooked (a loud programming error, not a heal-able miss).
+            const error = new Error("missing record for pid '" + storeRef.pid() + "' in lazy slot '" + this.name() + "' of " + anInstance.svTypeId());
+            const isFirstFailure = storeRef.attemptCount() === 0;
+            storeRef.recordFailedAttempt(error, "missingRecord");
+            if (isFirstFailure) {
+                console.error("Slot.onInstanceMaterializeLazySlot: " + error.message + " — returning null (or the onFailedLazyLoadSlot hook's fallback); will not re-attempt for a growing window");
+            }
+            return this.onInstanceFailedLazyLoad(anInstance, storeRef);
+        }
 
         if (initiatesLoadCycle && !pool.isFinalizing() && pool.loadingPids().count() > 0) {
             pool.didInitLoadingPids();
@@ -1215,6 +1248,51 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             anInstance.didMaterializeSlot(this);
         }
         return obj;
+    }
+
+    /**
+     * @category StoreRefs for lazy slots
+     * @description The failed-materialization return path: gives the owning
+     * instance a chance to substitute a fallback via an
+     * onFailedLazyLoadSlot<SlotName>(context) hook, then returns
+     * context.result (default null). The context is a mutable object:
+     * { result, error, errorKind, storeRef, slotName } — the hook sets
+     * context.result to override. Called on EVERY failed access, including
+     * negative-cache-latched ones (the latch rate-limits pool lookups and
+     * log spam, not the hook — a fallback must not flicker between values
+     * on alternating accesses), so hooks should be cheap and pure.
+     *
+     * NOTE for hook authors: writing a fallback into the slot through the
+     * setter is STORE-NEUTRAL by construction — the SvStoreRef is still in
+     * the slot, so didUpdateSlot classifies the write as a load and nothing
+     * is marked dirty; the hook also runs inside the materialization counter,
+     * so SvSyncable ancestors skip their cloud-timestamp touch (a fallback
+     * must not schedule a cloud push of an unchanged document). The fallback
+     * is re-derived next boot and the store keeps the dangling pid as a
+     * diagnostic breadcrumb. An owner that genuinely wants a persistent
+     * repair must explicitly call didMutate().
+     * @param {Object} anInstance - The instance owning the slot.
+     * @param {SvStoreRef} storeRef - The ref whose unref failed.
+     * @returns {*} context.result — null unless the hook overrode it.
+     */
+    onInstanceFailedLazyLoad (anInstance, storeRef) {
+        const context = {
+            result: null,
+            error: storeRef.lastError(),
+            errorKind: storeRef.lastErrorKind(),
+            storeRef: storeRef,
+            slotName: this.name()
+        };
+        const hookName = this.methodForFailedLazyLoad();
+        if (anInstance[hookName]) {
+            Slot.beginLazySlotMaterialization();
+            try {
+                anInstance[hookName](context);
+            } finally {
+                Slot.endLazySlotMaterialization();
+            }
+        }
+        return context.result;
     }
 
     /**

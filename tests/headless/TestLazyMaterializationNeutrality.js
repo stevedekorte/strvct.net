@@ -213,6 +213,63 @@ async function testNewObjectCreatedDuringMaterializationStillStores () {
     check(pool.kvMap().hasKey(created.puuid()), "the new object was stored by the next commit");
 }
 
+async function testMissingRecordFailureHandling () {
+    console.log("\nMissing record: null return (or hook fallback), SvStoreRef stays, negative cache latches, no store dirt or cloud touch");
+
+    const SvStoreRef = SvGlobals.get("SvStoreRef");
+    const pool = newPool();
+    const doc = TestLazyDocument.clone();
+
+    await storeDocAndSection(pool, doc);
+
+    // Point the slot's ref at a pid the pool has no record for.
+    const ref = placeStoreRefInSectionSlot(pool, doc);
+    ref.setPid("bogus_missing_pid_123");
+    doc.setLocalLastModified(12345);
+    pool.dirtyObjects().clear();
+    const timestampBaseline = doc.localLastModified();
+
+    // Access 1: fresh attempt — hits the pool, fails, records the attempt.
+    const result1 = doc.section();
+    check(result1 === null, "getter returned null on missing record (no hook defined)");
+    check(doc.thisPrototype().slotNamed("section").onInstanceRawGetValue(doc) instanceof SvStoreRef, "SvStoreRef still in the slot (failure never written through the setter)");
+    check(ref.attemptCount() === 1, "attempt recorded on the ref");
+    check(ref.lastErrorKind() === "missingRecord", "error kind classified as missingRecord");
+    check(pool.dirtyObjects().size === 0, "no object marked dirty by the failed materialization");
+
+    // Access 2 (immediate → inside the negative-cache window): no new pool
+    // attempt, same result.
+    const result2 = doc.section();
+    check(result2 === null, "latched access still returns null");
+    check(ref.attemptCount() === 1, "negative cache: no second pool attempt inside the window");
+
+    // Define the owner hook: capture context, substitute a fallback, and
+    // write it through the setter (the store-neutral repair path).
+    const SvJsonGroup = SvGlobals.get("SvJsonGroup");
+    let hookContext = null;
+    const fallback = SvJsonGroup.clone();
+    doc.onFailedLazyLoadSlotSection = function (context) {
+        hookContext = context;
+        context.result = fallback;
+        this.setSection(fallback);
+    };
+
+    // Access 3 (still latched): hook runs anyway — the latch rate-limits pool
+    // lookups, not the hook.
+    const result3 = doc.section();
+    check(result3 === fallback, "hook override: latched access returned the hook's fallback");
+    check(hookContext !== null && hookContext.errorKind === "missingRecord" && hookContext.storeRef === ref && hookContext.slotName === "section", "hook received the full context (errorKind, storeRef, slotName)");
+    check(ref.attemptCount() === 1, "hook invocation did not count as a pool attempt");
+
+    // The hook's setter write replaced the SvStoreRef — and was store-neutral.
+    check(doc.thisPrototype().slotNamed("section").onInstanceRawGetValue(doc) === fallback, "hook's setter write landed in the slot (subsequent accesses skip the failure path)");
+    check(pool.dirtyObjects().size === 0, "fallback write is store-neutral: nothing marked dirty (oldValue was the SvStoreRef)");
+    check(doc.localLastModified() === timestampBaseline, "fallback write did not touch localLastModified (hook runs inside the materialization counter)");
+
+    const result4 = doc.section();
+    check(result4 === fallback, "next access returns the fallback directly (real slot value now)");
+}
+
 async function testThrowingSetterLeavesStoreRefInPlace () {
     console.log("\nA throwing setter leaves the SvStoreRef in place (failure is retryable, exception propagates)");
 
@@ -258,6 +315,7 @@ async function main () {
 
     await testMaterializationIsStoreNeutralButUiVisible();
     await testNewObjectCreatedDuringMaterializationStillStores();
+    await testMissingRecordFailureHandling();
     await testThrowingSetterLeavesStoreRefInPlace();
 
     console.log("\n" + passed + " passed, " + failed + " failed");
