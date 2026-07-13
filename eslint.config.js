@@ -30,6 +30,7 @@ module.exports = [
             // Linting rules
             "no-undef": "off",
             "no-debugger": "off",
+            "no-unused-vars": ["error", { "args": "none" }], // unused method arguments are fine (hooks/overrides keep the full signature for documentation)
 
             // Formatting rules
             "indent": ["error", 4, { "SwitchCase": 1 }],
