@@ -6,6 +6,7 @@
     "SvTile_slideGesture.js",
     "SvTile_styling.js",
     "SvTitledTile.js",
+    "SvMeterNodeTile.js",
     "SvTextNodeTile.js",
     "SvHeaderTile.js",
     "subviews/_imports.json",
