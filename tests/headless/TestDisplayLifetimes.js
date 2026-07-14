@@ -125,6 +125,15 @@ function testTimePolicy () {
     check(m.isDisplayExpired() === false, "resolved 2s ago with N=10 → not yet");
     check(m.displayExpiryTime() === m.resolvedAt() + 10000, "pending expiry time = resolvedAt + N seconds");
 
+    // legacy rule: resolved-by-stored-fact (subclass isDisplayResolved
+    // override, e.g. a roll with a result) but never stamped → derives as
+    // long-expired (hidden on load, no linger replay)
+    const legacy = addMessage(conv, "pre-feature roll");
+    legacy.setDisplayLifetime("after-resolved-seconds:10");
+    check(legacy.isDisplayExpired() === false, "default isDisplayResolved: no stamp → unresolved → never expires");
+    legacy.isDisplayResolved = () => true; // subclass-style override (resolution is its own stored fact)
+    check(legacy.resolvedAt() === null && legacy.isDisplayExpired() === true, "resolved-without-stamp (legacy) derives as long-expired");
+
     // markResolvedNow: first stamp wins
     const m2 = addMessage(conv, "another");
     m2.setDisplayLifetime("after-resolved-seconds:10");

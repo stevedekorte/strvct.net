@@ -364,12 +364,35 @@
         }
 
         if (policy.startsWith("after-resolved-seconds:")) {
+            if (!this.isDisplayResolved()) {
+                return false;
+            }
             const resolvedAt = this.resolvedAt();
-            return resolvedAt !== null && (Date.now() >= resolvedAt + (n * 1000));
+            if (resolvedAt === null) {
+                // resolved, but before stamping existed (or by a path that
+                // couldn't stamp) — treat as expired long ago: it derives
+                // straight to hidden on load, no animation, no migration
+                return true;
+            }
+            return Date.now() >= resolvedAt + (n * 1000);
         }
 
         console.warn(this.svTypeId() + " unknown displayLifetime '" + policy + "'");
         return false;
+    }
+
+    /**
+   * @description Whether this message has RESOLVED for display purposes.
+   * Default: a resolvedAt stamp exists. Subclasses whose resolution is a
+   * stored fact of their own override this (e.g. a roll request is resolved
+   * iff it has a roll result) so messages resolved before stamping existed
+   * still derive as resolved — the legacy branch of isDisplayExpired then
+   * hides them on load instead of leaving them visible forever.
+   * @returns {Boolean}
+   * @category Display Lifetime
+   */
+    isDisplayResolved () {
+        return this.resolvedAt() !== null;
     }
 
     /**
