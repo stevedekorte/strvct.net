@@ -203,10 +203,13 @@
     async playSound (sound) {
     //this.pause();
         // A skip-if-not-ready sound whose data hasn't arrived by its turn is
-        // SKIPPED, not waited for — sound.play() awaits its fetch+decode
-        // while currentSound holds the queue, so a slow remote fetch would
-        // otherwise pause everything queued behind it (e.g. narration).
-        if (sound.skipIfNotReady && sound.skipIfNotReady() && !sound.isReadyToPlayNow()) {
+        // SKIPPED when other sounds are waiting behind it — sound.play()
+        // awaits its fetch+decode while currentSound holds the queue, so a
+        // slow remote fetch would otherwise pause everything queued behind
+        // it (e.g. narration). With an EMPTY queue there is nothing to hold
+        // up, so we wait for the fetch instead: a sound queued while the
+        // queue is idle would otherwise never play its first, uncached time.
+        if (sound.skipIfNotReady && sound.skipIfNotReady() && !sound.isReadyToPlayNow() && this.queueSize() > 0) {
             console.warn(this.logPrefix(), "skipping sound not ready at its turn:", sound.description());
             this.processQueue();
             return this;
@@ -215,7 +218,25 @@
             //sound.setData(audioBlob);
             sound.addDelegate(this);
             this.setCurrentSound(sound);
-            sound.play(); // returns a promise
+            try {
+                // resolves at end-of-playback; on the normal path the sound
+                // posts onSoundEnded (which advances the queue) just before
+                // this resolves
+                await sound.play();
+            } catch (error) {
+                console.warn(this.logPrefix(), "sound failed to play:", error ? error.message : error, "-", sound.description());
+            } finally {
+                // A sound that never actually played (missing data, failed
+                // fetch or decode) never posts onSoundEnded. Without this,
+                // it would hold currentSound forever and silently wedge the
+                // queue — every later sound queues behind it, never playing.
+                if (this.currentSound() === sound) {
+                    sound.removeDelegate(this);
+                    this.setCurrentSound(null);
+                    this.processQueue();
+                    this.didUpdateNode();
+                }
+            }
         } else {
             this.processQueue();
         }
