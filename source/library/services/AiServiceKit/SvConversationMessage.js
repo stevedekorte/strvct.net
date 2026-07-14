@@ -152,6 +152,61 @@
         }
 
         /**
+     * @member {String} displayLifetime - How long the message stays visible
+     * to the user (Plans/Disappearing Messages): "keep" (default, never
+     * expires), "after-messages-deep:N" (expires once ≥ N messages from the
+     * conversation tail), or "after-resolved-seconds:N" (expires N seconds
+     * after resolvedAt). Expiry itself is DERIVED locally per client from
+     * this policy (see isDisplayExpired) — never stored or synced, so
+     * multiplayer clients hide on their own clocks and late joiners load
+     * directly into the correct end state. Note: distinct from
+     * SvSummaryNode.hidePolicy (summary-field hiding) and from
+     * resultRetentionPolicy (AI-visible history) — display is its own
+     * retention axis.
+     * @category Display Lifetime
+     */
+        {
+            const slot = this.newSlot("displayLifetime", "keep");
+            slot.setCanInspect(true);
+            slot.setInspectorPath("SvConversationMessage");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setIsInCloudJson(true);
+        }
+
+        /**
+     * @member {Number} resolvedAt - Wall-clock ms timestamp of when this
+     * message RESOLVED (roll settled, mechanical response completed) — the
+     * shared anchor "after-resolved-seconds" policies count from. Stamped
+     * explicitly by the flows that know what resolution means for their
+     * message kind (see markResolvedNow); message completion alone does NOT
+     * imply resolution (a roll request is complete long before it's rolled).
+     * @category Display Lifetime
+     */
+        {
+            const slot = this.newSlot("resolvedAt", null);
+            slot.setCanInspect(true);
+            slot.setInspectorPath("SvConversationMessage");
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(true);
+            slot.setIsInCloudJson(true);
+        }
+
+        /**
+     * @member {Boolean} wasDisplayExpired - Transient last-known expiry
+     * state, used by the conversation's sweep to detect transitions (so a
+     * view refresh fires exactly once per expiry). Not stored.
+     * @category Display Lifetime
+     */
+        {
+            const slot = this.newSlot("wasDisplayExpired", false);
+            slot.setCanInspect(false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+        }
+
+        /**
      * @member {Object} delegate - The delegate object for the message.
      * @category Delegate
      */
@@ -252,6 +307,102 @@
 
     requiresCompletionBeforeUserResponse () {
         return true;
+    }
+
+    // --- display lifetime (Plans/Disappearing Messages) ---
+
+    /**
+   * @description Stamps the resolution timestamp (idempotent — first stamp
+   * wins) and asks the conversation to re-arm its expiry timer. Call from
+   * the flow that knows what "resolved" means for this message kind: a roll
+   * request when the result lands, a mechanical response when it completes.
+   * @returns {SvConversationMessage}
+   * @category Display Lifetime
+   */
+    markResolvedNow () {
+        if (this.resolvedAt() === null) {
+            this.setResolvedAt(Date.now());
+            const conversation = this.conversation();
+            if (conversation && conversation.scheduleDisplayLifetimeSweep) {
+                conversation.scheduleDisplayLifetimeSweep();
+            }
+        }
+        return this;
+    }
+
+    /**
+   * @description Whether this message is past its display lifetime — DERIVED
+   * locally from the policy, the message's distance from the conversation
+   * tail, and resolvedAt. Never stored: multiplayer clients each derive it
+   * on their own clock, and reloads land directly in the correct end state.
+   * @returns {Boolean}
+   * @category Display Lifetime
+   */
+    isDisplayExpired () {
+        const policy = this.displayLifetime();
+        if (!policy || policy === "keep") {
+            return false;
+        }
+
+        const n = Number(policy.split(":")[1]);
+        if (!Number.isFinite(n)) {
+            console.warn(this.svTypeId() + " invalid displayLifetime '" + policy + "'");
+            return false;
+        }
+
+        if (policy.startsWith("after-messages-deep:")) {
+            const conversation = this.conversation();
+            if (!conversation || !conversation.messages) {
+                return false;
+            }
+            const messages = conversation.messages();
+            const index = messages.indexOf(this);
+            if (index === -1) {
+                return false;
+            }
+            return (messages.length - 1 - index) >= n;
+        }
+
+        if (policy.startsWith("after-resolved-seconds:")) {
+            const resolvedAt = this.resolvedAt();
+            return resolvedAt !== null && (Date.now() >= resolvedAt + (n * 1000));
+        }
+
+        console.warn(this.svTypeId() + " unknown displayLifetime '" + policy + "'");
+        return false;
+    }
+
+    /**
+   * @description For "after-resolved-seconds" policies that are pending
+   * (resolved but not yet expired): the wall-clock ms timestamp of expiry,
+   * else null. The conversation's single timer arms for the earliest of
+   * these.
+   * @returns {Number|null}
+   * @category Display Lifetime
+   */
+    displayExpiryTime () {
+        const policy = this.displayLifetime();
+        if (policy && policy.startsWith("after-resolved-seconds:") && this.resolvedAt() !== null) {
+            const n = Number(policy.split(":")[1]);
+            if (Number.isFinite(n)) {
+                return this.resolvedAt() + (n * 1000);
+            }
+        }
+        return null;
+    }
+
+    /**
+   * @description Display-expired messages fold out of the visible chat.
+   * Composes under subclass overrides (SvAiParsedResponseMessage's developer
+   * mode bypass sits above this and reveals everything — the debugging
+   * escape hatch). Distinct from isVisibleToUser, which means "was NEVER
+   * shown" (tool results); an expired message was legitimately shown and
+   * then aged out.
+   * @returns {Boolean}
+   * @category Display Lifetime
+   */
+    isVisible () {
+        return super.isVisible() && !this.isDisplayExpired();
     }
 
 

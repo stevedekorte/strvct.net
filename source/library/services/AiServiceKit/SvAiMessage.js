@@ -166,14 +166,16 @@
         const devMode = SvApp.shared().developerMode();
 
         if (devMode) {
-            return true;
+            return true; // reveal everything — including display-expired messages
         }
 
         if (this.speakerName() === "Tool Call Results") { // temporary to hide tool call results from non-dev users
             return false;
         }
 
-        return this.role() !== "system";
+        // compose with the base: SvConversationMessage folds in display-lifetime
+        // expiry (Plans/Disappearing Messages) and the isVisible slot
+        return this.role() !== "system" && super.isVisible();
     }
 
     /**
@@ -366,7 +368,7 @@
                         if (typeof response.setIsComplete === "function" && !response.isComplete()) {
                             response.setIsComplete(true);
                         }
-                    } catch (e) { /* swallow secondary failures */ }
+                    } catch (secondaryFailure) { /* swallow secondary failures */ } // eslint-disable-line no-unused-vars
                 });
             }
         } catch (error) {

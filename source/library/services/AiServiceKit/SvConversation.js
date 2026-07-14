@@ -261,6 +261,89 @@
     // can be useful for sharing the changes with other clients
     }
 
+    // --- display lifetimes (Plans/Disappearing Messages) ---
+
+    /**
+   * @description Coalesced entry point: re-evaluates every message's display
+   * expiry at end of cycle. Triggered by message-list changes (depth
+   * policies), markResolvedNow (time policies), and the expiry timer.
+   * @returns {SvConversation}
+   * @category Display Lifetime
+   */
+    scheduleDisplayLifetimeSweep () {
+        this.scheduleMethod("sweepDisplayLifetimes");
+        return this;
+    }
+
+    /**
+   * @description Depth-based lifetimes ("after-messages-deep:N") change when
+   * messages are appended or removed — re-derive at end of cycle.
+   * @category Display Lifetime
+   */
+    didChangeSubnodeList () {
+        super.didChangeSubnodeList();
+        this.scheduleDisplayLifetimeSweep();
+        return this;
+    }
+
+    /**
+   * @description One pass over the messages: refresh the view of any message
+   * whose derived expiry state TRANSITIONED (exactly one refresh per
+   * transition — the tile runs the exit animation off it), then arm ONE
+   * timer for the earliest pending time-based expiry. Never a timer per
+   * message. Expiry is derived (see SvConversationMessage.isDisplayExpired);
+   * this sweep only decides WHEN views need to re-read it.
+   * @returns {SvConversation}
+   * @category Display Lifetime
+   */
+    sweepDisplayLifetimes () {
+        let nextExpiryTime = null;
+        this.messages().forEach(m => {
+            if (!m.isDisplayExpired) {
+                return; // defensive: foreign subnode kinds
+            }
+            const expired = m.isDisplayExpired();
+            if (expired !== m.wasDisplayExpired()) {
+                m.setWasDisplayExpired(expired);
+                // standard view-refresh channel (same as
+                // hideStreamInfoOnPreviousAiMessage); fires at most once per
+                // expiry transition, and always adjacent to real message
+                // activity, so the bubble's cloud-timestamp touch is noise-free
+                m.didUpdateNode();
+            }
+            if (!expired) {
+                const t = m.displayExpiryTime();
+                if (t !== null && (nextExpiryTime === null || t < nextExpiryTime)) {
+                    nextExpiryTime = t;
+                }
+            }
+        });
+        this.armDisplayLifetimeTimer(nextExpiryTime);
+        return this;
+    }
+
+    /**
+   * @description Arms (or clears) the conversation's single expiry timer.
+   * @param {Number|null} nextExpiryTime - wall-clock ms of the earliest
+   * pending expiry, or null for none.
+   * @category Display Lifetime
+   */
+    armDisplayLifetimeTimer (nextExpiryTime) {
+        if (this._displayLifetimeTimeoutId) {
+            clearTimeout(this._displayLifetimeTimeoutId);
+            this._displayLifetimeTimeoutId = null;
+        }
+        if (nextExpiryTime === null) {
+            return this;
+        }
+        const delayMs = Math.max(0, nextExpiryTime - Date.now()) + 50; // small pad so the sweep lands past the boundary
+        this._displayLifetimeTimeoutId = setTimeout(() => {
+            this._displayLifetimeTimeoutId = null;
+            this.sweepDisplayLifetimes();
+        }, delayMs);
+        return this;
+    }
+
     /**
    * @description Handles message completion.
    * @param {*} aMsg - The completed message.
