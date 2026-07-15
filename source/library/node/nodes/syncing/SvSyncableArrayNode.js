@@ -87,7 +87,16 @@
         // setters. See SvSyncableJsonGroup.didSyncToCloud for the
         // longer rationale.
         if (this.hasDoneInit() && !this._suppressLocalModifiedTouch) {
-            this.touchLocalModified();
+            if (SvObjectPool.isAnyPoolStoring()) {
+                // See SvSyncableJsonGroup.didUpdateNode for the full rationale:
+                // a didUpdateNode arriving during a store pass is a side effect
+                // of recordForStore reading getters, not a real model change.
+                // Touching the STORED localLastModified slot here would re-dirty
+                // this object mid-pass and trip the pool's double-store guard.
+                SvObjectPool.warnStorePassMutation(this);
+            } else {
+                this.touchLocalModified();
+            }
         }
         return super.didUpdateNode();
     }

@@ -212,6 +212,10 @@ SvGlobals.globals().ideal.SvAtomicMap = class SvAtomicMap extends ProtoClass {
         this.setMap(this.snapshot());
         this.setSnapshot(null);
         this.changedKeySet().clear();
+        // Discard async writes staged by the reverted tx — promiseCommit
+        // drains this queue, so leaving them here would leak the reverted
+        // transaction's writes into whatever transaction commits next.
+        this.asyncWriteQueue().clear();
         this.setIsInTx(false);
         this.onCompleteTx();
         return this;

@@ -95,6 +95,67 @@
 
     /**
      * @static
+     * @description Number of store passes (storeDirtyObjects) currently in
+     * progress across all pools. A counter rather than a boolean so nested or
+     * concurrent pools compose correctly. Since storeDirtyObjects() runs fully
+     * synchronously, this reliably brackets the entire pass.
+     * @returns {Number}
+     * @category Storing
+     */
+    static storingPassCount () {
+        return this._storingPassCount || 0;
+    }
+
+    /**
+     * @static
+     * @description True while any pool's storeDirtyObjects() pass is in
+     * progress. Model objects can consult this to tell an incidental mutation
+     * caused by serialization (getters read during recordForStore) apart from
+     * a genuine model change.
+     * @returns {Boolean}
+     * @category Storing
+     */
+    static isAnyPoolStoring () {
+        return this.storingPassCount() > 0;
+    }
+
+    /**
+     * @static
+     * @description Marks the beginning of a store pass. Called from
+     * storeDirtyObjects(). Always paired with endStoringPass() in a finally.
+     * @returns {void}
+     * @category Storing
+     */
+    static beginStoringPass () {
+        this._storingPassCount = this.storingPassCount() + 1;
+    }
+
+    /**
+     * @static
+     * @description Marks the end of a store pass.
+     * @returns {void}
+     * @category Storing
+     */
+    static endStoringPass () {
+        this._storingPassCount = this.storingPassCount() - 1;
+    }
+
+    /**
+     * @static
+     * @description Logs a warning (with a stack) that a stored-state mutation
+     * was suppressed because it arrived during a store pass — i.e. it was a
+     * side effect of recordForStore reading getters, not a real model change.
+     * The stack identifies the culprit getter so it can be fixed at the source.
+     * @param {Object} anObject - the object whose mutation was suppressed
+     * @returns {void}
+     * @category Storing
+     */
+    static warnStorePassMutation (anObject) {
+        console.warn(anObject.svTypeId() + " mutation suppressed during a store pass — serialization must not write stored state. Stack:\n" + new Error().stack);
+    }
+
+    /**
+     * @static
      * @description Notifies all open pools when an object's puuid changes.
      * This allows all pools tracking an object to update their internal mappings.
      * @param {Object} obj - The object whose puuid changed
@@ -947,26 +1008,62 @@
      * @returns {void}
      */
     async commitStoreDirtyObjects () {
-        this.logDebug("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
+        // SvSyncScheduler.processSets() invokes scheduled actions
+        // fire-and-forget: it does not await the promise this method returns.
+        // A second commit can therefore be scheduled and entered while this one
+        // is suspended at an await (promiseBegin / promiseCommit), which would
+        // interleave two kvMap transactions. Guard against re-entry: if a commit
+        // is already in flight, just bail. NOTE: we can't scheduleStore() here —
+        // when re-entered from the scheduler, isSyncingTargetAndMethod() is true
+        // for this exact target/method, so the call would silently no-op. The
+        // in-flight commit reschedules from its finally block instead, which
+        // runs in a later microtask where the scheduler is free again.
+        if (this._isCommitting) {
+            return;
+        }
 
-        if (this.hasDirtyObjects()) {
-            //console.log(this.svType() + " --- commitStoreDirtyObjects ---");
+        this._isCommitting = true;
+        try {
+            this.logDebug("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
 
-            //this.logDebug("--- commitStoreDirtyObjects begin ---");
-            await this.kvMap().promiseBegin();
-            const storeCount = this.storeDirtyObjects();
-            await this.kvMap().promiseCommit();
-            this.logDebug("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects");
-            this.logDebug("--- commitStoreDirtyObjects total objects: " + this.kvMap().count());
+            if (this.hasDirtyObjects()) {
+                //console.log(this.svType() + " --- commitStoreDirtyObjects ---");
 
-            //this.show("AFTER commitStoreDirtyObjects");
-
-            if (this._forcedDirtyObjectsSet) {
-                if (this._forcedDirtyObjectsSet.size !== 0) {
-                    this.scheduleStore();
-                } else {
-                    this._forcedDirtyObjectsSet = null;
+                //this.logDebug("--- commitStoreDirtyObjects begin ---");
+                await this.kvMap().promiseBegin();
+                let storeCount;
+                try {
+                    storeCount = this.storeDirtyObjects();
+                } catch (e) {
+                    // Self-heal the abandoned transaction: without this, a
+                    // throw mid-pass leaves the kvMap isInTx forever and every
+                    // later commit fails at promiseBegin.
+                    if (this.kvMap().isInTx()) {
+                        this.kvMap().revert();
+                    }
+                    throw e;
                 }
+                await this.kvMap().promiseCommit();
+                this.logDebug("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects");
+                this.logDebug("--- commitStoreDirtyObjects total objects: " + this.kvMap().count());
+
+                //this.show("AFTER commitStoreDirtyObjects");
+
+                if (this._forcedDirtyObjectsSet) {
+                    if (this._forcedDirtyObjectsSet.size !== 0) {
+                        this.scheduleStore();
+                    } else {
+                        this._forcedDirtyObjectsSet = null;
+                    }
+                }
+            }
+        } finally {
+            this._isCommitting = false;
+            // Pick up objects dirtied while this commit was in flight (their
+            // own scheduleStore calls may have been dropped by the re-entrancy
+            // guard above, or by the scheduler's isSyncing check).
+            if (this.hasDirtyObjects()) {
+                this.scheduleStore();
             }
         }
     }
@@ -982,41 +1079,51 @@
 
         let totalStoreCount = 0;
         this.setStoringPids(new Set());
+        SvObjectPool.beginStoringPass();
 
-        for (;;) { // easier to express clearly than do/while in this case
-            let thisLoopStoreCount = 0;
-            const dirtyBucket = this.dirtyObjects();
-            this.setDirtyObjects(new Map());
+        try {
+            for (;;) { // easier to express clearly than do/while in this case
+                let thisLoopStoreCount = 0;
+                const dirtyBucket = this.dirtyObjects();
+                this.setDirtyObjects(new Map());
 
-            dirtyBucket.forEachKV((puuid, obj) => {
-                //console.log("  storing pid " + puuid);
+                dirtyBucket.forEachKV((puuid, obj) => {
+                    //console.log("  storing pid " + puuid);
 
-                if (this.storingPids().has(puuid)) {
-                    const msg = "ERROR: attempt to double store " + obj.svTypeId();
-                    console.log(msg);
-                    throw new Error(msg);
+                    if (this.storingPids().has(puuid)) {
+                        const msg = "ERROR: attempt to double store " + obj.svTypeId();
+                        console.log(msg);
+                        throw new Error(msg);
+                    }
+
+                    this.storingPids().add(puuid);
+
+                    if (this._forcedDirtyObjectsSet && this._forcedDirtyObjectsSet.has(obj)) {
+                        this._forcedDirtyObjectsSet.delete(obj);
+                    }
+
+                    this.storeObject(obj);
+
+                    thisLoopStoreCount ++;
+                });
+
+                if (thisLoopStoreCount === 0) {
+                    break;
                 }
 
-                this.storingPids().add(puuid);
-
-                if (this._forcedDirtyObjectsSet && this._forcedDirtyObjectsSet.has(obj)) {
-                    this._forcedDirtyObjectsSet.delete(obj);
-                }
-
-                this.storeObject(obj);
-
-                thisLoopStoreCount ++;
-            });
-
-            if (thisLoopStoreCount === 0) {
-                break;
+                totalStoreCount += thisLoopStoreCount;
+                //this.logDebug(() => "totalStoreCount: " + totalStoreCount);
             }
-
-            totalStoreCount += thisLoopStoreCount;
-            //this.logDebug(() => "totalStoreCount: " + totalStoreCount);
+        } finally {
+            // Always clear the storing state, even if serialization threw
+            // mid-pass. Without this, an exception would leave storingPids
+            // populated forever, poisoning the pool: every later
+            // addDirtyObject() of an already-stored pid would raise a spurious
+            // double-store error.
+            SvObjectPool.endStoringPass();
+            this.setStoringPids(null);
         }
 
-        this.setStoringPids(null);
         return totalStoreCount;
     }
 
