@@ -7,8 +7,8 @@
  * @extends SvSummaryNode
  * @description A music library.
  * All tracks are under a Creative Commons License.
- 
- 
+
+
  */
 
 (class SvMusicLibrary extends SvSummaryNode {
@@ -215,10 +215,15 @@
     }
 
     /**
-   * @description Returns the playlists.
+   * @description Returns the playlists, lazy-loading them from the JSON
+   * catalog on first access. Lookups (trackWithName etc.) read this, so
+   * they must not depend on some OTHER caller having touched
+   * playlistDicts() first — a tool call arriving before prompt composition
+   * found an empty folder and reported valid track names as missing.
    * @returns {Array} The playlists.
    */
     playlists () {
+        this.playlistDicts(); // triggers setupPlaylists() once
         return this.folder().subnodes();
     }
 
