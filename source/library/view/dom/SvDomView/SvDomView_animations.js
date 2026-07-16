@@ -19,9 +19,10 @@
         //const needsRefocus = focusedElement !== this.element();
         // console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollToTop() needsRefocus = ", needsRefocus)
 
-        // TEMP diagnostic for chat scroll jumps — only logs when this call moves
-        // the viewport by more than a screenful (routine stick-to-bottom is silent)
-        {
+        // Scroll-jump diagnostic (opt-in: localStorage.SvScrollDebug = "1") —
+        // only logs when this call moves the viewport by more than a
+        // screenful (routine stick-to-bottom is silent)
+        if (typeof localStorage !== "undefined" && localStorage.getItem("SvScrollDebug") === "1") {
             const e = this.element();
             const distanceFromBottom = e.scrollHeight - (e.scrollTop + e.clientHeight);
             if (distanceFromBottom > e.clientHeight) {
@@ -145,9 +146,11 @@
             return false;
         }
 
-        // TEMP diagnostic for chat scroll jumps
-        console.log("[ScrollDebug] " + this.svTypeId() + ".scrollIntoView()\n" +
-            new Error().stack.split("\n").slice(2, 8).join("\n"));
+        // Scroll-jump diagnostic (opt-in: localStorage.SvScrollDebug = "1")
+        if (typeof localStorage !== "undefined" && localStorage.getItem("SvScrollDebug") === "1") {
+            console.log("[ScrollDebug] " + this.svTypeId() + ".scrollIntoView()\n" +
+                new Error().stack.split("\n").slice(2, 8).join("\n"));
+        }
 
         const focusedView = SvWebBrowserWindow.shared().activeDomView();
         //console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollIntoView() needsRefocus = ", focusedView !== this)

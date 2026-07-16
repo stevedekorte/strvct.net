@@ -161,6 +161,7 @@ Example Tool call format:
             slot.setCanEditInspection(false);
             slot.setIsInJsonSchema(false);
             slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true); // without this the inspector showed a completed call frozen at "queued"
             slot.setValidValues(["queued", "calling", "completed"]);
             // queued: tool is queued to be called
             // calling: tool is waiting for a setResult() call from the receiver of the tool call

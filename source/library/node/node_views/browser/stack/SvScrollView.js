@@ -196,10 +196,12 @@
                 this.contentView().startContentMutationObserverIfNeeded();
                 this.setupScrollToBottomButton();
 
-                // TEMP diagnostic for chat scroll jumps — programmatic focus()
-                // scrolls the focused element into view natively, without any
-                // scroll API call our other logging could catch
-                if (!this._scrollDebugFocusListener) {
+                // Scroll-jump diagnostic (opt-in: localStorage.SvScrollDebug
+                // = "1") — programmatic focus() scrolls the focused element
+                // into view natively, without any scroll API call our other
+                // logging could catch
+                if (!this._scrollDebugFocusListener
+                        && typeof localStorage !== "undefined" && localStorage.getItem("SvScrollDebug") === "1") {
                     this._scrollDebugFocusListener = (event) => {
                         const t = event.target;
                         console.log("[ScrollDebug] focusin inside scroll view: <" + t.tagName.toLowerCase() + "> class='" +
@@ -238,9 +240,10 @@
      * @category Event Handling
      */
     onScroll (/*event*/) {
-        // TEMP diagnostic for chat scroll jumps — logs any scroll event that
-        // moved more than a screenful since the last one
-        {
+        // Scroll-jump diagnostic (opt-in: localStorage.SvScrollDebug = "1") —
+        // logs any scroll event that moved more than a screenful since the
+        // last one
+        if (typeof localStorage !== "undefined" && localStorage.getItem("SvScrollDebug") === "1") {
             const e = this.element();
             const last = this._scrollDebugLastTop;
             if (last !== undefined && Math.abs(e.scrollTop - last) > e.clientHeight) {
