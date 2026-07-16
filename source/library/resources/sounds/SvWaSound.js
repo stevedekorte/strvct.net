@@ -539,7 +539,16 @@
         this.setPlayPromise(Promise.clone());
         this.setSource(this.newAudioSource()); // setups source with decoded buffer
         this.syncToSource(this.source());
-        this.source().start(this.whenToPlay(), this.offsetInSeconds(), this.duration());
+        if (this.loop()) {
+            // An explicit duration argument caps playback at that many
+            // seconds EVEN WHEN source.loop is true (Web Audio spec) — with
+            // duration() = the buffer length, a "looping" sound played
+            // exactly one pass and fired ended. Looping playback must omit
+            // the cap; it runs until stop().
+            this.source().start(this.whenToPlay(), this.offsetInSeconds());
+        } else {
+            this.source().start(this.whenToPlay(), this.offsetInSeconds(), this.duration());
+        }
         this.setIsPlaying(true);
         this.onStarted();
         return this.playPromise();
