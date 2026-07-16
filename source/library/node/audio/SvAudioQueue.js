@@ -20,8 +20,8 @@
  * - addDelegate(delegate)
  * - removeDelegate(delegate)
  * - stop()
- 
- 
+
+
  */
 
 (class SvAudioQueue extends SvSummaryNode {
@@ -213,6 +213,13 @@
             console.warn(this.logPrefix(), "skipping sound not ready at its turn:", sound.description());
             this.processQueue();
             return this;
+        }
+        if (this.isMuted()) {
+            console.log(this.logPrefix(), "DROPPING sound (queue is muted):", sound.description());
+        } else {
+            console.log(this.logPrefix(), "playing:", sound.description(),
+                "| ready:", (sound.isReadyToPlayNow ? sound.isReadyToPlayNow() : "(n/a)"),
+                "| queued behind:", this.queueSize());
         }
         if (!this.isMuted()) {
             //sound.setData(audioBlob);

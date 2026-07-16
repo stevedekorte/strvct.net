@@ -154,6 +154,9 @@
    */
     async play () {
         const player = this.library().musicPlayer();
+        // NOTE: this routes through the YouTube iframe player — its own mute
+        // and volume, a separate pipeline from the WebAudio narration voice
+        console.log("[MusicTrack] play '" + this.name() + "' via YouTube player (videoId " + this.trackId() + ")");
         player.setTrackName(this.name());
         player.setVideoId(this.trackId());
         player.setShouldRepeat(false);
@@ -162,6 +165,7 @@
         this.post("onSoundStarted");
         await player.play();
 
+        console.log("[MusicTrack] '" + this.name() + "' finished (player.play() resolved)");
         this.setIsPlaying(false);
         this.post("onSoundEnded");
     }

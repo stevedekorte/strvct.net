@@ -289,13 +289,21 @@
    */
     async play () {
         if (this.mute()) {
+            // the mute slot is STORED — once set, every track (including
+            // sound effects routed through this player) is silently dropped
+            // on every boot until unmuted; say so instead of vanishing
+            console.log("[YTAudio] play() SKIPPED: player is muted (stored setting) — '" + this.trackName() + "' will not be audible");
             return;
         }
 
         if (!this.videoId()) {
+            console.log("[YTAudio] play() SKIPPED: no videoId set (trackName: '" + this.trackName() + "')");
             return;
         }
 
+        console.log("[YTAudio] play '" + this.trackName() + "' videoId=" + this.videoId()
+            + " | volume: " + Math.round(this.volume() * 100) + "%"
+            + " | player ready: " + this.isReady());
         await this.playerPromise();
         this.logDebug("play() after promise");
 
