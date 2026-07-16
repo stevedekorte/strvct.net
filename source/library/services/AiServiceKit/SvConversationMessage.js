@@ -155,8 +155,10 @@
      * @member {String} displayLifetime - How long the message stays visible
      * to the user (Plans/Disappearing Messages): "keep" (default, never
      * expires), "after-messages-deep:N" (expires once ≥ N messages from the
-     * conversation tail), or "after-resolved-seconds:N" (expires N seconds
-     * after resolvedAt). Expiry itself is DERIVED locally per client from
+     * conversation tail), "after-resolved-next-message" (expires once
+     * resolved AND a later user-visible message completes — fully
+     * structural, no clocks), or "after-resolved-seconds:N" (expires N
+     * seconds after resolvedAt). Expiry itself is DERIVED locally per client from
      * this policy (see isDisplayExpired) — never stored or synced, so
      * multiplayer clients hide on their own clocks and late joiners load
      * directly into the correct end state. Note: distinct from
@@ -341,6 +343,38 @@
     isDisplayExpired () {
         const policy = this.displayLifetime();
         if (!policy || policy === "keep") {
+            return false;
+        }
+
+        if (policy === "after-resolved-next-message") {
+            // Fully structural — no clocks: expires once this message has
+            // RESOLVED (roll settled, mechanical response completed) AND a
+            // later USER-VISIBLE message has completed — i.e. the story has
+            // visibly moved past it. Invisible messages (tool results,
+            // continue nudges) don't count: the user never saw them, so
+            // folding on one would look arbitrary. An unresolved message
+            // never expires however much arrives after it (party chat can
+            // flow past a roll still in the air).
+            if (!this.isDisplayResolved()) {
+                return false;
+            }
+            const conversation = this.conversation();
+            if (!conversation || !conversation.messages) {
+                return false;
+            }
+            const messages = conversation.messages();
+            const index = messages.indexOf(this);
+            if (index === -1) {
+                return false;
+            }
+            for (let i = index + 1; i < messages.length; i++) {
+                const m = messages[i];
+                const visible = m.isVisibleToUser ? m.isVisibleToUser() : true;
+                const complete = m.isComplete ? m.isComplete() : true;
+                if (visible && complete) {
+                    return true;
+                }
+            }
             return false;
         }
 

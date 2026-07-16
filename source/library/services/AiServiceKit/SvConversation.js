@@ -271,7 +271,17 @@
    * @category Display Lifetime
    */
     scheduleDisplayLifetimeSweep () {
-        this.scheduleMethod("sweepDisplayLifetimes");
+        // NEXT cycle, not this one: the sweep itself mutates messages
+        // (assigning lifetime policies, wasDisplayExpired transitions), which
+        // can re-sort the subnode list → didChangeSubnodeList → back here
+        // WHILE sweepDisplayLifetimes is the action being processed — and
+        // same-cycle scheduling of the currently-processing action trips the
+        // SvSyncScheduler loop detector. Next-cycle scheduling coalesces all
+        // such re-triggers into one follow-up sweep, which settles: policies
+        // are assigned at most once per message and transitions are consumed,
+        // so the follow-up mutates nothing. (Lifetime timing is second-scale;
+        // a one-cycle delay is immaterial.)
+        this.scheduleMethodForNextCycle("sweepDisplayLifetimes");
         return this;
     }
 
@@ -351,6 +361,9 @@
    */
     onMessageComplete (aMsg) {
     //super.onMessageComplete(aMsg);
+        // a completion can expire "after-resolved-next-message" lifetimes on
+        // EARLIER messages (the story visibly moved past them) — re-derive
+        this.scheduleDisplayLifetimeSweep();
         this.chatInputNode().setValueIsEditable(true);
         // The anchored exchange is over once a user-visible response finishes
         // streaming — release the scroll anchor so normal stick-to-bottom /

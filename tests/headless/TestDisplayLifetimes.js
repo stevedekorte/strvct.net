@@ -170,6 +170,42 @@ function testSweepTransitionsAndTimer () {
     check(!conv._displayLifetimeTimeoutId, "timer cleared when nothing pending (test cleanup)");
 }
 
+function testNextMessagePolicy () {
+    console.log("\nafter-resolved-next-message: expires once resolved AND a later user-visible message completes");
+
+    const conv = newConversation();
+    const m = addMessage(conv, "roll request");
+    m.setDisplayLifetime("after-resolved-next-message");
+
+    check(m.isDisplayExpired() === false, "unresolved → not expired");
+
+    m.setResolvedAt(1); // resolved (any stamp)
+    check(m.isDisplayExpired() === false, "resolved but no later message → not expired (still the story's tail)");
+
+    const invisible = addMessage(conv, "tool results");
+    invisible.setIsVisibleToUser(false);
+    check(m.isDisplayExpired() === false, "a later INVISIBLE message doesn't count (user never saw it)");
+
+    const SvAiMessage = SvGlobals.get("SvAiMessage");
+    const streaming = SvAiMessage.clone();
+    streaming.setRole("assistant");
+    streaming.setContent("The blade arcs…");
+    streaming.setConversation(conv);
+    conv.addSubnode(streaming); // incomplete — still streaming
+    check(m.isDisplayExpired() === false, "a later visible but INCOMPLETE message doesn't count (narration still streaming)");
+
+    streaming.setIsComplete(true);
+    check(m.isDisplayExpired() === true, "later visible message completed → expired (the story moved past it)");
+    check(m.isVisible() === false, "…and reports not-visible");
+
+    // resolution still gates: an unresolved sibling with the same policy
+    // stays visible even though later messages completed
+    const unresolvedRoll = addMessage(conv, "second roll, dice in the air");
+    unresolvedRoll.setDisplayLifetime("after-resolved-next-message");
+    addMessage(conv, "party chat flowing past");
+    check(unresolvedRoll.isDisplayExpired() === false, "unresolved message never expires however much arrives after it");
+}
+
 function testMalformedPolicies () {
     console.log("\nMalformed policies fail visible (never expire)");
 
@@ -196,6 +232,7 @@ async function main () {
 
     testDepthPolicy();
     testTimePolicy();
+    testNextMessagePolicy();
     testSweepTransitionsAndTimer();
     testMalformedPolicies();
 
