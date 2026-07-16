@@ -220,6 +220,7 @@
             this.updateContent(reader.rootNode().innerHtml()); // update so we can highlight the text when speaking
 
             if (
+                !shouldIgnore && // a <sentence> nested in <think>/<scene-description> is meta-content — the tag dispatch above already skips it, but this block ran regardless and TTS spoke the AI's thoughts aloud
                 this.shouldVoiceNarrate() &&
         this.tagsToSpeak().includes(nodeTag)
             ) {
