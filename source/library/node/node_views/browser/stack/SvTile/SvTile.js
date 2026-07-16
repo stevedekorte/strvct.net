@@ -554,8 +554,20 @@
             && typeof document !== "undefined" && !document.hidden;
 
         if (!wantsAnimatedExit) {
+            // TEMP DIAGNOSTIC (remove after the blink-not-animating hunt):
+            // an EXPIRED node being hidden without animation is the exact
+            // branch that would blink — throw so the debugger captures the
+            // caller and the failed condition.
+            if (aBool && node && node.isDisplayExpired && node.isDisplayExpired()) {
+                const reasons = [];
+                if (this.isDisplayHidden()) { reasons.push("tile already displayHidden"); }
+                if (typeof document !== "undefined" && document.hidden) { reasons.push("document.hidden"); }
+                if (reasons.length === 0) { reasons.push("(none — should have animated?)"); }
+                throw new Error("[DisplayExit] hiding EXPIRED " + (node.svTypeId ? node.svTypeId() : "?") + " WITHOUT animation; reasons: " + reasons.join(", "));
+            }
             return super.setIsDisplayHidden(aBool);
         }
+        console.log("[DisplayExit] animating exit for " + (node.svTypeId ? node.svTypeId() : "?"));
         return this.animateDisplayExit();
     }
 
