@@ -178,6 +178,24 @@
     }
 
     /**
+   * @category Information
+   * @description A safe display label for any queued sound: the protocol
+   * only requires play/stop/addDelegate/removeDelegate — description() is
+   * optional (SvWaSound lacks it; SvMusicTrack has it).
+   * @param {Object} sound
+   * @returns {String}
+   */
+    descriptionForSound (sound) {
+        if (sound && typeof sound.description === "function") {
+            return sound.description();
+        }
+        if (sound && typeof sound.svTypeId === "function") {
+            return sound.svTypeId();
+        }
+        return String(sound);
+    }
+
+    /**
    * @category Queue Management
    * @description Processes the next item in the queue if no sound is currently playing.
    * @returns {SvAudioQueue} The audio queue instance.
@@ -210,14 +228,14 @@
         // up, so we wait for the fetch instead: a sound queued while the
         // queue is idle would otherwise never play its first, uncached time.
         if (sound.skipIfNotReady && sound.skipIfNotReady() && !sound.isReadyToPlayNow() && this.queueSize() > 0) {
-            console.warn(this.logPrefix(), "skipping sound not ready at its turn:", sound.description());
+            console.warn(this.logPrefix(), "skipping sound not ready at its turn:", this.descriptionForSound(sound));
             this.processQueue();
             return this;
         }
         if (this.isMuted()) {
-            console.log(this.logPrefix(), "DROPPING sound (queue is muted):", sound.description());
+            console.log(this.logPrefix(), "DROPPING sound (queue is muted):", this.descriptionForSound(sound));
         } else {
-            console.log(this.logPrefix(), "playing:", sound.description(),
+            console.log(this.logPrefix(), "playing:", this.descriptionForSound(sound),
                 "| ready:", (sound.isReadyToPlayNow ? sound.isReadyToPlayNow() : "(n/a)"),
                 "| queued behind:", this.queueSize());
         }
@@ -231,7 +249,7 @@
                 // this resolves
                 await sound.play();
             } catch (error) {
-                console.warn(this.logPrefix(), "sound failed to play:", error ? error.message : error, "-", sound.description());
+                console.warn(this.logPrefix(), "sound failed to play:", error ? error.message : error, "-", this.descriptionForSound(sound));
             } finally {
                 // A sound that never actually played (missing data, failed
                 // fetch or decode) never posts onSoundEnded. Without this,
