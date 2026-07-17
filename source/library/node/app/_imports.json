@@ -1,5 +1,6 @@
 [
     "SvErrorReport.js",
+    "SvClientReport.js",
     "SvAsyncTimer.js",
     "SvModel.js",
     "ui/_imports.json",

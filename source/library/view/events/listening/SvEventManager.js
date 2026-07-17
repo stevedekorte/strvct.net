@@ -85,6 +85,26 @@
             const slot = this.newSlot("userEventNames", new Set(["KeyboardEvent", "MouseEvent", "DragEvent", "TouchEvent", "PointerEvent", "WheelEvent", "InputEvent", "ClipboardEvent"]));
             slot.setSlotType("Set");
         }
+        /**
+         * @member {Object|null} lastEventStamp - { name, endTime, describe } of the last completed
+         * outermost event, stamped regardless of duration. SvLongTaskMonitor uses it to attribute
+         * longtask entries the browser won't attribute itself.
+         * @category Performance Reporting
+         */
+        {
+            const slot = this.newSlot("lastEventStamp", null);
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+        }
+        /**
+         * @member {Number} longEventThresholdMs - Outermost wrapped events (handler + end-of-event
+         * fullSyncNow) longer than this file a "long-event" report.
+         * @category Performance Reporting
+         */
+        {
+            const slot = this.newSlot("longEventThresholdMs", 1000);
+            slot.setSlotType("Number");
+        }
     }
 
     /**
@@ -173,10 +193,12 @@
      * @description Safely wraps an event callback
      * @param {Function} callback - The callback function to wrap
      * @param {Event} event - The event object (may be null/string in Node.js environments)
+     * @param {Function|null} [describeFunc=null] - Lazily describes the handler
+     * ("DelegateClass.onMethodName") for performance reports; only invoked when a report fires
      * @returns {*} The result of the callback function
      * @category Event Handling
      */
-    safeWrapEvent (callback, event) {
+    safeWrapEvent (callback, event, describeFunc = null) {
         // In Node.js, XMLHttpRequest events may not be proper Event objects
         // Use a string identifier instead, which currentEventName() already handles
         if (!event && typeof process !== "undefined" && process.versions && process.versions.node) {
@@ -184,8 +206,12 @@
         }
         assert(event);
         this.setCurrentEvent(event);
+        // Capture now — a nested safeWrapEvent nulls currentEvent when it completes
+        const eventName = this.currentEventName();
         let result = undefined;
         let eventCountBefore = this.eventLevelCount();
+        const isOutermost = (eventCountBefore === 0);
+        const startTime = isOutermost ? performance.now() : 0;
         this.incrementEventLevelCount();
         result = callback();
 
@@ -193,8 +219,37 @@
         assert(this.eventLevelCount() === eventCountBefore);
 
         this.syncIfAppropriate();
+        if (isOutermost) {
+            // After syncIfAppropriate so the duration includes the end-of-event fullSyncNow
+            // (notification cascade + view construction), not just the handler
+            this.recordCompletedEvent(eventName, startTime, describeFunc);
+        }
         this.setCurrentEvent(null);
         return result;
+    }
+
+    /**
+     * @description Stamps the last completed outermost event (for longtask attribution) and
+     * files a "long-event" report if the wrapped turn crossed longEventThresholdMs.
+     * @param {string|null} eventName - Constructor name (or string identifier) of the event
+     * @param {Number} startTime - performance.now() at wrap entry
+     * @param {Function|null} describeFunc - Lazy handler description, from the wrap caller
+     * @returns {SvEventManager} The instance of SvEventManager
+     * @category Performance Reporting
+     */
+    recordCompletedEvent (eventName, startTime, describeFunc) {
+        const endTime = performance.now();
+        this.setLastEventStamp({ name: eventName, endTime: endTime, describe: describeFunc });
+
+        const duration = endTime - startTime;
+        if (duration >= this.longEventThresholdMs() && SvGlobals.has("SvClientReport")) {
+            const json = { durationMs: Math.round(duration), event: eventName };
+            if (describeFunc) {
+                json.handler = describeFunc();
+            }
+            SvClientReport.report("long-event", json);
+        }
+        return this;
     }
 
     /**

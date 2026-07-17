@@ -419,7 +419,7 @@
             */
 
             return this.handleEvent(event);
-        }, event);
+        }, event, () => this.ownerDescription() + "." + this.fullMethodName());
 
         return result;
     }

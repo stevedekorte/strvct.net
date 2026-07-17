@@ -520,6 +520,10 @@
         if (SvGlobals.has("SvBootPerf")) {
             SvGlobals.get("SvBootPerf").report();
         }
+        // Start after init so boot work (tracked by SvBootPerf) doesn't file reports
+        if (SvGlobals.has("SvLongTaskMonitor")) {
+            SvLongTaskMonitor.shared().startIfSupported();
+        }
     }
 
     // --- user interface readiness ---

@@ -1,5 +1,6 @@
 [
-    "SvEventManager.js", 
+    "SvEventManager.js",
+    "SvLongTaskMonitor.js",
     "SvEventListener.js",
     "SvEventSetListener.js",
     "listeners/_imports.json"
