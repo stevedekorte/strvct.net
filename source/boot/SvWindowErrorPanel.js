@@ -548,7 +548,18 @@ class SvWindowErrorPanel extends Object {
                 additionalData.userFacing = null;
             }
 
-            SvErrorReport.asyncSend(new Error(errorInfo.message), additionalData);
+            // Report the ORIGINAL error (errorFromEvent already extracted it
+            // from event.error / event.reason) so the report carries the real
+            // stack. Creating a fresh Error here would capture THIS site's
+            // stack instead, squashing the crash location out of every report.
+            const originalError = (errorInfo.error instanceof Error) ? errorInfo.error : new Error(errorInfo.message);
+
+            // The raw Error object JSON-serializes to {} (its properties are
+            // non-enumerable), and its name/message/stack now travel via the
+            // primary error argument — so drop it from the additional data.
+            delete additionalData.error;
+
+            SvErrorReport.asyncSend(originalError, additionalData);
         } else {
             console.warn("SvErrorReport not defined yet, so we cannot send error report");
         }
