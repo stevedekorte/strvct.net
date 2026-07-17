@@ -8,8 +8,6 @@
  * @description A subclass of SvIndexedArray that maintains its subnodes in sorted order.
  * It does this by calling resort() on the array when a mutation occurs on the subnode items or the sort function changes.
  * The sort closure should return a comparison result.
- 
- 
  */
 
 (class SvSortedArray extends SvIndexedArray {

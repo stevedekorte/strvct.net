@@ -35,6 +35,12 @@
     modelsJson () {
         return [
             {
+                "name": "gemini-3.5-flash",
+                "title": "Gemini 3.5 Flash",
+                "inputTokenLimit": 1048576,
+                "outputTokenLimit": 65536
+            },
+            {
                 "name": "gemini-3.1-pro-preview",
                 "title": "Gemini 3.1 Pro Preview",
                 "inputTokenLimit": 1048576,

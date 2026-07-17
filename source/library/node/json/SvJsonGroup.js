@@ -323,7 +323,19 @@
                                     slot.onInstanceSetValue(this, newValue);
                                     this.markAsDirty(); // save our type conversion
                                 } else {
-                                    throw new Error(errorMessage);
+                                    // Persisted field whose stored value no longer matches
+                                    // the slot's declared type (a schema change, or a
+                                    // node-typed slot with no finalInitProto receiving an
+                                    // array/object): WARN AND SKIP — the same policy as
+                                    // unknown keys below. Throwing here aborted the WHOLE
+                                    // deserialize mid-object, blanking the record (e.g. a
+                                    // UoCharacter loaded from cloud losing everything
+                                    // because one field drifted — which then risks the
+                                    // blank being saved back over the good cloud copy).
+                                    // Skipping keeps that one field at its default and
+                                    // loads the rest of the object intact.
+                                    console.warn(this.logPrefix(), errorMessage, "— skipping this slot, keeping its default");
+                                    return; // skip this key (setSlotsJson forEach callback)
                                 }
                             }
                         } else {

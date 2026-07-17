@@ -481,7 +481,10 @@
                 count ++;
 
                 if (count > 6) {
-                    this.setIsDebugging(true);
+                    // Report the suspected loop loudly, but do NOT latch isDebugging on:
+                    // setIsDebugging(true) here is never reset, so a single loop scare would
+                    // leave the shared scheduler spewing per-action "-> scheduling" DEBUG lines
+                    // for the rest of the session. The diagnostics below print unconditionally.
                     console.log("\n\nSvSyncScheduler looped " + count + " times without resolving. Are we in a sync loop?");
                     console.log(" --- processSets # " + count + " --- ");
                     console.log("\nSvSyncActions (" + this.actionCount() + ") :\n" + this.actionsDescription());

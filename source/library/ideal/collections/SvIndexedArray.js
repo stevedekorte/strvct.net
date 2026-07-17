@@ -14,8 +14,6 @@
  *     a[i] = b -> instead use a.atPut(i, b)
  *     delete a[i] -> instead use a.removeAt(i)
  *
- 
- 
  */
 
 (class SvIndexedArray extends SvHookedArray {

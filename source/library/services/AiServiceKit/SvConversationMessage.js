@@ -340,7 +340,23 @@
    * @returns {Boolean}
    * @category Display Lifetime
    */
+    /**
+   * @description Master on/off switch for the Disappearing Messages feature
+   * (Plans/Disappearing Messages). When false, isDisplayExpired() always
+   * returns false, so no message ever folds out — every message stays visible.
+   * Temporarily DISABLED (2026-07): message disappearance made it hard to tell
+   * what happened while debugging tool-call handback. Return true to re-enable.
+   * @returns {Boolean}
+   * @category Display Lifetime
+   */
+    displayLifetimesEnabled () {
+        return false;
+    }
+
     isDisplayExpired () {
+        if (!this.displayLifetimesEnabled()) {
+            return false; // feature disabled — nothing ever folds out (see displayLifetimesEnabled)
+        }
         const policy = this.displayLifetime();
         if (!policy || policy === "keep") {
             return false;
