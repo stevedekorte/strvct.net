@@ -55,6 +55,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("methodForUndefinedGet", null);
         this.simpleNewSlot("methodForOnFinalized", null);
         this.simpleNewSlot("methodForShouldStoreSlot", null);
+        this.simpleNewSlot("methodForFailedLazyLoad", null); // for lazy slots — see onInstanceFailedLazyLoad
         //this.simpleNewSlot("methodNameCache", null)
 
         // getter
@@ -159,11 +160,32 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         return null;
     }
 
+    /**
+     * @description Marks the slot lazy: loadFromRecord leaves an SvStoreRef
+     * placeholder in the slot and the value materializes on first getter
+     * access. CONTRACT for hook authors: a didUpdateSlot<Name> hook on a lazy
+     * slot may receive an SvStoreRef as oldValue during the materialization
+     * write-back — that transition means "this write is a load, not an edit"
+     * (consumers derive store-neutrality from it). Treat an SvStoreRef
+     * oldValue as "there was no previous live value".
+     * FAILURE semantics: if the record is missing from the pool, the getter
+     * returns null (or the owner's onFailedLazyLoadSlot<Name> hook fallback),
+     * the SvStoreRef stays in the slot (retry-on-next-access, rate-limited
+     * by a negative cache on the ref), and nothing is written through the
+     * setter. See onInstanceMaterializeLazySlot / onInstanceFailedLazyLoad.
+     * @param {Boolean} aBool
+     * @returns {Slot}
+     * @category Lazy Loading
+     */
     setIsLazy (aBool) {
         this._isLazy = aBool;
-        if (aBool) {
-            this.setAllowsUndefinedValue(true); // we use undefined to indicate that the value is not yet loaded
-        }
+        // NOTE: an earlier lazy design used undefined as the "not yet loaded"
+        // marker and whitelisted it here via setAllowsUndefinedValue(true).
+        // The SvStoreRef placeholder replaced that design; the whitelist's
+        // only remaining effect was to let a FAILED materialization (e.g.
+        // unref() of a missing record returning undefined) write undefined
+        // into the slot silently. Undefined now fails validation like any
+        // other slot.
         return this;
     }
 
@@ -883,6 +905,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.setMethodForUndefinedGet("onUndefinedGet" + n); // for lazy slots
         this.setMethodForOnFinalized("onFinalizedSlot" + n); // for weak slots
         this.setMethodForShouldStoreSlot("shouldStoreSlot" + n); // for weak slots
+        this.setMethodForFailedLazyLoad("onFailedLazyLoadSlot" + n); // for lazy slots
         return this;
     }
 
@@ -1097,16 +1120,75 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     }
 
     /**
+     * @static
+     * @category StoreRefs for lazy slots
+     * @description True while any lazy slot's SvStoreRef is being written
+     * back into its slot (the setter call in onInstanceMaterializeLazySlot).
+     * The didUpdateNode bubble can reach OBJECTS OTHER THAN the materializing
+     * one (ancestors up the parent chain), and the bubble carries no oldValue
+     * to derive from — so cross-object echo filtering needs this globally
+     * visible signal (single-threaded JS attributes anything inside the
+     * window to the materialization). Consumers must filter NARROWLY: only
+     * side effects that are pure echoes of loading may consult this —
+     * currently just SvSyncable*.touchLocalModified (the cloud timestamp;
+     * loading is not a local modification). Dirty-marking is NOT filtered by
+     * this counter — objects genuinely created or changed by hooks during
+     * someone else's materialization must still be stored; the materializing
+     * instance's own write-back echo is DERIVED instead, from the SvStoreRef
+     * → value transition visible to didUpdateSlot (see
+     * SvStorableNode.didUpdateSlot).
+     * A counter, not a boolean, so nested materializations (writing one value
+     * can trigger a getter that materializes another) compose correctly.
+     * @returns {Boolean}
+     */
+    static isMaterializingAnyLazySlot () {
+        return (this._materializingLazySlotCount || 0) > 0;
+    }
+
+    /**
+     * @static
+     * @category StoreRefs for lazy slots
+     */
+    static beginLazySlotMaterialization () {
+        this._materializingLazySlotCount = (this._materializingLazySlotCount || 0) + 1;
+    }
+
+    /**
+     * @static
+     * @category StoreRefs for lazy slots
+     */
+    static endLazySlotMaterialization () {
+        this._materializingLazySlotCount = this._materializingLazySlotCount - 1;
+    }
+
+    /**
      * @category StoreRefs for lazy slots
      * @description Resolves a lazy slot's SvStoreRef stub into the real stored
      * object and writes it through the setter, so didUpdateSlot hooks and view
-     * sync fire like any other change — but with didMutate suppressed
-     * (materialization is not a semantic change; the object must not be marked
-     * dirty and mutation observers must not be notified).
+     * sync fire like any other change. Materialization is a no-op with respect
+     * to the store but an event with respect to the UI, so exactly two echo
+     * filters apply during the write-back: the materializing instance's own
+     * dirty-marking is skipped by DERIVATION — the SvStoreRef stays in the
+     * slot until the setter write, so didUpdateSlot sees the SvStoreRef →
+     * value transition and knows this is a load (SvStorableNode.didUpdateSlot,
+     * SvNode.didUpdateSlotSubnodes) — and SvSyncable ancestors reached by the
+     * didUpdateNode bubble (which carries no oldValue) skip their
+     * localLastModified touch via the static counter (see
+     * isMaterializingAnyLazySlot). Everything else — including objects
+     * genuinely created or changed by hooks inside the window — dirties and
+     * stores normally, as do real load-time changes (finalInit repairs during
+     * unref, didMaterializeSlot hygiene) which run OUTSIDE the write-back.
      */
     onInstanceMaterializeLazySlot (anInstance) {
         const storeRef = this.onInstanceRawGetValue(anInstance);
-        assert(storeRef instanceof SvStoreRef, "onInstanceMaterializeLazySlot called without a stub in slot '" + this.name() + "'");
+        assert(storeRef instanceof SvStoreRef, "onInstanceMaterializeLazySlot called without an SvStoreRef in slot '" + this.name() + "'");
+
+        // Negative cache: a ref that failed recently declines to hit the pool
+        // again (UI sync hammers getters every render pass), but the owner
+        // hook still runs so a fallback doesn't flicker between accesses.
+        if (!storeRef.canAttemptNow()) {
+            return this.onInstanceFailedLazyLoad(anInstance, storeRef);
+        }
 
         // If this materialization initiates the load cycle (the common case:
         // a getter touched after boot), drain the pool's loadingPids so
@@ -1119,29 +1201,98 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
         const obj = storeRef.unref(); // synchronous objectForPid — identity map preserves sameness
 
+        if (obj === undefined) {
+            // missingRecord: the pool has no record for this pid — a dangling
+            // ref (store GC or cloud-pool completeness bug upstream; the
+            // record may also arrive later via cloud sync). NEVER write the
+            // failure through the setter: the SvStoreRef stays in the slot,
+            // so the store keeps round-tripping the original pid (diagnostic
+            // breadcrumb, no silent self-heal) and the next access after the
+            // negative-cache window retries. A deserialize/setter THROW is
+            // handled differently by design: it propagates un-recorded and
+            // un-hooked (a loud programming error, not a heal-able miss).
+            const error = new Error("missing record for pid '" + storeRef.pid() + "' in lazy slot '" + this.name() + "' of " + anInstance.svTypeId());
+            const isFirstFailure = storeRef.attemptCount() === 0;
+            storeRef.recordFailedAttempt(error, "missingRecord");
+            if (isFirstFailure) {
+                console.error("Slot.onInstanceMaterializeLazySlot: " + error.message + " — returning null (or the onFailedLazyLoadSlot hook's fallback); will not re-attempt for a growing window");
+            }
+            return this.onInstanceFailedLazyLoad(anInstance, storeRef);
+        }
+
         if (initiatesLoadCycle && !pool.isFinalizing() && pool.loadingPids().count() > 0) {
             pool.didInitLoadingPids();
         }
 
-        // Clear the stub RAW before the setter write: didUpdateSlot hooks
-        // receive oldValue and assume its type (e.g. didUpdateSlotSubnodes
-        // calls oldValue.removeMutationObserver) — they must see the normal
-        // null → value load transition, never the stub.
-        this.onInstanceRawSetValue(anInstance, null);
-
-        anInstance.setIsMaterializingLazySlot(true);
+        // The SvStoreRef deliberately STAYS in the slot until the setter
+        // write below, so didUpdateSlot receives it as oldValue — the
+        // unforgeable, data-carried evidence that this write is a LOAD
+        // rather than an edit. Consumers derive the classification from the
+        // transition itself: SvStorableNode.didUpdateSlot skips didMutate,
+        // and SvNode.didUpdateSlotSubnodes skips both the
+        // removeMutationObserver call and the store half of
+        // didChangeSubnodeList. Contract: any didUpdateSlot<Name> hook on a
+        // LAZY slot may receive an SvStoreRef as oldValue (see setIsLazy).
+        // If the setter throws before the write lands, the SvStoreRef is
+        // still in place, so the next access simply retries.
+        Slot.beginLazySlotMaterialization();
         try {
             this.onInstanceSetValue(anInstance, obj);
         } finally {
-            anInstance.setIsMaterializingLazySlot(false);
+            Slot.endLazySlotMaterialization();
         }
 
-        // After the flag clears: hook edits (e.g. hygiene passes a class
+        // After the write-back: hook edits (e.g. hygiene passes a class
         // deferred from finalInit) are real mutations and mark dirty normally.
         if (anInstance.didMaterializeSlot) {
             anInstance.didMaterializeSlot(this);
         }
         return obj;
+    }
+
+    /**
+     * @category StoreRefs for lazy slots
+     * @description The failed-materialization return path: gives the owning
+     * instance a chance to substitute a fallback via an
+     * onFailedLazyLoadSlot<SlotName>(context) hook, then returns
+     * context.result (default null). The context is a mutable object:
+     * { result, error, errorKind, storeRef, slotName } — the hook sets
+     * context.result to override. Called on EVERY failed access, including
+     * negative-cache-latched ones (the latch rate-limits pool lookups and
+     * log spam, not the hook — a fallback must not flicker between values
+     * on alternating accesses), so hooks should be cheap and pure.
+     *
+     * NOTE for hook authors: writing a fallback into the slot through the
+     * setter is STORE-NEUTRAL by construction — the SvStoreRef is still in
+     * the slot, so didUpdateSlot classifies the write as a load and nothing
+     * is marked dirty; the hook also runs inside the materialization counter,
+     * so SvSyncable ancestors skip their cloud-timestamp touch (a fallback
+     * must not schedule a cloud push of an unchanged document). The fallback
+     * is re-derived next boot and the store keeps the dangling pid as a
+     * diagnostic breadcrumb. An owner that genuinely wants a persistent
+     * repair must explicitly call didMutate().
+     * @param {Object} anInstance - The instance owning the slot.
+     * @param {SvStoreRef} storeRef - The ref whose unref failed.
+     * @returns {*} context.result — null unless the hook overrode it.
+     */
+    onInstanceFailedLazyLoad (anInstance, storeRef) {
+        const context = {
+            result: null,
+            error: storeRef.lastError(),
+            errorKind: storeRef.lastErrorKind(),
+            storeRef: storeRef,
+            slotName: this.name()
+        };
+        const hookName = this.methodForFailedLazyLoad();
+        if (anInstance[hookName]) {
+            Slot.beginLazySlotMaterialization();
+            try {
+                anInstance[hookName](context);
+            } finally {
+                Slot.endLazySlotMaterialization();
+            }
+        }
+        return context.result;
     }
 
     /**

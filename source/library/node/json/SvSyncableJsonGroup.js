@@ -145,10 +145,19 @@
 
     /**
      * @description Marks the item as locally modified. Call when content changes.
+     * No-op during lazy-slot materialization: loading a stored value back into
+     * memory is not a local modification — the cloud already has it (or will
+     * compare against the true last edit). Without this guard, the
+     * materialization's didUpdateNode bubble stamps the document "locally
+     * modified", scheduling a spurious cloud push of an unchanged document and
+     * polluting staleness-conflict timestamps.
      * @returns {SvSyncableJsonGroup} This instance
      * @category Sync
      */
     touchLocalModified () {
+        if (Slot.isMaterializingAnyLazySlot()) {
+            return this;
+        }
         this.setLocalLastModified(Date.now());
         return this;
     }

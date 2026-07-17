@@ -108,11 +108,16 @@
 	        return this;
 	    }
 
-        if (aSlot.shouldStoreSlot() && !this.isMaterializingLazySlot()) {
-            // materializing a lazy slot's stored value is not a semantic change:
-            // update hooks (above) fire so views sync, but the object must not
-            // be marked dirty and mutation observers must not be notified
-            //this.didMutate(aSlot.name())
+        if (aSlot.shouldStoreSlot() && !(oldValue instanceof SvStoreRef)) {
+            // An SvStoreRef → value transition is a lazy slot MATERIALIZING —
+            // a load, not an edit: the store already holds exactly the value
+            // being written back, so marking dirty would re-store known state
+            // (and, mid-store-pass, trip the pool's double-store guard). The
+            // classification is DERIVED from the transition itself (the
+            // SvStoreRef survives to the setter — see
+            // Slot.onInstanceMaterializeLazySlot), so genuinely new or changed
+            // objects during someone else's materialization still didMutate
+            // normally. Every other transition is a real edit and dirties.
             this.didMutate();
         }
 

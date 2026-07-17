@@ -115,11 +115,17 @@
     }
 
     /**
-     * @description Marks the collection as locally modified.
+     * @description Marks the collection as locally modified. No-op during
+     * lazy-slot materialization — loading a stored value back into memory is
+     * not a local modification (see SvSyncableJsonGroup.touchLocalModified for
+     * the full rationale).
      * @returns {SvSyncableArrayNode} This instance
      * @category Sync
      */
     touchLocalModified () {
+        if (Slot.isMaterializingAnyLazySlot()) {
+            return this;
+        }
         this.setLocalLastModified(Date.now());
         return this;
     }
