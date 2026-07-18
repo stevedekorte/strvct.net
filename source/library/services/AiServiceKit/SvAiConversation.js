@@ -662,6 +662,27 @@
     // --- history filing (pushHistory tool) ---
 
     /**
+   * @description Returns the history container, creating and installing one if
+   * absent. Used at filing time so a conversation whose history slot never
+   * materialized (e.g. loaded from a record/cloud-json predating the slot, or a
+   * failed lazy load) can still file episodes instead of crashing. Read paths
+   * tolerate a null history and must NOT call this — it would create empty
+   * containers on read. Logs when it has to create one so the underlying cause
+   * (a conversation that reached filing with no history) is captured.
+   * @returns {SvAiConversationHistory}
+   * @category History
+   */
+    historyOrCreate () {
+        let history = this.history();
+        if (!history) {
+            console.warn(this.logPrefix(), "pushHistory: history was null at filing time — creating one (conversation likely loaded from a record predating the history slot)");
+            history = SvAiConversationHistory.clone();
+            this.setHistory(history);
+        }
+        return history;
+    }
+
+    /**
    * @description Tool: files the settled unfiled buffer as one titled history
    * episode. Copies (not moves) — the original message nodes stay in the
    * conversation untouched (the user's transcript keeps showing everything);
@@ -700,7 +721,7 @@
                 throw new Error("pushHistory: nothing to file — no settled messages since the last push");
             }
 
-            const block = this.history().newBlockWithTitleAndSubtitle(title, subtitle);
+            const block = this.historyOrCreate().newBlockWithTitleAndSubtitle(title, subtitle);
             candidates.forEach(m => {
                 block.addCopyOfMessage(m);
                 m.setFiledToHistoryBlockId(block.jsonId());
