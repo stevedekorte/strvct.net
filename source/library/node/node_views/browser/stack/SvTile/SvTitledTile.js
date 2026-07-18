@@ -75,22 +75,31 @@
     }
 
     /**
-     * @description Returns the top content area
+     * @description Returns the leading content area (holds the thumbnail).
+     * @returns {SvDomView}
+     * @category Layout
+     */
+    leadingContentArea () {
+        return this.contentView().subviews().at(0);
+    }
+
+    /**
+     * @description Returns the top content area (title/subtitle column).
      * @returns {SvDomView}
      * @category Layout
      */
     topContentArea () {
-        let lv = this.contentView().subviews().at(0);
+        let lv = this.contentView().subviews().at(1);
         return lv;
     }
 
     /**
-     * @description Returns the bottom content area
+     * @description Returns the bottom content area (trailing note/icon).
      * @returns {SvDomView}
      * @category Layout
      */
     bottomContentArea () {
-        let lv = this.contentView().subviews().at(1);
+        let lv = this.contentView().subviews().at(2);
         return lv;
     }
 
@@ -104,7 +113,16 @@
         const cv = this.contentView();
 
         cv.setMinHeight("5em");
-        cv.flexSplitIntoColumns(2);
+        cv.flexSplitIntoColumns(3);
+
+        // Leading region: holds the thumbnail (created lazily). Stays
+        // zero-width until a thumbnail is reserved/loaded, so tiles without
+        // a thumbnail are unaffected.
+        const leading = this.leadingContentArea();
+        leading.setDisplay("flex");
+        leading.setFlex("0 0 auto");
+        leading.setAlignItems("center");
+        leading.setJustifyContent("center");
 
         const lv = this.topContentArea();
 
@@ -163,19 +181,28 @@
      */
     setupThumbnailViewIfAbsent () {
         if (!this.thumbnailView()) {
-            // Create thumbnail as a simple SvDomView using CSS background-image
-            // so wide/tall images are center-cropped to fill the square.
+            // Leading thumbnail: a bare rounded frame rendered via CSS
+            // background-image so wide/tall images are cropped/fit to fill the
+            // square. The faint fill lets the empty frame read as a stand-in
+            // (reserving space) before/without an image, keeping the
+            // title/subtitle at a stable horizontal position.
             const tv = SvDomView.clone().setElementClassName("TileThumbnailView");
             tv.setFlex("0 0 auto");
             tv.setMinAndMaxWidth(50);
             tv.setMinAndMaxHeight(50);
+            // Match the gap to the tile content's left inset (the theme's
+            // 22px paddingLeft in SvThemeState), so the space on each side of
+            // the thumbnail is equal. px (not em): the inset and the frame are
+            // both px, and em would drift with each tile's font size.
+            tv.setMarginRight("22px");
             tv.setBorderRadiusPx(5);
             tv.setOverflow("hidden");
+            tv.setBackgroundColor("rgba(255, 255, 255, 0.07)");
             tv.setBackgroundSize("cover");
             tv.setBackgroundPosition("center");
 
             this.setThumbnailView(tv);
-            this.bottomContentArea().addSubview(tv);
+            this.leadingContentArea().addSubview(tv);
         }
         return this;
     }
@@ -217,20 +244,23 @@
             this.subtitleView().setIsDisplayHidden(!this.hasSubtitle());
 
             if (node) {
-                this.asyncUpdateThumbnailView(); // no await
-                /*
-                const imageUrl = node.nodeThumbnailUrl();
-                if (imageUrl) {
+                // Reserve the leading thumbnail frame synchronously when the
+                // node expects a thumbnail (optional duck-typed method; absent
+                // => false). This keeps the title/subtitle from shifting when
+                // the image resolves asynchronously, and keeps tiles in a
+                // column aligned whether or not each currently has an image.
+                const expectsThumbnail = node.nodeExpectsThumbnail ? node.nodeExpectsThumbnail() : false;
+                if (expectsThumbnail) {
                     this.setupThumbnailViewIfAbsent();
-                    const imageView = this.thumbnailView().subviews().first();
-                    if (imageView) {
-                        imageView.setFromDataURL(imageUrl);
-                    }
+                    this.thumbnailView().unhideDisplay();
+                } else if (this.thumbnailView()) {
+                    this.thumbnailView().hideDisplay();
+                }
+                this.asyncUpdateThumbnailView(); // no await; fills the frame if an image exists
 
-                    this.hideNoteView();
-                    this.hideNoteIconView();
-                } else {
-                */
+                // Note / note-icon live in the trailing region, independent of
+                // the (now leading) thumbnail — so e.g. an option's "✓" is no
+                // longer hidden when the option also has an image.
                 if (node.noteIconName() && !node.noteIsSubnodeCount()) {
                     this.hideNoteView();
                     this.showNoteIconView();
@@ -267,6 +297,10 @@
         if (imageUrl) {
             this.setupThumbnailViewIfAbsent();
             const tv = this.thumbnailView();
+            tv.unhideDisplay();
+            // Image present: drop the stand-in's faint fill so nothing tints
+            // behind the image (e.g. the letterbox of a "contain" tall image).
+            tv.setBackgroundColor("transparent");
             tv.setBackgroundImageUrlPath(imageUrl);
 
             // Check aspect ratio: crop wide images to fill, fit tall images whole
@@ -279,9 +313,6 @@
                 tv.setBackgroundSize("contain");
                 tv.setBackgroundRepeat("no-repeat");
             }
-
-            this.hideNoteView();
-            this.hideNoteIconView();
         }
         return this;
     }

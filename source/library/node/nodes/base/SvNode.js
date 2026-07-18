@@ -567,9 +567,49 @@
      */
     subnodeCount () {
         if (this.slotIsPendingMaterialization("subnodes")) {
-            return this.subnodes().length; // asking for the count is asking for the value
+            // Count from the stored record (an ordered list of element refs)
+            // without materializing the child objects — so asking for a count
+            // (e.g. a "N locations" note) doesn't trigger a lazy load.
+            const c = this.pendingSubnodesCount();
+            if (c !== null) {
+                return c;
+            }
+            return this.subnodes().length; // fall back: materialize
         }
         return this._subnodes.length;
+    }
+
+    /**
+     * @description Count of the still-lazy subnodes array, read from its stored
+     * record without materializing the child objects. Returns null when the
+     * count can't be derived cheaply (the store offers no synchronous
+     * raw-record read, the record is absent, or it isn't the expected array
+     * shape), so callers fall back to materializing. Store-neutral by
+     * construction: a store that can't do a cheap synchronous read just gets
+     * the fallback — nothing here forces materialization.
+     * @returns {number|null}
+     * @category Subnodes
+     */
+    pendingSubnodesCount () {
+        const slot = this.thisPrototype().slotNamed("subnodes");
+        const ref = slot ? slot.onInstanceRawGetValue(this) : null;
+        if (typeof SvStoreRef === "undefined" || !(ref instanceof SvStoreRef)) {
+            return null;
+        }
+        const store = ref.store();
+        if (!store || typeof store.recordForPid !== "function") {
+            return null;
+        }
+        let record;
+        try {
+            record = store.recordForPid(ref.pid()); // synchronous raw read; may be a no-op on async stores
+        } catch (e) {
+            return null; // any store that can't answer cheaply → fall back
+        }
+        if (!record || !Array.isArray(record.values)) {
+            return null;
+        }
+        return record.values.length; // element ref count == subnode count
     }
 
     firstVisibleSubnode () {
@@ -1705,11 +1745,12 @@
     // --- subnodes -----------------------------
     /**
 
-     * @description Get the number of subnodes of this instance.
+     * @description Get the number of subnodes of this instance. Alias of
+     * subnodeCount() — shares its non-materializing lazy path.
      * @returns {number} The number of subnodes.
      */
     subnodesCount () {
-        return this.subnodes().length;
+        return this.subnodeCount();
     }
 
     /**

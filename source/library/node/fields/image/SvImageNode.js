@@ -174,6 +174,10 @@
         return url;
     }
 
+    nodeExpectsThumbnail () {
+        return true;
+    }
+
     finalInit () {
         super.finalInit();
         this.setNodeViewClassName("SvImageWellView");

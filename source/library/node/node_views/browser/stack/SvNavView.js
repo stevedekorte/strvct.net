@@ -145,14 +145,33 @@
         if (this.node()) {
             const minWidth = this.node().nodeMinTileWidth();
             const maxWidth = this.availableNavWidth() - 1;
-            let w = defaultWidth;
-            w = Math.max(defaultWidth, minWidth);
+            let w = Math.max(defaultWidth, minWidth);
+            // Columns whose titled tiles reserve a leading thumbnail frame get
+            // that width back, so the frame doesn't steal it from the
+            // title/subtitle. The text area is flex:10, so the extra width
+            // flows straight into it — no content measurement / reflow.
+            w += this.thumbnailWidthAllowance();
             w = Math.min(w, maxWidth);
             if (w) {
                 return w;
             }
         }
         return defaultWidth;
+    }
+
+    /**
+     * @description Extra column width for a leading thumbnail frame when this
+     * column's tiles reserve one (frame width + its trailing gap). Checks the
+     * first subnode only — columns are effectively homogeneous — to avoid
+     * scanning a possibly-lazy subnode list. Returns 0 when no thumbnail.
+     * @returns {number}
+     * @category Layout
+     */
+    thumbnailWidthAllowance () {
+        const node = this.node();
+        const first = node ? node.subnodes().first() : null;
+        const expects = (first && first.nodeExpectsThumbnail) ? first.nodeExpectsThumbnail() : false;
+        return expects ? 72 : 0; // 50px frame + 22px gap (see SvTitledTile)
     }
 
     /**

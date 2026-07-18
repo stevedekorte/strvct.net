@@ -41,6 +41,7 @@
         this.setFontWeight("normal");
         this.setTextAlign("left");
         this.setOverflow("hidden");
+        this.setTextOverflow("ellipsis"); // truncate gracefully rather than hard-clip
         this.setMinWidth("2em");
         this.setWidth("100%");
         this.setWordWrap("break-word");

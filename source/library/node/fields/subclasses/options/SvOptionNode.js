@@ -225,5 +225,18 @@
         return null;
     }
 
+    /**
+     * @description Whether this option's tile should reserve a leading
+     * thumbnail frame. Delegates to the underlying node so a picked option's
+     * "✓" (trailing) and its image (leading) coexist and option lists stay
+     * aligned.
+     * @returns {boolean}
+     * @category Display
+     */
+    nodeExpectsThumbnail () {
+        const n = this.node();
+        return (n && n.nodeExpectsThumbnail) ? n.nodeExpectsThumbnail() : false;
+    }
+
 
 }.initThisClass());

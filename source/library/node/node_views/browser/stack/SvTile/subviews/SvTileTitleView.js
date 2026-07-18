@@ -49,6 +49,7 @@
         this.setTextAlign("left");
         this.setWhiteSpace("nowrap");
         this.setOverflow("hidden");
+        this.setTextOverflow("ellipsis"); // truncate gracefully rather than hard-clip
         this.setWordWrap("normal");
         return this;
     }
