@@ -342,21 +342,46 @@
    * @category Error Handling
    */
     onRequestError (aRequest) {
-        this.setError(aRequest.error());
-        const msg = aRequest.error().message;
-        console.error(this.logPrefix(), msg);
+        const e = aRequest.error();
+        console.error(this.logPrefix(), e && e.message);
 
-        // TODO: look at error and retry if appropriate,
-        // otherwise show error panel
-        SvWindowErrorPanel.shared().showPanelWithInfo({ message: msg });
-        /*
-        if (msg.includes("Please try again in 6ms.")) {
-            this.setRetryCount(this.retryCount() + 1);
-            const seconds = Math.pow(2, this.retryCount());
-            console.warn("WARNING: retrying openai request in " + seconds + " seconds");
-            this.addTimeout(() => this.asyncMakeRequest(), seconds*1000);
-        }
-        */
+        // Surface the failure IN the conversation rather than as a modal error
+        // panel. The notice becomes this response's content, which is
+        // dual-purpose:
+        //   - the player reads a plain-language explanation of what happened and
+        //     what to do, and
+        //   - because it stays in the AI-visible history as this turn's assistant
+        //     message (contentVisisbleToAi() returns content()), the NEXT request
+        //     shows the model that its prior attempt failed, and why, so it can
+        //     adjust instead of reproducing the same failure.
+        // Marking the message complete unblocks the chat for the next input.
+        // Covers stop errors (blocked / malformed / etc.) and transport errors.
+        this.setContent(this.requestErrorNoticeText(aRequest));
+        this.setIsComplete(true);
+        this.sendDelegateMessage("onMessageUpdate");
+    }
+
+    /**
+   * @description Player- and AI-facing text shown when a response request
+   * fails. Written to be actionable by BOTH readers: the player (what happened,
+   * what to try) and the model on the next request (its previous attempt failed
+   * for this reason — adjust, don't repeat). Subclasses may override to wrap it
+   * in their rendering markup.
+   * @param {SvAiRequest} aRequest
+   * @returns {string}
+   * @category Error Handling
+   */
+    requestErrorNoticeText (aRequest) {
+        const reason = aRequest.stopReason ? aRequest.stopReason() : null;
+        const detail = (reason && aRequest.stopReasonDescription)
+            ? aRequest.stopReasonDescription()
+            : (aRequest.error() ? aRequest.error().message : "unknown error");
+        const label = reason || "error";
+        return "⚠️ [System] The previous response could not be completed — "
+            + label + ": " + detail
+            + " This is a system-level failure, not something the player did wrong. "
+            + "On the next attempt, respond more concisely or rephrase to avoid the same "
+            + "failure; the player may also try a different input.";
     }
 
     /**

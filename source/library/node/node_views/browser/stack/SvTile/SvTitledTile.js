@@ -187,6 +187,11 @@
             // (reserving space) before/without an image, keeping the
             // title/subtitle at a stable horizontal position.
             const tv = SvDomView.clone().setElementClassName("TileThumbnailView");
+            // Explicit display so hideDisplay()/unhideDisplay() round-trips: those
+            // save the current display() to restore on unhide and assert a truthy
+            // saved value, so a view hidden while display() is null/"" would
+            // crash on unhide. Set it up front (before any hide can run).
+            tv.setDisplay("block");
             tv.setFlex("0 0 auto");
             tv.setMinAndMaxWidth(50);
             tv.setMinAndMaxHeight(50);
@@ -293,8 +298,18 @@
         if (!node || !node.asyncNodeThumbnailUrl) {
             return this;
         }
-        const imageUrl = await node.asyncNodeThumbnailUrl();
-        if (imageUrl) {
+        // A thumbnail is decorative and this runs fire-and-forget (see caller).
+        // Every await below can reject — a missing/failed blob fetch, an image
+        // that won't decode, or the view being torn down mid-await when the
+        // user navigates (breadcrumb click). None of those may surface as a
+        // global "Something Went Wrong": swallow and log. We also re-check the
+        // tile's node after each await, since tiles are recycled across nodes
+        // and a late result must not paint onto whatever node now owns the tile.
+        try {
+            const imageUrl = await node.asyncNodeThumbnailUrl();
+            if (this.node() !== node || !imageUrl) {
+                return this;
+            }
             this.setupThumbnailViewIfAbsent();
             const tv = this.thumbnailView();
             tv.unhideDisplay();
@@ -307,12 +322,17 @@
             const img = new Image();
             img.src = imageUrl;
             await img.decode();
+            if (this.node() !== node) {
+                return this;
+            }
             if (img.naturalWidth >= img.naturalHeight) {
                 tv.setBackgroundSize("cover");
             } else {
                 tv.setBackgroundSize("contain");
                 tv.setBackgroundRepeat("no-repeat");
             }
+        } catch (error) {
+            console.warn(this.svType() + " asyncUpdateThumbnailView ignored error:", error);
         }
         return this;
     }

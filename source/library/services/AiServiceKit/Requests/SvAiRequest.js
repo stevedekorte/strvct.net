@@ -1138,7 +1138,12 @@
     stopReasonDescription () {
         const reason = this.stopReason();
         const dict = this.stopReasonDict();
-        return dict[reason];
+        // Never return undefined: an unknown/undocumented reason (e.g. a new
+        // provider finishReason not yet in stopReasonDict) would otherwise make
+        // stopError() build `new Error(undefined)` — an empty-message error that
+        // surfaces as a blank "Something Went Wrong" panel. Fall back to the raw
+        // reason, then a generic label.
+        return dict[reason] || reason || "unknown stop reason";
     }
 
     /**

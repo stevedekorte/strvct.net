@@ -279,10 +279,17 @@
         const bodyJson = aRequest.bodyJson();
         const geminiBody = {};
 
+        // DANGEROUS_CONTENT covers violence — essential for a tabletop RPG with
+        // combat. It was previously omitted, so violent narration fell back to
+        // Gemini's stricter default threshold (a suspected cause of abnormal
+        // finishes). CIVIC_INTEGRITY added for completeness. If violence still
+        // trips DANGEROUS_CONTENT at BLOCK_ONLY_HIGH, drop it to BLOCK_NONE.
         geminiBody.safety_settings = [
             { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_ONLY_HIGH" },
             { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_ONLY_HIGH" },
-            { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_ONLY_HIGH" }
+            { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_ONLY_HIGH" },
+            { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_ONLY_HIGH" },
+            { "category": "HARM_CATEGORY_CIVIC_INTEGRITY", "threshold": "BLOCK_ONLY_HIGH" }
         ];
 
         geminiBody.generation_config = {

@@ -209,16 +209,17 @@
 
             if (candidate.finishReason) {
                 if (candidate.finishReason !== "STOP") {
-                    console.warn("finishReason: ", candidate.finishReason);
-                    this.setStopReason(candidates.finishReason);
+                    // Instrument the boundary: capture WHY the finish was abnormal.
+                    // safetyRatings (per-candidate) and promptFeedback (top-level,
+                    // set when the *prompt* is blocked) are what distinguish a
+                    // content/safety block from a genuinely malformed model output.
+                    // Logged verbatim rather than reasoned about.
+                    console.warn(this.svType() + " abnormal finishReason:", candidate.finishReason,
+                        "\n  candidate.safetyRatings:", JSON.stringify(candidate.safetyRatings || null),
+                        "\n  json.promptFeedback:", JSON.stringify(json.promptFeedback || null));
+                    this.setStopReason(candidate.finishReason); // was candidates.finishReason (array) → undefined
                 }
             }
-
-            /*
-      if (candidate.safetyRatings) {
-        console.log("candidate.safetyRatings: ", candidate.safetyRatings);
-      }
-      */
         }
 
         if (json.usageMetadata) {
@@ -238,6 +239,12 @@
             "MAX_TOKENS": "The maximum number of tokens as specified in the request was reached.",
             "SAFETY": "The candidate content was flagged for safety reasons.",
             "RECITATION": "The candidate content was flagged for recitation reasons.",
+            "BLOCKLIST": "The candidate content was flagged for using a blocked term.",
+            "PROHIBITED_CONTENT": "The candidate content was flagged for prohibited content.",
+            "SPII": "The candidate content was flagged for sensitive personally identifiable information.",
+            "MALFORMED_FUNCTION_CALL": "The model generated an invalid function call.",
+            "MALFORMED_RESPONSE": "The model produced a response the API could not parse (often transient, or triggered by specific content while thinking/streaming).",
+            "IMAGE_SAFETY": "Generated image content was flagged for safety reasons.",
             "OTHER": "Unknown reason."
         };
     }
