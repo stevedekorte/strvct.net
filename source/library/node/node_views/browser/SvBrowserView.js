@@ -95,6 +95,31 @@
             slot.setSlotType("SvObservation");
             slot.setAllowsNullValue(true);
         }
+
+        /**
+         * @member {SvNode} breadCrumbsHintOwner - the node currently answering
+         * the nodeWantsBreadCrumbs() view hint, or null when no node on the
+         * selected path implements it. Observed while it owns the answer (see
+         * watchBreadCrumbsHintOwner).
+         * @category UI
+         */
+        {
+            const slot = this.newSlot("breadCrumbsHintOwner", null);
+            slot.setSlotType("SvNode");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {SvObservation} breadCrumbsHintObs - observation of the hint
+         * owner's onUpdatedNode, so a dynamic answer re-applies without a
+         * navigation change.
+         * @category Observation
+         */
+        {
+            const slot = this.newSlot("breadCrumbsHintObs", null);
+            slot.setSlotType("SvObservation");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     /**
@@ -138,6 +163,7 @@
         super.didChangeNode();
         this.stackView().setNode(this.node());
         this.breadCrumbsView().didChangeBrowserPath();
+        this.syncBreadCrumbsVisibilityHint();
         return this;
     }
 
@@ -177,8 +203,58 @@
      */
     childUpdatedNavPath (/*aStackView*/) {
         this.breadCrumbsView().didChangeBrowserPath();
+        this.syncBreadCrumbsVisibilityHint();
         this.postNoteNamed("onBrowserViewPathChange");
         return true;
+    }
+
+    // --- breadcrumb visibility hint (nodeWantsBreadCrumbs) ---
+
+    /**
+     * @description Re-evaluates the breadcrumb bar's visibility from the
+     * nodeWantsBreadCrumbs() view hint: starting at the deepest selected node,
+     * the first parent-chain node responding to nodeWantsBreadCrumbs() answers
+     * (false hides the bar); no implementer means the bar shows. Derived, not
+     * commanded — every navigation change and hint-owner update recomputes it,
+     * so a hidden state can never outlive the node that requested it. Nodes
+     * opt in with either a slot (storable) or a computed method.
+     * @returns {SvBrowserView}
+     * @category UI
+     */
+    syncBreadCrumbsVisibilityHint () {
+        const tailNode = this.selectedNodePathArray().last() || this.node();
+        const owner = tailNode ? tailNode.firstParentChainNodeThatRespondsTo("nodeWantsBreadCrumbs") : null;
+        this.watchBreadCrumbsHintOwner(owner);
+        const wantsCrumbs = owner ? (owner.nodeWantsBreadCrumbs() !== false) : true;
+        this.breadCrumbsView().setIsDisplayHidden(!wantsCrumbs);
+        return this;
+    }
+
+    /**
+     * @description Observes the hint owner's onUpdatedNode so a dynamic answer
+     * (e.g. an immersive band opening under an unchanged selection) re-applies
+     * without a navigation change. Re-subscribes only when the owner changes.
+     * @param {SvNode|null} owner - the node answering nodeWantsBreadCrumbs().
+     * @returns {SvBrowserView}
+     * @category UI
+     */
+    watchBreadCrumbsHintOwner (owner) {
+        if (owner === this.breadCrumbsHintOwner()) {
+            return this;
+        }
+        if (this.breadCrumbsHintObs()) {
+            this.breadCrumbsHintObs().stopWatching();
+            this.setBreadCrumbsHintObs(null);
+        }
+        this.setBreadCrumbsHintOwner(owner);
+        if (owner) {
+            this.setBreadCrumbsHintObs(this.watchForNoteFrom("onUpdatedNode", owner).setSendName("onBreadCrumbsHintOwnerUpdated"));
+        }
+        return this;
+    }
+
+    onBreadCrumbsHintOwnerUpdated (/*aNote*/) {
+        this.syncBreadCrumbsVisibilityHint();
     }
 
     // --- navigation API ---
