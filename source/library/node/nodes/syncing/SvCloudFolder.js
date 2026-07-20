@@ -292,8 +292,10 @@
                 // "node not found". A brand-new child's cloud node may not
                 // exist yet (first save still in flight / a save that timed
                 // out), so removing it here deletes the item the user just
-                // created. Just log; let the next save retry.
+                // created. Just log; let the next save retry. Subclasses
+                // may reconcile TERMINAL failures via the hook below.
                 console.warn(this.cloudSyncLogPrefix(), "save failed for child:", e && e.message);
+                this.onChildCloudSaveFailed(child, e);
             }
         }
         if (this._pendingCloudDeletes && this._pendingCloudDeletes.size > 0) {
@@ -314,6 +316,19 @@
             this.didSyncToCloud();
         }
         return didUpload;
+    }
+
+    /**
+     * @description Hook: a child's asyncSaveToCloud failed (already logged
+     * by the caller). Base does nothing — transient failures simply retry
+     * on the next sync pass. Subclasses may reconcile failures they can
+     * prove terminal (e.g. a permission-denied save of a child whose cloud
+     * scope was deleted — retrying forever just produces an error storm).
+     * @param {SvNode} child
+     * @param {Error} error
+     * @category Cloud Sync
+     */
+    onChildCloudSaveFailed (/*child, error*/) {
     }
 
     async asyncSyncFromCloud () {
