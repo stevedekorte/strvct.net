@@ -14,5 +14,6 @@
     "History/_imports.json",
     "SvAiConversation.js",
     "SvAiConversations.js",
+    "SimulatedUser/_imports.json",
     "SvAiService.js"
 ]

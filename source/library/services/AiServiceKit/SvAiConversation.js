@@ -463,6 +463,141 @@
     }
 
     /**
+   * @description The tag vocabulary whose spans are mechanical scaffolding a
+   * human never reads (reasoning, tool traffic). Messages consult this via
+   * SvConversationMessage.mechanicalTagNames. App conversations override and
+   * concat their domain's tags.
+   * @returns {Array<String>}
+   * @category User Projection
+   */
+    mechanicalTagNames () {
+        return ["think", "tool-call", "tool-call-result"];
+    }
+
+    /**
+   * @description The user-visible history — the mirror of
+   * aiVisibleHistoryForResponse for the human audience: the messages a
+   * person sees in the conversation. Used to compose the user-view
+   * transcript handed to a simulated user (SvSimulatedUserController).
+   * @returns {Array} The messages visible to the user.
+   * @category User Projection
+   */
+    userVisibleHistory () {
+        return this.messages().select(m => (m.isVisibleToUser ? m.isVisibleToUser() : true));
+    }
+
+    /**
+   * @description The conversation as a human reads it: one speaker-labeled
+   * line per user-visible message with substantive content (each message
+   * projects itself via contentVisibleToUser — request tiles render their
+   * prompt/options/answer, prose messages their stripped text). This is the
+   * exact information set a simulated user is given — deliberately NOT the
+   * AI-visible history, so a simulated user acting on hidden info is itself
+   * a leak bug the projection surfaces.
+   * @returns {String} The transcript.
+   * @category User Projection
+   */
+    userVisibleTranscript () {
+        const lines = [];
+        this.userVisibleHistory().forEach(m => {
+            const role = m.role ? m.role() : null;
+            if (role === "system") {
+                return; // shown in the UI (dev), but not part of the dialogue a user reads
+            }
+            const text = m.contentVisibleToUser ? m.contentVisibleToUser() : "";
+            if (text.length === 0) {
+                return; // mechanical-only — renders as nothing to the user
+            }
+            lines.push(m.transcriptSpeakerLabel() + ": " + text);
+        });
+        return lines.join("\n\n");
+    }
+
+    /**
+   * @description True when nothing is in flight: no incomplete messages and
+   * no uncompleted blocking tool calls. The settled/unsettled distinction a
+   * simulated user (or any turn-taking automation) needs before acting.
+   * @returns {Boolean}
+   * @category User Projection
+   */
+    isSettled () {
+        return this.incompleteMessages().length === 0
+            && !this.assistantToolKit().hasUncompletedBlockingToolCalls();
+    }
+
+    /**
+   * @description Given a settled conversation, is it the user's turn to
+   * speak? Walks the user-visible history backwards: trailing mechanical
+   * assistant messages (image tiles, tool scaffolding) are skipped; the
+   * first substantive message decides — assistant prose means the user was
+   * addressed and the conversation waits on them; anything else (a user
+   * message, a settled request whose result is driving the AI's next turn)
+   * means the AI owes the next move.
+   * @returns {Boolean}
+   * @category User Projection
+   */
+    awaitsUserProse () {
+        const msgs = this.userVisibleHistory();
+        for (let i = msgs.length - 1; i >= 0; i--) {
+            const m = msgs[i];
+            const role = m.role ? m.role() : null;
+            if (role === "system") {
+                return false; // nothing but the system prompt yet
+            }
+            const prose = m.contentVisibleToUser ? m.contentVisibleToUser() : "";
+            if (role === "assistant") {
+                if (prose.length === 0) {
+                    continue; // trailing mechanical message — keep walking
+                }
+                return true;
+            }
+            return false; // the user (or a settled request) has the last word
+        }
+        return false;
+    }
+
+    /**
+   * @description The request messages currently awaiting a user's answer
+   * (blocking requests like dice rolls or choice prompts). Base conversations
+   * have none; apps with request-message vocabularies override this so a
+   * simulated user can find and answer them.
+   * @returns {Array} The pending request messages.
+   * @category User Projection
+   */
+    pendingUserRequests () {
+        return [];
+    }
+
+    /**
+   * @description The system prompt for a simulated user of this
+   * conversation — who its human is and how they behave. This generic
+   * default describes a curious tester; app conversations override to
+   * provide their per-assistant persona (a player for a game master, a
+   * builder for a builder assistant, …), typically loaded from a prompt
+   * resource file.
+   * @returns {String}
+   * @category User Projection
+   */
+    simulatedUserPersonaPrompt () {
+        return [
+            "You are ROLE-PLAYING AS A HUMAN USER testing an AI-assisted application by using it.",
+            "Below is the transcript of the conversation so far, exactly as the user sees it.",
+            "",
+            "Respond with ONLY your next turn as that user — one short, natural message,",
+            "as if typing into the chat box. Do NOT respond as the assistant, do NOT",
+            "describe the UI, do NOT explain that you are an AI or a test.",
+            "Act with curiosity and a little variety: explore, ask questions, try things,",
+            "occasionally take an unexpected but plausible action — the goal is to exercise",
+            "the application, not to play it safe.",
+            "When the assistant presents a list of OPTIONS to choose from, either reply with",
+            "exactly one option's label to pick it, or answer in your own words if you'd",
+            "rather do something else.",
+            "",
+            "Output your user turn as plain text with no tags and no preamble.",
+        ].join("\n");
+    }
+
+    /**
    * @description Gets the chat request class.
    * @returns {Class} The chat request class.
    * @category Configuration

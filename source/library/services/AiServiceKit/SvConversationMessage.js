@@ -644,6 +644,61 @@
     }
 
     /**
+   * The tag names whose tagged spans are mechanical scaffolding a human
+   * reader never sees (reasoning, tool traffic). The vocabulary is owned by
+   * the conversation (apps subclass their conversation and extend the list
+   * with domain tags — a message-class category couldn't safely override a
+   * method its own class defines); the message falls back to the framework
+   * defaults when it has no conversation.
+
+   * @returns {Array<String>} The tag names to strip from user-visible text.
+   * @category User Projection
+   */
+    mechanicalTagNames () {
+        const conv = (typeof this.conversation === "function") ? this.conversation() : null;
+        if (conv && typeof conv.mechanicalTagNames === "function") {
+            return conv.mechanicalTagNames();
+        }
+        return ["think", "tool-call", "tool-call-result"]; // keep in sync with SvAiConversation.mechanicalTagNames
+    }
+
+    /**
+   * The user-facing projection of this message: what a human effectively
+   * reads — content with mechanical tags (see mechanicalTagNames) and HTML
+   * comments removed. The mirror of the AI-facing content used for requests.
+   * Message subclasses that render as something other than their content
+   * (e.g. a request tile with a prompt and options) override this to return
+   * what their tile shows.
+
+   * @returns {String} The user-visible text (may be empty for mechanical-only messages).
+   * @category User Projection
+   */
+    contentVisibleToUser () {
+        const raw = this.content();
+        if (typeof raw !== "string") {
+            return ""; // non-string content (JSON-valued messages) has no prose
+        }
+        const tags = this.mechanicalTagNames().join("|");
+        return raw
+            .replace(new RegExp("<(" + tags + ")\\b[^>]*>[\\s\\S]*?<\\/\\1>", "gi"), "")
+            .replace(/<!--[\s\S]*?-->/g, "")
+            .trim();
+    }
+
+    /**
+   * The speaker label used when composing a user-view transcript (see
+   * SvAiConversation.userVisibleTranscript). Generic default is the role;
+   * apps override to their domain vocabulary (e.g. GAME / PLAYER).
+
+   * @returns {String} The transcript speaker label.
+   * @category User Projection
+   */
+    transcriptSpeakerLabel () {
+        const role = this.role ? this.role() : null;
+        return role ? role.toUpperCase() : "MESSAGE";
+    }
+
+    /**
    * Get the subtitle of the message.
 
    * @returns {String} The subtitle of the message.
