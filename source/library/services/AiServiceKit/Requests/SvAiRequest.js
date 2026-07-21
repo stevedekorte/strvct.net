@@ -925,7 +925,17 @@
     onError (e) {
         this.setError(e);
 
-        if (this.isRecoverableError()) {
+        if (this.isConnectivityError()) {
+            // Phase 2 of the recovery ladder: we are OFFLINE — timed retries
+            // against a dead network are pure flooding, and the platform
+            // tells us the right moment instead. Park and retry once when
+            // connectivity returns. Does not consume auto-retry attempts
+            // (a long offline stretch is one event, not N failures).
+            e.message = "Connection lost — will retry automatically when you're back online";
+            e.svIsRetrying = true; // renderers show the transient waiting status
+            this._awaitingReconnect = true;
+            this.watchOnceForNote("onBrowserOnline");
+        } else if (this.isRecoverableError()) {
             this.setRetryCount(this.retryCount() + 1);
             if (this.retryCount() > this.maxAutoRetries()) {
                 // Sustained outage: stop auto-retrying. The message renderer
@@ -980,6 +990,7 @@
     onRequestAbort (/*request*/) {
         this.setDidAbort(true);
         this.setStatus("aborted");
+        this._awaitingReconnect = false; // an aborted request must not resend on reconnect
         this.sendDelegateMessage("onStreamEnd");
         //this.sendDelegateMessage("onStreamAbort");
         // An abort frequently follows an error that already rejected
@@ -1237,6 +1248,34 @@
             return this.retriableStopReasons().has(e.name);
         }
         return false;
+    }
+
+    /**
+   * @category Error Handling
+   * @description True when the failure is connectivity: we are offline.
+   * Conservative on purpose — a status-0 failure while the browser reports
+   * online keeps its normal (recoverable/terminal) classification; only a
+   * confirmed-offline state routes to the wait-for-reconnect path.
+   * @returns {boolean}
+   */
+    isConnectivityError () {
+        return !SvPlatform.isOnline();
+    }
+
+    /**
+   * @category Error Handling
+   * @description Connectivity restored (browser online event, observed once
+   * when a request parked awaiting reconnect): retry immediately. Guarded —
+   * a request that settled some other way meanwhile (aborted, recovered by
+   * the user) must not resend.
+   */
+    onBrowserOnline (/*aNote*/) {
+        if (!this._awaitingReconnect) {
+            return;
+        }
+        this._awaitingReconnect = false;
+        console.log(this.logPrefix(), "connectivity restored — retrying request");
+        this.retryRequest();
     }
 
 }).initThisClass();
