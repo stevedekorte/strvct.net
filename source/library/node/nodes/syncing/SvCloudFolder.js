@@ -239,7 +239,23 @@
      * @category Cloud Sync
      */
     childWithCloudStableId (stableId) {
-        return this.subnodes().detect(sn => sn.cloudFsStableId && sn.cloudFsStableId() === stableId) || null;
+        // Exception-safe: a subnode may inherit cloudFsStableId as an
+        // abstract-method throw without being a folder-owned doc (e.g. a
+        // client-side session mirror living next to host sessions). Such a
+        // child can't match a folder entry — treating the throw as
+        // "no answer" instead of letting it abort the whole folder
+        // reconciliation (which surfaced as "Sessions sync failed for
+        // realm ...: UoClientSession must override cloudFsStableId()").
+        return this.subnodes().detect(sn => {
+            if (!sn.cloudFsStableId) {
+                return false;
+            }
+            try {
+                return sn.cloudFsStableId() === stableId;
+            } catch {
+                return false;
+            }
+        }) || null;
     }
 
     /**
