@@ -207,42 +207,8 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setupCss();
-    }
-
-    /**
-     * @description Injects the shimmer @keyframes and sheen class. The sheen is
-     * an oversized diagonal band that sweeps via translateX rather than
-     * background-position, so the animation runs on the compositor (GPU) instead
-     * of forcing per-frame paints.
-     * @returns {SvImageWellView} The current instance.
-     * @category Styling
-     */
-    setupCss () {
-        SvWebDocument.shared().addStyleSheetString(`
-            @keyframes SvImageWellShimmer {
-                0%   { transform: translateX(-55%); }
-                100% { transform: translateX(55%); }
-            }
-            .SvImageWellShimmerSheen {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: -50%;
-                right: -50%;
-                background-image: linear-gradient(115deg,
-                    rgba(255,255,255,0) 0%,
-                    rgba(255,255,255,0) 34%,
-                    rgba(255,255,255,0.07) 44%,
-                    rgba(255,255,255,0.13) 50%,
-                    rgba(255,255,255,0.07) 56%,
-                    rgba(255,255,255,0) 66%,
-                    rgba(255,255,255,0) 100%);
-                animation: SvImageWellShimmer 3.4s ease-in-out infinite alternate;
-                will-change: transform;
-            }
-        `);
-        return this;
+        // (shimmer keyframes/sheen CSS moved to SvShimmerOverlayView — the
+        // shared loading affordance used here and by tile thumbnails)
     }
 
     /**
@@ -1097,7 +1063,7 @@
     /**
      * @description Lazily builds the diagonal shimmer sheen overlay. The sheen
      * is a wide, slightly-transparent white gradient band that animates across
-     * the box via the SvImageWellShimmer keyframes. It overlays whether or not a
+     * the box via the shared SvShimmerOverlayView. It overlays whether or not a
      * preview image is present (it sits above both the empty box and the blurred
      * preview) and ignores pointer events. zIndex 2 keeps it above the front
      * layer (zIndex 1).
@@ -1108,20 +1074,9 @@
         if (this.shimmerView()) {
             return this.shimmerView();
         }
-        const v = SvFlexDomView.clone();
-        v.setPosition("absolute");
-        v.setInset("0px");
-        v.setZIndex(2);
-        v.setOverflow("hidden"); // clips the oversized sheen band
-        v.setPointerEvents("none");
-        v.turnOffUserSelect();
-        // Full-bleed sheen: a large, soft diagonal highlight that sweeps (and
-        // gently reverses) across the whole box, reading as flowing light. Its
-        // geometry (an oversized band), gradient and translateX animation all
-        // live in the SvImageWellShimmerSheen class (see setupCss).
-        const sheen = SvFlexDomView.clone();
-        sheen.setElementClassName("SvImageWellShimmerSheen");
-        v.addSubview(sheen);
+        // The shared shimmer (SvShimmerOverlayView) — same sheen used by
+        // tile thumbnails, so "loading an image" reads identically app-wide.
+        const v = SvShimmerOverlayView.clone();
         this.setShimmerView(v);
         this.addSubview(v);
         return v;

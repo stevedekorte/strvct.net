@@ -306,10 +306,27 @@
         // tile's node after each await, since tiles are recycled across nodes
         // and a late result must not paint onto whatever node now owns the tile.
         try {
+            // Loading affordance: shimmer the stand-in while the (possibly
+            // cloud) fetch is in flight — a blank frame otherwise reads as
+            // "no image", indistinguishable from an actual missing one. Only
+            // when nothing is displayed yet: periodic re-syncs must not flash
+            // placeholder over a visible thumbnail.
+            if (node.nodeExpectsThumbnail && node.nodeExpectsThumbnail()) {
+                this.setupThumbnailViewIfAbsent();
+                this.startThumbnailShimmerIfNeeded();
+            }
             const imageUrl = await node.asyncNodeThumbnailUrl();
-            if (this.node() !== node || !imageUrl) {
+            if (this.node() !== node) {
+                this.stopThumbnailShimmer(); // recycled: the new node's own pass owns the state
                 return this;
             }
+            if (!imageUrl) {
+                this.stopThumbnailShimmer();
+                this.markThumbnailUnavailable(); // dev-only glyph; silent otherwise
+                return this;
+            }
+            this.stopThumbnailShimmer();
+            this.clearThumbnailUnavailable();
             this.setupThumbnailViewIfAbsent();
             const tv = this.thumbnailView();
             tv.unhideDisplay();
@@ -332,7 +349,96 @@
                 tv.setBackgroundRepeat("no-repeat");
             }
         } catch (error) {
+            this.stopThumbnailShimmer();
+            this.markThumbnailUnavailable();
             console.warn(this.svType() + " asyncUpdateThumbnailView ignored error:", error);
+        }
+        return this;
+    }
+
+    // --- thumbnail loading / unavailable states ---
+
+    /**
+     * @description True when the thumbnail frame currently displays an image.
+     * @returns {Boolean}
+     * @category Thumbnail
+     */
+    thumbnailHasImage () {
+        const tv = this.thumbnailView();
+        if (!tv) {
+            return false;
+        }
+        const bg = tv.element().style.backgroundImage;
+        return !!bg && bg !== "none";
+    }
+
+    /**
+     * @description Overlays the shared shimmer (same effect as image-message
+     * loading) on the thumbnail stand-in while a fetch is in flight. No-op if
+     * already shimmering or an image is already displayed.
+     * @category Thumbnail
+     */
+    startThumbnailShimmerIfNeeded () {
+        const tv = this.thumbnailView();
+        if (!tv || this._thumbnailShimmer || this.thumbnailHasImage()) {
+            return this;
+        }
+        tv.setPosition("relative"); // anchor the absolute overlay
+        this._thumbnailShimmer = SvShimmerOverlayView.clone();
+        tv.addSubview(this._thumbnailShimmer);
+        return this;
+    }
+
+    stopThumbnailShimmer () {
+        if (this._thumbnailShimmer) {
+            const tv = this.thumbnailView();
+            if (tv) {
+                tv.removeSubview(this._thumbnailShimmer);
+            }
+            this._thumbnailShimmer = null;
+        }
+        return this;
+    }
+
+    /**
+     * @description The fetch settled with no image. In developer mode, show a
+     * faint "no image" glyph so a dead artwork reference is visibly
+     * diagnosable instead of silently blank; for players the frame just
+     * settles back to the quiet stand-in fill.
+     * @category Thumbnail
+     */
+    markThumbnailUnavailable () {
+        const tv = this.thumbnailView();
+        if (!tv || this._thumbnailUnavailableGlyph || this.thumbnailHasImage()) {
+            return this;
+        }
+        const devMode = (typeof SvApp !== "undefined") && SvApp.shared().developerMode && SvApp.shared().developerMode();
+        if (!devMode) {
+            return this;
+        }
+        const g = SvFlexDomView.clone();
+        g.setPosition("absolute");
+        g.setInset("0px");
+        g.setDisplay("flex");
+        g.setAlignItems("center");
+        g.setJustifyContent("center");
+        g.setColor("rgba(255, 255, 255, 0.18)");
+        g.setFontSize("20px");
+        g.setPointerEvents("none");
+        g.setInnerHtml("&#8856;"); // ⊘ — image reference resolved to nothing
+        this._thumbnailUnavailableGlyph = g;
+        tv.setPosition("relative");
+        tv.addSubview(g);
+        return this;
+    }
+
+    clearThumbnailUnavailable () {
+        if (this._thumbnailUnavailableGlyph) {
+            const tv = this.thumbnailView();
+            if (tv) {
+                tv.removeSubview(this._thumbnailUnavailableGlyph);
+            }
+            this._thumbnailUnavailableGlyph = null;
         }
         return this;
     }
