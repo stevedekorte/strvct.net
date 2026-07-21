@@ -300,6 +300,19 @@
         json.messages = this.jsonHistory();
 
         request.setBodyJson(json);
+
+        // App-agnostic hook: let the conversation supply per-request headers
+        // (e.g. usage attribution) for the requests it spawns. Duck-typed so the
+        // framework stays app-blind — a conversation that does not implement it
+        // yields no header and no behavior change.
+        const conversation = this.conversation();
+        if (conversation && typeof conversation.aiRequestCustomHeaders === "function") {
+            const headers = conversation.aiRequestCustomHeaders();
+            if (headers) {
+                request.setCustomHeaders(headers);
+            }
+        }
+
         return request;
     }
 

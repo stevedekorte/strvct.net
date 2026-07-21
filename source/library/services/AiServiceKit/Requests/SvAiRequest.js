@@ -111,6 +111,19 @@
             slot.setSlotType("JSON Object");
         }
 
+        /**
+     * @member {Object} customHeaders - Optional per-request headers merged into the
+     *   outgoing request headers just before the XHR is sent. App-agnostic transport:
+     *   the framework forwards whatever dict is set here and knows nothing of its
+     *   contents. Default null → no header, no behavior change.
+     */
+        {
+            const slot = this.newSlot("customHeaders", null);
+            slot.setSlotType("JSON Object");
+            slot.setShouldStoreSlot(false);
+            slot.setAllowsNullValue(true);
+        }
+
 
         /**
      * @member {Boolean} isStreaming - Whether the request is streaming.
@@ -624,6 +637,13 @@
 
         // Get request options and URL asynchronously
         const requestOptions = await this.requestOptions();
+        // Merge any caller-supplied per-request headers here, at the single seam
+        // where every subclass' requestOptions() result is consumed, so it covers
+        // subclasses that override requestOptions() (e.g. SvGeminiRequest) without
+        // touching each override. Default null → no-op.
+        if (this.customHeaders()) {
+            Object.assign(requestOptions.headers, this.customHeaders());
+        }
         const apiUrl = await this.activeApiUrl();
 
         // Configure the XHR request

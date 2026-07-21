@@ -58,6 +58,19 @@
         }
 
         /**
+     * @member {Object} customHeaders - Optional per-request headers merged into the
+     *   outgoing request headers. App-agnostic pass-through: the framework forwards
+     *   whatever dict is set here. Default null → no header, no behavior change.
+     * @category Request Data
+     */
+        {
+            const slot = this.newSlot("customHeaders", null);
+            slot.setSlotType("JSON Object");
+            slot.setShouldStoreSlot(false);
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
      * @member {String} body - The stringified version of bodyJson.
      * @category Request Data
      */
@@ -214,10 +227,14 @@
         const xhr = SvXhrRequest.clone();
         xhr.setUrl(this.proxyUrl());
         xhr.setMethod("POST");
-        xhr.setHeaders({
+        const headers = {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${await this.service().apiKeyOrUserAuthToken()}`
-        });
+        };
+        if (this.customHeaders()) {
+            Object.assign(headers, this.customHeaders());
+        }
+        xhr.setHeaders(headers);
         xhr.setDelegate(this);
         xhr.setBody(JSON.stringify(this.bodyJson()));
         xhr.setResponseType("blob"); // Set to blob for binary audio data

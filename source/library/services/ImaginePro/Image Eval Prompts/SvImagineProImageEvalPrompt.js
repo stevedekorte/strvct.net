@@ -161,6 +161,7 @@
                 const evaluator = this.imageEvaluators().add();
                 evaluator.setSvImage(fileToDownload.imageNode());
                 evaluator.setImageGenPrompt(this.prompt());
+                evaluator.setCustomHeaders(this.customHeaders()); // forward attribution to the Gemini eval request
             }
 
             this.setStatus("Evaluating images...");
