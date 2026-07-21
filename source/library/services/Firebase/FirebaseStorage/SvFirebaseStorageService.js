@@ -427,9 +427,47 @@
     }
 
     async asyncBlobForHash (hash) {
-        const file = await this.asyncPublicFileForHash(hash);
-        await file.asyncDownloadIfNeeded();
-        return file.blob();
+        // Per-hash in-flight dedup + shared negative cache. SvCloudBlobNode
+        // keeps a static missing-hash cache, but it only fills in AFTER a
+        // probe resolves — at boot, every view holding an image node for the
+        // SAME missing hash (campaign tile, session tile, TV band) fired its
+        // own dev+prod fallback probe concurrently before the first 404
+        // landed: a 404 storm per dead artwork ref. All concurrent callers
+        // now share ONE probe, and a definitively-missing hash short-circuits
+        // here for the TTL as well.
+        if (!this._blobFetchPromises) {
+            this._blobFetchPromises = new Map(); // hash → in-flight promise
+            this._missingBlobHashes = new Map(); // hash → last-miss ms
+        }
+        const missTtlMs = 60000;
+        const lastMiss = this._missingBlobHashes.get(hash);
+        if (lastMiss && (Date.now() - lastMiss) < missTtlMs) {
+            return null; // known-missing; don't re-probe for the TTL
+        }
+        let promise = this._blobFetchPromises.get(hash);
+        if (!promise) {
+            promise = (async () => {
+                const file = await this.asyncPublicFileForHash(hash);
+                try {
+                    await file.asyncDownloadIfNeeded(); // throws on 404
+                } catch (error) {
+                    // Record only DEFINITIVE not-found (mirrors
+                    // SvCloudBlobNode.errorIsDefinitiveNotFound's intent) —
+                    // transient failures must stay retryable.
+                    const msg = (error && error.message) || "";
+                    if (/object-not-found|does not exist|\b404\b/.test(msg)) {
+                        this._missingBlobHashes.set(hash, Date.now());
+                    }
+                    throw error; // callers classify/report as before
+                }
+                this._missingBlobHashes.delete(hash);
+                return file.blob();
+            })().finally(() => {
+                this._blobFetchPromises.delete(hash);
+            });
+            this._blobFetchPromises.set(hash, promise);
+        }
+        return promise;
     }
 
     async asyncPublicUrlForHash (hash) {
