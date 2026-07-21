@@ -1973,6 +1973,58 @@
         return hashesSet;
     }
 
+    /**
+     * @description Blob hashes referenced by THIS pool's records/instances
+     * only. Distinct from allBlobHashesSet (which unions ALL open pools —
+     * correct for blob GC, where a superset protects against wrong
+     * deletion, but wrong for per-document blob SYNC: a session pool asking
+     * "which blobs do I reference" must not answer with every hash in the
+     * app, or every document uploads and chases every other document's blobs).
+     * Same conservative record-scan as allBlobHashesSet, scoped to one pool.
+     * @returns {Set<string>}
+     * @category Blobs
+     */
+    localBlobHashesSet () {
+        const hashesSet = new Set();
+        const hexHashRegex = /[0-9a-f]{64}/g;
+        this.kvMap().keysSet().forEach(pid => {
+            const recordString = this.kvMap().at(pid);
+            if (Type.isString(recordString)) {
+                const matches = recordString.match(hexHashRegex);
+                if (matches) {
+                    matches.forEach(h => hashesSet.add(h));
+                }
+            }
+        });
+        this.activeObjects().forEachKV((pid, obj) => {
+            if (obj && obj.referencedBlobHashesSet) {
+                hashesSet.addAll(obj.referencedBlobHashesSet());
+            }
+        });
+        return hashesSet;
+    }
+
+    /**
+     * @description Diagnostic: which of this pool's records contain the
+     * given substring (e.g. a blob hash)? Returns short descriptors
+     * ("Type pid") parsed from the record JSON without materializing
+     * anything. Used to name the nodes holding a dangling blob reference.
+     * @param {String} substring
+     * @returns {Array<String>}
+     * @category Blobs
+     */
+    recordDescriptorsContaining (substring) {
+        const found = [];
+        this.kvMap().keysSet().forEach(pid => {
+            const recordString = this.kvMap().at(pid);
+            if (Type.isString(recordString) && recordString.includes(substring)) {
+                const typeMatch = recordString.match(/"type"\s*:\s*"([^"]+)"/);
+                found.push((typeMatch ? typeMatch[1] : "?") + " " + pid);
+            }
+        });
+        return found;
+    }
+
 
 }.initThisClass());
 
