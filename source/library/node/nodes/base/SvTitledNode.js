@@ -10,8 +10,8 @@
  *     icon/thumbnail (move to viewable?)
  *
  * SvNode -> SvTitledNode -> SvInspectableNode -> SvViewableNode -> SvStyledNode -> SvBaseNode -> StorableNode
- 
- 
+
+
  */
 
 
@@ -130,8 +130,15 @@
      * @returns {string|number} The subtitle or subnode count.
      */
     subtitle () {
-        if (this.subtitleIsSubnodeCount() && this.subnodesCount()) {
-            return this.subnodesCount();
+        if (this.subtitleIsSubnodeCount()) {
+            // Lazy-subnodes safety (see note() below): never force
+            // materialization just to display a count.
+            if (this.slotIsPendingMaterialization && this.slotIsPendingMaterialization("subnodes")) {
+                return this._subtitle;
+            }
+            if (this.subnodesCount()) {
+                return this.subnodesCount();
+            }
         }
 
         return this._subtitle;
@@ -151,6 +158,19 @@
      */
     note () {
         if (this.noteIsSubnodeCount()) {
+            // Lazy-subnodes safety: counting must NOT force materialization.
+            // The note slot is STORED, so recordForStore reads this getter
+            // during the store pass — with a lazy subnodes slot (Plans/Slot
+            // Lazy Loading) the count would materialize the whole subtree
+            // mid-commit, and materialization's load-time hooks mutate slots
+            // whose didMutate lands mid-store (the mid-store tripwire; seen
+            // live via UoAiChat's message tree). Until the subnodes
+            // materialize, serve the last stored note — the count as of the
+            // last save, which is also what the lazy design wants displayed
+            // at boot. This guard covers all noteSubnodesCount overrides.
+            if (this.slotIsPendingMaterialization && this.slotIsPendingMaterialization("subnodes")) {
+                return (this._note == null) ? "" : this._note;
+            }
             const count = this.noteSubnodesCount();
             if (count) {
                 return String(count);
