@@ -893,8 +893,16 @@
                 // pass stores it in a later loop), but if it turns out the
                 // object was ALREADY in the bucket being walked, the loop
                 // guard will flag it — capture the culprit's stack now so
-                // that report names the code that mutated during the store
+                // that report names the code that mutated during the store.
+                // Capture DEEP: the culprit frame (whoever called the setter
+                // / didUpdateNode) sits past V8's default 10-frame limit —
+                // the didMutate→didUpdateSlot→setter plumbing alone eats the
+                // whole default budget, so the report truncated exactly at
+                // the frame that mattered.
+                const savedLimit = Error.stackTraceLimit;
+                Error.stackTraceLimit = 60;
                 this.midStoreDirtyStacks().set(puuid, new Error().stack);
+                Error.stackTraceLimit = savedLimit;
             }
             this.dirtyObjects().set(puuid, anObject);
             this.scheduleStore();
