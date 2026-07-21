@@ -345,6 +345,18 @@
         const e = aRequest.error();
         console.error(this.logPrefix(), e && e.message);
 
+        // Recoverable failure with a retry already scheduled (e.g. service
+        // overloaded): show a plain-language WAITING status, not the terminal
+        // notice — and do NOT complete the message. The retry re-streams into
+        // this same message (onStreamStart resets content), and premature
+        // completion would fire tool processing / auto-continue / self-play
+        // on a fake-final message.
+        if (e && e.svIsRetrying) {
+            this.setContent("⏳ " + e.message + "…");
+            this.sendDelegateMessage("onMessageUpdate");
+            return;
+        }
+
         // Surface the failure IN the conversation rather than as a modal error
         // panel. The notice becomes this response's content, which is
         // dual-purpose:

@@ -98,7 +98,14 @@
         */
 
         if (request.error()) {
-            this.addAiError("AI ERROR: " + request.error().message);
+            const err = request.error();
+            if (err.svIsRetrying) {
+                // Transient, a retry is scheduled: show a waiting status, not
+                // red error text (the retry's onStreamStart resets content).
+                this.setContent("⏳ " + err.message + "…");
+                return;
+            }
+            this.addAiError("AI ERROR: " + err.message);
             return;
         }
 

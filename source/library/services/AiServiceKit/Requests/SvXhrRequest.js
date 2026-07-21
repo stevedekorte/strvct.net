@@ -658,11 +658,21 @@
         });
 
         xhr.addEventListener("timeout", (event) => {
-            em.safeWrapEvent(() => {
-                const error = new Error(`Request timeout: exceeded ${this.timeoutPeriodInMs()}ms`);
-                console.warn(this.logPrefix(), error.message, "\n", this.descriptionJson());
-                this.onXhrTimeout(error);
-            }, event);
+            // Same guard as loadend: onXhrTimeout THROWS a descriptive error
+            // when the request has no onRequestError delegate, and
+            // safeWrapEvent does not catch — the throw escaped the event
+            // listener as an unhandled window error (debugger break /
+            // pageerror) even though callers get their failure via the
+            // loadend path anyway. Route it to onError like loadend does.
+            try {
+                em.safeWrapEvent(() => {
+                    const error = new Error(`Request timeout: exceeded ${this.timeoutPeriodInMs()}ms`);
+                    console.warn(this.logPrefix(), error.message, "\n", this.descriptionJson());
+                    this.onXhrTimeout(error);
+                }, event);
+            } catch (error) {
+                this.onError(error);
+            }
         });
 
         // For GET and HEAD requests, don't send a body (even if it's undefined/null)

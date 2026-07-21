@@ -895,7 +895,11 @@
             this.retryWithDelay(nd);
             this.setRetryDelaySeconds(nd);
             const ts = SvTimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
-            e.message = this.service().title() + " overloaded, retrying in " + ts;
+            // User-readable (this message reaches the chat status line) and
+            // flagged as transient so message renderers show a waiting status
+            // instead of a terminal failure notice.
+            e.message = "AI service overloaded — retrying in " + ts;
+            e.svIsRetrying = true;
         }
 
         console.error(this.logPrefix(), e.message);
@@ -928,8 +932,15 @@
         this.sendDelegateMessage("onStreamEnd");
         //this.sendDelegateMessage("onStreamAbort");
         // An abort frequently follows an error that already rejected
-        // (e.g. a stream "error" event handler calls abort()).
-        this.xhrPromise().callRejectFuncIfPending(new Error("aborted"));
+        // (e.g. a stream "error" event handler calls abort()) — in that case
+        // nobody is awaiting xhrPromise anymore and the rejection below would
+        // surface as an UNHANDLED rejection (debugger break / pageerror; seen
+        // live when an Anthropic overloaded_error aborted the stream while
+        // the retry machinery had already taken over). Mark it handled first:
+        // real awaiters, if any, still receive the rejection.
+        const p = this.xhrPromise();
+        p.catch(() => {}); // no-op: suppress unhandled-rejection when orphaned
+        p.callRejectFuncIfPending(new Error("aborted"));
     }
 
     /**
