@@ -235,6 +235,43 @@
         }
 
         /**
+     * @member {Number} retryCount - Automatic retries attempted so far on this request.
+     */
+        {
+            const slot = this.newSlot("retryCount", 0);
+            slot.setInspectorPath(this.svType());
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Number");
+            slot.setDuplicateOp("duplicate");
+        }
+
+        /**
+     * @member {Number} maxAutoRetries - Recoverable failures beyond this stop
+     * auto-retrying (sustained outage: flooding a struggling service helps no
+     * one) and hand the next attempt to the user (recovery affordance).
+     */
+        {
+            const slot = this.newSlot("maxAutoRetries", 4);
+            slot.setInspectorPath(this.svType());
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Number");
+            slot.setDuplicateOp("duplicate");
+            slot.setCanEditInspection(true);
+        }
+
+        /**
+     * @member {Number} maxRetryDelaySeconds - Ceiling on the exponential backoff.
+     */
+        {
+            const slot = this.newSlot("maxRetryDelaySeconds", 60);
+            slot.setInspectorPath(this.svType());
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Number");
+            slot.setDuplicateOp("duplicate");
+            slot.setCanEditInspection(true);
+        }
+
+        /**
      * @member {String} fullContent - The full content of the response.
      */
         {
@@ -889,17 +926,31 @@
         this.setError(e);
 
         if (this.isRecoverableError()) {
-            const d = this.retryDelaySeconds();
-            const f = 2; // exponential backoff factor
-            const nd = (d * f).randomBetween(d * f * f); // random spot between the next two exponential points
-            this.retryWithDelay(nd);
-            this.setRetryDelaySeconds(nd);
-            const ts = SvTimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
-            // User-readable (this message reaches the chat status line) and
-            // flagged as transient so message renderers show a waiting status
-            // instead of a terminal failure notice.
-            e.message = "AI service overloaded — retrying in " + ts;
-            e.svIsRetrying = true;
+            this.setRetryCount(this.retryCount() + 1);
+            if (this.retryCount() > this.maxAutoRetries()) {
+                // Sustained outage: stop auto-retrying. The message renderer
+                // parks the response incomplete WITH error, which surfaces the
+                // chat's recovery affordance (e.g. the "Recover from Errors"
+                // header button) — the user initiates the next attempt.
+                e.message = "The AI service appears to be having sustained issues"
+                    + " (stopped after " + this.maxAutoRetries() + " automatic retries)."
+                    + " Press 'Recover from Errors' above to try again.";
+                e.svRetriesExhausted = true;
+            } else {
+                const d = this.retryDelaySeconds();
+                const f = 2; // exponential backoff factor
+                let nd = (d * f).randomBetween(d * f * f); // random spot between the next two exponential points
+                nd = Math.min(nd, this.maxRetryDelaySeconds()); // ceiling: back off, don't disappear
+                this.retryWithDelay(nd);
+                this.setRetryDelaySeconds(nd);
+                const ts = SvTimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
+                // User-readable (this message reaches the chat status line) and
+                // flagged as transient so message renderers show a waiting status
+                // instead of a terminal failure notice.
+                e.message = "AI service overloaded — retrying in " + ts
+                    + " (attempt " + this.retryCount() + " of " + this.maxAutoRetries() + ")";
+                e.svIsRetrying = true;
+            }
         }
 
         console.error(this.logPrefix(), e.message);

@@ -357,6 +357,20 @@
             return;
         }
 
+        // Sustained outage — auto-retries exhausted: park the message
+        // INCOMPLETE with its error set. The error state surfaces the chat's
+        // recovery affordance (app header button), whose recovery path
+        // deletes this stuck turn and re-requests from the last user message
+        // — the user initiates the next attempt. Not completed on purpose: a
+        // terminal completion would read as "the turn ended" to tool
+        // processing and automation, and there is no turn content.
+        if (e && e.svRetriesExhausted) {
+            this.setError(e);
+            this.setContent("⚠️ " + e.message);
+            this.sendDelegateMessage("onMessageUpdate");
+            return;
+        }
+
         // Surface the failure IN the conversation rather than as a modal error
         // panel. The notice becomes this response's content, which is
         // dual-purpose:

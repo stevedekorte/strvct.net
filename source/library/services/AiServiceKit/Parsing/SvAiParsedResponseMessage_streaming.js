@@ -105,6 +105,14 @@
                 this.setContent("⏳ " + err.message + "…");
                 return;
             }
+            if (err.svRetriesExhausted) {
+                // Sustained outage: park incomplete with error so the chat's
+                // recovery affordance appears (see SvAiResponseMessage
+                // .onRequestError, the non-streaming twin of this branch).
+                this.setError(err);
+                this.setContent("⚠️ " + err.message);
+                return;
+            }
             this.addAiError("AI ERROR: " + err.message);
             return;
         }
