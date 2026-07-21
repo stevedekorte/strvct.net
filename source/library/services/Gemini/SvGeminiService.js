@@ -35,6 +35,21 @@
     modelsJson () {
         return [
             {
+                // GA 2026-07-21 (blog.google Gemini 3.6 Flash announcement).
+                // Token limits not stated in the announcement; family values.
+                "name": "gemini-3.6-flash",
+                "title": "Gemini 3.6 Flash",
+                "inputTokenLimit": 1048576,
+                "outputTokenLimit": 65536
+            },
+            {
+                // GA 2026-07-21 (same announcement; 350 output tokens/s).
+                "name": "gemini-3.5-flash-lite",
+                "title": "Gemini 3.5 Flash-Lite",
+                "inputTokenLimit": 1048576,
+                "outputTokenLimit": 65536
+            },
+            {
                 "name": "gemini-3.5-flash",
                 "title": "Gemini 3.5 Flash",
                 "inputTokenLimit": 1048576,
