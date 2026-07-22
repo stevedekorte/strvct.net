@@ -55,6 +55,28 @@
             slot.setSlotType("Array");
         }
 
+        /**
+     * @member {boolean} isPaused - Transport pause: processQueue holds while
+     * true. Unlike isMuted (which DROPS sounds), pausing retains everything —
+     * queued sounds wait, and the interrupted sound is re-queued to replay
+     * from its start on resume.
+     */
+        {
+            const slot = this.newSlot("isPaused", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+     * @member {Array} playedSounds - Bounded history of sounds that finished
+     * playing (oldest first), retained so the transport can skip backward —
+     * a played SvWaSound replays cleanly (play() builds a fresh audio source
+     * per playback). See maxPlayedSoundsCount.
+     */
+        {
+            const slot = this.newSlot("playedSounds", null);
+            slot.setSlotType("Array");
+        }
+
         this.setNodeSubtitleIsChildrenSummary(true);
         this.setShouldStoreSubnodes(false);
     }
@@ -80,6 +102,7 @@
         super.init();
         this.setTitle("Audio Queue");
         this.setQueue([]);
+        this.setPlayedSounds([]);
     }
 
     /**
@@ -201,6 +224,9 @@
    * @returns {SvAudioQueue} The audio queue instance.
    */
     processQueue () {
+        if (this.isPaused()) {
+            return this; // transport hold — resume() releases
+        }
         if (!this.currentSound()) {
             const q = this.queue();
             if (q.length) {
@@ -277,42 +303,147 @@
         waSound.removeDelegate(this);
         this.logDebug("finished playing");
         this.setCurrentSound(null);
+        // pause() re-queues the interrupted sound to replay on resume — that
+        // stop also lands here, but the sound didn't finish: don't file it
+        // into played history (it sits at the front of the queue instead).
+        if (!(this.isPaused() && this.queue()[0] === waSound)) {
+            this.recordPlayedSound(waSound);
+        }
         this.processQueue();
         this.didUpdateNode();
     }
 
+    // --- transport (pause / resume / sentence skips) ---
+    // The playhead model: playedSounds (history) + queue (future); the
+    // boundary between them is the playhead. Skips move sounds across the
+    // boundary but never play — only resume() does. Sentence-granular skips
+    // count only spoken-transcript sounds; interleaved effects and <break>
+    // fillers ride along with the sentence they precede.
+
     /**
-   * @category Playback Control
-   * @description Pauses the current sound if one is playing.
-   * @throws {Error} Pause is not currently supported.
+   * @category Transport
+   * @description How many finished sounds to retain for backward skips.
+   * @returns {number}
+   */
+    maxPlayedSoundsCount () {
+        return 50;
+    }
+
+    recordPlayedSound (sound) {
+        const played = this.playedSounds();
+        played.push(sound);
+        while (played.length > this.maxPlayedSoundsCount()) {
+            played.shift();
+        }
+        return this;
+    }
+
+    /**
+   * @category Transport
+   * @description Whether a sound is a spoken sentence for skip counting —
+   * it carries a transcript that isn't a silent <break> filler.
+   * @param {Object} sound
+   * @returns {boolean}
+   */
+    soundHasSpokenTranscript (sound) {
+        const t = (sound && sound.transcript) ? sound.transcript() : null;
+        return Type.isString(t) && t.trim().length > 0 && !t.trim().startsWith("<break");
+    }
+
+    /**
+   * @category Transport
+   * @description The transcript at the playhead: the next spoken sentence
+   * that resume() would (eventually) play, or null at the live edge.
+   * @returns {String|null}
+   */
+    playheadTranscript () {
+        const next = this.queue().find(s => this.soundHasSpokenTranscript(s));
+        return next ? next.transcript() : null;
+    }
+
+    /**
+   * @category Transport
+   * @description Pauses playback: the interrupted sound is re-queued to
+   * replay from its start on resume; everything queued waits. Idempotent.
+   * (Also finally makes setIsMuted(true)'s pause() call safe — it threw
+   * "pause not supported" before the transport existed.)
+   * @returns {SvAudioQueue}
    */
     pause () {
-        throw new Error("pause not supported");
-    /*
-    this.logDebug("pause()");
-
-    const audio = this.currentSound();
-    if (audio) {
-      audio.pause();
-      this.logDebug("paused");
-    }
-    */
+        if (this.isPaused()) {
+            return this;
+        }
+        this.setIsPaused(true);
+        const current = this.currentSound();
+        if (current) {
+            this.queue().unshift(current); // replay from its start on resume
+            if (current.stop) {
+                current.stop(); // its ended path sees the pause re-queue and skips history
+            }
+        }
+        this.didUpdateNode();
+        return this;
     }
 
     /**
-   * @category Playback Control
-   * @description Resumes playing the current sound if one is paused.
+   * @category Transport
+   * @description Releases a pause and plays on from the playhead.
+   * @returns {SvAudioQueue}
    */
     resume () {
-        this.logDebug("resume()");
-
-        const audio = this.currentSound();
-        if (audio) {
-            //if (audio.paused) {
-            audio.play();
-            this.logDebug("resumed");
-            //}
+        if (!this.isPaused()) {
+            return this;
         }
+        this.setIsPaused(false);
+        this.processQueue();
+        this.didUpdateNode();
+        return this;
+    }
+
+    /**
+   * @category Transport
+   * @description Moves the playhead back by up to sentenceCount spoken
+   * sentences (history permitting), pausing first if needed. Does not play.
+   * @param {number} sentenceCount
+   * @returns {String|null} the transcript now at the playhead.
+   */
+    skipBack (sentenceCount) {
+        this.pause();
+        const played = this.playedSounds();
+        let moved = 0;
+        while (moved < sentenceCount && played.length > 0) {
+            const sound = played.pop();
+            this.queue().unshift(sound);
+            if (this.soundHasSpokenTranscript(sound)) {
+                moved += 1;
+            }
+        }
+        this.didUpdateNode();
+        return this.playheadTranscript();
+    }
+
+    /**
+   * @category Transport
+   * @description Moves the playhead forward by up to sentenceCount spoken
+   * sentences, clamped at the live edge (the newest not-yet-spoken
+   * sentence), pausing first if needed. Does not play.
+   * @param {number} sentenceCount
+   * @returns {String|null} the transcript now at the playhead.
+   */
+    skipForward (sentenceCount) {
+        this.pause();
+        let moved = 0;
+        while (moved < sentenceCount) {
+            const q = this.queue();
+            const index = q.findIndex(s => this.soundHasSpokenTranscript(s));
+            if (index === -1) {
+                break; // live edge — nothing spoken left to skip
+            }
+            q.splice(0, index + 1).forEach(s => this.recordPlayedSound(s));
+            moved += 1;
+        }
+        this.didUpdateNode();
+        return this.playheadTranscript();
     }
 
     /**
@@ -326,6 +457,8 @@
         // this.onSoundEnded(audio); // needed?
         }
         this.setQueue([]);
+        this.setPlayedSounds([]); // transport history dies with the queue
+        this.setIsPaused(false);
     }
 
     /**
