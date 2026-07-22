@@ -293,6 +293,26 @@
                         } else if (slot.slotType() === "JSON Object" && Type.typeName(v) === "Object") {
                             // "JSON Object" slots accept plain objects from JSON deserialization
                             slot.onInstanceSetValue(this, v);
+                        } else if (Type.typeName(v) === "Object" && Type.isString(v._type)
+                                && SvGlobals.get(slot.slotType()) && Type.isFunction(SvGlobals.get(slot.slotType()).fromJson)) {
+                            // Discriminated object slot — the same _type convention
+                            // newSubnodeForJson uses for mixed-class arrays, extended to
+                            // slots: the dict names its concrete class, the slot's
+                            // declared type is the allowed base. fromJson's
+                            // newInstanceFromJson asserts _type isKindOf the declared
+                            // class, so a JSON payload can never smuggle an arbitrary
+                            // class into the slot. First consumer: UoCharacter.controller
+                            // (UoPlayerController | UoAiController).
+                            const declaredClass = SvGlobals.get(slot.slotType());
+                            const node = slot.onInstanceGetValue(this);
+                            if (node && node.svType() === v._type && node.deserializeFromJson) {
+                                // same concrete class — merge in place (preserves
+                                // instance identity and any owner back-pointers)
+                                node.deserializeFromJson(v, filterName, jsonPathComponents.concat(k));
+                            } else {
+                                const newNode = declaredClass.fromJson(v, jsonPathComponents.concat(k));
+                                slot.onInstanceSetValue(this, newNode);
+                            }
                         } else if (slot.slotType() !== Type.typeName(v)) {
                             const errorMessage = this.logPrefix() + " .setSlotsJson() slotType mismatch: " + slot.slotType() + " slot type !== " + Type.typeName(v) + " value type at path: " + jsonPathComponents.concat(k).join("/");
                             console.warn(errorMessage);
