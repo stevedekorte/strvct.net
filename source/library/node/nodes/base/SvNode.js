@@ -226,6 +226,27 @@
             const slot = this.newSlot("canDelete", false);
             slot.setSlotType("Boolean");
             slot.setDuplicateOp("copyValue");
+            // The getter is hand-written (see canDelete() below): it consults
+            // the parent's canDeleteSubnodes policy before this slot's value.
+            // The setter stays auto-generated.
+            slot.setOwnsGetter(false);
+        }
+
+        {
+            /**
+             * Container policy over the deletability of this node's subnodes,
+             * consulted by each subnode's canDelete(): false vetoes deletion,
+             * true grants it, null (the default) means no opinion — the
+             * subnode's own canDelete slot decides. Lets a container state
+             * its policy once (e.g. a game-session party declares its member
+             * characters undeletable) instead of every member class knowing
+             * about every container it can live in. Single-level by design —
+             * it does not cascade to deeper descendants.
+             */
+            const slot = this.newSlot("canDeleteSubnodes", null);
+            slot.setSlotType("Boolean");
+            slot.setAllowsNullValue(true);
+            slot.setDuplicateOp("copyValue");
         }
 
         {
@@ -1605,6 +1626,27 @@
     add (noArg) {
         assert(noArg === undefined);
         return this.addAt(this.subnodeCount());
+    }
+
+    /**
+     * @description Whether the user may delete this node. The parent
+     * container's canDeleteSubnodes policy is consulted first — false vetoes,
+     * true grants — and when the container has no opinion (null, the default)
+     * this node's own canDelete slot value answers. Hand-written getter (the
+     * canDelete slot sets ownsGetter false) so deletability policy can live
+     * with the container that owns the list.
+     * @returns {Boolean}
+     * @category Deletion
+     */
+    canDelete () {
+        const parent = this.parentNode();
+        if (parent && typeof parent.canDeleteSubnodes === "function") {
+            const policy = parent.canDeleteSubnodes();
+            if (policy !== null && policy !== undefined) {
+                return policy;
+            }
+        }
+        return this._canDelete;
     }
 
     /**
