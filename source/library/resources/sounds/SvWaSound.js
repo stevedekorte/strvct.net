@@ -166,6 +166,18 @@
         }
 
         /**
+         * @member volume
+         * @description linear gain applied to playback (1 = source level).
+         * When not 1, the audio source is routed through a GainNode.
+         * Set before play() — the gain graph is built per playback.
+         * @type {Number}
+         */
+        {
+            const slot = this.newSlot("volume", 1);
+            slot.setSlotType("Number");
+        }
+
+        /**
          * @member whenToPlay
          * @description when to play
          * @type {Number}
@@ -500,7 +512,14 @@
         const ctx = this.audioCtx();
         const source = ctx.createBufferSource();
         source.buffer = this.decodedBuffer();
-        source.connect(ctx.destination);
+        if (this.volume() !== 1) {
+            const gain = ctx.createGain();
+            gain.gain.value = this.volume();
+            source.connect(gain);
+            gain.connect(ctx.destination);
+        } else {
+            source.connect(ctx.destination);
+        }
         this.syncToSource(source);
         source.addEventListener("ended", (event) => {
             this.onEnded(event);
