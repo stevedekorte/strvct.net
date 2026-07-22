@@ -814,9 +814,15 @@
         }
         this.setPreviewDataUrl(dataUrl);
         if (dataUrl) {
-            // Installing a blurred preview is a non-terminal state this view is
-            // displaying, so a later final reveal is a transition it witnessed.
-            this.setWitnessedProgress(true);
+            // Installing a blurred preview counts as witnessed PROGRESS only
+            // while generation is actually in flight (isWorking). A preview
+            // covering mere fetch latency for an already-complete image
+            // (reload, scroll-back, late join — the final's blob resolves a
+            // sync later) is not a transition worth animating: the final must
+            // snap in sharp, not play the focus-pull reveal.
+            if (this.isWorking()) {
+                this.setWitnessedProgress(true);
+            }
             // Crossfade the new blurred layer in over the outgoing one (which
             // stays opaque underneath and is removed once the incoming fade
             // completes, so the box never shows through). removeOutgoingBackLayer
