@@ -498,11 +498,36 @@
    * @category User Projection
    */
     userVisibleTranscript () {
+        // Episodic collapse — the SAME memory model composeJsonHistory
+        // applies to the AI view, mirrored for the human reader: messages
+        // filed to a superseded episode render as one summary line per block
+        // (the block projects itself via transcriptSummaryLine); the newest
+        // filed block and everything unfiled render in full. This is how a
+        // person holds a long session too: recent scenes in detail, earlier
+        // ones as a one-line recollection. It also bounds a simulated
+        // user's per-turn context, which would otherwise grow for the life
+        // of the session (filing copies messages to history and marks the
+        // originals — they never leave messages()).
+        const history = this.history ? this.history() : null;
+        const newestBlock = (history && history.newestBlock) ? history.newestBlock() : null;
+        const inlineBlockId = newestBlock ? newestBlock.jsonId() : null;
+        const emittedBlockIds = new Set();
         const lines = [];
         this.userVisibleHistory().forEach(m => {
             const role = m.role ? m.role() : null;
             if (role === "system") {
                 return; // shown in the UI (dev), but not part of the dialogue a user reads
+            }
+            const blockId = (m.filedToHistoryBlockId ? m.filedToHistoryBlockId() : null);
+            if (blockId && blockId !== inlineBlockId) {
+                if (!emittedBlockIds.has(blockId)) {
+                    emittedBlockIds.add(blockId);
+                    const block = history.blockWithJsonId(blockId);
+                    if (block) {
+                        lines.push(block.transcriptSummaryLine());
+                    }
+                }
+                return; // superseded episode — collapsed into its summary line
             }
             const text = m.contentVisibleToUser ? m.contentVisibleToUser() : "";
             if (text.length === 0) {

@@ -108,4 +108,18 @@
         return copy;
     }
 
+    /**
+     * @description How this episode reads in a user-view transcript — the
+     * human-memory analog of the AI view's marker dict: a reader keeps
+     * recent scenes in detail and earlier ones as a one-line recollection.
+     * Used by SvAiConversation.userVisibleTranscript for superseded blocks.
+     * @returns {String}
+     * @category User Projection
+     */
+    transcriptSummaryLine () {
+        const subtitle = this.subtitle();
+        return "EARLIER EPISODE: " + this.title()
+            + (Type.isString(subtitle) && subtitle.trim().length > 0 ? " — " + subtitle : "");
+    }
+
 }.initThisClass());
