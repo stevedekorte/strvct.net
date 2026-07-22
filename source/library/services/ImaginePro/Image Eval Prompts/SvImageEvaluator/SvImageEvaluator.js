@@ -137,6 +137,19 @@
             slot.setDescription("XHR request used for Gemini API call");
         }
 
+        /**
+     * @member {Object} customHeaders
+     * @description Optional per-request headers forwarded to the Gemini
+     *   evaluation request. App-agnostic pass-through; default null → no header.
+     * @category Request
+     */
+        {
+            const slot = this.newSlot("customHeaders", null);
+            slot.setSlotType("JSON Object");
+            slot.setShouldStoreSlot(false);
+            slot.setAllowsNullValue(true);
+        }
+
 
         // Action to evaluate the image
     /*
@@ -391,6 +404,7 @@
         const evalModel = service.models().subnodes().detect(m => m.modelName() === "gemini-3.1-flash-lite-preview") || service.defaultChatModel();
         request.setChatModel(evalModel);
         request.setBodyJson(bodyJson);
+        request.setCustomHeaders(this.customHeaders()); // usage attribution for the eval call
         request.setIsStreaming(false); // We want the complete response, not streaming
         request.setTimeoutPeriodInMs(30 * 60 * 1000); // 30 minutes for vision API (can be slow)
 

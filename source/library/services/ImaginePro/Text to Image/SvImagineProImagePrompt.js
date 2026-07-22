@@ -559,6 +559,21 @@ Midjourney
             //slot.setIsInCloudJson(false); // Delegates are runtime refs, would create circular references
         }
 
+        /**
+     * @member {Object} customHeaders
+     * @description Optional per-request headers forwarded to every request this
+     *   prompt spawns — the generation submit, the status polls, and (in the eval
+     *   subclass) the image-evaluation requests. App-agnostic pass-through;
+     *   default null → no header, no behavior change.
+     * @category Request Data
+     */
+        {
+            const slot = this.newSlot("customHeaders", null);
+            slot.setSlotType("JSON Object");
+            slot.setShouldStoreSlot(false);
+            slot.setAllowsNullValue(true);
+        }
+
 
         /**
          * @member {Action} newSeedAction
@@ -930,10 +945,10 @@ Midjourney
         request.setDelegate(this);
         request.setUrl(proxyEndpoint);
         request.setMethod("POST");
-        request.setHeaders({
+        request.setHeaders(this.headersWithCustom({
             "Authorization": `Bearer ${apiKey}`,
             "Content-Type": "application/json"
-        });
+        }));
 
         const fullPrompt = await this.asyncComposeFullPrompt();
 
@@ -956,10 +971,10 @@ Midjourney
                 request.setDelegate(this);
                 request.setUrl(proxyEndpoint);
                 request.setMethod("POST");
-                request.setHeaders({
+                request.setHeaders(this.headersWithCustom({
                     "Authorization": `Bearer ${apiKey}`,
                     "Content-Type": "application/json"
-                });
+                }));
                 request.setBody(JSON.stringify(bodyJson));
                 this.setXhrRequest(request);
             }
@@ -1017,7 +1032,22 @@ Midjourney
         generation.setPromptNote(fullPrompt);
         generation.setTaskId(taskId);
         generation.setDelegate(this);
+        generation.setCustomHeaders(this.customHeaders()); // status polls carry the same attribution
         await generation.asyncStartPolling();
+    }
+
+    /**
+   * @description Returns a copy of the given headers dict with any per-request
+   *   customHeaders merged in. App-agnostic pass-through helper.
+   * @param {Object} headers - The base headers dict.
+   * @returns {Object} The headers dict with customHeaders merged.
+   * @category Request Preparation
+   */
+    headersWithCustom (headers) {
+        if (this.customHeaders()) {
+            return Object.assign({}, headers, this.customHeaders());
+        }
+        return headers;
     }
 
     /**
