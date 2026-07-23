@@ -466,9 +466,17 @@
 
         const childStack = this.nextStackView();
         if (childStack) {
-            childStack.selectNodePathArray(nextNodePathArray);
+            // Propagate the child's result: a deep component that can't
+            // resolve yet (its column materializes lazily, a cycle after the
+            // parent tile is selected) must report failure so the caller's
+            // bounded retry (SvBrowserView.trySelectPendingPath) fires.
+            // Returning true unconditionally silently truncated programmatic
+            // navs at the first unmaterialized level.
+            return childStack.selectNodePathArray(nextNodePathArray);
         }
-        return true;
+        // Remaining path but no child stack yet: same lazy-materialization
+        // case — fail so the retry can pick it up next cycle.
+        return nextNodePathArray.length === 0;
     }
 
     /**
