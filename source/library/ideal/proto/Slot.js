@@ -1357,7 +1357,17 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 return v.every(value => valueIsInValidItems(value));
             }
 
-            return valueIsInValidItems(v);
+            if (valueIsInValidItems(v)) {
+                return true;
+            }
+            // The slot's declared initValue is a legal state by definition —
+            // it's what every fresh instance holds before a pick is made.
+            // Without this, a validItems slot whose default isn't in the list
+            // (e.g. "" meaning "unset") can never round-trip through JSON
+            // hydration: re-setting the unset value fails validation and the
+            // autoSetter's resolution path throws (seen: a multiplayer client
+            // join crashed deserializing a map with an unset scale).
+            return Type.valuesAreEqual(v, this.initValue());
         }
 
         return true;
@@ -1457,9 +1467,13 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                             console.log("RESOLUTION: setting value to initValue: ", resolvedValue);
                             const validItems = slot.validItems();
                             if (!Type.isNull(validItems)) {
-                                resolvedValue = validItems.first();
+                                // items are {label, subtitle, value} dicts — resolve to the
+                                // first item's VALUE (the dict itself can never pass a
+                                // String/Number slot's type check, so assigning it turned
+                                // this recovery path into a guaranteed throw).
+                                resolvedValue = validItems.first() ? validItems.first().value : null;
                                 if (!slot.validateValue(resolvedValue)) {
-                                    console.log("RESOLUTION: setting value to validItems.first(): ", resolvedValue);
+                                    console.log("RESOLUTION: validItems.first().value also invalid: ", resolvedValue);
                                     throw new Error(errorMsg);
                                 }
                             }
