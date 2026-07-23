@@ -240,10 +240,14 @@
      * @category Event Handling
      */
     onScroll (/*event*/) {
-        // Scroll-jump diagnostic (opt-in: localStorage.SvScrollDebug = "1") —
-        // logs any scroll event that moved more than a screenful since the
-        // last one
-        if (typeof localStorage !== "undefined" && localStorage.getItem("SvScrollDebug") === "1") {
+        // Scroll-jump diagnostic — ALWAYS ON (was opt-in via
+        // localStorage.SvScrollDebug, but the environments where jumps
+        // reproduce are exactly the ones where nobody can set the flag).
+        // Fires only on a move larger than a screenful since the last
+        // scroll event, so it is silent in normal use; when the reported
+        // "keeps jumping back to earlier messages" bug strikes, the console
+        // names the state (anchor, refNode, wasAtBottom) at the jump.
+        {
             const e = this.element();
             const last = this._scrollDebugLastTop;
             if (last !== undefined && Math.abs(e.scrollTop - last) > e.clientHeight) {
