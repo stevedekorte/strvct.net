@@ -137,7 +137,7 @@
 
         // instructions
         {
-            const slot = this.newSlot("instructions", "Dungeon Master narration. Cinematic and vivid but easy to follow. Slightly slower than normal with short pauses after sentences and a longer pause before reveals. Vary intonation for tension and wonder; confident downward cadence on statements. Enunciate fantasy names. Clearly emphasize numbers, dice results, and status conditions. Use subtle, consistent NPC voices without going cartoonish.");
+            const slot = this.newSlot("instructions", "Dungeon Master narration. Cinematic and vivid but easy to follow. Slightly slower than normal with short pauses after sentences and a longer pause before reveals. Vary intonation for tension and wonder; confident downward cadence on statements. Enunciate fantasy names. Clearly emphasize numbers, dice results, and status conditions. Use subtle, consistent NPC voices without going cartoonish. Read the text verbatim and completely: when text begins with a name followed by a colon (a list entry like 'Dirk: a tenth-level fighter'), SPEAK the name and continue — never treat it as a speaker label or stage direction to omit.");
             slot.setInspectorPath("");
             slot.setLabel("instructions");
             slot.setShouldStoreSlot(true);
@@ -403,7 +403,7 @@
         const bodyJson = {
             model: this.ttsModel(),
             voice: this.voice(),
-            input: this.prompt(),
+            input: this.ttsSafeInput(),
             response_format: this.responseFormat(),
             speed: this.speed(),
         };
@@ -414,6 +414,20 @@
 
         request.setBodyJson(bodyJson);
         return request;
+    }
+
+    /**
+   * @description The request input: the prompt with TTS hazards neutralized.
+   * A leading proper-noun-plus-colon ("Dirk: a tenth-level fighter.") reads
+   * as a dialogue speaker label, and TTS models (the LLM-based ones
+   * especially) can DROP speaker labels as stage directions instead of
+   * reading them. Rewrite a leading label's colon to an em dash so the name
+   * is always spoken. Input-only: prompt() and the sound transcript (the
+   * closed captions) keep the original text.
+   * @returns {string}
+   */
+    ttsSafeInput () {
+        return this.prompt().replace(/^(\s*)([A-Z][\w' .-]{0,40}):(\s)/, "$1$2 —$3");
     }
 
     /**
