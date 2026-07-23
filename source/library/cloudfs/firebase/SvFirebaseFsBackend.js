@@ -442,7 +442,13 @@
         const ref = this._liveRef(sessionId).child(uid);
         const payload = Object.assign({}, data || {});
         payload.connectedAt = firebase.database.ServerValue.TIMESTAMP;
-        ref.onDisconnect().remove();
+        // The onDisconnect arm is its OWN server round-trip with its own
+        // promise — a rejection here (PERMISSION_DENIED after the session's
+        // scope was deleted out from under a live heartbeat) is otherwise an
+        // unhandled rejection that surfaces as an app error dialog, even when
+        // the caller catches the set() below.
+        ref.onDisconnect().remove().catch((e) =>
+            console.warn("[SvFirebaseFsBackend] onDisconnect arm failed (scope deleted?):", e && e.message));
         await ref.set(payload);
     }
 
@@ -452,7 +458,9 @@
      */
     async clearLiveNode (sessionId, uid) {
         const ref = this._liveRef(sessionId).child(uid);
-        ref.onDisconnect().cancel();
+        // Same unhandled-rejection hazard as the arm in setLiveNode.
+        ref.onDisconnect().cancel().catch((e) =>
+            console.warn("[SvFirebaseFsBackend] onDisconnect cancel failed (scope deleted?):", e && e.message));
         await ref.remove();
     }
 
