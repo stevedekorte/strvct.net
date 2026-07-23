@@ -80,6 +80,12 @@
         this.setHeight("100%");
         this.setCursor("pointer");
         this.setColor("var(--SvCompanionTab-color, rgba(255, 255, 255, 0.5))");
+        // A faint fill + hairline edge so the collapsed rail reads as a
+        // control strip instead of an unexplained gap beside the content
+        // (reported twice against a dark chat column / fullscreen image).
+        // The border-color var was documented in the classdesc but never
+        // applied; the border side follows the docked edge via syncCaret.
+        this.setBackgroundColor("var(--SvCompanionTab-background-color, rgba(255, 255, 255, 0.035))");
         this.turnOffUserSelect();
 
         const label = SvTextView.clone();
@@ -128,6 +134,12 @@
     syncCaret () {
         const label = this.labelView();
         label.setCssProperty("writing-mode", null);
+        // Hairline on the content-facing edge (vertical tab = side dock →
+        // left edge; horizontal = bottom dock → top edge).
+        const edge = this.isVerticalTab() ? "border-left" : "border-top";
+        const other = this.isVerticalTab() ? "border-top" : "border-left";
+        this.setCssProperty(other, null);
+        this.setCssProperty(edge, "1px solid var(--SvCompanionTab-border-color, rgba(255, 255, 255, 0.08))");
         let glyph;
         if (this.isVerticalTab()) {
             glyph = this.companionIsDocked() ? "▸" : "◂";
