@@ -464,14 +464,28 @@
             // from re-engaging auto-scroll.
             return this;
         }
+        const atBottom = this.isAtBottom();
         if (this.isInTransientTeardown()) {
-            // Tiles are torn down mid-sync: the emptied scroller reads as
-            // "at bottom", which would make the rebuild stick-to-bottom
-            // instead of restoring the reading position.
+            // Tiles are torn down mid-sync: the emptied scroller falsely
+            // reads as "at bottom" — never LATCH true from this state (it
+            // would make the rebuild stick-to-bottom instead of restoring
+            // the reading position). But the FALSE-ward flip must still
+            // register: streaming re-syncs make teardown windows frequent,
+            // and suppressing both directions left wasAtBottom stale-true
+            // when the user scrolled up mid-generation — the next mutation
+            // then slammed them to the bottom (captured in prod as
+            // "[ScrollDebug] JUMP … wasAtBottom true": the reported
+            // keeps-jumping-away-while-reading bug). Recording not-at-bottom
+            // is always safe; worst case one mutation restores the reading
+            // position instead of sticking, and the next real scroll
+            // re-establishes the truth.
+            if (!atBottom && this.wasAtBottom()) {
+                this.setWasAtBottom(false);
+            }
             return this;
         }
-        if (this.wasAtBottom() !== this.isAtBottom()) {
-            this.setWasAtBottom(this.isAtBottom());
+        if (this.wasAtBottom() !== atBottom) {
+            this.setWasAtBottom(atBottom);
         }
         return this;
     }
