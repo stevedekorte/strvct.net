@@ -170,6 +170,20 @@
     }
 
     /**
+   * User-facing counterpart of valueInputBlockingReason: a short friendly
+   * line the input tile shows as placeholder text while input is blocked
+   * ("Waiting for the host to return…"). Null means no placeholder. The
+   * conversation curates the wording (chatInputBlockingHint); the machine
+   * reason above stays for console diagnostics.
+   * @returns {String|null}
+   * @category Input
+   */
+    valueInputBlockingHint () {
+        const c = this.conversation();
+        return (c && typeof c.chatInputBlockingHint === "function") ? c.chatInputBlockingHint() : null;
+    }
+
+    /**
    * Handle the value input event
    * @param {Object} changedView - The changed view object
    * @category Event Handling

@@ -4,6 +4,16 @@ SvFieldValueView br {
     display: none;
 }
 
+/* SvTextView sets data-placeholder (see setPlaceholderText) but nothing
+   rendered it — used by the chat input to show WHY input is blocked
+   ("Waiting for the host to return…") right where the user tries to act. */
+.SvChatInputTileValueView[data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    opacity: 0.45;
+    pointer-events: none;
+    font-style: italic;
+}
+
 .SvFieldValueView * {
     display: inline;
     white-space: nowrap;

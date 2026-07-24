@@ -48,6 +48,13 @@
             }
             this._lastLoggedInputBlockReason = reason;
         }
+        // Show WHY input is blocked right where the user tries to act: the
+        // node's curated hint renders as the editor's placeholder (only
+        // visible while the editor is empty — data-placeholder CSS).
+        if (valueView && valueView.setPlaceholderText && node && typeof node.valueInputBlockingHint === "function") {
+            const blocked = !(node.acceptsValueInput && node.acceptsValueInput());
+            valueView.setPlaceholderText(blocked ? node.valueInputBlockingHint() : null);
+        }
         const isFocused = valueView && typeof valueView.isFocused === "function" && valueView.isFocused();
         if (isFocused && node && !node._forceValueViewSync) {
             const nodeValue = this.visibleValue();
