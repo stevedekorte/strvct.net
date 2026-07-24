@@ -196,18 +196,15 @@
      * @category Sync
      */
     didSyncFromCloud (cloudTimestamp) {
-        // Backend timestamp shapes vary (Firestore Timestamp, Date, millis) —
+        // Backend timestamp shapes vary (Firestore Timestamp, Date, millis,
+        // or a seconds/nanos pair once a Timestamp has crossed JSON) —
         // SvFsNode.lastModified is deliberately untyped — but these stamps are
         // Number slots. A raw Timestamp object failed slot validation and
-        // nulled BOTH stamps on every manifest placeholder (prod 2026-07-10),
-        // so normalize here, the single choke point for all callers.
-        if (cloudTimestamp && typeof cloudTimestamp !== "number") {
-            if (typeof cloudTimestamp.toMillis === "function") {
-                cloudTimestamp = cloudTimestamp.toMillis();
-            } else if (typeof cloudTimestamp.getTime === "function") {
-                cloudTimestamp = cloudTimestamp.getTime();
-            }
-        }
+        // nulled BOTH stamps on every manifest placeholder (prod 2026-07-10).
+        // Date.asMillis is the shared coercion; this is NOT the only door —
+        // SvSyncCollectionSource sets these stamps directly and compares them,
+        // and normalizes at those sites too.
+        cloudTimestamp = Date.asMillis(cloudTimestamp);
         this._suppressLocalModifiedTouch = true;
         try {
             this.setCloudLastModified(cloudTimestamp);

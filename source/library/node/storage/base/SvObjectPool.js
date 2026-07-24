@@ -1647,7 +1647,19 @@
     async promiseCollect () {
         //console.log(this.svType() + " --- promiseCollect ---");
         if (Type.isUndefined(this.rootPid())) {
-            console.log(this.logPrefix() + "---- NO ROOT PID FOR COLLECT - clearing! ----");
+            // Report what is being destroyed. Without the count, the boot log's
+            // "store records: 0" (measured AFTER this runs) can't distinguish
+            // two very different failures: a store the browser evicted, which
+            // arrives here already empty, versus a populated store that lost
+            // its root pid and is being wiped by us. Pair this line with the
+            // previous-boot marker SvApp.openStore logs.
+            let count = "unknown";
+            try {
+                count = this.kvMap().count();
+            } catch {
+                // diagnostic only — never break boot
+            }
+            console.log(this.logPrefix() + "---- NO ROOT PID FOR COLLECT - clearing " + count + " records! ----");
             await this.kvMap().promiseBegin();
             this.kvMap().clear();
             await this.kvMap().promiseCommit();

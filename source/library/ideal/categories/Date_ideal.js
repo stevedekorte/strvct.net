@@ -37,6 +37,94 @@
     }
 
     /**
+     * @description Coerces a timestamp of unknown shape to epoch milliseconds.
+     *
+     * Backend timestamps arrive in whatever shape the transport left them in:
+     * a Firestore Timestamp (toMillis), a Date (getTime), a seconds/nanos pair
+     * (what a Timestamp degrades into once it crosses JSON or structured
+     * clone — the prototype, and therefore toMillis, is gone), an ISO string,
+     * or already-millis. Consumers that store these in Number slots or compare
+     * them with `>` need one place that flattens all of it.
+     *
+     * Returns null for anything it cannot interpret — including an
+     * unrecognized object shape, which it reports once per shape so the
+     * offending payload names itself in the log instead of silently becoming
+     * null. (A slot that nulls its timestamp makes an item look never-synced,
+     * which re-uploads it on every startup; a raw object in a `>` comparison
+     * is always false, which makes cloud updates silently never apply.)
+     *
+     * @param {*} value - Millis, Date, Firestore Timestamp, {seconds,nanoseconds}, ISO string, or null.
+     * @returns {Number|null} Epoch milliseconds, or null if uninterpretable.
+     * @category Time
+     */
+    static asMillis (value) {
+        if (value === null || value === undefined) {
+            return null;
+        }
+
+        if (typeof value === "number") {
+            return Number.isFinite(value) ? value : null;
+        }
+
+        if (typeof value === "string") {
+            const trimmed = value.trim();
+            if (trimmed === "") {
+                return null;
+            }
+            if (/^-?\d+$/.test(trimmed)) {
+                return Number(trimmed);
+            }
+            const parsed = Date.parse(trimmed);
+            return Number.isNaN(parsed) ? null : parsed;
+        }
+
+        if (typeof value === "object") {
+            // Firestore Timestamp, or anything else exposing the same contract
+            if (typeof value.toMillis === "function") {
+                return Date.asMillis(value.toMillis());
+            }
+            // Date, or anything date-like
+            if (typeof value.getTime === "function") {
+                return Date.asMillis(value.getTime());
+            }
+            // A Timestamp that lost its prototype crossing JSON / structured
+            // clone. Both spellings appear in the wild: the client SDK uses
+            // seconds/nanoseconds, the admin SDK's toJSON uses _seconds/_nanoseconds.
+            const seconds = value.seconds !== undefined ? value.seconds : value._seconds;
+            const nanos = value.nanoseconds !== undefined ? value.nanoseconds : value._nanoseconds;
+            if (typeof seconds === "number") {
+                return seconds * 1000 + (typeof nanos === "number" ? Math.floor(nanos / 1e6) : 0);
+            }
+        }
+
+        this.warnOnceAboutUninterpretableTimestamp(value);
+        return null;
+    }
+
+    /**
+     * @description Reports an uninterpretable timestamp shape once per shape,
+     * so a recurring bad payload names itself without flooding the console.
+     * @param {*} value - The value asMillis could not interpret.
+     * @category Time
+     */
+    static warnOnceAboutUninterpretableTimestamp (value) {
+        if (!this._warnedTimestampShapes) {
+            this._warnedTimestampShapes = new Set();
+        }
+        const constructorName = (value && value.constructor && value.constructor.name) || "(none)";
+        const keys = (typeof value === "object") ? Object.keys(value).sort().join(",") : "";
+        const shape = typeof value + "/" + constructorName + "/" + keys;
+        if (this._warnedTimestampShapes.has(shape)) {
+            return;
+        }
+        this._warnedTimestampShapes.add(shape);
+        console.warn("[Date.asMillis] uninterpretable timestamp — returning null." +
+            " typeof: " + typeof value +
+            ", constructor: " + constructorName +
+            ", keys: [" + keys + "]");
+    }
+
+    /**
      * @returns {Date} A shallow copy of the current Date object.
      * @category Utility
      */

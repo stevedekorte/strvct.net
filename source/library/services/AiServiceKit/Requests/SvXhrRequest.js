@@ -336,6 +336,26 @@
         return "[" + this.svTypeId() + ":" + this.requestId() + "]";
     }
 
+    /**
+     * @description Describes an XHR event handler for performance reports.
+     * Without it a slow one reports only as
+     * {"durationMs":2959,"event":"XMLHttpRequestProgressEvent"} — which
+     * request, and which phase, is unrecoverable. Lazy: only called when a
+     * report actually fires, so the url work is off the hot path.
+     * @param {string} handlerName - e.g. "onXhrProgress"
+     * @returns {string} e.g. "SvXhrRequest.onXhrProgress(/v1/chat/completions)"
+     * @category Performance Reporting
+     */
+    descriptionForXhrEvent (handlerName) {
+        let path = this.url() || "";
+        try {
+            path = new URL(path).pathname;
+        } catch {
+            // non-absolute or malformed url — keep it as-is
+        }
+        return this.svTypeId() + "." + handlerName + "(" + path + ")";
+    }
+
     // --- request options helpers ---
 
     /*
@@ -611,26 +631,26 @@
         xhr.addEventListener("loadstart", (event) => {
             em.safeWrapEvent(() => {
                 this.onXhrLoadStart(event);
-            }, event);
+            }, event, () => this.descriptionForXhrEvent("onXhrLoadStart"));
         });
 
         xhr.addEventListener("progress", (event) => {
             em.safeWrapEvent(() => {
                 this.onXhrProgress(event);
-            }, event);
+            }, event, () => this.descriptionForXhrEvent("onXhrProgress"));
         }, false);
 
         xhr.addEventListener("load", (event) => {
             em.safeWrapEvent(() => {
                 this.onXhrLoad(event);
-            }, event);
+            }, event, () => this.descriptionForXhrEvent("onXhrLoad"));
         });
 
         xhr.addEventListener("loadend", (event) => {
             try {
                 em.safeWrapEvent(() => {
                     this.onXhrLoadEnd(event);
-                }, event);
+                }, event, () => this.descriptionForXhrEvent("onXhrLoadEnd"));
             } catch (error) {
                 this.onError(error);
             }
@@ -648,13 +668,13 @@
                 const error = new Error(errorMessage);
 
                 this.onXhrError(error);
-            }, event);
+            }, event, () => this.descriptionForXhrEvent("onXhrError"));
         });
 
         xhr.addEventListener("abort", (event) => {
             em.safeWrapEvent(() => {
                 this.onXhrAbort(event);
-            }, event);
+            }, event, () => this.descriptionForXhrEvent("onXhrAbort"));
         });
 
         xhr.addEventListener("timeout", (event) => {
@@ -669,7 +689,7 @@
                     const error = new Error(`Request timeout: exceeded ${this.timeoutPeriodInMs()}ms`);
                     console.warn(this.logPrefix(), error.message, "\n", this.descriptionJson());
                     this.onXhrTimeout(error);
-                }, event);
+                }, event, () => this.descriptionForXhrEvent("onXhrTimeout"));
             } catch (error) {
                 this.onError(error);
             }

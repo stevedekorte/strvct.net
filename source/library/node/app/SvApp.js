@@ -371,6 +371,60 @@
         }
     }
 
+    /**
+     * @description The localStorage key holding a one-line summary of the
+     * previous boot's store size. localStorage and IndexedDB are evicted on
+     * different schedules, so this survives an IndexedDB wipe and lets a
+     * SINGLE load answer "was the store populated last time?" — otherwise it
+     * takes two consecutive reloads to tell a cold first visit apart from an
+     * eviction, and a user can't easily be asked to do that reliably.
+     * @returns {string}
+     * @category Performance Tracking
+     */
+    static bootStoreStatsKey () {
+        return "SvApp_lastBootStoreStats";
+    }
+
+    /**
+     * @description Describes the previous boot's store size for the boot log.
+     * @returns {string} e.g. "; previous boot 3.2h ago had 412 records" (empty if unknown)
+     * @category Performance Tracking
+     */
+    previousBootStoreDescription () {
+        if (typeof localStorage === "undefined") {
+            return "";
+        }
+        try {
+            const raw = localStorage.getItem(SvApp.bootStoreStatsKey());
+            if (!raw) {
+                return "; no previous boot recorded (first visit, or localStorage was cleared too)";
+            }
+            const previous = JSON.parse(raw);
+            const hoursAgo = (Date.now() - previous.at) / (1000 * 60 * 60);
+            const age = hoursAgo < 1 ? Math.round(hoursAgo * 60) + "m" : hoursAgo.toFixed(1) + "h";
+            return "; previous boot " + age + " ago had " + previous.records + " records";
+        } catch {
+            return "";
+        }
+    }
+
+    /**
+     * @description Records this boot's store size for the next boot to compare against.
+     * @param {Number} recordCount - Number of records present after the store opened.
+     * @category Performance Tracking
+     */
+    recordBootStoreStats (recordCount) {
+        if (typeof localStorage === "undefined") {
+            return;
+        }
+        try {
+            localStorage.setItem(SvApp.bootStoreStatsKey(),
+                JSON.stringify({ at: Date.now(), records: recordCount }));
+        } catch {
+            // diagnostic only — never break boot
+        }
+    }
+
     async openStore () {
         await this.store().promiseOpen();
         this.bootPerfMark("storeRecordsRead");
@@ -389,7 +443,9 @@
                     bytes += (v && v.byteLength) || 0;
                 }
             });
-            console.log("[SvBootPerf] store records: " + recordsMap.size + " (~" + Math.round(bytes / 1024) + "KB)");
+            console.log("[SvBootPerf] store records: " + recordsMap.size + " (~" + Math.round(bytes / 1024) + "KB)" +
+                this.previousBootStoreDescription());
+            this.recordBootStoreStats(recordsMap.size);
             const topTypes = Array.from(typeCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 20);
             topTypes.forEach(([typeName, count]) => {
                 console.log("[SvBootPerf]   " + String(count).padStart(6) + "  " + typeName);

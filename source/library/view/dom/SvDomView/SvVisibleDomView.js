@@ -133,7 +133,8 @@
         const obs = new IntersectionObserver((entries, observer) => {
             const intersectionEvent = new Event("IntersectionObserverEvent", { bubbles: false, cancelable: true }); // not sure about these options settings
 
-            SvEventManager.shared().safeWrapEvent(() => { this.handleIntersection(entries, observer); }, intersectionEvent);
+            SvEventManager.shared().safeWrapEvent(() => { this.handleIntersection(entries, observer); }, intersectionEvent,
+                () => this.svTypeId() + ".handleIntersection");
             //this.handleIntersection(entries, observer);
         }, intersectionObserverOptions);
 

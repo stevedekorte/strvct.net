@@ -32,6 +32,21 @@
     }
 
     /**
+     * Describes a timeout callback for performance reports. Timer callbacks
+     * reach SvEventManager as a synthetic "Event", so without this a slow one
+     * is reported only as {"durationMs":7931,"event":"Event"} — no way to tell
+     * which timer, or what cascade it triggered. Lazy: only called when a
+     * report actually fires.
+     * @param {string|number} timeoutName - The timeout's name, or its id when unnamed.
+     * @returns {string} e.g. "UoSession.timeout('cloudSync')"
+     * @category Timeout Management
+     */
+    descriptionForTimeoutNamed (timeoutName) {
+        const owner = (typeof this.svTypeId === "function") ? this.svTypeId() : (this.constructor && this.constructor.name);
+        return owner + ".timeout('" + timeoutName + "')";
+    }
+
+    /**
      * Adds a timeout function to be executed after a specified delay.
      * @param {Function} aFunc - The function to be executed.
      * @param {number} msDelay - The delay in milliseconds before the function is executed.
@@ -51,9 +66,10 @@
 
         const tidInfo = new Array(2); // will store [timeoutName, timeoutId] so we can capture returned tid in timeout closure
         const tid = setTimeout(() => {
-            this.removeTimeoutNamed(tidInfo[0]);
+            const timeoutName = tidInfo[0];
+            this.removeTimeoutNamed(timeoutName);
             const event = new Event("Custom_addTimeoutEvent", { bubbles: false, cancelable: true }); // not sure about these options settings
-            SvEventManager.shared().safeWrapEvent(aFunc, event);
+            SvEventManager.shared().safeWrapEvent(aFunc, event, () => this.descriptionForTimeoutNamed(timeoutName));
         }, msDelay);
         tidInfo[0] = optionalName ? optionalName : tid;
         tidInfo[1] = tid;
@@ -168,13 +184,14 @@
             if (!target) {
                 return; // target was collected, skip
             }
-            target.removeTimeoutNamed(tidInfo[0]);
+            const timeoutName = tidInfo[0];
+            target.removeTimeoutNamed(timeoutName);
             const callbacks = target.weakTimeoutCallbackMap();
             const fn = callbacks.get(callbackKey);
             callbacks.delete(callbackKey);
             if (fn) {
                 const event = new Event("Custom_addTimeoutEvent", { bubbles: false, cancelable: true });
-                SvEventManager.shared().safeWrapEvent(fn, event);
+                SvEventManager.shared().safeWrapEvent(fn, event, () => target.descriptionForTimeoutNamed(timeoutName));
             }
         }, msDelay);
         tidInfo[0] = optionalName ? optionalName : tid;

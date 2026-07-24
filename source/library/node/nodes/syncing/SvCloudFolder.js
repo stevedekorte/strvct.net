@@ -224,7 +224,11 @@
             if (title && child.setTitle) child.setTitle(title);
             if (subtitle && child.setSubtitle) child.setSubtitle(subtitle);
             const lm = childFsNode && typeof childFsNode.lastModified === "function" ? childFsNode.lastModified() : null;
-            if (child.didSyncFromCloud) child.didSyncFromCloud(lm || Date.now());
+            // asMillis before the fallback: an uninterpretable object is
+            // truthy, so `lm || Date.now()` would forward the object itself
+            // and null out both stamps downstream (which reads as
+            // never-synced and re-uploads the item on every startup).
+            if (child.didSyncFromCloud) child.didSyncFromCloud(Date.asMillis(lm) || Date.now());
         } finally {
             child._suppressLocalModifiedTouch = false;
         }

@@ -336,8 +336,12 @@
                         // Item was fetched before but cloud has newer - mark for refetch
                         localItem.setFetchState("unfetched");
                     }
-                    if (localItem.setCloudLastModified && sourceMetadata.lastModified) {
-                        localItem.setCloudLastModified(sourceMetadata.lastModified);
+                    // Date.asMillis: manifest timestamps are whatever shape the
+                    // backend/transport left behind, but this is a Number slot
+                    // (see SvSyncableJsonGroup.didSyncFromCloud)
+                    const cloudMillis = Date.asMillis(sourceMetadata.lastModified);
+                    if (localItem.setCloudLastModified && cloudMillis !== null) {
+                        localItem.setCloudLastModified(cloudMillis);
                     }
                 }
             }
@@ -514,9 +518,10 @@
             stub.setContentSource(this);
         }
 
-        // Set cloud timestamp from metadata
-        if (stub.setCloudLastModified && metadata.lastModified) {
-            stub.setCloudLastModified(metadata.lastModified);
+        // Set cloud timestamp from metadata (normalized — Number slot)
+        const cloudMillis = Date.asMillis(metadata.lastModified);
+        if (stub.setCloudLastModified && cloudMillis !== null) {
+            stub.setCloudLastModified(cloudMillis);
         }
 
         return stub;
@@ -560,8 +565,16 @@
             return false;
         }
 
-        const localCloudTimestamp = localItem.cloudLastModified ? localItem.cloudLastModified() : 0;
-        const cloudIsNewer = sourceMetadata.lastModified > localCloudTimestamp;
+        // Compare millis, never raw manifest values: an unnormalized Timestamp
+        // object makes every `>` below false, so the cloud would silently never
+        // be seen as newer and updates would never apply.
+        const cloudTimestamp = Date.asMillis(sourceMetadata.lastModified);
+        if (cloudTimestamp === null) {
+            return false;
+        }
+
+        const localCloudTimestamp = localItem.cloudLastModified ? (localItem.cloudLastModified() || 0) : 0;
+        const cloudIsNewer = cloudTimestamp > localCloudTimestamp;
 
         if (!cloudIsNewer) {
             return false; // Cloud hasn't changed since last sync

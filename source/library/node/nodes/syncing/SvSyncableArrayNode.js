@@ -157,13 +157,7 @@
     didSyncFromCloud (cloudTimestamp = Date.now()) {
         // normalize varying backend timestamp shapes to millis — see
         // SvSyncableJsonGroup.didSyncFromCloud for the prod incident this pins
-        if (cloudTimestamp && typeof cloudTimestamp !== "number") {
-            if (typeof cloudTimestamp.toMillis === "function") {
-                cloudTimestamp = cloudTimestamp.toMillis();
-            } else if (typeof cloudTimestamp.getTime === "function") {
-                cloudTimestamp = cloudTimestamp.getTime();
-            }
-        }
+        cloudTimestamp = Date.asMillis(cloudTimestamp);
         this._suppressLocalModifiedTouch = true;
         try {
             this.setCloudLastModified(cloudTimestamp);
