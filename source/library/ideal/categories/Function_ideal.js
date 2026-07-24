@@ -163,6 +163,17 @@ Function.prototype.addParameter = function (name, type, description) {
         assert(description, "Description is required");
     }
 
+    // JSON-schema primitive type names are lowercase; a capitalized variant
+    // ("String", "Object") slips through here and crashes SCHEMA GENERATION
+    // at request time — far from the mistake. Normalize case for primitives
+    // at definition time (class-named types like "JsonPatchRequest" pass
+    // through untouched). This trap has now been hit three times.
+    const primitives = ["string", "number", "boolean", "object", "array", "null", "integer"];
+    const lower = String(type).toLowerCase();
+    if (primitives.includes(lower)) {
+        type = lower;
+    }
+
     this.parameters()[name] = {
         "type": type,
         "description": description // description will not be used if the type is a class (and not a basic JSON type)
@@ -184,6 +195,15 @@ Function.prototype.parametersCallDescription = function () {
 // return type
 
 Function.prototype.setReturnTypes = function (types) {
+    // Same primitive-case normalization as addParameter: capitalized JSON
+    // primitive names ("Object") crash schema generation at request time.
+    const primitives = ["string", "number", "boolean", "object", "array", "null", "integer"];
+    if (Array.isArray(types)) {
+        types = types.map((t) => {
+            const lower = String(t).toLowerCase();
+            return primitives.includes(lower) ? lower : t;
+        });
+    }
     this.setMetaProperty("returnTypes", types);
     return this;
 };
