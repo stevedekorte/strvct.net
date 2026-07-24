@@ -1201,7 +1201,19 @@
         }
         //const wasAlreadyAllocated = isSingleton && (aClass._shared !== null && aClass._shared !== undefined);
 
-        const obj = aClass.instanceFromRecordInStore(aRecord, this);
+        // Breadcrumb for dangling-reference diagnostics: while this record
+        // loads, any "missing record for <pid>" it triggers (resolving its
+        // refs) can name WHO holds the dangling reference — without it the
+        // missing-record log is untraceable (reported: hundreds of missing
+        // records with no way to find the referrer).
+        if (!this._loadingRecordStack) { this._loadingRecordStack = []; }
+        this._loadingRecordStack.push(aRecord.type + ":" + aRecord.id);
+        let obj;
+        try {
+            obj = aClass.instanceFromRecordInStore(aRecord, this);
+        } finally {
+            this._loadingRecordStack.pop();
+        }
         if (obj === null) {
             // maybe the class shouldStore is false?
             return null;
@@ -1300,7 +1312,10 @@
 
         const aRecord = this.recordForPid(puuid);
         if (Type.isUndefined(aRecord)) {
-            console.log(this.logPrefix() + "missing record for " + puuid);
+            const referrer = (this._loadingRecordStack && this._loadingRecordStack.length > 0)
+                ? this._loadingRecordStack[this._loadingRecordStack.length - 1]
+                : "(not during a record load)";
+            console.log(this.logPrefix() + "missing record for " + puuid + " — referenced while loading " + referrer);
             return undefined;
         }
         if (aRecord.type === "SvPersistentObjectPool") {
