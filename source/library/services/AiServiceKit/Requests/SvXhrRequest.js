@@ -258,6 +258,19 @@
         }
 
         /**
+     * @member {Array} expectedErrorStatusCodes - HTTP status codes which are a
+     * normal outcome for this request rather than a failure — e.g. [404] for a
+     * request that asks "does this resource exist?" and reads absence as an
+     * answer. Such a response is not logged as an error. Error state itself is
+     * unchanged (hasError() still reports it), so callers branch on status().
+     */
+        {
+            const slot = this.newSlot("expectedErrorStatusCodes", null);
+            slot.setSlotType("Array");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
      * @member {Action} retryRequestAction - The action to retry the request.
      */
         {
@@ -784,6 +797,22 @@
         return xhr.status >= 300;
     }
 
+    /**
+     * @description Whether the given status code was declared a normal outcome
+     * for this request via setExpectedErrorStatusCodes(). Used to keep expected
+     * non-2xx responses out of the error log; see the slot's documentation.
+     * @param {Number} statusCode
+     * @returns {Boolean}
+     * @category Helpers
+     */
+    isExpectedErrorStatusCode (statusCode) {
+        const expected = this.expectedErrorStatusCodes();
+        if (expected === null) {
+            return false;
+        }
+        return expected.includes(statusCode);
+    }
+
     responseXmlError () {
         const text = this.responseText();
         try {
@@ -912,7 +941,9 @@
                 const statusCode = this.xhr().status;
                 const fullStatus = this.fullNameForXhrStatusCode(statusCode);
 
-                console.warn(this.logPrefix(), "HTTP error:", fullStatus, "URL:", this.url());
+                if (!this.isExpectedErrorStatusCode(statusCode)) {
+                    console.warn(this.logPrefix(), "HTTP error:", fullStatus, "URL:", this.url());
+                }
 
                 // Try to extract an error message from the response — but only for
                 // text-based responses. For blob/arraybuffer responseTypes the body
