@@ -276,6 +276,11 @@
                     this.setStatus("failed");
                     this.setError(new Error(errorMsg));
                     this.stopPolling();
+                    // Settle the awaited completionPromise (as handlePollError
+                    // does). This was previously missing, so a 400 stopped
+                    // polling but left the promise pending forever — hanging the
+                    // awaiting generate() chain and never surfacing a failure.
+                    this.completionPromise().callRejectFunc(this.error());
                     this.sendDelegateMessage("onImageGenerationError", [this]);
                 } else {
                     // Other errors, keep polling
@@ -321,13 +326,26 @@
         this.setStatus("completed");
         this.stopPolling();
 
-        // ImaginePro returns images directly in response.images
-        const imageUrls = response.images;
-        if (imageUrls && imageUrls.length > 0) {
-            await this.downloadImageUrls(imageUrls);
-        }
+        try {
+            // ImaginePro returns images directly in response.images
+            const imageUrls = response.images;
+            if (imageUrls && imageUrls.length > 0) {
+                await this.downloadImageUrls(imageUrls);
+            }
 
-        this.completionPromise().callResolveFunc(this);
+            this.completionPromise().callResolveFunc(this);
+        } catch (error) {
+            // handlePollDone is invoked WITHOUT await (from handlePollResponse),
+            // so a throw from the image downloads used to skip the resolve above
+            // and leave completionPromise pending forever — hanging the awaiting
+            // generate() chain. Settle it as a rejection instead, matching
+            // handlePollError.
+            const normalizedError = Error.normalizeError(error);
+            this.setStatus("failed");
+            this.setError(normalizedError);
+            this.completionPromise().callRejectFunc(normalizedError);
+            this.sendDelegateMessage("onImageGenerationError", [this]);
+        }
     }
 
     async downloadImageUrls (imageUrls) {
@@ -378,6 +396,11 @@
             this.setStatus("timeout");
             this.setError(new Error("Task timed out after " + this.maxPollAttempts() + " attempts"));
             this.stopPolling();
+            // Settle the awaited completionPromise (as handlePollError does).
+            // This was previously missing, so exhausting the poll attempts
+            // stopped polling but left the promise pending forever — hanging
+            // the awaiting generate() chain and never surfacing a failure.
+            this.completionPromise().callRejectFunc(this.error());
             this.sendDelegateMessage("onImageGenerationError", [this]);
         } else {
             const timeoutId = setTimeout(() => this.pollTaskStatus(), this.pollInterval());

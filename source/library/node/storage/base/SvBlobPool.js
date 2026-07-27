@@ -261,16 +261,26 @@
 
             // Cache the blob for future access
             this.activeBlobs().set(hash, blob);
-            this.activeWritesMap().delete(hash);
-            writePromise.callResolveFunc(hash);
+            return hash;
         } catch (error) {
             console.error(`Error storing blob ${hash.substring(0, 8)}...: ${error.message}`);
-            this.activeWritesMap().delete(hash);
-            writePromise.callRejectFunc(error);
+            // Reject the shared promise so concurrent/later stores awaiting this
+            // hash observe the failure (before the finally's resolve-if-pending,
+            // which then no-ops on the now-settled promise).
+            writePromise.callRejectFuncIfPending(error);
             throw error;
+        } finally {
+            // Single cleanup for EVERY exit — the deduplication return, the
+            // normal-store return, and the error throw. Clear the in-flight
+            // entry and settle the shared promise so a store of the same hash
+            // that is awaiting this promise can never hang. The deduplication
+            // branch previously returned WITHOUT this cleanup, leaking a pending
+            // promise that poisoned the hash for the lifetime of the pool: every
+            // subsequent store of that content awaited a promise that would
+            // never settle.
+            this.activeWritesMap().delete(hash);
+            writePromise.callResolveFuncIfPending(hash);
         }
-
-        return hash;
     }
 
     /**
