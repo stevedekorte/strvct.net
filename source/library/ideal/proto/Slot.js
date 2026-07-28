@@ -1215,7 +1215,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             const isFirstFailure = storeRef.attemptCount() === 0;
             storeRef.recordFailedAttempt(error, "missingRecord");
             if (isFirstFailure) {
-                console.error("Slot.onInstanceMaterializeLazySlot: " + error.message + " — returning null (or the onFailedLazyLoadSlot hook's fallback); will not re-attempt for a growing window");
+                console.error("Slot.onInstanceMaterializeLazySlot: " + error.message
+                    + " — returning null (or the onFailedLazyLoadSlot hook's fallback); will not re-attempt for a growing window"
+                    + " — " + this.missingRecordDiagnosis(anInstance, pool));
             }
             return this.onInstanceFailedLazyLoad(anInstance, storeRef);
         }
@@ -1248,6 +1250,36 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             anInstance.didMaterializeSlot(this);
         }
         return obj;
+    }
+
+    /**
+     * @category StoreRefs for lazy slots
+     * @description One decisive datum for a missingRecord failure: does the
+     * OWNER of the dangling slot have a record in this same pool? It splits
+     * the two causes that produce identical symptoms —
+     *   owner present → the owner was stored here but its children were not
+     *     (partial write, or child records removed by something other than
+     *     GC; GC itself marks from on-disk records, so it cannot orphan a
+     *     child whose parent record still holds the pid).
+     *   owner absent  → the owner never came from this pool at all, so its
+     *     pids are another pool's identifiers (cross-pool JSON provenance).
+     * Log-only; no side effects, no self-heal.
+     * @param {Object} anInstance - The instance owning the dangling slot.
+     * @param {SvObjectPool} pool - The pool the storeRef resolves against.
+     * @returns {String}
+     */
+    missingRecordDiagnosis (anInstance, pool) {
+        if (!pool || !pool.kvMap || !pool.kvMap()) {
+            return "owner record presence unknown (no kvMap)";
+        }
+        const ownerPid = anInstance.puuid ? anInstance.puuid() : null;
+        if (!ownerPid) {
+            return "owner has no puuid";
+        }
+        const ownerIsStored = pool.kvMap().hasKey(ownerPid);
+        return "owner " + ownerPid + (ownerIsStored
+            ? " IS stored in this pool (child record missing: partial write, or removed outside GC)"
+            : " is NOT stored in this pool (owner came from foreign JSON — cross-pool pid)");
     }
 
     /**
