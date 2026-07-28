@@ -53,21 +53,37 @@
         const number = this.value();
         const significantDigits = this.significantDigits();
 
+        // NaN / Infinity have no magnitude; report them rather than compute on them
+        if (!Number.isFinite(number)) {
+            return String(number);
+        }
+
         // Handle zero to avoid Math.log10(0) = -Infinity
         if (number === 0) {
             return "0";
         }
 
         const suffixes = ["", "K", "M", "B", "T"];
-        const magnitude = Math.floor(Math.log10(Math.abs(number)) / 3);
-        const scaled = number / Math.pow(10, magnitude * 3);
+
+        // The magnitude MUST be clamped into the suffix table. |value| < 1
+        // yields a negative magnitude and |value| >= 1e15 overruns the table;
+        // either way suffixes[magnitude] was undefined, and `Number + undefined`
+        // is numeric addition — so this method returned the NUMBER NaN rather
+        // than a string, and every caller rendered "NaN". Clamping keeps
+        // sub-unit values on the no-suffix path (0.5 -> "0.5") and pins huge
+        // ones to the largest suffix (1e15 -> "1000T").
+        const magnitude = Math.min(
+            Math.max(Math.floor(Math.log10(Math.abs(number)) / 3), 0),
+            suffixes.length - 1
+        );
 
         if (magnitude === 0) {
-            return number.toString();
-        } else {
-            const roundedScaled = Number(scaled.toPrecision(significantDigits));
-            return roundedScaled + suffixes[magnitude];
+            return String(number);
         }
+
+        const scaled = number / Math.pow(10, magnitude * 3);
+        const roundedScaled = Number(scaled.toPrecision(significantDigits));
+        return String(roundedScaled) + suffixes[magnitude];
     }
 
 }.initThisClass());
