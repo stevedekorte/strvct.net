@@ -484,17 +484,92 @@
             return 0;
         }
 
+        // Only evict what we can get back. The caller's reachability set is a
+        // conservative superset of what OPEN pools reference, but a session's
+        // records live in a SubObjectPool that is CLOSED whenever the session
+        // isn't loaded — so a blob referenced solely by an unopened session
+        // reads as unreferenced here. Evicting it is harmless when the cloud
+        // has a copy (the next access re-fetches) and permanent when it does
+        // not, which is how a session comes back reporting "blob not found
+        // locally (or in cloud) ... unrecoverable ref".
+        //
+        // So: never delete the last copy. A blob is evictable only once
+        // something has recorded that it reached cloud storage
+        // (asyncMarkHashInCloud, set on a successful upload and on a fetch
+        // FROM the cloud). Unmarked blobs are retained and reported.
+        const evictableHashesSet = new Set();
+        let retainedCount = 0;
+        for (const hash of unreferencedHashesSet) {
+            if (await this.asyncHashIsInCloud(hash)) {
+                evictableHashesSet.add(hash);
+            } else {
+                retainedCount++;
+            }
+        }
+
+        if (retainedCount > 0) {
+            console.log(this.logPrefix() + "retaining " + retainedCount
+                + " unreferenced blob(s) not known to be in cloud storage"
+                + " (nothing else can restore them; they stay until an upload marks them)");
+        }
+
+        if (evictableHashesSet.size === 0) {
+            return 0;
+        }
+
         // Build the full set of keys to remove (blob data + metadata for each unreferenced hash)
         const keysToRemove = new Set();
-        unreferencedHashesSet.forEach(hash => {
+        evictableHashesSet.forEach(hash => {
             console.log(this.logPrefix() + "collecting unreferenced blob " + hash.substring(0, 12) + "...");
             keysToRemove.add(hash);
             keysToRemove.add(this.metadataKeyForHash(hash));
         });
 
-        console.log(this.logPrefix() + "removing " + unreferencedHashesSet.size + " unreferenced blobs (" + keysToRemove.size + " keys including metadata)");
+        console.log(this.logPrefix() + "removing " + evictableHashesSet.size + " unreferenced blobs (" + keysToRemove.size + " keys including metadata)");
         await this.idb().promiseRemoveKeySet(keysToRemove);
-        return unreferencedHashesSet.size;
+        return evictableHashesSet.size;
+    }
+
+    /**
+     * @description Records that this blob exists in cloud storage, which is
+     * what makes local eviction safe (see asyncCollectUnreferencedKeySet).
+     * Callers: a successful upload, and a fetch FROM the cloud — anything
+     * that establishes a copy exists somewhere other than this device.
+     *
+     * Deliberately one-way and coarse: it says "a copy has existed in the
+     * cloud", not "a copy is in the cloud right now". The pool has no way to
+     * observe remote deletion, and the flag's only job is to keep GC from
+     * destroying a last copy.
+     * @async
+     * @param {string} hash - The content hash
+     * @returns {Promise<Boolean>} true if the marker was written
+     * @category Garbage Collection
+     */
+    async asyncMarkHashInCloud (hash) {
+        assert(typeof hash === "string", "Hash must be a string");
+        const metadata = await this.asyncGetMetadata(hash);
+        if (!metadata) {
+            return false; // no such blob locally — nothing to mark
+        }
+        if (metadata.customMetadata && metadata.customMetadata.inCloud) {
+            return true; // already marked
+        }
+        metadata.customMetadata = Object.assign({}, metadata.customMetadata, { inCloud: true });
+        await this.idb().promiseAtPut(this.metadataKeyForHash(hash), JSON.stringify(metadata));
+        return true;
+    }
+
+    /**
+     * @description Whether this blob is known to have reached cloud storage,
+     * and is therefore safe to evict locally.
+     * @async
+     * @param {string} hash - The content hash
+     * @returns {Promise<Boolean>}
+     * @category Garbage Collection
+     */
+    async asyncHashIsInCloud (hash) {
+        const metadata = await this.asyncGetMetadata(hash);
+        return !!(metadata && metadata.customMetadata && metadata.customMetadata.inCloud);
     }
 
     /**

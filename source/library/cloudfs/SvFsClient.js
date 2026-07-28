@@ -127,8 +127,26 @@
      */
     noteCloudHasBlobHash (hash) {
         const bareHash = (hash || "").replace(/^sha256:/, "");
-        if (bareHash) {
-            this.cloudKnownBlobHashes().add(bareHash);
+        if (!bareHash) {
+            return;
+        }
+        this.cloudKnownBlobHashes().add(bareHash);
+
+        // Durable half of the same fact. This set dies with the page, but blob
+        // GC needs to know ACROSS restarts that a blob is recoverable before it
+        // may evict the local copy — otherwise it can delete the last copy of a
+        // blob whose only referrer is a session pool that happens to be closed
+        // (see SvBlobPool.asyncCollectUnreferencedKeySet).
+        //
+        // Fire-and-forget with a catch: no caller needs to await a GC hint, and
+        // an unhandled rejection would be worse than a missing marker — a
+        // missing marker only means the blob is retained.
+        const blobPool = SvBlobPool.shared();
+        if (blobPool && blobPool.asyncMarkHashInCloud) {
+            blobPool.asyncMarkHashInCloud(bareHash).catch((error) => {
+                console.warn("SvFsClient: could not mark blob as in-cloud "
+                    + bareHash.slice(0, 12) + "...: " + (error && error.message));
+            });
         }
     }
 
