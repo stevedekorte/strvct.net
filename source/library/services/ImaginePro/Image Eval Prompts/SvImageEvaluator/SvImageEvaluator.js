@@ -392,7 +392,10 @@
         request.setChatModel(evalModel);
         request.setBodyJson(bodyJson);
         request.setIsStreaming(false); // We want the complete response, not streaming
-        request.setTimeoutPeriodInMs(30 * 60 * 1000); // 30 minutes for vision API (can be slow)
+        request.setTimeoutPeriodInMs(2 * 60 * 1000); // 2 min: instrumented runs show healthy image evals
+        // complete in seconds; this bound exists so a wedged vision call fails fast enough for the
+        // caller's own generation deadline to matter (a 30-minute allowance made every outer
+        // timeout meaningless and looked like a hang to the user).
 
         // Store reference to underlying XHR for debugging
         this.setSvXhrRequest(request.currentXhrRequest());
