@@ -457,6 +457,17 @@
             console.log("  looking for node: ", node.svDebugId());
             const subnodeIds = this.tilesView().node().subnodes().map(node => node.svDebugId());
             console.log("  subnodes:" + JSON.stableStringifyWithStdOptions(subnodeIds));
+            // The view half of the comparison. tileWithNode() matches on node
+            // IDENTITY, so a miss has two very different causes and the
+            // subnodes list alone can't tell them apart: no tiles were built
+            // yet (a sync/timing problem), or tiles exist but hold different
+            // nodes than the path does (e.g. a tile keyed to a link's target
+            // rather than the SvLinkNode itself).
+            const tileNodeIds = this.tilesView().tiles().map(aTile => {
+                const tileNode = aTile.node();
+                return tileNode ? tileNode.svDebugId() : "(tile with no node)";
+            });
+            console.log("  tiles (" + tileNodeIds.length + "):" + JSON.stableStringifyWithStdOptions(tileNodeIds));
 
             return false;
         }
