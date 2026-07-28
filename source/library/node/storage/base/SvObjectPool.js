@@ -278,6 +278,17 @@
             slot.setSlotType("Set");
         }
 
+        /**
+         * @member {Set} warnedDanglingRefPidSet
+         * @description pids already reported by warnIfRefWillDangle, so one
+         * bad subtree doesn't produce a wall of identical warnings
+         * @default null
+         */
+        {
+            const slot = this.newSlot("warnedDanglingRefPidSet", null);
+            slot.setSlotType("Set");
+        }
+
         // blob pool
         {
             const slot = this.newSlot("blobPool", null);
@@ -1472,9 +1483,55 @@
         if (!this.hasActiveObject(v)) {
             this.addActiveObject(v);
             this.addDirtyObject(v);
+        } else {
+            // Already in the identity map, so the branch above won't queue it
+            // — but "known to the pool" is not the same question as "will be
+            // written". If it isn't, we are about to mint a dangling pointer.
+            this.warnIfRefWillDangle(v);
         }
         const ref = { "*": v.puuid() };
         return ref;
+    }
+
+    /**
+     * @description Tripwire for the dangling-reference class of bug: we are
+     * about to write {"*": pid} into a record, so that pid MUST end up with a
+     * record of its own — either it already has one, or it is queued in this
+     * write cycle. If neither holds, the reference is dangling the moment it
+     * is written, and nothing will notice until a much later boot fails to
+     * materialize it ("missing record for pid ... in lazy slot ...").
+     *
+     * Log-only and deliberately non-repairing: marking the object dirty here
+     * would grow the dirty set mid-flush, and silently self-healing would hide
+     * the write path that produced the danger. First occurrence per pid only.
+     * @param {Object} v - the object about to be referenced
+     * @returns {Boolean} true if the reference is safe
+     * @category Storing
+     */
+    warnIfRefWillDangle (v) {
+        const pid = v.puuid();
+
+        if (this.dirtyObjects().has(pid)) {
+            return true; // queued for writing in this cycle
+        }
+        if (this.kvMap() && this.kvMap().hasKey(pid)) {
+            return true; // already on disk
+        }
+
+        if (!this.warnedDanglingRefPidSet()) {
+            this.setWarnedDanglingRefPidSet(new Set());
+        }
+        if (this.warnedDanglingRefPidSet().has(pid)) {
+            return false;
+        }
+        this.warnedDanglingRefPidSet().add(pid);
+
+        console.warn(this.logPrefix()
+            + "DANGLING REF being written: " + v.svType() + " " + pid
+            + " is active but has no record and is not queued — the referring"
+            + " record will point at nothing after this commit."
+            + "\n" + new Error("dangling ref write site").stack);
+        return false;
     }
 
     // read a record
