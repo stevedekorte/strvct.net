@@ -141,6 +141,23 @@
     }
 
     /**
+     * Hook: the assistant tool kit's send gate completed a pass with no
+     * blocking tool work and no active response left — the moment when
+     * "whether a message went out" becomes final. This is the ONLY signal a
+     * conversation gets that silent tool work has finished, because finishing
+     * it sends nothing: a turn made only of silent-success calls settles here
+     * with didSendMessage false and nothing else to wake the AI. Subclasses
+     * that defer a decision while tool work is in flight (e.g. an
+     * auto-continue check) re-run it here. Default no-op.
+     * @param {Boolean} didSendMessage - True if a tool-results / runtime-event
+     * message was created by this pass.
+     * @category Tool calls
+     */
+    onToolCallGateSettled (/*didSendMessage*/) {
+        return this;
+    }
+
+    /**
      * @description Override SvJsonArrayNode.deserializeFromJson so that
      * subnodes reconstructed from cloud projection get their
      * `conversation` slot wired up. The base implementation appends

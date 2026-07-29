@@ -417,6 +417,32 @@ The following formats will be used for tool calls and responses:
             this.successfulToolCalls().addCalls(successfulCalls);
             this.failedToolCalls().addCalls(failedCalls);
         }
+
+        // Past the early-return above, the gate is settled: nothing is
+        // blocking, no response is active, and whether a message went out is
+        // now final. Tell the conversation — for silent tool work, which sends
+        // nothing, this is the only completion signal there is.
+        this.notifyConversationOfSettledGate(willSendMessage);
+    }
+
+    /**
+     * @description Reports a completed send-gate pass to the conversation
+     * (SvConversation.onToolCallGateSettled). Advisory: a conversation that
+     * doesn't implement the hook, or throws in it, must never break the tool
+     * pipeline mid-drain.
+     * @param {Boolean} didSendMessage
+     * @category Sending
+     */
+    notifyConversationOfSettledGate (didSendMessage) {
+        const conv = this.conversation();
+        if (!conv || typeof conv.onToolCallGateSettled !== "function") {
+            return;
+        }
+        try {
+            conv.onToolCallGateSettled(didSendMessage);
+        } catch (e) {
+            console.warn(this.logPrefix(), "onToolCallGateSettled failed:", e && e.message);
+        }
     }
 
     newCallResponseMessage (speakerName, content) {
