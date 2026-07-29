@@ -8,20 +8,51 @@
  * @class SvScrollView
  * @extends SvDomView
  * @classdesc
- * SvScrollView is a specialized view that provides scrolling functionality.
- * It implements a sticks-to-bottom behavior and handles content mutations.
+ * SvScrollView is a specialized view that provides scrolling with a
+ * stick-to-bottom behavior for chat-like content.
  *
- * Notes:
- * - isAtBottom is a computed property that checks if scroll is at bottom now
- * - wasAtBottom tracks if scroll was at bottom before content change
+ * Design: scroll behavior is driven by INTENT, not by measured position.
  *
- * When user scrolls or setScrollHeight:
- * - update wasAtBottom (using isAtBottom)
- * - update lastScrollHeight (may be used elsewhere later)
+ * scrollIntent is one of:
+ * - "bottom":   keep the viewport pinned to the bottom of the content
+ * - "preserve": keep the tile the user is reading at a fixed viewport offset
  *
- * When content changes:
- * - auto scroll if wasAtBottom true
- * - update lastScrollHeight to bottom (may be used elsewhere later)
+ * Intent changes ONLY on:
+ * - user-initiated scrolling (wheel / touch / mouse / key input followed by
+ *   scroll events): scrolling away from the bottom selects "preserve",
+ *   reaching the bottom selects "bottom"
+ * - explicit API calls: pinToBottom(), scrollToBottomSmooth(),
+ *   anchorOnSubview() (question anchoring), resetForNewContent()
+ *
+ * Geometry changes (streaming text growth, images acquiring their intrinsic
+ * size, tiles added or removed, viewport resizes) NEVER change intent — they
+ * only cause the current intent to be re-applied. This is what makes the
+ * scroll position immune to the async races of the previous
+ * measure-then-latch design (stale wasAtBottom): a layout change can no
+ * longer be mistaken for a user decision.
+ *
+ * Geometry changes are observed two ways:
+ * - a MutationObserver (owned by SvScrollContentView) for childList changes
+ * - a ResizeObserver on the scroller and content elements, which catches
+ *   what the MutationObserver structurally cannot: text growing inside an
+ *   existing DOM node (streaming), images acquiring their intrinsic size
+ *   after decode, and viewport height changes
+ *
+ * Scroll events are classified into three kinds:
+ * - programmatic: caused by our own scrollTop writes (matched against the
+ *   pendingProgrammaticScrolls list) — never reinterpreted as user intent
+ * - user: within a "user scroll session" armed by an input event and
+ *   sustained by scroll-event continuity (which covers touch momentum after
+ *   the finger lifts) — the ONLY kind that updates intent and the viewport
+ *   reference
+ * - foreign: everything else (e.g. the browser natively scrolling a focused
+ *   element into view) — ignored; the current intent re-asserts on the next
+ *   geometry change
+ *
+ * Anchor mode (question anchoring): anchorOnSubview() pins a message tile to
+ * the top of the viewport (adding bottom padding so there is room to do so)
+ * while its response streams in below. It is "preserve" intent plus padding
+ * bookkeeping; releaseAnchor() ends it without moving the viewport.
  */
 (class SvScrollView extends SvDomView {
 
@@ -31,7 +62,8 @@
      */
     initPrototypeSlots () {
         /**
-         * @member {Boolean} sticksToBottom - Determines if the view should stick to the bottom
+         * @member {Boolean} sticksToBottom - Whether the stick-to-bottom
+         * machinery (intent tracking, observers, button) is active
          * @category Configuration
          */
         {
@@ -40,30 +72,21 @@
         }
 
         /**
-         * @member {Boolean} wasAtBottom - Tracks if the view was at the bottom before content change
+         * @member {String} scrollIntent - "bottom" (pin viewport to content
+         * bottom) or "preserve" (hold the reading position). Changed only by
+         * user-classified scrolling and explicit API calls — never by
+         * geometry measurements.
          * @category State
          */
         {
-            const slot = this.newSlot("wasAtBottom", false);
-            slot.setSlotType("Boolean");
+            const slot = this.newSlot("scrollIntent", "bottom");
+            slot.setSlotType("String");
         }
 
         /**
-         * @member {Number} lastScrollHeight - Stores the last scroll height
-         * @category State
-         */
-        {
-            const slot = this.newSlot("lastScrollHeight", 0);
-            slot.setSlotType("Number");
-        }
-
-        /**
-         * @member {Boolean} isAnchored - True when anchor-scroll is active.
-         * While anchored, updateWasAtBottom() is suppressed so transient
-         * layout changes during view syncs cannot flip wasAtBottom to true
-         * and trigger an unwanted scroll-to-bottom.
-         * Cleared only by explicit user action (scroll-to-bottom button or
-         * scrolling to the bottom manually).
+         * @member {Boolean} isAnchored - True while question-anchor mode is
+         * active: "preserve" intent plus bottom padding that makes room to
+         * hold the anchored tile at the viewport top.
          * @category State
          */
         {
@@ -72,14 +95,11 @@
         }
 
         /**
-         * @member {SvNode} viewportRefNode - The node of the tile that was at
-         * the top of the viewport at the last scroll event. After every content
-         * mutation (while not at the bottom), scrollTop is restored so this
-         * tile keeps its viewport position — which makes the reading position
-         * immune to layout changes elsewhere: images completing above, tile
-         * re-syncs tearing DOM down and back up, and browser scrollTop clamps
-         * after transient shrinks. Tracked by NODE (not tile) so a re-created
-         * tile still resolves.
+         * @member {SvNode} viewportRefNode - The node of the tile at the top
+         * of the viewport, used by "preserve" intent to restore the reading
+         * position after layout changes elsewhere (images completing above,
+         * tile re-syncs, browser scrollTop clamps). Tracked by NODE (not
+         * tile) so a re-created tile still resolves.
          * @category State
          */
         {
@@ -88,8 +108,9 @@
         }
 
         /**
-         * @member {Number} viewportRefOffset - The reference tile's offset from
-         * the viewport top (tile offsetTop - scrollTop) at the last scroll event.
+         * @member {Number} viewportRefOffset - The reference tile's offset
+         * from the viewport top (tile offsetTop - scrollTop) at the last
+         * user scroll.
          * @category State
          */
         {
@@ -104,6 +125,94 @@
         {
             const slot = this.newSlot("scrollToBottomButton", null);
             slot.setSlotType("SvScrollToBottomButton");
+        }
+
+        /**
+         * @member {ResizeObserver} contentResizeObserver - Observes the
+         * scroller and content elements so pure height changes (streaming
+         * text growth, image decode, viewport resize) re-apply the current
+         * intent. The MutationObserver alone cannot see these.
+         * @category DOM
+         */
+        {
+            const slot = this.newSlot("contentResizeObserver", null);
+            slot.setSlotType("ResizeObserver");
+        }
+
+        /**
+         * @member {Function} userInputListener - Shared handler recording
+         * user input (wheel / touch / mouse / key) that arms a user scroll
+         * session. Kept for removal on retire.
+         * @category DOM
+         */
+        {
+            const slot = this.newSlot("userInputListener", null);
+            slot.setSlotType("Function");
+        }
+
+        /**
+         * @member {Number} userScrollSessionUntil - Timestamp (performance.now
+         * ms) until which scroll events are classified as user-initiated.
+         * Armed by input events, extended by scroll-event continuity so touch
+         * momentum stays classified as the user's scroll.
+         * @category State
+         */
+        {
+            const slot = this.newSlot("userScrollSessionUntil", 0);
+            slot.setSlotType("Number");
+        }
+
+        /**
+         * @member {Array} pendingProgrammaticScrolls - Records of our own
+         * scrollTop writes ({top, at}) awaiting their scroll events, so those
+         * events are never reinterpreted as user intent.
+         * @category State
+         */
+        {
+            const slot = this.newSlot("pendingProgrammaticScrolls", null);
+            slot.setSlotType("Array");
+        }
+
+        /**
+         * @member {Boolean} isSmoothScrollingToBottom - True while the
+         * smooth scroll started by scrollToBottomSmooth() is in flight; its
+         * intermediate scroll events must not be classified as user intent.
+         * @category State
+         */
+        {
+            const slot = this.newSlot("isSmoothScrollingToBottom", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+         * @member {Boolean} hasPendingIntentRetry - True while a deferred
+         * applyScrollIntent() is scheduled (used when an apply is suppressed
+         * during an active user scroll session).
+         * @category State
+         */
+        {
+            const slot = this.newSlot("hasPendingIntentRetry", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+         * @member {Number} jumpLogLastScrollTop - Last scrollTop seen by the
+         * always-on scroll-jump diagnostic.
+         * @category Diagnostics
+         */
+        {
+            const slot = this.newSlot("jumpLogLastScrollTop", null);
+            slot.setSlotType("Number");
+        }
+
+        /**
+         * @member {Function} scrollDebugFocusListener - Opt-in diagnostic
+         * focusin listener (localStorage.SvScrollDebug = "1").
+         * @category Diagnostics
+         */
+        {
+            const slot = this.newSlot("scrollDebugFocusListener", null);
+            slot.setSlotType("Function");
         }
     }
 
@@ -121,6 +230,29 @@
         this.setOverflow("-moz-scrollbars-none");
         this.setBackgroundColor("transparent");
         this.setIsRegisteredForBrowserDrop(true);
+        this.setPendingProgrammaticScrolls([]);
+        return this;
+    }
+
+    /**
+     * @description Releases observers and listeners.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Lifecycle
+     */
+    prepareToRetire () {
+        super.prepareToRetire();
+        const observer = this.contentResizeObserver();
+        if (observer) {
+            observer.disconnect();
+            this.setContentResizeObserver(null);
+        }
+        const listener = this.userInputListener();
+        if (listener) {
+            this.userInputEventNames().forEach((name) => {
+                this.element().removeEventListener(name, listener, { capture: true });
+            });
+            this.setUserInputListener(null);
+        }
         return this;
     }
 
@@ -156,6 +288,8 @@
         return false;
     }
 
+    // --- view hierarchy ---
+
     /**
      * @description Returns the first subview as the scroll content view
      * @returns {SvDomView} The scroll content view
@@ -163,14 +297,6 @@
      */
     scrollContentView () {
         return this.subviews().first();
-    }
-
-    /**
-     * @description Starts listening for scroll events
-     * @category Event Handling
-     */
-    listenForScroll () {
-        this.scrollListener().setIsListening(true);
     }
 
     /**
@@ -182,9 +308,21 @@
         return this.subviews().first();
     }
 
+    // --- setup ---
+
     /**
-     * @description Sets whether the view should stick to the bottom
+     * @description Starts listening for scroll events
+     * @category Event Handling
+     */
+    listenForScroll () {
+        this.scrollListener().setIsListening(true);
+    }
+
+    /**
+     * @description Sets whether the view should stick to the bottom,
+     * starting the observers and listeners the feature needs.
      * @param {Boolean} aBool - Whether to stick to the bottom
+     * @returns {SvScrollView} The SvScrollView instance
      * @category Configuration
      */
     setSticksToBottom (aBool) {
@@ -192,25 +330,83 @@
             this._sticksToBottom = aBool;
             if (aBool) {
                 this.listenForScroll();
-                this.updateScrollTracking();
+                this.startUserInputMonitoringIfNeeded();
+                this.startResizeObserverIfNeeded();
                 this.contentView().startContentMutationObserverIfNeeded();
                 this.setupScrollToBottomButton();
-
-                // Scroll-jump diagnostic (opt-in: localStorage.SvScrollDebug
-                // = "1") — programmatic focus() scrolls the focused element
-                // into view natively, without any scroll API call our other
-                // logging could catch
-                if (!this._scrollDebugFocusListener
-                        && typeof localStorage !== "undefined" && localStorage.getItem("SvScrollDebug") === "1") {
-                    this._scrollDebugFocusListener = (event) => {
-                        const t = event.target;
-                        console.log("[ScrollDebug] focusin inside scroll view: <" + t.tagName.toLowerCase() + "> class='" +
-                            String(t.className).slice(0, 80) + "'\n" + new Error().stack.split("\n").slice(2, 7).join("\n"));
-                    };
-                    this.element().addEventListener("focusin", this._scrollDebugFocusListener);
-                }
+                this.startScrollDebugFocusListenerIfNeeded();
             }
         }
+        return this;
+    }
+
+    /**
+     * @description Event names whose occurrence identifies subsequent scroll
+     * events as user-initiated.
+     * @returns {Array} The event names.
+     * @category Event Handling
+     */
+    userInputEventNames () {
+        return ["wheel", "touchstart", "touchmove", "mousedown", "keydown"];
+    }
+
+    /**
+     * @description Installs passive capture listeners that timestamp user
+     * input, arming the user-scroll-session classifier. NOTE: these are
+     * deliberately raw listeners (a framework-internal exception to the
+     * event-listener-class convention) — they must only record a timestamp,
+     * with no delegate dispatch or gesture side effects.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Event Handling
+     */
+    startUserInputMonitoringIfNeeded () {
+        if (!this.userInputListener()) {
+            const listener = () => this.recordUserInput();
+            this.setUserInputListener(listener);
+            this.userInputEventNames().forEach((name) => {
+                this.element().addEventListener(name, listener, { passive: true, capture: true });
+            });
+        }
+        return this;
+    }
+
+    /**
+     * @description Starts the ResizeObserver on the scroller and content
+     * elements. This is what catches geometry changes the MutationObserver
+     * cannot: streaming text growing inside an existing DOM node, images
+     * acquiring their intrinsic size after decode, and viewport resizes.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category DOM
+     */
+    startResizeObserverIfNeeded () {
+        if (this.contentResizeObserver() || (typeof ResizeObserver === "undefined")) {
+            return this;
+        }
+        const observer = new ResizeObserver(() => this.onContentGeometryChanged());
+        this.setContentResizeObserver(observer);
+        this.observeElementResize(this.element());
+        const contentView = this.contentView();
+        if (contentView) {
+            this.observeElementResize(contentView.element());
+        }
+        return this;
+    }
+
+    /**
+     * @description Observes an element's border-box size (falling back to
+     * the default box on browsers without options support).
+     * @param {Element} element - The element to observe.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category DOM
+     */
+    observeElementResize (element) {
+        const observer = this.contentResizeObserver();
+        try {
+            observer.observe(element, { box: "border-box" });
+        } catch {
+            observer.observe(element); // older Safari: no observe options support
+        }
+        return this;
     }
 
     /**
@@ -223,7 +419,6 @@
      */
     setupScrollToBottomButton () {
         if (!this.scrollToBottomButton()) {
-            //console.log("[AnchorScroll] SvScrollView.setupScrollToBottomButton() creating button");
             const button = SvScrollToBottomButton.clone();
             button.setScrollView(this);
             this.setScrollToBottomButton(button);
@@ -235,101 +430,306 @@
     }
 
     /**
-     * @description Handles scroll events
-     * @param {Event} event - The scroll event
+     * @description Installs the opt-in focusin diagnostic
+     * (localStorage.SvScrollDebug = "1") — programmatic focus() scrolls the
+     * focused element into view natively, without any scroll API call our
+     * other logging could catch.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Diagnostics
+     */
+    startScrollDebugFocusListenerIfNeeded () {
+        if (!this.scrollDebugFocusListener() && this.isScrollDebugging()) {
+            const listener = (event) => {
+                const t = event.target;
+                console.log("[ScrollDebug] focusin inside scroll view: <" + t.tagName.toLowerCase() + "> class='" +
+                    String(t.className).slice(0, 80) + "'\n" + new Error().stack.split("\n").slice(2, 7).join("\n"));
+            };
+            this.setScrollDebugFocusListener(listener);
+            this.element().addEventListener("focusin", listener);
+        }
+        return this;
+    }
+
+    /**
+     * @description Whether verbose scroll diagnostics are enabled
+     * (localStorage.SvScrollDebug = "1").
+     * @returns {Boolean} Whether scroll debugging is on.
+     * @category Diagnostics
+     */
+    isScrollDebugging () {
+        return (typeof localStorage !== "undefined") && (localStorage.getItem("SvScrollDebug") === "1");
+    }
+
+    // --- scroll event classification ---
+
+    /**
+     * @description Records user input, arming (or extending) the user scroll
+     * session and cancelling any in-flight smooth scroll.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Event Handling
+     */
+    recordUserInput () {
+        const now = performance.now();
+        this.setUserScrollSessionUntil(Math.max(this.userScrollSessionUntil(), now + this.userInputArmMs()));
+        this.setIsSmoothScrollingToBottom(false);
+        return this;
+    }
+
+    /**
+     * @description How long after an input event scroll events count as
+     * user-initiated.
+     * @returns {Number} Milliseconds.
+     * @category Configuration
+     */
+    userInputArmMs () {
+        return 250;
+    }
+
+    /**
+     * @description How long scroll-event continuity keeps a user scroll
+     * session alive (covers touch momentum between frames).
+     * @returns {Number} Milliseconds.
+     * @category Configuration
+     */
+    scrollSessionExtendMs () {
+        return 200;
+    }
+
+    /**
+     * @description How long an unmatched programmatic-scroll record is kept
+     * before being discarded (its event was coalesced away).
+     * @returns {Number} Milliseconds.
+     * @category Configuration
+     */
+    pendingScrollTtlMs () {
+        return 1000;
+    }
+
+    /**
+     * @description Whether we are currently inside a user scroll session.
+     * @returns {Boolean} True if scroll events should be classified as user-initiated.
+     * @category State
+     */
+    isInUserScrollSession () {
+        return performance.now() <= this.userScrollSessionUntil();
+    }
+
+    /**
+     * @description Handles scroll events: classifies them as programmatic /
+     * user / foreign, and updates intent only for user-classified ones.
      * @category Event Handling
      */
     onScroll (/*event*/) {
-        // Scroll-jump diagnostic — ALWAYS ON (was opt-in via
-        // localStorage.SvScrollDebug, but the environments where jumps
-        // reproduce are exactly the ones where nobody can set the flag).
-        // Fires only on a move larger than a screenful since the last
-        // scroll event, so it is silent in normal use; when the reported
-        // "keeps jumping back to earlier messages" bug strikes, the console
-        // names the state (anchor, refNode, wasAtBottom) at the jump.
-        {
-            const e = this.element();
-            const last = this._scrollDebugLastTop;
-            if (last !== undefined && Math.abs(e.scrollTop - last) > e.clientHeight) {
-                console.log("[ScrollDebug] " + this.svTypeId() + " JUMP " + last + " -> " + e.scrollTop +
-                    " (scrollHeight " + e.scrollHeight + ", clientHeight " + e.clientHeight +
-                    ", isAnchored " + this.isAnchored() +
-                    ", refNode " + (this.viewportRefNode() ? this.viewportRefNode().svTypeId() : "null") +
-                    ", wasAtBottom " + this.wasAtBottom() + ")");
+        this.logScrollJumpIfNeeded();
+        if (!this.sticksToBottom()) {
+            return;
+        }
+        const now = performance.now();
+        this.purgeStalePendingScrolls(now);
+        if (!this.consumePendingProgrammaticScroll() && !this.isSmoothScrollingToBottomStill()) {
+            if (now <= this.userScrollSessionUntil()) {
+                this.setUserScrollSessionUntil(now + this.scrollSessionExtendMs());
+                this.updateIntentFromUserScroll();
             }
-            this._scrollDebugLastTop = e.scrollTop;
+            // else: foreign scroll (e.g. browser-native focus scrolling) —
+            // change nothing; the current intent re-asserts on the next
+            // geometry change
         }
-
-        // If anchored and user has scrolled to the bottom, disengage anchor mode.
-        // Not during a teardown window — an emptied scroller falsely reads as
-        // "at bottom" when the browser clamps scrollTop.
-        if (this.isAnchored() && this.isAtBottom() && !this.isInTransientTeardown()) {
-            //console.log("[AnchorScroll] onScroll: user reached bottom, disengaging anchor");
-            this.setIsAnchored(false);
-            this.clearAnchorPadding();
-        }
-        this.updateViewportRef();
-        this.updateScrollTracking();
         this.updateScrollToBottomButton();
     }
 
     /**
-     * @description Records which tile is currently at the top of the viewport
-     * and its offset, as the reference for keeping the reading position stable
-     * across content mutations. Called on every scroll event (user, browser
-     * scroll-anchoring adjustments, clamps, and our own restores alike) — the
-     * most recent scroll position is by definition the position to preserve.
-     * Skipped while the current reference tile is missing from the DOM (a view
-     * re-sync mid-teardown, or the clamp that shrink causes) so a transient
-     * state can't overwrite a good reference before restore runs.
-     * @returns {SvScrollView} The SvScrollView instance.
+     * @description Whether the smooth scroll to bottom is still in flight,
+     * clearing the flag once the bottom is reached.
+     * @returns {Boolean} True while intermediate smooth-scroll events should be ignored.
      * @category State
      */
-    /**
-     * @description True while the reference tile is absent from the DOM but its
-     * node still exists in the model — i.e. a view re-sync has torn tiles down
-     * and not yet rebuilt them. In that window the scroller's geometry is
-     * meaningless (an emptied scroller reads as "at bottom"), so scroll-state
-     * bookkeeping must not trust it. A node deleted from the model is NOT
-     * transient: the reference is cleared and normal behavior resumes.
-     * @returns {Boolean} Whether a transient teardown is in progress.
-     * @category State
-     */
-    isInTransientTeardown () {
-        const refNode = this.viewportRefNode();
-        const contentView = this.contentView();
-        if (!refNode || !contentView || !contentView.subviewForNode) {
+    isSmoothScrollingToBottomStill () {
+        if (!this.isSmoothScrollingToBottom()) {
             return false;
         }
-        const tile = contentView.subviewForNode(refNode);
-        if (tile && tile.element().isConnected) {
-            return false;
-        }
-        if (refNode.parentNode && !refNode.parentNode()) {
-            // actually deleted from the model — not a teardown window
-            this.setViewportRefNode(null);
-            return false;
+        if (this.isAtBottom()) {
+            this.setIsSmoothScrollingToBottom(false);
         }
         return true;
     }
 
-    updateViewportRef () {
+    /**
+     * @description Consumes the pending programmatic-scroll record matching
+     * the current scrollTop, if any. Earlier records are dropped too, since
+     * their events were coalesced into this one.
+     * @returns {Boolean} Whether this scroll event was one of our own writes.
+     * @category Event Handling
+     */
+    consumePendingProgrammaticScroll () {
+        const pending = this.pendingProgrammaticScrolls();
+        const top = this.element().scrollTop;
+        const index = pending.findIndex((entry) => Math.abs(entry.top - top) <= 1);
+        if (index === -1) {
+            return false;
+        }
+        pending.splice(0, index + 1);
+        return true;
+    }
+
+    /**
+     * @description Drops programmatic-scroll records whose events never
+     * arrived (coalesced away by the browser).
+     * @param {Number} now - Current performance.now() timestamp.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Event Handling
+     */
+    purgeStalePendingScrolls (now) {
+        const pending = this.pendingProgrammaticScrolls();
+        while (pending.length && (now - pending[0].at) > this.pendingScrollTtlMs()) {
+            pending.shift();
+        }
+        return this;
+    }
+
+    /**
+     * @description Updates intent from a user-classified scroll event:
+     * reaching the bottom pins, scrolling away preserves the new reading
+     * position.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category State
+     */
+    updateIntentFromUserScroll () {
+        if (this.isAtBottom()) {
+            if (this.scrollIntent() !== "bottom" || this.isAnchored()) {
+                this.pinToBottom();
+            }
+        } else {
+            this.setScrollIntent("preserve");
+            this.deriveViewportRef();
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the scroll intent, logging transitions when
+     * diagnostics are enabled.
+     * @param {String} intent - "bottom" or "preserve".
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category State
+     */
+    setScrollIntent (intent) {
+        if (this._scrollIntent !== intent) {
+            if (this.isScrollDebugging()) {
+                console.log("[ScrollDebug] " + this.svTypeId() + " intent " + this._scrollIntent + " -> " + intent);
+            }
+            this._scrollIntent = intent;
+        }
+        return this;
+    }
+
+    // --- geometry changes ---
+
+    /**
+     * @description Handles content view mutations (from the content view's
+     * MutationObserver).
+     * @param {MutationRecord[]} mutations - The mutations that occurred
+     * @category Event Handling
+     */
+    onContentViewMutations (/*mutations*/) {
+        this.onContentGeometryChanged();
+    }
+
+    /**
+     * @description Handles any geometry change (mutation or resize) by
+     * re-applying the current intent. Geometry changes never CHANGE intent.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Event Handling
+     */
+    onContentGeometryChanged () {
+        this.applyScrollIntent();
+        return this;
+    }
+
+    // --- applying intent ---
+
+    /**
+     * @description Applies the current intent to the scroll position:
+     * "bottom" pins to the natural content bottom, "preserve" restores the
+     * reading position. Suppressed (and retried shortly after) while the
+     * user is actively scrolling away from the bottom, so we never fight a
+     * gesture in progress.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
+     */
+    applyScrollIntent () {
+        if (!this.sticksToBottom()) {
+            return this;
+        }
+        if (this.isInUserScrollSession() && !this.isAtBottom()) {
+            this.scheduleIntentRetry();
+            return this;
+        }
+        if (this.scrollIntent() === "bottom") {
+            this.programmaticScrollTo(this.naturalScrollHeight() - this.element().clientHeight);
+        } else {
+            this.restoreViewportPosition();
+        }
+        this.updateScrollToBottomButton();
+        return this;
+    }
+
+    /**
+     * @description Schedules a deferred applyScrollIntent() for after the
+     * user scroll session ends.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
+     */
+    scheduleIntentRetry () {
+        if (!this.hasPendingIntentRetry()) {
+            this.setHasPendingIntentRetry(true);
+            this.addWeakTimeout(() => {
+                this.setHasPendingIntentRetry(false);
+                this.applyScrollIntent();
+            }, this.scrollSessionExtendMs() + 50);
+        }
+        return this;
+    }
+
+    /**
+     * @description Writes scrollTop (clamped), recording the write so the
+     * resulting scroll event is classified as programmatic. All scroll
+     * position writes MUST go through this method.
+     * @param {Number} target - The desired scrollTop.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
+     */
+    programmaticScrollTo (target) {
+        const e = this.element();
+        const clamped = Math.max(0, Math.min(target, e.scrollHeight - e.clientHeight));
+        if (Math.abs(e.scrollTop - clamped) >= 1) {
+            e.scrollTop = clamped;
+            this.pendingProgrammaticScrolls().push({ top: e.scrollTop, at: performance.now() });
+        }
+        return this;
+    }
+
+    // --- viewport reference (reading position) ---
+
+    /**
+     * @description Records which tile is at the top of the viewport and its
+     * offset, as the reference "preserve" intent restores against. Called
+     * only from user-classified scrolls and anchor seeding — never from
+     * transient layout states.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category State
+     */
+    deriveViewportRef () {
         const contentView = this.contentView();
-        if (!contentView || !this.sticksToBottom()) {
+        if (!contentView) {
             return this;
         }
-
-        if (this.isInTransientTeardown()) {
-            // keep the existing reference until tiles are rebuilt
-            return this;
-        }
-
         const scrollTop = this.element().scrollTop;
         const tiles = contentView.subviews();
         for (let i = 0; i < tiles.length; i++) {
             const te = tiles[i].element();
-            if (te.offsetTop + te.offsetHeight > scrollTop + 1) {
-                if (tiles[i].node) {
+            if (te.isConnected && (te.offsetTop + te.offsetHeight > scrollTop + 1)) {
+                if (tiles[i].node && tiles[i].node()) {
                     this.setViewportRefNode(tiles[i].node());
                     this.setViewportRefOffset(te.offsetTop - scrollTop);
                 }
@@ -340,74 +740,102 @@
     }
 
     /**
-     * @description Restores the scroll position so the reference tile (the one
-     * at the top of the viewport at the last scroll event) keeps its viewport
-     * offset. Called after content mutations while not at the bottom. This is
-     * what keeps the reading position stable when layout changes elsewhere —
-     * an image finishing above, tiles being torn down and re-created by a view
-     * sync, or the browser clamping scrollTop after a transient shrink. When
-     * the browser's native scroll anchoring already compensated correctly this
-     * computes the same value and is a no-op.
+     * @description The reference tile, if it currently exists in the DOM.
+     * @returns {SvDomView|null} The reference tile or null.
+     * @category State
+     */
+    viewportRefTile () {
+        const refNode = this.viewportRefNode();
+        const contentView = this.contentView();
+        if (!refNode || !contentView || !contentView.subviewForNode) {
+            return null;
+        }
+        const tile = contentView.subviewForNode(refNode);
+        if (tile && tile.element().isConnected) {
+            return tile;
+        }
+        return null;
+    }
+
+    /**
+     * @description Whether the content view currently has any tile in the DOM.
+     * False means a view re-sync has torn tiles down and not yet rebuilt them.
+     * @returns {Boolean} Whether live tiles exist.
+     * @category State
+     */
+    contentHasConnectedTiles () {
+        const contentView = this.contentView();
+        if (!contentView) {
+            return false;
+        }
+        return contentView.subviews().some((sv) => sv.element().isConnected);
+    }
+
+    /**
+     * @description Restores the scroll position so the reference tile keeps
+     * its viewport offset. If the reference tile is gone but other tiles are
+     * live, the reference was deleted or hidden — re-derive it from wherever
+     * the viewport is now. If no tiles are live we are mid-teardown: keep
+     * everything and wait for the rebuild to trigger the next apply.
      * @returns {SvScrollView} The SvScrollView instance.
      * @category Scrolling
      */
     restoreViewportPosition () {
-        const refNode = this.viewportRefNode();
-        const contentView = this.contentView();
-        if (!refNode || !contentView || !contentView.subviewForNode) {
+        const tile = this.viewportRefTile();
+        if (!tile) {
+            if (this.contentHasConnectedTiles()) {
+                this.deriveViewportRef();
+            }
             return this;
         }
-
-        const tile = contentView.subviewForNode(refNode);
-        if (!tile || !tile.element().isConnected) {
-            // The reference tile is gone right now (teardown in progress, or
-            // the message was deleted). Keep the reference — if the tile is
-            // re-created, the next mutation restores against it.
-            return this;
-        }
-
         const e = this.element();
-        const targetTop = tile.element().offsetTop - this.viewportRefOffset();
-        const clampedTarget = Math.max(0, Math.min(targetTop, e.scrollHeight - e.clientHeight));
-        if (Math.abs(e.scrollTop - clampedTarget) > 1) {
+        const target = tile.element().offsetTop - this.viewportRefOffset();
+        const clamped = Math.max(0, Math.min(target, e.scrollHeight - e.clientHeight));
+        if (Math.abs(e.scrollTop - clamped) > 1) {
             // TEMP diagnostic for chat scroll jumps
-            console.log("[ScrollDebug] " + this.svTypeId() + ".restoreViewportPosition() " + e.scrollTop + " -> " + clampedTarget +
-                " (ref " + refNode.svTypeId() + " offset " + this.viewportRefOffset() + ")");
-            e.scrollTop = clampedTarget;
+            console.log("[ScrollDebug] " + this.svTypeId() + ".restoreViewportPosition() " + e.scrollTop + " -> " + clamped +
+                " (ref " + this.viewportRefNode().svTypeId() + " offset " + this.viewportRefOffset() + ")");
         }
+        this.programmaticScrollTo(target);
         return this;
     }
 
+    // --- position measurements ---
+
     /**
-     * @description Handles content view mutations
-     * @param {MutationRecord[]} mutations - The mutations that occurred
-     * @category Event Handling
+     * @description The content height excluding any anchor padding — the
+     * height of what the user perceives as the content.
+     * @returns {Number} The natural scroll height in pixels.
+     * @category Calculation
      */
-    onContentViewMutations (/*mutations*/) {
-        if (this.sticksToBottom()) {
-            if (this.wasAtBottom()) {
-                this.immediatelyScrollToBottom();
-                this.setWasAtBottom(true);
-                this.setLastScrollHeight(this.clientHeight());
-            } else {
-                // Reading somewhere above the bottom — keep the viewport
-                // stable relative to the content the user is looking at.
-                this.restoreViewportPosition();
-            }
-            this.updateScrollToBottomButton();
-        }
+    naturalScrollHeight () {
+        return this.element().scrollHeight - this.anchorPaddingPx();
     }
 
     /**
-     * @description Checks if the view is currently at the bottom
+     * @description The bottom padding currently applied to the content view
+     * for anchor mode.
+     * @returns {Number} The padding in pixels.
+     * @category Calculation
+     */
+    anchorPaddingPx () {
+        const contentView = this.contentView();
+        if (!contentView) {
+            return 0;
+        }
+        return parseFloat(contentView.paddingBottom()) || 0;
+    }
+
+    /**
+     * @description Checks if the viewport is at the bottom of the natural
+     * content (anchor padding excluded).
      * @returns {Boolean} Whether the view is at the bottom
      * @category State
      */
     isAtBottom () {
         const e = this.element();
-        const tolerance = this.computeScrollTolerance();
-        const difference = e.scrollHeight - (e.scrollTop + e.clientHeight);
-        return difference <= tolerance;
+        const difference = this.naturalScrollHeight() - (e.scrollTop + e.clientHeight);
+        return difference <= this.computeScrollTolerance();
     }
 
     /**
@@ -419,74 +847,58 @@
         return 10;
     }
 
+    // --- explicit intent API ---
+
     /**
-     * @description Sets the scroll height and updates scroll tracking
-     * @param {Number} v - The new scroll height
-     * @returns {SvScrollView} The SvScrollView instance
-     * @category State
+     * @description Pins the viewport to the bottom: clears any anchor state
+     * and padding, sets "bottom" intent, and applies it immediately.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
      */
-    setScrollHeight (v) {
-        super.setScrollHeight(v);
-        this.updateScrollTracking();
+    pinToBottom () {
+        this.setIsAnchored(false);
+        this.clearAnchorPadding();
+        this.setScrollIntent("bottom");
+        this.applyScrollIntent();
         return this;
     }
 
     /**
-     * @description Updates scroll tracking
-     * @returns {SvScrollView} The SvScrollView instance
-     * @category State
+     * @description Smooth-scrolls to the bottom (scroll-to-bottom button),
+     * setting "bottom" intent up front so streaming during the animation
+     * cannot fight it.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
      */
-    updateScrollTracking () {
-        this.updateLastScrollHeight();
-        this.updateWasAtBottom();
+    scrollToBottomSmooth () {
+        this.setIsAnchored(false);
+        this.clearAnchorPadding();
+        this.setScrollIntent("bottom");
+        this.setIsSmoothScrollingToBottom(true);
+        this.element().scrollTo({
+            top: this.element().scrollHeight,
+            behavior: "smooth"
+        });
         return this;
     }
 
     /**
-     * @description Updates the last scroll height
-     * @returns {SvScrollView} The SvScrollView instance
-     * @category State
+     * @description Resets scroll state for newly displayed content (the
+     * content view was bound to a different node): conversations open pinned
+     * to the bottom.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
      */
-    updateLastScrollHeight () {
-        this.setLastScrollHeight(this.scrollHeight());
-        return this;
-    }
-
-    /**
-     * @description Updates whether the view was at the bottom
-     * @returns {SvScrollView} The SvScrollView instance
-     * @category State
-     */
-    updateWasAtBottom () {
-        if (this.isAnchored()) {
-            // While anchored, never flip wasAtBottom to true.
-            // This prevents transient layout changes during view syncs
-            // from re-engaging auto-scroll.
-            return this;
-        }
-        const atBottom = this.isAtBottom();
-        if (this.isInTransientTeardown()) {
-            // Tiles are torn down mid-sync: the emptied scroller falsely
-            // reads as "at bottom" — never LATCH true from this state (it
-            // would make the rebuild stick-to-bottom instead of restoring
-            // the reading position). But the FALSE-ward flip must still
-            // register: streaming re-syncs make teardown windows frequent,
-            // and suppressing both directions left wasAtBottom stale-true
-            // when the user scrolled up mid-generation — the next mutation
-            // then slammed them to the bottom (captured in prod as
-            // "[ScrollDebug] JUMP … wasAtBottom true": the reported
-            // keeps-jumping-away-while-reading bug). Recording not-at-bottom
-            // is always safe; worst case one mutation restores the reading
-            // position instead of sticking, and the next real scroll
-            // re-establishes the truth.
-            if (!atBottom && this.wasAtBottom()) {
-                this.setWasAtBottom(false);
-            }
-            return this;
-        }
-        if (this.wasAtBottom() !== atBottom) {
-            this.setWasAtBottom(atBottom);
-        }
+    resetForNewContent () {
+        this.setIsAnchored(false);
+        this.clearAnchorPadding();
+        this.setViewportRefNode(null);
+        this.setViewportRefOffset(0);
+        this.setIsSmoothScrollingToBottom(false);
+        this.setPendingProgrammaticScrolls([]);
+        this.setUserScrollSessionUntil(0);
+        this.setScrollIntent("bottom");
+        this.applyScrollIntent();
         return this;
     }
 
@@ -494,7 +906,8 @@
 
     /**
      * @description Updates the visibility of the scroll-to-bottom button.
-     * Shows when not at bottom and content overflows; hides when at bottom.
+     * Shows when not at bottom and content overflows; hides when at bottom
+     * or when the viewport is inside the anchor padding area.
      * @returns {SvScrollView} The SvScrollView instance.
      * @category UI
      */
@@ -502,17 +915,10 @@
         const button = this.scrollToBottomButton();
         if (button) {
             const e = this.element();
-            // Account for anchor padding — the real content height is
-            // scrollHeight minus any padding we added for anchoring
-            const contentView = this.contentView();
-            const anchorPadding = contentView ? parseFloat(contentView.paddingBottom()) || 0 : 0;
-            const realContentHeight = e.scrollHeight - anchorPadding;
-            const realContentOverflows = realContentHeight > e.clientHeight;
-            // Also check that the scroll position isn't just sitting in the padding area
-            const scrollBottom = e.scrollTop + e.clientHeight;
-            const pastRealContent = scrollBottom <= realContentHeight;
-
-            if (!this.isAtBottom() && realContentOverflows && pastRealContent) {
+            const naturalHeight = this.naturalScrollHeight();
+            const contentOverflows = naturalHeight > e.clientHeight;
+            const withinContent = (e.scrollTop + e.clientHeight) <= naturalHeight;
+            if (!this.isAtBottom() && contentOverflows && withinContent) {
                 button.showButton();
             } else {
                 button.hideButton();
@@ -521,84 +927,60 @@
         return this;
     }
 
-    /**
-     * @description Smooth-scrolls to the bottom of the scroll view.
-     * @returns {SvScrollView} The SvScrollView instance.
-     * @category Scrolling
-     */
-    scrollToBottomSmooth () {
-        // Disengage anchor mode — user is explicitly requesting scroll to bottom
-        if (this.isAnchored()) {
-            //console.log("[AnchorScroll] scrollToBottomSmooth: disengaging anchor");
-            this.setIsAnchored(false);
-            this.clearAnchorPadding();
-        }
-        this.element().scrollTo({
-            top: this.element().scrollHeight,
-            behavior: "smooth"
-        });
-        return this;
-    }
-
     // --- anchor scroll ---
 
     /**
-     * @description Scrolls so that the given subview is at the top of the viewport.
-     * Disengages auto-scroll by updating scroll tracking (wasAtBottom becomes false).
+     * @description Scrolls so the given subview sits at the top of the
+     * viewport and engages anchor mode: bottom padding makes room to hold it
+     * there while its response streams in below, and the subview becomes the
+     * viewport reference for "preserve" intent.
      * @param {SvDomView} aSubview - The subview to anchor at the top.
      * @returns {SvScrollView} The SvScrollView instance.
      * @category Scrolling
      */
     anchorOnSubview (aSubview) {
-        //console.log("[AnchorScroll] SvScrollView.anchorOnSubview() subview:", aSubview ? aSubview.svType() : "null");
-        const contentView = this.contentView();
-
         if (aSubview) {
-            // Add bottom padding so we can scroll the target to the top of the viewport
-            // even when it's near the end of the content. The padding gives the browser
-            // room to scroll past the natural end of the content.
-            const viewportHeight = this.element().clientHeight;
-            if (contentView) {
-                contentView.setPaddingBottom(viewportHeight + "px");
-            }
-
-            this.element().scrollTop = aSubview.element().offsetTop;
+            this.applyAnchorPadding();
+            this.programmaticScrollTo(aSubview.element().offsetTop);
             // TEMP diagnostic for chat scroll jumps
             console.log("[ScrollDebug] " + this.svTypeId() + ".anchorOnSubview(" + aSubview.svTypeId() + ")" +
                 " offsetTop " + aSubview.element().offsetTop +
                 " -> scrollTop " + this.element().scrollTop +
-                " (scrollHeight " + this.element().scrollHeight + ", clientHeight " + viewportHeight +
-                ", offsetParent " + (aSubview.element().offsetParent === this.element() ? "scrollView" : (aSubview.element().offsetParent ? aSubview.element().offsetParent.className : "null")) + ")");
-            // Seed the viewport reference to the anchored tile so mutations
-            // keep it pinned even before the next scroll event.
-            if (aSubview.node) {
+                " (scrollHeight " + this.element().scrollHeight + ", clientHeight " + this.element().clientHeight + ")");
+            if (aSubview.node && aSubview.node()) {
                 this.setViewportRefNode(aSubview.node());
                 this.setViewportRefOffset(0);
             }
         } else {
-            // No anchor target — scroll to top
-            this.element().scrollTop = 0;
+            this.programmaticScrollTo(0);
             this.setViewportRefNode(null);
         }
-        // Engage anchor mode — suppresses wasAtBottom from being flipped
-        // to true by transient layout changes during view syncs.
         this.setIsAnchored(true);
-        this.setWasAtBottom(false);
-        this.updateLastScrollHeight();
-        //console.log("[AnchorScroll]   after anchor: isAnchored:", this.isAnchored(), "isAtBottom:", this.isAtBottom(), "wasAtBottom:", this.wasAtBottom());
+        this.setScrollIntent("preserve");
         this.updateScrollToBottomButton();
         return this;
     }
 
     /**
-     * @description Disengages anchor mode without moving the scroll position:
-     * clears the anchor padding and lets normal stick-to-bottom /
-     * reading-position semantics resume. Called when the anchored exchange's
-     * response completes — the anchor exists to hold the reading position
-     * WHILE the response streams; holding it afterwards makes every later
-     * content mutation (e.g. a progressive image's preview frames) keep
-     * re-pinning the viewport to the anchor point, fighting the user's
-     * attempts to scroll down.
+     * @description Adds bottom padding equal to the viewport height so a
+     * tile near the end of the content can be scrolled to the viewport top.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
+     */
+    applyAnchorPadding () {
+        const contentView = this.contentView();
+        if (contentView) {
+            contentView.setPaddingBottom(this.element().clientHeight + "px");
+        }
+        return this;
+    }
+
+    /**
+     * @description Disengages anchor mode without moving the viewport:
+     * shrinks the anchor padding to the minimum that avoids a scrollTop
+     * clamp, then resumes normal semantics — pinning if the user is at the
+     * natural bottom, preserving their position otherwise. Called when the
+     * anchored exchange's response completes.
      * @returns {SvScrollView} The SvScrollView instance.
      * @category Scrolling
      */
@@ -609,24 +991,72 @@
         // TEMP diagnostic for chat scroll jumps
         console.log("[ScrollDebug] " + this.svTypeId() + ".releaseAnchor() scrollTop " + this.element().scrollTop);
         this.setIsAnchored(false);
-        this.clearAnchorPadding();
-        this.updateScrollTracking();
+        this.reduceAnchorPaddingSafely();
+        if (this.isAtBottom()) {
+            this.pinToBottom();
+        }
         this.updateScrollToBottomButton();
         return this;
     }
 
     /**
+     * @description Shrinks the anchor padding to the minimum that keeps the
+     * current scrollTop valid — clearing it outright could clamp scrollTop
+     * and visibly yank the viewport. Any remainder is cleared when the user
+     * next reaches the bottom (pinToBottom).
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Scrolling
+     */
+    reduceAnchorPaddingSafely () {
+        const contentView = this.contentView();
+        const currentPadding = this.anchorPaddingPx();
+        if (!contentView || currentPadding === 0) {
+            return this;
+        }
+        const e = this.element();
+        const naturalHeight = e.scrollHeight - currentPadding;
+        const needed = Math.max(0, (e.scrollTop + e.clientHeight) - naturalHeight);
+        if (needed < currentPadding) {
+            contentView.setPaddingBottom(Math.ceil(needed) + "px");
+        }
+        return this;
+    }
+
+    /**
      * @description Removes the anchor padding from the content view.
-     * Called when the user scrolls to the bottom (re-engages auto-scroll)
-     * so the extra padding doesn't leave empty space.
      * @returns {SvScrollView} The SvScrollView instance.
      * @category Scrolling
      */
     clearAnchorPadding () {
         const contentView = this.contentView();
-        if (contentView) {
+        if (contentView && this.anchorPaddingPx() !== 0) {
             contentView.setPaddingBottom("0px");
         }
+        return this;
+    }
+
+    // --- diagnostics ---
+
+    /**
+     * @description Scroll-jump diagnostic — ALWAYS ON. Fires only on a move
+     * larger than a screenful between scroll events, so it is silent in
+     * normal use; when a "jumped back to earlier messages" bug strikes, the
+     * console names the state at the jump.
+     * @returns {SvScrollView} The SvScrollView instance.
+     * @category Diagnostics
+     */
+    logScrollJumpIfNeeded () {
+        const e = this.element();
+        const last = this.jumpLogLastScrollTop();
+        if (last !== null && Math.abs(e.scrollTop - last) > e.clientHeight) {
+            console.log("[ScrollDebug] " + this.svTypeId() + " JUMP " + last + " -> " + e.scrollTop +
+                " (scrollHeight " + e.scrollHeight + ", clientHeight " + e.clientHeight +
+                ", intent " + this.scrollIntent() +
+                ", isAnchored " + this.isAnchored() +
+                ", refNode " + (this.viewportRefNode() ? this.viewportRefNode().svTypeId() : "null") +
+                ", inUserSession " + this.isInUserScrollSession() + ")");
+        }
+        this.setJumpLogLastScrollTop(e.scrollTop);
         return this;
     }
 

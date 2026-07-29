@@ -85,8 +85,12 @@
     syncFromNode () {
         super.syncFromNode();
         const node = this.node();
-        if (node && node.subviewsScrollSticksToBottom) {
-            this.scrollView().setSticksToBottom(node.subviewsScrollSticksToBottom());
+        const scrollView = this.scrollView();
+        if (node && scrollView && scrollView.setSticksToBottom) {
+            // Default to false so a column reused for a node without the
+            // method doesn't inherit stale stick-to-bottom behavior
+            const sticks = node.subviewsScrollSticksToBottom ? node.subviewsScrollSticksToBottom() : false;
+            scrollView.setSticksToBottom(sticks);
         }
         return this;
     }
@@ -117,7 +121,11 @@
             if (aNode) {
                 if (aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
                     this.setJustifyContent("flex-end");
-                    this.addWeakTimeout(() => { this.scrollToBottom(); }, 0);
+                    const scrollView = this.scrollView();
+                    if (scrollView && scrollView.resetForNewContent) {
+                        scrollView.setSticksToBottom(true);
+                        scrollView.resetForNewContent();
+                    }
                 }
 
                 // Watch for anchor scroll requests from this node
@@ -184,12 +192,15 @@
     }
 
     /**
-     * Handle scroll events from the scroll view.
-     * @param {Event} event - The scroll event.
-     * @category Event Handling
+     * Whether this content view lives inside a stick-to-bottom scroll view.
+     * Used by tile selection code to skip native scrollIntoView calls that
+     * would fight the scroll view's intent management.
+     * @returns {Boolean} Whether the parent scroll view sticks to bottom.
+     * @category Hierarchy
      */
-    onScrollViewScroll (event) {
-
+    isInStickToBottomScrollView () {
+        const scrollView = this.scrollView();
+        return !!(scrollView && scrollView.sticksToBottom && scrollView.sticksToBottom());
     }
 
     /**

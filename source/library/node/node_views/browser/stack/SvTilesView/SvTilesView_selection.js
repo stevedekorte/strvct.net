@@ -7,8 +7,6 @@
  * @extends SvTilesView
  * @classdesc
  * SvTilesView_selection extends SvTilesView to handle selection-related functionality.
- 
- 
  */
 
 (class SvTilesView_selection extends SvTilesView {
@@ -445,7 +443,14 @@
 
         if (subview) {
             this.selectTileWithNode(subnode);
-            subview.scrollIntoView();
+            if (this.isInStickToBottomScrollView()) {
+                // This note comes from an explicit user add (SvNode.addAt),
+                // so express it as intent — a native scrollIntoView would
+                // fight the scroll view's intent management
+                this.scrollView().pinToBottom();
+            } else {
+                subview.scrollIntoView();
+            }
             subview.justTap();
         } else {
             console.warn(this.svType() + " for node " + this.node().svTypeId() + " has no matching subview for shouldSelectSubnode " + subnode.svTypeId());
@@ -471,7 +476,11 @@
 
         if (subview) {
             this.selectTileWithNode(subnode);
-            subview.scrollIntoView();
+            if (!this.isInStickToBottomScrollView()) {
+                // In stick-to-bottom columns (chat) the scroll view owns the
+                // scroll position; a native scrollIntoView would fight it
+                subview.scrollIntoView();
+            }
 
             this.didChangeNavSelection();
         } else {
@@ -506,10 +515,17 @@
     }
 
     /**
-     * @description Scrolls to the bottom of the view.
+     * @description Scrolls to the bottom of the view. In stick-to-bottom
+     * columns this routes through the scroll view's intent API; elsewhere it
+     * falls back to a native scrollIntoView of the last tile.
      * @returns {SvTilesView_selection} The current instance.
      */
     scrollToBottom () {
+        if (this.isInStickToBottomScrollView()) {
+            this.scrollView().pinToBottom();
+            return this;
+        }
+
         const last = this.tiles().last();
 
         if (last) {
