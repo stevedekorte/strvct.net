@@ -231,6 +231,22 @@
         }
 
         /**
+         * @member {SvAiChatModel} defaultFailoverChatModel - Model a conversation
+         * temporarily switches to when its own model is failing due to a service
+         * outage (see SvAiResponseMessage.onRequestError). Null means no failover
+         * is configured and outages behave exactly as before. Should name a model
+         * from a DIFFERENT provider than defaultChatModel — a sibling model on
+         * the same provider shares the outage.
+         * @category AI Service
+         */
+        {
+            const slot = this.newSlot("defaultFailoverChatModel", null);
+            slot.setShouldStoreSlot(true);
+            slot.setIsSubnodeField(false);
+            slot.setSlotType("SvAiChatModel");
+        }
+
+        /**
          * @member {SvI18n} i18n
          * @description Internationalization service with persistent translation cache.
          * @category i18n

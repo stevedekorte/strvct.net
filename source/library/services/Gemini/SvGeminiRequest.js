@@ -258,4 +258,22 @@
         return this.stopReason() === "MAX_TOKENS";
     }
 
+    /**
+   * @description Gemini stop reasons worth retrying. MALFORMED_RESPONSE is the
+   * important one: per stopReasonDict above it is "often transient", and it
+   * arrives on an HTTP 200, so no status-code check can see it. Without this
+   * override Gemini inherited the base class's empty set and retried nothing —
+   * a transient parse failure ended the turn outright.
+   *
+   * Deliberately excluded: SAFETY, RECITATION, BLOCKLIST, PROHIBITED_CONTENT,
+   * SPII, IMAGE_SAFETY (content decisions — an identical retry gets an
+   * identical refusal), MAX_TOKENS (handled by continuation), and
+   * MALFORMED_FUNCTION_CALL (our tool schema's problem, not the service's).
+   * @returns {Set}
+   * @category Error Handling
+   */
+    retriableStopReasons () {
+        return new Set(["MALFORMED_RESPONSE", "OTHER"]);
+    }
+
 }).initThisClass();

@@ -373,13 +373,12 @@
             }
         } catch (error) {
             if (error instanceof SvAiRequestOverloadedError) {
-                // TODO: handle overloaded error
-                /*
-                const failoverModel = SvServices.shared().defaultFailoverChatModel();
-                if (failoverModel !== currentModel) {
-                    // TODO: switch to failover model
-                }
-                */
+                // Overload/outage handling lives on the response message now:
+                // SvAiRequest.onError() runs the retry ladder, and
+                // SvAiResponseMessage.onRequestError() tries the failover model
+                // (asyncTryFailoverModel) before parking the turn. Nothing to do
+                // here — a synchronous throw from request SETUP is not an
+                // outage, so it propagates like any other setup failure.
                 error.rethrow();
             } else {
                 error.rethrow();

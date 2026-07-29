@@ -1230,11 +1230,67 @@
 
     /**
    * @category Stopping
-   * @description Returns the retriable stop reasons
+   * @description Provider-specific stop reasons which mean "try again" —
+   * capacity, overload, and transient parse failures. Empty in the base class
+   * on purpose: these names come from provider payloads, so each subclass
+   * declares its own. (This previously defaulted to Anthropic's
+   * "overloaded_error", which meant every non-Anthropic provider inherited a
+   * name it can never emit and therefore never retried anything.)
    * @returns {Set}
    */
     retriableStopReasons () {
-        return new Set(["overloaded_error"]);
+        return new Set();
+    }
+
+    /**
+   * @category Error Handling
+   * @description HTTP statuses that mean the service — not our request — is
+   * the problem: rate limiting, and server/gateway failures.
+   * @returns {Set}
+   */
+    outageStatusCodes () {
+        return new Set([429, 500, 502, 503, 504, 522, 524]);
+    }
+
+    /**
+   * @category Error Handling
+   * @description True when the failure looks like a service outage rather than
+   * something wrong with what we sent: a retriable provider stop reason, or an
+   * outage-class HTTP status. Callers use this both for auto-retry and to
+   * decide whether switching to a failover model could help.
+   * @returns {boolean}
+   */
+    isOutageError () {
+        const e = this.error();
+        if (e && this.retriableStopReasons().has(e.name)) {
+            return true;
+        }
+        const xhrRequest = this.currentXhrRequest();
+        if (xhrRequest && this.outageStatusCodes().has(xhrRequest.statusCode())) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+   * @category Error Handling
+   * @description True when the failure is OUR fault — a malformed request, an
+   * invalid tool definition, an over-long context, a rejected credential. A
+   * second attempt fails identically and a different model hides the bug
+   * rather than fixing it, so these must never retry and never fail over.
+   * 408 (timeout) and 429 (rate limit) are 4xx but are NOT ours.
+   * @returns {boolean}
+   */
+    isOurRequestError () {
+        const xhrRequest = this.currentXhrRequest();
+        if (!xhrRequest) {
+            return false;
+        }
+        const code = xhrRequest.statusCode();
+        if (code === 408 || code === 429) {
+            return false;
+        }
+        return code >= 400 && code < 500;
     }
 
     /**
@@ -1243,11 +1299,10 @@
    * @returns {boolean}
    */
     isRecoverableError () {
-        const e = this.error();
-        if (e) {
-            return this.retriableStopReasons().has(e.name);
+        if (this.isOurRequestError()) {
+            return false; // never retry what a retry cannot fix
         }
-        return false;
+        return this.isOutageError();
     }
 
     /**

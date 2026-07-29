@@ -15,6 +15,30 @@
    */
     initPrototypeSlots () {
     /**
+     * @member {Boolean} didAttemptFailover - Whether this turn already switched
+     * to the failover model. Per-message so a failing failover parks the turn
+     * instead of ping-ponging between providers.
+     * @category Failover
+     */
+        {
+            const slot = this.newSlot("didAttemptFailover", false);
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+     * @member {SvAiChatModel} didFailoverFromChatModel - The model this turn
+     * switched AWAY from, so revert policy knows what to restore.
+     * @category Failover
+     */
+        {
+            const slot = this.newSlot("didFailoverFromChatModel", null);
+            slot.setShouldStoreSlot(false);
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("SvAiChatModel");
+        }
+
+        /**
      * @member {SvAiRequest} request - The associated request object.
      * @category Data
      */
@@ -365,6 +389,17 @@
         // terminal completion would read as "the turn ended" to tool
         // processing and automation, and there is no turn content.
         if (e && e.svRetriesExhausted) {
+            // Before parking the turn for user-initiated recovery, try the
+            // failover model once. This is the right altitude for the switch:
+            // a request object is bound to its provider (requestClass() comes
+            // from the conversation's service, which derives from its
+            // chatModel), so aRequest.retryRequest() would re-hit the SAME
+            // provider. Switching means pointing the conversation at the other
+            // model and building a NEW request — which is exactly what
+            // asyncMakeRequest() does.
+            if (this.asyncTryFailoverModel(e)) {
+                return;
+            }
             this.setError(e);
             this.setContent("⚠️ " + e.message);
             this.sendDelegateMessage("onMessageUpdate");
@@ -385,6 +420,90 @@
         this.setContent(this.requestErrorNoticeText(aRequest));
         this.setIsComplete(true);
         this.sendDelegateMessage("onMessageUpdate");
+    }
+
+    /**
+   * @description The conversation's configured failover model, or null when
+   * none is set, it is the model that just failed, or it is on the same service
+   * as the model that just failed (a sibling model shares the outage).
+   * @returns {SvAiChatModel|null}
+   * @category Failover
+   */
+    availableFailoverChatModel () {
+        const failoverModel = SvServices.shared().defaultFailoverChatModel();
+        if (!failoverModel) {
+            return null;
+        }
+        const currentModel = this.chatModel();
+        if (!currentModel || failoverModel === currentModel) {
+            return null;
+        }
+        if (failoverModel.service() === currentModel.service()) {
+            return null;
+        }
+        return failoverModel;
+    }
+
+    /**
+   * @description Last resort before parking a turn: point the conversation at
+   * the failover model and re-request into THIS same message, so the player
+   * sees one turn that took a while rather than a failure plus a retry.
+   *
+   * Once per message: the flag is on the message, not the conversation, so a
+   * failover that also fails parks the turn normally instead of ping-ponging.
+   * The conversation keeps the failover model afterwards — subsequent turns
+   * stay on it rather than re-paying the whole retry ladder each turn — and
+   * whoever owns revert policy reads didFailoverFromChatModel() to know what to
+   * switch back to.
+   *
+   * Only outage-class failures get here (isRecoverableError gates the ladder),
+   * so a malformed request of ours never triggers a provider switch.
+   * @param {Error} e - the exhausted-retries error, annotated on success
+   * @returns {Boolean} true when a failover attempt was started
+   * @category Failover
+   */
+    asyncTryFailoverModel (e) {
+        if (this.didAttemptFailover()) {
+            return false;
+        }
+        const failoverModel = this.availableFailoverChatModel();
+        if (!failoverModel) {
+            return false;
+        }
+        const conversation = this.conversation();
+        if (!conversation || typeof conversation.setChatModel !== "function") {
+            return false;
+        }
+
+        const fromName = this.chatModel().modelName();
+        const toName = failoverModel.modelName();
+        this.setDidAttemptFailover(true);
+        this.setDidFailoverFromChatModel(this.chatModel());
+        conversation.setChatModel(failoverModel);
+        if (e) {
+            e.svDidFailover = true;
+        }
+
+        console.warn(this.logPrefix(), "model failover: " + fromName +
+            " is failing — switching this conversation to " + toName);
+
+        // Visible to the player AND to the model on the next request: the
+        // transcript records that the turn changed hands.
+        this.setContent("⏳ Switching to a backup AI model (" + toName + ") — one moment…");
+        this.sendDelegateMessage("onMessageUpdate");
+
+        // Fire and forget with an explicit rejection handler: asyncMakeRequest
+        // returns a promise, and an unhandled rejection here would strand the
+        // message exactly the way the failover is meant to prevent.
+        this.asyncMakeRequest().catch((failoverError) => {
+            const message = failoverError && failoverError.message ? failoverError.message : String(failoverError);
+            console.error(this.logPrefix(), "model failover to " + toName + " also failed:", message);
+            this.setError(failoverError);
+            this.setContent("⚠️ Both the main and backup AI models are failing. " +
+                "Press 'Recover from Errors' above to try again.");
+            this.sendDelegateMessage("onMessageUpdate");
+        });
+        return true;
     }
 
     /**
