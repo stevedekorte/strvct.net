@@ -289,6 +289,17 @@
             slot.setSlotType("Set");
         }
 
+        /**
+         * @member {Set} warnedMissingPidSet
+         * @description pids already reported as missing, so a dangling subtree
+         * reports once instead of on every load attempt and every save cycle
+         * @default null
+         */
+        {
+            const slot = this.newSlot("warnedMissingPidSet", null);
+            slot.setSlotType("Set");
+        }
+
         // blob pool
         {
             const slot = this.newSlot("blobPool", null);
@@ -1326,7 +1337,9 @@
             const referrer = (this._loadingRecordStack && this._loadingRecordStack.length > 0)
                 ? this._loadingRecordStack[this._loadingRecordStack.length - 1]
                 : "(not during a record load)";
-            console.log(this.logPrefix() + "missing record for " + puuid + " — referenced while loading " + referrer);
+            if (this.shouldReportMissingPid(puuid)) {
+                console.log(this.logPrefix() + "missing record for " + puuid + " — referenced while loading " + referrer);
+            }
             return undefined;
         }
         if (aRecord.type === "SvPersistentObjectPool") {
@@ -1351,8 +1364,9 @@
             lastSet.forEach(loadedPid => { // sends didLoadFromStore to each matching object
                 const obj = this.activeObjectForPid(loadedPid);
                 if (Type.isUndefined(obj)) {
-                    const errorMsg = "missing activeObjectForPid " + loadedPid;
-                    console.warn(this.logPrefix() + errorMsg);
+                    if (this.shouldReportMissingPid(loadedPid)) {
+                        console.warn(this.logPrefix() + "missing activeObjectForPid " + loadedPid);
+                    }
                     //throw new Error(errorMsg)
                 } else if (obj.didLoadFromStore) {
                     obj.didLoadFromStore(); // should this be able to trigger an objectForPid() that would add to loadingPids?
@@ -1508,6 +1522,28 @@
      * @returns {Boolean} true if the reference is safe
      * @category Storing
      */
+    /**
+     * @description First-occurrence gate for missing-pid reports. A dangling
+     * subtree is retried on every access and re-walked on every save cycle, so
+     * without this one broken character produced hundreds of identical console
+     * entries per cycle (each with a stack), which buried everything else and
+     * measurably slowed sync. SvStoreRef already latches its own
+     * materialization warning for the same reason; this is the pool-level half.
+     * @param {String} pid
+     * @returns {Boolean} true the first time this pid is reported
+     * @category Loading
+     */
+    shouldReportMissingPid (pid) {
+        if (!this.warnedMissingPidSet()) {
+            this.setWarnedMissingPidSet(new Set());
+        }
+        if (this.warnedMissingPidSet().has(pid)) {
+            return false;
+        }
+        this.warnedMissingPidSet().add(pid);
+        return true;
+    }
+
     warnIfRefWillDangle (v) {
         const pid = v.puuid();
 
