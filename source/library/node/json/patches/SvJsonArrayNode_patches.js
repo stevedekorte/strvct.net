@@ -479,7 +479,7 @@
         // "replace" op in line with it. Addressing stays positional (the index);
         // only the WRITE becomes in-place.
         const valueClass = (value && value._type)
-            ? SvGlobals.get(value._type)
+            ? SvJsonIdNode.classForJsonType(value._type) // follows ClassRenames
             : (this.subnodeClasses().length === 1 ? this.subnodeClasses().first() : null);
         const sameClass = valueClass && oldNode.thisClass && oldNode.thisClass() === valueClass;
 

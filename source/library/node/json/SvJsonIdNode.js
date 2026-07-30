@@ -344,6 +344,59 @@
     }
 
 
+    // --- renamed classes in JSON ---
+
+    /**
+     * @description Canonical map of old class name -> new class name for JSON
+     * deserialization. Populated by SvObjectPool.addClassNameConversion, so
+     * ClassRenames.json stays the single registration point.
+     *
+     * Record loading has always applied these (SvObjectPool.classForName), but
+     * JSON deserialization did not: a _type naming a renamed class resolved to
+     * nothing, and the caller silently produced null. That is a boot-breaking
+     * asymmetry, because cloud documents, catalog docs and Copy-JSON exports
+     * all carry _type and long outlive a rename.
+     * @returns {Map}
+     * @category JSON
+     */
+    static jsonTypeRenameMap () {
+        if (!this._jsonTypeRenameMap) {
+            this._jsonTypeRenameMap = new Map();
+        }
+        return this._jsonTypeRenameMap;
+    }
+
+    /**
+     * @param {String} oldName
+     * @param {String} newName
+     * @category JSON
+     */
+    static addJsonTypeRename (oldName, newName) {
+        this.jsonTypeRenameMap().set(oldName, newName);
+        return this;
+    }
+
+    /**
+     * @description Resolve a JSON _type to a class, following renames. Returns
+     * undefined when the name is unknown — callers MUST handle that rather than
+     * pass the result on, since a null node in a subnodes array surfaces much
+     * later as an unrelated crash.
+     * @param {String} className
+     * @returns {Function|undefined}
+     * @category JSON
+     */
+    static classForJsonType (className) {
+        if (!className) {
+            return undefined;
+        }
+        const direct = SvGlobals.get(className);
+        if (direct) {
+            return direct;
+        }
+        const newName = SvJsonIdNode.jsonTypeRenameMap().get(className);
+        return newName ? SvGlobals.get(newName) : undefined;
+    }
+
     /*
     // TODO: add AiJson support
     asAiJson () {

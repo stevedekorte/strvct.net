@@ -630,7 +630,7 @@
             // Honor the value's declared _type so a typed object keeps its concrete
             // class (needed for the same-class in-place check in replaceDirectly and
             // so an added object isn't silently downgraded to a generic group).
-            const typeClass = (value && value._type) ? SvGlobals.get(value._type) : null;
+            const typeClass = (value && value._type) ? SvJsonIdNode.classForJsonType(value._type) : null; // follows ClassRenames
             const objectNode = (typeClass || SvJsonGroup).clone();
             if (typeof objectNode.deserializeFromJson === "function") {
                 objectNode.deserializeFromJson(value, undefined, []);

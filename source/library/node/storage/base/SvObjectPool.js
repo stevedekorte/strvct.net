@@ -1165,6 +1165,13 @@
      */
     addClassNameConversion (oldName, newName) {
         this.classNameConversionMap().set(oldName, newName);
+        // Mirror into the JSON layer: record loading and JSON deserialization
+        // both have to follow renames, and ClassRenames.json should be the only
+        // place a rename is declared. Without this, a renamed class loaded fine
+        // from the store and resolved to null from a cloud/catalog document.
+        if (typeof SvJsonIdNode !== "undefined" && SvJsonIdNode.addJsonTypeRename) {
+            SvJsonIdNode.addJsonTypeRename(oldName, newName);
+        }
         return this;
     }
 

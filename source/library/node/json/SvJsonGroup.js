@@ -523,7 +523,8 @@
     static newInstanceFromJson (json, pathComponents = []) {
         const className = json._type;
         assert(className, "newInstanceFromJson() no _type in json: " + JSON.stableStringify(json) + " at path: " + pathComponents.join("/"));
-        const aClass = SvGlobals.get(className);
+        const aClass = SvJsonIdNode.classForJsonType(className); // follows ClassRenames
+        assert(aClass, "newInstanceFromJson() unknown _type '" + className + "' at path: " + pathComponents.join("/") + " (add a ClassRenames.json entry if the class was renamed)");
         assert(aClass.isKindOf(this), "newInstanceFromJson() class mismatch: " + className + " !== " + this.svType() + " at path: " + pathComponents.join("/")); // sanity check
         const instance = aClass.clone();
         return instance;

@@ -239,9 +239,17 @@
         let aNode = null;
         let className = json._type;
         if (className) {
-            const aClass = SvGlobals.get(className);
+            // classForJsonType, not SvGlobals.get: a _type naming a RENAMED
+            // class must still resolve (ClassRenames.json). Returning null here
+            // used to corrupt the subnodes array and crash later somewhere
+            // unrelated, so an unresolvable _type is reported at its source.
+            const aClass = SvJsonIdNode.classForJsonType(className);
             if (aClass) {
                 aNode = aClass.fromJson(json, jsonPathComponents);
+            } else {
+                console.warn(this.logPrefix() + ".newSubnodeForJson() unknown _type '"
+                    + className + "' at path: " + jsonPathComponents.join("/")
+                    + " — skipping this entry (add a ClassRenames.json entry if the class was renamed)");
             }
         } else if (this.subnodeClasses().length === 1) { // only one subnode class, so we can use the clone method
             const aClass = this.subnodeClasses().first();
@@ -301,7 +309,11 @@
                 newSubnodes.push(existingNode);
             } else {
                 const aNode = this.newSubnodeForJson(v, filterName, jsonPathComponents.concat(index));
-                newSubnodes.push(aNode);
+                if (aNode) {
+                    newSubnodes.push(aNode);
+                } // else: unresolvable _type, already warned. A null in this
+                  // array reaches the scheduler and throws in
+                  // onDidReorderSubnodes with no trace back to the real cause.
                 //console.log(this.logPrefix(), "SvJsonArrayNode.setJson() creating new node " + aNode.svType() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
             }
         });
