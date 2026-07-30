@@ -878,6 +878,33 @@
     }
 
     /**
+     * @description Whether a node of aClass belongs in this collection.
+     *
+     * SUBCLASSES COUNT. An empty subnodeClasses() means "anything"; otherwise a
+     * class is accepted when it IS one of the declared classes or DESCENDS from
+     * one. Callers used to test `subnodeClasses().includes(aClass)`, an exact
+     * match that rejected a subclass of a declared class — which contradicts the
+     * polymorphism rule the model layer is built on: a UoArtifact that extends
+     * UoItem IS a UoItem, and a collection of UoItem should take it. The exact
+     * match silently dropped such a node with a console warning.
+     * @param {Function} aClass - the candidate subnode's class
+     * @returns {Boolean}
+     * @category Subnodes
+     */
+    acceptsSubnodeClass (aClass) {
+        const allowed = this.subnodeClasses();
+        if (allowed.length === 0) {
+            return true; // unconstrained
+        }
+        if (!aClass) {
+            return false;
+        }
+        return allowed.some(allowedClass =>
+            aClass === allowedClass
+            || (aClass.isSubclassOf && aClass.isSubclassOf(allowedClass)));
+    }
+
+    /**
 
      * @description Get the accepted subnode types.
      * @returns {Array} An array of accepted subnode types.
@@ -2681,8 +2708,7 @@
                     this.removeAllSubnodes();
                     subnodes.forEach(subnodeJson => {
                         const subnode = SvNode.instanceFromJson(subnodeJson);
-                        const hasValidSubnodeClass = this.subnodeClasses().length === 0 || this.subnodeClasses().includes(subnode.thisClass());
-                        if (hasValidSubnodeClass) {
+                        if (this.acceptsSubnodeClass(subnode.thisClass())) {
                             this.addSubnode(subnode);
                         } else {
                             console.warn("fromJsonSchema subnode class '" + subnode.svType() + "' not in subnodeClasses " + JSON.stableStringifyWithStdOptions(this.subnodeClasses().map(c => c.svType())));
