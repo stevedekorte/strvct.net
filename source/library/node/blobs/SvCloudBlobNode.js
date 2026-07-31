@@ -141,7 +141,31 @@
 
     // --- auto-sync to cloud ---
 
+    /**
+     * @description Replaces the bytes and uploads them, resetting the cloud
+     * bookkeeping FIRST.
+     *
+     * The reset cannot be left to didUpdateSlotValueHash: that hook fires only
+     * when the old and new hash are both non-null, and this method moves the hash
+     * old -> null -> new (the base nulls it so a true hash is recomputed instead
+     * of the stale cache being returned). Neither transition satisfies the guard,
+     * so on a REPLACED blob hasInCloud stayed true from the previous content and
+     * schedulePushToCloud() returned early — the new bytes were not uploaded here.
+     * They still reached the cloud eventually, because asyncPublicUrl() pushes
+     * when it finds no cloud copy and a local blob, but only when something later
+     * asked for a URL. That lateness is half of "the host sees the new character
+     * image and the client does not".
+     *
+     * Safe to do here because reaching this method MEANS the bytes changed:
+     * asyncSetBlobValue compares hashes and only delegates here on a mismatch.
+     * @param {Blob} blob
+     * @returns {SvCloudBlobNode}
+     * @category Cloud Storage
+     */
     async asyncJustSetBlobValue (blob) { // private method, don't call directly, use asyncSetBlobValue instead
+        this.setHasInCloud(false); // the old content's cloud state does not describe these bytes
+        this.setDownloadUrl(null); // nor does its URL
+        this.clearPushToCloudPromise(); // abandon any in-flight push of the old bytes
         await super.asyncJustSetBlobValue(blob);
         if (this.doesAutoSyncToCloud()) {
             this.schedulePushToCloud();
@@ -387,7 +411,49 @@
             this.setHasInCloud(false); // old content's cloud state does not describe the new hash
             this.setDownloadUrl(null); // old content's URL
             this.clearPushToCloudPromise(); // abandon any in-flight push of the old bytes
+            this.scheduleFetchForNewContent();
         }
+    }
+
+    /**
+     * @description After the content identity changes, go and GET the new bytes
+     * instead of waiting for something to ask for them.
+     *
+     * The clears above are correct but they only invalidate — they leave the node
+     * holding a hash and nothing else. On the machine that AUTHORED the new
+     * content that is harmless, because it still has the blob (its hash moves
+     * old -> null -> new, which this both-non-null guard skips, so its blobValue
+     * survives). On a machine RECEIVING the change over cloud json the hash moves
+     * old -> new directly: the base hook drops the now-stale cached bytes, and
+     * nothing replaces them until a view happens to ask. Views ask when they
+     * initialize, which is why a regenerated character portrait appeared on the
+     * host immediately and on the client only after a reload.
+     *
+     * asyncBlobValue(), not asyncPublicUrl(): the URL path requires either
+     * hasInCloud (just cleared) or a local blob to push, and would throw "Not
+     * Found" on the receiving side. The blob path pulls from the cloud BY HASH,
+     * which is exactly what a receiver needs. blobValue syncsToView, so the view
+     * repaints when the bytes land.
+     * @category Cloud Storage
+     */
+    scheduleFetchForNewContent () {
+        // No blobValue check here: super's hook has ALREADY dropped the cached
+        // bytes by this point, precisely because they belonged to the old hash.
+        // The authoring side is excluded by the both-non-null guard instead — its
+        // hash moves old -> null -> new — so anything reaching here needs bytes it
+        // does not have.
+        SvSyncScheduler.shared().scheduleTargetAndMethod(this, "onScheduledFetchForNewContent");
+    }
+
+    onScheduledFetchForNewContent () {
+        if (this.blobValue()) {
+            return; // something supplied them between the schedule and now
+        }
+        // fire and forget: a miss is already logged by the pull path, and a
+        // failure here must not break whatever applied the update
+        this.asyncBlobValue().catch(error => {
+            console.warn(this.logPrefix() + " fetch after content change failed: " + (error.message || error));
+        });
     }
 
     async asyncBlobValue (forceRetry = false) {
