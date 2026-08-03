@@ -68,18 +68,12 @@
         assert(cv.paddingRight() === "0.5em");
         assert(cv.paddingTop() === "0.5em");
         assert(cv.paddingBottom() === "0.5em");
-        cv.setPaddingLeft = function () {
-            //throw new Error("setPaddingLeft is not allowed");
-        };
-        cv.setPaddingRight = function () {
-            //throw new Error("setPaddingRight is not allowed");
-        };
-        cv.setPaddingTop = function () {
-            //throw new Error("setPaddingTop is not allowed");
-        };
-        cv.setPaddingBottom = function () {
-            //throw new Error("setPaddingBottom is not allowed");
-        };
+        // Neutered setters must still return the receiver — callers chain them
+        // (see the SvChatMessageTile phantom-tile-padding bug).
+        cv.setPaddingLeft = function () { return this; };
+        cv.setPaddingRight = function () { return this; };
+        cv.setPaddingTop = function () { return this; };
+        cv.setPaddingBottom = function () { return this; };
         return this;
     }
 

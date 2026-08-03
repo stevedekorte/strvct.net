@@ -351,7 +351,7 @@
         this.subviews().atInsert(anIndex, aSubview);
         assert(this.subviews()[anIndex] === aSubview);
 
-        //SvThrashDetector.shared().didWrite("atInsertElement", this)
+        this.didDomWrite("atInsertElement");
         this.element().atInsertElement(anIndex, aSubview.element());
         assert(this.element().childNodes[anIndex] === aSubview.element());
 
@@ -556,7 +556,7 @@
 
         const e = aSubview.element();
         if (this.hasChildElement(e)) { // sanity check - make we have child element
-            //SvThrashDetector.shared().didWrite("removeChild", this)
+            this.didDomWrite("removeChild");
             this.element().removeChild(e); // WARNING: this will trigger an immediate onBlur window event, which may cause sync actions
 
             // sanity check - make sure element was removed

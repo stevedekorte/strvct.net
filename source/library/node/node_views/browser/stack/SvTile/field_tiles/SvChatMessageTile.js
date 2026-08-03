@@ -164,18 +164,20 @@
         v.setIsMultiline(true);
         v.setDoesInput(true);
 
-        v.setPaddingTop = () => { return this; };
-        v.setPaddingLeft = () => { return this; };
-        v.setPaddingRight = () => { return this; };
-        v.setPaddingBottom = () => { return this; };
+        // Lock in the padding/background/border above: later generic sync code
+        // (e.g. SvFieldTile.syncValueFromNode) restyles the value view, so these
+        // setters are neutered. They MUST return v (the value view), not the
+        // tile — callers chain them (valueView.setPaddingLeft(..).setPaddingRight(..)),
+        // and returning the tile made the second call style the TILE, adding a
+        // phantom right padding (the mobile chat-input right-gap bug).
+        v.setPaddingTop = () => { return v; };
+        v.setPaddingLeft = () => { return v; };
+        v.setPaddingRight = () => { return v; };
+        v.setPaddingBottom = () => { return v; };
 
-        v.setBackgroundColor = () => { return this; };
-        v.setBorder = () => {
-            return this;
-        };
-        v.syncBorder = () => {
-            return this;
-        };
+        v.setBackgroundColor = () => { return v; };
+        v.setBorder = () => { return v; };
+        v.syncBorder = () => { return v; };
 
         v.setDoesHoldFocusOnReturn(true);
         v.setDoesInput(true);

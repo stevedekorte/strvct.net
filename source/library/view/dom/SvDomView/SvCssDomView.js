@@ -186,7 +186,7 @@
     // --- attributes ---
 
     setAttribute (k, v) {
-        //SvThrashDetector.shared().didWrite(k, this);
+        this.didDomWrite(k);
         this.element().setAttribute(k, v);
         return this;
     }
@@ -208,7 +208,7 @@
 
     removeAttribute (k) {
         if (this.element().hasAttribute(k)) {
-            //SvThrashDetector.shared().didWrite(k, this);
+            this.didDomWrite(k);
             this.element().removeAttribute(k);
         }
         return this;
@@ -399,7 +399,7 @@
     // --- css properties ---
 
     setSpecialCssProperty (k, newValue) {
-        //SvThrashDetector.shared().didWrite(k, this);
+        this.didDomWrite(k);
 
         assert(k[0] === "-" && !k.beginsWith("--")); // sanity check
 
@@ -416,7 +416,7 @@
     }
 
     removeCssProperty (k) {
-        //SvThrashDetector.shared().didWrite(k, this);
+        this.didDomWrite(k);
         this.element().style.removeProperty(k);
         return this;
     }
@@ -443,7 +443,7 @@
                 this.removeCssProperty(key);
             } else {
                 style.setProperty(key, newValue);
-                //SvThrashDetector.shared().didWrite(key, this);
+                this.didDomWrite(key);
 
                 /*
                 if (doesSanityCheck) {
@@ -3097,13 +3097,30 @@
         return this;
     }
 
-    didDomRead (/*opName*/) {
-        //SvThrashDetector.shared().didRead(opName, this)
+    /**
+     * @description Records a geometry READ for thrash detection. A no-op unless
+     * "?thrash=1" is in the url — these fire on nearly every view operation, so
+     * the disabled path must stay one static boolean.
+     * @param {String} opName
+     * @category Reflow
+     */
+    didDomRead (opName) {
+        if (SvThrashDetector.isInstrumenting()) {
+            SvThrashDetector.shared().didRead(opName, this);
+        }
         return this;
     }
 
-    didDomWrite (/*opName*/) {
-        //SvThrashDetector.shared().didWrite(opName, this)
+    /**
+     * @description Records a DOM WRITE for thrash detection. A read after one of
+     * these, in the same frame, is what forces synchronous layout.
+     * @param {String} opName
+     * @category Reflow
+     */
+    didDomWrite (opName) {
+        if (SvThrashDetector.isInstrumenting()) {
+            SvThrashDetector.shared().didWrite(opName, this);
+        }
         return this;
     }
 

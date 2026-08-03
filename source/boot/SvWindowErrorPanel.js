@@ -238,9 +238,12 @@ class SvWindowErrorPanel extends Object {
                 style.fontSize = "1em";
                 style.borderRadius = "0em";
                 style.overflow = "hidden";
+                style.overflowY = "auto";
                 style.border = "1px solid #444";
                 style.transition = "opacity 0.5s ease-out, transform 0.5s ease-out";
-                style.maxWidth = "min(40%, 90vw)"; // 40% on desktop, 90% on mobile
+                // full width on mobile (minus margin), capped at a fixed width on desktop
+                style.maxWidth = "min(90vw, 600px)";
+                style.maxHeight = "85vh";
             }
 
             const messageDiv = document.createElement("div");

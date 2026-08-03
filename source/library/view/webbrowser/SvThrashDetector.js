@@ -179,6 +179,57 @@
     }
 
     /**
+     * @description Whether instrumentation is live, as a STATIC check so the
+     * hot path costs one boolean when it is off. The DOM read/write hooks fire
+     * on nearly every view operation, so they must not pay for a singleton
+     * lookup or a slot read when nobody is measuring.
+     *
+     * Turned on by "?thrash=1" in the url — deliberately not a console call,
+     * since a url is something you can type and a console paste may not be.
+     * @returns {Boolean}
+     * @category Configuration
+     */
+    static isInstrumenting () {
+        if (this._isInstrumenting === undefined) {
+            let on = false;
+            try {
+                on = (typeof window !== "undefined") && window.location
+                    && String(window.location.search || "").includes("thrash=1");
+            } catch (noWindow) {
+                on = false;
+            }
+            this._isInstrumenting = !!on;
+            if (on) {
+                console.log("SvThrashDetector: instrumenting DOM read/write interleaving (?thrash=1)");
+                this.shared().setEnabled(true);
+                this.shared().startFrameLoop();
+            }
+        }
+        return this._isInstrumenting;
+    }
+
+    /**
+     * @description Reports once per animation frame, which is the unit that
+     * matters: a write followed by a read INSIDE one frame is the interleaving
+     * that forces synchronous layout. Nothing called beginFrame/endFrame before,
+     * so the detector could never report.
+     * @category Frame Management
+     */
+    startFrameLoop () {
+        if (this._frameLoopStarted) {
+            return this;
+        }
+        this._frameLoopStarted = true;
+        const tick = () => {
+            this.endFrame();
+            this.beginFrame();
+            window.requestAnimationFrame(tick);
+        };
+        window.requestAnimationFrame(tick);
+        return this;
+    }
+
+    /**
      * @description Begins a new frame for thrash detection
      * @category Frame Management
      */
@@ -205,8 +256,12 @@
                 if (optionalView) {
                     m = optionalView.svDebugId() + " get " + opName;
                 }
-                const s = this.lastWrite() + " -> " + m;
-                this.triggers().push(s);
+                // The stack is the point: "someView set height -> otherView get
+                // clientHeight" tells you WHAT interleaved, but not which code
+                // did it. Two frames up from here is the caller of the read.
+                const frames = String(new Error().stack || "").split("\n").slice(2, 5)
+                    .map(f => f.trim()).join(" <- ");
+                this.triggers().push(this.lastWrite() + " -> " + m + "\n         at " + frames);
                 this.onThrash();
             }
         }
@@ -247,7 +302,8 @@
      */
     endFrame () {
         if (this.enabled() && this.reflowCount()) {
-            console.log(">>> " +  this.svType() + " reflowCount: ", this.reflowCount() + " triggers: ", JSON.stringify(this.triggers(), null, 2));
+            console.log(">>> " + this.svType() + " forced-layout count this frame: " + this.reflowCount());
+            this.triggers().forEach((t, i) => console.log("      " + (i + 1) + ". " + t));
         }
     }
 
