@@ -204,8 +204,11 @@
             }
             this._isInstrumenting = !!on;
             if (on) {
-                console.log("%c[SvThrashDetector] ARMED — reporting write-then-read pairs per frame."
-                    + " A clean interaction logs nothing.", "color: orange; font-weight: bold");
+                console.warn("[SvThrashDetector] ON (?thrash=1). Reporting DOM write-then-read"
+                    + " interleaving per animation frame, with the reading code's stack."
+                    + " A heartbeat follows every " + (this.shared().heartbeatMs() / 1000)
+                    + "s so you can tell it is alive even when nothing is thrashing."
+                    + " Reload without ?thrash=1 to turn it off.");
                 this.shared().setEnabled(true);
                 this.shared().startFrameLoop();
             }
@@ -305,7 +308,51 @@
      * @description Ends the current frame and logs thrash information if enabled
      * @category Frame Management
      */
+    /**
+     * @description How often the heartbeat reports while armed.
+     * @returns {Number} milliseconds
+     * @category Configuration
+     */
+    heartbeatMs () {
+        return 5000;
+    }
+
+    /**
+     * @description Periodic proof of life while armed.
+     *
+     * Without this, an armed detector and a broken one look identical: both print
+     * nothing when the page is clean. The heartbeat says which — and a window
+     * reporting 0 forced layouts is a real result, not a silence to wonder about.
+     * @category Diagnostics
+     */
+    reportHeartbeatIfDue () {
+        const now = Date.now();
+        if (this._windowStartedAt === undefined) {
+            this._windowStartedAt = now;
+            this._windowFrames = 0;
+            this._windowReflows = 0;
+        }
+        this._windowFrames = (this._windowFrames || 0) + 1;
+        this._windowReflows = (this._windowReflows || 0) + this.reflowCount();
+        if (now - this._windowStartedAt < this.heartbeatMs()) {
+            return this;
+        }
+        const seconds = Math.round((now - this._windowStartedAt) / 100) / 10;
+        const verdict = this._windowReflows === 0
+            ? "no forced layouts — clean"
+            : (this._windowReflows + " forced layout(s)");
+        console.warn("[SvThrashDetector] alive: " + this._windowFrames + " frames in "
+            + seconds + "s, " + verdict);
+        this._windowStartedAt = now;
+        this._windowFrames = 0;
+        this._windowReflows = 0;
+        return this;
+    }
+
     endFrame () {
+        if (this.enabled()) {
+            this.reportHeartbeatIfDue();
+        }
         if (this.enabled() && this.reflowCount()) {
             console.log(">>> " + this.svType() + " forced-layout count this frame: " + this.reflowCount());
             this.triggers().forEach((t, i) => console.log("      " + (i + 1) + ". " + t));

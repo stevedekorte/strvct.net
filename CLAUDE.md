@@ -372,8 +372,11 @@ all of it again to decide a button's visibility, then writing that button's
 ### Verifying
 
 `SvThrashDetector` is wired into the DOM read/write accessors. Load any page with
-**`?thrash=1`** and it reports, once per animation frame, every write-then-read
-pair with the reading code's stack. A clean interaction logs nothing. Use it
+**`?thrash=1`** (anywhere in the url — after the hash is fine) and it reports,
+once per animation frame, every write-then-read pair with the reading code's stack.
+It `console.warn`s that it is ON when it arms, and heartbeats every 5s with either
+"no forced layouts — clean" or a count, so a quiet console is a RESULT rather than
+an ambiguity about whether it is running. Use it
 before claiming a reflow fix works — reasoning about this from source is
 unreliable, which is exactly how the regression above shipped.
 
