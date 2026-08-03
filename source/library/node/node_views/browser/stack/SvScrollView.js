@@ -661,17 +661,55 @@
         if (!this.sticksToBottom()) {
             return this;
         }
-        if (this.isInUserScrollSession() && !this.isAtBottom()) {
+        // READ ONCE, then write. This runs on every content geometry change —
+        // including a keystroke resizing the chat input — and it used to read
+        // scrollHeight/clientHeight/scrollTop (and a computed padding) between a
+        // scrollTop write and a button display write, forcing synchronous layout
+        // several times per event.
+        const geometry = this.scrollGeometry();
+        if (this.isInUserScrollSession() && !this.isAtBottomForGeometry(geometry)) {
             this.scheduleIntentRetry();
             return this;
         }
         if (this.scrollIntent() === "bottom") {
-            this.programmaticScrollTo(this.naturalScrollHeight() - this.element().clientHeight);
+            this.programmaticScrollTo(geometry.naturalHeight - geometry.clientHeight);
         } else {
             this.restoreViewportPosition();
         }
-        this.updateScrollToBottomButton();
+        // The writes above changed scrollTop, so the button decision is made from
+        // the snapshot rather than re-measuring.
+        this.updateScrollToBottomButtonForGeometry(geometry);
         return this;
+    }
+
+    /**
+     * @description One snapshot of everything the intent logic needs, taken in a
+     * single read phase so no write can sit between two reads.
+     * @returns {Object} { scrollTop, clientHeight, scrollHeight, naturalHeight }
+     * @category Calculation
+     */
+    scrollGeometry () {
+        const e = this.element();
+        const scrollTop = e.scrollTop;
+        const clientHeight = e.clientHeight;
+        const scrollHeight = e.scrollHeight;
+        return {
+            scrollTop: scrollTop,
+            clientHeight: clientHeight,
+            scrollHeight: scrollHeight,
+            naturalHeight: scrollHeight - this.anchorPaddingPx() // tracked, not measured
+        };
+    }
+
+    /**
+     * @description isAtBottom() against an existing snapshot.
+     * @param {Object} geometry
+     * @returns {Boolean}
+     * @category Calculation
+     */
+    isAtBottomForGeometry (geometry) {
+        const difference = geometry.naturalHeight - (geometry.scrollTop + geometry.clientHeight);
+        return difference <= this.computeScrollTolerance();
     }
 
     /**
@@ -819,11 +857,39 @@
      * @category Calculation
      */
     anchorPaddingPx () {
-        const contentView = this.contentView();
-        if (!contentView) {
-            return 0;
+        // The tracked value, NOT a computed-style read. This view is the only
+        // writer of that padding (three call sites below), so it can remember
+        // what it set. Reading it back cost a getComputedStyle, and
+        // applyScrollIntent asks for it four times per call — interleaved with a
+        // scrollTop write and a button display write, which is what turned every
+        // content resize into a run of forced layouts. Typing in the chat input
+        // resizes the content, so that ran on keystrokes.
+        if (this._anchorPaddingPx === undefined) {
+            // Measured ONCE, in case a stylesheet set it before we ever did —
+            // reporting 0 for real padding would overstate naturalScrollHeight and
+            // bring back the slam-to-bottom class of bug. Every write after this
+            // goes through setAnchorPaddingPx, so this never measures again.
+            const contentView = this.contentView();
+            this._anchorPaddingPx = contentView ? (parseFloat(contentView.paddingBottom()) || 0) : 0;
         }
-        return parseFloat(contentView.paddingBottom()) || 0;
+        return this._anchorPaddingPx;
+    }
+
+    /**
+     * @description Writes the content view's bottom padding and remembers it, so
+     * anchorPaddingPx() never has to measure.
+     * @param {Number} px
+     * @returns {SvScrollView}
+     * @category DOM
+     */
+    setAnchorPaddingPx (px) {
+        const contentView = this.contentView();
+        const value = Math.max(0, Math.ceil(px || 0));
+        this._anchorPaddingPx = value;
+        if (contentView) {
+            contentView.setPaddingBottom(value + "px");
+        }
+        return this;
     }
 
     /**
@@ -833,9 +899,7 @@
      * @category State
      */
     isAtBottom () {
-        const e = this.element();
-        const difference = this.naturalScrollHeight() - (e.scrollTop + e.clientHeight);
-        return difference <= this.computeScrollTolerance();
+        return this.isAtBottomForGeometry(this.scrollGeometry());
     }
 
     /**
@@ -912,13 +976,22 @@
      * @category UI
      */
     updateScrollToBottomButton () {
+        return this.updateScrollToBottomButtonForGeometry(this.scrollGeometry());
+    }
+
+    /**
+     * @description The button decision from an existing snapshot, so callers that
+     * already measured do not measure again after their own writes.
+     * @param {Object} geometry
+     * @returns {SvScrollView}
+     * @category UI
+     */
+    updateScrollToBottomButtonForGeometry (geometry) {
         const button = this.scrollToBottomButton();
         if (button) {
-            const e = this.element();
-            const naturalHeight = this.naturalScrollHeight();
-            const contentOverflows = naturalHeight > e.clientHeight;
-            const withinContent = (e.scrollTop + e.clientHeight) <= naturalHeight;
-            if (!this.isAtBottom() && contentOverflows && withinContent) {
+            const contentOverflows = geometry.naturalHeight > geometry.clientHeight;
+            const withinContent = (geometry.scrollTop + geometry.clientHeight) <= geometry.naturalHeight;
+            if (!this.isAtBottomForGeometry(geometry) && contentOverflows && withinContent) {
                 button.showButton();
             } else {
                 button.hideButton();
@@ -970,7 +1043,7 @@
     applyAnchorPadding () {
         const contentView = this.contentView();
         if (contentView) {
-            contentView.setPaddingBottom(this.element().clientHeight + "px");
+            this.setAnchorPaddingPx(this.element().clientHeight);
         }
         return this;
     }
@@ -1017,7 +1090,7 @@
         const naturalHeight = e.scrollHeight - currentPadding;
         const needed = Math.max(0, (e.scrollTop + e.clientHeight) - naturalHeight);
         if (needed < currentPadding) {
-            contentView.setPaddingBottom(Math.ceil(needed) + "px");
+            this.setAnchorPaddingPx(needed);
         }
         return this;
     }
@@ -1030,7 +1103,7 @@
     clearAnchorPadding () {
         const contentView = this.contentView();
         if (contentView && this.anchorPaddingPx() !== 0) {
-            contentView.setPaddingBottom("0px");
+            this.setAnchorPaddingPx(0);
         }
         return this;
     }
