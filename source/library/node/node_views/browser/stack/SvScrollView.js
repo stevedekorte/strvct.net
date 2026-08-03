@@ -520,16 +520,20 @@
      * @category Event Handling
      */
     onScroll (/*event*/) {
-        this.logScrollJumpIfNeeded();
+        // ONE snapshot for the whole handler: the jump diagnostic and the
+        // at-bottom test both need the same numbers, and re-reading them after
+        // any write in between forces layout.
+        const geometry = this.scrollGeometry();
+        this.logScrollJumpIfNeeded(geometry);
         if (!this.sticksToBottom()) {
             return;
         }
         const now = performance.now();
         this.purgeStalePendingScrolls(now);
-        if (!this.consumePendingProgrammaticScroll() && !this.isSmoothScrollingToBottomStill()) {
+        if (!this.consumePendingProgrammaticScroll(geometry) && !this.isSmoothScrollingToBottomStill()) {
             if (now <= this.userScrollSessionUntil()) {
                 this.setUserScrollSessionUntil(now + this.scrollSessionExtendMs());
-                this.updateIntentFromUserScroll();
+                this.updateIntentFromUserScroll(geometry);
             }
             // else: foreign scroll (e.g. browser-native focus scrolling) —
             // change nothing; the current intent re-asserts on the next
@@ -561,9 +565,9 @@
      * @returns {Boolean} Whether this scroll event was one of our own writes.
      * @category Event Handling
      */
-    consumePendingProgrammaticScroll () {
+    consumePendingProgrammaticScroll (geometry) {
         const pending = this.pendingProgrammaticScrolls();
-        const top = this.element().scrollTop;
+        const top = geometry ? geometry.scrollTop : this.element().scrollTop;
         const index = pending.findIndex((entry) => Math.abs(entry.top - top) <= 1);
         if (index === -1) {
             return false;
@@ -594,14 +598,15 @@
      * @returns {SvScrollView} The SvScrollView instance.
      * @category State
      */
-    updateIntentFromUserScroll () {
-        if (this.isAtBottom()) {
+    updateIntentFromUserScroll (geometry) {
+        const g = geometry || this.scrollGeometry();
+        if (this.isAtBottomForGeometry(g)) {
             if (this.scrollIntent() !== "bottom" || this.isAnchored()) {
                 this.pinToBottom();
             }
         } else {
             this.setScrollIntent("preserve");
-            this.deriveViewportRef();
+            this.deriveViewportRef(g);
         }
         return this;
     }
@@ -671,14 +676,17 @@
             this.scheduleIntentRetry();
             return this;
         }
+        let scrollTopAfter = geometry.scrollTop;
         if (this.scrollIntent() === "bottom") {
-            this.programmaticScrollTo(geometry.naturalHeight - geometry.clientHeight);
+            scrollTopAfter = this.programmaticScrollTo(geometry.naturalHeight - geometry.clientHeight, geometry);
         } else {
-            this.restoreViewportPosition();
+            scrollTopAfter = this.restoreViewportPosition(geometry);
         }
-        // The writes above changed scrollTop, so the button decision is made from
-        // the snapshot rather than re-measuring.
-        this.updateScrollToBottomButtonForGeometry(geometry);
+        // The button decision uses the position we just WROTE, not a re-read: the
+        // pre-write snapshot would be stale (showing the button for a frame after
+        // pinning to the bottom), and re-measuring would force layout.
+        this.updateScrollToBottomButtonForGeometry(
+            Object.assign({}, geometry, { scrollTop: scrollTopAfter }));
         return this;
     }
 
@@ -737,13 +745,31 @@
      * @returns {SvScrollView} The SvScrollView instance.
      * @category Scrolling
      */
-    programmaticScrollTo (target) {
+    programmaticScrollTo (target, geometry) {
         const e = this.element();
-        const clamped = Math.max(0, Math.min(target, e.scrollHeight - e.clientHeight));
-        if (Math.abs(e.scrollTop - clamped) >= 1) {
+        // Reuse the caller's snapshot when it has one: measuring here after the
+        // caller's own writes is how a single scroll adjustment turned into
+        // several forced layouts.
+        const g = geometry || this.scrollGeometry();
+        const clamped = Math.max(0, Math.min(target, g.scrollHeight - g.clientHeight));
+        if (Math.abs(g.scrollTop - clamped) >= 1) {
             e.scrollTop = clamped;
-            this.pendingProgrammaticScrolls().push({ top: e.scrollTop, at: performance.now() });
+            this.pendingProgrammaticScrolls().push({ top: clamped, at: performance.now() });
+            this.setLastWrittenScrollTop(clamped);
+            return clamped;
         }
+        return g.scrollTop; // unchanged
+    }
+
+    /**
+     * @description The scrollTop this view last wrote, so post-write decisions can
+     * use it instead of reading the DOM back.
+     * @param {Number} v
+     * @returns {SvScrollView}
+     * @category State
+     */
+    setLastWrittenScrollTop (v) {
+        this._lastWrittenScrollTop = v;
         return this;
     }
 
@@ -757,12 +783,15 @@
      * @returns {SvScrollView} The SvScrollView instance.
      * @category State
      */
-    deriveViewportRef () {
+    deriveViewportRef (geometry) {
         const contentView = this.contentView();
         if (!contentView) {
             return this;
         }
-        const scrollTop = this.element().scrollTop;
+        // The per-tile offsetTop/offsetHeight reads below are unavoidable — finding
+        // the reference tile IS a measurement — but scrollTop comes from the
+        // caller's snapshot so this never re-reads it after a write.
+        const scrollTop = geometry ? geometry.scrollTop : this.element().scrollTop;
         const tiles = contentView.subviews();
         for (let i = 0; i < tiles.length; i++) {
             const te = tiles[i].element();
@@ -818,24 +847,24 @@
      * @returns {SvScrollView} The SvScrollView instance.
      * @category Scrolling
      */
-    restoreViewportPosition () {
+    restoreViewportPosition (geometry) {
+        const g = geometry || this.scrollGeometry();
         const tile = this.viewportRefTile();
         if (!tile) {
             if (this.contentHasConnectedTiles()) {
                 this.deriveViewportRef();
             }
-            return this;
+            return g.scrollTop;
         }
-        const e = this.element();
+        // The one unavoidable read here: which tile is the reference and where it
+        // sits. Everything else comes from the snapshot.
         const target = tile.element().offsetTop - this.viewportRefOffset();
-        const clamped = Math.max(0, Math.min(target, e.scrollHeight - e.clientHeight));
-        if (Math.abs(e.scrollTop - clamped) > 1) {
-            // TEMP diagnostic for chat scroll jumps
-            console.log("[ScrollDebug] " + this.svTypeId() + ".restoreViewportPosition() " + e.scrollTop + " -> " + clamped +
+        const clamped = Math.max(0, Math.min(target, g.scrollHeight - g.clientHeight));
+        if (this.isScrollDebugging() && Math.abs(g.scrollTop - clamped) > 1) {
+            console.log("[ScrollDebug] " + this.svTypeId() + ".restoreViewportPosition() " + g.scrollTop + " -> " + clamped +
                 " (ref " + this.viewportRefNode().svTypeId() + " offset " + this.viewportRefOffset() + ")");
         }
-        this.programmaticScrollTo(target);
-        return this;
+        return this.programmaticScrollTo(target, g);
     }
 
     // --- position measurements ---
@@ -1014,12 +1043,17 @@
     anchorOnSubview (aSubview) {
         if (aSubview) {
             this.applyAnchorPadding();
-            this.programmaticScrollTo(aSubview.element().offsetTop);
-            // TEMP diagnostic for chat scroll jumps
-            console.log("[ScrollDebug] " + this.svTypeId() + ".anchorOnSubview(" + aSubview.svTypeId() + ")" +
-                " offsetTop " + aSubview.element().offsetTop +
-                " -> scrollTop " + this.element().scrollTop +
-                " (scrollHeight " + this.element().scrollHeight + ", clientHeight " + this.element().clientHeight + ")");
+            const offsetTop = aSubview.element().offsetTop; // read once
+            const wrote = this.programmaticScrollTo(offsetTop);
+            if (this.isScrollDebugging()) {
+                // Gated, and built from values already in hand. Ungated, this log
+                // measured offsetTop AGAIN plus scrollTop, scrollHeight and
+                // clientHeight — four reads immediately after the scrollTop write
+                // above, which forces synchronous layout every time a message is
+                // anchored.
+                console.log("[ScrollDebug] " + this.svTypeId() + ".anchorOnSubview(" + aSubview.svTypeId() + ")" +
+                    " offsetTop " + offsetTop + " -> scrollTop " + wrote);
+            }
             if (aSubview.node && aSubview.node()) {
                 this.setViewportRefNode(aSubview.node());
                 this.setViewportRefOffset(0);
@@ -1061,8 +1095,9 @@
         if (!this.isAnchored()) {
             return this;
         }
-        // TEMP diagnostic for chat scroll jumps
-        console.log("[ScrollDebug] " + this.svTypeId() + ".releaseAnchor() scrollTop " + this.element().scrollTop);
+        if (this.isScrollDebugging()) {
+            console.log("[ScrollDebug] " + this.svTypeId() + ".releaseAnchor() scrollTop " + this.element().scrollTop);
+        }
         this.setIsAnchored(false);
         this.reduceAnchorPaddingSafely();
         if (this.isAtBottom()) {
@@ -1118,9 +1153,13 @@
      * @returns {SvScrollView} The SvScrollView instance.
      * @category Diagnostics
      */
-    logScrollJumpIfNeeded () {
-        const e = this.element();
+    logScrollJumpIfNeeded (geometry) {
         const last = this.jumpLogLastScrollTop();
+        // Uses the caller's snapshot. Measuring here would add two reads to every
+        // scroll event just to decide whether to log — and onScroll goes on to
+        // measure the same values anyway.
+        const e = { scrollTop: geometry.scrollTop, clientHeight: geometry.clientHeight,
+            scrollHeight: geometry.scrollHeight };
         if (last !== null && Math.abs(e.scrollTop - last) > e.clientHeight) {
             console.log("[ScrollDebug] " + this.svTypeId() + " JUMP " + last + " -> " + e.scrollTop +
                 " (scrollHeight " + e.scrollHeight + ", clientHeight " + e.clientHeight +

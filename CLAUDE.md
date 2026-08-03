@@ -322,6 +322,65 @@ class ConfigObject extends SvStorableNode {
   - Node hierarchy changes
   - View updates
 
+## DOM Reads and Writes: never interleave them (CRITICAL for view code)
+
+Reading geometry after writing to the DOM, in the same synchronous block, forces
+the browser to lay out immediately. Do it a few times in one event handler and a
+keystroke costs hundreds of milliseconds.
+
+This has bitten us for real: typing in a multiplayer client became unusable, with
+**eight Forced Layouts inside a single Key Up event (637ms)**. The cause was
+`SvScrollView.applyScrollIntent()` — reached from a ResizeObserver, so it ran when
+typing resized the chat input — reading `scrollHeight` / `clientHeight` /
+`scrollTop` / a computed `padding-bottom`, then writing `scrollTop`, then reading
+all of it again to decide a button's visibility, then writing that button's
+`display`.
+
+### The rules
+
+1. **Snapshot, then write.** Take every measurement you need up front, into
+   locals or a small object, then perform the writes. Never call a method that
+   measures after you have written. If a helper needs geometry, give it the
+   snapshot — add a `(geometry)` parameter rather than letting it measure again.
+2. **Never measure a value you own.** If this view is the only writer of a style,
+   track what it set. `anchorPaddingPx()` used to read back a `padding-bottom`
+   that the scroll view itself had written — a `getComputedStyle` call, four times
+   per invocation, for a number it already knew.
+3. **Know what counts as a read.** Not just `element().scrollTop` — the framework
+   accessors (`clientHeight()`, `offsetTop()`, `scrollHeight()`,
+   `boundingClientRect()`) all measure, and so does anything routed through
+   `getCssProperty()` (`paddingBottom()`, `display()`, …) because that calls
+   `getComputedStyle`. `getAttribute()` measures too.
+4. **A log line that mentions geometry IS a read.** Building the string measures,
+   whether or not the message ends up printed. Gate the whole statement:
+
+   ```javascript
+   if (this.isScrollDebugging()) {                    // gate FIRST
+       console.log("scrollTop " + e.scrollTop);       // read only when logging
+   }
+   ```
+
+   And prefer values already in hand over re-measuring for the message.
+5. **Treat ResizeObserver, scroll and input handlers as hot paths.** They fire per
+   frame or per keystroke. A write inside a ResizeObserver callback that changes
+   size re-triggers the observer — check for that feedback loop.
+6. **Diagnostics are not exempt, and rewrites reinstate them.** The ScrollDebug
+   logs were made opt-in on 2026-07-16 and came back ungated in the 2026-07-29
+   rewrite of the same file. When you rewrite a file, re-check the fixes that were
+   already applied to it.
+
+### Verifying
+
+`SvThrashDetector` is wired into the DOM read/write accessors. Load any page with
+**`?thrash=1`** and it reports, once per animation frame, every write-then-read
+pair with the reading code's stack. A clean interaction logs nothing. Use it
+before claiming a reflow fix works — reasoning about this from source is
+unreliable, which is exactly how the regression above shipped.
+
+Note the detector only sees reads that go through the framework accessors. Direct
+`element().scrollTop` style access bypasses it, so prefer the accessors in new
+code.
+
 ## Notification System Details
 
 - Central to framework's reactivity and component communication
