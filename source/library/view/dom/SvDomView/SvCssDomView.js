@@ -3105,7 +3105,10 @@
      * @category Reflow
      */
     didDomRead (opName) {
-        if (SvThrashDetector.isInstrumenting()) {
+        // typeof guard: this fires during boot, possibly before the detector class
+        // has been evaluated. An undefined reference here would be a ReferenceError
+        // inside every DOM read — i.e. a blank app.
+        if (typeof SvThrashDetector !== "undefined" && SvThrashDetector.isInstrumenting()) {
             SvThrashDetector.shared().didRead(opName, this);
         }
         return this;
@@ -3118,7 +3121,7 @@
      * @category Reflow
      */
     didDomWrite (opName) {
-        if (SvThrashDetector.isInstrumenting()) {
+        if (typeof SvThrashDetector !== "undefined" && SvThrashDetector.isInstrumenting()) {
             SvThrashDetector.shared().didWrite(opName, this);
         }
         return this;

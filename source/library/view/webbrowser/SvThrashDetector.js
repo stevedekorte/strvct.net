@@ -193,14 +193,19 @@
         if (this._isInstrumenting === undefined) {
             let on = false;
             try {
+                // Check the WHOLE url, not just location.search. This app routes on
+                // the hash (/play#Uo/My%20Sessions/...), so a "?thrash=1" typed at
+                // the end of a url lands in the FRAGMENT and never appears in
+                // location.search — which made the flag look broken.
                 on = (typeof window !== "undefined") && window.location
-                    && String(window.location.search || "").includes("thrash=1");
+                    && String(window.location.href || "").includes("thrash=1");
             } catch (noWindow) {
                 on = false;
             }
             this._isInstrumenting = !!on;
             if (on) {
-                console.log("SvThrashDetector: instrumenting DOM read/write interleaving (?thrash=1)");
+                console.log("%c[SvThrashDetector] ARMED — reporting write-then-read pairs per frame."
+                    + " A clean interaction logs nothing.", "color: orange; font-weight: bold");
                 this.shared().setEnabled(true);
                 this.shared().startFrameLoop();
             }
