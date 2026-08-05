@@ -25,7 +25,12 @@ html, body {
     -webkit-font-smoothing: subpixel-antialiased;
     font-smooth: always;
 
-    /* text-size-adjust fixes issue with contenteditable fonts being tiny */
+    /* text-size-adjust fixes issue with contenteditable fonts being tiny,
+       and disables mobile Safari's per-block text autosizing (which inflated
+       long text blocks like narration — changing sizes on rotation and while
+       streaming). Safari only honors the -webkit- prefixed form. */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
     text-size-adjust: 100%;
 
 
