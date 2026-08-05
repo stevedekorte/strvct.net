@@ -88,33 +88,7 @@
     }
 
 
-    /**
-     * @description Applies the node's height hint (nodeMinTileHeight) as a
-     * true MINIMUM: the tile starts compact — replacing SvFieldTile's 5em
-     * floors, which left large dead bands above and below a one-line input —
-     * and still grows with the typed text. Growth is capped by the value
-     * view's max height (see createValueView); past that the editor scrolls.
-     * This tile applies the hint ITSELF and it must stay that way: SvTile
-     * ignores nodeMinTileHeight, and honoring it globally breaks every tile,
-     * because SvViewableNode.finalInit() stamps 80 onto every node — titled
-     * tiles (roll messages, headers, companion sheet) get clipped to a fixed
-     * 80px.
-     * @returns {SvChatInputTile} The current instance.
-     * @category Layout
-     */
-    updateSubviews () {
-        super.updateSubviews();
-        const node = this.node();
-        if (node) {
-            const h = node.nodeMinTileHeight();
-            if (h > 0) {
-                this.setMinHeightPx(h);
-                this.setMaxHeight("none");
-                this.contentView().setMinHeightPx(h);
-            }
-        }
-        return this;
-    }
+    // nodeMinTileHeight min-only application inherited from SvChatMessageTile.
 
     /**
      * @description Creates and configures the value view.

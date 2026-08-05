@@ -700,6 +700,20 @@
     }
 
     /**
+     * @description The minimum tile height applied by makeOrientationRight.
+     * Overridable: syncFromNode runs updateSubviews THEN syncOrientation, so
+     * a subclass that sets its own minimum in updateSubviews gets overwritten
+     * here on every full sync (while selection paths run updateSubviews
+     * alone) — the tile height then flips with selection state. Subclasses
+     * with a custom minimum (SvChatMessageTile) override this so both paths
+     * agree.
+     * @returns {String} The CSS min-height value.
+     */
+    orientationMinHeight () {
+        return "5em";
+    }
+
+    /**
      * @description Makes the orientation right.
      */
     makeOrientationRight () {
@@ -708,7 +722,7 @@
         this.setDisplay("inline-block");
 
         this.setMinAndMaxWidth("100%");
-        this.setMinHeight("5em");
+        this.setMinHeight(this.orientationMinHeight());
         this.setHeight("fit-content");
         this.setMaxHeight(null);
 

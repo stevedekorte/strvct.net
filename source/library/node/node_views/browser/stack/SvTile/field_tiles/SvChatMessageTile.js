@@ -196,6 +196,50 @@
     }
 
     /**
+     * @description Applies the node's height hint (nodeMinTileHeight) as a
+     * true MINIMUM: chat tiles hug their text — replacing SvFieldTile's 5em
+     * tile/contentView floors, which left dead bands above and below short
+     * messages — while still growing with the content. Chat tiles apply the
+     * hint THEMSELVES and it must stay that way: SvTile ignores
+     * nodeMinTileHeight, and honoring it globally breaks every tile, because
+     * SvViewableNode.finalInit() stamps 80 onto every node — titled tiles
+     * (roll messages, headers, companion sheet) get clipped to a fixed 80px.
+     * Chat message/input nodes override nodeMinTileHeight() to return a
+     * compact constant.
+     * @returns {SvChatMessageTile} The current instance.
+     * @category Layout
+     */
+    updateSubviews () {
+        super.updateSubviews();
+        const node = this.node();
+        if (node) {
+            const h = node.nodeMinTileHeight();
+            if (h > 0) {
+                this.setMinHeightPx(h);
+                this.setMaxHeight("none");
+                this.contentView().setMinHeightPx(h);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * @description Keeps makeOrientationRight (which runs AFTER
+     * updateSubviews on every full sync) in agreement with the compact
+     * minimum above — otherwise the tile's height flips between 5em and the
+     * hint depending on which sync path ran last (visible as messages
+     * changing height when selected/deselected).
+     * @returns {String} The CSS min-height value.
+     */
+    orientationMinHeight () {
+        const node = this.node();
+        if (node && node.nodeMinTileHeight() > 0) {
+            return this.pxNumberToString(node.nodeMinTileHeight());
+        }
+        return super.orientationMinHeight();
+    }
+
+    /**
      * @description Synchronizes the tile with its node.
      * @returns {SvChatInputTile} The current instance.
      * @category Synchronization

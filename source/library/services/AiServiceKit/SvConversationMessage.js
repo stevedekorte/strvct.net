@@ -284,6 +284,20 @@
     }
 
     /**
+   * Chat messages request a compact tile: a one-line height so short
+   * messages hug their text instead of sitting in SvFieldTile's 5em
+   * minimum (SvChatMessageTile applies this as a true minimum — tiles
+   * still grow with the content). A constant (not a slot fallback)
+   * because SvViewableNode.finalInit() stamps 80 into the stored slot on
+   * every load, so the stored value can never carry a per-node setting.
+   * @returns {number} - The requested tile height in px
+   * @category Layout
+   */
+    nodeMinTileHeight () {
+        return 48;
+    }
+
+    /**
    * Create a message ID if it doesn't exist.
 
    * @category Initialization
