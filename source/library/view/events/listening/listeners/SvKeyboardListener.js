@@ -40,6 +40,12 @@
         //this.addEventNameAndMethodName("keypress", "onKeyPress"); // deprecated in modern browsers
         //this.addEventNameAndMethodName("change", "onChange");
         this.addEventNameAndMethodName("input", "onInput");
+        // beforeinput reports the edit INTENT (event.inputType, e.g.
+        // "insertParagraph") before the DOM changes. Software keyboards
+        // (iOS Safari) don't reliably deliver Enter as keyCode 13 key events,
+        // so intent-based handlers need this channel. Only delegates that
+        // implement onBeforeInput are registered (delegateCanRespond).
+        this.addEventNameAndMethodName("beforeinput", "onBeforeInput").setIsUserInteraction(true);
         return this;
     }
 

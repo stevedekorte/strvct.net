@@ -995,6 +995,30 @@
     }
 
     /**
+     * @description On before input. Submit-on-return for software keyboards:
+     * iOS Safari's on-screen keyboard often doesn't deliver Return as clean
+     * key events (keyup may not fire; keydown arrives as keyCode 229 while
+     * autocorrect composition is active), so the onEnterKeyUp path never
+     * runs and Return just inserts a newline. beforeinput reports the intent
+     * ("insertParagraph") reliably on every platform. No double send on
+     * desktop: there onKeyDown sees keyCode 13 and preventDefaults it, which
+     * suppresses the beforeinput event entirely — the two paths are mutually
+     * exclusive per keystroke. Shift+Enter arrives as "insertLineBreak" and
+     * passes through untouched.
+     * @param {Event} event - The InputEvent (has inputType).
+     * @returns {Boolean} False if the event was consumed.
+     */
+    onBeforeInput (event) {
+        if (event.inputType === "insertParagraph" && (this.isSingleLine() || this.doesInput())) {
+            event.preventDefault();
+            this.formatValue();
+            this.afterEnter();
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * @description On input.
      * @param {Event} event - The event.
      * @returns {void}
