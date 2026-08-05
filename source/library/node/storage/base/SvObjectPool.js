@@ -1146,14 +1146,54 @@
     // --- reading ---
 
     /**
-     * @description get the className conversion map
+     * @description The className conversion map, SHARED BY EVERY POOL.
+     *
+     * A rename is a fact about the codebase's history, not a property of one
+     * pool, so there is exactly one map and it does not matter which pool an
+     * app registers renames on.
+     *
+     * It was per-instance, and the app registers renames on the shared
+     * persistent pool only — so every SvSubObjectPool (cloud nodes, sessions)
+     * resolved class names against an EMPTY map. A renamed class then loaded
+     * fine from the local store and came back `null` from a cloud record, whose
+     * nulls are then "repaired" out of the subnodes array: silent data loss on
+     * the cloud path, once per boot. The JSON layer already got this right
+     * (SvJsonIdNode.jsonTypeRenameMap is static), which is exactly why cloud
+     * JSON followed renames while cloud RECORDS did not.
+     *
+     * Deliberately keyed off SvObjectPool itself rather than `this` — a static
+     * touched through a subclass would give each subclass its own map and
+     * reintroduce the same bug one level up.
      * @returns {Map}
      */
     classNameConversionMap () {
-        if (!this._classNameConversionMap) {
-            this._classNameConversionMap = new Map();
+        return SvObjectPool.sharedClassNameConversionMap();
+    }
+
+    /**
+     * @description The one conversion map. See classNameConversionMap().
+     * @returns {Map}
+     */
+    static sharedClassNameConversionMap () {
+        if (!SvObjectPool._classNameConversionMap) {
+            SvObjectPool._classNameConversionMap = new Map();
         }
-        return this._classNameConversionMap;
+        return SvObjectPool._classNameConversionMap;
+    }
+
+    /**
+     * @description Class-side registration, so renames can be declared before
+     * (or without) any pool existing.
+     * @param {String} oldName
+     * @param {String} newName
+     * @returns {Class}
+     */
+    static addClassNameConversion (oldName, newName) {
+        this.sharedClassNameConversionMap().set(oldName, newName);
+        if (typeof SvJsonIdNode !== "undefined" && SvJsonIdNode.addJsonTypeRename) {
+            SvJsonIdNode.addJsonTypeRename(oldName, newName); // keep the JSON layer in step
+        }
+        return this;
     }
 
     /**
