@@ -105,6 +105,20 @@
     */
 
     /**
+   * The chat input requests a compact tile: a one-line height so the tile
+   * hugs the input text instead of sitting in SvFieldTile's 5em minimum.
+   * A constant (not a slot fallback) because SvViewableNode.finalInit()
+   * stamps 80 into the stored slot on every load, so the stored value can
+   * never carry a meaningful per-node setting. SvChatInputTile applies this
+   * as a true minimum — the tile still grows with multiline text.
+   * @returns {number} - The requested tile height in px
+   * @category Layout
+   */
+    nodeMinTileHeight () {
+        return 48;
+    }
+
+    /**
    * Set the value of the chat input
    * @param {string} v - The value to set
    * @returns {SvChatInputNode} - Returns this instance
