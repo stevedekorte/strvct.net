@@ -99,14 +99,14 @@
             /** @member {string} editableColor
              * @description The color for editable text.
              */
-            const slot = this.newSlot("editableColor", "#aaa");
+            const slot = this.newSlot("editableColor", "var(--sv-text-editable, #aaa)");
             slot.setSlotType("String");
         }
         {
             /** @member {string} uneditableColor
              * @description The color for uneditable text.
              */
-            const slot = this.newSlot("uneditableColor", "#888");
+            const slot = this.newSlot("uneditableColor", "var(--sv-text-uneditable, #888)");
             slot.setSlotType("String");
         }
         {

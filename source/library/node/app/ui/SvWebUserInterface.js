@@ -216,8 +216,13 @@
      */
     setupDocTheme () {
         const doc = SvDocumentBody.shared();
-        doc.setColor("#f4f4ec");
-        doc.setBackgroundColor("rgb(25, 25, 25)");
+        // Token-indirected: these write INLINE styles on <body>, which beat
+        // every stylesheet rule — expressing them as var() lets a theme
+        // restyle the document while the fallbacks preserve the default look.
+        // (The old literal #f4f4ec inline color leaked into themed borders as
+        // currentColor; the literal #191919 background made theme backgrounds
+        // impossible to apply.)
+        doc.setColor("var(--sv-text, #f4f4ec)");
         this.setupNormalDocTheme();
     }
 
@@ -227,8 +232,8 @@
      */
     setupNormalDocTheme () {
         const doc = SvDocumentBody.shared();
-        doc.setBackgroundColor("#191919");
-        doc.setFontFamily("HoeflerTitling");
+        doc.setBackgroundColor("var(--sv-bg, #191919)");
+        doc.setFontFamily("var(--sv-font, HoeflerTitling)");
 
         //doc.setFontFamily("EB Garamond");
         //doc.setFontFamily("IMFellEnglish");

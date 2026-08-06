@@ -85,8 +85,28 @@
      * @description Returns an array of valid color values.
      * @returns {string[]} Array of valid color values.
      */
+    /**
+     * @static
+     * @description Theme-token color values used by the default states
+     * (setupAsDefault*State). These MUST be members of validColors: slot
+     * values outside validValues get coerced back to the init value
+     * ("inherit") by the options-field machinery, which silently erased
+     * the token indirection and left the selected state styleless in
+     * every theme (probe-diagnosed 2026-08-06).
+     * @returns {string[]} Array of token color values.
+     */
+    static themeTokenColors () {
+        return [
+            "var(--sv-text, #bbb)",
+            "var(--sv-text-muted, #ccc)",
+            "var(--sv-text-selected, white)",
+            "var(--sv-selection-bg, #222)",
+            "var(--sv-selection-active-bg, #333)"
+        ];
+    }
+
     static validColors () {
-        return ["inherit", "", "transparent", "white", "black", "#000", "#111", "rgb(25, 25, 25)", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#aaa", "#bbb", "#ccc", "#ddd", "#fff"];
+        return ["inherit", "", "transparent", "white", "black", "#000", "#111", "rgb(25, 25, 25)", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#aaa", "#bbb", "#ccc", "#ddd", "#fff"].concat(this.themeTokenColors());
     }
 
     /**
@@ -665,10 +685,11 @@
      * @returns {SvThemeState} The instance.
      */
     setupAsDefaultActiveState () {
-        //this.setColor("white");
-        //this.setBackgroundColor("#333");
-        this.setThemeAttribute("color", "white");
-        this.setThemeAttribute("backgroundColor", "#333");
+        // var() token indirection: the fallback IS the default look; a theme
+        // stylesheet (see the app's theme tokens) can redefine the --sv-*
+        // token to restyle every tile without touching the theme records.
+        this.setThemeAttribute("color", "var(--sv-text-selected, white)");
+        this.setThemeAttribute("backgroundColor", "var(--sv-selection-active-bg, #333)");
         //this.setThemeAttribute("fontWeight", "normal");
     }
 
@@ -677,7 +698,7 @@
      * @returns {SvThemeState} The instance.
      */
     setupAsDefaultUnselectedState () {
-        this.setThemeAttribute("color", "#bbb");
+        this.setThemeAttribute("color", "var(--sv-text, #bbb)");
         this.setThemeAttribute("backgroundColor", "transparent");
         //this.setThemeAttribute("fontWeight", "normal");
     }
@@ -687,8 +708,8 @@
      * @returns {SvThemeState} The instance.
      */
     setupAsDefaultSelectedState () {
-        this.setThemeAttribute("color", "white");
-        this.setThemeAttribute("backgroundColor", "#222");
+        this.setThemeAttribute("color", "var(--sv-text-selected, white)");
+        this.setThemeAttribute("backgroundColor", "var(--sv-selection-bg, #222)");
         //this.setThemeAttribute("fontWeight", "normal");
     }
 
@@ -697,7 +718,7 @@
      * @returns {SvThemeState} The instance.
      */
     setupAsDefaultDisabledState () {
-        this.setThemeAttribute("color", "#ccc");
+        this.setThemeAttribute("color", "var(--sv-text-muted, #ccc)");
         //this.setThemeAttribute("backgroundColor", "transparent");
         //this.setThemeAttribute("fontWeight", "normal");
 

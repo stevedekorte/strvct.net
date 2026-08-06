@@ -16,7 +16,7 @@ html, body {
     margin: 0px;
     border: 0px;
 
-    background-color: black;
+    background-color: var(--sv-bg, black);
     zoom: 100%;
 
     font-size: 20px;
@@ -66,6 +66,16 @@ html * {
 
 * {
     overflow: hidden;
+}
+
+/* Programmatically-focused views must not draw the browser focus ring:
+   tiles use tabIndex -1 + element.focus() to route keyboard events on
+   selection, which painted a blue outline around the selected tile at
+   boot. Selection is conveyed by the themed tile background instead.
+   Keyboard-tabbable controls (tabindex >= 0, inputs) keep their rings. */
+[tabindex="-1"]:focus,
+[tabindex="-1"]:focus-visible {
+    outline: none;
 }
 
 /* avoid outlines */

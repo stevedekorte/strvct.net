@@ -10,6 +10,41 @@
 (class SvDefaultTheme extends SvTheme {
 
     /**
+     * @static
+     * @description The version of the built-in default theme values. Bump
+     * this when the setupAsDefault* values change (SvThemeState defaults,
+     * theme class structure) — the theme tree is STORED, so without a bump
+     * existing stores keep the old values forever and only fresh stores see
+     * the new defaults. Bumping rebuilds the default theme on next load
+     * (discarding any inspector customizations of it).
+     * @returns {number} The defaults version.
+     * @category Versioning
+     */
+    static defaultsVersion () {
+        // 2: state colors express --sv-* token indirection
+        // 3: token colors admitted to validColors — v2's rebuild had them
+        //    coerced back to "inherit" by options-field validation, leaving
+        //    the selected state styleless in every theme
+        return 3;
+    }
+
+    /**
+     * @description Initializes the prototype slots.
+     * @category Initialization
+     */
+    initPrototypeSlots () {
+        /**
+         * @member {number} setupVersion - defaultsVersion at last setup.
+         * @category Versioning
+         */
+        {
+            const slot = this.newSlot("setupVersion", 0);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Number");
+        }
+    }
+
+    /**
      * @description Initializes the SvDefaultTheme instance.
      * @returns {SvDefaultTheme} The initialized instance.
      * @category Initialization
@@ -25,6 +60,9 @@
      */
     finalInit () {
         super.finalInit();
+        if (this.setupVersion() !== this.thisClass().defaultsVersion()) {
+            this.removeAllSubnodes(); // stale stored defaults — rebuild below
+        }
         this.setupAsDefault();
     }
 
@@ -39,6 +77,7 @@
             this.setTitle("DefaultTheme");
             const defaultThemeClass = SvThemeClass.clone().setupAsDefault();
             this.addSubnode(defaultThemeClass);
+            this.setSetupVersion(this.thisClass().defaultsVersion());
         }
         return this;
     }

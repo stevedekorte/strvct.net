@@ -141,8 +141,10 @@
         const icon = SvgIconView.clone(); //.setElementClassName("RightActionView")
         icon.setMinAndMaxWidth(12);
         icon.setMinAndMaxHeight(15);
-        icon.setFillColor("white");
-        icon.setStrokeColor("white");
+        // redundant with SvgIconView's defaults, but kept explicit: themed
+        // via --sv-icon-color so light themes get ink icons
+        icon.setFillColor("var(--sv-icon-color, white)");
+        icon.setStrokeColor("var(--sv-icon-color, white)");
         icon.setOpacity(1);
         icon.hideDisplay();
         this.setIconView(this.addSubview(icon));

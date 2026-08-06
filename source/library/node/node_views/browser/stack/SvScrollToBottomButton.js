@@ -60,8 +60,8 @@
         this.setMinAndMaxWidth(44);
         this.setMinAndMaxHeight(44);
         this.setBorderRadius("50%");
-        this.setBackgroundColor("rgba(255, 255, 255, 0.15)");
-        this.setBoxShadow("0 2px 8px rgba(0, 0, 0, 0.3)");
+        this.setBackgroundColor("var(--sv-scroll-button-bg, rgba(255, 255, 255, 0.15))");
+        this.setBoxShadow("var(--sv-scroll-button-shadow, 0 2px 8px rgba(0, 0, 0, 0.3))");
         this.setCssProperty("backdrop-filter", "blur(8px)");
         this.setCursor("pointer");
         this.setOpacity(0);
@@ -71,8 +71,8 @@
         const iv = SvgIconView.clone().setIconName("down");
         iv.setMinAndMaxWidth(18);
         iv.setMinAndMaxHeight(18);
-        iv.setFillColor("white");
-        iv.setStrokeColor("white");
+        iv.setFillColor("var(--sv-icon-color, white)");
+        iv.setStrokeColor("var(--sv-icon-color, white)");
         iv.setOpacity(0.9);
         iv.makeFlexAndCenterContent();
         this.setIconView(iv);
