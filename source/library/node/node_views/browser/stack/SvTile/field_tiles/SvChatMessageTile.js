@@ -145,31 +145,28 @@
         v.setMargin("0em");
         v.setOverflowX("hidden");
         v.setOverflowY("scroll");
-        v.setBackgroundColor("rgba(255, 255, 255, 0.05)");
-        v.setBorder("1px solid rgba(255, 255, 255, 0.02)");
-        v.setBorderRadius("0.4em");
-        v.setPaddingTop("0.4em");
-        v.setPaddingLeft("0.4em");
-        v.setPaddingRight("0.4em");
-        v.setPaddingBottom("0.4em");
 
-        v.setPaddingTop("0.4em");
-        v.setPaddingBottom("0.4em");
-        v.setPaddingLeft("0.8em");
-        v.setPaddingRight("0.8em");
+        // The bubble chrome (background, border, radius, padding) lives in
+        // field_tiles/_css.css as token-driven rules (--sv-chat-msg-*), so a
+        // theme can restyle it. Clear SvTextView.init's inline paddings AND
+        // its syncBorder() inline "border: none" so the stylesheet rules
+        // actually apply — an inline shorthand expands to border-left etc.
+        // and silently beats any CSS rule (found via probe: the themed
+        // player-message left rule matched but never rendered).
+        v.setPaddingTop(null);
+        v.setPaddingLeft(null);
+        v.setPaddingRight(null);
+        v.setPaddingBottom(null);
+        v.setBorder(null);
 
-        v.setAllowsHtml(true);
-        v.setWhiteSpace("normal");
-
-        v.setIsMultiline(true);
-        v.setDoesInput(true);
-
-        // Lock in the padding/background/border above: later generic sync code
-        // (e.g. SvFieldTile.syncValueFromNode) restyles the value view, so these
-        // setters are neutered. They MUST return v (the value view), not the
-        // tile — callers chain them (valueView.setPaddingLeft(..).setPaddingRight(..)),
-        // and returning the tile made the second call style the TILE, adding a
-        // phantom right padding (the mobile chat-input right-gap bug).
+        // Neuter the chrome setters IMMEDIATELY after the clears — the mode
+        // setters below (setIsMultiline, setDoesInput, setDoesHoldFocusOnReturn)
+        // trigger syncEditingControl → syncBorder("none"), which re-imposed the
+        // inline border inside this very method (probe-verified). They MUST
+        // return v (the value view), not the tile — callers chain them
+        // (valueView.setPaddingLeft(..).setPaddingRight(..)), and returning the
+        // tile made the second call style the TILE, adding a phantom right
+        // padding (the mobile chat-input right-gap bug).
         v.setPaddingTop = () => { return v; };
         v.setPaddingLeft = () => { return v; };
         v.setPaddingRight = () => { return v; };
@@ -178,6 +175,12 @@
         v.setBackgroundColor = () => { return v; };
         v.setBorder = () => { return v; };
         v.syncBorder = () => { return v; };
+
+        v.setAllowsHtml(true);
+        v.setWhiteSpace("normal");
+
+        v.setIsMultiline(true);
+        v.setDoesInput(true);
 
         v.setDoesHoldFocusOnReturn(true);
         v.setDoesInput(true);
@@ -247,6 +250,11 @@
     syncFromNode () {
         const node = this.node();
         this.watchSender(node);
+        // Expose the message's role ("user" / "assistant") to CSS so themes
+        // can style them differently (e.g. a left rule on player messages).
+        if (node && node.role) {
+            this.setAttribute("data-role", node.role());
+        }
         super.syncFromNode(); // This now includes syncDotsFromNode
         // Check for backward compatibility with isComplete
         if (node && node.isComplete && !node.valueIsComplete) {

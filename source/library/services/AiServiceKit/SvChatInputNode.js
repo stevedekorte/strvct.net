@@ -171,6 +171,19 @@
     }
 
     /**
+   * The idle placeholder shown while the input is empty and ACCEPTING text
+   * ("What do you do?"). The conversation owns the wording; null shows no
+   * placeholder. Distinct from valueInputBlockingHint, which replaces it
+   * while input is blocked.
+   * @returns {String|null}
+   * @category Input
+   */
+    valuePlaceholderText () {
+        const c = this.conversation();
+        return (c && typeof c.chatInputPlaceholder === "function") ? c.chatInputPlaceholder() : null;
+    }
+
+    /**
    * Diagnostic: why this input is currently refusing input (acceptsValueInput()
    * is false), or null when it accepts. Delegates to the conversation, which owns
    * the gating decision; the field tile reads this to log what we're waiting on at

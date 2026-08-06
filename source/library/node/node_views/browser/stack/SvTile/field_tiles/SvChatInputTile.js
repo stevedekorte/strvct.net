@@ -48,12 +48,15 @@
             }
             this._lastLoggedInputBlockReason = reason;
         }
-        // Show WHY input is blocked right where the user tries to act: the
-        // node's curated hint renders as the editor's placeholder (only
-        // visible while the editor is empty — data-placeholder CSS).
+        // The editor's placeholder (data-placeholder CSS, only visible while
+        // empty): while blocked it shows WHY right where the user tries to
+        // act; while accepting it falls back to the node's idle placeholder
+        // ("What do you do?") rather than clearing — nulling it here is what
+        // made the idle placeholder never appear.
         if (valueView && valueView.setPlaceholderText && node && typeof node.valueInputBlockingHint === "function") {
             const blocked = !(node.acceptsValueInput && node.acceptsValueInput());
-            valueView.setPlaceholderText(blocked ? node.valueInputBlockingHint() : null);
+            const idleText = (typeof node.valuePlaceholderText === "function") ? node.valuePlaceholderText() : null;
+            valueView.setPlaceholderText(blocked ? node.valueInputBlockingHint() : idleText);
         }
         const isFocused = valueView && typeof valueView.isFocused === "function" && valueView.isFocused();
         if (isFocused && node && !node._forceValueViewSync) {

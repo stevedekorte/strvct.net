@@ -9,9 +9,45 @@ SvFieldValueView br {
    ("Waiting for the host to return…") right where the user tries to act. */
 .SvChatInputTileValueView[data-placeholder]:empty::before {
     content: attr(data-placeholder);
-    opacity: 0.45;
+    /* themes with an explicit placeholder color set opacity 1 and carry the
+       fade in the color itself; the default look fades inherited text color */
+    opacity: var(--sv-chat-placeholder-opacity, 0.45);
     pointer-events: none;
-    font-style: italic;
+    font-style: var(--sv-chat-placeholder-style, italic);
+    color: var(--sv-chat-placeholder-color, inherit);
+}
+
+/* --- Chat message / input chrome ---
+   Token-driven so a theme can restyle it (see the app's theme stylesheet);
+   the var() fallbacks ARE the default look. These used to be inline styles
+   in createValueView — the corresponding setters there are deliberately
+   neutered so generic field-sync code can't reintroduce inline values that
+   would override these rules. */
+
+.SvChatMessageTileValueView {
+    background-color: var(--sv-chat-msg-bg, rgba(255, 255, 255, 0.05));
+    border: var(--sv-chat-msg-border, 1px solid rgba(255, 255, 255, 0.02));
+    border-radius: var(--sv-chat-msg-radius, 0.4em);
+    padding: var(--sv-chat-msg-padding, 0.4em 0.8em);
+    font-family: var(--sv-chat-font, inherit);
+}
+
+/* the player's messages can carry a distinguishing left rule (themes opt in;
+   the fallback preserves the default look's uniform border) */
+.SvChatMessageTile[data-role="user"] .SvChatMessageTileValueView {
+    border-left: var(--sv-chat-msg-user-rule, 1px solid rgba(255, 255, 255, 0.02));
+}
+
+.SvChatInputTileValueView {
+    background-color: var(--sv-chat-input-bg, rgba(255, 255, 255, 0.05));
+    border: var(--sv-chat-input-border, 1px solid rgba(255, 255, 255, 0.02));
+    /* themes can keep a writing-line bottom rule while the box border is
+       none; the fallback matches the uniform border so the default look
+       is unchanged */
+    border-bottom: var(--sv-chat-input-bottom-rule, var(--sv-chat-input-border, 1px solid rgba(255, 255, 255, 0.02)));
+    border-radius: var(--sv-chat-input-radius, 0.4em);
+    padding: var(--sv-chat-input-padding, 0.4em 0.8em);
+    font-family: var(--sv-chat-font, inherit);
 }
 
 .SvFieldValueView * {
