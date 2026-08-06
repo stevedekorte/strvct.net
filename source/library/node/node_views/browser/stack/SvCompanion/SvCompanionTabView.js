@@ -92,6 +92,14 @@
         label.setFontSize("1em");
         label.setWhiteSpace("nowrap");
         label.setPointerEvents("none");
+        // SvTextView.init plants inline 0.5em side paddings — inside a 16px
+        // rail that pushes the caret glyph visibly off-center. Zero them all;
+        // flex on this tab does the centering.
+        label.setPaddingLeft("0em");
+        label.setPaddingRight("0em");
+        label.setPaddingTop("0em");
+        label.setPaddingBottom("0em");
+        label.setMinWidth("0px"); // SvTextView also sets a 10px min-width
         this.setLabelView(label);
         this.addSubview(label);
         this.syncCaret(); // sets the caret glyph for the current edge/state
@@ -125,9 +133,10 @@
 
     /**
      * @description Sets the caret glyph to point the way a tap moves the panel:
-     * when docked it offers to collapse (push toward the edge: ▸ for a side
-     * dock, ▾ for a bottom dock); when collapsed it offers to expand (pull away
-     * from the edge: ◂ / ▴). A single glyph, no writing-mode rotation.
+     * when docked it offers to collapse (push toward the edge: › for a side
+     * dock, ⌄ for a bottom dock); when collapsed it offers to expand (pull away
+     * from the edge: ‹ / ⌃). Thin single-stroke carets matching the breadcrumb
+     * separators. A single glyph, no writing-mode rotation.
      * @returns {SvCompanionTabView} The current instance.
      * @category Display
      */
@@ -142,9 +151,13 @@
         this.setCssProperty(edge, "1px solid var(--SvCompanionTab-border-color, rgba(255, 255, 255, 0.08))");
         let glyph;
         if (this.isVerticalTab()) {
-            glyph = this.companionIsDocked() ? "▸" : "◂";
+            glyph = this.companionIsDocked() ? "›" : "‹";
+            // same optical nudge the breadcrumb separator uses: these glyphs
+            // sit low in their line box, and flex centers the box, not the ink
+            label.setCssProperty("transform", "translateY(-0.08em)");
         } else {
-            glyph = this.companionIsDocked() ? "▾" : "▴";
+            glyph = this.companionIsDocked() ? "⌄" : "⌃";
+            label.setCssProperty("transform", "translateY(-0.15em)");
         }
         label.setString(glyph);
         return this;

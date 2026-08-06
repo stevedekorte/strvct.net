@@ -63,6 +63,17 @@
             slot.setSlotType("SvButtonView");
             slot.setAllowsNullValue(true);
         }
+
+        /**
+         * @member {Boolean} isPathCollapsed - true while the current node has
+         * replaced the whole path with a single title + back arrow (see
+         * nodeCollapsedBreadcrumbTitle). Compaction is skipped in this mode.
+         * @category Display
+         */
+        {
+            const slot = this.newSlot("isPathCollapsed", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     initPrototype () {
@@ -210,6 +221,20 @@
 
         const pathNodes = this.pathNodes();
 
+        // Collapsed mode: the current node may replace the whole path with a
+        // single title + back arrow (nodeCollapsedBreadcrumbTitle — e.g. the
+        // session chat shows the session's name instead of the full path).
+        const currentNode = pathNodes.length > 0 ? pathNodes[pathNodes.length - 1] : null;
+        const collapsedTitle = (currentNode && currentNode.nodeCollapsedBreadcrumbTitle) ? currentNode.nodeCollapsedBreadcrumbTitle() : null;
+        this.setIsPathCollapsed(!!collapsedTitle);
+        if (collapsedTitle) {
+            this._lastRenderedPathNodes = []; // next normal render fades in fresh
+            this.setBackButtonView(this.newBackButton());
+            this.addSubview(this.backButtonView());
+            this.addSubview(this.newCollapsedCrumbView(collapsedTitle));
+            return this;
+        }
+
         // The rebuild recreates every crumb element, which would replay the
         // fade-in animation on the WHOLE path. Diff the rendered segments
         // against the previous render (by node identity) and mark the common
@@ -261,6 +286,9 @@
      * @category Layout
      */
     updateCompaction () {
+        if (this.isPathCollapsed()) {
+            return this; // collapsed mode is always [back, title]; nothing to compact
+        }
         const e = this.element();
         const views = this.subviews();
         const back = this.backButtonView();
@@ -314,6 +342,33 @@
         v.titleView().setPaddingRight("0.5em");
         v.titleView().setElementClassName("SvBreadCrumbLabel");
         v.setTitle("←");
+        v.setTarget(this);
+        v.setAction("onClickBackButton");
+        return v;
+    }
+
+    /**
+     * @description Creates the single title crumb shown in collapsed mode
+     * (see nodeCollapsedBreadcrumbTitle). Clicking it navigates one level up,
+     * matching the back arrow beside it.
+     * @param {String} title The collapsed title.
+     * @returns {SvButtonView} The crumb view.
+     * @category View Creation
+     */
+    newCollapsedCrumbView (title) {
+        const v = SvButtonView.clone();
+        v.setDisplay("inline-block");
+        v.setWidth("fit-content");
+        v.setHeight("fit-content");
+        v.setFlexShrink(1); // a long session title may need to ellipsize
+        v.setPaddingLeft("0em");
+        v.setPaddingRight("0em");
+        v.titleView().setPaddingLeft("0em");
+        v.titleView().setPaddingRight("0em");
+        v.titleView().setOverflow("hidden");
+        v.titleView().setTextOverflow("ellipsis");
+        v.titleView().setElementClassName("SvBreadCrumbLabel current");
+        v.setTitle(title);
         v.setTarget(this);
         v.setAction("onClickBackButton");
         return v;

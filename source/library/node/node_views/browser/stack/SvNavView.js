@@ -204,7 +204,7 @@
         this.setUserSelect("none");
         this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s");
 
-        const borderStyle = "1px solid rgba(255, 255, 255, 0.1)";
+        const borderStyle = "1px solid var(--sv-hairline, rgba(255, 255, 255, 0.1))";
         const backgroundColor = "rgba(255, 255, 255, 0.03)";
 
         {
@@ -393,7 +393,7 @@
 
         // Only show border when not on mobile
         if (!SvWebBrowserWindow.shared().isOnMobile()) {
-            this.setBorderRight("1px solid #333");
+            this.setBorderRight("1px solid var(--sv-hairline, #333)");
         } else {
             this.setBorderRight(null);
         }
@@ -435,7 +435,7 @@
         this.setBorderRight(null);
         // Only show border when not on mobile
         if (!SvWebBrowserWindow.shared().isOnMobile()) {
-            this.setBorderBottom("1px solid #333");
+            this.setBorderBottom("1px solid var(--sv-hairline, #333)");
         } else {
             this.setBorderBottom(null);
         }
@@ -516,6 +516,7 @@
         this.headerView().syncFromNode();
         this.footerView().syncFromNode();
         this.syncClickToAddView();
+        this.syncContentMaxWidth();
 
         // Accessibility: label the region from its node
         if (this.node()) {
@@ -523,6 +524,36 @@
         }
 
         //console.log(this.svTypeId(), " syncFromNode done");
+        return this;
+    }
+
+    /**
+     * @description Applies the node's reading-measure hint
+     * (nodeContentMaxWidth): the column's tile stack and footer content
+     * center inside a maximum measure, via symmetric padding — NOT by
+     * narrowing the views — so hairline dividers and the scrollbar keep
+     * spanning the full column while the content sits in a centered
+     * reading column. The HEADER stays full-bleed on purpose: it hosts
+     * media like the session's TV band, which should span the column.
+     * A null hint leaves the column untouched.
+     * @returns {SvNavView} The current instance.
+     * @category Layout
+     */
+    syncContentMaxWidth () {
+        const node = this.node();
+        const w = (node && node.nodeContentMaxWidth) ? node.nodeContentMaxWidth() : null;
+        const pad = w ? ("max(0px, calc((100% - " + w + ") / 2))") : null;
+        [this.tilesView(), this.footerView()].forEach(v => {
+            if (v) {
+                v.setPaddingLeft(pad);
+                v.setPaddingRight(pad);
+            }
+        });
+        // a previously-applied header inset must clear if the hint changes
+        if (this.headerView()) {
+            this.headerView().setPaddingLeft(null);
+            this.headerView().setPaddingRight(null);
+        }
         return this;
     }
 

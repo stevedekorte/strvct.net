@@ -107,7 +107,7 @@
          * @category Layout
          */
         {
-            const slot = this.newSlot("tabLength", 30);
+            const slot = this.newSlot("tabLength", 16);
             slot.setSlotType("Number");
         }
     }

@@ -242,6 +242,32 @@
     }
 
     /**
+     * @description Optional breadcrumb-collapse hint. When a node returns a
+     * non-null string, the breadcrumb bar replaces the WHOLE path with that
+     * single title plus a back arrow (both navigate one level up) while this
+     * node is the current one. Must be a method override returning a value
+     * (like nodeMinTileHeight), not a stored slot.
+     * @returns {String|null} The collapsed title, or null for the normal path.
+     * @category Layout
+     */
+    nodeCollapsedBreadcrumbTitle () {
+        return null;
+    }
+
+    /**
+     * @description Optional reading-measure hint: a CSS length (e.g. "68ch",
+     * or a var() so themes can tune it) that this node's nav column centers
+     * its content within (see SvNavView.syncContentMaxWidth). Null means
+     * full-width content (the default). Must be a method override returning
+     * a value, not a stored slot.
+     * @returns {String|null} The content max width, or null.
+     * @category Layout
+     */
+    nodeContentMaxWidth () {
+        return null;
+    }
+
+    /**
      * @description Returns the node orientation.
      * @returns {string} The node orientation.
      * @category Layout
