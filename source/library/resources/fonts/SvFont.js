@@ -44,6 +44,39 @@ These properties help you match the size of the fallback font to the final webfo
 
     /**
      * @static
+     * @description Per-family FontFace metric overrides
+     * (ascentOverride / descentOverride / lineGapOverride). Some display
+     * faces carry lopsided vertical metrics (a large ascent and small
+     * descent), which pushes their glyphs above center in any line-box- or
+     * flex-centered element (buttons, chips). Registering normalized
+     * metrics here fixes vertical centering everywhere at once. Apps
+     * register their fonts' overrides at class-eval time — before font
+     * resources load in SvResources.asyncFinishSetup.
+     * @returns {Map<string, Object>} family name -> FontFace descriptor dict
+     * @category Font Properties
+     */
+    static metricOverridesMap () {
+        if (!this._metricOverridesMap) {
+            this._metricOverridesMap = new Map();
+        }
+        return this._metricOverridesMap;
+    }
+
+    /**
+     * @static
+     * @description Registers FontFace metric overrides for a font family.
+     * @param {string} familyName - The font family name.
+     * @param {Object} dict - e.g. { ascentOverride: "78%", descentOverride: "22%", lineGapOverride: "0%" }
+     * @returns {SvFont} The class.
+     * @category Font Properties
+     */
+    static setMetricOverridesForFamily (familyName, dict) {
+        this.metricOverridesMap().set(familyName, dict);
+        return this;
+    }
+
+    /**
+     * @static
      * @description Returns a map of font weight names to their corresponding numeric values.
      * @returns {Map<string, number>} A map of font weight names to numeric values.
      * @category Font Properties
@@ -203,6 +236,11 @@ These properties help you match the size of the fallback font to the final webfo
         if (Object.keys(this.options()).length === 0) {
             this.setOptions(this.optionsFromName());
             name = name.split(" ").shift();
+        }
+
+        const metricOverrides = SvFont.metricOverridesMap().get(name.split(" ").shift());
+        if (metricOverrides) {
+            this.setOptions(Object.assign({}, this.options(), metricOverrides));
         }
 
         const face = new FontFace(name, this.data(), this.options());
