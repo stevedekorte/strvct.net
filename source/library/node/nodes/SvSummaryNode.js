@@ -90,7 +90,10 @@
 
         /**
          * @member {boolean} hasNewLineSeparator
-         * @description Determines if there should be a newline separator between key and value.
+         * @description LEGACY: a newline separator between key and value.
+         * Only participates when summaryFormat is one of the legacy enum
+         * values (see templateForSummaryFormat) — native templates write
+         * the \n into the template instead.
          * @category Summary
          */
         {
@@ -106,7 +109,13 @@
 
         /**
          * @member {string} summaryFormat
-         * @description The format of the summary.
+         * @description The summary template: freeform text with {key} and
+         * {value} tokens (e.g. "{key}: {value}", "foo {value} ({key})\n").
+         * The six legacy enum values ("none", "key", "value", "key value",
+         * "value key", "key: value") remain valid and map to templates at
+         * read time. NO setValidValues here: freeform templates require it,
+         * and the options-field machinery silently coerces off-list values
+         * back to the init value (see docs/Plans/Summary Format).
          * @category Summary
          */
         {
@@ -116,7 +125,6 @@
             slot.setCanInspect(true);
             slot.setSlotType("String");
             slot.setLabel("format");
-            slot.setValidValues(["none", "key", "value", "key value", "value key", "key: value"]);
             slot.setSyncsToView(true);
             slot.setInspectorPath("Node/Summary");
         }
@@ -268,7 +276,6 @@
             v = "";
         }
 
-        const f = this.summaryFormat();
         let end = this.nodeSummarySuffixOut();
         const begin = this.hasNewlineBeforeSummary() ? "\n" : "";
 
@@ -276,44 +283,37 @@
             end = "\n";
         }
 
-        if (f === "key") {
-            if (!k) {
-                return "";
-            }
-            return begin + k + end;
+        const format = SvSummaryFormat.fromString(this.templateForSummaryFormat());
+        const body = format.apply(k, v);
+        if (body === "") {
+            return "";
         }
+        return begin + body + end;
+    }
 
-        if (f === "value") {
-            if (!v) {
-                return "";
-            }
-            return begin + v + end;
-        }
-
-        const kvSeparator = this.hasNewLineSeparator() ? "\n" : " ";
-
-        if (f === "key value") {
-            if (!k) {
-                return "";
-            }
-            return begin + k + kvSeparator + v + end;
-        }
-
-        if (f === "key: value") {
-            if (!k) {
-                return "";
-            }
-            return begin + k + ":" + kvSeparator + v + end;
-        }
-
-        if (f === "value key") {
-            if (!v) {
-                return "";
-            }
-            return begin + v + kvSeparator + k + end;
-        }
-
-        return "";
+    /**
+     * @description The summaryFormat as a template string. The six legacy
+     * enum values map to equivalent templates here — AT READ TIME, so stored
+     * data and existing setSummaryFormat call sites are untouched — with
+     * hasNewLineSeparator folded in (that boolean only ever applied to the
+     * legacy formats; native templates write the \n into the template).
+     * See docs/Plans/Summary Format.
+     * @returns {string} The template string.
+     * @category Summary
+     */
+    templateForSummaryFormat () {
+        const f = this.summaryFormat();
+        const sep = this.hasNewLineSeparator() ? "\n" : " ";
+        const legacyMap = {
+            "none": "",
+            "key": "{key}",
+            "value": "{value}",
+            "key value": "{key}" + sep + "{value}",
+            "key: value": "{key}:" + sep + "{value}",
+            "value key": "{value}" + sep + "{key}"
+        };
+        const legacy = legacyMap[f];
+        return (legacy === undefined) ? f : legacy;
     }
 
     /**
