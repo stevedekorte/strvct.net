@@ -122,11 +122,20 @@
      * @category Rendering
      */
     apply (key, value) {
-        const values = { key: key || "", value: value || "" };
+        // The required-first-token check is FALSY-based (matching the legacy
+        // branches' `if (!k) return ""`), but rendering must stringify
+        // faithfully: 0 and false are real values and render as "0"/"false"
+        // — coercing with `v || ""` silently blanked every zero (coin
+        // amounts, counters) in summaries.
+        const raw = { key: key, value: value };
         const first = this.firstTokenName();
-        if (first && values[first] === "") {
+        if (first && !raw[first]) {
             return ""; // first-token-required rule (see classdesc)
         }
+        const values = {
+            key: Type.isNullOrUndefined(key) ? "" : String(key),
+            value: Type.isNullOrUndefined(value) ? "" : String(value)
+        };
         return this.parts().map(p => (typeof p === "string") ? p : values[p.token]).join("");
     }
 
