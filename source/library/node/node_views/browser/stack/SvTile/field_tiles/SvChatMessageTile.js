@@ -109,7 +109,8 @@
      */
     highlightElement (e) {
         e.style.opacity = 1;
-        e.style.color = "rgba(255, 255, 0, 1)";
+        // the sentence currently being narrated; themes recolor via the token
+        e.style.color = "var(--sv-speaking-color, rgba(255, 255, 0, 1))";
         return this;
     }
 
