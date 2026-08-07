@@ -214,6 +214,17 @@
             const slot = this.newSlot("scrollDebugFocusListener", null);
             slot.setSlotType("Function");
         }
+
+        /**
+         * @member {Boolean} lastContinueLinkDecision - The last show/hide
+         * decision for the continue-reading link, so the opt-in diagnostic
+         * logs transitions rather than every scroll event.
+         * @category Diagnostics
+         */
+        {
+            const slot = this.newSlot("lastContinueLinkDecision", null);
+            slot.setSlotType("Boolean");
+        }
     }
 
     /**
@@ -457,7 +468,14 @@
      * @category Diagnostics
      */
     isScrollDebugging () {
-        return (typeof localStorage !== "undefined") && (localStorage.getItem("SvScrollDebug") === "1");
+        if ((typeof localStorage !== "undefined") && (localStorage.getItem("SvScrollDebug") === "1")) {
+            return true;
+        }
+        // URL-typeable variant ("scrolldebug=1" anywhere in the url, hash
+        // included) for environments where a console paste isn't possible —
+        // same rationale and whole-href check as SvThrashDetector.
+        return (typeof window !== "undefined") && window.location
+            && String(window.location.href || "").includes("scrolldebug=1");
     }
 
     // --- scroll event classification ---
@@ -1020,7 +1038,22 @@
         if (button) {
             const contentOverflows = geometry.naturalHeight > geometry.clientHeight;
             const withinContent = (geometry.scrollTop + geometry.clientHeight) <= geometry.naturalHeight;
-            if (!this.isAtBottomForGeometry(geometry) && contentOverflows && withinContent) {
+            const shouldShow = !this.isAtBottomForGeometry(geometry) && contentOverflows && withinContent;
+            if (this.isScrollDebugging() && this.lastContinueLinkDecision() !== shouldShow) {
+                // Gated FIRST, and built entirely from the snapshot in hand —
+                // no reads. Logs only decision CHANGES, so a slow-to-appear
+                // link leaves exactly the transition (or its absence) behind.
+                this.setLastContinueLinkDecision(shouldShow);
+                console.log("[ScrollDebug] " + this.svTypeId() + " continue-link " + (shouldShow ? "SHOW" : "hide")
+                    + " scrollTop " + Math.round(geometry.scrollTop)
+                    + " clientH " + Math.round(geometry.clientHeight)
+                    + " scrollH " + Math.round(geometry.scrollHeight)
+                    + " naturalH " + Math.round(geometry.naturalHeight)
+                    + " anchorPad " + Math.round(this.anchorPaddingPx())
+                    + " intent " + this.scrollIntent()
+                    + " anchored " + this.isAnchored());
+            }
+            if (shouldShow) {
                 button.showButton();
             } else {
                 button.hideButton();
