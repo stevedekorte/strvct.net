@@ -94,6 +94,21 @@
     // nodeMinTileHeight min-only application inherited from SvChatMessageTile.
 
     /**
+     * @description The input is a CONTROL, not a selectable item: it holds
+     * selection/focus almost permanently while chatting, so the theme's
+     * selected/active state background painted the whole footer row as a
+     * gray band. Apply theme styles normally, then keep the background
+     * transparent in every state.
+     * @returns {SvChatInputTile} The current instance.
+     * @category Style
+     */
+    applyStyles () {
+        super.applyStyles();
+        this.contentView().setBackgroundColor("transparent");
+        return this;
+    }
+
+    /**
      * @description Creates and configures the value view.
      * @returns {SvTextView} The configured value view.
      * @category UI
