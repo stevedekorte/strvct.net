@@ -83,7 +83,7 @@
             slot.setAllowsNullValue(true);
             slot.setDescription("Evaluation score (0.0-1.0)");
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
 
@@ -101,7 +101,7 @@
             slot.setSyncsToView(true);
             slot.setDescription("Current evaluation status");
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**
@@ -118,7 +118,7 @@
             slot.setSyncsToView(true);
             slot.setAllowsNullValue(true);
             slot.setDescription("Error from evaluation process");
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**

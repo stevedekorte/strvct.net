@@ -130,7 +130,7 @@
         this.setNodeCanReorderSubnodes(true);
 
         this.setNodeCanAddSubnode(true);
-        this.setSummaryFormat("value");
+        this.setSummaryFormat("{value}");
 
         // Override SvField's default: an options collection IS navigable —
         // tapping it should reveal its SvOptionNode children. Only the

@@ -97,7 +97,7 @@
         this.setCanDelete(true);
         this.setNodeCanEditTitle(true);
         this.setNodeSubtitleIsChildrenSummary(false);
-        this.setSummaryFormat("key value");
+        this.setSummaryFormat("{key} {value}");
         this.setNoteIsSubnodeCount(true);
     }
 

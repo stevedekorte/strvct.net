@@ -76,7 +76,7 @@
     initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
-        this.setSummaryFormat("value");
+        this.setSummaryFormat("{value}");
         this.setHasNewlineAfterSummary(true);
         this.setNodeCanReorderSubnodes(false);
         this.setCanDelete(true);

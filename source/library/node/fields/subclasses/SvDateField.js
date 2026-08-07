@@ -54,7 +54,7 @@
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
             slot.setSyncsToView(true);
-            slot.setSummaryFormat("none");
+            slot.setSummaryFormat("");
         }
 
         /**
@@ -67,7 +67,7 @@
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
             slot.setSyncsToView(true);
-            slot.setSummaryFormat("none");
+            slot.setSummaryFormat("");
         }
 
         /**
@@ -80,7 +80,7 @@
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
             slot.setSyncsToView(true);
-            slot.setSummaryFormat("none");
+            slot.setSummaryFormat("");
         }
     }
 

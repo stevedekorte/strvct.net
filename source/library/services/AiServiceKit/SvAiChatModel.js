@@ -124,7 +124,7 @@
     finalInit () {
         super.finalInit();
         this.setTitle("AI Model");
-        this.setSummaryFormat("value");
+        this.setSummaryFormat("{value}");
         this.setHasNewlineAfterSummary(true);
     }
 

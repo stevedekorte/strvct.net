@@ -79,7 +79,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("value");
+            slot.setSummaryFormat("{value}");
         }
 
         /**
@@ -626,7 +626,7 @@
             //sn.setTitle(deviceEntity.entity_id.before("."));
             sn.setTitle(deviceEntity.entity_id);
             sn.setSubtitle(deviceEntity.state);
-            sn.setSummaryFormat("key value");
+            sn.setSummaryFormat("{key} {value}");
             node.addSubnode(sn);
           });
       });

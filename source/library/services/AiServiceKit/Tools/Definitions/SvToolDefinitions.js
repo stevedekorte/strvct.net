@@ -28,7 +28,7 @@
         this.setShouldStoreSubnodes(false);
         this.setSubnodeClasses([SvToolDefinition]);
 
-        this.setSummaryFormat("value");
+        this.setSummaryFormat("{value}");
         this.setHasNewlineAfterSummary(true);
         this.setNodeCanReorderSubnodes(false);
         this.setNoteIsSubnodeCount(true);

@@ -65,7 +65,7 @@
                 return instance.validLocaleNames();
             });
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("value");
+            slot.setSummaryFormat("{value}");
         }
 
         /**
@@ -81,7 +81,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("value");
+            slot.setSummaryFormat("{value}");
             slot.setValidValuesClosure((instance) => {
                 return instance.validDisplayNames();
             });
@@ -104,7 +104,7 @@
                 return instance.validVoiceStyles();
             });
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("value");
+            slot.setSummaryFormat("{value}");
         }
 
         /**
@@ -123,7 +123,7 @@
                 return instance.validVolumes();
             });
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("value");
+            slot.setSummaryFormat("{value}");
         }
 
         /**
@@ -139,7 +139,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Number");
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("value key");
+            slot.setSummaryFormat("{value}\n{key}");
         }
 
         /**
@@ -155,7 +155,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Number");
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("value key");
+            slot.setSummaryFormat("{value}\n{key}");
         }
 
         /**

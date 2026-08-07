@@ -61,7 +61,7 @@
             slot.setCanInspect(true);
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**
@@ -107,7 +107,7 @@
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
             slot.setDescription("The XMLHttpRequest responseType. Use 'blob' for binary data like images or audio.");
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**
@@ -123,7 +123,7 @@
             slot.setSlotType("Number");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
 
@@ -137,7 +137,7 @@
             slot.setSlotType("Number");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // max retries
@@ -151,7 +151,7 @@
             slot.setSlotType("Number");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // retry count
@@ -165,7 +165,7 @@
             slot.setSlotType("Number");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // --- State ---
@@ -184,7 +184,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**
@@ -200,7 +200,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**
@@ -211,7 +211,7 @@
             slot.setLabel("Error");
             slot.setInspectorPath("State");
             slot.setSlotType("Error");
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         {
@@ -221,7 +221,7 @@
             slot.setCanEditInspection(false);
             slot.setIsSubnodeField(true);
             slot.setSlotType("String");
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
 
@@ -238,7 +238,7 @@
             slot.setSlotType("Boolean");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**
@@ -254,7 +254,7 @@
             slot.setSlotType("Boolean");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**

@@ -56,7 +56,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            //slot.setSummaryFormat("value")
+            //slot.setSummaryFormat("{value}")
         }
 
         {
@@ -85,7 +85,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            //slot.setSummaryFormat("value");
+            //slot.setSummaryFormat("{value}");
         }
 
         // --- error and reconnect ---

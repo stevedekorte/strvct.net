@@ -25,7 +25,7 @@
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(true);
         this.setSubnodeClasses([SvRuntimeEventReport]);
-        this.setSummaryFormat("value");
+        this.setSummaryFormat("{value}");
         this.setHasNewlineAfterSummary(true);
         this.setNodeCanReorderSubnodes(false);
         this.setCanDelete(false);

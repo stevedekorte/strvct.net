@@ -295,7 +295,7 @@ Example Tool call format:
         this.setCanDelete(false);
         this.setNodeCanAddSubnode(false);
         /*
-        this.setSummaryFormat("value");
+        this.setSummaryFormat("{value}");
         this.setHasNewlineAfterSummary(true);
         */
     }

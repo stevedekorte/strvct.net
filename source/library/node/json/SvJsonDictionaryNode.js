@@ -55,7 +55,7 @@
         this.setNodeCanReorderSubnodes(true);
         this.setCanDelete(true);
         this.setNoteIconName("right-arrow");
-        this.setSummaryFormat("key value");
+        this.setSummaryFormat("{key}\n{value}");
         this.setHasNewLineSeparator(true);
         this.setHasNewlineAfterSummary(true);
     }

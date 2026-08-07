@@ -88,7 +88,7 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setCanEditInspection(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**
@@ -102,7 +102,7 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setCanEditInspection(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // status
@@ -113,7 +113,7 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("value");
+            slot.setSummaryFormat("{value}");
         }
 
         // composite action

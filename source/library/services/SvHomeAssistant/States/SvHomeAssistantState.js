@@ -74,7 +74,7 @@
 
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
-        this.setSummaryFormat("key value");
+        this.setSummaryFormat("{key} {value}");
     }
 
     /**

@@ -29,7 +29,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
-            //slot.setSummaryFormat("value")
+            //slot.setSummaryFormat("{value}")
         }
 
         /**
@@ -45,7 +45,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            //slot.setSummaryFormat("value")
+            //slot.setSummaryFormat("{value}")
         }
 
         /**
@@ -61,7 +61,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            //slot.setSummaryFormat("value")
+            //slot.setSummaryFormat("{value}")
         }
 
         /**
@@ -77,7 +77,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            //slot.setSummaryFormat("value")
+            //slot.setSummaryFormat("{value}")
         }
 
         /**
@@ -103,7 +103,7 @@
             slot.setSlotType("Boolean");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
-            slot.setSummaryFormat("key value");
+            slot.setSummaryFormat("{key}\n{value}");
         }
 
         /**
@@ -159,7 +159,7 @@
             slot.setSlotType("Number");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
-            slot.setSummaryFormat("key value");
+            slot.setSummaryFormat("{key}\n{value}");
         }
 
         /**
@@ -175,7 +175,7 @@
             slot.setSlotType("Number");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
-            slot.setSummaryFormat("key value");
+            slot.setSummaryFormat("{key}\n{value}");
         }
 
         /**
@@ -191,7 +191,7 @@
             slot.setSlotType("Number");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
-            slot.setSummaryFormat("key value");
+            slot.setSummaryFormat("{key}\n{value}");
         }
 
         /**

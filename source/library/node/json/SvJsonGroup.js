@@ -37,7 +37,7 @@
 
     initPrototype () {
         this.setNoteIconName("right-arrow");
-        this.setSummaryFormat("key value");
+        this.setSummaryFormat("{key}\n{value}");
         this.setHasNewlineAfterSummary(true);
         this.setHasNewLineSeparator(true);
         this.setNodeSubtitleIsChildrenSummary(true);
@@ -140,7 +140,7 @@
         //slot.setIsSubnode(true);
         slot.setIsSubnodeField(true);
         slot.setSlotType(Type.isString(finalProto) ? finalProto : finalProto.svType());
-        slot.setSummaryFormat("key: value");
+        slot.setSummaryFormat("{key}:\n{value}");
         slot.setDuplicateOp("duplicate");
 
         return slot;
@@ -164,7 +164,7 @@
         slot.setIsSubnodeField(true);
         slot.setSyncsToView(true);
         slot.setCanEditInspection(true);
-        slot.setSummaryFormat("key: value");
+        slot.setSummaryFormat("{key}:\n{value}");
         slot.setIsRequired(true);
     }
 

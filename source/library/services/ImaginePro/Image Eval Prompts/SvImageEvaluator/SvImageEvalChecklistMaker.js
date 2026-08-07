@@ -86,7 +86,7 @@
             slot.setSyncsToView(true);
             slot.setDescription("Current generation status");
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**
@@ -103,7 +103,7 @@
             slot.setSyncsToView(true);
             slot.setAllowsNullValue(true);
             slot.setDescription("Error from generation process");
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
     }
 

@@ -34,7 +34,7 @@
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // Last updated
@@ -47,7 +47,7 @@
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // File size in bytes
@@ -60,7 +60,7 @@
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // Content type (MIME type)
@@ -89,7 +89,7 @@
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // Custom metadata
@@ -111,7 +111,7 @@
             slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // Blob data (for upload or after download)

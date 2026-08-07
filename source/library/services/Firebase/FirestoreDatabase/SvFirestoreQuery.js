@@ -38,7 +38,7 @@
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // Order by field
@@ -52,7 +52,7 @@
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
 
@@ -68,7 +68,7 @@
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
             slot.setValidValues(["ascending", "descending"]);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // Documents container (holds query results)

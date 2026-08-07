@@ -60,7 +60,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("none");
+            slot.setSummaryFormat("");
         }
 
         {
@@ -78,7 +78,7 @@
             slot.setSlotType("String");
             slot.setValidValues(validModels);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("none");
+            slot.setSummaryFormat("");
         }
 
         {
@@ -96,7 +96,7 @@
             slot.setSlotType("String");
             slot.setValidValues(validVoices);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("value key");
+            slot.setSummaryFormat("{value}\n{key}");
         }
 
         {
@@ -131,7 +131,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Number");
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("value key");
+            slot.setSummaryFormat("{value}\n{key}");
             slot.setValidValues(validValuesJson);
         }
 
@@ -192,7 +192,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Boolean");
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("none");
+            slot.setSummaryFormat("");
         }
 
         {
@@ -221,7 +221,7 @@
             const slot = this.newSlot("ttsRequestQueue", null);
             slot.setDuplicateOp("copyValue");
             slot.setShouldStoreSlot(false);
-            slot.setSummaryFormat("none");
+            slot.setSummaryFormat("");
             slot.setSlotType("Array");
 
         }
@@ -236,7 +236,7 @@
             slot.setShouldStoreSlot(false);
             slot.setIsSubnode(true);
             slot.setSlotType("SvAudioQueue");
-            slot.setSummaryFormat("none");
+            slot.setSummaryFormat("");
         }
 
         /*
@@ -261,7 +261,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("none");
+            slot.setSummaryFormat("");
         }
 
         {

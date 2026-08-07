@@ -288,7 +288,7 @@
      */
     initPrototype () {
         this.setShouldStore(true);
-        this.setSummaryFormat("key value");
+        this.setSummaryFormat("{key}\n{value}");
         this.setHasNewlineAfterSummary(true);
         // Tapping a field tile shouldn't push an empty column —
         // fields are terminal property tiles. Inspection mode (alt-tap)

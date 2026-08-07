@@ -81,7 +81,7 @@
 
     initPrototype () {
         /*
-        this.setSummaryFormat("key value");
+        this.setSummaryFormat("{key}\n{value}");
         this.setHasNewlineAfterSummary(true);
         this.setHasNewLineSeparator(true);
         this.setNodeSubtitleIsChildrenSummary(true);

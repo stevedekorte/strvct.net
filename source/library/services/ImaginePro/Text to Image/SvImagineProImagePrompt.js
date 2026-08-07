@@ -98,7 +98,7 @@
             slot.setSlotType("String");
             slot.setValidValues(["midjourney"]);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**
@@ -125,7 +125,7 @@
             slot.setValidItems(validItems);
             slot.setValidValuesArePermissive(true);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /**
@@ -144,7 +144,7 @@
             slot.setSlotType("String");
             slot.setValidValues(["relax", "fast", "turbo"]);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
 
@@ -174,7 +174,7 @@
             slot.setSlotType("String");
             slot.setValidItems(validItems);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // -stylize (--s) → integer 0–1000. Default ~100. Higher = more MJ “aesthetic” influence; lower = more literal to your text.
@@ -203,7 +203,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setValidItems(validItems);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // --chaos → integer 0–100. Higher = more variety/divergence across the 4 grid images. Default 0.
@@ -239,7 +239,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setValidItems(validItems);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // --weird (--w) → integer 0–3000. Adds experimental “strangeness.” Compatible with v5+ (incl. v7). Note: seed interactions can be less stable.
@@ -264,7 +264,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setValidItems(validItems);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // --seed → integer 0–4,294,967,295. Locks the random start so you can reproduce/iterate.
@@ -280,7 +280,7 @@
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // --quality (--q) → enum 1 | 2 | 4 in v7. Spends more GPU on the initial grid only (not variations/inpainting/upscales). Default 1.
@@ -319,7 +319,7 @@ Midjourney
             slot.setSyncsToView(true);
             slot.setCanEditInspection(true);
             slot.setDescription("Contains style reference image for Midjourney (Firebase Storage or other hosted URL)");
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         /*
@@ -362,7 +362,7 @@ Midjourney
             slot.setDuplicateOp("duplicate");
             slot.setValidItems(validItems);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
             slot.setValidValuesArePermissive(true);
         }
 
@@ -383,7 +383,7 @@ Midjourney
             slot.setSyncsToView(true);
             slot.setCanEditInspection(true);
             slot.setDescription("Contains character reference sheet composite image for Midjourney (Firebase Storage or other hosted URL)");
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // omniRefWeight
@@ -415,7 +415,7 @@ Midjourney
             slot.setCanEditInspection(true);
             slot.setValidItems(validItems);
             slot.setDescription("Omnireference weight (1-1000): 25-50 subtle, 100-300 balanced, 400+ strong influence");
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // extraImages SvImagesNode slot
@@ -430,7 +430,7 @@ Midjourney
             slot.setSyncsToView(true);
             slot.setCanEditInspection(true);
             slot.setDescription("MJ calls these 'image prompts'.");
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // extra images weight (can be 1, 2, or 3)
@@ -455,7 +455,7 @@ Midjourney
             slot.setSyncsToView(true);
             slot.setValidItems(validItems);
             slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
+            slot.setSummaryFormat("{key}:\n{value}");
         }
 
         // generationCount slot
@@ -503,7 +503,7 @@ Midjourney
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Error");
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key value");
+            slot.setSummaryFormat("{key}\n{value}");
         }
 
 
@@ -522,7 +522,7 @@ Midjourney
             slot.setSlotType("String");
             //slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setSummaryFormat("key value");
+            slot.setSummaryFormat("{key}\n{value}");
         }
 
         /**
