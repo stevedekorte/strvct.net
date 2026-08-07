@@ -97,8 +97,13 @@
         this.setWidth("100%");
         this.setMinHeight("1em");
 
-        this.setPaddingTop("0.75em");
-        this.setPaddingBottom("0.85em");
+        // Symmetric ON PURPOSE. This was 0.75em top / 0.85em bottom — an optical
+        // nudge to push text up off the baseline, which reads as "not vertically
+        // centered" once the face changes, and the app now ships several. The total
+        // (1.6em) is unchanged, so nothing reflows; only the distribution does. If a
+        // theme wants an optical offset it should be a token, not a constant here.
+        this.setPaddingTop("0.8em");
+        this.setPaddingBottom("0.8em");
 
         this.setPaddingLeft("1em");
         this.setPaddingRight("1em");
