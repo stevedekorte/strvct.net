@@ -7,8 +7,16 @@
 /**
  * @class SvScrollToBottomButton
  * @extends SvFlexDomView
- * @classdesc A floating button that appears at the bottom-center of a SvScrollView
- * when content extends below the viewport. Clicking it smooth-scrolls to the bottom.
+ * @classdesc The "continue reading" affordance shown when scroll content
+ * extends below the viewport: a full-width gradient that dissolves the
+ * content into the page background (via --sv-bg, so it follows the theme)
+ * with a centered italic link — "Continue to the latest ⌄" — that
+ * smooth-scrolls to the bottom. Both fade in/out together, driven by the
+ * owning SvScrollView through showButton()/hideButton().
+ *
+ * Themeable via:
+ *     --sv-bg                     gradient dissolve color (page background)
+ *     --sv-scroll-link-color      the link text color
  */
 (class SvScrollToBottomButton extends SvFlexDomView {
 
@@ -18,12 +26,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @member {SvgIconView} iconView - The icon view for the down-arrow chevron.
+         * @member {SvDomView} labelRowView - the tappable centered link row
+         * (label + chevron); the only part of the strip that takes pointer
+         * events, so the gradient never blocks interaction with content.
          * @category View
          */
         {
-            const slot = this.newSlot("iconView", null);
-            slot.setSlotType("SvgIconView");
+            const slot = this.newSlot("labelRowView", null);
+            slot.setSlotType("SvDomView");
         }
 
         /**
@@ -44,39 +54,50 @@
     init () {
         super.init();
 
-        this.makeFlexAndCenterContent();
         this.turnOffUserSelect();
 
-        // Sticky positioning inside the SvScrollView:
-        // stays fixed at the bottom of the visible scroll area
+        // A full-width strip stuck to the bottom of the visible scroll area.
+        // The strip itself never takes pointer events (it overlays ~6em of
+        // content); only the label row inside it is tappable.
         this.setPosition("sticky");
-        this.setBottomPx(16);
-        // Center horizontally using auto margins (works for block-level elements with a fixed width)
-        this.setCssProperty("margin-left", "auto");
-        this.setCssProperty("margin-right", "auto");
+        this.setBottomPx(0);
+        this.setWidth("100%");
+        this.setMinAndMaxHeight(104);
         this.setZIndex(100);
+        this.setDisplay("flex");
+        this.setFlexDirection("column");
+        this.setJustifyContent("flex-end");
+        this.setAlignItems("center");
+        this.setPointerEvents("none");
 
-        // Styling: circular button
-        this.setMinAndMaxWidth(44);
-        this.setMinAndMaxHeight(44);
-        this.setBorderRadius("50%");
-        this.setBackgroundColor("var(--sv-scroll-button-bg, rgba(255, 255, 255, 0.15))");
-        this.setBoxShadow("var(--sv-scroll-button-shadow, 0 2px 8px rgba(0, 0, 0, 0.3))");
-        this.setCssProperty("backdrop-filter", "blur(8px)");
-        this.setCursor("pointer");
+        // Content dissolves into the page background as it approaches the
+        // input — same curve as the reference mock (transparent → 94% at
+        // 55% → solid). color-mix keeps it theme-correct from one token.
+        this.setBackgroundImage(
+            "linear-gradient(to bottom, transparent 0%, "
+            + "color-mix(in srgb, var(--sv-bg, #191919) 94%, transparent) 55%, "
+            + "var(--sv-bg, #191919) 100%)");
+
         this.setOpacity(0);
-        this.setTransition("opacity 0.2s ease");
+        this.setTransition("opacity 180ms ease");
 
-        // Icon
-        const iv = SvgIconView.clone().setIconName("down");
-        iv.setMinAndMaxWidth(18);
-        iv.setMinAndMaxHeight(18);
-        iv.setFillColor("var(--sv-icon-color, white)");
-        iv.setStrokeColor("var(--sv-icon-color, white)");
-        iv.setOpacity(0.9);
-        iv.makeFlexAndCenterContent();
-        this.setIconView(iv);
-        this.addSubview(iv);
+        // The centered link: italic label + the reference mock's thin
+        // stemmed down-arrow (stroke follows the link color via currentColor).
+        const row = SvDomView.clone();
+        row.setDisplay("flex");
+        row.setAlignItems("center");
+        row.setCssProperty("gap", "9px");
+        row.setColor("var(--sv-scroll-link-color, rgba(255, 255, 255, 0.6))");
+        row.setCursor("pointer");
+        row.setPaddingBottom("10px");
+        row.turnOffUserSelect();
+        row.setInnerHtml(
+            "<span style=\"font-style: italic; pointer-events: none;\">Continue to the latest</span>"
+            + "<svg width=\"13\" height=\"13\" viewBox=\"0 0 13 13\" fill=\"none\" style=\"pointer-events: none;\">"
+            + "<path d=\"M6.5 2 v8 M3 7 l3.5 3.5 L10 7\" stroke=\"currentColor\" stroke-width=\"1.4\""
+            + " stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>");
+        this.setLabelRowView(row);
+        this.addSubview(row);
 
         this.addDefaultTapGesture();
 
@@ -87,24 +108,24 @@
     }
 
     /**
-     * @description Shows the button with a fade-in.
+     * @description Shows the strip with a fade-in.
      * @returns {SvScrollToBottomButton} The instance.
      * @category Visibility
      */
     showButton () {
         this.setOpacity(1);
-        this.setPointerEvents("auto");
+        this.labelRowView().setPointerEvents("auto");
         return this;
     }
 
     /**
-     * @description Hides the button with a fade-out.
+     * @description Hides the strip with a fade-out.
      * @returns {SvScrollToBottomButton} The instance.
      * @category Visibility
      */
     hideButton () {
         this.setOpacity(0);
-        this.setPointerEvents("none");
+        this.labelRowView().setPointerEvents("none");
         return this;
     }
 
