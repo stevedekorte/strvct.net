@@ -1,10 +1,15 @@
 "use strict";
 
-/* NOTE: no theme tokens here. This view renders BEFORE any theme stylesheet
-   loads (UoThemeCss deliberately excludes #loadingView), so a var(--sv-boot-*)
-   could never resolve to anything but its fallback — it advertised a
-   themeability that did not exist. Literals, honestly. See
-   docs/Plans/Theme Token Unification. */
+/* THEMING: this view renders BEFORE any stylesheet loads, so it can only use tokens
+   the host page defines inline on <html>. The former --sv-boot-* set was not one of
+   those and could never resolve to anything but its fallback, so it is gone.
+
+   --sv-text IS available: app.html inlines it alongside the static
+   data-uo-theme stamp precisely so the boot screen matches the page it is painting
+   on. The `white` fallback keeps strvct standalone (no host tokens) looking as it
+   did. The bar track stays a literal mid grey deliberately — it must read against
+   BOTH a parchment and an ink ground, so following the text colour would make it
+   vanish on one of them. See docs/Plans/Theme Token Unification. */
 
 /**
  * @module boot
@@ -119,7 +124,7 @@ class SvBootLoadingView extends Object {
             "    display: flex; flex-direction: column; align-items: center; justify-content: center;",
             "    text-align: center;",
             "    font-family: sans-serif;",
-            "    color: white;",
+            "    color: var(--sv-text, white);",
             "    opacity: 0; background: none; border: 0; z-index: 9999;",
             "}",
             "#loadingViewTitle { display: flex; justify-content: center; align-items: center; padding: 0; margin-bottom: 1em; }",
@@ -132,7 +137,7 @@ class SvBootLoadingView extends Object {
             "    overflow: hidden;",
             "}",
             "#innerLoadingView {",
-            "    background-color: white;",
+            "    background-color: currentColor;",
             "    border-radius: 0.25em;",
             "    height: 100%; width: 0;",
             "    transition: width 0.3s linear;",
