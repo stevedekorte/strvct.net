@@ -15,8 +15,8 @@
  * owning SvScrollView through showButton()/hideButton().
  *
  * Themeable via:
- *     --sv-bg                     gradient dissolve color (page background)
- *     --sv-scroll-link-color      the link text color
+ *     --sv-bg      gradient dissolve color (page background)
+ *     --sv-text    link color (rendered at 0.6 opacity, like tile subtitles)
  */
 (class SvScrollToBottomButton extends SvFlexDomView {
 
@@ -87,7 +87,10 @@
         row.setDisplay("flex");
         row.setAlignItems("center");
         row.setCssProperty("gap", "9px");
-        row.setColor("var(--sv-scroll-link-color, rgba(255, 255, 255, 0.6))");
+        // tile-subtitle treatment: the theme text color at 0.6 opacity
+        // (matches SvTitledTile's subtitle styling in every theme)
+        row.setColor("var(--sv-text, #bbb)");
+        row.setOpacity(0.6);
         row.setCursor("pointer");
         row.setPaddingBottom("10px");
         row.turnOffUserSelect();
