@@ -222,7 +222,7 @@
         // (The old literal #f4f4ec inline color leaked into themed borders as
         // currentColor; the literal #191919 background made theme backgrounds
         // impossible to apply.)
-        doc.setColor("var(--sv-text, #f4f4ec)");
+        doc.setColor("var(--sv-text)");
         this.setupNormalDocTheme();
     }
 
@@ -232,8 +232,8 @@
      */
     setupNormalDocTheme () {
         const doc = SvDocumentBody.shared();
-        doc.setBackgroundColor("var(--sv-bg, #191919)");
-        doc.setFontFamily("var(--sv-font, HoeflerTitling)");
+        doc.setBackgroundColor("var(--sv-bg)");
+        doc.setFontFamily("var(--sv-font)");
 
         //doc.setFontFamily("EB Garamond");
         //doc.setFontFamily("IMFellEnglish");

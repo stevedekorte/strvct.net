@@ -143,8 +143,8 @@
         icon.setMinAndMaxHeight(15);
         // redundant with SvgIconView's defaults, but kept explicit: themed
         // via --sv-icon-color so light themes get ink icons
-        icon.setFillColor("var(--sv-icon-color, white)");
-        icon.setStrokeColor("var(--sv-icon-color, white)");
+        icon.setFillColor("var(--sv-icon-color)");
+        icon.setStrokeColor("var(--sv-icon-color)");
         icon.setOpacity(1);
         icon.hideDisplay();
         this.setIconView(this.addSubview(icon));

@@ -204,7 +204,7 @@
         this.setUserSelect("none");
         this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s");
 
-        const borderStyle = "1px solid var(--sv-hairline, rgba(255, 255, 255, 0.1))";
+        const borderStyle = "1px solid var(--sv-hairline)";
         const backgroundColor = "rgba(255, 255, 255, 0.03)";
 
         {
@@ -393,7 +393,7 @@
 
         // Only show border when not on mobile
         if (!SvWebBrowserWindow.shared().isOnMobile()) {
-            this.setBorderRight("1px solid var(--sv-hairline, #333)");
+            this.setBorderRight("1px solid var(--sv-hairline)");
         } else {
             this.setBorderRight(null);
         }
@@ -435,7 +435,7 @@
         this.setBorderRight(null);
         // Only show border when not on mobile
         if (!SvWebBrowserWindow.shared().isOnMobile()) {
-            this.setBorderBottom("1px solid var(--sv-hairline, #333)");
+            this.setBorderBottom("1px solid var(--sv-hairline)");
         } else {
             this.setBorderBottom(null);
         }

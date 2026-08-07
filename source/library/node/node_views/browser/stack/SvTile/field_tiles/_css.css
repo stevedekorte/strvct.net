@@ -11,10 +11,10 @@ SvFieldValueView br {
     content: attr(data-placeholder);
     /* themes with an explicit placeholder color set opacity 1 and carry the
        fade in the color itself; the default look fades inherited text color */
-    opacity: var(--sv-chat-placeholder-opacity, 0.45);
+    opacity: var(--sv-chat-placeholder-opacity);
     pointer-events: none;
-    font-style: var(--sv-chat-placeholder-style, italic);
-    color: var(--sv-chat-placeholder-color, inherit);
+    font-style: var(--sv-chat-placeholder-style);
+    color: var(--sv-chat-placeholder-color);
 }
 
 /* --- Chat message / input chrome ---
@@ -25,29 +25,32 @@ SvFieldValueView br {
    would override these rules. */
 
 .SvChatMessageTileValueView {
-    background-color: var(--sv-chat-msg-bg, rgba(255, 255, 255, 0.05));
-    border: var(--sv-chat-msg-border, 1px solid rgba(255, 255, 255, 0.02));
-    border-radius: var(--sv-chat-msg-radius, 0.4em);
-    padding: var(--sv-chat-msg-padding, 0.4em 0.8em);
-    font-family: var(--sv-chat-font, inherit);
+    background-color: var(--sv-chat-msg-bg);
+    border: var(--sv-chat-msg-border);
+    border-radius: var(--sv-chat-msg-radius);
+    padding: var(--sv-chat-msg-padding);
+    font-family: var(--sv-chat-font);
 }
 
 /* the player's messages can carry a distinguishing left rule (themes opt in;
    the fallback preserves the default look's uniform border) */
 .SvChatMessageTile[data-role="user"] .SvChatMessageTileValueView {
-    border-left: var(--sv-chat-msg-user-rule, 1px solid rgba(255, 255, 255, 0.02));
+    border-left: var(--sv-chat-msg-user-rule);
 }
 
 .SvChatInputTileValueView {
-    background-color: var(--sv-chat-input-bg, rgba(255, 255, 255, 0.05));
-    border: var(--sv-chat-input-border, 1px solid rgba(255, 255, 255, 0.02));
+    background-color: var(--sv-chat-input-bg);
+    border: var(--sv-chat-input-border);
     /* themes can keep a writing-line bottom rule while the box border is
        none; the fallback matches the uniform border so the default look
        is unchanged */
-    border-bottom: var(--sv-chat-input-bottom-rule, var(--sv-chat-input-border, 1px solid rgba(255, 255, 255, 0.02)));
-    border-radius: var(--sv-chat-input-radius, 0.4em);
-    padding: var(--sv-chat-input-padding, 0.4em 0.8em);
-    font-family: var(--sv-chat-font, inherit);
+    /* The one legitimate var() fallback left: a token chaining to ANOTHER token,
+       not to a literal. A theme that does not distinguish the bottom rule inherits
+       the general input border. See docs/Plans/Theme Token Unification. */
+    border-bottom: var(--sv-chat-input-bottom-rule, var(--sv-chat-input-border));
+    border-radius: var(--sv-chat-input-radius);
+    padding: var(--sv-chat-input-padding);
+    font-family: var(--sv-chat-font);
 }
 
 .SvFieldValueView * {

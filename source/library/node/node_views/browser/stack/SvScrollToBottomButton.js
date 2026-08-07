@@ -75,8 +75,8 @@
         // 55% → solid). color-mix keeps it theme-correct from one token.
         this.setBackgroundImage(
             "linear-gradient(to bottom, transparent 0%, "
-            + "color-mix(in srgb, var(--sv-bg, #191919) 94%, transparent) 55%, "
-            + "var(--sv-bg, #191919) 100%)");
+            + "color-mix(in srgb, var(--sv-bg) 94%, transparent) 55%, "
+            + "var(--sv-bg) 100%)");
 
         this.setOpacity(0);
         this.setTransition("opacity 180ms ease");
@@ -92,7 +92,7 @@
         // theme's muted token (the placeholder/subtitle gray) at full opacity.
         // The rgba fallback reproduces the classic theme's previous rendering
         // (#bbb at 0.6 over near-black).
-        row.setColor("var(--sv-text-muted, rgba(187, 187, 187, 0.6))");
+        row.setColor("var(--sv-text-dim)");
         row.setCursor("pointer");
         row.setPaddingBottom("10px");
         row.turnOffUserSelect();

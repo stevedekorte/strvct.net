@@ -83,7 +83,7 @@
             // Token-indirected so themes can recolor every icon at once
             // (a light theme needs ink icons); the fallback preserves the
             // default look, and explicit setStrokeColor calls still win.
-            const slot = this.newSlot("strokeColor", "var(--sv-icon-color, white)");
+            const slot = this.newSlot("strokeColor", "var(--sv-icon-color)");
             slot.setDoesHookSetter(true);
             slot.setSlotType("String");
         }
@@ -92,7 +92,7 @@
          * @category Styling
          */
         {
-            const slot = this.newSlot("fillColor", "var(--sv-icon-color, white)"); // see strokeColor note
+            const slot = this.newSlot("fillColor", "var(--sv-icon-color)"); // see strokeColor note
             slot.setDoesHookSetter(true);
             slot.setSlotType("String");
         }

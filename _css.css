@@ -1,3 +1,69 @@
+/*
+    STRVCT default theme tokens.
+
+    This is the DEFAULT THEME — what strvct looks like standing alone, with no app
+    theme loaded. It used to have no definition at all: every call site wrote
+    a var() with its own inline literal fallback, so "default" was whatever
+    each file happened to choose. --sv-text alone had SEVEN different fallbacks
+    across 17 sites (#b0b0b0 .. #ffffff), meaning the same token read as "primary
+    text" in one file and "muted grey" in another.
+
+    Defining them here keeps strvct independently usable (the reason the fallbacks
+    existed) while giving that look ONE readable definition. An app theme overrides
+    these by defining the same names on a more specific selector — see
+    app/styles/UoThemeCss.js.
+
+    Call sites should now use bare var(--sv-text) with NO inline fallback, so a token
+    nobody defined fails visibly instead of silently resolving to a local literal.
+
+    The text scale is three steps, because the literals it replaces clustered into
+    three bands, not two:
+      --sv-text        primary copy and headings
+      --sv-text-muted  secondary copy — still meant to be READ
+      --sv-text-dim    hints, placeholders, decoration — not meant to be read closely
+
+    Contrast on the default #191919 background: 15.9:1 / 8.1:1 / 5.0:1.
+
+    See docs/Plans/Theme Token Unification.
+*/
+:root {
+    --sv-bg: #191919;
+    --sv-surface: #191919;
+
+    --sv-text: #f4f4ec;
+    --sv-text-muted: #b0b0b0;
+    --sv-text-dim: #888888;
+    --sv-text-selected: #ffffff;
+    --sv-text-editable: #aaa;
+    --sv-text-uneditable: #888;
+
+    --sv-hairline: rgba(255, 255, 255, 0.15);
+    --sv-selection-bg: rgba(255, 255, 255, 0.10);
+    --sv-selection-active-bg: rgba(255, 255, 255, 0.14);
+
+    --sv-icon-color: white;
+    --sv-speaking-color: rgb(240, 192, 0);
+    --sv-scroll-link-color: #b0b0b0;
+
+    --sv-font: HoeflerTitling;
+    --sv-chat-font: inherit;
+
+    /* chat chrome — the app theme overrides these wholesale */
+    --sv-chat-msg-bg: rgba(255, 255, 255, 0.05);
+    --sv-chat-msg-border: 1px solid rgba(255, 255, 255, 0.02);
+    --sv-chat-msg-radius: 0.4em;
+    --sv-chat-msg-padding: 0.4em 0.8em;
+    --sv-chat-msg-user-rule: 1px solid rgba(255, 255, 255, 0.02);
+    --sv-chat-input-bg: rgba(255, 255, 255, 0.05);
+    --sv-chat-input-border: 1px solid rgba(255, 255, 255, 0.02);
+    --sv-chat-input-radius: 0.4em;
+    --sv-chat-input-padding: 0.4em 0.8em;
+    --sv-chat-input-bottom-rule: none;
+    --sv-chat-placeholder-color: inherit;
+    --sv-chat-placeholder-style: italic;
+    --sv-chat-placeholder-opacity: 0.45;
+}
+
 html, body {
     display: flex;
     position: absolute;
@@ -16,7 +82,7 @@ html, body {
     margin: 0px;
     border: 0px;
 
-    background-color: var(--sv-bg, black);
+    background-color: var(--sv-bg);
     zoom: 100%;
 
     font-size: 20px;

@@ -97,11 +97,11 @@
      */
     static themeTokenColors () {
         return [
-            "var(--sv-text, #bbb)",
-            "var(--sv-text-muted, #ccc)",
-            "var(--sv-text-selected, white)",
-            "var(--sv-selection-bg, #222)",
-            "var(--sv-selection-active-bg, #333)"
+            "var(--sv-text-muted)",
+            "var(--sv-text-muted)",
+            "var(--sv-text-selected)",
+            "var(--sv-selection-bg)",
+            "var(--sv-selection-active-bg)"
         ];
     }
 
@@ -688,8 +688,8 @@
         // var() token indirection: the fallback IS the default look; a theme
         // stylesheet (see the app's theme tokens) can redefine the --sv-*
         // token to restyle every tile without touching the theme records.
-        this.setThemeAttribute("color", "var(--sv-text-selected, white)");
-        this.setThemeAttribute("backgroundColor", "var(--sv-selection-active-bg, #333)");
+        this.setThemeAttribute("color", "var(--sv-text-selected)");
+        this.setThemeAttribute("backgroundColor", "var(--sv-selection-active-bg)");
         //this.setThemeAttribute("fontWeight", "normal");
     }
 
@@ -698,7 +698,7 @@
      * @returns {SvThemeState} The instance.
      */
     setupAsDefaultUnselectedState () {
-        this.setThemeAttribute("color", "var(--sv-text, #bbb)");
+        this.setThemeAttribute("color", "var(--sv-text-muted)");
         this.setThemeAttribute("backgroundColor", "transparent");
         //this.setThemeAttribute("fontWeight", "normal");
     }
@@ -708,8 +708,8 @@
      * @returns {SvThemeState} The instance.
      */
     setupAsDefaultSelectedState () {
-        this.setThemeAttribute("color", "var(--sv-text-selected, white)");
-        this.setThemeAttribute("backgroundColor", "var(--sv-selection-bg, #222)");
+        this.setThemeAttribute("color", "var(--sv-text-selected)");
+        this.setThemeAttribute("backgroundColor", "var(--sv-selection-bg)");
         //this.setThemeAttribute("fontWeight", "normal");
     }
 
@@ -718,7 +718,7 @@
      * @returns {SvThemeState} The instance.
      */
     setupAsDefaultDisabledState () {
-        this.setThemeAttribute("color", "var(--sv-text-muted, #ccc)");
+        this.setThemeAttribute("color", "var(--sv-text-muted)");
         //this.setThemeAttribute("backgroundColor", "transparent");
         //this.setThemeAttribute("fontWeight", "normal");
 

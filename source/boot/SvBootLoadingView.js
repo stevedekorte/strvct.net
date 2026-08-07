@@ -1,5 +1,11 @@
 "use strict";
 
+/* NOTE: no theme tokens here. This view renders BEFORE any theme stylesheet
+   loads (UoThemeCss deliberately excludes #loadingView), so a var(--sv-boot-*)
+   could never resolve to anything but its fallback — it advertised a
+   themeability that did not exist. Literals, honestly. See
+   docs/Plans/Theme Token Unification. */
+
 /**
  * @module boot
  */
@@ -82,13 +88,6 @@ class SvBootLoadingView extends Object {
    * custom properties, so a host page can customize with a small :root
    * declaration and gets the defaults otherwise:
    *
-   *   --sv-boot-font-family     (default: sans-serif)
-   *   --sv-boot-text-color      (default: white)
-   *   --sv-boot-bar-width       (default: 8em)
-   *   --sv-boot-bar-height      (default: 0.5em)
-   *   --sv-boot-bar-radius      (default: 0.25em; 0 = square edges)
-   *   --sv-boot-bar-color       (default: white)
-   *   --sv-boot-bar-track-color (default: #666)
    *
    * NOTE: a custom font-family only renders during boot if the host page
    * makes the font available at boot time (preload + @font-face in its own
@@ -119,22 +118,22 @@ class SvBootLoadingView extends Object {
             "    width: 320px; height: 120px;",
             "    display: flex; flex-direction: column; align-items: center; justify-content: center;",
             "    text-align: center;",
-            "    font-family: var(--sv-boot-font-family, sans-serif);",
-            "    color: var(--sv-boot-text-color, white);",
+            "    font-family: sans-serif;",
+            "    color: white;",
             "    opacity: 0; background: none; border: 0; z-index: 9999;",
             "}",
             "#loadingViewTitle { display: flex; justify-content: center; align-items: center; padding: 0; margin-bottom: 1em; }",
             "#loadingViewBarTrack {",
             "    display: block; padding: 0;",
-            "    width: var(--sv-boot-bar-width, 8em);",
-            "    height: var(--sv-boot-bar-height, 0.5em);",
-            "    border-radius: var(--sv-boot-bar-radius, 0.25em);",
-            "    background-color: var(--sv-boot-bar-track-color, #666);",
+            "    width: 8em;",
+            "    height: 0.5em;",
+            "    border-radius: 0.25em;",
+            "    background-color: #666;",
             "    overflow: hidden;",
             "}",
             "#innerLoadingView {",
-            "    background-color: var(--sv-boot-bar-color, white);",
-            "    border-radius: var(--sv-boot-bar-radius, 0.25em);",
+            "    background-color: white;",
+            "    border-radius: 0.25em;",
             "    height: 100%; width: 0;",
             "    transition: width 0.3s linear;",
             "}",
