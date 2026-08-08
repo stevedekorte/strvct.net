@@ -43,6 +43,19 @@
 
     --sv-icon-color: white;
     --sv-speaking-color: rgb(240, 192, 0);
+    /* The narrated sentence gets a SECOND channel besides hue, because hue alone is
+       a weak signal at body size (and useless to a red-green colour-blind reader).
+       Which channel depends on the ground, so the technique is per-theme and these
+       default to inert:
+         --sv-speaking-shadow  a glow. Needs a DARKER surround to read as emitted
+                               light; on a light ground a dark halo reads as ink
+                               bleed or a blurry screen, not emphasis.
+         --sv-speaking-bg      a wash behind the text. Keeps glyph edges crisp, so
+                               it is the light-ground answer.
+       Both are paint-only: this restyles on every sentence advance and must not
+       trigger layout. */
+    --sv-speaking-shadow: none;
+    --sv-speaking-bg: transparent;
     --sv-scroll-link-color: #b0b0b0;
 
     --sv-font: HoeflerTitling;

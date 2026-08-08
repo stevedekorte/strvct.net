@@ -109,8 +109,15 @@
      */
     highlightElement (e) {
         e.style.opacity = 1;
-        // the sentence currently being narrated; themes recolor via the token
+        // The sentence currently being narrated. Hue alone is a weak signal at body
+        // size — the light theme's red sits at only 1.9:1 against the body ink — so
+        // the theme supplies a SECOND channel too: a wash on a light ground, a glow
+        // on a dark one. Both default to inert, so a theme that wants neither gets
+        // colour only. All three are paint-only; none triggers layout, which matters
+        // because this runs on every sentence advance.
         e.style.color = "var(--sv-speaking-color)";
+        e.style.backgroundColor = "var(--sv-speaking-bg)";
+        e.style.textShadow = "var(--sv-speaking-shadow)";
         return this;
     }
 
@@ -124,6 +131,11 @@
         e.style.fontWeight = "";
         e.style.opacity = "";
         e.style.color = "";
+        // Must clear everything highlightElement set. Anything left behind
+        // accumulates down the message as narration advances, so the whole
+        // paragraph ends up wearing the active-sentence treatment.
+        e.style.backgroundColor = "";
+        e.style.textShadow = "";
         return this;
     }
 
