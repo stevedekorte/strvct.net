@@ -1,15 +1,15 @@
 "use strict";
 
-/* THEMING: this view renders BEFORE any stylesheet loads, so it can only use tokens
-   the host page defines inline on <html>. The former --sv-boot-* set was not one of
-   those and could never resolve to anything but its fallback, so it is gone.
+/* THEMING: the --sv-boot-* variables are the host page's control surface for this
+   view, and they ARE used — app.html defines all seven in a :root block to match the
+   landing page (Cormorant Garamond, warm ink, antique-gold hairline bar, square
+   edges). Every fallback below is strvct's own standalone look.
 
-   --sv-text IS available: app.html inlines it alongside the static
-   data-uo-theme stamp precisely so the boot screen matches the page it is painting
-   on. The `white` fallback keeps strvct standalone (no host tokens) looking as it
-   did. The bar track stays a literal mid grey deliberately — it must read against
-   BOTH a parchment and an ink ground, so following the text colour would make it
-   vanish on one of them. See docs/Plans/Theme Token Unification. */
+   These were briefly replaced with literals during the token cleanup, on the strength
+   of an inventory that reported them undefined. That inventory only scanned .js and
+   .css, so it never saw app.html and called a live design dead. The boot screen lost
+   its face and its hairline bar until Steve spotted it. If a token here looks unused,
+   grep the HTML before believing it. */
 
 /**
  * @module boot
@@ -123,22 +123,22 @@ class SvBootLoadingView extends Object {
             "    width: 320px; height: 120px;",
             "    display: flex; flex-direction: column; align-items: center; justify-content: center;",
             "    text-align: center;",
-            "    font-family: sans-serif;",
-            "    color: var(--sv-text, white);",
+            "    font-family: var(--sv-boot-font-family, sans-serif);",
+            "    color: var(--sv-boot-text-color, white);",
             "    opacity: 0; background: none; border: 0; z-index: 9999;",
             "}",
             "#loadingViewTitle { display: flex; justify-content: center; align-items: center; padding: 0; margin-bottom: 1em; }",
             "#loadingViewBarTrack {",
             "    display: block; padding: 0;",
-            "    width: 8em;",
-            "    height: 0.5em;",
-            "    border-radius: 0.25em;",
-            "    background-color: #666;",
+            "    width: var(--sv-boot-bar-width, 8em);",
+            "    height: var(--sv-boot-bar-height, 0.5em);",
+            "    border-radius: var(--sv-boot-bar-radius, 0.25em);",
+            "    background-color: var(--sv-boot-bar-track-color, #666);",
             "    overflow: hidden;",
             "}",
             "#innerLoadingView {",
-            "    background-color: currentColor;",
-            "    border-radius: 0.25em;",
+            "    background-color: var(--sv-boot-bar-color, white);",
+            "    border-radius: var(--sv-boot-bar-radius, 0.25em);",
             "    height: 100%; width: 0;",
             "    transition: width 0.3s linear;",
             "}",
