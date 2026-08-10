@@ -480,7 +480,7 @@
         // only the WRITE becomes in-place.
         const valueClass = (value && value._type)
             ? SvJsonIdNode.classForJsonType(value._type) // follows ClassRenames
-            : (this.subnodeClasses().length === 1 ? this.subnodeClasses().first() : null);
+            : this.defaultSubnodeClass(); // same rule as newSubnodeForJson: first is the default
         const sameClass = valueClass && oldNode.thisClass && oldNode.thisClass() === valueClass;
 
         if (sameClass && typeof oldNode.deserializeFromJson === "function") {

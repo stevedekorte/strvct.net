@@ -268,6 +268,23 @@
     }
 
     /**
+     * @description Whether this node's scroll column should show a scrollbar.
+     *
+     * Opt-in per node, in the nodeContentMaxWidth idiom: a method returning a value,
+     * never a stored slot (see the nodeMinTileHeight landmine — a stored hint gets
+     * stamped onto every node and is then impossible to take back).
+     *
+     * The app hides webkit scrollbars globally, which suits a column browser but not
+     * a long reading surface, where a scrollable region with no scroll affordance
+     * reads as a defect. A node that IS a reading surface says so here.
+     * @returns {Boolean}
+     * @category Layout
+     */
+    nodeShowsScrollbar () {
+        return false;
+    }
+
+    /**
      * @description Returns the node orientation.
      * @returns {string} The node orientation.
      * @category Layout

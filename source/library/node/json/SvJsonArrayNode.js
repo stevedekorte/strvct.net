@@ -235,6 +235,16 @@
      * @returns {SvJsonNode} The new subnode.
      * @category Subnode Management
      */
+    /**
+     * @description The class to use for a JSON entry that carries no _type — the
+     * first declared subnode class, or null when none are declared.
+     * @returns {Class|null}
+     * @category Subnode Management
+     */
+    defaultSubnodeClass () {
+        return this.subnodeClasses().first() || null;
+    }
+
     newSubnodeForJson (json, filterName, jsonPathComponents = []) {
         let aNode = null;
         let className = json._type;
@@ -251,12 +261,26 @@
                     + className + "' at path: " + jsonPathComponents.join("/")
                     + " — skipping this entry (add a ClassRenames.json entry if the class was renamed)");
             }
-        } else if (this.subnodeClasses().length === 1) { // only one subnode class, so we can use the clone method
-            const aClass = this.subnodeClasses().first();
-            aNode = aClass.clone().deserializeFromJson(json, filterName, jsonPathComponents);
         } else {
-            //debugger; // should not happen
-            aNode = SvJsonNode.nodeForJson(json, jsonPathComponents);
+            // No _type: use the DEFAULT subnode class. This used to require exactly
+            // one subnode class, and anything else fell through to nodeForJson(),
+            // which returns null for a plain object — a null then corrupts the
+            // subnodes array and surfaces as a crash somewhere unrelated.
+            //
+            // That made a collection polymorphic-by-addition a breaking change: the
+            // moment a second class registered itself (UoArtifact into UoItems),
+            // every previously-valid entry WITHOUT a _type stopped deserializing,
+            // including the ones an AI writes via a tool call — and the AI has no way
+            // to know a discriminator became mandatory.
+            //
+            // The first declared class is the natural default: additional classes are
+            // the special cases and name themselves with _type.
+            const aClass = this.defaultSubnodeClass();
+            if (aClass) {
+                aNode = aClass.clone().deserializeFromJson(json, filterName, jsonPathComponents);
+            } else {
+                aNode = SvJsonNode.nodeForJson(json, jsonPathComponents); // no declared classes
+            }
         }
         return aNode;
     }

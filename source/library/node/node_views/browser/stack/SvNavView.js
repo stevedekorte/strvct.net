@@ -517,6 +517,7 @@
         this.footerView().syncFromNode();
         this.syncClickToAddView();
         this.syncContentMaxWidth();
+        this.syncScrollbarVisibility();
 
         // Accessibility: label the region from its node
         if (this.node()) {
@@ -554,6 +555,35 @@
             this.headerView().setPaddingLeft(null);
             this.headerView().setPaddingRight(null);
         }
+        return this;
+    }
+
+    /**
+     * @description Applies the node's nodeShowsScrollbar() hint to this column's
+     * scroll view.
+     *
+     * Uses the STANDARD scrollbar properties rather than ::-webkit-scrollbar, for two
+     * reasons: they work in Firefox as well as Chrome, and scrollbar-color takes theme
+     * tokens — so the thumb is ink on parchment and paper on ink, instead of the
+     * hardcoded #aaa the webkit rules use, which would look wrong on a light ground.
+     * --sv-text-dim rather than --sv-hairline: a hairline is meant to be barely
+     * there, and a scroll affordance has to be findable.
+     *
+     * Cleared (not just skipped) when the hint is false, so a node that changes its
+     * mind — or a recycled view bound to a different node — does not keep a scrollbar
+     * it no longer wants.
+     * @returns {SvNavView}
+     * @category Layout
+     */
+    syncScrollbarVisibility () {
+        const node = this.node();
+        const shows = !!(node && node.nodeShowsScrollbar && node.nodeShowsScrollbar());
+        const sv = this.scrollView();
+        if (!sv) {
+            return this;
+        }
+        sv.setCssProperty("scrollbar-width", shows ? "thin" : null);
+        sv.setCssProperty("scrollbar-color", shows ? "var(--sv-text-dim) transparent" : null);
         return this;
     }
 
