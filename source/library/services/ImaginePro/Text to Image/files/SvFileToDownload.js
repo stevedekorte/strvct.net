@@ -40,6 +40,16 @@
             slot.setDescription("The URL of the page that referred to this image. This is used to track the source of the image.");
         }
 
+        // bearer token slot
+        {
+            const slot = this.newSlot("bearerToken", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(false); // a short-lived credential; never persist it
+            slot.setSyncsToView(false);
+            slot.setCanEditInspection(false);
+            slot.setDescription("Optional bearer token, sent as an Authorization header for destinations that require one. Empty by default, so a plain CDN fetch stays free of a CORS preflight.");
+        }
+
         /**
      * @member {SvImageNode} imageNode
      * @description Blob-backed storage for the downloaded image. Data lives in SvBlobPool; record stores only a hash + public URL.
@@ -260,6 +270,13 @@
             if (this.refererUrl()) {
                 headers["Referer"] = this.refererUrl();
             }
+        }
+
+        // Sent only when set: some destinations require it, but adding a
+        // non-simple header to a cross-origin GET would force a needless CORS
+        // preflight on the ones that don't.
+        if (this.bearerToken()) {
+            headers["Authorization"] = "Bearer " + this.bearerToken();
         }
 
         request.setHeaders(headers);
