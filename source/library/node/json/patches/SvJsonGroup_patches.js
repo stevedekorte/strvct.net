@@ -579,6 +579,27 @@
    * @category JSON Patch
    */
     setJsonKeyValue (key, value) {
+        // `_type` is JSON METADATA, not a slot. asJson() writes it from
+        // thisClass().svType() so a mixed-type array can rebuild its elements as the
+        // right classes; nothing stores it, so getSlot("_type") is always empty and a
+        // patch touching it could only ever throw "Slot '_type' not found".
+        //
+        // A host legitimately emits `add /.../_type` whenever its serialization
+        // includes the discriminator and the client's copy does not, which is a
+        // difference in what was written, not in what the object IS. When the value
+        // agrees with this node's class the operation is a no-op, and failing it
+        // aborts the whole patch — every operation after it is dropped, so one
+        // cosmetic disagreement desynchronises the client's entire state.
+        if (key === "_type") {
+            const declared = SvJsonIdNode.classForJsonType(value); // follows ClassRenames
+            if (!declared || declared === this.thisClass()) {
+                return this; // agrees (or names a class we cannot resolve) — nothing to do
+            }
+            throw new Error(`Cannot change _type from '${this.thisClass().svType()}' to '${value}'`
+                + " by patching a property: an element's class is chosen when it is created,"
+                + " so this needs a replace of the element itself, not of its _type");
+        }
+
         const slot = this.getSlot(key);
         if (!slot) {
             throw new Error(`Slot '${key}' not found`);
