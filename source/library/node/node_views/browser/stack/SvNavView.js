@@ -442,8 +442,10 @@
 
         this.setMinAndMaxHeight("100%");
 
-        // Only show border when not on mobile
-        if (!SvWebBrowserWindow.shared().isOnMobile()) {
+        // Only show border when not on mobile — and not when this column's
+        // right edge is the boundary of a COLLAPSED companion: a closed
+        // region draws no rule, so the user sees only the pill there.
+        if (!SvWebBrowserWindow.shared().isOnMobile() && !this.companionBoundaryIsBare()) {
             this.setBorderRight("1px solid var(--sv-hairline)");
         } else {
             this.setBorderRight(null);
@@ -509,6 +511,24 @@
             v.setWidth("fit-content");
             v.setHeight("100%");
         }
+    }
+
+    /**
+     * @description Whether this column's right border would double as the
+     * boundary of a collapsed companion. True only when this column is the
+     * deepest (no child columns between it and the companion) and the
+     * companion is not expanded — a closed region draws no hairline.
+     * @returns {Boolean}
+     * @category Styling
+     */
+    companionBoundaryIsBare () {
+        const stack = this.stackView();
+        const detail = stack ? stack.detailView() : null;
+        if (!detail || (detail.hasStackContent && detail.hasStackContent())) {
+            return false; // child columns own that boundary, keep the divider
+        }
+        const companion = detail.companionView ? detail.companionView() : null;
+        return !!(companion && companion.isExpanded && !companion.isExpanded());
     }
 
     /**

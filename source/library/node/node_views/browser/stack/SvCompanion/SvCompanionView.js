@@ -411,6 +411,11 @@
         // docked, the content must stay within the panel.
         this.setOverflow(mode === "docked" ? "hidden" : "visible");
 
+        // The adjacent column's right border doubles as this boundary's rule
+        // (present when docked, none when closed — see SvNavView
+        // companionBoundaryIsBare), so it must re-resolve on mode changes.
+        this.syncAdjacentBoundary();
+
         if (mode === "hidden") {
             // Too narrow: no panel and no pill; the content column gets the
             // full width.
@@ -463,6 +468,23 @@
             }
         }
 
+        return this;
+    }
+
+    /**
+     * @description Asks the stack's nav column to re-resolve its right
+     * border, whose presence depends on this companion's mode. No-op until
+     * the companion is attached (init runs applyMode before that).
+     * @returns {SvCompanionView}
+     * @category Layout
+     */
+    syncAdjacentBoundary () {
+        const detail = this.parentView();
+        const stack = (detail && detail.stackView) ? detail.stackView() : null;
+        const nav = (stack && stack.navView) ? stack.navView() : null;
+        if (nav && nav.syncOrientation) {
+            nav.syncOrientation();
+        }
         return this;
     }
 
