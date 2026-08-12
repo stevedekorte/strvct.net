@@ -120,7 +120,10 @@
     /**
      * @description Absolutely-positioned vertical overlay riding a side
      * panel's leading edge: 1em wide, full height, taking no layout space.
-     * @param {String} side - which edge of the parent to ride ("left"/"right").
+     * "outsideLeft" hangs the strip just OUTSIDE the parent's left edge —
+     * for a collapsed zero-width panel, so the pill floats over the content
+     * beside the boundary (the parent must not clip its overflow then).
+     * @param {String} side - "left" | "right" | "outsideLeft".
      * @returns {SvEdgeHandleView}
      * @category Layout
      */
@@ -128,8 +131,12 @@
         this.setPosition("absolute");
         this.setTop("0px");
         this.setBottom("0px");
+        this.setRight(null);
+        this.setLeft(null);
         if (side === "right") {
             this.setRight("0px");
+        } else if (side === "outsideLeft") {
+            this.setLeft("-1em");
         } else {
             this.setLeft("0px");
         }
@@ -143,7 +150,9 @@
     /**
      * @description Absolutely-positioned horizontal overlay riding a
      * bottom-docked panel's top edge: 1em tall, full width, no layout space.
-     * @param {String} side - which edge of the parent to ride ("top"/"bottom").
+     * "outsideTop" hangs the strip just above the parent's top edge (the
+     * collapsed zero-height counterpart of "outsideLeft").
+     * @param {String} side - "top" | "bottom" | "outsideTop".
      * @returns {SvEdgeHandleView}
      * @category Layout
      */
@@ -151,8 +160,12 @@
         this.setPosition("absolute");
         this.setLeft("0px");
         this.setRight("0px");
+        this.setBottom(null);
+        this.setTop(null);
         if (side === "bottom") {
             this.setBottom("0px");
+        } else if (side === "outsideTop") {
+            this.setTop("-1em");
         } else {
             this.setTop("0px");
         }

@@ -147,6 +147,13 @@
     toggleExpanded () {
         this.setIsRegionExpanded(!this.isRegionExpanded());
         this.didUpdateNode();
+        // The nav COLUMN owns the collapse (flex + fade), and it syncs from
+        // its own node — the conversation — not from this footer node. Nudge
+        // it, the same way the TV band nudges on fold-mode changes.
+        const conversation = this.conversation();
+        if (conversation && conversation.didUpdateNode) {
+            conversation.didUpdateNode();
+        }
         return this;
     }
 

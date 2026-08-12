@@ -13,15 +13,18 @@
  *
  *     SvCompanionView (node = nodeCompanionNode())
  *     ├── contentView   ← the node's view (nodeViewClassName, default SvBrowserView)
- *     └── tabView (SvCompanionTabView)  ← collapsed form: title label + badge
+ *     ├── tabView (SvCompanionTabView)  ← retired strip, never displayed (its
+ *     │       attention badge needs a new home — see Plans/Edge Handles)
+ *     └── edgeHandleView (SvEdgeHandleView)  ← the pill on the leading edge
  *
  * Modes:
- *   - docked:  content visible beside a thin caret strip (the tab), in normal
- *     flow. The columns compact to make room (companionReservedWidth feeds
- *     compaction). The strip's caret collapses the panel.
- *   - tab:     just the caret strip; content not shown. The caret expands it.
- *   - hidden:  nothing shown (the window is too narrow for even the strip), so
- *     the content column gets the full width.
+ *   - docked:  content visible, in normal flow. The columns compact to make
+ *     room (companionReservedWidth feeds compaction). The edge pill sits just
+ *     inside the panel's leading edge and collapses it.
+ *   - tab:     completely unseen (zero width); the pill overhangs the
+ *     boundary, floating over the content beside it, and expands the panel.
+ *   - hidden:  nothing at all, not even the pill (window too narrow), so the
+ *     content column gets the full width.
  *
  * The companion is always in normal flow — it NEVER floats over neighboring
  * content. Tapping the tab pins docked/tab (userMode); the columns compact to
@@ -283,10 +286,10 @@
         if (mode === "docked") {
             return this.preferredLength();
         }
-        if (mode === "tab") {
-            return this.tabLength();
-        }
-        return 0; // hidden
+        // tab: the collapsed companion is completely unseen and takes NO
+        // space — the edge pill overhangs the boundary instead of sitting
+        // in a reserved strip (Steve, 2026-08-12).
+        return 0;
     }
 
     /**
@@ -370,9 +373,9 @@
         tab.setIsVerticalTab(vertical);
         tab.setCompanionIsDocked(mode === "docked");
 
-        // size of the whole companion along the dock axis
-        const length = (mode === "docked") ? this.preferredLength()
-            : (mode === "tab") ? this.tabLength() : 0;
+        // size of the whole companion along the dock axis; collapsed takes
+        // no space at all (the pill overhangs the boundary instead)
+        const length = (mode === "docked") ? this.preferredLength() : 0;
         if (vertical) {
             this.setMinAndMaxWidth(length);
             this.setMinAndMaxHeight(null);
@@ -385,10 +388,20 @@
 
         this.applyEdgeHandlePlacement();
 
+        // The strip is fully retired: the pill is the affordance in every
+        // mode. NOTE this leaves the aggregate attention badge homeless while
+        // collapsed — an open question in Plans/Edge Handles (likely future
+        // home: a tint on the pill).
+        tab.hideDisplay();
+
+        // Collapsed, the companion is completely unseen (zero width) and the
+        // pill overhangs its boundary — so the pill must not be clipped;
+        // docked, the content must stay within the panel.
+        this.setOverflow(mode === "docked" ? "hidden" : "visible");
+
         if (mode === "hidden") {
-            // Too narrow: drop the panel, its strip and its handle entirely so
-            // the content column gets the full width.
-            tab.hideDisplay();
+            // Too narrow: no panel and no pill; the content column gets the
+            // full width.
             this.edgeHandleView().syncToRegion(); // hides (showsEdgeHandle is false)
             if (content) {
                 content.hideDisplay();
@@ -397,26 +410,6 @@
         }
 
         this.edgeHandleView().syncToRegion();
-
-        // The tab is only the COLLAPSED strip (it carries the attention
-        // badge); when docked, the edge handle on the leading edge is the
-        // collapse control and the content gets the full panel width.
-        if (mode === "tab") {
-            tab.unhideDisplay();
-            tab.setFlexGrow(1); // fills the strip when alone
-            tab.setFlexShrink(0);
-            if (vertical) {
-                tab.setMinAndMaxWidth(this.tabLength());
-                tab.setMinAndMaxHeight(null);
-                tab.setHeight("100%");
-            } else {
-                tab.setMinAndMaxHeight(this.tabLength());
-                tab.setMinAndMaxWidth(null);
-                tab.setWidth("100%");
-            }
-        } else {
-            tab.hideDisplay();
-        }
 
         if (mode === "docked") {
             if (content) {
@@ -463,17 +456,20 @@
 
     /**
      * @description Places the edge handle on the panel's LEADING edge — the
-     * boundary it shares with the content it docks against (left for a right
-     * dock, top for a bottom dock).
+     * boundary it shares with the content it docks against. Docked, the pill
+     * sits just INSIDE that edge (right of the panel's left edge, overlapping
+     * its leading 1em); collapsed, the panel is zero-width and the pill hangs
+     * just OUTSIDE it, floating over the content beside the boundary.
      * @returns {SvCompanionView}
      * @category Layout
      */
     applyEdgeHandlePlacement () {
         const handle = this.edgeHandleView();
+        const docked = this.mode() === "docked";
         if (this.isVerticalEdge()) {
-            handle.configureVerticalOverlay("left");
+            handle.configureVerticalOverlay(docked ? "left" : "outsideLeft");
         } else {
-            handle.configureHorizontalOverlay("top");
+            handle.configureHorizontalOverlay(docked ? "top" : "outsideTop");
         }
         return this;
     }
