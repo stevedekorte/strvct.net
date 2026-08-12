@@ -226,7 +226,56 @@
         const owner = tailNode ? tailNode.firstParentChainNodeThatRespondsTo("nodeWantsBreadCrumbs") : null;
         this.watchBreadCrumbsHintOwner(owner);
         const wantsCrumbs = owner ? (owner.nodeWantsBreadCrumbs() !== false) : true;
-        this.breadCrumbsView().setIsDisplayHidden(!wantsCrumbs);
+        this.applyBreadCrumbsVisible(wantsCrumbs);
+        return this;
+    }
+
+    /**
+     * @description Collapses/restores the breadcrumb bar as a max-height
+     * slide with an opacity fade (prototype-parity motion, one gesture with
+     * the theatre opening beneath it). The bar keeps its display — height
+     * zero plus hidden overflow retires it visually and interactively.
+     * @param {Boolean} visible
+     * @returns {SvBrowserView}
+     * @category UI
+     */
+    applyBreadCrumbsVisible (visible) {
+        if (this._appliedCrumbsVisible === undefined) {
+            this._appliedCrumbsVisible = true;
+        }
+        if (this._appliedCrumbsVisible === visible) {
+            return this;
+        }
+        this._appliedCrumbsVisible = visible;
+
+        const crumbs = this.breadCrumbsView();
+        const curve = "cubic-bezier(.2,.8,.2,1)";
+        crumbs.setTransition("max-height 0.34s " + curve + ", min-height 0.34s " + curve + ", opacity 0.26s ease-out");
+        crumbs.setOverflowY("hidden");
+        if (visible) {
+            crumbs.setIsDisplayHidden(false); // in case an older path display-hid it
+            crumbs.setMinHeight("55px");
+            crumbs.setMaxHeight("55px");
+            crumbs.setOpacity(1);
+            crumbs.setCssProperty("border-bottom-width", "1px");
+            this.addTimeout(() => {
+                if (this._appliedCrumbsVisible === true) {
+                    crumbs.setMaxHeight(null);
+                }
+            }, 360, "crumbsMotion");
+        } else {
+            crumbs.setMaxHeight("55px"); // a definite FROM value...
+            this.addTimeout(() => {
+                if (this._appliedCrumbsVisible === false) {
+                    crumbs.setMinHeight("0px");
+                    crumbs.setMaxHeight("0px"); // ...slides to zero
+                    crumbs.setOpacity(0);
+                    // WIDTH, not the shorthand: a zero-height bar's border
+                    // still renders as a 1px line over the theatre
+                    crumbs.setCssProperty("border-bottom-width", "0px");
+                }
+            }, 16, "crumbsMotion");
+        }
         return this;
     }
 

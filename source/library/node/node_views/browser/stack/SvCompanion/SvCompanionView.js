@@ -142,6 +142,15 @@
         this.setFlexShrink(0);
         this.setOverflow("hidden"); // content stays within the panel; never floats over neighbors
         this.setBackgroundColor("var(--SvCompanion-bg, rgba(255, 255, 255, 0.03))");
+        // Prototype-parity motion: the panel SLIDES between its docked width
+        // and zero (the flexing content column follows per layout, no second
+        // transition needed). Size is applied via setMinAndMaxWidth/Height,
+        // so those are the animating properties.
+        {
+            const curve = "cubic-bezier(.2,.8,.2,1)";
+            this.setTransition(["min-width", "max-width", "min-height", "max-height"]
+                .map(p => p + " 0.38s " + curve).join(", "));
+        }
 
         const tab = SvCompanionTabView.clone();
         tab.setCompanionView(this);
@@ -407,7 +416,16 @@
 
         if (mode === "docked") {
             if (content) {
+                this.clearTimeoutNamed("companionContentHide");
                 content.unhideDisplay();
+                if (this._appliedContentMode !== "docked") {
+                    // fade the sheet in while the panel slides open
+                    content.setTransition("opacity 0.3s ease-out");
+                    content.setOpacity(0);
+                    this.addTimeout(() => {
+                        content.setOpacity(1);
+                    }, 30, "companionContentFadeIn");
+                }
                 content.setPosition("relative");
                 content.setZIndex(null);
                 content.setFlexGrow(1);
@@ -439,11 +457,22 @@
             // it width) so the content shows without needing a manual resize.
             this.scheduleMethod("relayoutDockedContent");
         } else {
-            // tab only: content not shown (never a slide-over overlay).
+            // tab: the sheet fades while the panel slides shut, then unmounts
+            // once the motion is over (never a slide-over overlay).
             if (content) {
-                content.hideDisplay();
+                if (this._appliedContentMode === "docked") {
+                    content.setOpacity(0);
+                    this.addTimeout(() => {
+                        if (this.mode() !== "docked") {
+                            content.hideDisplay();
+                        }
+                    }, 390, "companionContentHide");
+                } else {
+                    content.hideDisplay();
+                }
             }
         }
+        this._appliedContentMode = mode;
 
         return this;
     }

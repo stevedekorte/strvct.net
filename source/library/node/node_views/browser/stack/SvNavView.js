@@ -305,7 +305,20 @@
         // scroll area shrinking below its content; the collapsible regions
         // need it to yield (down to zero in theatre mode).
         this.scrollView().setMinHeight("0px");
-        this.footerView().setTransition("opacity 0.26s ease-out");
+
+        // Prototype-parity motion (Plans/Edge Handles § Animations, revised
+        // 2026-08-12: feel beats the strict no-layout-transition rule for
+        // these rare, user-initiated ~400ms toggles): region toggles ANIMATE
+        // their layout share — flex-grow for the theatre, max-height for the
+        // footer — with content fades layered on. The no-MEASUREMENT rule
+        // still holds absolutely: transitions relayout, nothing ever reads.
+        {
+            const curve = "cubic-bezier(.2,.8,.2,1)";
+            this.headerView().setTransition("flex-grow 0.42s " + curve);
+            this.scrollView().setTransition("flex-grow 0.42s " + curve);
+            this.scrollView().setFlexBasis("0px"); // so grow interpolates proportions
+            this.footerView().setTransition("max-height 0.34s " + curve + ", opacity 0.26s ease-out");
+        }
 
         this.addGestureRecognizer(SvRightEdgePanGestureRecognizer.clone()); // for adjusting width
         this.addGestureRecognizer(SvBottomEdgePanGestureRecognizer.clone()); // for adjusting height
@@ -730,6 +743,7 @@
 
         const header = this.headerView();
         const scroll = this.scrollView();
+        const hasRegion = !!this.headerRegion();
         if (expanded) {
             header.setHeight("auto"); // clear fit-content so flex sizes it (definite, so the tile's 100% resolves)
             header.setFlexGrow(1);
@@ -738,17 +752,27 @@
             header.setMinHeight("0px");
             header.setBorderBottom(null); // the region owns its surface; no doubled rule
             scroll.setFlexGrow(0);
-            scroll.setFlexBasis("0px");
             this.headerHandleView().setOrder(0); // ride the top of the column
+        } else if (hasRegion) {
+            // a collapsed REGION keeps flex-basis 0 (height comes from grow),
+            // so open/close is a pure flex-grow transition both ways
+            header.setHeight("auto");
+            header.setFlexGrow(0);
+            header.setFlexShrink(1);
+            header.setFlexBasis("0px");
+            header.setMinHeight("0px");
+            header.setBorderBottom(null); // a closed region draws no rule
+            scroll.setFlexGrow(1);
+            this.headerHandleView().setOrder(2);
         } else {
+            // no region: the legacy hug-content header (e.g. a recovery button)
             header.setHeight("fit-content");
             header.setFlexGrow(0);
             header.setFlexShrink(0);
             header.setFlexBasis(null);
             header.setMinHeight(null);
-            header.setBorderBottom(this.headerRegion() ? null : "1px solid var(--sv-hairline)"); // a closed region draws no rule
+            header.setBorderBottom("1px solid var(--sv-hairline)");
             scroll.setFlexGrow(1);
-            scroll.setFlexBasis(null);
             this.headerHandleView().setOrder(2);
         }
         this.headerHandleView().setIsInverted(expanded);
@@ -758,11 +782,11 @@
     }
 
     /**
-     * @description Footer (chat input) collapse: fade -> snap. The content
-     * fades out first (compositor-only), then the space closes in one layout
-     * commit; expanding mirrors it (snap -> fade). The commit is scheduled
-     * with addTimeout matching the fade — never transitionend, never a bare
-     * rAF (background tabs).
+     * @description Footer (chat input) collapse: a max-height slide with the
+     * content fading alongside, per the prototype. The cap is a definite
+     * value only during the motion (max-height:none cannot animate), then
+     * lifts so a multiline input can grow freely. Sequencing uses addTimeout
+     * — never transitionend, never a bare rAF (background tabs).
      * @param {Boolean} expanded
      * @returns {SvNavView}
      * @category Collapsible Regions
@@ -778,19 +802,28 @@
 
         const footer = this.footerView();
         if (expanded) {
-            footer.unhideDisplay(); // snap the space open...
-            footer.setOpacity(0);
+            footer.setCssProperty("visibility", null);
+            footer.setMaxHeight("12em"); // slides 0 -> cap
+            footer.setOpacity(1);
             this.addTimeout(() => {
-                footer.setOpacity(1); // ...then fade the content in
-            }, 30, "footerRegionFadeIn");
+                if (this._appliedFooterRegionExpanded === true) {
+                    footer.setMaxHeight(null); // lift the cap for multiline growth
+                }
+            }, 360, "footerRegionMotion");
             this.footerHandleView().setMarginBottom("0px");
         } else {
-            footer.setOpacity(0); // fade the content out...
+            footer.setMaxHeight("12em"); // a definite FROM value...
             this.addTimeout(() => {
                 if (this._appliedFooterRegionExpanded === false) {
-                    footer.hideDisplay(); // ...then close the space in one commit
+                    footer.setMaxHeight("0px"); // ...slides cap -> 0
+                    footer.setOpacity(0);
+                    this.addTimeout(() => {
+                        if (this._appliedFooterRegionExpanded === false) {
+                            footer.setCssProperty("visibility", "hidden"); // unfocusable while collapsed
+                        }
+                    }, 360, "footerRegionMotion");
                 }
-            }, 260, "footerRegionFadeOut");
+            }, 16, "footerRegionMotion");
             // the pill becomes the column's bottom edge: keep its touch
             // target clear of the home-indicator gesture zone
             this.footerHandleView().setMarginBottom("env(safe-area-inset-bottom)");
