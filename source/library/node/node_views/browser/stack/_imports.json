@@ -1,4 +1,5 @@
 [
+    "SvEdgeHandle/_imports.json",
     "SvStackView.js",
     "SvDetailView.js",
     "SvNavView.js",

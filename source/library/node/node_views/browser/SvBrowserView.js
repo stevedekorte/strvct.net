@@ -460,4 +460,71 @@
         return true;
     }
 
+    // --- collapsible-region shortcuts (see SvEdgeHandleView) ---
+
+    /**
+     * @description Walks this browser's stack chain front to back.
+     * @param {Function} fn - visitor receiving each SvStackView; a truthy
+     * return stops the walk and is returned.
+     * @returns {*} The visitor's first truthy result, or null.
+     * @category Navigation
+     */
+    detectStackViewInChain (fn) {
+        let stack = this.stackView();
+        while (stack) {
+            const result = fn(stack);
+            if (result) {
+                return result;
+            }
+            stack = stack.nextStackView();
+        }
+        return null;
+    }
+
+    /**
+     * @description Meta-Backslash toggles the deepest visible companion
+     * panel. Generic: the companion is a framework region; which stack has
+     * one is discovered, not assumed.
+     * @returns {Boolean} false when handled (stops propagation).
+     * @category Keyboard
+     */
+    onMetaBackslashKeyDown (event) {
+        let companion = null;
+        this.detectStackViewInChain((stack) => {
+            const detail = stack.detailView();
+            const c = (detail && detail.companionView) ? detail.companionView() : null;
+            if (c && c.showsEdgeHandle()) {
+                companion = c; // keep walking: the DEEPEST visible companion wins
+            }
+            return false;
+        });
+        if (companion) {
+            companion.toggleExpanded();
+            event.preventDefault();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @description Escape collapses an expanded collapsible header region
+     * (e.g. a theatre band). Focused text editing wins — SvTextView consumes
+     * Escape before it can bubble here — so this only fires when nothing
+     * closer claimed the key.
+     * @returns {Boolean} false when handled (stops propagation).
+     * @category Keyboard
+     */
+    onEscapeKeyDown (/*event*/) {
+        const region = this.detectStackViewInChain((stack) => {
+            const nav = stack.navView();
+            const headerRegion = (nav && nav.headerRegion) ? nav.headerRegion() : null;
+            return (headerRegion && headerRegion.isExpanded() === true) ? headerRegion : null;
+        });
+        if (region) {
+            region.toggleExpanded();
+            return false;
+        }
+        return true;
+    }
+
 }.initThisClass());

@@ -107,9 +107,25 @@
          * @category Layout
          */
         {
-            const slot = this.newSlot("tabLength", 16);
+            const slot = this.newSlot("tabLength", 20);
             slot.setSlotType("Number");
         }
+
+        /**
+         * @member {SvEdgeHandleView} edgeHandleView - the edge pill riding the
+         * panel's LEADING edge (the boundary with the content it docks
+         * against). An overlay child, so it moves with the panel because it is
+         * inside the panel — no offset arithmetic, no second animation.
+         * @category UI
+         */
+        {
+            const slot = this.newSlot("edgeHandleView", null);
+            slot.setSlotType("SvEdgeHandleView");
+        }
+    }
+
+    initPrototype () {
+        this.addProtocol(SvCollapsibleRegionProtocol);
     }
 
     init () {
@@ -127,8 +143,43 @@
         this.setTabView(tab);
         this.addSubview(tab);
 
+        const handle = SvEdgeHandleView.clone();
+        handle.setRegion(this);
+        this.setEdgeHandleView(handle);
+        this.addSubview(handle);
+
         this.applyMode();
         return this;
+    }
+
+    // --- SvCollapsibleRegionProtocol ---
+
+    /**
+     * @description The companion is "expanded" when docked; the tab strip and
+     * hidden modes both read as collapsed.
+     * @returns {Boolean}
+     * @category Collapsible Region
+     */
+    isExpanded () {
+        return this.mode() === "docked";
+    }
+
+    collapsibleAxis () {
+        return this.isVerticalEdge() ? "horizontal" : "vertical";
+    }
+
+    /**
+     * @description No handle when the window is too narrow for even the strip
+     * — the region has no boundary to mark.
+     * @returns {Boolean}
+     * @category Collapsible Region
+     */
+    showsEdgeHandle () {
+        return this.mode() !== "hidden";
+    }
+
+    collapsibleRegionLabel () {
+        return "Companion panel";
     }
 
     // --- node binding ---
@@ -332,30 +383,39 @@
             this.setWidth("100%");
         }
 
+        this.applyEdgeHandlePlacement();
+
         if (mode === "hidden") {
-            // Too narrow: drop the panel and its tab entirely so the content
-            // column gets the full width.
+            // Too narrow: drop the panel, its strip and its handle entirely so
+            // the content column gets the full width.
             tab.hideDisplay();
+            this.edgeHandleView().syncToRegion(); // hides (showsEdgeHandle is false)
             if (content) {
                 content.hideDisplay();
             }
             return this;
         }
 
-        // The tab is a persistent control in both docked and tab modes: a thin
-        // fixed strip on the dock edge whose caret expands (when a tab) or
-        // collapses (when docked) the panel.
-        tab.unhideDisplay();
-        tab.setFlexGrow(mode === "tab" ? 1 : 0); // fills the strip when alone; fixed beside content when docked
-        tab.setFlexShrink(0);
-        if (vertical) {
-            tab.setMinAndMaxWidth(this.tabLength());
-            tab.setMinAndMaxHeight(null);
-            tab.setHeight("100%");
+        this.edgeHandleView().syncToRegion();
+
+        // The tab is only the COLLAPSED strip (it carries the attention
+        // badge); when docked, the edge handle on the leading edge is the
+        // collapse control and the content gets the full panel width.
+        if (mode === "tab") {
+            tab.unhideDisplay();
+            tab.setFlexGrow(1); // fills the strip when alone
+            tab.setFlexShrink(0);
+            if (vertical) {
+                tab.setMinAndMaxWidth(this.tabLength());
+                tab.setMinAndMaxHeight(null);
+                tab.setHeight("100%");
+            } else {
+                tab.setMinAndMaxHeight(this.tabLength());
+                tab.setMinAndMaxWidth(null);
+                tab.setWidth("100%");
+            }
         } else {
-            tab.setMinAndMaxHeight(this.tabLength());
-            tab.setMinAndMaxWidth(null);
-            tab.setWidth("100%");
+            tab.hideDisplay();
         }
 
         if (mode === "docked") {
@@ -398,6 +458,23 @@
             }
         }
 
+        return this;
+    }
+
+    /**
+     * @description Places the edge handle on the panel's LEADING edge — the
+     * boundary it shares with the content it docks against (left for a right
+     * dock, top for a bottom dock).
+     * @returns {SvCompanionView}
+     * @category Layout
+     */
+    applyEdgeHandlePlacement () {
+        const handle = this.edgeHandleView();
+        if (this.isVerticalEdge()) {
+            handle.configureVerticalOverlay("left");
+        } else {
+            handle.configureHorizontalOverlay("top");
+        }
         return this;
     }
 

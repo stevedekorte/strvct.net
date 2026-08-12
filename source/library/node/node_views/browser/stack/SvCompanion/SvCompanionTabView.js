@@ -5,11 +5,14 @@
 
 /** * @class SvCompanionTabView
  * @extends SvFlexDomView
- * @classdesc The collapsed form of an SvCompanionView: a thin tab hugging the
- * edge the companion collapsed toward. It shows only a chevron affordance
- * (pointing the way the panel expands) plus an attention badge — deliberately
- * no title, since the strip is too narrow to render one legibly. Tapping it
- * toggles the companion open.
+ * @classdesc The collapsed form of an SvCompanionView: a quiet strip hugging
+ * the edge the companion collapsed toward, carrying ONLY the aggregate
+ * attention badge. The caret glyph and the strip's own tap gesture were
+ * retired for the edge-handle redesign (see SvEdgeHandleView): the pill on
+ * the boundary is the one toggle affordance, and the boundary away from the
+ * pill is deliberately inert. The badge stays — it is a notification, not an
+ * affordance, and deleting it would remove the only signal that the companion
+ * wants attention while collapsed.
  *
  * Colors can be themed via CSS variables:
  *
@@ -27,15 +30,6 @@
         {
             const slot = this.newSlot("companionView", null);
             slot.setSlotType("SvCompanionView");
-        }
-
-        /**
-         * @member {SvTextView} labelView - shows a chevron affordance (no title)
-         * @category UI
-         */
-        {
-            const slot = this.newSlot("labelView", null);
-            slot.setSlotType("SvTextView");
         }
 
         /**
@@ -78,7 +72,6 @@
         this.setJustifyContent("center");
         this.setWidth("100%");
         this.setHeight("100%");
-        this.setCursor("pointer");
         this.setColor("var(--SvCompanionTab-color, rgba(255, 255, 255, 0.5))");
         // A faint fill + hairline edge so the collapsed rail reads as a
         // control strip instead of an unexplained gap beside the content
@@ -88,21 +81,7 @@
         this.setBackgroundColor("var(--SvCompanionTab-background-color, rgba(255, 255, 255, 0.035))");
         this.turnOffUserSelect();
 
-        const label = SvTextView.clone();
-        label.setFontSize("1em");
-        label.setWhiteSpace("nowrap");
-        label.setPointerEvents("none");
-        // SvTextView.init plants inline 0.5em side paddings — inside a 16px
-        // rail that pushes the caret glyph visibly off-center. Zero them all;
-        // flex on this tab does the centering.
-        label.setPaddingLeft("0em");
-        label.setPaddingRight("0em");
-        label.setPaddingTop("0em");
-        label.setPaddingBottom("0em");
-        label.setMinWidth("0px"); // SvTextView also sets a 10px min-width
-        this.setLabelView(label);
-        this.addSubview(label);
-        this.syncCaret(); // sets the caret glyph for the current edge/state
+        this.syncCaret(); // sets the boundary hairline for the current edge
 
         const badge = SvBadgeView.clone();
         badge.setPosition("absolute");
@@ -113,10 +92,6 @@
         this.addSubview(badge);
 
         this.setPosition("relative");
-        this.addDefaultTapGesture();
-
-        this.setAriaRole("button");
-        this.setAriaLabel("Toggle companion panel");
 
         return this;
     }
@@ -132,34 +107,17 @@
     }
 
     /**
-     * @description Sets the caret glyph to point the way a tap moves the panel:
-     * when docked it offers to collapse (push toward the edge: › for a side
-     * dock, ⌄ for a bottom dock); when collapsed it offers to expand (pull away
-     * from the edge: ‹ / ⌃). Thin single-stroke carets matching the breadcrumb
-     * separators. A single glyph, no writing-mode rotation.
+     * @description Applies the boundary hairline to the content-facing edge
+     * (vertical tab = side dock → left edge; horizontal = bottom dock → top
+     * edge). The caret glyph is retired — the edge pill is the affordance.
      * @returns {SvCompanionTabView} The current instance.
      * @category Display
      */
     syncCaret () {
-        const label = this.labelView();
-        label.setCssProperty("writing-mode", null);
-        // Hairline on the content-facing edge (vertical tab = side dock →
-        // left edge; horizontal = bottom dock → top edge).
         const edge = this.isVerticalTab() ? "border-left" : "border-top";
         const other = this.isVerticalTab() ? "border-top" : "border-left";
         this.setCssProperty(other, null);
         this.setCssProperty(edge, "1px solid var(--SvCompanionTab-border-color, rgba(255, 255, 255, 0.08))");
-        let glyph;
-        if (this.isVerticalTab()) {
-            glyph = this.companionIsDocked() ? "›" : "‹";
-            // same optical nudge the breadcrumb separator uses: these glyphs
-            // sit low in their line box, and flex centers the box, not the ink
-            label.setCssProperty("transform", "translateY(-0.08em)");
-        } else {
-            glyph = this.companionIsDocked() ? "⌄" : "⌃";
-            label.setCssProperty("transform", "translateY(-0.15em)");
-        }
-        label.setString(glyph);
         return this;
     }
 
@@ -178,14 +136,6 @@
             badge.unhideDisplay();
         } else {
             badge.hideDisplay();
-        }
-        return this;
-    }
-
-    onTapComplete (/*aGesture*/) {
-        const companion = this.companionView();
-        if (companion) {
-            companion.toggleExpanded();
         }
         return this;
     }

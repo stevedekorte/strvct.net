@@ -15,8 +15,8 @@
  * 3. Through gesture handling: The onRightEdgePanMove() method allows users to resize by dragging the right edge
  * 4. Via SvStackView width management: The parent SvStackView can compact and expand NavViews based on available space
  * 5. The width can also be adapted using setWidth("-webkit-fill-available") when a SvNavView needs to fill remaining space
- 
- 
+
+
  */
 
 (class SvNavView extends SvNodeView {
@@ -65,6 +65,28 @@
         {
             const slot = this.newSlot("tilesView", null);
             slot.setSlotType("SvTilesView");
+        }
+
+        /**
+         * @member {SvEdgeHandleView} headerHandleView - edge pill on the
+         * boundary between the header region and the scroll area; active only
+         * when the node's headerNode() conforms to SvCollapsibleRegionProtocol
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("headerHandleView", null);
+            slot.setSlotType("SvEdgeHandleView");
+        }
+
+        /**
+         * @member {SvEdgeHandleView} footerHandleView - edge pill on the
+         * boundary between the scroll area and the footer region; active only
+         * when the node's footerNode() conforms to SvCollapsibleRegionProtocol
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("footerHandleView", null);
+            slot.setSlotType("SvEdgeHandleView");
         }
 
         /**
@@ -235,6 +257,35 @@
         this.setTilesView(SvTilesView.clone());
         this.scrollView().addSubview(this.tilesView());
 
+        // Collapsible-region edge handles (see SvEdgeHandleView). Appended
+        // after the footer, so flex `order` — not DOM order — places every
+        // column child; that is also what lets the header handle move to the
+        // very top of the column in theatre mode without re-inserting nodes.
+        {
+            const handle = SvEdgeHandleView.clone();
+            handle.configureHorizontal("below"); // overlays the scroll top
+            handle.setShowsGradient(true); // narration dissolves under the strip
+            this.setHeaderHandleView(handle);
+            this.addSubview(handle);
+        }
+        {
+            const handle = SvEdgeHandleView.clone();
+            handle.configureHorizontal("above"); // overlays the scroll bottom
+            this.setFooterHandleView(handle);
+            this.addSubview(handle);
+        }
+        this.headerView().setOrder(1);
+        this.headerHandleView().setOrder(2);
+        this.scrollView().setOrder(3);
+        this.footerHandleView().setOrder(4);
+        this.footerView().setOrder(5);
+
+        // In a column flex container the default min-height:auto stops the
+        // scroll area shrinking below its content; the collapsible regions
+        // need it to yield (down to zero in theatre mode).
+        this.scrollView().setMinHeight("0px");
+        this.footerView().setTransition("opacity 0.26s ease-out");
+
         this.addGestureRecognizer(SvRightEdgePanGestureRecognizer.clone()); // for adjusting width
         this.addGestureRecognizer(SvBottomEdgePanGestureRecognizer.clone()); // for adjusting height
 
@@ -404,7 +455,12 @@
         if (this.headerView()) {
             const v = this.headerView();
             v.setWidth("100%");
-            v.setHeight("fit-content");
+            if (this._appliedHeaderRegionExpanded !== true) {
+                // theatre mode owns the header's height (flex 1 1 0); see
+                // applyHeaderRegionExpanded — fit-content would zero the
+                // region's 100%-height tile
+                v.setHeight("fit-content");
+            }
         }
 
         if (this.footerView()) {
@@ -515,6 +571,7 @@
 
         this.headerView().syncFromNode();
         this.footerView().syncFromNode();
+        this.syncCollapsibleRegions();
         this.syncClickToAddView();
         this.syncContentMaxWidth();
         this.syncScrollbarVisibility();
@@ -525,6 +582,134 @@
         }
 
         //console.log(this.svTypeId(), " syncFromNode done");
+        return this;
+    }
+
+    // --- collapsible regions (SvCollapsibleRegionProtocol edge handles) ---
+
+    /**
+     * @description The node's headerNode() when it can drive an edge handle,
+     * else null. The header node is swappable (e.g. a recovery button can
+     * take the band's place), so this re-resolves on every sync.
+     * @returns {Object|null}
+     * @category Collapsible Regions
+     */
+    headerRegion () {
+        const node = this.node();
+        const header = (node && node.headerNode) ? node.headerNode() : null;
+        return (header && this.headerHandleView().regionIsUsable(header)) ? header : null;
+    }
+
+    footerRegion () {
+        const node = this.node();
+        const footer = (node && node.footerNode) ? node.footerNode() : null;
+        return (footer && this.footerHandleView().regionIsUsable(footer)) ? footer : null;
+    }
+
+    /**
+     * @description Wires the edge handles to the current header/footer
+     * regions and applies each region's expanded state to the column's flex
+     * layout. Idempotent — guarded per region so repeated syncs never restart
+     * a fade or re-commit a layout.
+     * @returns {SvNavView}
+     * @category Collapsible Regions
+     */
+    syncCollapsibleRegions () {
+        const headerRegion = this.headerRegion();
+        this.headerHandleView().setRegion(headerRegion);
+        this.headerHandleView().syncToRegion();
+        this.applyHeaderRegionExpanded(headerRegion ? headerRegion.isExpanded() === true : false);
+
+        const footerRegion = this.footerRegion();
+        this.footerHandleView().setRegion(footerRegion);
+        this.footerHandleView().syncToRegion();
+        this.applyFooterRegionExpanded(footerRegion ? footerRegion.isExpanded() !== false : true);
+        return this;
+    }
+
+    /**
+     * @description Theatre-mode flex swap, as ONE layout commit: expanded, the
+     * header region takes the space remaining in the column (flex 1 1 0) and
+     * the scroll area collapses to zero — never a fixed height, never a
+     * measurement, so nothing can be pushed off-screen. The header handle
+     * order-swaps to the very top of the column (over the expanded region's
+     * own surface) and both horizontal pills invert for a dark field.
+     * @param {Boolean} expanded
+     * @returns {SvNavView}
+     * @category Collapsible Regions
+     */
+    applyHeaderRegionExpanded (expanded) {
+        if (this._appliedHeaderRegionExpanded === expanded) {
+            return this;
+        }
+        this._appliedHeaderRegionExpanded = expanded;
+
+        const header = this.headerView();
+        const scroll = this.scrollView();
+        if (expanded) {
+            header.setHeight("auto"); // clear fit-content so flex sizes it (definite, so the tile's 100% resolves)
+            header.setFlexGrow(1);
+            header.setFlexShrink(1);
+            header.setFlexBasis("0px");
+            header.setMinHeight("0px");
+            header.setBorderBottom(null); // the region owns its surface; no doubled rule
+            scroll.setFlexGrow(0);
+            scroll.setFlexBasis("0px");
+            this.headerHandleView().setOrder(0); // ride the top of the column
+        } else {
+            header.setHeight("fit-content");
+            header.setFlexGrow(0);
+            header.setFlexShrink(0);
+            header.setFlexBasis(null);
+            header.setMinHeight(null);
+            header.setBorderBottom(this.headerRegion() ? null : "1px solid var(--sv-hairline)"); // a closed region draws no rule
+            scroll.setFlexGrow(1);
+            scroll.setFlexBasis(null);
+            this.headerHandleView().setOrder(2);
+        }
+        this.headerHandleView().setIsInverted(expanded);
+        this.footerHandleView().setIsInverted(expanded);
+        return this;
+    }
+
+    /**
+     * @description Footer (chat input) collapse: fade -> snap. The content
+     * fades out first (compositor-only), then the space closes in one layout
+     * commit; expanding mirrors it (snap -> fade). The commit is scheduled
+     * with addTimeout matching the fade — never transitionend, never a bare
+     * rAF (background tabs).
+     * @param {Boolean} expanded
+     * @returns {SvNavView}
+     * @category Collapsible Regions
+     */
+    applyFooterRegionExpanded (expanded) {
+        if (this._appliedFooterRegionExpanded === undefined) {
+            this._appliedFooterRegionExpanded = true; // columns start expanded
+        }
+        if (this._appliedFooterRegionExpanded === expanded) {
+            return this;
+        }
+        this._appliedFooterRegionExpanded = expanded;
+
+        const footer = this.footerView();
+        if (expanded) {
+            footer.unhideDisplay(); // snap the space open...
+            footer.setOpacity(0);
+            this.addTimeout(() => {
+                footer.setOpacity(1); // ...then fade the content in
+            }, 30, "footerRegionFadeIn");
+            this.footerHandleView().setMarginBottom("0px");
+        } else {
+            footer.setOpacity(0); // fade the content out...
+            this.addTimeout(() => {
+                if (this._appliedFooterRegionExpanded === false) {
+                    footer.hideDisplay(); // ...then close the space in one commit
+                }
+            }, 260, "footerRegionFadeOut");
+            // the pill becomes the column's bottom edge: keep its touch
+            // target clear of the home-indicator gesture zone
+            this.footerHandleView().setMarginBottom("env(safe-area-inset-bottom)");
+        }
         return this;
     }
 

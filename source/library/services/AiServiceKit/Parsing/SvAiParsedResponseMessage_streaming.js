@@ -236,20 +236,26 @@
 
             if (
                 !shouldIgnore && // a <sentence> nested in <think>/<scene-description> is meta-content — the tag dispatch above already skips it, but this block ran regardless and TTS spoke the AI's thoughts aloud
-                this.shouldVoiceNarrate() &&
         this.tagsToSpeak().includes(nodeTag)
             ) {
                 const speak = text; //this.spokenContentOfText(text); // no longer needed as we only speak tags which contain no subtags
                 //console.log("speak: '" + speak.clipWithEllipsis(15) + "'");
 
-                if (nodeTag !== "sentence") {
-                    this.playTtsPauseMs(50); // pause for location name
-                }
+                if (this.shouldVoiceNarrate()) {
+                    if (nodeTag !== "sentence") {
+                        this.playTtsPauseMs(50); // pause for location name
+                    }
 
-                this.voiceNarrateText(speak);
+                    this.voiceNarrateText(speak);
 
-                if (nodeTag !== "sentence") {
-                    this.playTtsPauseMs(15);
+                    if (nodeTag !== "sentence") {
+                        this.playTtsPauseMs(15);
+                    }
+                } else {
+                    // No audio to ride (voice off, or a device with no TTS):
+                    // pace the caption from the text, so CC shows regardless
+                    // of the voice setting (see _voiceNarration.js).
+                    this.paceCaptionText(speak);
                 }
                 //console.log("onHtmlStreamReaderPopNode html = [" + html + "]");
             }

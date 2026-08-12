@@ -117,4 +117,14 @@
         return prefersDark;
     }
 
+    /**
+     * @description Checks if the user prefers reduced motion. Decorative
+     * animation (e.g. entrance emphasis) should be skipped when true.
+     * @returns {boolean} True if the user prefers reduced motion.
+     * @category User Preferences
+     */
+    prefersReducedMotion () {
+        return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    }
+
 }.initThisClass());

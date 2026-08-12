@@ -85,6 +85,64 @@
         this.postNoteNamed("onSpokeText").setInfo(text); //.setIsDebugging(true);
     }
 
+    // --- caption pacing without audio ---
+    // Captions show regardless of the voice setting (Plans/Edge Handles): the
+    // theatre collapses the narration column, so the caption is the only text
+    // channel there. When no sound rides a narration segment (voice disabled,
+    // or a device that gets no TTS), the SAME onSpeakingText/onSpokeText
+    // notifications are posted from this text pacer — per sentence, cleared
+    // on a reading-time timeout — so caption consumers ride one channel
+    // regardless of which clock drives it.
+
+    /**
+     * @description Queues a sentence for text-paced captioning; starts the
+     * pacer if idle.
+     * @param {String} text - the sentence to caption.
+     * @returns {SvAiParsedResponseMessage}
+     * @category Caption Pacing
+     */
+    paceCaptionText (text) {
+        this.pacedCaptionQueue().push(text);
+        if (!this._pacedCaptionActive) {
+            this.showNextPacedCaption();
+        }
+        return this;
+    }
+
+    pacedCaptionQueue () {
+        if (!this._pacedCaptionQueue) {
+            this._pacedCaptionQueue = []; // lazy: categories cannot add slots
+        }
+        return this._pacedCaptionQueue;
+    }
+
+    showNextPacedCaption () {
+        const text = this.pacedCaptionQueue().shift();
+        if (Type.isNullOrUndefined(text)) {
+            this._pacedCaptionActive = false;
+            return this;
+        }
+        this._pacedCaptionActive = true;
+        this.onSpeakingText(text);
+        this.addTimeout(() => {
+            this.onSpokeText(text);
+            this.showNextPacedCaption();
+        }, this.readingTimeMsForText(text), "pacedCaption");
+        return this;
+    }
+
+    /**
+     * @description How long a paced caption holds: roughly a reading speed of
+     * 250wpm with a floor so short lines still register.
+     * @param {String} text
+     * @returns {Number} milliseconds
+     * @category Caption Pacing
+     */
+    readingTimeMsForText (text) {
+        const words = text.split(/\s+/).filter(w => w.length > 0).length;
+        return Math.max(1600, 400 + words * 240);
+    }
+
     /*
     onSoundStarted (aNote) {
         const sound = aNote.sender();

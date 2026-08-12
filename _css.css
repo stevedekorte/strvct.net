@@ -42,6 +42,10 @@
     --sv-selection-active-bg: rgba(255, 255, 255, 0.14);
 
     --sv-icon-color: white;
+    /* The single "attention" hue: edge-handle glints, theatre captions,
+       anything that must draw the eye without being a control. Apps theme it
+       (undreamedof uses a parchment gold). */
+    --sv-attention: #ffe14d;
     --sv-speaking-color: rgb(240, 192, 0);
     /* The narrated sentence gets a SECOND channel besides hue, because hue alone is
        a weak signal at body size (and useless to a red-green colour-blind reader).

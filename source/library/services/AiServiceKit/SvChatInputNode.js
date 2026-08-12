@@ -75,6 +75,33 @@
             slot.setSyncsToView(true);
         }
 
+        /**
+     * @member {Boolean} isCollapsibleRegion - opt-in: whether this input row
+     * gets an edge handle (see SvCollapsibleRegionProtocol). Off by default;
+     * a conversation that wants a collapsible input enables it in its
+     * setupChatInputNode override. Never stored.
+     * @category Collapsible Region
+     */
+        {
+            const slot = this.newSlot("isCollapsibleRegion", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+        }
+
+        /**
+     * @member {Boolean} isRegionExpanded - per-device presentation state:
+     * whether the input row is currently shown. A session always starts
+     * expanded (never stored — collapsing is a reading-mode gesture, not a
+     * preference).
+     * @category Collapsible Region
+     */
+        {
+            const slot = this.newSlot("isRegionExpanded", true);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+        }
+
     /*
     {
       const slot = this.newSlot("sttSession", null);
@@ -95,6 +122,50 @@
         this.setKeyIsVisible(false);
         this.setValue("");
         this.setCanDelete(true);
+
+        this.addProtocol(SvCollapsibleRegionProtocol);
+    }
+
+    // --- SvCollapsibleRegionProtocol (the edge pill above the input row) ---
+
+    /**
+   * @description Whether the input row is currently shown. Part of
+   * SvCollapsibleRegionProtocol.
+   * @returns {Boolean}
+   * @category Collapsible Region
+   */
+    isExpanded () {
+        return this.isRegionExpanded();
+    }
+
+    /**
+   * @description Collapses or restores the input row (a per-device
+   * reading-mode gesture — the pill on the boundary brings it back).
+   * @returns {SvChatInputNode}
+   * @category Collapsible Region
+   */
+    toggleExpanded () {
+        this.setIsRegionExpanded(!this.isRegionExpanded());
+        this.didUpdateNode();
+        return this;
+    }
+
+    collapsibleAxis () {
+        return "vertical";
+    }
+
+    /**
+   * @description The handle exists only for conversations that opted in via
+   * setIsCollapsibleRegion(true).
+   * @returns {Boolean}
+   * @category Collapsible Region
+   */
+    showsEdgeHandle () {
+        return this.isCollapsibleRegion();
+    }
+
+    collapsibleRegionLabel () {
+        return "Message box";
     }
 
     /*
