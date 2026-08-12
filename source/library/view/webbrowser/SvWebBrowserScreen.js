@@ -29,15 +29,6 @@
     }
 
     /**
-     * @description Initializes the SvWebBrowserScreen instance.
-     * @category Initialization
-     */
-    init () {
-        assert(!this.thisClass().hasShared()); // enforce singleton
-        super.init();
-    }
-
-    /**
      * @description Gets the width of the screen.
      * @returns {number} The width of the screen.
      * @category Dimensions
