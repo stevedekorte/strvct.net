@@ -455,7 +455,12 @@
             // resize re-ran compaction. Now that we're docked at a real width,
             // re-run its compaction next cycle (once the flex layout has given
             // it width) so the content shows without needing a manual resize.
-            this.scheduleMethod("relayoutDockedContent");
+            // AFTER the width slide completes — recompacting next cycle
+            // measured a ~10px mid-transition panel and laid the sheet's
+            // columns out to nothing (blank companion, playtest 2026-08-12)
+            this.addTimeout(() => {
+                this.relayoutDockedContent();
+            }, 400, "relayoutDockedContent");
         } else {
             // tab: the sheet fades while the panel slides shut, then unmounts
             // once the motion is over (never a slide-over overlay).
@@ -492,10 +497,9 @@
         while (stack) {
             const nav = stack.navView ? stack.navView() : null;
             if (nav && nav.syncOrientation) {
-                nav.syncOrientation(); // border re-resolve
-            }
-            if (nav && nav.syncCompanionHandle) {
-                nav.syncCompanionHandle();
+                // border re-resolve; the region re-apply (pill, theatre
+                // swap) rides along inside syncOrientation
+                nav.syncOrientation();
             }
             stack = stack.nextStackView ? stack.nextStackView() : null;
         }

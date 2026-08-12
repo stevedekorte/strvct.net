@@ -396,6 +396,12 @@
             this.makeOrientationDown();
         }
         this.updateWidthForWindow();
+        // Orientation stamping writes generic values over the collapsible-
+        // region layout (SvStackScrollView.makeVertical sets flexGrow 1
+        // unconditionally), and it has many callers — stack compaction among
+        // them — so the region pass always rides along to restore the
+        // theatre swap. Idempotent; same-value writes restart nothing.
+        this.syncCollapsibleRegions();
         return this;
     }
 
@@ -725,21 +731,25 @@
     }
 
     /**
-     * @description Theatre-mode flex swap, as ONE layout commit: expanded, the
-     * header region takes the space remaining in the column (flex 1 1 0) and
-     * the scroll area collapses to zero — never a fixed height, never a
-     * measurement, so nothing can be pushed off-screen. The header handle
-     * order-swaps to the very top of the column (over the expanded region's
-     * own surface) and both horizontal pills invert for a dark field.
+     * @description Theatre-mode flex swap: expanded, the header region takes
+     * the space remaining in the column (flex 1 1 0, sliding via the grow
+     * transition) and the scroll area collapses to zero — never a fixed
+     * height, never a measurement, so nothing can be pushed off-screen. The
+     * header handle order-swaps to the very top of the column and all pills
+     * invert for the dark field.
+     *
+     * RE-APPLIED IN FULL ON EVERY SYNC, deliberately unguarded: orientation
+     * sync re-stamps generic values over these (SvStackScrollView.makeVertical
+     * sets flexGrow 1 unconditionally), so a change-guard here left the
+     * column half-stomped after any mid-theatre sync — the narration split
+     * 50/50 under the open band. Same-value style writes are free and do not
+     * restart transitions.
      * @param {Boolean} expanded
      * @returns {SvNavView}
      * @category Collapsible Regions
      */
     applyHeaderRegionExpanded (expanded) {
-        if (this._appliedHeaderRegionExpanded === expanded) {
-            return this;
-        }
-        this._appliedHeaderRegionExpanded = expanded;
+        this._appliedHeaderRegionExpanded = expanded; // consulted by makeOrientationRight
 
         const header = this.headerView();
         const scroll = this.scrollView();
