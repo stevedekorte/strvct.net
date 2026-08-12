@@ -780,12 +780,8 @@ This regenerates all `index.html` files, `sitemap.xml`, `llms.txt`, and `llms-fu
 
 # Important
 
-- **Treat strvct as part of this project, not a library with outside users.** undreamedof.ai is currently its only consumer (Steve, 2026-08-12), so do not pay the costs of a hypothetical second one: no protocol or indirection invented *solely* to keep app knowledge out of the framework, no defensive generality, and above all no duplicated code in the name of purity. If something belongs in strvct, put it there; if the simplest correct thing references how the app actually works, that is acceptable.
+- **Keep strvct's CODE general — no app-specific knowledge.** It is a framework, and it should stay one: nothing in here should know about characters, sessions, campaigns, or how undreamedof.ai happens to be built. When the app needs framework behavior that depends on app facts, the app supplies them — through a node hint (`nodeContentMaxWidth()`, `nodeShowsScrollbar()`), a protocol, a token, or a delegate. Those indirections are worth their cost.
 
-- **What still holds, because it earns its keep for reasons other than purity:**
-  - **`Sv*` vs `Uo*` naming** — it tells you where code lives at a glance.
-  - **Separate git repos** — strvct is a submodule, so a change there is its own commit plus a pin in the app repo. Mechanical, not philosophical.
-  - **Model / view separation** (above) — that is about testability and swappable UIs, and is unaffected by this.
-  - **Genuinely generic mechanisms are still worth keeping generic** — not to serve an imagined second app, but because a narrow abstraction is usually the harder one to reason about. Choose it when it is *simpler*, not as a tax.
+- **Treat strvct as part of THIS PROJECT for version control.** It is not an external dependency to be worked around or waited on. Change it in the same breath as the app code that needs it, and ship the two together: a strvct commit plus a pin bump in the app repo, in the same release. Do not contort app code to avoid touching the framework, and do not leave a needed framework fix unmade because it lives in another repo.
 
-  The old rule read: "Strvct is an independent framework and you should avoid making any changes that include information about the applications using it." It is retired. Revisit if a second consumer ever appears.
+  The distinction matters and is easy to collapse (2026-08-12): *general in its code, integrated in its history*. Being free to change strvct is not licence to put Uo in it.
