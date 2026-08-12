@@ -111,7 +111,7 @@
         this.addSubview(tick);
 
         this.addDefaultTapGesture();
-        this.setIsRegisteredForMouse(true);
+        this.setIsRegisteredForMouse(true, false); // explicit useCapture: undefined trips the type warning
         this.setIsRegisteredForKeyboard(true); // Tab-reachable; Enter/Space toggle
         this.setAriaRole("button");
 

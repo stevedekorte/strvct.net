@@ -9,6 +9,16 @@
  */
 (class SvWebBrowserScreen extends ProtoClass {
 
+    /**
+     * @description Declares the singleton (same pattern as
+     * SvWebBrowserWindow) so shared() works — init() already enforced
+     * one-instance, but ProtoClass.shared() also requires the declaration.
+     * @category Initialization
+     */
+    static initClass () {
+        this.setIsSingleton(true);
+    }
+
     initPrototypeSlots () {
 
         {
