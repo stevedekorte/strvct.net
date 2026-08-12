@@ -90,6 +90,21 @@
         }
 
         /**
+         * @member {SvEdgeHandleView} companionHandleView - edge pill on this
+         * column's right edge, shown only while this is the deepest column
+         * and the adjacent companion is COLLAPSED. The collapsed companion is
+         * zero-width (completely unseen — no gutter, no bar over the
+         * theatre's dark field), so its pill must anchor in the column beside
+         * it, exactly like the header/footer pills overlay the scroll area.
+         * While docked, the companion's own inset pill takes over.
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("companionHandleView", null);
+            slot.setSlotType("SvEdgeHandleView");
+        }
+
+        /**
          * @member {Boolean} isCollapsed - Whether the SvNavView is collapsed
          * @category State
          */
@@ -272,6 +287,12 @@
             const handle = SvEdgeHandleView.clone();
             handle.configureHorizontal("above"); // overlays the scroll bottom
             this.setFooterHandleView(handle);
+            this.addSubview(handle);
+        }
+        {
+            const handle = SvEdgeHandleView.clone();
+            handle.configureVerticalOverlay("right"); // overlays the column's right edge
+            this.setCompanionHandleView(handle);
             this.addSubview(handle);
         }
         this.headerView().setOrder(1);
@@ -515,19 +536,14 @@
 
     /**
      * @description Whether this column's right border would double as the
-     * boundary of a collapsed companion. True only when this column is the
-     * deepest (no child columns between it and the companion) and the
-     * companion is not expanded — a closed region draws no hairline.
+     * boundary of a collapsed companion (found by adjacentCompanionView —
+     * only the deepest column touches it, at any navigation depth). A closed
+     * region draws no hairline: the user sees only the pill.
      * @returns {Boolean}
      * @category Styling
      */
     companionBoundaryIsBare () {
-        const stack = this.stackView();
-        const detail = stack ? stack.detailView() : null;
-        if (!detail || (detail.hasStackContent && detail.hasStackContent())) {
-            return false; // child columns own that boundary, keep the divider
-        }
-        const companion = detail.companionView ? detail.companionView() : null;
+        const companion = this.adjacentCompanionView();
         return !!(companion && companion.isExpanded && !companion.isExpanded());
     }
 
@@ -644,6 +660,54 @@
         this.footerHandleView().setRegion(footerRegion);
         this.footerHandleView().syncToRegion();
         this.applyFooterRegionExpanded(footerRegion ? footerRegion.isExpanded() !== false : true);
+
+        this.syncCompanionHandle();
+        return this;
+    }
+
+    /**
+     * @description The companion whose boundary this column's right edge
+     * touches: only when this is the deepest column (its own detail has no
+     * child content), the NEAREST enclosing companion up the stack chain —
+     * intermediate details hold only the descending chain, so nothing else
+     * sits between. Null otherwise.
+     * @returns {SvCompanionView|null}
+     * @category Collapsible Regions
+     */
+    adjacentCompanionView () {
+        const stack = this.stackView();
+        if (!stack) {
+            return null;
+        }
+        const detail = stack.detailView ? stack.detailView() : null;
+        if (!detail || (detail.hasStackContent && detail.hasStackContent())) {
+            return null; // deeper columns sit between us and any companion
+        }
+        let s = stack;
+        while (s) {
+            const d = s.detailView ? s.detailView() : null;
+            const companion = (d && d.companionView) ? d.companionView() : null;
+            if (companion) {
+                return companion;
+            }
+            s = s.previousStackView ? s.previousStackView() : null;
+        }
+        return null;
+    }
+
+    /**
+     * @description Shows this column's right-edge pill while the adjacent
+     * companion is collapsed (zero-width, so the pill cannot anchor inside
+     * it); the companion's own inset pill takes over while docked.
+     * @returns {SvNavView}
+     * @category Collapsible Regions
+     */
+    syncCompanionHandle () {
+        const handle = this.companionHandleView();
+        const companion = this.adjacentCompanionView();
+        const collapsed = !!(companion && companion.mode && companion.mode() === "tab");
+        handle.setRegion(collapsed ? companion : null);
+        handle.syncToRegion();
         return this;
     }
 
@@ -689,6 +753,7 @@
         }
         this.headerHandleView().setIsInverted(expanded);
         this.footerHandleView().setIsInverted(expanded);
+        this.companionHandleView().setIsInverted(expanded); // it floats over the dark field too
         return this;
     }
 

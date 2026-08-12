@@ -493,7 +493,7 @@
         this.detectStackViewInChain((stack) => {
             const detail = stack.detailView();
             const c = (detail && detail.companionView) ? detail.companionView() : null;
-            if (c && c.showsEdgeHandle()) {
+            if (c && c.mode() !== "hidden") {
                 companion = c; // keep walking: the DEEPEST visible companion wins
             }
             return false;

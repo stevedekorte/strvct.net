@@ -21,9 +21,10 @@
  *   - docked:  content visible, in normal flow. The columns compact to make
  *     room (companionReservedWidth feeds compaction). The edge pill sits just
  *     inside the panel's leading edge and collapses it.
- *   - tab:     visually nothing — an invisible 1em gutter whose only content
- *     is the floating pill, which expands the panel. (A true zero-width
- *     collapse would put the pill outside SvDetailView's overflow clip.)
+ *   - tab:     completely unseen — zero width, nothing drawn. The pill lives
+ *     in the ADJACENT column (SvNavView.companionHandleView), since a
+ *     zero-width box inside the detail view's overflow clip has no pixels
+ *     for an overlay of its own.
  *   - hidden:  nothing at all, not even the pill (window too narrow), so the
  *     content column gets the full width.
  *
@@ -172,16 +173,6 @@
         return this.isVerticalEdge() ? "horizontal" : "vertical";
     }
 
-    /**
-     * @description No handle when the window is too narrow for even the strip
-     * — the region has no boundary to mark.
-     * @returns {Boolean}
-     * @category Collapsible Region
-     */
-    showsEdgeHandle () {
-        return this.mode() !== "hidden";
-    }
-
     collapsibleRegionLabel () {
         return "Companion panel";
     }
@@ -283,18 +274,11 @@
      * @category Layout
      */
     currentReservedLength () {
-        const mode = this.mode();
-        if (mode === "docked") {
-            return this.preferredLength();
-        }
-        if (mode === "tab") {
-            // The collapsed companion draws NOTHING (no strip, no background)
-            // but keeps a 1em gutter as the pill's home. A true zero-width
-            // collapse put the pill outside SvDetailView's deliberate
-            // overflow clip, which swallowed it (playtest, 2026-08-12).
-            return this.tabLength();
-        }
-        return 0; // hidden
+        // Collapsed takes NO space at all: its pill anchors in the adjacent
+        // column (SvNavView.companionHandleView), not in this zero-width box
+        // — a gutter here showed as a page-colored bar over the theatre's
+        // dark field (playtest, 2026-08-12).
+        return (this.mode() === "docked") ? this.preferredLength() : 0;
     }
 
     /**
@@ -378,13 +362,9 @@
         tab.setIsVerticalTab(vertical);
         tab.setCompanionIsDocked(mode === "docked");
 
-        // size of the whole companion along the dock axis; collapsed keeps
-        // only the invisible 1em pill gutter (see currentReservedLength)
+        // size of the whole companion along the dock axis; collapsed is
+        // zero — completely unseen (see currentReservedLength)
         const length = this.currentReservedLength();
-
-        // Collapsed, the companion must be completely unseen: the gutter
-        // draws no fill — only the pill floats there. Docked, the themed
-        // panel background returns.
         this.setBackgroundColor(mode === "docked"
             ? "var(--SvCompanion-bg, rgba(255, 255, 255, 0.03))"
             : "transparent");
@@ -406,27 +386,24 @@
         // home: a tint on the pill).
         tab.hideDisplay();
 
-        // Collapsed, the companion is completely unseen (zero width) and the
-        // pill overhangs its boundary — so the pill must not be clipped;
-        // docked, the content must stay within the panel.
-        this.setOverflow(mode === "docked" ? "hidden" : "visible");
+        // This inset pill exists only while DOCKED; collapsed, the panel is
+        // zero-width (nothing to anchor in), so the adjacent column's
+        // right-edge pill takes over (SvNavView.syncCompanionHandle).
+        this.edgeHandleView().setRegion(mode === "docked" ? this : null);
+        this.edgeHandleView().syncToRegion();
 
-        // The adjacent column's right border doubles as this boundary's rule
-        // (present when docked, none when closed — see SvNavView
-        // companionBoundaryIsBare), so it must re-resolve on mode changes.
+        // The adjacent column owns the boundary rule AND the collapsed-state
+        // pill, so it must re-resolve on every mode change.
         this.syncAdjacentBoundary();
 
         if (mode === "hidden") {
             // Too narrow: no panel and no pill; the content column gets the
             // full width.
-            this.edgeHandleView().syncToRegion(); // hides (showsEdgeHandle is false)
             if (content) {
                 content.hideDisplay();
             }
             return this;
         }
-
-        this.edgeHandleView().syncToRegion();
 
         if (mode === "docked") {
             if (content) {
@@ -472,18 +449,26 @@
     }
 
     /**
-     * @description Asks the stack's nav column to re-resolve its right
-     * border, whose presence depends on this companion's mode. No-op until
-     * the companion is attached (init runs applyMode before that).
+     * @description Asks every column in this companion's stack subtree to
+     * re-resolve its boundary — the right border AND the collapsed-state
+     * pill both live on whichever column is currently the deepest, which
+     * changes with navigation. No-op until the companion is attached (init
+     * runs applyMode before that).
      * @returns {SvCompanionView}
      * @category Layout
      */
     syncAdjacentBoundary () {
         const detail = this.parentView();
-        const stack = (detail && detail.stackView) ? detail.stackView() : null;
-        const nav = (stack && stack.navView) ? stack.navView() : null;
-        if (nav && nav.syncOrientation) {
-            nav.syncOrientation();
+        let stack = (detail && detail.stackView) ? detail.stackView() : null;
+        while (stack) {
+            const nav = stack.navView ? stack.navView() : null;
+            if (nav && nav.syncOrientation) {
+                nav.syncOrientation(); // border re-resolve
+            }
+            if (nav && nav.syncCompanionHandle) {
+                nav.syncCompanionHandle();
+            }
+            stack = stack.nextStackView ? stack.nextStackView() : null;
         }
         return this;
     }
