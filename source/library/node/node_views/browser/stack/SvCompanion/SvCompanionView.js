@@ -21,8 +21,9 @@
  *   - docked:  content visible, in normal flow. The columns compact to make
  *     room (companionReservedWidth feeds compaction). The edge pill sits just
  *     inside the panel's leading edge and collapses it.
- *   - tab:     completely unseen (zero width); the pill overhangs the
- *     boundary, floating over the content beside it, and expands the panel.
+ *   - tab:     visually nothing — an invisible 1em gutter whose only content
+ *     is the floating pill, which expands the panel. (A true zero-width
+ *     collapse would put the pill outside SvDetailView's overflow clip.)
  *   - hidden:  nothing at all, not even the pill (window too narrow), so the
  *     content column gets the full width.
  *
@@ -286,10 +287,14 @@
         if (mode === "docked") {
             return this.preferredLength();
         }
-        // tab: the collapsed companion is completely unseen and takes NO
-        // space — the edge pill overhangs the boundary instead of sitting
-        // in a reserved strip (Steve, 2026-08-12).
-        return 0;
+        if (mode === "tab") {
+            // The collapsed companion draws NOTHING (no strip, no background)
+            // but keeps a 1em gutter as the pill's home. A true zero-width
+            // collapse put the pill outside SvDetailView's deliberate
+            // overflow clip, which swallowed it (playtest, 2026-08-12).
+            return this.tabLength();
+        }
+        return 0; // hidden
     }
 
     /**
@@ -373,9 +378,16 @@
         tab.setIsVerticalTab(vertical);
         tab.setCompanionIsDocked(mode === "docked");
 
-        // size of the whole companion along the dock axis; collapsed takes
-        // no space at all (the pill overhangs the boundary instead)
-        const length = (mode === "docked") ? this.preferredLength() : 0;
+        // size of the whole companion along the dock axis; collapsed keeps
+        // only the invisible 1em pill gutter (see currentReservedLength)
+        const length = this.currentReservedLength();
+
+        // Collapsed, the companion must be completely unseen: the gutter
+        // draws no fill — only the pill floats there. Docked, the themed
+        // panel background returns.
+        this.setBackgroundColor(mode === "docked"
+            ? "var(--SvCompanion-bg, rgba(255, 255, 255, 0.03))"
+            : "transparent");
         if (vertical) {
             this.setMinAndMaxWidth(length);
             this.setMinAndMaxHeight(null);
@@ -457,19 +469,18 @@
     /**
      * @description Places the edge handle on the panel's LEADING edge — the
      * boundary it shares with the content it docks against. Docked, the pill
-     * sits just INSIDE that edge (right of the panel's left edge, overlapping
-     * its leading 1em); collapsed, the panel is zero-width and the pill hangs
-     * just OUTSIDE it, floating over the content beside the boundary.
+     * sits just inside that edge, overlapping the panel's leading 1em;
+     * collapsed, the panel is an invisible 1em gutter and the pill floating
+     * in it reads as sitting just left of (or above) the boundary.
      * @returns {SvCompanionView}
      * @category Layout
      */
     applyEdgeHandlePlacement () {
         const handle = this.edgeHandleView();
-        const docked = this.mode() === "docked";
         if (this.isVerticalEdge()) {
-            handle.configureVerticalOverlay(docked ? "left" : "outsideLeft");
+            handle.configureVerticalOverlay("left");
         } else {
-            handle.configureHorizontalOverlay(docked ? "top" : "outsideTop");
+            handle.configureHorizontalOverlay("top");
         }
         return this;
     }
