@@ -780,4 +780,12 @@ This regenerates all `index.html` files, `sitemap.xml`, `llms.txt`, and `llms-fu
 
 # Important
 
-- Strvct is an independent framework and you should avoid making any changes that include information about the applications using it (i.e. maintain separation of concerns).
+- **Treat strvct as part of this project, not a library with outside users.** undreamedof.ai is currently its only consumer (Steve, 2026-08-12), so do not pay the costs of a hypothetical second one: no protocol or indirection invented *solely* to keep app knowledge out of the framework, no defensive generality, and above all no duplicated code in the name of purity. If something belongs in strvct, put it there; if the simplest correct thing references how the app actually works, that is acceptable.
+
+- **What still holds, because it earns its keep for reasons other than purity:**
+  - **`Sv*` vs `Uo*` naming** — it tells you where code lives at a glance.
+  - **Separate git repos** — strvct is a submodule, so a change there is its own commit plus a pin in the app repo. Mechanical, not philosophical.
+  - **Model / view separation** (above) — that is about testability and swappable UIs, and is unaffected by this.
+  - **Genuinely generic mechanisms are still worth keeping generic** — not to serve an imagined second app, but because a narrow abstraction is usually the harder one to reason about. Choose it when it is *simpler*, not as a tax.
+
+  The old rule read: "Strvct is an independent framework and you should avoid making any changes that include information about the applications using it." It is retired. Revisit if a second consumer ever appears.
