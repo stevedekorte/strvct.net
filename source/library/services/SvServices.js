@@ -116,6 +116,18 @@
 
 
         /**
+         * @member {SvKreaService} kreaService
+         * @category AI Service
+         */
+        {
+            const slot = this.newSlot("kreaService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(SvKreaService);
+            slot.setIsSubnodeField(true);
+        }
+
+
+        /**
          * @member {SvOpenAiService} openAiService
          * @category AI Service
          */
