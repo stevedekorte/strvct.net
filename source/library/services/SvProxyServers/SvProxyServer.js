@@ -210,7 +210,9 @@
         }
 
         const domain = parts.slice(-2).join(".");
-        const subdomain = parts.slice(0, -2).join(".") || null;
+        // a bare two-part domain (undreamedof.ai) has an EMPTY subdomain -
+        // null tripped the String slot's type warning on every prod boot
+        const subdomain = parts.slice(0, -2).join(".");
 
         this.setDomain(domain);
         this.setSubdomain(subdomain);
