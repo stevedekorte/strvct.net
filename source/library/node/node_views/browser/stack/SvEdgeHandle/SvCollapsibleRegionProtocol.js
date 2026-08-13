@@ -13,10 +13,13 @@
  * Implementors may be model nodes (per-device presentation state in non-stored
  * slots) or views (pure view state) — the handle does not care which.
  *
- * Two OPTIONAL methods are consulted when present (not part of conformance):
+ * Three OPTIONAL methods are consulted when present (not part of conformance):
  *   - showsEdgeHandle() -> Boolean — false hides the handle entirely (e.g. a
  *     band with no content yet has no boundary to mark).
  *   - collapsibleRegionLabel() -> String — the handle's accessible name.
+ *   - expandedRegionBackgroundCss() -> String — a CSS color the whole column
+ *     is painted while the region is expanded (e.g. a theatre's near-black),
+ *     so sub-pixel rounding seams can never show the page through it.
  */
 (class SvCollapsibleRegionProtocol extends Protocol {
 

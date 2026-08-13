@@ -262,7 +262,10 @@
         {
             const v = SvTileContainer.clone();
             v.setBorderTop(borderStyle);
-            v.setBackgroundColor(backgroundColor);
+            // A REAL page ground, not a translucent wash: the footer (chat
+            // input) can sit over a theatre-dark column, and ink-colored text
+            // needs the page behind it to stay readable there.
+            v.setBackgroundColor("var(--sv-bg)");
             v.setFlexGrow(0);
             v.setFlexShrink(0);
             this.setFooterView(v);
@@ -753,7 +756,17 @@
 
         const header = this.headerView();
         const scroll = this.scrollView();
-        const hasRegion = !!this.headerRegion();
+        const region = this.headerRegion();
+        const hasRegion = !!region;
+
+        // Paint the whole column in the expanded region's surface color (a
+        // theatre's near-black): fractional-scale rounding leaves sub-pixel
+        // seams above/below the flexed header, and this is what stops the
+        // page showing through them (the EdgeControls prototype's own fix).
+        const surface = (expanded && region && typeof region.expandedRegionBackgroundCss === "function")
+            ? region.expandedRegionBackgroundCss() : null;
+        this.setBackgroundColor(surface); // null restores the column's normal (transparent) ground
+
         if (expanded) {
             header.setHeight("auto"); // clear fit-content so flex sizes it (definite, so the tile's 100% resolves)
             header.setFlexGrow(1);
