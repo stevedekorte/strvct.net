@@ -69,7 +69,16 @@
         }
 
         const e = this.speakableElementWithText(text);
-        assert(e, "SvChatInputTile.onSpeakingText(aNote) missing div for text [" + text + "]");
+        if (!e) {
+            // Best-effort presentation: the sentence's div may not have
+            // rendered yet — the text-paced caption clock (voice off) posts
+            // right at parse time, ahead of the tile's next sync, where the
+            // TTS clock's audio latency always hid this race. Never throw
+            // from inside the notification pipeline over a missed highlight;
+            // the next sentence re-syncs the highlighting.
+            console.warn(this.svTypeId() + ".onSpeakingText: no rendered div yet for [" + text.clipWithEllipsis(40) + "] — skipping highlight");
+            return;
+        }
         this.unhighlightAllSentences();
         this.highlightElement(e);
     }

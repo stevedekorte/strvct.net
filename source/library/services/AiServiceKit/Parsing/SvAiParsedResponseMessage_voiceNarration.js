@@ -104,7 +104,14 @@
     paceCaptionText (text) {
         this.pacedCaptionQueue().push(text);
         if (!this._pacedCaptionActive) {
-            this.showNextPacedCaption();
+            this._pacedCaptionActive = true;
+            // A beat before the first sentence: the pacer runs at parse time,
+            // AHEAD of the tile sync that renders the sentence's div — give
+            // the view a cycle so highlight/caption consumers find their
+            // target (the TTS clock's audio latency provided this for free).
+            this.addTimeout(() => {
+                this.showNextPacedCaption();
+            }, 150, "pacedCaptionStart");
         }
         return this;
     }

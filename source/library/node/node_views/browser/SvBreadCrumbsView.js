@@ -303,24 +303,34 @@
         // Subview order: [back, crumb, sep, crumb, sep, …, currentCrumb].
         // Hide leading (crumb, separator) pairs left-to-right until the rest
         // fits. The current crumb (last subview) is never hidden.
-        let didHide = false;
         let i = 1;
         while (e.scrollWidth > e.clientWidth && i < views.length - 1) {
             views[i].hideDisplay(); // crumb
             if (i + 1 < views.length - 1) {
                 views[i + 1].hideDisplay(); // its trailing separator
             }
-            didHide = true;
             i += 2;
         }
 
-        if (!didHide) {
+        // Always keep the back button while there is a parent to return to.
+        // Compaction used to hide it whenever the full path fit, which left a
+        // narrow companion (often a single visible column) with no way back.
+        if (!this.canNavigateBack()) {
             back.hideDisplay();
         }
 
         // Fallback for a single crumb wider than the bar: keep its tail visible.
         e.scrollLeft = e.scrollWidth;
         return this;
+    }
+
+    /**
+     * @description Whether the current path has a parent crumb to return to.
+     * @returns {Boolean}
+     * @category Navigation
+     */
+    canNavigateBack () {
+        return this.pathNodes().length >= 2;
     }
 
     /**
@@ -380,15 +390,12 @@
      * @category Event Handling
      */
     onClickBackButton () {
-        const browser = this.browserView();
         const pathNodes = this.pathNodes();
-        if (!browser || !browser.stackView() || pathNodes.length < 2) {
+        if (pathNodes.length < 2) {
             return this;
         }
         // selectNodePathArray expects the path after the stack's own root node
-        browser.stackView().selectNodePathArray(pathNodes.slice(1, pathNodes.length - 1));
-        this.scheduleMethod("setupPathViews");
-        return this;
+        return this.requestSelectPath(pathNodes.slice(1, pathNodes.length - 1));
     }
 
     titleForNode (node) {
@@ -444,12 +451,26 @@
      * @category Event Handling
      */
     onClickPathComponent (crumbView) {
+        return this.requestSelectPath(crumbView.info().shallowCopy());
+    }
+
+    /**
+     * @description Asks the browser to select a path, with retry so a
+     * lazily-materialized column does not swallow the click.
+     * @param {Array} subpath Nodes after the browser root.
+     * @returns {SvBreadCrumbsView}
+     * @category Navigation
+     */
+    requestSelectPath (subpath) {
         const browser = this.browserView();
-        if (!browser || !browser.stackView()) {
+        if (!browser) {
             return this;
         }
-        const subpath = crumbView.info().shallowCopy();
-        browser.stackView().selectNodePathArray(subpath);
+        if (browser.selectPathWithRetry) {
+            browser.selectPathWithRetry(subpath);
+        } else if (browser.stackView()) {
+            browser.stackView().selectNodePathArray(subpath);
+        }
         // popping to the root unselects without firing a path-change note,
         // so rebuild the crumbs explicitly
         this.scheduleMethod("setupPathViews");

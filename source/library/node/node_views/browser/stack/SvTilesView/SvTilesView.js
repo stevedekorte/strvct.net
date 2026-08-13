@@ -199,9 +199,51 @@
      * @category Data
      */
     tileWithNode (aNode) {
-        //return this.tiles().detect(tile => tile.node() === aNode);
-        return this.tiles().detect(tile => tile.nodeTileLink() === aNode);
-        //return this.tiles().detect(tile => tile.node().nodeTileLink() === aNode);
+        const exact = this.tiles().detect(tile => tile.nodeTileLink() === aNode);
+        if (exact) {
+            return exact;
+        }
+        // Bus snapshots replace live instances. Breadcrumb paths still hold
+        // the old refs; match the surviving tile by a stable identity.
+        return this.tiles().detect(tile => this.tileMatchesReplacedNode(tile, aNode));
+    }
+
+    /**
+     * @description True when a tile's linked node is the replacement for a
+     * path node that no longer exists (same characterId, or unique type+title).
+     * @param {SvTile} tile
+     * @param {SvNode} aNode
+     * @returns {Boolean}
+     * @category Data
+     */
+    tileMatchesReplacedNode (tile, aNode) {
+        const linked = tile.nodeTileLink();
+        if (!linked || !aNode || linked === aNode) {
+            return false;
+        }
+        if (this.stableNodeKey(linked) && this.stableNodeKey(linked) === this.stableNodeKey(aNode)) {
+            return true;
+        }
+        return this.isUniqueTypeAndTitleMatch(linked, aNode);
+    }
+
+    stableNodeKey (node) {
+        const id = (node.characterId && node.characterId()) ? String(node.characterId()) : "";
+        return id.length > 0 ? id : null;
+    }
+
+    isUniqueTypeAndTitleMatch (linked, aNode) {
+        if (linked.svType() !== aNode.svType()) {
+            return false;
+        }
+        if (linked.title() !== aNode.title()) {
+            return false;
+        }
+        const matches = this.tiles().filter(tile => {
+            const n = tile.nodeTileLink();
+            return n && n.svType() === aNode.svType() && n.title() === aNode.title();
+        });
+        return matches.length === 1;
     }
 
 

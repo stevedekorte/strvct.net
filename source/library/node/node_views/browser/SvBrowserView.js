@@ -212,22 +212,44 @@
 
     /**
      * @description Re-evaluates the breadcrumb bar's visibility from the
-     * nodeWantsBreadCrumbs() view hint: starting at the deepest selected node,
-     * the first parent-chain node responding to nodeWantsBreadCrumbs() answers
-     * (false hides the bar); no implementer means the bar shows. Derived, not
-     * commanded — every navigation change and hint-owner update recomputes it,
-     * so a hidden state can never outlive the node that requested it. Nodes
-     * opt in with either a slot (storable) or a computed method.
+     * nodeWantsBreadCrumbs() view hint. Embedded browsers (the companion
+     * panel) always show crumbs — theatre-mode hiding is a main-browser
+     * title-bar concern, and walking the *model* parent chain from a
+     * link-followed node can leak that hint into the companion and trap
+     * the user with no way back. The main browser walks its selected path
+     * (not the model parent chain) so a link jump cannot pick up an
+     * ancestor that is not actually on this browser's path.
      * @returns {SvBrowserView}
      * @category UI
      */
     syncBreadCrumbsVisibilityHint () {
-        const tailNode = this.selectedNodePathArray().last() || this.node();
-        const owner = tailNode ? tailNode.firstParentChainNodeThatRespondsTo("nodeWantsBreadCrumbs") : null;
+        if (!this.handlesGlobalNavRequests()) {
+            this.watchBreadCrumbsHintOwner(null);
+            this.applyBreadCrumbsVisible(true);
+            return this;
+        }
+        const owner = this.breadCrumbsHintOwnerOnSelectedPath();
         this.watchBreadCrumbsHintOwner(owner);
         const wantsCrumbs = owner ? (owner.nodeWantsBreadCrumbs() !== false) : true;
         this.applyBreadCrumbsVisible(wantsCrumbs);
         return this;
+    }
+
+    /**
+     * @description The nearest selected-path node that implements
+     * nodeWantsBreadCrumbs(), walking from the tail toward the root.
+     * @returns {SvNode|null}
+     * @category UI
+     */
+    breadCrumbsHintOwnerOnSelectedPath () {
+        const path = this.selectedNodePathArray();
+        for (let i = path.length - 1; i >= 0; i--) {
+            const node = path[i];
+            if (node && node.respondsTo && node.respondsTo("nodeWantsBreadCrumbs")) {
+                return node;
+            }
+        }
+        return null;
     }
 
     /**
@@ -456,11 +478,23 @@
     onRequestSelectNodePath (aNote) {
         const path = aNote.info();
         if (Array.isArray(path) && path.length > 0) {
-            this._pendingSelectPath = path;
-            this._pendingSelectAttempt = 0;
-            this.trySelectPendingPath();
+            this.selectPathWithRetry(path);
         }
         return this;
+    }
+
+    /**
+     * @description Selects a path, retrying if a tile has not materialized
+     * yet. Breadcrumb clicks use this so a single missed column does not
+     * swallow the navigation.
+     * @param {Array} path The nodes to select (after the root, or absolute).
+     * @returns {SvBrowserView}
+     * @category Navigation
+     */
+    selectPathWithRetry (path) {
+        this._pendingSelectPath = path;
+        this._pendingSelectAttempt = 0;
+        return this.trySelectPendingPath();
     }
 
     /**
