@@ -182,12 +182,14 @@
          * @member {SvYouTubeService} youtubeService
          * @category Video Service
          */
+        /*
         {
             const slot = this.newSlot("youtubeService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(SvYouTubeService);
             slot.setIsSubnodeField(true);
         }
+        */
 
         /**
          * @member {SvPeerService} peerService
