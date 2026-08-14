@@ -143,6 +143,43 @@
         return (rawList || []).map((d) => SvFsNode.fromData(client, d));
     }
 
+    /**
+     * Complete listing of this folder's direct children, paginating
+     * asyncListChildren's sortKey cursor. Consumers that DIFF local state
+     * against the cloud (deletion reconciliation) must know whether the
+     * listing is complete — a truncated list is indistinguishable from
+     * deletions, and pruning against it would mass-delete. sortKey defaults
+     * to the child's stable id, so the cursor is unique within a folder.
+     *
+     * @param {Object} [opts]
+     * @param {number} [opts.pageSize=200]
+     * @param {number} [opts.maxPages=10] — a ~2000-child ceiling; beyond it
+     *   isComplete is false and callers should degrade to add-only behavior.
+     * @returns {Promise<{children: Array<SvFsNode>, isComplete: boolean}>}
+     */
+    async asyncListAllChildren (opts) {
+        const pageSize = (opts && opts.pageSize) || 200;
+        const maxPages = (opts && opts.maxPages) || 10;
+        const children = [];
+        let cursor = undefined;
+        for (let pageIndex = 0; pageIndex < maxPages; pageIndex++) {
+            const page = await this.asyncListChildren({ limit: pageSize, startAfterSortKey: cursor });
+            children.push(...page);
+            if (page.length < pageSize) {
+                return { children, isComplete: true };
+            }
+            const lastSortKey = page[page.length - 1].sortKey ? page[page.length - 1].sortKey() : null;
+            if (!lastSortKey || lastSortKey === cursor) {
+                // a non-advancing cursor would loop forever; treat as truncated
+                console.warn("SvFsFolder.asyncListAllChildren: non-advancing sortKey cursor for folder " + this.id());
+                return { children, isComplete: false };
+            }
+            cursor = lastSortKey;
+        }
+        console.warn("SvFsFolder.asyncListAllChildren: folder " + this.id() + " exceeded " + (pageSize * maxPages) + " children — listing truncated");
+        return { children, isComplete: false };
+    }
+
     /** Detach the children listener if any. Idempotent. */
     detachChildrenListener () {
         const handle = this.childrenListenerHandle();
@@ -184,7 +221,7 @@
                     stop();
                     resolve((rawList || []).map((d) => SvFsNode.fromData(client, d)));
                 },
-                (e) => { try { stop(); } catch (_) { /* */ } reject(e); }
+                (e) => { try { stop(); } catch { /* */ } reject(e); }
             );
         });
         this.setChildrenCache(items);

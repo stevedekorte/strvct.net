@@ -14,10 +14,16 @@
  *
  *   - cloudFsClient() wiring (via the `defaultFsBackend()` hook)
  *   - "loading…" subtitle while the first sync is in flight
- *   - _pendingCloudDeletes tracking via the removeSubnode override
+ *   - THE UNIFIED DELETION PIPELINE: deleting a child queues a persisted,
+ *     scope-aware delete descriptor (removeSubnode + isBeingDeleted());
+ *     the queue survives reloads, retries every to-cloud pass, and doubles
+ *     as the deletion tombstone consulted by every re-add path
  *   - asyncSyncToCloud  (save dirty children + flush pending deletes)
  *   - asyncSyncFromCloud (read folder → optional childrenLastModified
- *     cache check → list + apply children; eager or lazy/manifest-first)
+ *     cache check → COMPLETE listing → apply children; eager or
+ *     lazy/manifest-first → PRUNE local children deleted in cloud —
+ *     the listing is authoritative for membership; a dirty local child
+ *     is later than the cloud and wins, per most-recent-wins)
  *   - per-folder childrenLastModified cache (skip the re-list when the
  *     folder's direct children are unchanged since the last sync)
  *   - lazy manifest-first loading: render the list from the manifest and
@@ -59,6 +65,66 @@
             slot.setShouldStoreSlot(true);
             slot.setIsInCloudJson(false);
         }
+
+        {
+            // The unified deletion pipeline's queue: descriptors
+            // ({nodeId, scopeRootId|null}) of deleted children whose cloud
+            // delete has not yet SUCCEEDED. Stored, so an unflushed delete
+            // survives a reload (the old in-memory Set died with the page
+            // and the child re-added itself from cloud next boot). Doubles
+            // as the deletion tombstone: every re-add path consults it.
+            // Mutate ONLY copy-on-write through the helpers below — in-place
+            // mutation never reaches persistence dirty-tracking. Retroactive
+            // default [] = empty queue = legacy behavior.
+            const slot = this.newSlot("pendingCloudDeletes", []);
+            slot.setSlotType("Array");
+            slot.setShouldStoreSlot(true);
+            slot.setIsInCloudJson(false);
+        }
+    }
+
+    // ---------------------------------------------------------------- Pending-delete queue (copy-on-write)
+
+    /**
+     * @description Queues a cloud delete descriptor ({nodeId, scopeRootId})
+     * for flushing on the next to-cloud pass. Copy-on-write so the stored
+     * slot's setter fires (persistence + the folder's own dirty touch, which
+     * self-schedules the flush).
+     * @param {Object} descriptor - { nodeId: String, scopeRootId: String|null }
+     * @returns {SvCloudFolder}
+     * @category Deletion Pipeline
+     */
+    addPendingCloudDelete (descriptor) {
+        if (!descriptor || !descriptor.nodeId) return this;
+        if (this.hasPendingCloudDelete(descriptor.nodeId)) return this;
+        this.setPendingCloudDeletes(this.pendingCloudDeletes().concat([{
+            nodeId: descriptor.nodeId,
+            scopeRootId: descriptor.scopeRootId || null,
+            // "delete" (default) removes the node/scope; "leave" removes only
+            // the caller's membership row (a client leaving a shared scope)
+            scopeAction: descriptor.scopeAction || "delete"
+        }]));
+        return this;
+    }
+
+    removePendingCloudDelete (nodeId) {
+        this.setPendingCloudDeletes(this.pendingCloudDeletes().filter(d => d.nodeId !== nodeId));
+        return this;
+    }
+
+    hasPendingCloudDelete (nodeId) {
+        return this.pendingCloudDeletes().some(d => d.nodeId === nodeId);
+    }
+
+    /**
+     * @description Whether a delete is pending for the given multiplayer
+     * scope — consulted by scope-discovery re-add paths.
+     * @param {String} scopeRootId
+     * @returns {Boolean}
+     * @category Deletion Pipeline
+     */
+    hasPendingCloudDeleteScope (scopeRootId) {
+        return !!scopeRootId && this.pendingCloudDeletes().some(d => d.scopeRootId === scopeRootId);
     }
 
     init () {
@@ -277,22 +343,42 @@
     // ---------------------------------------------------------------- removeSubnode → pending cloud delete
 
     removeSubnode (aSubnode) {
-        // Queue a cloud delete for the removed child UNLESS it deletes its own
-        // cloud node. A self-deleting child (handlesOwnCloudDelete() === true,
-        // e.g. one whose delete() runs its own asyncDeleteFromCloud — and may
-        // need a scope-aware delete the generic deleteNode can't do) would
-        // otherwise be deleted twice (here AND by the child). It would also be
-        // wrongly deleted on a NON-delete removal such as replaceSubnodeWith,
-        // since this fires for every removal, not just user deletes.
-        const selfDeletes = aSubnode && typeof aSubnode.handlesOwnCloudDelete === "function" && aSubnode.handlesOwnCloudDelete();
-        if (aSubnode && aSubnode.cloudFsNodeId && !selfDeletes) {
-            const nodeId = aSubnode.cloudFsNodeId();
-            if (nodeId) {
-                if (!this._pendingCloudDeletes) this._pendingCloudDeletes = new Set();
-                this._pendingCloudDeletes.add(nodeId);
-            }
+        // Queue a cloud delete ONLY for true deletions. removeSubnode fires
+        // for every removal — structural swaps (replaceSubnodeWith),
+        // cloud-initiated prunes, zombie reconciliation — and none of those
+        // may delete the cloud object. The child's delete() sets
+        // isBeingDeleted() before detaching (SvNode.delete), which is the
+        // discriminator. The child supplies its own scope-aware descriptor
+        // via the optional cloudDeleteDescriptor() hook.
+        const isDeletion = aSubnode && typeof aSubnode.isBeingDeleted === "function" && aSubnode.isBeingDeleted();
+        if (isDeletion) {
+            this.addPendingCloudDelete(this.cloudDeleteDescriptorForChild(aSubnode));
         }
         return super.removeSubnode(aSubnode);
+    }
+
+    /**
+     * @description The delete descriptor for a child: the child's own
+     * cloudDeleteDescriptor() when it has one (e.g. a promoted session adds
+     * its multiplayer scope id, which the flush deletes scope-aware), else
+     * { nodeId } from cloudFsNodeId(). Null when the child has no cloud id
+     * (never synced — nothing to delete).
+     * @param {SvNode} child
+     * @returns {Object|null}
+     * @category Deletion Pipeline
+     */
+    cloudDeleteDescriptorForChild (child) {
+        try {
+            if (typeof child.cloudDeleteDescriptor === "function") {
+                return child.cloudDeleteDescriptor();
+            }
+            const nodeId = (typeof child.cloudFsNodeId === "function") ? child.cloudFsNodeId() : null;
+            return nodeId ? { nodeId: nodeId, scopeRootId: null } : null;
+        } catch {
+            // e.g. a client-session mirror whose stable-id accessor throws;
+            // it has no folder-owned cloud doc to delete
+            return null;
+        }
     }
 
     // ---------------------------------------------------------------- Cloud sync
@@ -318,19 +404,40 @@
                 this.onChildCloudSaveFailed(child, e);
             }
         }
-        if (this._pendingCloudDeletes && this._pendingCloudDeletes.size > 0) {
+        // Flush the persisted delete queue, scope-aware: a promoted session's
+        // descriptor carries its scopeRootId and must go through deleteScope
+        // (which also removes the _members subcollection and RTDB bus trees,
+        // and is the only path the backend permits for a scope root); plain
+        // folder children go through deleteNode. Entries persist across
+        // reloads and retry every pass until the cloud confirms — stronger
+        // than the in-page retry burst this replaces.
+        for (const descriptor of this.pendingCloudDeletes().slice()) {
             const client = this.cloudFsClient();
-            const remaining = new Set();
-            for (const nodeId of this._pendingCloudDeletes) {
-                try {
-                    await client.backend().deleteNode(nodeId);
-                    didUpload = true;
-                } catch (e) {
-                    console.warn(this.cloudSyncLogPrefix(), "cloud delete failed for", nodeId, e && e.message);
-                    remaining.add(nodeId);
+            try {
+                if (descriptor.scopeRootId && descriptor.scopeAction === "leave") {
+                    await client.backend().leaveScope(descriptor.scopeRootId);
+                    console.log(this.cloudSyncLogPrefix(), "Left multiplayer scope:", descriptor.scopeRootId);
+                } else if (descriptor.scopeRootId && typeof client.backend().deleteScope === "function") {
+                    // exact log text is a spec contract (delete-session-persists)
+                    await client.backend().deleteScope(descriptor.scopeRootId);
+                    console.log(this.cloudSyncLogPrefix(), "Deleted multiplayer scope:", descriptor.scopeRootId);
+                } else {
+                    await client.backend().deleteNode(descriptor.nodeId);
+                    console.log(this.cloudSyncLogPrefix(), "Deleted cloud child:", descriptor.nodeId);
+                }
+                this.removePendingCloudDelete(descriptor.nodeId);
+                didUpload = true;
+            } catch (e) {
+                if (/not.?found|no such|does not exist/i.test((e && e.message) || "")) {
+                    // Already gone (deleted elsewhere, or the child never
+                    // finished its first sync) — the goal state is reached;
+                    // retrying forever would just be an error storm.
+                    console.log(this.cloudSyncLogPrefix(), "cloud delete target already absent:", descriptor.nodeId);
+                    this.removePendingCloudDelete(descriptor.nodeId);
+                } else {
+                    console.warn(this.cloudSyncLogPrefix(), "cloud delete failed for", descriptor.nodeId, "(will retry):", e && e.message);
                 }
             }
-            this._pendingCloudDeletes = remaining;
         }
         if (this.didSyncToCloud) {
             this.didSyncToCloud();
@@ -386,7 +493,8 @@
                 return this;
             }
 
-            const childNodes = await folder.asyncListChildren({ limit: 200 });
+            const { children: childNodes, isComplete } = await folder.asyncListAllChildren();
+            const listedStableIds = new Set();
             // Load children CONCURRENTLY. These are independent per-child
             // reads; doing them sequentially makes startup scale with the
             // child count × round-trip — and any orphaned/dead child entry
@@ -396,10 +504,16 @@
             // defer each child's full-content download to first open — this
             // keeps startup to ~the manifest read instead of N full pool.json
             // downloads. Eager folders load every child's content up front.
+            //
+            // BOTH branches skip children with a pending local delete: the
+            // cloud doc is still listed until the flush lands, and re-adding
+            // it here would undo a delete performed just before a reload.
             if (this.usesLazyChildLoading()) {
                 for (const child of childNodes) {
                     const stableId = this.cloudFsChildIdFromNodeId(child.id());
                     if (!stableId) continue;
+                    listedStableIds.add(stableId);
+                    if (this.hasPendingCloudDelete(child.id())) continue;
                     try {
                         this.applyChildPlaceholderFromCloud(stableId, child);
                     } catch (e) {
@@ -410,6 +524,8 @@
                 await Promise.all(childNodes.map(async (child) => {
                     const stableId = this.cloudFsChildIdFromNodeId(child.id());
                     if (!stableId) return;
+                    listedStableIds.add(stableId);
+                    if (this.hasPendingCloudDelete(child.id())) return;
                     // local-wins-while-dirty: never let a from-cloud apply
                     // overwrite a local child that has unsaved local changes. The
                     // live local instance is the fresher source of truth and will
@@ -429,7 +545,19 @@
                     }
                 }));
             }
+            // Deletion reconciliation: the complete cloud listing is
+            // authoritative for MEMBERSHIP. A truncated listing must never
+            // prune — absence would be indistinguishable from truncation.
+            if (isComplete) {
+                this.pruneChildrenAbsentFromCloud(listedStableIds);
+            } else {
+                console.warn(this.cloudSyncLogPrefix(), "listing truncated at ceiling — skipping deletion prune");
+            }
             // Record the validated stamp so the next sync can cache-hit.
+            // Safe even though it consumes the change evidence: deletes
+            // bubble childrenLastModified too (onNodeWrite handles the
+            // before-exists/after-null case), so a future cache hit proves
+            // membership is unchanged.
             this.setSyncedChildrenClmKey(cloudClmKey);
             if (this.didSyncFromCloud) this.didSyncFromCloud();
             return this;
@@ -439,6 +567,86 @@
                 this.didUpdateNode();
             }
         }
+    }
+
+    // ---------------------------------------------------------------- Deletion reconciliation (prune)
+
+    /**
+     * @description Subclasses MAY exclude children whose membership is
+     * governed by another authority than this folder's listing (e.g.
+     * multiplayer sessions discovered via scope membership). Default: every
+     * child is folder-governed.
+     * @param {SvNode} child
+     * @returns {Boolean}
+     * @category Deletion Pipeline
+     */
+    childMayBeCloudPruned (/*child*/) {
+        return true;
+    }
+
+    /**
+     * @description Exception-safe stable id for a child (a client-session
+     * mirror's accessor throws — such a child has no folder entry).
+     * @param {SvNode} child
+     * @returns {String|null}
+     * @category Deletion Pipeline
+     */
+    cloudStableIdForChild (child) {
+        if (!child || typeof child.cloudFsStableId !== "function") return null;
+        try {
+            return child.cloudFsStableId();
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * @description Removes local children that were deleted in the cloud:
+     * previously synced (cloudLastModified set), clean (a dirty child is
+     * LATER than the cloud and wins — its next save legitimately recreates
+     * the doc: most-recent-wins), folder-governed, and absent from a
+     * COMPLETE cloud listing. Cloud-initiated, so the removal must not
+     * queue a cloud delete — guaranteed by the isBeingDeleted()
+     * discriminator in removeSubnode (these children are shut down and
+     * removed, never delete()d).
+     * @param {Set<String>} listedStableIds
+     * @returns {SvCloudFolder}
+     * @category Deletion Pipeline
+     */
+    pruneChildrenAbsentFromCloud (listedStableIds) {
+        for (const child of this.subnodes().slice()) {
+            const stableId = this.cloudStableIdForChild(child);
+            if (!stableId) continue;                    // not a folder-owned doc
+            if (listedStableIds.has(stableId)) continue; // present in cloud
+            const wasSynced = child.cloudLastModified && child.cloudLastModified();
+            if (!wasSynced) continue;                   // never reached cloud — local-new wins
+            if (child.needsCloudSync && child.needsCloudSync()) continue; // dirty — local wins
+            if (!this.childMayBeCloudPruned(child)) continue; // another authority governs it
+            console.log(this.cloudSyncLogPrefix(), "pruning local child deleted in cloud:", stableId);
+            this.removeSubnodeForCloudPrune(child);
+        }
+        return this;
+    }
+
+    /**
+     * @description Cloud-initiated local removal: shut the child down (stop
+     * observers, audio, timers) and detach it. Same shape as the zombie
+     * reconciliation removal — never .delete() (which queues cloud deletes
+     * and navigates).
+     * @param {SvNode} child
+     * @returns {SvCloudFolder}
+     * @category Deletion Pipeline
+     */
+    removeSubnodeForCloudPrune (child) {
+        if (typeof child.shutdown === "function") {
+            try {
+                child.shutdown();
+            } catch (e) {
+                console.warn(this.cloudSyncLogPrefix(), "prune shutdown failed:", e && e.message);
+            }
+        }
+        this.removeSubnode(child);
+        return this;
     }
 
     /**
@@ -459,7 +667,7 @@
             const s = (clm._seconds != null) ? clm._seconds : clm.seconds;
             const n = (clm._nanoseconds != null) ? clm._nanoseconds : clm.nanoseconds;
             if (s != null) return String(s) + "." + String(n || 0);
-            try { return JSON.stringify(clm); } catch (e) { return null; }
+            try { return JSON.stringify(clm); } catch { return null; }
         }
         return null;
     }

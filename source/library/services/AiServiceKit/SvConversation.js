@@ -324,8 +324,15 @@
    * @category Display Lifetime
    */
     sweepDisplayLifetimes () {
+        const messages = this.messages();
+        if (!messages) {
+            // A scheduled sweep can outlive its conversation: an AI response
+            // completing for a session deleted/shut down mid-request lands
+            // here after teardown nulled the subnodes. Nothing to sweep.
+            return this;
+        }
         let nextExpiryTime = null;
-        this.messages().forEach(m => {
+        messages.forEach(m => {
             if (!m.isDisplayExpired) {
                 return; // defensive: foreign subnode kinds
             }

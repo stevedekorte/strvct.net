@@ -624,7 +624,7 @@
         let record;
         try {
             record = store.recordForPid(ref.pid()); // synchronous raw read; may be a no-op on async stores
-        } catch (e) {
+        } catch {
             return null; // any store that can't answer cheaply → fall back
         }
         if (!record || !Array.isArray(record.values)) {
@@ -1697,8 +1697,25 @@
      * @returns {SvNode} This instance.
      */
     delete () {
+        // Deletion marker, set BEFORE detaching: parent containers observe
+        // removals for many reasons (structural swaps like
+        // replaceSubnodeWith included), and only true deletions should have
+        // deletion side effects (e.g. SvCloudFolder queueing a cloud
+        // delete). Transient — never stored.
+        this._isBeingDeleted = true;
         this.removeFromParentNode();
         return this;
+    }
+
+    /**
+     * @description Whether this node is being (or has been) deleted via
+     * delete(), as opposed to merely removed/re-parented. Containers use
+     * this to distinguish deletions from structural removals.
+     * @returns {Boolean}
+     * @category Deletion
+     */
+    isBeingDeleted () {
+        return this._isBeingDeleted === true;
     }
 
     deleteNodeAndNavigateToParent () {

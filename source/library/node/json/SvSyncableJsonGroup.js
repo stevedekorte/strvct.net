@@ -158,7 +158,14 @@
         if (Slot.isMaterializingAnyLazySlot()) {
             return this;
         }
-        this.setLocalLastModified(Date.now());
+        // ALWAYS advance past the cloud stamp: needsCloudSync() is a strict
+        // local > cloud, so an edit landing in the SAME MILLISECOND as a
+        // just-completed sync stamp would read as clean and be silently
+        // dropped by dirty-tracking (found by the deletion-propagation e2e:
+        // load → edit within one ms → the edit neither saved nor protected
+        // the record from pruning).
+        const cloud = this.cloudLastModified() || 0;
+        this.setLocalLastModified(Math.max(Date.now(), cloud + 1));
         return this;
     }
 
