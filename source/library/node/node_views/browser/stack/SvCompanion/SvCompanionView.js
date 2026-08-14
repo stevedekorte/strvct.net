@@ -453,14 +453,17 @@
             // its columns while we were a tab — i.e. hidden / zero-width — so
             // its nav compacted to nothing and stayed blank until a window
             // resize re-ran compaction. Now that we're docked at a real width,
-            // re-run its compaction next cycle (once the flex layout has given
-            // it width) so the content shows without needing a manual resize.
-            // AFTER the width slide completes — recompacting next cycle
-            // measured a ~10px mid-transition panel and laid the sheet's
-            // columns out to nothing (blank companion, playtest 2026-08-12)
-            this.addTimeout(() => {
-                this.relayoutDockedContent();
-            }, 400, "relayoutDockedContent");
+            // re-run its compaction AFTER the width slide completes (an early
+            // recompaction measured a ~10px mid-transition panel and laid the
+            // sheet's columns out to nothing). ONLY on the tab→docked
+            // transition — applyMode re-applies idempotently on every sync
+            // pass, and rescheduling the named timeout each pass warned
+            // "timeout with that name already exists" per sync.
+            if (this._appliedContentMode !== "docked") {
+                this.addTimeout(() => {
+                    this.relayoutDockedContent();
+                }, 400, "relayoutDockedContent");
+            }
         } else {
             // tab: the sheet fades while the panel slides shut, then unmounts
             // once the motion is over (never a slide-over overlay).
