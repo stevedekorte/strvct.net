@@ -230,8 +230,8 @@ class SvWindowErrorPanel extends Object {
             {
                 const style = errorPanelDiv.style;
                 style.position = "relative"; // Changed from fixed since it's now inside backdrop
-                style.backgroundColor = "rgb(25, 25, 25)";
-                style.color = "black";
+                style.backgroundColor = "var(--sv-surface, rgb(25, 25, 25))"; // boot-safe theming: dark fallback for pre-theme errors
+                style.color = "var(--sv-text, black)";
                 style.width = "fit-content";
                 style.height = "fit-content";
                 style.fontFamily = "inherit";
@@ -239,7 +239,7 @@ class SvWindowErrorPanel extends Object {
                 style.borderRadius = "0em";
                 style.overflow = "hidden";
                 style.overflowY = "auto";
-                style.border = "1px solid #444";
+                style.border = "1px solid var(--sv-hairline, #444)";
                 style.transition = "opacity 0.5s ease-out, transform 0.5s ease-out";
                 // full width on mobile (minus margin), capped at a fixed width on desktop
                 style.maxWidth = "min(90vw, 600px)";
@@ -295,8 +295,8 @@ class SvWindowErrorPanel extends Object {
 
             // Create text container on the right
             html += "<div style='flex:1;'>";
-            html += `<div style='color:white; font-weight:bold; font-size:1.2em; padding-bottom:0.5em;'>${errorTitle}</div>`;
-            html += `<div style="color:#888;">${errorMessage}</div>`;
+            html += `<div style='color:var(--sv-text, white); font-weight:bold; font-size:1.2em; padding-bottom:0.5em;'>${errorTitle}</div>`;
+            html += `<div style="color:var(--sv-text-muted, #888);">${errorMessage}</div>`;
             html += "</div>";
 
             messageDiv.innerHTML = html;
@@ -306,7 +306,7 @@ class SvWindowErrorPanel extends Object {
             {
                 const style = detailsContainer.style;
                 style.margin = "0 2em 0 2em";
-                style.borderTop = "1px solid #444";
+                style.borderTop = "1px solid var(--sv-hairline, #444)";
                 style.paddingTop = "0.5em";
             }
 
@@ -322,7 +322,7 @@ class SvWindowErrorPanel extends Object {
             const detailsToggle = document.createElement("div");
             {
                 const style = detailsToggle.style;
-                style.color = "#aaa";
+                style.color = "var(--sv-text-muted, #aaa)";
                 style.cursor = "pointer";
                 style.fontSize = "0.9em";
                 style.userSelect = "none";
@@ -333,10 +333,10 @@ class SvWindowErrorPanel extends Object {
             {
                 const style = detailsContent.style;
                 style.display = "none";
-                style.color = "#999";
+                style.color = "var(--sv-text-muted, #999)";
                 style.fontSize = "0.7em";
                 style.fontFamily = "monospace";
-                style.backgroundColor = "#1a1a1a";
+                style.backgroundColor = "var(--sv-selection-bg, #1a1a1a)";
                 style.padding = "0.5em";
                 style.borderRadius = "4px";
                 style.marginTop = "0.5em";
@@ -399,7 +399,7 @@ class SvWindowErrorPanel extends Object {
                 copyButton.appendChild(clipboardImg);
 
                 copyButton.addEventListener("mouseenter", () => {
-                    copyButton.style.backgroundColor = "#333";
+                    copyButton.style.backgroundColor = "var(--sv-selection-active-bg, #333)";
                 });
 
                 copyButton.addEventListener("mouseleave", () => {
@@ -459,20 +459,20 @@ class SvWindowErrorPanel extends Object {
                 style.textAlign = "center";
                 style.cursor = "pointer";
                 style.transition = "all 0.2s ease";
-                style.backgroundColor = isPrimary ? "#444" : "rgb(25, 25, 25)";
-                style.color = isPrimary ? "#fff" : "#aaa";
-                style.border = "1px solid #444";
+                style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, #444)" : "var(--sv-surface, rgb(25, 25, 25))";
+                style.color = isPrimary ? "var(--sv-text, #fff)" : "var(--sv-text-muted, #aaa)";
+                style.border = "1px solid var(--sv-hairline, #444)";
                 style.borderRadius = "0";
                 style.padding = "0.5em 1.5em";
                 style.flex = "1";
                 button.textContent = label;
 
                 button.addEventListener("mouseenter", () => {
-                    button.style.backgroundColor = isPrimary ? "#555" : "#333";
+                    button.style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, #555)" : "var(--sv-selection-bg, #333)";
                 });
 
                 button.addEventListener("mouseleave", () => {
-                    button.style.backgroundColor = isPrimary ? "#444" : "rgb(25, 25, 25)";
+                    button.style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, #444)" : "var(--sv-surface, rgb(25, 25, 25))";
                 });
 
                 button.addEventListener("click", clickHandler);

@@ -119,9 +119,9 @@
         this.setWidth("fit-content");
         this.setMinWidth("12em");
         this.setHeight("fit-content");
-        this.setBorder("1px solid rgb(68, 68, 68)");
+        this.setBorder("1px solid var(--sv-hairline)");
         this.setZIndex(10000);
-        this.setBackgroundColor("rgb(25, 25, 25)");
+        this.setBackgroundColor("var(--sv-surface)"); // themed panel ground (was hardcoded dark — invisible mismatch on light themes)
 
         {
             // title view
@@ -130,7 +130,7 @@
             v.setHeight("3em");
             //v.centerInParentView();
             v.setValue("");
-            v.setColor("white");
+            v.setColor("var(--sv-text)");
             v.setWhiteSpace("pre-wrap");
             v.setWidth("100%");
             v.setTextAlign("left");
@@ -159,7 +159,7 @@
             v.setPaddingTop("0.5em");
             v.setPaddingBottom("1em");
             v.setFontWeight("bold");
-            v.setColor("#999");
+            v.setColor("var(--sv-text-muted)");
             //v.setBorder("1px solid rgb(68, 68, 68)");
             this.setSubtitleView(v);
             this.addSubview(v);
@@ -178,7 +178,7 @@
             v.setMarginTop("1em");
             v.setWidth("100%");
             v.setHeight("2em");
-            v.setBorderTop("1px solid rgb(68, 68, 68)");
+            v.setBorderTop("1px solid var(--sv-hairline)");
             v.setPadding("0em");
             this.addSubview(v);
             this.setButtonsRowView(v);
@@ -206,7 +206,7 @@
         const button = this.newHitButton();
         this.buttonsRowView().addSubview(button);
         if (this.buttons().length > 0) {
-            button.setBorderLeft("1px solid rgb(68, 68, 68)");
+            button.setBorderLeft("1px solid var(--sv-hairline)");
         }
         this.buttons().push(button);
 
@@ -221,7 +221,7 @@
         v.setPaddingBottom("0em");
         v.setPaddingLeft("0.5em");
         v.setPaddingRight("0.5em");
-        v.setColor("#999");
+        v.setColor("var(--sv-text-muted)");
         v.setHeight("2em");
         v.setTarget(this);
         v.setAction("hitButton");
