@@ -1,12 +1,12 @@
 {
   "title": "",
   "topTitle": "STRVCT",
-  "subtitle": "A naked objects framework for JavaScript with automatic UI generation, persistence, and cloud sync.",
+  "subtitle": "A naked-objects framework for JavaScript",
   "content": [
     {
       "type": "ContentText",
       "title": "About",
-      "body": "<p>STRVCT implements the <a href=\"http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf\">naked objects</a> pattern for JavaScript. You write domain model classes with annotated properties and the framework dynamically generates the user interface as it's being used, handles persistence, and keeps everything synchronized.</p><p>The model layer is completely independent of the UI, allowing the same application code to run in a browser, on a command line, or headlessly in Node.js for testing and server-side processing.</p><p>For a detailed treatment of this approach, see <a href=\"docs/Naked%20Objects/\">Closing the Usability Gap in Naked Objects</a>.</p>"
+      "body": "<p>You write the domain model.<br>The framework handles the rest.</p><p>STRVCT implements the naked-objects pattern: annotated model classes become the single source of truth. From those annotations the framework produces a live interface, manages persistence, and keeps every layer synchronized at runtime. Custom views can still be written when needed; most of the time they are not.</p><p>Because the model is independent of the UI, the same application code runs in the browser, on the command line, or headlessly in Node.js. Persistence is transparent (IndexedDB by default, optional cloud sync). Accessibility, internationalization, and gesture handling are derived rather than hand-coded.</p><p>Because the model carries explicit annotations and remains independent of the view layer, the same structure that is easy for humans to reason about is also relatively easy for language models to generate and maintain. The parts that models still struggle with most—keeping complex UI, state, and persistence correctly synchronized—are largely handled by the framework rather than generated as fragile glue code.</p><p>The result is software whose structure stays close to the domain itself.</p><p>For a detailed treatment of this approach, see <a href=\"docs/Naked%20Objects/\">Closing the Usability Gap in Naked Objects</a>.</p>"
     },
     {
       "type": "ContentText",
