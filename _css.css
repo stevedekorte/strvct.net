@@ -38,6 +38,7 @@
     --sv-text-uneditable: #888;
 
     --sv-hairline: rgba(255, 255, 255, 0.15);
+    --sv-input-border: 1px solid rgba(255, 255, 255, 0.2);
     --sv-selection-bg: rgba(255, 255, 255, 0.10);
     --sv-selection-active-bg: rgba(255, 255, 255, 0.14);
 

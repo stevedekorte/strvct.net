@@ -120,7 +120,7 @@
             /** @member {string} valueEditableBorder
              * @description The border for editable value.
              */
-            const slot = this.newSlot("valueEditableBorder", "1px solid rgba(255, 255, 255, 0.2)");
+            const slot = this.newSlot("valueEditableBorder", "var(--sv-input-border)");
             slot.setSlotType("String");
         }
         /*

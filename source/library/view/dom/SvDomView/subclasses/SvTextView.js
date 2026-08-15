@@ -173,7 +173,7 @@
          * @description The editable border.
          */
         {
-            const slot = this.newSlot("editableBorder", "1px solid rgba(255, 255, 255, 0.2)");
+            const slot = this.newSlot("editableBorder", "var(--sv-input-border)");
             slot.setSlotType("String");
         }
 

@@ -522,7 +522,7 @@
             ? aRequest.stopReasonDescription()
             : (aRequest.error() ? aRequest.error().message : "unknown error");
         const label = reason || "error";
-        return "⚠️ [System] The previous response could not be completed — "
+        return "The previous response could not be completed — "
             + label + ": " + detail
             + " This is a system-level failure, not something the player did wrong. "
             + "On the next attempt, respond more concisely or rephrase to avoid the same "
