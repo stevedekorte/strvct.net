@@ -36,11 +36,47 @@
    * @category Configuration
    */
     modelsJson () {
+        // Text/chat models from https://docs.x.ai/developers/models (2026-08-12).
+        // grok-4-latest / grok-4-0709 / grok-3 / grok-4-fast* retired 2026-05-15.
+        // Imagine and Voice are not chat models and stay off this list.
         return [
             {
-                "name": "grok-4-latest",
-                "title": "Grok 4",
-                "inputTokenLimit": 256000,
+                "name": "grok-4.6",
+                "title": "Grok 4.6",
+                "subtitle": "Flagship — chat, code, and agents",
+                "inputTokenLimit": 500000,
+                "outputTokenLimit": 256000
+            },
+            {
+                "name": "grok-4.5",
+                "title": "Grok 4.5",
+                "subtitle": "Previous flagship",
+                "inputTokenLimit": 500000,
+                "outputTokenLimit": 256000
+            },
+            {
+                "name": "grok-4.3",
+                "title": "Grok 4.3",
+                "subtitle": "1M context, configurable reasoning",
+                "inputTokenLimit": 1000000,
+                "outputTokenLimit": 256000
+            },
+            {
+                "name": "grok-4.20-0309-reasoning",
+                "title": "Grok 4.20 Reasoning",
+                "inputTokenLimit": 1000000,
+                "outputTokenLimit": 256000
+            },
+            {
+                "name": "grok-4.20-0309-non-reasoning",
+                "title": "Grok 4.20",
+                "inputTokenLimit": 1000000,
+                "outputTokenLimit": 256000
+            },
+            {
+                "name": "grok-4.20-multi-agent-0309",
+                "title": "Grok 4.20 Multi-Agent",
+                "inputTokenLimit": 1000000,
                 "outputTokenLimit": 256000
             }
         ];

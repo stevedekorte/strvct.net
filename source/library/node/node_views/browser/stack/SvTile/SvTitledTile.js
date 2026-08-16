@@ -453,6 +453,11 @@
         this.titleView().syncStateFrom(this);
         this.subtitleView().syncStateFrom(this);
         this.noteView().syncStateFrom(this);
+        if (this.looksSelected()) {
+            this.titleView().setIsSelected(true);
+            this.subtitleView().setIsSelected(true);
+            this.noteView().setIsSelected(true);
+        }
         this.updateNoteViewStyle();
         /*
         this.titleView().setIsSelected(b)

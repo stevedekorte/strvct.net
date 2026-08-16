@@ -26,7 +26,7 @@ curl https://api.x.ai/v1/chat/completions \
         "content": "What is the answer to life and universe?"
       }
     ],
-    "model": "grok-beta",
+    "model": "grok-4.6",
     "stream": true,
     "temperature": 0
   }'
@@ -38,7 +38,7 @@ curl https://api.x.ai/v1/chat/completions \
   "id": "304e12ef-81f4-4e93-a41c-f5f57f6a2b56",
   "object": "chat.completion",
   "created": 1728511727,
-  "model": "grok-beta",
+  "model": "grok-4.6",
   "choices": [
     {
       "index": 0,

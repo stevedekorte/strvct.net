@@ -862,6 +862,10 @@
         super.syncStylesToSubviews();
         this.keyView().syncStateFrom(this);
         this.valueView().syncStateFrom(this);
+        if (this.looksSelected()) {
+            this.keyView().setIsSelected(true);
+            this.valueView().setIsSelected(true);
+        }
         return this;
     }
 

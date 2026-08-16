@@ -145,10 +145,35 @@
             const slot = this.newSlot("lastSelectionDate", null);
             slot.setSlotType("Date");
         }
+        {
+            /**
+             * @member {boolean} isDepressed
+             * @description Finger/mouse is down. View-only press feedback —
+             * paints the selected theme look without setting isSelected or
+             * starting navigation. Must be applied on pointer-down so the
+             * browser can paint before mouseup hydrates the next column.
+             */
+            const slot = this.newSlot("isDepressed", false);
+            slot.setSlotType("Boolean");
+            slot.setOwnsSetter(true);
+            slot.setDoesHookSetter(true);
+        }
+        {
+            /**
+             * @member {SvShimmerOverlayView} pressShimmerView
+             * @description Compositor sheen while a press is in flight.
+             * View-only; not selection and not a model loading flag.
+             */
+            const slot = this.newSlot("pressShimmerView", null);
+            slot.setSlotType("SvShimmerOverlayView");
+        }
     }
 
     setNode (aNode) {
         if (aNode !== this.node()) {
+            if (this.isDepressed()) {
+                this.setIsDepressed(false);
+            }
 
             if (this.node()) {
                 const name = this.node().svType();
@@ -177,6 +202,68 @@
         if (state) {
             state.applyBorderStylesToView(this); // apply only border styles
             state.applyNonBorderStylesToView(this.contentView()); // apply non border styles
+        }
+        return this;
+    }
+
+    /**
+     * @description True when the tile should paint as selected, including
+     * the transient pointer-down look. Does not mean the tile is selected.
+     * @returns {boolean}
+     */
+    looksSelected () {
+        return this.isSelected() || this.isDepressed();
+    }
+
+    /**
+     * @description Theme state, treating a press as selected so the
+     * acknowledgement uses the real selected tokens.
+     * @returns {string}
+     */
+    currentThemeStateName () {
+        if (this.isDepressed() && !this.isDisabled()) {
+            return "selected";
+        }
+        return super.currentThemeStateName();
+    }
+
+    /**
+     * @description Apply the press look immediately (this turn), not via
+     * the end-of-event scheduler — mousedown must write the DOM before
+     * the turn ends so the browser can paint before mouseup hydrates.
+     */
+    didUpdateSlotIsDepressed (/*oldValue, newValue*/) {
+        this.applyStyles();
+        if (this.isDepressed()) {
+            this.startPressShimmer();
+        } else {
+            this.stopPressShimmer();
+        }
+        return this;
+    }
+
+    /**
+     * @description Overlay the shared sheen now so it is on the compositor
+     * before mouseup. CSS delay hides motion on a fast tap.
+     */
+    startPressShimmer () {
+        if (this.pressShimmerView()) {
+            return this;
+        }
+        const overlay = SvShimmerOverlayView.clone().useStartDelay();
+        this.addSubview(overlay);
+        this.setPressShimmerView(overlay);
+        return this;
+    }
+
+    /**
+     * @description Remove the press sheen. Safe if it was never started.
+     */
+    stopPressShimmer () {
+        const overlay = this.pressShimmerView();
+        if (overlay) {
+            this.removeSubview(overlay);
+            this.setPressShimmerView(null);
         }
         return this;
     }

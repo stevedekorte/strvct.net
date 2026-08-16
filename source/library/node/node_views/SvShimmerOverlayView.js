@@ -56,6 +56,9 @@
                 animation: SvShimmerOverlaySweep 3.4s ease-in-out infinite alternate;
                 will-change: transform;
             }
+            .SvShimmerOverlaySheenDelayed {
+                animation-delay: 300ms;
+            }
         `);
         return this;
     }
@@ -71,6 +74,20 @@
         const sheen = SvFlexDomView.clone();
         sheen.setElementClassName("SvShimmerOverlaySheen");
         this.addSubview(sheen);
+        return this;
+    }
+
+    /**
+     * @description Hold the sheen still for 300ms so a fast action never
+     * shows motion. The delay is CSS (compositor), so it still elapses
+     * while the main thread is blocked after this overlay is on screen.
+     * @returns {SvShimmerOverlayView}
+     */
+    useStartDelay () {
+        const sheen = this.subviews().first();
+        if (sheen) {
+            sheen.appendElementClassName("SvShimmerOverlaySheenDelayed");
+        }
         return this;
     }
 

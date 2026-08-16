@@ -24,6 +24,26 @@
     }
 
     /**
+     * @description Pointer-down acknowledgement. Writes the selected look
+     * now so this (short) turn can paint before mouseup hydrates.
+     * Does not set isSelected or start navigation.
+     */
+    onTapBegin (/*aGesture*/) {
+        if (this.isSelectable() && !this.isSelected()) {
+            this.setIsDepressed(true);
+        }
+        return this;
+    }
+
+    /**
+     * @description Finger moved off or the tap was cancelled.
+     */
+    onTapCancelled (/*aGesture*/) {
+        this.setIsDepressed(false);
+        return this;
+    }
+
+    /**
      * @description Handles the completion of a tap gesture.
      * @param {Object} aGesture - The gesture object.
      * @returns {SvTile_gestures} The instance of the class.
@@ -34,11 +54,13 @@
         const keyModifiers = SvKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
 
         const methodName = "just" + keyModifiers.join("") + "Tap";
-        if (this[methodName]) {
-            this[methodName].apply(this);
-            return this;
+        try {
+            if (this[methodName]) {
+                this[methodName].apply(this);
+            }
+        } finally {
+            this.setIsDepressed(false);
         }
-
         return this;
     }
 
