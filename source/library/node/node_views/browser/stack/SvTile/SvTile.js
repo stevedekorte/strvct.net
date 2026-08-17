@@ -212,7 +212,15 @@
      * @returns {boolean}
      */
     looksSelected () {
-        return this.isSelected() || this.isDepressed();
+        return this.shouldPaintSelectionLook() && (this.isSelected() || this.isDepressed());
+    }
+
+    shouldPaintSelectionLook () {
+        const node = this.node();
+        if (node && typeof node.nodeTilePaintsSelectionLook === "function") {
+            return node.nodeTilePaintsSelectionLook();
+        }
+        return true;
     }
 
     /**
@@ -221,6 +229,9 @@
      * @returns {string}
      */
     currentThemeStateName () {
+        if (!this.shouldPaintSelectionLook()) {
+            return this.isDisabled() ? "disabled" : "unselected";
+        }
         if (this.isDepressed() && !this.isDisabled()) {
             return "selected";
         }
@@ -234,7 +245,7 @@
      */
     didUpdateSlotIsDepressed (/*oldValue, newValue*/) {
         this.applyStyles();
-        if (this.isDepressed() && !this.isDisabled()) {
+        if (this.isDepressed() && !this.isDisabled() && this.shouldPaintSelectionLook()) {
             // Belt-and-suspenders: stored themes can have a styleless
             // selected state (inherit), which made the press look a no-op.
             this.contentView().setBackgroundColor("var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))");

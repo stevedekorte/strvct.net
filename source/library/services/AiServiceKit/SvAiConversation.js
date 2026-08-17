@@ -471,7 +471,7 @@
    * @category User Projection
    */
     mechanicalTagNames () {
-        return ["think", "tool-call", "tool-call-result"];
+        return ["think", "tool-call", "tool-call-result", "request-info"];
     }
 
     /**

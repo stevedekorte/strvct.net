@@ -699,7 +699,7 @@
             // loadend path anyway. Route it to onError like loadend does.
             try {
                 em.safeWrapEvent(() => {
-                    const error = new Error(`Request timeout: exceeded ${this.timeoutPeriodInMs()}ms`);
+                    const error = new Error(this.timeoutErrorMessage());
                     console.warn(this.logPrefix(), error.message, "\n", this.descriptionJson());
                     this.onXhrTimeout(error);
                 }, event, () => this.descriptionForXhrEvent("onXhrTimeout"));
@@ -1158,6 +1158,48 @@
    * @description Called when the XHR timeout event is fired
    * @param {Error} error - The timeout error
    */
+    timeoutErrorMessage () {
+        const seconds = Math.round(this.timeoutPeriodInMs() / 1000);
+        const url = this.displayUrl();
+        if (url) {
+            return "Request timed out after " + seconds + " seconds (" + url + ")";
+        }
+        return "Request timed out after " + seconds + " seconds";
+    }
+
+    displayUrl () {
+        const raw = this.url();
+        if (!Type.isString(raw) || raw.length === 0) {
+            return "";
+        }
+        try {
+            const parsed = new URL(raw);
+            return this.urlWithoutQuery(this.proxiedTargetUrl(parsed) || (parsed.origin + parsed.pathname));
+        } catch (e) {
+            const q = raw.indexOf("?");
+            return q === -1 ? raw : raw.slice(0, q);
+        }
+    }
+
+    proxiedTargetUrl (parsed) {
+        for (const value of parsed.searchParams.values()) {
+            if (/^https?:\/\//i.test(value)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    urlWithoutQuery (urlString) {
+        try {
+            const parsed = new URL(urlString);
+            return parsed.origin + parsed.pathname;
+        } catch (e) {
+            const q = String(urlString).indexOf("?");
+            return q === -1 ? String(urlString) : String(urlString).slice(0, q);
+        }
+    }
+
     onXhrTimeout (error) {
         assert(error instanceof Error, "onXhrTimeout error not instance of Error");
 

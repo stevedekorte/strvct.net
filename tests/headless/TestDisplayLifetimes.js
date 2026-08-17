@@ -7,7 +7,8 @@
  *
  * Invariants under test:
  * - v1 isDisplayExpired: only complete narration-progress-only messages,
- *   and only once a later user-visible message has completed.
+ *   and once a later follow-on has begun (narration/table-talk text, even
+ *   while streaming) or a later completed user/choice message exists.
  * - isVisible() does NOT fold expiry (the tile stays in the column).
  * - Stored policies live on isExpiredByStoredPolicy (later slices).
  * - The conversation sweep fires exactly ONE view refresh (didUpdateNode)
@@ -149,7 +150,8 @@ function testSweepTransitionsAndTimer () {
     const progress = addProgressMessage(conv, "Checking on the tavern…");
     conv.sweepDisplayLifetimes(); // settle wasDisplayExpired baseline
 
-    addMessage(conv, "I open the door."); // later visible complete → expired
+    const story = addMessage(conv, "<narration><p>The door opens.</p></narration>");
+    story.setRole("assistant");
     const updates = countUpdates(progress, () => {
         conv.sweepDisplayLifetimes();
         conv.sweepDisplayLifetimes(); // second sweep: no transition, no refresh
@@ -215,7 +217,7 @@ function addProgressMessage (conv, inner) {
 }
 
 function testNarrationProgressSlice () {
-    console.log("\nv1 slice: only narration-progress-only messages expire, and only after the next visible complete message");
+    console.log("\nv1 slice: only narration-progress-only messages expire, and only after a later completed follow-on");
 
     const conv = newConversation();
     const progress = addProgressMessage(conv, "Checking on the tavern…");
@@ -226,9 +228,35 @@ function testNarrationProgressSlice () {
     invisible.setIsVisibleToUser(false);
     check(progress.isDisplayExpired() === false, "later invisible message does not expire it");
 
-    addMessage(conv, "I open the door.");
-    check(progress.isDisplayExpired() === true, "later visible complete message expires it");
+    check(progress.hasNarrationContent() === false, "progress-only is not a <narration> tag");
+    check(progress.hasFollowOnContent() === false, "progress-only has no follow-on of its own");
+
+    const moreProgress = addProgressMessage(conv, "Still checking…");
+    check(progress.isDisplayExpired() === false, "a later progress-only line does not expire it");
+
+    const streamingProgress = addMessage(conv, "<narration-progress>Filing the arrival…");
+    streamingProgress.setRole("assistant");
+    streamingProgress.setIsComplete(false);
+    check(progress.isDisplayExpired() === false, "a later unclosed progress tag does not expire it");
+    check(moreProgress.isDisplayExpired() === false, "…nor the progress line just before it");
+
+    const streaming = addMessage(conv, "<narration><p>The door</p></narration>");
+    streaming.setRole("assistant");
+    streaming.setIsComplete(false);
+    check(progress.isDisplayExpired() === true, "begun later narration expires earlier progress");
+    check(moreProgress.isDisplayExpired() === true, "…and the progress line just before it");
     check(progress.isVisible() === true, "expired progress is still isVisible (tile stays in the column)");
+
+    const convTalk = newConversation();
+    const prep = addProgressMessage(convTalk, "Preparing to begin…");
+    const talk = addMessage(convTalk, "<table-talk>Welcome to the table.</table-talk>");
+    talk.setRole("assistant");
+    check(prep.isDisplayExpired() === true, "later completed table-talk expires progress-only");
+
+    const convUser = newConversation();
+    const look = addProgressMessage(convUser, "Waiting…");
+    addMessage(convUser, "I open the door.");
+    check(look.isDisplayExpired() === true, "a later completed user line expires progress-only");
 
     const mixed = addMessage(conv, "<narration-progress>Checking…</narration-progress>\nThe door creaks.");
     mixed.setRole("assistant");
@@ -244,16 +272,17 @@ function testNarrationProgressSlice () {
 
     const conv2 = newConversation();
     const stale = addProgressMessage(conv2, "Checking…");
-    const leftover = addMessage(conv2, "The door was already open.");
-    leftover.setIsComplete(false); // persisted snapshot never got the complete flag
-    check(stale.isDisplayExpired() === true, "later visible non-progress message expires it even if still incomplete");
+    const leftover = addMessage(conv2, "<narration><p>The door was already open.</p></narration>");
+    leftover.setRole("assistant");
+    leftover.setIsComplete(false);
+    check(stale.isDisplayExpired() === true, "begun later narration expires it without waiting for complete");
 
     const conv3 = newConversation();
-    const prep = addProgressMessage(conv3, "Preparing to begin…");
+    const waiting = addProgressMessage(conv3, "Preparing to begin…");
     const choice = addMessage(conv3, "");
     choice.setRole("assistant");
     choice.setIsComplete(false);
-    check(prep.isDisplayExpired() === true, "a later visible choice/request expires progress-only (not another progress line)");
+    check(waiting.isDisplayExpired() === false, "a later incomplete choice does not expire progress-only");
 }
 
 function testMalformedPolicies () {

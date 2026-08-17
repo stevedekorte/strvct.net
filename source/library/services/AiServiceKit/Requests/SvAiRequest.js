@@ -125,6 +125,20 @@
             slot.setIsSubnodeField(true);
         }
 
+        {
+            const slot = this.newSlot("requestBeganAtMs", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+        }
+
+        {
+            const slot = this.newSlot("usageJson", null);
+            slot.setSlotType("JSON Object");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+        }
+
         /**
      * @member {Promise} xhrPromise - The promise for the XMLHttpRequest.
      */
@@ -283,6 +297,12 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
+        }
+
+        {
+            const slot = this.newSlot("pendingControlToken", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(false);
         }
 
         /**
@@ -694,9 +714,11 @@
 
         if (!this.isContinuation()) {
             this.setFullContent("");
+            this.setPendingControlToken("");
         }
 
         if (!this.isContinuation()) {
+            this.setRequestBeganAtMs(Date.now());
             this.sendDelegateMessage("onRequestBegin");
             this.sendDelegateMessage("onStreamStart");
         }
@@ -739,6 +761,7 @@
             return;
         }
 
+        this.finalizeStreamContent();
         this.sendDelegateMessage("onStreamEnd");
         this.sendDelegateMessage("onRequestComplete");
 
@@ -783,7 +806,28 @@
             }
         }
 
+        if (this.errorIsTimeout()) {
+            return;
+        }
+        if (request.didTimeout && request.didTimeout()) {
+            this.onError(new Error(request.timeoutErrorMessage()));
+            return;
+        }
+        if (xhr && xhr.status === 0) {
+            this.onError(new Error("The connection dropped before a reply arrived."));
+            return;
+        }
         this.onError(new Error("request error code: " + xhr.status));
+    }
+
+    errorIsTimeout () {
+        const xhrRequest = this.currentXhrRequest();
+        if (xhrRequest && xhrRequest.didTimeout && xhrRequest.didTimeout()) {
+            return true;
+        }
+        const error = this.error();
+        const message = error && error.message ? error.message : "";
+        return /timed?\s*out/i.test(message);
     }
 
     /**
@@ -846,6 +890,71 @@
    * @description Copies the body to the clipboard
    * @returns {SvAiRequest}
    */
+    noteUsageJson (json) {
+        if (!json) {
+            return this;
+        }
+        const usage = json.usage || json.usageMetadata || null;
+        if (usage && typeof usage === "object") {
+            this.setUsageJson(usage);
+        }
+        return this;
+    }
+
+    inputByteCount () {
+        const body = this.bodyJson();
+        if (!body) {
+            return 0;
+        }
+        return JSON.stringify(body).length;
+    }
+
+    outputByteCount () {
+        return String(this.fullContent() || "").length;
+    }
+
+    inputTokenCount () {
+        return this.tokenCountFromUsage("in")
+            || this.slotTokenCount("usageInputTokenCount")
+            || this.estimatedTokenCount(this.inputByteCount());
+    }
+
+    outputTokenCount () {
+        return this.tokenCountFromUsage("out")
+            || this.slotTokenCount("usageOutputTokenCount")
+            || this.estimatedTokenCount(this.outputByteCount());
+    }
+
+    slotTokenCount (methodName) {
+        if (typeof this[methodName] !== "function") {
+            return 0;
+        }
+        return this[methodName]() || 0;
+    }
+
+    tokenCountFromUsage (kind) {
+        const usage = this.usageJson();
+        if (!usage) {
+            return 0;
+        }
+        if (kind === "in") {
+            return usage.prompt_tokens || usage.input_tokens || usage.promptTokenCount || 0;
+        }
+        return usage.completion_tokens || usage.output_tokens || usage.candidatesTokenCount || 0;
+    }
+
+    estimatedTokenCount (byteCount) {
+        return Math.round((byteCount || 0) / 4);
+    }
+
+    elapsedSeconds () {
+        const began = this.requestBeganAtMs();
+        if (!began) {
+            return 0;
+        }
+        return Math.max(1, Math.round((Date.now() - began) / 1000));
+    }
+
     copyBody () {
         this.body().asyncCopyToClipboard();
         return this;
@@ -924,48 +1033,58 @@
    */
     onError (e) {
         this.setError(e);
-
-        if (this.isConnectivityError()) {
-            // Phase 2 of the recovery ladder: we are OFFLINE — timed retries
-            // against a dead network are pure flooding, and the platform
-            // tells us the right moment instead. Park and retry once when
-            // connectivity returns. Does not consume auto-retry attempts
-            // (a long offline stretch is one event, not N failures).
-            e.message = "Connection lost — will retry automatically when you're back online";
-            e.svIsRetrying = true; // renderers show the transient waiting status
-            this._awaitingReconnect = true;
-            this.watchOnceForNote("onBrowserOnline");
-        } else if (this.isRecoverableError()) {
-            this.setRetryCount(this.retryCount() + 1);
-            if (this.retryCount() > this.maxAutoRetries()) {
-                // Sustained outage: stop auto-retrying. The message renderer
-                // parks the response incomplete WITH error, which surfaces the
-                // chat's recovery affordance (e.g. the "Recover from Errors"
-                // header button) — the user initiates the next attempt.
-                e.message = "The AI service appears to be having sustained issues"
-                    + " (stopped after " + this.maxAutoRetries() + " automatic retries)."
-                    + " Press 'Recover from Errors' above to try again.";
-                e.svRetriesExhausted = true;
-            } else {
-                const d = this.retryDelaySeconds();
-                const f = 2; // exponential backoff factor
-                let nd = (d * f).randomBetween(d * f * f); // random spot between the next two exponential points
-                nd = Math.min(nd, this.maxRetryDelaySeconds()); // ceiling: back off, don't disappear
-                this.retryWithDelay(nd);
-                this.setRetryDelaySeconds(nd);
-                const ts = SvTimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
-                // User-readable (this message reaches the chat status line) and
-                // flagged as transient so message renderers show a waiting status
-                // instead of a terminal failure notice.
-                e.message = "AI service overloaded — retrying in " + ts
-                    + " (attempt " + this.retryCount() + " of " + this.maxAutoRetries() + ")";
-                e.svIsRetrying = true;
-            }
-        }
-
+        this.classifyRecovery(e);
         console.error(this.logPrefix(), e.message);
         this.sendDelegateMessage("onRequestError", [this, e]);
         return this;
+    }
+
+    classifyRecovery (e) {
+        if (this.isConnectivityError()) {
+            this.parkForReconnect(e);
+            return;
+        }
+        // A client timeout already burned the full wait. Same-model retry
+        // would cost another 4 minutes; failover (if configured) is next.
+        if (this.errorIsTimeout()) {
+            e.svRetriesExhausted = true;
+            return;
+        }
+        if (this.isRecoverableError()) {
+            this.scheduleOutageRetry(e);
+        }
+    }
+
+    parkForReconnect (e) {
+        e.message = "Connection lost — will retry automatically when you're back online";
+        e.svIsRetrying = true;
+        this._awaitingReconnect = true;
+        this.watchOnceForNote("onBrowserOnline");
+    }
+
+    scheduleOutageRetry (e) {
+        this.setRetryCount(this.retryCount() + 1);
+        if (this.retryCount() > this.maxAutoRetries()) {
+            e.message = "The AI service appears to be having sustained issues"
+                + " (stopped after " + this.maxAutoRetries() + " automatic retries)."
+                + " Press 'Recover from Errors' above to try again.";
+            e.svRetriesExhausted = true;
+            return;
+        }
+        this.beginRetryCountdown(e);
+    }
+
+    beginRetryCountdown (e) {
+        const d = this.retryDelaySeconds();
+        const f = 2;
+        let nd = (d * f).randomBetween(d * f * f);
+        nd = Math.min(nd, this.maxRetryDelaySeconds());
+        this.retryWithDelay(nd);
+        this.setRetryDelaySeconds(nd);
+        const ts = SvTimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
+        e.message = "AI service overloaded — retrying in " + ts
+            + " (attempt " + this.retryCount() + " of " + this.maxAutoRetries() + ")";
+        e.svIsRetrying = true;
     }
 
     /**
@@ -1157,9 +1276,35 @@
    * @param {string} newContent
    */
     onNewContent (newContent) {
-    //console.log(this.logPrefix(), this.svTypeId() + ".onNewContent(`" + newContent + "`)");
-        this.setFullContent(this.fullContent() + newContent);
-        this.sendDelegateMessage("onStreamData", [this, newContent]);
+        const incoming = this.pendingControlToken() + String(newContent || "");
+        const split = this.splitControlTokenHoldback(incoming);
+        this.setPendingControlToken(split.pending);
+        if (split.visible) {
+            this.setFullContent(String(this.fullContent() || "") + split.visible);
+            this.sendDelegateMessage("onStreamData", [this, split.visible]);
+        }
+    }
+
+    withoutModelControlTokens (text) {
+        return String(text).replace(/<\|[a-zA-Z0-9_.-]+\|>/g, "");
+    }
+
+    splitControlTokenHoldback (text) {
+        const withoutComplete = this.withoutModelControlTokens(text);
+        const match = withoutComplete.match(/<\|[a-zA-Z0-9_.-]*\|?$/);
+        if (!match) {
+            return { visible: withoutComplete, pending: "" };
+        }
+        return {
+            visible: withoutComplete.slice(0, -match[0].length),
+            pending: match[0]
+        };
+    }
+
+    finalizeStreamContent () {
+        this.setPendingControlToken("");
+        this.setFullContent(this.withoutModelControlTokens(this.fullContent() || ""));
+        return this;
     }
 
     // --- stopping ---
@@ -1261,6 +1406,9 @@
    * @returns {boolean}
    */
     isOutageError () {
+        if (this.errorIsTimeout()) {
+            return true;
+        }
         const e = this.error();
         if (e && this.retriableStopReasons().has(e.name)) {
             return true;

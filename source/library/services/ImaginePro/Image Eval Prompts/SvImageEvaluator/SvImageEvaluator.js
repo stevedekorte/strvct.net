@@ -220,7 +220,7 @@
             throw new Error("Image has no data URL");
         }
         // Extract base64 portion (after "data:image/jpeg;base64," or similar)
-        const parts = dataUrl.split(',');
+        const parts = dataUrl.split(",");
         if (parts.length < 2) {
             throw new Error("Invalid data URL format");
         }

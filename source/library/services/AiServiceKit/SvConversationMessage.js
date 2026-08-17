@@ -297,6 +297,10 @@
         return 48;
     }
 
+    nodeTilePaintsSelectionLook () {
+        return false;
+    }
+
     /**
    * Create a message ID if it doesn't exist.
 
@@ -366,10 +370,10 @@
 
     /**
    * @description v1 slice: only complete narration-progress-only messages
-   * expire, and only once a later user-visible message has completed.
-   * Stored displayLifetime policies (user-message depth, rolls, clocks)
-   * are not consulted — they stay for later slices. Expiry does NOT fold
-   * into isVisible(): the tile stays in the column and hides itself.
+   * expire, and only once a later player-visible follow-on has begun
+   * (a <narration> or <table-talk> with text, even while still streaming)
+   * or a later completed user line / choice exists. Stored displayLifetime
+   * policies stay for later slices. Expiry does NOT fold into isVisible().
    * @returns {Boolean}
    * @category Display Lifetime
    */
@@ -383,7 +387,10 @@
         if (!this.isNarrationProgressOnly()) {
             return false;
         }
-        return this.hasLaterNonProgressVisibleMessage();
+        if (this.hasFollowOnContent()) {
+            return false;
+        }
+        return this.hasCompletedFollowOnAfter();
     }
 
     /**
@@ -399,18 +406,20 @@
         if (typeof raw !== "string") {
             return false;
         }
-        if (!/<narration-progress\b/i.test(raw)) {
+        if (!/<narration-progress(?![\w-])/i.test(raw)) {
             return false;
         }
         return this.visibleTextWithoutProgress(raw).length === 0;
     }
 
     visibleTextWithoutProgress (raw) {
-        const withoutProgress = raw.replace(/<narration-progress\b[^>]*>[\s\S]*?<\/narration-progress>/gi, "");
+        const withoutProgress = raw.replace(/<narration-progress(?![\w-])[^>]*>[\s\S]*?<\/narration-progress>/gi, "");
         const tags = this.mechanicalTagNames().join("|");
         return withoutProgress
             .replace(new RegExp("<(" + tags + ")\\b[^>]*>[\\s\\S]*?<\\/\\1>", "gi"), "")
             .replace(/<!--[\s\S]*?-->/g, "")
+            .replace(/<[^>]+>/g, "")
+            .replace(/&nbsp;/gi, " ")
             .trim();
     }
 
@@ -438,9 +447,8 @@
     /**
    * @description Later visible message that is not itself progress-only
    * (narration, table-talk, a choice request, a user line, an image).
-   * Incomplete is fine — a choice sitting after "Preparing to begin…"
-   * means that progress line has done its job. Another progress-only
-   * sibling does not count.
+   * Unused by isDisplayExpired in the v1 slice (that waits for a
+   * completed narration); kept for later kinds.
    * @returns {Boolean}
    * @category Display Lifetime
    */
@@ -466,6 +474,121 @@
             return true;
         }
         return false;
+    }
+
+    /**
+   * @description True when this complete message contains a non-empty
+   * <narration> section. Empty or still-streaming narration does not count.
+   * @returns {Boolean}
+   * @category Display Lifetime
+   */
+    hasCompletedNarration () {
+        if (this.isComplete && !this.isComplete()) {
+            return false;
+        }
+        return this.hasNarrationContent();
+    }
+
+    hasNarrationContent () {
+        return this.hasTaggedVisibleContent("narration");
+    }
+
+    hasTableTalkContent () {
+        return this.hasTaggedVisibleContent("table-talk");
+    }
+
+    hasTaggedVisibleContent (tagName) {
+        const raw = this.content();
+        if (typeof raw !== "string") {
+            return false;
+        }
+        // (?![\\w-]) so <narration> does not match <narration-progress>.
+        const closed = new RegExp("<" + tagName + "(?![\\w-])[^>]*>([\\s\\S]*?)</" + tagName + ">", "gi");
+        let match = closed.exec(raw);
+        while (match) {
+            if (this.plainTextOf(match[1]).length > 0) {
+                return true;
+            }
+            match = closed.exec(raw);
+        }
+        const open = new RegExp("<" + tagName + "(?![\\w-])[^>]*>([\\s\\S]*)$", "i");
+        const streaming = raw.match(open);
+        return !!(streaming && this.plainTextOf(streaming[1]).length > 0);
+    }
+
+    plainTextOf (html) {
+        return String(html || "").replace(/<[^>]+>/g, "").replace(/&nbsp;/gi, " ").trim();
+    }
+
+    hasFollowOnContent () {
+        return this.hasNarrationContent() || this.hasTableTalkContent();
+    }
+
+    hasCompletedFollowOnContent () {
+        return this.hasFollowOnContent();
+    }
+
+    /**
+   * @description A later completed player-visible message that is not
+   * more progress. Progress-only tiles leave once the story or the
+   * table has actually moved on.
+   * @returns {Boolean}
+   * @category Display Lifetime
+   */
+    hasCompletedNarrationAfter () {
+        return this.hasCompletedFollowOnAfter();
+    }
+
+    hasCompletedFollowOnAfter () {
+        const conversation = this.conversation();
+        if (!conversation || !conversation.messages) {
+            return false;
+        }
+        const messages = conversation.messages();
+        const index = this.indexInMessages(messages);
+        if (index === -1) {
+            return false;
+        }
+        for (let i = index + 1; i < messages.length; i++) {
+            const m = messages[i];
+            const visible = m.isVisibleToUser ? m.isVisibleToUser() : true;
+            if (!visible) {
+                continue;
+            }
+            if (this.messageIsProgressScaffold(m)) {
+                continue;
+            }
+            if (m.hasFollowOnContent && m.hasFollowOnContent()) {
+                return true;
+            }
+            if (m.isComplete && m.isComplete()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    messageIsProgressScaffold (message) {
+        const raw = message.content && message.content();
+        if (typeof raw !== "string" || !/<narration-progress(?![\w-])/i.test(raw)) {
+            return false;
+        }
+        if (message.hasFollowOnContent && message.hasFollowOnContent()) {
+            return false;
+        }
+        return true;
+    }
+
+    indexInMessages (messages) {
+        const index = messages.indexOf(this);
+        if (index !== -1) {
+            return index;
+        }
+        const id = this.messageId && this.messageId();
+        if (!id) {
+            return -1;
+        }
+        return messages.indexOf(messages.detect(m => m.messageId && m.messageId() === id));
     }
 
     /**
@@ -715,7 +838,10 @@
    */
     setContent (s) {
         this.setValue(s);
-        //this.directDidUpdateNode()
+        const conversation = this.conversation();
+        if (conversation && conversation.scheduleDisplayLifetimeSweep) {
+            conversation.scheduleDisplayLifetimeSweep();
+        }
         return this;
     }
 

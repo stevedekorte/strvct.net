@@ -223,6 +223,7 @@
         }
 
         if (json.usageMetadata) {
+            this.noteUsageJson(json);
             this.setUsageOutputTokenCount(json.usageMetadata.totalTokenCount);
         }
     }

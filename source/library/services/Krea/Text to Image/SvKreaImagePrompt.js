@@ -778,6 +778,7 @@
 
         try {
             const bodyJson = await this.asyncComposeRequestBody();
+            console.log(this.logPrefix(), "image prompt:", bodyJson.prompt);
             const jobId = await this.asyncSubmitJob(bodyJson);
             await this.addGenerationForJobId(jobId, bodyJson.prompt);
             await this.asyncCollectResultImage();

@@ -205,52 +205,53 @@
     }
 
     async promiseSendDelegateTag (phase, tagName, tagText) {
-        const ignoreMissingMethodsForTags = ["narration-progress", "session-name"];
-        // phase is "Stream" or "Complete"
-        // note: need to be careful about async here. We use it do deal with json tags errors as
-        // we make follow up network requests repair them, but some things need to be synchronous,
-        // such as updating the session, character sheet, or voice narration...
-        // text tags
         const textMethodName = "on" + phase + "_" + this.convertTagToCamelCase(tagName) + "_TagText";
         if (this.tagDelegate().respondsTo(textMethodName)) {
-            console.log("tagDelegate calling method: " + textMethodName);
-            // One catch site covers every tag handler (app delegates included):
-            // without it a handler exception becomes an unhandled promise
-            // rejection (this call is not awaited by the parser) and the AI
-            // continues on a false premise.
-            try {
-                return await this.tagDelegate()[textMethodName](tagText, this);
-            } catch (error) {
-                console.error(this.svType() + ".promiseSendDelegateTag() " + textMethodName + " threw:", error);
-                this.reportRuntimeError(error, {
-                    tag: tagName,
-                    phase: phase.toLowerCase(),
-                    excerpt: String(tagText).clipWithEllipsis(200)
-                });
-                return undefined;
-            }
-        } else if (tagName.includes("-")) { // only warn if it has a dash as it's a special tag
-            if (ignoreMissingMethodsForTags.includes(tagName)) {
-                // we can ignore missing methods for this tag
-            } else {
-                // otherwise, we need to report an error
-                if (tagName === "tool-call-result") {
-                    // if the the tag is a tool-call-result, let's compose a special error message
-                    // to remind the ai that tool call results can only be returned by the tool call itself.
-                    const errorMessage = `You have mistakenly responded with a tool-call-result tag. 
-            Tool call results can only be returned by the tool call itself. `;
-                    const extraNote = this.noteForToolJsonString(tagText);
-                    this.reportErrorToAi("Error: " + errorMessage + extraNote);
-                    return;
-                } else {
-                    console.warn("tagDelegate (" + this.tagDelegate().svType() + ") missing method: " + textMethodName + " for tag: " + tagName);
-                    let errorMessage = "Error: you responded with a '" + tagName + "' tag which the client does not understand. ";
-                    errorMessage += "If you have sent the tool call for which this was the result, then ignore your own response and wait from the tool-call-result from the client user response. ";
-                    errorMessage += "Critical: you MUST NOT make use of <tool-call-result> tag in your response.";
-                    this.reportErrorToAi(errorMessage);
-                }
-            }
+            return this.promiseCallTagHandler(textMethodName, tagName, phase, tagText);
         }
+        this.handleMissingTagMethod(tagName, tagText);
+    }
+
+    async promiseCallTagHandler (methodName, tagName, phase, tagText) {
+        try {
+            return await this.tagDelegate()[methodName](tagText, this);
+        } catch (error) {
+            console.error(this.svType() + ".promiseSendDelegateTag() " + methodName + " threw:", error);
+            this.reportRuntimeError(error, {
+                tag: tagName,
+                phase: phase.toLowerCase(),
+                excerpt: String(tagText).clipWithEllipsis(200)
+            });
+            return undefined;
+        }
+    }
+
+    handleMissingTagMethod (tagName, tagText) {
+        if (!tagName.includes("-") || this.shouldIgnoreMissingTagMethod(tagName)) {
+            return;
+        }
+        if (tagName === "tool-call-result") {
+            const extraNote = this.noteForToolJsonString(tagText);
+            this.reportErrorToAi("Error: You have mistakenly responded with a tool-call-result tag. Tool call results can only be returned by the tool call itself. " + extraNote);
+            return;
+        }
+        this.reportUnknownTagToAi(tagName);
+    }
+
+    shouldIgnoreMissingTagMethod (tagName) {
+        const name = String(tagName || "").toLowerCase();
+        if (this.mechanicalTagNames().includes(name)) {
+            return true;
+        }
+        return ["narration-progress", "session-name"].includes(name);
+    }
+
+    reportUnknownTagToAi (tagName) {
+        console.warn("tagDelegate (" + this.tagDelegate().svType() + ") missing method for tag: " + tagName);
+        let errorMessage = "Error: you responded with a '" + tagName + "' tag which the client does not understand. ";
+        errorMessage += "If you have sent the tool call for which this was the result, then ignore your own response and wait from the tool-call-result from the client user response. ";
+        errorMessage += "Critical: you MUST NOT make use of <tool-call-result> tag in your response.";
+        this.reportErrorToAi(errorMessage);
     }
 
     noteForToolJsonString (jsonString) {

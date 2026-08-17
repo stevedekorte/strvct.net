@@ -73,7 +73,6 @@
         const apiKey = await this.apiKeyOrUserAuthToken();
         const bodyJson = this.bodyJson();
         bodyJson.stream = true;
-        //bodyJson.usage = true;
         return {
             method: "POST",
             headers: {
@@ -135,6 +134,8 @@
         if (json.error) {
             console.warn("ERROR: " + json.error.message);
             this.xhrPromise().callRejectFunc(new Error(json.error.message));
+        } else if (json.usage) {
+            this.noteUsageJson(json);
         } else if (
             json.choices &&
         json.choices.length > 0

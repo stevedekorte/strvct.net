@@ -517,16 +517,31 @@
    * @category Error Handling
    */
     requestErrorNoticeText (aRequest) {
-        const reason = aRequest.stopReason ? aRequest.stopReason() : null;
-        const detail = (reason && aRequest.stopReasonDescription)
-            ? aRequest.stopReasonDescription()
-            : (aRequest.error() ? aRequest.error().message : "unknown error");
-        const label = reason || "error";
-        return "The previous response could not be completed — "
-            + label + ": " + detail
-            + " This is a system-level failure, not something the player did wrong. "
-            + "On the next attempt, respond more concisely or rephrase to avoid the same "
-            + "failure; the player may also try a different input.";
+        if (this.errorIsTimeout(aRequest)) {
+            return "The storyteller took too long to respond. Try again — a shorter action often helps.";
+        }
+        if (this.errorIsTransport(aRequest)) {
+            return "The storyteller lost the connection before finishing. Try again.";
+        }
+        return "The storyteller could not finish that reply. Try again.";
+    }
+
+    errorIsTimeout (aRequest) {
+        const request = aRequest || this.request();
+        if (request && typeof request.errorIsTimeout === "function" && request.errorIsTimeout()) {
+            return true;
+        }
+        const error = request && request.error ? request.error() : null;
+        const message = error && error.message ? error.message : "";
+        return /timed?\s*out/i.test(message);
+    }
+
+    errorIsTransport (aRequest) {
+        const error = aRequest && aRequest.error ? aRequest.error() : null;
+        const message = error && error.message ? error.message : "";
+        return /request error code:\s*0\b/i.test(message)
+            || /connection dropped/i.test(message)
+            || /network error/i.test(message);
     }
 
     /**
@@ -562,10 +577,8 @@
    * @param {SvAiRequest} aRequest - The request object.
    * @category Event Handling
    */
-    onRequestComplete (/*aRequest*/) {
-
-        //this.setRequest(null)
-        //this.setStatus("complete");
+    onRequestComplete (aRequest) {
+        this.appendRequestInfo(aRequest);
         this.markAsComplete();
     }
 
@@ -616,12 +629,55 @@
    * @param {SvAiRequest} request - The request object.
    * @category Event Handling
    */
-    onStreamEnd (/*request*/) {
-
-        //this.setContent(request.fullContent()); // all data has already been sent
+    onStreamEnd (request) {
+        this.appendRequestInfo(request || this.request());
         this.setIsComplete(true);
         this.sendDelegateMessage("onMessageUpdate");
     }
+
+    appendRequestInfo (aRequest) {
+        const request = aRequest || this.request();
+        if (!request) {
+            return this;
+        }
+        const current = this.content() || "";
+        if (current.includes("<request-info")) {
+            return this;
+        }
+        const line = this.requestInfoLine(request);
+        if (!line) {
+            return this;
+        }
+        this.setContent(current + "<request-info>" + line + "</request-info>");
+        return this;
+    }
+
+    requestInfoLine (request) {
+        const parts = [];
+        const inTok = request.inputTokenCount ? request.inputTokenCount() : 0;
+        const outTok = request.outputTokenCount ? request.outputTokenCount() : 0;
+        if (inTok) {
+            parts.push(this.compactCount(inTok) + " in");
+        }
+        if (outTok) {
+            parts.push(this.compactCount(outTok) + " out");
+        }
+        const secs = request.elapsedSeconds ? request.elapsedSeconds() : 0;
+        if (secs) {
+            parts.push(secs + "s");
+        }
+        return parts.join(", ");
+    }
+
+    compactCount (n) {
+        if (n >= 1000) {
+            const k = n / 1000;
+            return (k >= 10 ? k.toFixed(0) : k.toFixed(1).replace(/\.0$/, "")) + "k";
+        }
+        return String(n);
+    }
+
+
 
     /**
    * Handles value input.

@@ -22,7 +22,7 @@
             slot.setSlotType("Boolean");
         }
         {
-            const slot = this.newSlot("isDisplayExitAnimating", false);
+            const slot = this.newSlot("isProgressTagExitPending", false);
             slot.setSlotType("Boolean");
         }
     }
@@ -242,6 +242,12 @@
      * @returns {SvChatMessageTile} The current instance.
      * @category Layout
      */
+    applyStyles () {
+        super.applyStyles();
+        this.contentView().setBackgroundColor("transparent");
+        return this;
+    }
+
     updateSubviews () {
         super.updateSubviews();
         const node = this.node();
@@ -285,13 +291,15 @@
         if (node && node.role) {
             this.setAttribute("data-role", node.role());
         }
-        // Live streams animate progress-tag fades; settled/reloaded
-        // messages snap (ChatCss keys off data-complete).
+        // Live tiles that already showed progress keep the animate bit so
+        // a same-chunk complete does not CSS-snap the tag. Reload snaps.
+        if (this.hasBeenShownUnexpired()) {
+            this.setAttribute("data-animate-progress", "true");
+        }
         if (node && node.isComplete) {
             this.setAttribute("data-complete", node.isComplete() ? "true" : "false");
         }
         super.syncFromNode(); // This now includes syncDotsFromNode
-        // Check for backward compatibility with isComplete
         if (node && node.isComplete && !node.valueIsComplete) {
             if (node.isComplete()) {
                 this.hideValueDots();
@@ -299,78 +307,21 @@
                 this.showValueDots();
             }
         }
-        if (node && node.isVisible() && !this.shouldHideForDisplayExpiry()) {
-            this.setHasBeenShownUnexpired(true);
-        }
+        this.rememberVisibleProgress();
+        this.animateSupersededProgressTags();
         return this;
     }
 
-    /**
-     * @description syncFromNode always ends in syncOrientation, which resets
-     * display to inline-block and min-height to 5em/48px. That would un-hide
-     * an expired tile and leave a blank padded block. Skip orientation when
-     * we are hiding for expiry, and keep the box at zero.
-     * @returns {SvChatMessageTile}
-     * @category Display Lifetime
-     */
-    syncOrientation () {
-        if (this.shouldHideForDisplayExpiry()) {
-            super.setIsDisplayHidden(true);
-            this.setMinHeight("0px");
-            this.setMinHeightPx(0);
-            this.setMaxHeight("0px");
-            this.setHeight("0px");
-            return this;
-        }
-        return super.syncOrientation();
+    progressMinVisibleMs () {
+        return 3000;
     }
 
-    /**
-     * @description Expired narration-progress tiles stay in the column
-     * (isVisible is not folded). Intercept hide/show so expiry can fade
-     * the same tile instead of dropping it from visibleSubnodes.
-     * @param {Boolean} aBool
-     * @returns {SvChatMessageTile}
-     * @category Display Lifetime
-     */
-    setIsDisplayHidden (aBool) {
-        if (this.isDisplayExitAnimating()) {
-            if (!aBool && !this.shouldHideForDisplayExpiry()) {
-                this.cancelDisplayExitAnimation();
-                return super.setIsDisplayHidden(false);
-            }
-            return this;
-        }
-        if (this.shouldHideForDisplayExpiry()) {
-            return this.hideForDisplayExpiry();
-        }
-        return super.setIsDisplayHidden(aBool);
+    progressFadeMs () {
+        return 3000;
     }
 
-    shouldHideForDisplayExpiry () {
-        if (this.showsExpiredMessages()) {
-            return false;
-        }
-        const node = this.node();
-        return !!(node && node.isDisplayExpired && node.isDisplayExpired());
-    }
-
-    showsExpiredMessages () {
-        if (typeof SvApp === "undefined" || !SvApp.shared) {
-            return false;
-        }
-        const app = SvApp.shared();
-        return !!(app && app.developerMode && app.developerMode());
-    }
-
-    hideForDisplayExpiry () {
-        if (this.isDisplayHidden()) {
-            return this;
-        }
-        if (!this.hasBeenShownUnexpired() || this.shouldSkipDisplayExitAnimation()) {
-            return super.setIsDisplayHidden(true);
-        }
-        return this.animateDisplayExit();
+    progressCollapseMs () {
+        return 1000;
     }
 
     shouldSkipDisplayExitAnimation () {
@@ -383,33 +334,210 @@
         return false;
     }
 
-    animateDisplayExit () {
-        const style = this.element().style;
-        style.transition = "opacity 0.6s ease-out";
-        style.opacity = "0";
-        this.setIsDisplayExitAnimating(true);
-        this.addTimeout(() => this.finishDisplayExit(), 650, "displayExit");
+    rememberVisibleProgress () {
+        if (this.visibleProgressTags().length > 0) {
+            this.setHasBeenShownUnexpired(true);
+        }
         return this;
     }
 
-    finishDisplayExit () {
-        this.setIsDisplayExitAnimating(false);
-        super.setIsDisplayHidden(true);
-        this.clearDisplayExitStyles();
+    visibleProgressTags () {
+        return this.progressTags().filter(el => {
+            if (el.offsetHeight <= 0 || el.dataset.exit === "1") {
+                return false;
+            }
+            // Streaming often leaves <narration> nested inside an unclosed
+            // progress tag. Fading that wrapper would hide the story.
+            return !el.querySelector("narration, table-talk");
+        });
+    }
+
+    progressTags () {
+        const e = this.element();
+        if (!e || !e.querySelectorAll) {
+            return [];
+        }
+        return Array.from(e.querySelectorAll("narration-progress"));
+    }
+
+    animateSupersededProgressTags () {
+        if (this.earlierProgressStillShowing()) {
+            return this;
+        }
+        if (!this.tileHasFollowOnStarted()) {
+            return this;
+        }
+        if (this.visibleProgressTags().length === 0) {
+            return this;
+        }
+        if (this.shouldSkipDisplayExitAnimation()) {
+            return this.snapProgressTagsHidden();
+        }
+        return this.scheduleProgressTagExit();
+    }
+
+    snapProgressTagsHidden () {
+        this.visibleProgressTags().forEach(el => {
+            el.style.display = "none";
+        });
+        this.setIsProgressTagExitPending(false);
+        return this.notifyLaterProgressExits();
+    }
+
+    scheduleProgressTagExit () {
+        if (this.isProgressTagExitPending()) {
+            return this;
+        }
+        this.setIsProgressTagExitPending(true);
+        this.addTimeout(() => this.beginProgressTagExit(this.nextProgressTagToExit()), this.progressMinVisibleMs(), "progressTagExit");
         return this;
     }
 
-    cancelDisplayExitAnimation () {
-        this.clearTimeoutNamed("displayExit");
-        this.setIsDisplayExitAnimating(false);
-        this.clearDisplayExitStyles();
+    nextProgressTagToExit () {
+        const tags = this.visibleProgressTags();
+        return tags.length ? [tags[0]] : [];
+    }
+
+    tileHasFollowOnStarted () {
+        if (this.domHasFollowOnContent()) {
+            return true;
+        }
+        const node = this.node();
+        if (node && node.hasFollowOnContent && node.hasFollowOnContent()) {
+            return true;
+        }
+        return !!(node && node.hasCompletedFollowOnAfter && node.hasCompletedFollowOnAfter());
+    }
+
+    domHasFollowOnContent () {
+        const e = this.element();
+        if (!e || !e.querySelectorAll) {
+            return false;
+        }
+        const tags = e.querySelectorAll("narration, table-talk");
+        for (let i = 0; i < tags.length; i++) {
+            if ((tags[i].textContent || "").trim().length > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    beginProgressTagExit (tags) {
+        if (!tags || tags.length === 0) {
+            this.setIsProgressTagExitPending(false);
+            return this;
+        }
+        const heights = tags.map(el => el.offsetHeight);
+        tags.forEach((el, i) => {
+            el.dataset.exit = "1";
+            el.style.overflow = "hidden";
+            el.style.height = heights[i] + "px";
+        });
+        this.addTimeout(() => this.fadeProgressTags(tags), 0, "progressTagExit");
         return this;
     }
 
-    clearDisplayExitStyles () {
-        const style = this.element().style;
-        style.transition = "";
-        style.opacity = "";
+    fadeProgressTags (tags) {
+        const fade = "opacity " + (this.progressFadeMs() / 1000) + "s ease-out";
+        tags.forEach(el => {
+            el.style.transition = fade;
+            el.style.opacity = "0";
+        });
+        this.addTimeout(() => this.collapseProgressTags(tags), this.progressFadeMs(), "progressTagExit");
+        return this;
+    }
+
+    collapseProgressTags (tags) {
+        const secs = this.progressCollapseMs() / 1000;
+        const collapse = "height " + secs + "s ease-in, margin " + secs + "s ease-in, padding " + secs + "s ease-in";
+        tags.forEach(el => {
+            el.style.transition = collapse;
+            el.style.height = "0px";
+            el.style.margin = "0px";
+            el.style.padding = "0px";
+        });
+        this.addTimeout(() => this.finishProgressTagExit(tags), this.progressCollapseMs(), "progressTagExit");
+        return this;
+    }
+
+    finishProgressTagExit (tags) {
+        tags.forEach(el => {
+            el.style.display = "none";
+        });
+        this.setIsProgressTagExitPending(false);
+        if (this.visibleProgressTags().length > 0) {
+            return this.scheduleProgressTagExit();
+        }
+        return this.notifyLaterProgressExits();
+    }
+
+    tryStartProgressExit () {
+        return this.animateSupersededProgressTags();
+    }
+
+    tilesView () {
+        let view = this.parentView();
+        while (view) {
+            if (view.subviewForNode) {
+                return view;
+            }
+            view = view.parentView();
+        }
+        return null;
+    }
+
+    conversationMessages () {
+        const node = this.node();
+        const conversation = node && node.conversation && node.conversation();
+        if (!conversation || !conversation.messages) {
+            return [];
+        }
+        return conversation.messages();
+    }
+
+    isProgressExitBusy () {
+        return this.isProgressTagExitPending();
+    }
+
+    earlierProgressStillShowing () {
+        const node = this.node();
+        const tilesView = this.tilesView();
+        if (!node || !tilesView) {
+            return false;
+        }
+        const messages = this.conversationMessages();
+        const index = messages.indexOf(node);
+        for (let i = 0; i < index; i++) {
+            const tile = tilesView.subviewForNode(messages[i]);
+            if (!tile) {
+                continue;
+            }
+            if (tile.isProgressTagExitPending && tile.isProgressTagExitPending()) {
+                return true;
+            }
+            if (tile.visibleProgressTags && tile.visibleProgressTags().length > 0
+                    && tile.tileHasFollowOnStarted && tile.tileHasFollowOnStarted()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    notifyLaterProgressExits () {
+        const tilesView = this.tilesView();
+        const node = this.node();
+        if (!tilesView || !node) {
+            return this;
+        }
+        const messages = this.conversationMessages();
+        const index = messages.indexOf(node);
+        for (let i = index + 1; i < messages.length; i++) {
+            const tile = tilesView.subviewForNode(messages[i]);
+            if (tile && typeof tile.tryStartProgressExit === "function") {
+                tile.tryStartProgressExit();
+            }
+        }
         return this;
     }
 
