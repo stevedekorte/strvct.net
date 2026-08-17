@@ -92,4 +92,24 @@ curl https://api.x.ai/v1/chat/completions \
         return this;
     }
 
+    async requestOptions () {
+        const options = await super.requestOptions();
+        const convId = this.grokConvId();
+        if (convId) {
+            options.headers["x-grok-conv-id"] = convId;
+        }
+        return options;
+    }
+
+    grokConvId () {
+        const delegate = this.delegate();
+        const conversation = delegate && typeof delegate.conversation === "function"
+            ? delegate.conversation()
+            : null;
+        if (conversation && typeof conversation.jsonId === "function" && conversation.jsonId()) {
+            return conversation.jsonId();
+        }
+        return null;
+    }
+
 }).initThisClass();
