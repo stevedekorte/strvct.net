@@ -355,57 +355,137 @@
    * @category Display Lifetime
    */
     /**
-   * @description Master on/off switch for the Disappearing Messages feature
-   * (Plans/Disappearing Messages). When false, isDisplayExpired() always
-   * returns false, so no message ever folds out — every message stays visible.
-   * Temporarily DISABLED (2026-07): message disappearance made it hard to tell
-   * what happened while debugging tool-call handback. Return true to re-enable.
+   * @description Master on/off switch for display-lifetime folding
+   * (Plans/Disappearing Messages). When false, nothing ever expires.
    * @returns {Boolean}
    * @category Display Lifetime
    */
     displayLifetimesEnabled () {
+        return true;
+    }
+
+    /**
+   * @description v1 slice: only complete narration-progress-only messages
+   * expire, and only once a later user-visible message has completed.
+   * Stored displayLifetime policies (user-message depth, rolls, clocks)
+   * are not consulted — they stay for later slices. Expiry does NOT fold
+   * into isVisible(): the tile stays in the column and hides itself.
+   * @returns {Boolean}
+   * @category Display Lifetime
+   */
+    isDisplayExpired () {
+        if (!this.displayLifetimesEnabled()) {
+            return false;
+        }
+        if (!this.isComplete()) {
+            return false;
+        }
+        if (!this.isNarrationProgressOnly()) {
+            return false;
+        }
+        return this.hasLaterNonProgressVisibleMessage();
+    }
+
+    /**
+   * @description True when the content has a narration-progress tag and no
+   * remaining user-facing prose once that tag (and other mechanical tags)
+   * are stripped. Tool-only / think-only messages are not this — they stay
+   * so tool-call handback remains readable.
+   * @returns {Boolean}
+   * @category Display Lifetime
+   */
+    isNarrationProgressOnly () {
+        const raw = this.content();
+        if (typeof raw !== "string") {
+            return false;
+        }
+        if (!/<narration-progress\b/i.test(raw)) {
+            return false;
+        }
+        return this.visibleTextWithoutProgress(raw).length === 0;
+    }
+
+    visibleTextWithoutProgress (raw) {
+        const withoutProgress = raw.replace(/<narration-progress\b[^>]*>[\s\S]*?<\/narration-progress>/gi, "");
+        const tags = this.mechanicalTagNames().join("|");
+        return withoutProgress
+            .replace(new RegExp("<(" + tags + ")\\b[^>]*>[\\s\\S]*?<\\/\\1>", "gi"), "")
+            .replace(/<!--[\s\S]*?-->/g, "")
+            .trim();
+    }
+
+    hasLaterUserVisibleCompleteMessage () {
+        const conversation = this.conversation();
+        if (!conversation || !conversation.messages) {
+            return false;
+        }
+        const messages = conversation.messages();
+        const index = messages.indexOf(this);
+        if (index === -1) {
+            return false;
+        }
+        for (let i = index + 1; i < messages.length; i++) {
+            const m = messages[i];
+            const visible = m.isVisibleToUser ? m.isVisibleToUser() : true;
+            const complete = m.isComplete ? m.isComplete() : true;
+            if (visible && complete) {
+                return true;
+            }
+        }
         return false;
     }
 
-    isDisplayExpired () {
-        if (!this.displayLifetimesEnabled()) {
-            return false; // feature disabled — nothing ever folds out (see displayLifetimesEnabled)
+    /**
+   * @description Later visible message that is not itself progress-only
+   * (narration, table-talk, a choice request, a user line, an image).
+   * Incomplete is fine — a choice sitting after "Preparing to begin…"
+   * means that progress line has done its job. Another progress-only
+   * sibling does not count.
+   * @returns {Boolean}
+   * @category Display Lifetime
+   */
+    hasLaterNonProgressVisibleMessage () {
+        const conversation = this.conversation();
+        if (!conversation || !conversation.messages) {
+            return false;
         }
+        const messages = conversation.messages();
+        const index = messages.indexOf(this);
+        if (index === -1) {
+            return false;
+        }
+        for (let i = index + 1; i < messages.length; i++) {
+            const m = messages[i];
+            const visible = m.isVisibleToUser ? m.isVisibleToUser() : true;
+            if (!visible) {
+                continue;
+            }
+            if (m.isNarrationProgressOnly && m.isNarrationProgressOnly()) {
+                continue;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+   * @description Stored-policy engine (after-messages-deep, after-resolved-*).
+   * Unused by isDisplayExpired in the v1 slice; kept so later kinds can
+   * switch on without rewriting the predicates. Tests cover this directly.
+   * @returns {Boolean}
+   * @category Display Lifetime
+   */
+    isExpiredByStoredPolicy () {
         const policy = this.displayLifetime();
         if (!policy || policy === "keep") {
             return false;
         }
 
         if (policy === "after-resolved-next-message") {
-            // Fully structural — no clocks: expires once this message has
-            // RESOLVED (roll settled, mechanical response completed) AND a
-            // later USER-VISIBLE message has completed — i.e. the story has
-            // visibly moved past it. Invisible messages (tool results,
-            // continue nudges) don't count: the user never saw them, so
-            // folding on one would look arbitrary. An unresolved message
-            // never expires however much arrives after it (party chat can
-            // flow past a roll still in the air).
             if (!this.isDisplayResolved()) {
                 return false;
             }
-            const conversation = this.conversation();
-            if (!conversation || !conversation.messages) {
-                return false;
-            }
-            const messages = conversation.messages();
-            const index = messages.indexOf(this);
-            if (index === -1) {
-                return false;
-            }
-            for (let i = index + 1; i < messages.length; i++) {
-                const m = messages[i];
-                const visible = m.isVisibleToUser ? m.isVisibleToUser() : true;
-                const complete = m.isComplete ? m.isComplete() : true;
-                if (visible && complete) {
-                    return true;
-                }
-            }
-            return false;
+            return this.hasLaterUserVisibleCompleteMessage();
         }
 
         const n = Number(policy.split(":")[1]);
@@ -433,9 +513,6 @@
             }
             const resolvedAt = this.resolvedAt();
             if (resolvedAt === null) {
-                // resolved, but before stamping existed (or by a path that
-                // couldn't stamp) — treat as expired long ago: it derives
-                // straight to hidden on load, no animation, no migration
                 return true;
             }
             return Date.now() >= resolvedAt + (n * 1000);
@@ -477,21 +554,6 @@
         }
         return null;
     }
-
-    /**
-   * @description Display-expired messages fold out of the visible chat.
-   * Composes under subclass overrides (SvAiParsedResponseMessage's developer
-   * mode bypass sits above this and reveals everything — the debugging
-   * escape hatch). Distinct from isVisibleToUser, which means "was NEVER
-   * shown" (tool results); an expired message was legitimately shown and
-   * then aged out.
-   * @returns {Boolean}
-   * @category Display Lifetime
-   */
-    isVisible () {
-        return super.isVisible() && !this.isDisplayExpired();
-    }
-
 
     // --- error handling ---
 

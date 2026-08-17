@@ -234,7 +234,10 @@
      */
     didUpdateSlotIsDepressed (/*oldValue, newValue*/) {
         this.applyStyles();
-        if (this.isDepressed()) {
+        if (this.isDepressed() && !this.isDisabled()) {
+            // Belt-and-suspenders: stored themes can have a styleless
+            // selected state (inherit), which made the press look a no-op.
+            this.contentView().setBackgroundColor("var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))");
             this.startPressShimmer();
         } else {
             this.stopPressShimmer();
@@ -604,108 +607,6 @@
         }
         this.updateSubviews();
         this.syncOrientation();
-        return this;
-    }
-
-    // --- display-lifetime exit animation (Plans/Disappearing Messages) ---
-
-    /**
-     * @description Intercepts the shown → hidden transition when the node
-     * aged out of its display lifetime (node.isDisplayExpired — conversation
-     * messages; a no-op for every other node kind) and the tab is watched:
-     * fade opacity to 0, collapse height to 0, THEN apply display:none (the
-     * same end state every other path — page build, hidden tab, reveal-off —
-     * snaps to directly). Animations are a courtesy for watched tabs, never
-     * a correctness step: background tabs may never paint, so nothing here
-     * waits on animation frames — plain timeouts sequence the stages and the
-     * end state is applied unconditionally.
-     * @param {Boolean} aBool
-     * @returns {SvTile}
-     * @category Display Lifetime
-     */
-    setIsDisplayHidden (aBool) {
-        if (this._displayExitTimeoutIds) { // exit animation in progress
-            if (!aBool) {
-                // revealed mid-exit (developer mode toggle, policy change) —
-                // cancel the choreography and show normally
-                this.cancelDisplayExitAnimation();
-                return super.setIsDisplayHidden(false);
-            }
-            return this; // already animating toward hidden
-        }
-
-        const node = this.node();
-        const wantsAnimatedExit = aBool
-            && !this.isDisplayHidden()
-            && node && node.isDisplayExpired && node.isDisplayExpired()
-            && typeof document !== "undefined" && !document.hidden;
-
-        if (!wantsAnimatedExit) {
-            // TEMP DIAGNOSTIC (remove after the blink-not-animating hunt):
-            // an EXPIRED node being hidden without animation is the exact
-            // branch that would blink — throw so the debugger captures the
-            // caller and the failed condition.
-            if (aBool && node && node.isDisplayExpired && node.isDisplayExpired()) {
-                const reasons = [];
-                if (this.isDisplayHidden()) { reasons.push("tile already displayHidden"); }
-                if (typeof document !== "undefined" && document.hidden) { reasons.push("document.hidden"); }
-                if (reasons.length === 0) { reasons.push("(none — should have animated?)"); }
-                throw new Error("[DisplayExit] hiding EXPIRED " + (node.svTypeId ? node.svTypeId() : "?") + " WITHOUT animation; reasons: " + reasons.join(", "));
-            }
-            return super.setIsDisplayHidden(aBool);
-        }
-        console.log("[DisplayExit] animating exit for " + (node.svTypeId ? node.svTypeId() : "?"));
-        return this.animateDisplayExit();
-    }
-
-    /**
-     * @description The exit choreography: opacity → 0 (600ms), then height /
-     * margins / padding → 0 (350ms), then display:none with inline styles
-     * cleared (so a later reveal renders normally).
-     * @returns {SvTile}
-     * @category Display Lifetime
-     */
-    animateDisplayExit () {
-        const e = this.element();
-        const style = e.style;
-        style.overflow = "hidden";
-        style.height = e.offsetHeight + "px";
-        style.transition = "opacity 0.6s ease-out";
-        style.opacity = "0";
-
-        const collapseId = setTimeout(() => {
-            style.transition = "height 0.35s ease-in, margin 0.35s ease-in, padding 0.35s ease-in";
-            style.height = "0px";
-            style.marginTop = "0px";
-            style.marginBottom = "0px";
-            style.paddingTop = "0px";
-            style.paddingBottom = "0px";
-
-            const finishId = setTimeout(() => {
-                this.cancelDisplayExitAnimation(); // clears inline styles + ids
-                super.setIsDisplayHidden(true);
-            }, 400);
-            this._displayExitTimeoutIds.push(finishId);
-        }, 650);
-        this._displayExitTimeoutIds = [collapseId];
-        return this;
-    }
-
-    /**
-     * @description Stops any in-flight exit animation and restores the
-     * element's inline styles to their pre-animation state.
-     * @returns {SvTile}
-     * @category Display Lifetime
-     */
-    cancelDisplayExitAnimation () {
-        if (this._displayExitTimeoutIds) {
-            this._displayExitTimeoutIds.forEach(id => clearTimeout(id));
-            this._displayExitTimeoutIds = null;
-        }
-        const style = this.element().style;
-        ["overflow", "height", "transition", "opacity", "marginTop", "marginBottom", "paddingTop", "paddingBottom"].forEach(k => {
-            style[k] = "";
-        });
         return this;
     }
 

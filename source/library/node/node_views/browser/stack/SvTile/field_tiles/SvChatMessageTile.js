@@ -17,6 +17,14 @@
      * @category Initialization
      */
     initPrototypeSlots () {
+        {
+            const slot = this.newSlot("hasBeenShownUnexpired", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("isDisplayExitAnimating", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     /**
@@ -277,6 +285,11 @@
         if (node && node.role) {
             this.setAttribute("data-role", node.role());
         }
+        // Live streams animate progress-tag fades; settled/reloaded
+        // messages snap (ChatCss keys off data-complete).
+        if (node && node.isComplete) {
+            this.setAttribute("data-complete", node.isComplete() ? "true" : "false");
+        }
         super.syncFromNode(); // This now includes syncDotsFromNode
         // Check for backward compatibility with isComplete
         if (node && node.isComplete && !node.valueIsComplete) {
@@ -286,6 +299,117 @@
                 this.showValueDots();
             }
         }
+        if (node && node.isVisible() && !this.shouldHideForDisplayExpiry()) {
+            this.setHasBeenShownUnexpired(true);
+        }
+        return this;
+    }
+
+    /**
+     * @description syncFromNode always ends in syncOrientation, which resets
+     * display to inline-block and min-height to 5em/48px. That would un-hide
+     * an expired tile and leave a blank padded block. Skip orientation when
+     * we are hiding for expiry, and keep the box at zero.
+     * @returns {SvChatMessageTile}
+     * @category Display Lifetime
+     */
+    syncOrientation () {
+        if (this.shouldHideForDisplayExpiry()) {
+            super.setIsDisplayHidden(true);
+            this.setMinHeight("0px");
+            this.setMinHeightPx(0);
+            this.setMaxHeight("0px");
+            this.setHeight("0px");
+            return this;
+        }
+        return super.syncOrientation();
+    }
+
+    /**
+     * @description Expired narration-progress tiles stay in the column
+     * (isVisible is not folded). Intercept hide/show so expiry can fade
+     * the same tile instead of dropping it from visibleSubnodes.
+     * @param {Boolean} aBool
+     * @returns {SvChatMessageTile}
+     * @category Display Lifetime
+     */
+    setIsDisplayHidden (aBool) {
+        if (this.isDisplayExitAnimating()) {
+            if (!aBool && !this.shouldHideForDisplayExpiry()) {
+                this.cancelDisplayExitAnimation();
+                return super.setIsDisplayHidden(false);
+            }
+            return this;
+        }
+        if (this.shouldHideForDisplayExpiry()) {
+            return this.hideForDisplayExpiry();
+        }
+        return super.setIsDisplayHidden(aBool);
+    }
+
+    shouldHideForDisplayExpiry () {
+        if (this.showsExpiredMessages()) {
+            return false;
+        }
+        const node = this.node();
+        return !!(node && node.isDisplayExpired && node.isDisplayExpired());
+    }
+
+    showsExpiredMessages () {
+        if (typeof SvApp === "undefined" || !SvApp.shared) {
+            return false;
+        }
+        const app = SvApp.shared();
+        return !!(app && app.developerMode && app.developerMode());
+    }
+
+    hideForDisplayExpiry () {
+        if (this.isDisplayHidden()) {
+            return this;
+        }
+        if (!this.hasBeenShownUnexpired() || this.shouldSkipDisplayExitAnimation()) {
+            return super.setIsDisplayHidden(true);
+        }
+        return this.animateDisplayExit();
+    }
+
+    shouldSkipDisplayExitAnimation () {
+        if (typeof document !== "undefined" && document.hidden) {
+            return true;
+        }
+        if (typeof window !== "undefined" && window.matchMedia) {
+            return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        }
+        return false;
+    }
+
+    animateDisplayExit () {
+        const style = this.element().style;
+        style.transition = "opacity 0.6s ease-out";
+        style.opacity = "0";
+        this.setIsDisplayExitAnimating(true);
+        this.addTimeout(() => this.finishDisplayExit(), 650, "displayExit");
+        return this;
+    }
+
+    finishDisplayExit () {
+        this.setIsDisplayExitAnimating(false);
+        super.setIsDisplayHidden(true);
+        this.clearDisplayExitStyles();
+        return this;
+    }
+
+    cancelDisplayExitAnimation () {
+        this.clearTimeoutNamed("displayExit");
+        this.setIsDisplayExitAnimating(false);
+        this.clearDisplayExitStyles();
+        return this;
+    }
+
+    clearDisplayExitStyles () {
+        const style = this.element().style;
+        style.transition = "";
+        style.opacity = "";
         return this;
     }
 

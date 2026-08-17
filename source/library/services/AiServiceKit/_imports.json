@@ -15,5 +15,6 @@
     "SvAiConversation.js",
     "SvAiConversations.js",
     "SimulatedUser/_imports.json",
-    "SvAiService.js"
+    "SvAiService.js",
+    "Music/_imports.json"
 ]

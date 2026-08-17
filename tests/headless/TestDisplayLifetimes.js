@@ -6,14 +6,10 @@
  * Headless test: message display lifetimes (Plans/Disappearing Messages).
  *
  * Invariants under test:
- * - "keep" (default) never expires.
- * - "after-messages-deep:N" derives expiry purely from distance to the
- *   conversation tail — flips as messages are appended, no clocks involved.
- * - "after-resolved-seconds:N" derives expiry from the shared resolvedAt
- *   stamp vs the local clock; unresolved messages never expire.
- * - markResolvedNow is idempotent (first stamp wins).
- * - isVisible() composes: an expired message reports not-visible (the tile
- *   machinery hides on this), while isVisibleToUser is left untouched.
+ * - v1 isDisplayExpired: only complete narration-progress-only messages,
+ *   and only once a later user-visible message has completed.
+ * - isVisible() does NOT fold expiry (the tile stays in the column).
+ * - Stored policies live on isExpiredByStoredPolicy (later slices).
  * - The conversation sweep fires exactly ONE view refresh (didUpdateNode)
  *   per expiry transition, and arms a single timer for the earliest
  *   pending time-based expiry.
@@ -96,15 +92,17 @@ function testDepthPolicy () {
     const m = addMessage(conv, "I attack the goblin");
     m.setDisplayLifetime("after-messages-deep:2");
 
-    check(m.isDisplayExpired() === false, "fresh message (depth 0) not expired");
+    check(m.isExpiredByStoredPolicy() === false, "fresh message (depth 0) not expired");
+    check(m.isDisplayExpired() === false, "v1 isDisplayExpired ignores stored depth policy");
     check(m.isVisible() === true, "…and reports visible");
 
     addMessage(conv, "reply 1");
-    check(m.isDisplayExpired() === false, "depth 1 (< N) not expired");
+    check(m.isExpiredByStoredPolicy() === false, "depth 1 (< N) not expired");
 
     addMessage(conv, "reply 2");
-    check(m.isDisplayExpired() === true, "depth 2 (≥ N) expired");
-    check(m.isVisible() === false, "…and reports not-visible (tile hides on this)");
+    check(m.isExpiredByStoredPolicy() === true, "depth 2 (≥ N) expired by stored policy");
+    check(m.isDisplayExpired() === false, "v1 still ignores stored depth policy");
+    check(m.isVisible() === true, "isVisible does not fold expiry — tile stays in the column");
     check(m.isVisibleToUser() === true, "isVisibleToUser untouched — expiry is a separate, derived state");
 }
 
@@ -115,14 +113,14 @@ function testTimePolicy () {
     const m = addMessage(conv, "roll request");
     m.setDisplayLifetime("after-resolved-seconds:10");
 
-    check(m.isDisplayExpired() === false, "unresolved message never expires (dice still in the air)");
+    check(m.isExpiredByStoredPolicy() === false, "unresolved message never expires (dice still in the air)");
     check(m.displayExpiryTime() === null, "…and reports no pending expiry time");
 
     m.setResolvedAt(Date.now() - 11000); // resolved 11s ago (> N)
-    check(m.isDisplayExpired() === true, "resolved 11s ago with N=10 → expired");
+    check(m.isExpiredByStoredPolicy() === true, "resolved 11s ago with N=10 → expired");
 
     m.setResolvedAt(Date.now() - 2000); // resolved 2s ago (< N)
-    check(m.isDisplayExpired() === false, "resolved 2s ago with N=10 → not yet");
+    check(m.isExpiredByStoredPolicy() === false, "resolved 2s ago with N=10 → not yet");
     check(m.displayExpiryTime() === m.resolvedAt() + 10000, "pending expiry time = resolvedAt + N seconds");
 
     // legacy rule: resolved-by-stored-fact (subclass isDisplayResolved
@@ -130,9 +128,9 @@ function testTimePolicy () {
     // long-expired (hidden on load, no linger replay)
     const legacy = addMessage(conv, "pre-feature roll");
     legacy.setDisplayLifetime("after-resolved-seconds:10");
-    check(legacy.isDisplayExpired() === false, "default isDisplayResolved: no stamp → unresolved → never expires");
+    check(legacy.isExpiredByStoredPolicy() === false, "default isDisplayResolved: no stamp → unresolved → never expires");
     legacy.isDisplayResolved = () => true; // subclass-style override (resolution is its own stored fact)
-    check(legacy.resolvedAt() === null && legacy.isDisplayExpired() === true, "resolved-without-stamp (legacy) derives as long-expired");
+    check(legacy.resolvedAt() === null && legacy.isExpiredByStoredPolicy() === true, "resolved-without-stamp (legacy) derives as long-expired");
 
     // markResolvedNow: first stamp wins
     const m2 = addMessage(conv, "another");
@@ -148,12 +146,11 @@ function testSweepTransitionsAndTimer () {
     console.log("\nSweep: one view refresh per expiry transition; one timer for the earliest pending expiry");
 
     const conv = newConversation();
-    const m = addMessage(conv, "user message");
-    m.setDisplayLifetime("after-messages-deep:1");
+    const progress = addProgressMessage(conv, "Checking on the tavern…");
     conv.sweepDisplayLifetimes(); // settle wasDisplayExpired baseline
 
-    addMessage(conv, "reply"); // pushes m to depth 1 → expired
-    const updates = countUpdates(m, () => {
+    addMessage(conv, "I open the door."); // later visible complete → expired
+    const updates = countUpdates(progress, () => {
         conv.sweepDisplayLifetimes();
         conv.sweepDisplayLifetimes(); // second sweep: no transition, no refresh
     });
@@ -177,14 +174,14 @@ function testNextMessagePolicy () {
     const m = addMessage(conv, "roll request");
     m.setDisplayLifetime("after-resolved-next-message");
 
-    check(m.isDisplayExpired() === false, "unresolved → not expired");
+    check(m.isExpiredByStoredPolicy() === false, "unresolved → not expired");
 
     m.setResolvedAt(1); // resolved (any stamp)
-    check(m.isDisplayExpired() === false, "resolved but no later message → not expired (still the story's tail)");
+    check(m.isExpiredByStoredPolicy() === false, "resolved but no later message → not expired (still the story's tail)");
 
     const invisible = addMessage(conv, "tool results");
     invisible.setIsVisibleToUser(false);
-    check(m.isDisplayExpired() === false, "a later INVISIBLE message doesn't count (user never saw it)");
+    check(m.isExpiredByStoredPolicy() === false, "a later INVISIBLE message doesn't count (user never saw it)");
 
     const SvAiMessage = SvGlobals.get("SvAiMessage");
     const streaming = SvAiMessage.clone();
@@ -192,18 +189,71 @@ function testNextMessagePolicy () {
     streaming.setContent("The blade arcs…");
     streaming.setConversation(conv);
     conv.addSubnode(streaming); // incomplete — still streaming
-    check(m.isDisplayExpired() === false, "a later visible but INCOMPLETE message doesn't count (narration still streaming)");
+    check(m.isExpiredByStoredPolicy() === false, "a later visible but INCOMPLETE message doesn't count (narration still streaming)");
 
     streaming.setIsComplete(true);
-    check(m.isDisplayExpired() === true, "later visible message completed → expired (the story moved past it)");
-    check(m.isVisible() === false, "…and reports not-visible");
+    check(m.isExpiredByStoredPolicy() === true, "later visible message completed → expired (the story moved past it)");
+    check(m.isVisible() === true, "isVisible stays true — expiry is the tile's job");
 
     // resolution still gates: an unresolved sibling with the same policy
     // stays visible even though later messages completed
     const unresolvedRoll = addMessage(conv, "second roll, dice in the air");
     unresolvedRoll.setDisplayLifetime("after-resolved-next-message");
     addMessage(conv, "party chat flowing past");
-    check(unresolvedRoll.isDisplayExpired() === false, "unresolved message never expires however much arrives after it");
+    check(unresolvedRoll.isExpiredByStoredPolicy() === false, "unresolved message never expires however much arrives after it");
+}
+
+function addProgressMessage (conv, inner) {
+    const SvAiMessage = SvGlobals.get("SvAiMessage");
+    const m = SvAiMessage.clone();
+    m.setRole("assistant");
+    m.setContent("<narration-progress>" + inner + "</narration-progress>");
+    m.setIsComplete(true);
+    m.setConversation(conv);
+    conv.addSubnode(m);
+    return m;
+}
+
+function testNarrationProgressSlice () {
+    console.log("\nv1 slice: only narration-progress-only messages expire, and only after the next visible complete message");
+
+    const conv = newConversation();
+    const progress = addProgressMessage(conv, "Checking on the tavern…");
+    check(progress.isNarrationProgressOnly() === true, "progress-only content is detected");
+    check(progress.isDisplayExpired() === false, "complete progress with no later message stays visible");
+
+    const invisible = addMessage(conv, "Continue.");
+    invisible.setIsVisibleToUser(false);
+    check(progress.isDisplayExpired() === false, "later invisible message does not expire it");
+
+    addMessage(conv, "I open the door.");
+    check(progress.isDisplayExpired() === true, "later visible complete message expires it");
+    check(progress.isVisible() === true, "expired progress is still isVisible (tile stays in the column)");
+
+    const mixed = addMessage(conv, "<narration-progress>Checking…</narration-progress>\nThe door creaks.");
+    mixed.setRole("assistant");
+    addMessage(conv, "after mixed");
+    check(mixed.isNarrationProgressOnly() === false, "progress plus prose is not progress-only");
+    check(mixed.isDisplayExpired() === false, "mixed message does not expire");
+
+    const toolsOnly = addMessage(conv, "<tool-call>lookup</tool-call>");
+    toolsOnly.setRole("assistant");
+    addMessage(conv, "after tools");
+    check(toolsOnly.isNarrationProgressOnly() === false, "tool-only (no progress tag) is not progress-only");
+    check(toolsOnly.isDisplayExpired() === false, "tool-only does not expire in v1");
+
+    const conv2 = newConversation();
+    const stale = addProgressMessage(conv2, "Checking…");
+    const leftover = addMessage(conv2, "The door was already open.");
+    leftover.setIsComplete(false); // persisted snapshot never got the complete flag
+    check(stale.isDisplayExpired() === true, "later visible non-progress message expires it even if still incomplete");
+
+    const conv3 = newConversation();
+    const prep = addProgressMessage(conv3, "Preparing to begin…");
+    const choice = addMessage(conv3, "");
+    choice.setRole("assistant");
+    choice.setIsComplete(false);
+    check(prep.isDisplayExpired() === true, "a later visible choice/request expires progress-only (not another progress line)");
 }
 
 function testMalformedPolicies () {
@@ -216,9 +266,9 @@ function testMalformedPolicies () {
     console.warn = () => {};
     try {
         m.setDisplayLifetime("after-messages-deep:oops");
-        check(m.isDisplayExpired() === false, "non-numeric N → not expired");
+        check(m.isExpiredByStoredPolicy() === false, "non-numeric N → not expired");
         m.setDisplayLifetime("bogus-policy:5");
-        check(m.isDisplayExpired() === false, "unknown policy → not expired");
+        check(m.isExpiredByStoredPolicy() === false, "unknown policy → not expired");
     } finally {
         console.warn = realWarn;
     }
@@ -230,6 +280,7 @@ async function main () {
 
     SvGlobals.get("SvSyncScheduler").shared().pause();
 
+    testNarrationProgressSlice();
     testDepthPolicy();
     testTimePolicy();
     testNextMessagePolicy();

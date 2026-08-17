@@ -166,7 +166,7 @@
         const devMode = SvApp.shared().developerMode();
 
         if (devMode) {
-            return true; // reveal everything — including display-expired messages
+            return true; // reveal never-shown messages (tool results, system)
         }
 
         if (this.speakerName() === "Tool Call Results") { // temporary to hide tool call results from non-dev users

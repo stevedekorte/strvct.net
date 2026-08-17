@@ -42,6 +42,12 @@
             slot.setSlotType("Boolean");
         }
 
+        {
+            const slot = this.newSlot("hasCompletedFirstDisplayLifetimeSweep", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+        }
+
     }
 
     /**
@@ -331,6 +337,7 @@
             // here after teardown nulled the subnodes. Nothing to sweep.
             return this;
         }
+        const notifyViews = this.hasCompletedFirstDisplayLifetimeSweep();
         let nextExpiryTime = null;
         messages.forEach(m => {
             if (!m.isDisplayExpired) {
@@ -339,11 +346,13 @@
             const expired = m.isDisplayExpired();
             if (expired !== m.wasDisplayExpired()) {
                 m.setWasDisplayExpired(expired);
-                // standard view-refresh channel (same as
-                // hideStreamInfoOnPreviousAiMessage); fires at most once per
-                // expiry transition, and always adjacent to real message
-                // activity, so the bubble's cloud-timestamp touch is noise-free
-                m.didUpdateNode();
+                // First sweep after load: tiles have not painted yet and will
+                // snap on first syncFromNode. didUpdateNode here storms the
+                // column and cancels in-flight progressive image loads
+                // (SvImageWellFieldTile epoch).
+                if (notifyViews) {
+                    m.didUpdateNode();
+                }
             }
             if (!expired) {
                 const t = m.displayExpiryTime();
@@ -353,6 +362,7 @@
             }
         });
         this.armDisplayLifetimeTimer(nextExpiryTime);
+        this.setHasCompletedFirstDisplayLifetimeSweep(true);
         return this;
     }
 

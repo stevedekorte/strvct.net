@@ -126,6 +126,13 @@
             slot.setIsSubnodeField(true);
         }
 
+        {
+            const slot = this.newSlot("minimaxService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(SvMinimaxService);
+            slot.setIsSubnodeField(true);
+        }
+
 
         /**
          * @member {SvOpenAiService} openAiService
@@ -295,6 +302,15 @@
     aiSvServices () {
         const values = this.subnodeFields().map(sn => sn.value());
         return values.filter(sn => sn.thisClass().isKindOf(SvAiService));
+    }
+
+    /**
+     * @description A new music prompt from the default music service.
+     * Game code should use this rather than naming MiniMax.
+     * @returns {SvMusicPrompt}
+     */
+    newMusicPrompt () {
+        return this.minimaxService().newMusicPrompt();
     }
 
     // --- ai model helpers ---

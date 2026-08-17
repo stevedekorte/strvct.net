@@ -301,7 +301,9 @@
             aGesture.cancel();
             return;
         }
-        this.setBackgroundColor("rgba(255, 255, 255, 0.1)");
+        // Theme token, not hardcoded white: parchment-light is cream, so
+        // rgba(255,255,255,0.1) was an invisible press.
+        this.setBackgroundColor("var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))");
     }
 
     /**
@@ -310,7 +312,7 @@
      * @category Event Handling
      */
     onTapCancelled (/*aGesture*/) {
-        this.setBackgroundColor("rgba(255, 255, 255, 0.0)");
+        this.setBackgroundColor("transparent");
     }
 
     /**
@@ -320,7 +322,7 @@
      * @category Event Handling
      */
     onTapComplete (/*aGesture*/) {
-        this.setBackgroundColor("rgba(255, 255, 255, 0.0)");
+        this.setBackgroundColor("transparent");
         this.sendActionToTarget();
         //SvSimpleSynth.clone().playButtonTap();
         return false;
