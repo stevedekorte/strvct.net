@@ -88,6 +88,17 @@ curl https://api.x.ai/v1/chat/completions \
     // subclasses should override this method to set up the request for streaming
         const body = this.bodyJson();
         body.stream = true;
+        // Without this the stream carries NO usage object at all, so the
+        // billing proxy cannot settle actual cost (incl. the cached_tokens
+        // discount) and falls back to the estimate — observed 2026-08-18 as
+        // ~$2.20/request debits on grok-4.6 with fictional output tokens.
+        body.stream_options = { include_usage: true };
+        // Same grok-4.6 model, faster scheduling lane. xAI bills 2x only when
+        // the response confirms service_tier: "priority".
+        body.service_tier = "priority";
+        // Default is "high" and cannot be disabled. Low is the documented
+        // setting for latency-sensitive tool calling (GM turns).
+        body.reasoning_effort = "low";
         //body.max_tokens = this.outputTokenLimit(); // current max output tokens allowed by Xai
         return this;
     }

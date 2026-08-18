@@ -53,6 +53,9 @@
         // subclasses should override this method to set up the request for streaming
         const body = this.bodyJson();
         body.stream = true;
+        // Ship usage in the final SSE chunk so the billing proxy can settle
+        // actual cost instead of falling back to the estimate.
+        body.stream_options = { include_usage: true };
         body.max_tokens = this.chatModel().outputTokenLimit(); // current max output tokens allowed by Groq
         return this;
     }

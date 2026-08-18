@@ -73,6 +73,9 @@
         const apiKey = await this.apiKeyOrUserAuthToken();
         const bodyJson = this.bodyJson();
         bodyJson.stream = true;
+        // Ship usage in the final SSE chunk so the billing proxy can settle
+        // actual cost instead of falling back to the estimate.
+        bodyJson.stream_options = { include_usage: true };
         return {
             method: "POST",
             headers: {
