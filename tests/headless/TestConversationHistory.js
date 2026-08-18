@@ -276,6 +276,71 @@ function testResultRetention () {
     method.setResultRetentionPolicy("keep"); // restore for any later checks
 }
 
+function testOutcomeOnly () {
+    console.log("\noutcome-only: the payload never ships, newest included (Cache-Safe Standing View)");
+    const conv = newConversation();
+    conv.prepareForFirstAccess();
+    const method = conv.pushHistory;
+    method.setResultRetentionPolicy("outcome-only");
+    method.setResultRetentionNote("outcome recorded — see <standing-view> at the end of the request");
+
+    const buildRequest = () => [
+        { role: "system", content: "You are the GM." },
+        toolResultDict("pushHistory", "OLD"),
+        { role: "user", content: "filler 1" },
+        toolResultDict("pushHistory", "NEW"),
+        { role: "user", content: "filler 2" }
+    ];
+
+    const pass1 = buildRequest();
+    conv.onFilterJsonHistory(pass1);
+    check(!pass1[1].content.includes("OLD") && !pass1[3].content.includes("NEW"),
+        "every payload stubbed — the NEWEST result too (nothing survives to be rewritten later)");
+    check(pass1[1].content.includes("outcome recorded") && pass1[3].content.includes("outcome recorded"),
+        "stubs carry the tool's retention note");
+
+    // The core cache invariant: the same stored message produces byte-identical
+    // outbound content on every request — no slice→stub transition, ever.
+    const pass2 = buildRequest();
+    conv.onFilterJsonHistory(pass2);
+    check(pass1[1].content === pass2[1].content && pass1[3].content === pass2[3].content,
+        "outbound bytes for a tool result are identical across requests");
+
+    // Call errors ship frozen in place: only .result is stubbed.
+    const errPayload = { callId: "c-err", toolName: "pushHistory", result: "PAYLOAD", status: "error", error: "bad lens: no node at /nowhere" };
+    const errMessages = [
+        { role: "system", content: "sys" },
+        { role: "user", content: "<tool-call-result>\n" + JSON.stringify(errPayload, null, 2) + "\n</tool-call-result>" },
+        { role: "user", content: "filler" }
+    ];
+    conv.onFilterJsonHistory(errMessages);
+    check(errMessages[1].content.includes("bad lens: no node at /nowhere"), "call error ships in place (.error is not stubbed)");
+    check(!errMessages[1].content.includes("PAYLOAD"), "an errored call's result payload is still stubbed");
+
+    // keep-newest-only regression: unused vocabulary, contract kept honest —
+    // covered above in testResultRetention (newest survives, older stubbed).
+    method.setResultRetentionPolicy("keep");
+}
+
+function testConversationEphemeralAppend () {
+    console.log("\nappendEphemeralUserContent (conversation-level, service fallback)");
+    const conv = newConversation();
+    conv.service = () => null; // force the no-service fallback path (a resolvable default service would take the provider-shaped path instead)
+    const messages = [
+        { role: "system", content: "sys" },
+        { role: "user", content: "stored player text" }
+    ];
+    conv.appendEphemeralUserContent(messages, "<system-reminder>file your episodes</system-reminder>");
+    check(messages.length === 3, "fallback appends a new dict (stored user untouched)");
+    check(messages[1].content === "stored player text", "stored user message bytes unchanged");
+    check(messages[2].isEphemeral === true && messages[2].role === "user", "appended dict is an ephemeral user");
+
+    conv.appendEphemeralUserContent(messages, "<standing-view>live</standing-view>");
+    check(messages.length === 3, "second append concatenates — still exactly one trailing ephemeral user");
+    check(messages[2].content.includes("file your episodes") && messages[2].content.includes("<standing-view>live</standing-view>"),
+        "trailing ephemeral user carries both appends");
+}
+
 // --- main --------------------------------------------------------------------
 
 async function main () {
@@ -285,6 +350,8 @@ async function main () {
 
     testHistory();
     testResultRetention();
+    testOutcomeOnly();
+    testConversationEphemeralAppend();
 
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);

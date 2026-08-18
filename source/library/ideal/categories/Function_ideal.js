@@ -261,14 +261,18 @@ Function.prototype.resultReminderMethodName = function () {
 // AI-visible history (see SvAiConversation.onFilterJsonHistory):
 //   "keep" (default)   - never stripped (events: rolls, images)
 //   "keep-newest-only" - only the newest result survives, at any age
-//                        (complete-view snapshots like getClientState)
+//                        (currently unused vocabulary — kept, see the
+//                        SvAiConversation.onFilterJsonHistory doc)
+//   "outcome-only"     - the payload never ships, newest included; the live
+//                        view rides a never-stored request trailer instead
+//                        (getClientState — Plans/Cache-Safe Standing View)
 //   "recent-window:N"  - results older than the last N messages are stripped
 // Stripped results have json.result replaced by resultRetentionNote (or a
 // generic note); the tool CALL stays visible in the assistant text.
 
 Function.prototype.setResultRetentionPolicy = function (aString) {
     assert(Type.isString(aString));
-    assert(aString === "keep" || aString === "keep-newest-only" || aString.startsWith("recent-window:"),
+    assert(aString === "keep" || aString === "keep-newest-only" || aString === "outcome-only" || aString.startsWith("recent-window:"),
         "invalid result retention policy '" + aString + "'");
     this.setMetaProperty("resultRetentionPolicy", aString);
     return this;

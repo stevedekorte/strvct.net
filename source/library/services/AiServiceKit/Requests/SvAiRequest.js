@@ -641,6 +641,29 @@
     }
 
     /**
+   * Removes the isEphemeral marker from every message dict before send.
+   * The flag is ours (Plans/Cache-Safe Standing View): adapters read it to
+   * skip merging trailers into stored history and to keep cache markers off
+   * them — but providers reject unknown fields on message objects (Anthropic
+   * 400s). Lives HERE on the common send path, not in any adapter's
+   * prepareToSendRequest, so adapters that inherit the base no-op prep
+   * (OpenAI) are covered too.
+   * @returns {SvAiRequest}
+   */
+    stripEphemeralFlags () {
+        const body = this.bodyJson();
+        const messages = body ? body.messages : null;
+        if (Type.isArray(messages)) {
+            messages.forEach((m) => {
+                if (m && m.isEphemeral !== undefined) {
+                    delete m.isEphemeral;
+                }
+            });
+        }
+        return this;
+    }
+
+    /**
    * Sends the request and streams the response
    * @returns {Promise}
    */
@@ -651,6 +674,7 @@
         }
 
         this.service().prepareToSendRequest(this); // give anthropic a chance to ensure alternating user/assistant messages
+        this.stripEphemeralFlags(); // AFTER prep (merge + cache markers read the flag), before the bytes go out
 
         this.setError(null); // clear error (in case we are retrying)
         assert(!this.currentXhrRequest());

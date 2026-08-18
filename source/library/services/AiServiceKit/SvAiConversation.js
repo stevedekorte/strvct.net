@@ -1003,10 +1003,21 @@
    * tool method; read via the tool definition):
    *
    *   "keep" (default)   — results are never stripped (events: rolls, images).
-   *   "keep-newest-only" — only the newest result survives, at ANY age
-   *                        (complete-view snapshots — older ones are redundant
-   *                        and, post-patches, potentially contradictory; the
-   *                        newest survives forever so the AI is never stateless).
+   *   "keep-newest-only" — only the newest result survives, at ANY age.
+   *                        NOTE: currently unused vocabulary (getClientState
+   *                        moved to "outcome-only" — Plans/Cache-Safe Standing
+   *                        View). Kept deliberately with its contract tested;
+   *                        do not "simplify it away". Its flaw for cacheable
+   *                        prompts: each new call rewrites the PREVIOUS newest
+   *                        in place — a mid-history byte edit that busts the
+   *                        provider prompt-cache prefix from that message on.
+   *   "outcome-only"     — the payload NEVER ships, newest included: every
+   *                        result is stubbed to the retention note from the
+   *                        first send, so historical bytes never change. The
+   *                        live payload rides a never-stored request trailer
+   *                        instead (see appendEphemeralUserContent). The
+   *                        .error and .reminder fields are untouched, so call
+   *                        errors still ship frozen in place.
    *   "recent-window:N"  — results older than the last N messages are stripped
    *                        (recent errors matter, old successes don't; keep N
    *                        small so the rewritten region stays confined to the
@@ -1043,7 +1054,13 @@
                 if (!policy || policy === "keep") {
                     return content;
                 }
-                if (policy === "keep-newest-only") {
+                if (policy === "outcome-only") {
+                    // Fall through to the stub — every result, newest included,
+                    // from the FIRST send, so this tag's outbound bytes never
+                    // change between requests (cache-prefix stability). The
+                    // .error/.reminder fields below survive: only .result is
+                    // replaced.
+                } else if (policy === "keep-newest-only") {
                     if (!seenNewestOfTool.has(toolName)) {
                         seenNewestOfTool.add(toolName); // newest survives, whatever its age
                         return content;
@@ -1067,6 +1084,37 @@
                 return JSON.stableStringifyWithStdOptions(resultJson, null, 2);
             });
         }
+        return messages;
+    }
+
+    /**
+   * @description Appends never-stored per-request content (a standing-view
+   * trailer, a filing reminder) to the outbound message-dict array via the
+   * service's ephemeral-append path (spacer handling, isEphemeral marking —
+   * see SvAiService.appendEphemeralUserContent and Plans/Cache-Safe Standing
+   * View). Falls back to a plain marked user dict when no service is
+   * resolvable (headless fixtures). Never touches stored message nodes.
+   * @param {Array} messages - The request message dicts (post-filter).
+   * @param {String} text - The content to append.
+   * @returns {Array} The same array.
+   * @category Session State
+   */
+    appendEphemeralUserContent (messages, text) {
+        let service = null;
+        try {
+            service = this.service();
+        } catch (e) { // eslint-disable-line no-unused-vars
+            // no chat model wired (headless fixture) — use the generic shape
+        }
+        if (service && typeof service.appendEphemeralUserContent === "function") {
+            return service.appendEphemeralUserContent(messages, text);
+        }
+        const last = messages.length ? messages[messages.length - 1] : null;
+        if (last && last.isEphemeral === true && last.role === "user") {
+            last.content = last.content + "\n\n" + text;
+            return messages;
+        }
+        messages.push({ role: "user", content: text, isEphemeral: true });
         return messages;
     }
 

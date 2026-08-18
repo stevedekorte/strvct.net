@@ -287,6 +287,17 @@
    * @param {Object} aRequest - The request object to prepare.
    * @category API Communication
    */
+    /**
+   * @description Gemini's contents mapping asserts user/model roles and two
+   * consecutive user contents can fail, so an ephemeral user trailer after a
+   * stored user message needs a (model-role) spacer.
+   * @returns {Boolean}
+   * @category Request Handling
+   */
+    requiresAlternatingRoles () {
+        return true;
+    }
+
     prepareToSendRequest (aRequest) {
     // Chat endpoint is now built dynamically in getChatEndpointWithKey()
 

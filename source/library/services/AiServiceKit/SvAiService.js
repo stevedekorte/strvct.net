@@ -216,6 +216,54 @@
         return this;
     }
 
+    /**
+   * @description Whether this provider's API rejects consecutive same-role
+   * messages (strict user/assistant alternation). Services that merge or
+   * alternate (Anthropic, Gemini, DeepSeek) override to true; providers that
+   * accept consecutive user messages (OpenAI, xAI, Groq) inherit false.
+   * Consulted by appendEphemeralUserContent to decide whether an ephemeral
+   * user trailer needs an assistant spacer in front of it. The decision
+   * lives here, once — not re-derived inside each adapter.
+   * @returns {Boolean}
+   * @category Request Handling
+   */
+    requiresAlternatingRoles () {
+        return false;
+    }
+
+    /**
+   * @description Appends never-stored, per-request content (a standing-view
+   * trailer, a filing reminder) to a request's message-dict array as a
+   * trailing EPHEMERAL user message (Plans/Cache-Safe Standing View). The
+   * dicts are marked isEphemeral: true so adapters never merge them into
+   * stored history (which would edit the cache prefix AND change what a
+   * stored message's bytes look like on the next request) and never place
+   * cache markers on them. Multiple appends in one request concatenate into
+   * ONE trailing user dict — ephemeral may merge with ephemeral, never with
+   * stored. On alternating-role providers, a stored trailing user message
+   * gets a one-line ephemeral assistant spacer first so roles stay legal
+   * without touching the stored message.
+   * @param {Array} messages - The request message dicts (post-filter).
+   * @param {String} text - The content to append.
+   * @returns {Array} The same array.
+   * @category Request Handling
+   */
+    appendEphemeralUserContent (messages, text) {
+        const userRole = this.userRoleName();
+        const last = messages.length ? messages[messages.length - 1] : null;
+        if (last && last.isEphemeral === true && last.role === userRole) {
+            last.content = last.content + "\n\n" + text;
+            return messages;
+        }
+        if (this.requiresAlternatingRoles() && last && last.role === userRole) {
+            // Non-empty by requirement (Anthropic rejects empty content) and
+            // self-describing prose, not a fake tag models might echo.
+            messages.push({ role: this.assistantRoleName(), content: "(context notes follow)", isEphemeral: true });
+        }
+        messages.push({ role: userRole, content: text, isEphemeral: true });
+        return messages;
+    }
+
 
     setupFromInfo () {
         const info = this.serviceInfo();

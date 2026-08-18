@@ -168,6 +168,12 @@
     return this;
   }
 */
+    // NOTE (Plans/Cache-Safe Standing View): prepareToSendRequest above is
+    // commented out — DeepSeek inherits the base no-op, does NOT merge, and
+    // tolerates consecutive same-role messages, so it also inherits
+    // requiresAlternatingRoles() === false (the OpenAI/xAI treatment). If the
+    // merge loop is ever revived, add the ephemeral-dict guard from
+    // SvAnthropicService AND override requiresAlternatingRoles to true.
 
     assertHasModels ()  {
         assert(this.models().subnodes().length > 0, "SvDeepSeekService must have at least one model");

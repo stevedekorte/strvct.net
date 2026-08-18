@@ -165,8 +165,16 @@
             if (message.role === "system") {
                 message.role = this.userRoleName(); //  need to do this now that we're using the system property
             }
-            if (message.role === lastRole) {
-                const lastMessage = newMessages.last();
+            // Ephemeral dicts (standing-view trailer, filing reminders — see
+            // Plans/Cache-Safe Standing View) may merge with each other but
+            // NEVER with a stored neighbor: folding a per-request trailer
+            // into the last stored user changes that message's bytes between
+            // requests, busting the prompt-cache prefix (and the helper adds
+            // an assistant spacer so this adjacency shouldn't arise anyway).
+            const lastMessage = newMessages.length ? newMessages.last() : null;
+            const sameEphemerality = lastMessage
+                && (message.isEphemeral === true) === (lastMessage.isEphemeral === true);
+            if (message.role === lastRole && sameEphemerality) {
                 //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n"
                 lastMessage.content = lastMessage.content + "\n" + message.content;
             } else {
@@ -242,11 +250,30 @@
             }
         };
 
-        markMessage(messages[messages.length - 1]);
-        if (messages.length > 6) {
-            markMessage(messages[messages.length - 6]);
+        // Markers go on STORED messages only (Plans/Cache-Safe Standing View):
+        // an ephemeral trailer's bytes differ every request, so a cache_control
+        // there is a cache WRITE (1.25×) that can never be read back. The last
+        // stored message is exactly the prefix the next request re-sends.
+        const stored = messages.filter((m) => m.isEphemeral !== true);
+        if (stored.length === 0) {
+            return this;
+        }
+        markMessage(stored[stored.length - 1]);
+        if (stored.length > 6) {
+            markMessage(stored[stored.length - 6]);
         }
         return this;
+    }
+
+    /**
+   * @description Anthropic's Messages API requires strict user/assistant
+   * alternation (the merge loop above exists for exactly this reason), so an
+   * ephemeral user trailer after a stored user message needs a spacer.
+   * @returns {Boolean}
+   * @category Request Handling
+   */
+    requiresAlternatingRoles () {
+        return true;
     }
 
     /*
