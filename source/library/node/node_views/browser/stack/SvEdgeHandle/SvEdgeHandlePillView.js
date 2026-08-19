@@ -14,8 +14,10 @@
  * does nothing (a fully clickable edge fired constantly by accident).
  *
  * States (the whole interaction model — there is no idle fade):
- *   - resting: 2.2em tick at 0.10 opacity (0.18 on touch, which has no hover)
- *   - hot (pointer within the box, or touch held): 3x length, 0.50 opacity
+ *   - resting: 2.2em tick; opacity from --sv-edge-handle-resting-opacity
+ *     (coarse pointers use --sv-edge-handle-coarse-opacity — no hover)
+ *   - hot (pointer within the box, or touch held): 3x length,
+ *     --sv-edge-handle-hot-opacity
  *
  * Growth is transform: scaleX/scaleY — never a width/height transition — so
  * hover costs no layout. On a 2px hairline the corner-radius distortion under
@@ -104,11 +106,15 @@
         this.turnOffUserSelect();
 
         const tick = SvDomView.clone();
+        tick.setElementClassName("SvEdgeHandleTick");
         tick.setPointerEvents("none");
         tick.setBorderRadius("1px");
         tick.setTransition(this.standardTickTransition());
         this.setTickView(tick);
         this.addSubview(tick);
+        if (this.isCoarsePointer()) {
+            this.setAttribute("data-coarse", "true");
+        }
 
         this.addDefaultTapGesture();
         this.setIsRegisteredForMouse(true, false); // explicit useCapture: undefined trips the type warning
@@ -132,12 +138,14 @@
         return SvTouchScreen.shared().isSupported();
     }
 
-    restingOpacity () {
-        return this.isCoarsePointer() ? 0.18 : 0.10;
+    applyHotAttribute () {
+        this.setAttribute("data-hot", this.isHot() ? "true" : "false");
+        return this;
     }
 
-    hotOpacity () {
-        return 0.5;
+    applyGlintingAttribute () {
+        this.setAttribute("data-glinting", this.isGlinting() ? "true" : "false");
+        return this;
     }
 
     standardTickTransition () {
@@ -194,7 +202,8 @@
         const hot = this.isHot();
         const scale = (this.axis() === "horizontal") ? "scaleX" : "scaleY";
         tick.setTransform(hot ? (scale + "(3)") : (scale + "(1)"));
-        tick.setOpacity(hot ? this.hotOpacity() : this.restingOpacity());
+        this.applyHotAttribute();
+        this.applyGlintingAttribute();
         if (!this.isGlinting()) {
             tick.setBackgroundColor(this.restingTickColor());
         }
@@ -233,8 +242,8 @@
         }
         const tick = this.tickView();
         this.setIsGlinting(true);
+        this.applyGlintingAttribute();
         tick.setBackgroundColor("var(--sv-attention)");
-        tick.setOpacity(this.hotOpacity());
         this.addTimeout(() => {
             tick.setTransition(this.settleTickTransition());
             tick.setBackgroundColor(this.restingTickColor());

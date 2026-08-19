@@ -47,6 +47,11 @@
        anything that must draw the eye without being a control. Apps theme it
        (undreamedof uses a parchment gold). */
     --sv-attention: #ffe14d;
+    /* Edge-handle ticks (companion / header / footer pills). Apps raise
+       these on dark pages — 0.10 of --sv-text on #191919 is nearly invisible. */
+    --sv-edge-handle-resting-opacity: 0.10;
+    --sv-edge-handle-coarse-opacity: 0.18;
+    --sv-edge-handle-hot-opacity: 0.50;
     --sv-speaking-color: rgb(240, 192, 0);
     /* The narrated sentence gets a SECOND channel besides hue, because hue alone is
        a weak signal at body size (and useless to a red-green colour-blind reader).
@@ -80,6 +85,19 @@
     --sv-chat-placeholder-color: inherit;
     --sv-chat-placeholder-style: italic;
     --sv-chat-placeholder-opacity: 0.45;
+}
+
+.SvEdgeHandlePillView .SvEdgeHandleTick {
+    opacity: var(--sv-edge-handle-resting-opacity);
+}
+
+.SvEdgeHandlePillView[data-coarse="true"] .SvEdgeHandleTick {
+    opacity: var(--sv-edge-handle-coarse-opacity);
+}
+
+.SvEdgeHandlePillView[data-hot="true"] .SvEdgeHandleTick,
+.SvEdgeHandlePillView[data-glinting="true"] .SvEdgeHandleTick {
+    opacity: var(--sv-edge-handle-hot-opacity);
 }
 
 html, body {

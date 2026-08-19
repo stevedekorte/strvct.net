@@ -25,6 +25,11 @@
             const slot = this.newSlot("isProgressTagExitPending", false);
             slot.setSlotType("Boolean");
         }
+        {
+            const slot = this.newSlot("progressCompactObserver", null);
+            slot.setSlotType("IntersectionObserver");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     /**
@@ -309,7 +314,15 @@
         }
         this.rememberVisibleProgress();
         this.animateSupersededProgressTags();
+        this.scheduleProgressCompactWatch();
         return this;
+    }
+
+    isChatDebugMode () {
+        return typeof SvApp !== "undefined"
+            && SvApp.shared
+            && SvApp.shared().developerMode
+            && SvApp.shared().developerMode();
     }
 
     progressMinVisibleMs () {
@@ -320,8 +333,8 @@
         return 3000;
     }
 
-    progressCollapseMs () {
-        return 1000;
+    progressFadedOpacity () {
+        return "0.2";
     }
 
     shouldSkipDisplayExitAnimation () {
@@ -332,6 +345,14 @@
             return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         }
         return false;
+    }
+
+    isProgressReloadSnap () {
+        // First paint after reload / late join: the tile never showed this
+        // progress live, so do not replay the dwell+fade. CSS already snaps
+        // opacity; JS marks exit and collapses tiles above the fold.
+        return this.getAttribute("data-animate-progress") !== "true"
+            && this.tileHasFollowOnStarted();
     }
 
     rememberVisibleProgress () {
@@ -346,9 +367,10 @@
             if (el.offsetHeight <= 0 || el.dataset.exit === "1") {
                 return false;
             }
-            // Streaming often leaves <narration> nested inside an unclosed
-            // progress tag. Fading that wrapper would hide the story.
-            return !el.querySelector("narration, table-talk");
+            // Streaming often leaves <narration> (or an <img>) nested
+            // inside an unclosed progress tag. Fading that wrapper would
+            // hide the story / the generated scene.
+            return !el.querySelector("narration, table-talk, img");
         });
     }
 
@@ -361,26 +383,28 @@
     }
 
     animateSupersededProgressTags () {
-        if (this.earlierProgressStillShowing()) {
-            return this;
-        }
         if (!this.tileHasFollowOnStarted()) {
             return this;
         }
         if (this.visibleProgressTags().length === 0) {
             return this;
         }
-        if (this.shouldSkipDisplayExitAnimation()) {
+        if (this.isProgressReloadSnap() || this.shouldSkipDisplayExitAnimation()) {
             return this.snapProgressTagsHidden();
+        }
+        if (this.earlierProgressStillShowing()) {
+            return this;
         }
         return this.scheduleProgressTagExit();
     }
 
     snapProgressTagsHidden () {
         this.visibleProgressTags().forEach(el => {
-            el.style.display = "none";
+            el.dataset.exit = "1";
+            el.style.opacity = this.progressFadedOpacity();
         });
         this.setIsProgressTagExitPending(false);
+        this.scheduleProgressCompactWatch();
         return this.notifyLaterProgressExits();
     }
 
@@ -428,11 +452,8 @@
             this.setIsProgressTagExitPending(false);
             return this;
         }
-        const heights = tags.map(el => el.offsetHeight);
-        tags.forEach((el, i) => {
+        tags.forEach(el => {
             el.dataset.exit = "1";
-            el.style.overflow = "hidden";
-            el.style.height = heights[i] + "px";
         });
         this.addTimeout(() => this.fadeProgressTags(tags), 0, "progressTagExit");
         return this;
@@ -442,33 +463,18 @@
         const fade = "opacity " + (this.progressFadeMs() / 1000) + "s ease-out";
         tags.forEach(el => {
             el.style.transition = fade;
-            el.style.opacity = "0";
+            el.style.opacity = this.progressFadedOpacity();
         });
-        this.addTimeout(() => this.collapseProgressTags(tags), this.progressFadeMs(), "progressTagExit");
+        this.addTimeout(() => this.finishProgressTagExit(), this.progressFadeMs(), "progressTagExit");
         return this;
     }
 
-    collapseProgressTags (tags) {
-        const secs = this.progressCollapseMs() / 1000;
-        const collapse = "height " + secs + "s ease-in, margin " + secs + "s ease-in, padding " + secs + "s ease-in";
-        tags.forEach(el => {
-            el.style.transition = collapse;
-            el.style.height = "0px";
-            el.style.margin = "0px";
-            el.style.padding = "0px";
-        });
-        this.addTimeout(() => this.finishProgressTagExit(tags), this.progressCollapseMs(), "progressTagExit");
-        return this;
-    }
-
-    finishProgressTagExit (tags) {
-        tags.forEach(el => {
-            el.style.display = "none";
-        });
+    finishProgressTagExit () {
         this.setIsProgressTagExitPending(false);
         if (this.visibleProgressTags().length > 0) {
             return this.scheduleProgressTagExit();
         }
+        this.scheduleProgressCompactWatch();
         return this.notifyLaterProgressExits();
     }
 
@@ -485,6 +491,161 @@
             view = view.parentView();
         }
         return null;
+    }
+
+    didUpdateSlotParentView (oldValue, newValue) {
+        super.didUpdateSlotParentView(oldValue, newValue);
+        if (!newValue) {
+            this.disconnectProgressCompactObserver();
+        }
+        return this;
+    }
+
+    scrollView () {
+        let view = this.tilesView();
+        while (view) {
+            if (view.anchorOnSubview) {
+                return view;
+            }
+            view = view.parentView();
+        }
+        return null;
+    }
+
+    fadedProgressTags () {
+        return this.progressTags().filter(el => {
+            if (el.style.display === "none") {
+                return false;
+            }
+            if (el.querySelector("narration, table-talk, img")) {
+                return false;
+            }
+            if (el.dataset.exit === "1") {
+                return true;
+            }
+            return this.getAttribute("data-animate-progress") !== "true"
+                && this.tileHasFollowOnStarted();
+        });
+    }
+
+    hasStickyUserFacingContent () {
+        if (this.domHasFollowOnContent()) {
+            return true;
+        }
+        const e = this.element();
+        if (e && e.querySelector("img")) {
+            return true;
+        }
+        const node = this.node();
+        if (node && node.visibleTextWithoutProgress && node.content) {
+            return node.visibleTextWithoutProgress(node.content()).length > 0;
+        }
+        return false;
+    }
+
+    needsEmptyTileWatch () {
+        if (this.isChatDebugMode()) {
+            return false;
+        }
+        if (this.fadedProgressTags().length > 0) {
+            return true;
+        }
+        if (this.visibleProgressTags().length > 0) {
+            return false;
+        }
+        return !this.hasStickyUserFacingContent();
+    }
+
+    scheduleProgressCompactWatch () {
+        if (this.isChatDebugMode()) {
+            return this.revealHiddenTileForDebug();
+        }
+        if (!this.needsEmptyTileWatch()) {
+            return this;
+        }
+        if (this.progressCompactObserver()) {
+            return this.maybeCompactFadedProgress();
+        }
+        return this.watchFadedProgressForCompact();
+    }
+
+    revealHiddenTileForDebug () {
+        this.disconnectProgressCompactObserver();
+        this.unhideDisplay();
+        this.progressTags().forEach(el => {
+            if (el.dataset.exit === "1") {
+                el.style.display = "";
+                el.style.opacity = this.progressFadedOpacity();
+            }
+        });
+        return this;
+    }
+
+    watchFadedProgressForCompact () {
+        const root = this.scrollView() ? this.scrollView().element() : null;
+        const tileEl = this.element();
+        if (!root || !tileEl || typeof IntersectionObserver === "undefined") {
+            return this.maybeCompactFadedProgress();
+        }
+        const observer = new IntersectionObserver(entries => this.onProgressCompactIntersect(entries), { root: root, threshold: 0 });
+        this.setProgressCompactObserver(observer);
+        observer.observe(tileEl);
+        return this.maybeCompactFadedProgress();
+    }
+
+    onProgressCompactIntersect (entries) {
+        const entry = entries[0];
+        if (!entry || !entry.rootBounds) {
+            return this;
+        }
+        if (entry.boundingClientRect.bottom < entry.rootBounds.top) {
+            this.maybeCompactFadedProgress();
+        }
+        return this;
+    }
+
+    maybeCompactFadedProgress () {
+        const scrollView = this.scrollView();
+        if (scrollView && scrollView.isInUserScrollSession && scrollView.isInUserScrollSession()) {
+            this.addTimeout(() => this.maybeCompactFadedProgress(), 250, "progressCompact");
+            return this;
+        }
+        if (this.tileIsFullyAboveScrollView()) {
+            this.compactFadedProgressTags();
+        }
+        return this;
+    }
+
+    tileIsFullyAboveScrollView () {
+        const root = this.scrollView() ? this.scrollView().element() : null;
+        const tileEl = this.element();
+        if (!root || !tileEl) {
+            return false;
+        }
+        return tileEl.getBoundingClientRect().bottom < root.getBoundingClientRect().top - 1;
+    }
+
+    compactFadedProgressTags () {
+        if (this.isChatDebugMode()) {
+            return this;
+        }
+        this.fadedProgressTags().forEach(el => {
+            el.style.transition = "none";
+            el.style.display = "none";
+        });
+        if (!this.hasStickyUserFacingContent() && this.visibleProgressTags().length === 0) {
+            this.hideDisplay();
+        }
+        return this.disconnectProgressCompactObserver();
+    }
+
+    disconnectProgressCompactObserver () {
+        const observer = this.progressCompactObserver();
+        if (observer) {
+            observer.disconnect();
+            this.setProgressCompactObserver(null);
+        }
+        return this;
     }
 
     conversationMessages () {
