@@ -629,6 +629,43 @@
     }
 
     /**
+     * @description The governing PARENT listing proved this folder's own
+     * cloud doc was DELETED (the user-home read path: a complete listing of
+     * the home's children that does not contain this folder). rm -rf
+     * semantics: remove every previously-synced local child, INCLUDING
+     * dirty ones — a deleted folder is authoritative over its whole
+     * subtree, and the dirty bit on an eager-loaded child (a session's
+     * self-dirtying wiring) is bookkeeping churn, not a user edit an
+     * admin wipe must respect. This is deliberately STRONGER than
+     * pruneChildrenAbsentFromCloud (which is per-record reconciliation
+     * inside a LIVE folder, where dirty-local-wins protects offline
+     * edits). Never-synced children survive: born locally, never the
+     * deletion's target — they re-upload into a recreated folder.
+     * Children governed by another authority (childMayBeCloudPruned
+     * false, e.g. membership-discovered multiplayer sessions) are
+     * untouched: their cloud life isn't in this folder. Clears the
+     * children clm cache so a later recreate re-lists from scratch.
+     * @returns {Number} how many children were pruned
+     * @category Deletion Pipeline
+     */
+    pruneSyncedChildrenForDeletedCloudFolder () {
+        let pruned = 0;
+        for (const child of this.subnodes().slice()) {
+            const wasSynced = child.cloudLastModified && child.cloudLastModified();
+            if (!wasSynced) continue;                         // never reached cloud — locally born, keep
+            if (!this.childMayBeCloudPruned(child)) continue; // another authority governs it
+            const stableId = this.cloudStableIdForChild(child);
+            console.log(this.cloudSyncLogPrefix(), "cloud folder deleted — pruning previously-synced child:", stableId || (child.title && child.title()) || child.svType());
+            this.removeSubnodeForCloudPrune(child);
+            pruned += 1;
+        }
+        if (pruned > 0) {
+            this.setSyncedChildrenClmKey(null);
+        }
+        return pruned;
+    }
+
+    /**
      * @description Cloud-initiated local removal: shut the child down (stop
      * observers, audio, timers) and detach it. Same shape as the zombie
      * reconciliation removal — never .delete() (which queues cloud deletes
