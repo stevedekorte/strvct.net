@@ -666,6 +666,35 @@
     }
 
     /**
+     * @description Split-brain self-heal: drop stored refs to children whose
+     * parentNode() is a DIFFERENT folder. Historical adoption bugs wrote the
+     * same child into two folders' stored subnode lists (two per-realm
+     * collections sharing one uid-flat cloud folder); at every load the
+     * instances re-parent the same pooled nodes back and forth ("already has
+     * parent" warnings), and — worse — a delete() only detaches the child
+     * from its CURRENT parent, so the other list resurrects it on the next
+     * boot (observed in prod 2026-08-20: deleted sessions all returned on
+     * reload with a clean cloud). Run AFTER pool loading settles (the last
+     * loader owns the child); every other holder purges its stale ref. Plain
+     * removeSubnode — the child is not being deleted, so nothing queues a
+     * cloud delete; persisting the removal is the heal.
+     * @returns {Number} how many stale refs were dropped
+     * @category Deletion Pipeline
+     */
+    dropSubnodesParentedElsewhere () {
+        let dropped = 0;
+        for (const child of this.subnodes().slice()) {
+            const parent = child.parentNode && child.parentNode();
+            if (!parent || parent === this) continue;
+            if (!(parent instanceof SvCloudFolder)) continue; // only heal folder-vs-folder splits
+            console.log(this.cloudSyncLogPrefix(), "[split-brain] dropping stale ref to", (child.title && child.title()) || child.svType(), "— its live parent is", parent.svType());
+            this.removeSubnode(child);
+            dropped += 1;
+        }
+        return dropped;
+    }
+
+    /**
      * @description Cloud-initiated local removal: shut the child down (stop
      * observers, audio, timers) and detach it. Same shape as the zombie
      * reconciliation removal — never .delete() (which queues cloud deletes
