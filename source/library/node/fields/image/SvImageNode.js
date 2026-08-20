@@ -244,13 +244,22 @@
     }
 
     setBlobFromDataURL (dataURL) {
-        if (dataURL && dataURL.startsWith("http")) {
+        if (!dataURL) {
+            this.clear();
+            return this;
+        }
+        if (dataURL.startsWith("http")) {
             throw new Error("setDataURL: dataURL is public");
         }
+        // Set the blob synchronously so hasBlobValue() is true immediately
+        // (SvFileToDownload.hasLoaded keys off that during the hash window),
+        // then replace the Sv blob ref via the async path (hash, local store,
+        // cloud push).
         const blob = Blob.fromDataUrl(dataURL);
-        this.setValueHash(null);
         this.setBlobValue(blob);
-        this.asyncValueHash(); // compute the hash
+        this.asyncSetBlobValue(blob).catch((error) => {
+            console.error(this.svType() + ".setBlobFromDataURL failed to replace blob ref:", error);
+        });
         return this;
     }
 

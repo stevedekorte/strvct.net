@@ -250,7 +250,11 @@
         const node = this.node();
         if (this.imageView() && node) {
             const dataUrl = this.imageView().dataURL();
-            if (node.setBlobFromDataURL) {
+            if (dataUrl && node.asyncSetDataURL) {
+                node.asyncSetDataURL(dataUrl).catch((error) => {
+                    console.error(this.svType() + " failed to replace image blob:", error);
+                });
+            } else if (node.setBlobFromDataURL) {
                 node.setBlobFromDataURL(dataUrl);
             }
         }
@@ -423,6 +427,15 @@
      * @category Drag and Drop
      */
     onBrowserDropImageJpeg (dataChunk) {
+        this.droppedImageData(dataChunk);
+    }
+
+    /**
+     * @description Handles browser drop of JPEG images with the image/jpg MIME type.
+     * @param {Object} dataChunk - The dropped image data.
+     * @category Drag and Drop
+     */
+    onBrowserDropImageJpg (dataChunk) {
         this.droppedImageData(dataChunk);
     }
 

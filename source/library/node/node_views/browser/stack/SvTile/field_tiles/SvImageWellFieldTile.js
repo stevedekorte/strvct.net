@@ -343,17 +343,42 @@
         }
 
         if (this.nodeValueIsEditable()) { // cascade included: read-only-in-context wells never write back
-            const dataUrl = this.imageWellView().imageDataUrl();
-            const value = field.value();
-
-            if (value && value.setBlobFromDataURL) {
-                // Value is an SvImageNode or similar blob-backed object
-                value.setBlobFromDataURL(dataUrl);
-            } else {
-                field.setValue(dataUrl);
-            }
+            this.writeWellDataUrlToField(field, this.imageWellView().imageDataUrl());
         }
 
+        return this;
+    }
+
+    /**
+     * @description Writes a dropped or edited image onto the field. Prefers
+     * the blob-node path (create blob, replace Sv blob ref) so wells whose
+     * value is an SvImageNode stay on the same storage path as generation.
+     * @param {SvImageWellField} field
+     * @param {String|null} dataUrl
+     * @returns {SvImageWellFieldTile}
+     * @category Synchronization
+     */
+    writeWellDataUrlToField (field, dataUrl) {
+        const value = field.value();
+        if (!dataUrl) {
+            if (value && value.clear) {
+                value.clear();
+            } else {
+                field.setValue(null);
+            }
+            return this;
+        }
+        if (value && value.asyncSetDataURL) {
+            value.asyncSetDataURL(dataUrl).catch((error) => {
+                console.error(this.svType() + " failed to replace image blob:", error);
+            });
+            return this;
+        }
+        if (value && value.setBlobFromDataURL) {
+            value.setBlobFromDataURL(dataUrl);
+            return this;
+        }
+        field.setValue(dataUrl);
         return this;
     }
 
