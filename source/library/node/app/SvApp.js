@@ -311,6 +311,43 @@
         await SvBlobPool.shared().asyncClear();
     }
 
+    // --- account reset epoch (app plan: Account Reset Epoch) ---
+    // The device's last-ACCEPTED reset epoch per user, stored in
+    // localStorage — deliberately OUTSIDE the object pool, because
+    // accepting an epoch bump is what DROPS the pool; the stamp must
+    // survive the drop or the next boot would loop. SvApp owns these so
+    // model code never touches browser globals directly.
+
+    static acceptedResetEpochKeyForUser (uid) {
+        return "SvApp_acceptedResetEpoch_" + uid;
+    }
+
+    static acceptedResetEpochForUser (uid) {
+        if (typeof localStorage === "undefined" || !uid) {
+            return 0;
+        }
+        return Number(localStorage.getItem(this.acceptedResetEpochKeyForUser(uid))) || 0;
+    }
+
+    static setAcceptedResetEpochForUser (uid, epoch) {
+        if (typeof localStorage === "undefined" || !uid) {
+            return;
+        }
+        localStorage.setItem(this.acceptedResetEpochKeyForUser(uid), String(epoch));
+    }
+
+    /**
+     * @description Reload the page to complete a data reset (pairs with
+     * requestClearStoreOnBoot — the boot path deletes the stores before
+     * any connection opens). No-op headless.
+     * @category Data Management
+     */
+    static hardReloadForDataReset () {
+        if (typeof window !== "undefined" && window.location && window.location.reload) {
+            window.location.reload();
+        }
+    }
+
     /**
      * @description Consumes the clear-on-boot flag (returns whether it was set).
      * @returns {boolean}
