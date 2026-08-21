@@ -13,6 +13,7 @@
     "Parsing/_imports.json",
     "History/_imports.json",
     "SvAiConversation.js",
+    "SvAiConversation_errorRecovery.js",
     "SvAiConversations.js",
     "SimulatedUser/_imports.json",
     "SvAiService.js",

@@ -181,6 +181,12 @@
         this.setTagDelegate(this); // needed to get tool calls
         this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
         this.setResponseMsgClass(SvAiParsedResponseMessage);
+
+        if (!this.slotIsPendingMaterialization("subnodes")) {
+            // lazy subnodes run this in didMaterializeSlot instead — the
+            // messages don't exist yet here (see the errorRecovery category)
+            this.runLoadHygiene();
+        }
     }
 
     didInit () {
@@ -192,6 +198,10 @@
     prepareForFirstAccess () {
         super.prepareForFirstAccess();
         this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+        // Returning to a conversation is a healing event: a turn that died
+        // while we were away (reload mid-stream, exhausted retries) must not
+        // leave the input wedged. Idempotent; guarded against live streams.
+        this.runLoadHygiene();
         return this;
     }
 
