@@ -401,10 +401,25 @@
    */
     onChatInputValue (v) {
         const userMsg = this.newUserMessage();
-        userMsg.setContent(v);
+        this.prepareUserInputMessage(userMsg, v);
         userMsg.setIsComplete(true); // this should trigger a requestResponse
         //userMsg.requestResponse();
         SvSimpleSynth.clone().playSendBeep();
+    }
+
+    /**
+   * @description Hook: populate a just-created user input message (content,
+   * and optionally speaker attribution). Base sets the raw text; subclasses
+   * may name the human speaker (e.g. the account's display name) or wrap
+   * the content in app-specific markup. Chats that build their user
+   * messages wholesale (e.g. a game session's party-seat naming) override
+   * onChatInputValue instead and never reach this.
+   * @param {SvAiMessage} userMsg
+   * @param {String} v - the typed text
+   * @category Chat Input
+   */
+    prepareUserInputMessage (userMsg, v) {
+        userMsg.setContent(v);
     }
 
     /**
