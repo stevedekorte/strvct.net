@@ -323,6 +323,9 @@
      */
     onMessageError (/*aMsg*/) {
         this.scheduleMethod("syncRecoveryAffordance");
+        // An errored turn never settles the send gate, so a parked turn
+        // request (parallel-turn guard) would wedge — fire it here instead.
+        this.scheduleMethod("fireDeferredTurnRequestIfClear");
     }
 
     // --- manual recovery action ---

@@ -131,6 +131,23 @@
         }
 
         /**
+     * @member {SvAiMessage} deferredTurnRequestMessage - Parallel-turn guard.
+     * Turn triggers are independent (a completed user message, a tool-results
+     * message, a runtime-event wake) and can fire while a response is already
+     * streaming; unchecked, that starts two AI turns from the same history
+     * point (observed: the adventure opening narrated twice in parallel).
+     * A request made while a response is active parks its message here —
+     * latest wins, since the AI reads full history and one turn covers every
+     * trigger — and fires when the send gate settles. Transient by design:
+     * a reload's load hygiene handles any leftovers.
+     * @category State
+     */
+        {
+            const slot = this.newSlot("deferredTurnRequestMessage", null);
+            slot.setSlotType("SvAiMessage");
+        }
+
+        /**
      * @member {SvAssistantToolKit} assistantToolKit - The tool kit for the assistant.
      * @category Configuration
      */
@@ -462,6 +479,7 @@
 
     clear () {
         this.assistantToolKit().removeAllToolCalls();
+        this.setDeferredTurnRequestMessage(null); // a cleared conversation has no turn left to defer
         super.clear();
         return this;
     }
@@ -665,6 +683,65 @@
     onMessageComplete (aMsg) {
         super.onMessageComplete(aMsg);
         this.assistantToolKit().onMessageComplete(aMsg);
+        return this;
+    }
+
+    /**
+   * @description Parks a turn request made while a response is still
+   * streaming (see the deferredTurnRequestMessage slot). Latest trigger
+   * wins: the AI reads full history, so one deferred turn covers them all.
+   * @param {SvAiMessage} aMsg - the message whose requestResponse was deferred
+   * @returns {SvAiConversation}
+   * @category Turn Serialization
+   */
+    deferTurnRequestFrom (aMsg) {
+        const prior = this.deferredTurnRequestMessage();
+        console.warn(this.logPrefix(), "requestResponse while a response is streaming — deferring the turn for "
+            + aMsg.svType() + (prior ? " (replacing a prior deferred trigger — one turn covers both)" : ""));
+        this.setDeferredTurnRequestMessage(aMsg);
+        return this;
+    }
+
+    /**
+   * @description Fires a parked turn request once nothing is streaming and
+   * no blocking tool work remains. Clears the slot before firing so a
+   * re-defer can't loop.
+   * @returns {SvAiConversation}
+   * @category Turn Serialization
+   */
+    fireDeferredTurnRequestIfClear () {
+        const msg = this.deferredTurnRequestMessage();
+        if (!msg) {
+            return this;
+        }
+        if (this.hasActiveResponses() || this.assistantToolKit().hasUncompletedBlockingToolCalls()) {
+            return this; // a later gate-settle pass re-checks
+        }
+        this.setDeferredTurnRequestMessage(null);
+        console.log(this.logPrefix(), "firing the deferred turn request from " + msg.svType());
+        msg.requestResponse();
+        return this;
+    }
+
+    /**
+   * @description Send-gate settle hook (SvAssistantToolKit): when a
+   * tool-results / runtime-events message just went out, ITS completion
+   * drives the next turn — a parked trigger would duplicate it, so drop it.
+   * Otherwise this is the safe moment to fire a deferred turn.
+   * @param {Boolean} didSendMessage
+   * @returns {SvAiConversation}
+   * @category Turn Serialization
+   */
+    onToolCallGateSettled (didSendMessage) {
+        super.onToolCallGateSettled(didSendMessage);
+        if (didSendMessage) {
+            if (this.deferredTurnRequestMessage()) {
+                console.log(this.logPrefix(), "dropping the deferred turn trigger — the just-sent tool results message drives the next turn");
+                this.setDeferredTurnRequestMessage(null);
+            }
+        } else {
+            this.fireDeferredTurnRequestIfClear();
+        }
         return this;
     }
 

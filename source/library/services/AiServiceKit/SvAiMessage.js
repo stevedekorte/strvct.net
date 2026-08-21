@@ -330,6 +330,16 @@
             // other participants, but never drives the AI loop.
             return null;
         }
+        // Parallel-turn guard: turn triggers are independent (a completed
+        // user message, a tool-results message, a runtime-event wake) and can
+        // land while a response is still streaming. Starting a second request
+        // then runs two turns from the same history point (observed: the
+        // adventure opening narrated twice in parallel). Park the request on
+        // the conversation instead; it fires when the send gate settles.
+        if (this.conversation().hasActiveResponses()) {
+            this.conversation().deferTurnRequestFrom(this);
+            return null;
+        }
         this.conversation().assertNoUncompletedBlockingToolCalls();
 
 
