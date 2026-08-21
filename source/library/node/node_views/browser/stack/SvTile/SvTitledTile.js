@@ -214,11 +214,11 @@
     }
 
     /**
-     * @description A quiet "scene" pictogram (mountains + sun) shown in the
-     * reserved thumbnail frame whenever NO image is displayed — an empty
-     * frame reads as broken; the pictogram reads as "an image belongs here".
-     * Drawn inline (no asset), stroked in the theme's dim text token so it
-     * sits back in both themes. Removed the moment a real image lands.
+     * @description A quiet "?" shown in the reserved thumbnail frame
+     * whenever NO image is displayed — an empty frame reads as broken; the
+     * glyph reads as "not pictured yet". Set in the tile's own face and the
+     * theme's dim text token so it sits back in both themes. Removed the
+     * moment a real image lands.
      * @category Thumbnail
      */
     addThumbnailStandInGlyphIfNeeded () {
@@ -235,13 +235,8 @@
         g.setPointerEvents("none");
         g.setColor("var(--sv-text-dim)");
         g.setOpacity("0.55");
-        g.setInnerHtml(
-            "<svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\""
-            + " stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\">"
-            + "<circle cx=\"16.5\" cy=\"7.5\" r=\"2\"/>"
-            + "<path d=\"M3 17.5 L8.5 10.5 L12.5 15 L15 12.2 L21 17.5\"/>"
-            + "</svg>"
-        );
+        g.setFontSize("24px");
+        g.setInnerHtml("?"); // inherits the app face (serif in parchment)
         this._thumbnailStandInGlyph = g;
         tv.setPosition("relative");
         tv.addSubview(g);
