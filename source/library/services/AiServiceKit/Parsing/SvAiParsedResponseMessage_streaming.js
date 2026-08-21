@@ -251,10 +251,12 @@
                     if (nodeTag !== "sentence") {
                         this.playTtsPauseMs(15);
                     }
-                } else {
+                } else if (this.conversationWantsCaptionPacing()) {
                     // No audio to ride (voice off, or a device with no TTS):
                     // pace the caption from the text, so CC shows regardless
-                    // of the voice setting (see _voiceNarration.js).
+                    // of the voice setting (see _voiceNarration.js). Opt-in
+                    // per conversation — the theatre CC wants it; assistant
+                    // chats must NOT highlight silently (reads as broken).
                     this.paceCaptionText(speak);
                 }
                 //console.log("onHtmlStreamReaderPopNode html = [" + html + "]");

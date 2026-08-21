@@ -50,10 +50,27 @@
         return conv.firstOwnerChainNodeOfClass(UoSession);
     }
 
+    /**
+     * The conversation owns the narration controller (duck-typed:
+     * isEnabled / queueNarrationSegment / stopSpeaking). Session chats
+     * forward to their session's controller; assistant conversations carry
+     * their own. Framework stays app-agnostic — no UoSession reference here.
+     */
     narrationController () {
-        const session = this.session();
-        if (!session || typeof session.narrationController !== "function") { return null; }
-        return session.narrationController();
+        const conv = this.conversation();
+        if (!conv || typeof conv.narrationController !== "function") { return null; }
+        return conv.narrationController();
+    }
+
+    /**
+     * Whether the SILENT caption pacer may drive sentence highlighting when
+     * voice is off (the theatre CC rides it). Opt-in per conversation —
+     * without the gate, every assistant conversation highlighted text as if
+     * narrating while producing no sound, which read as broken audio.
+     */
+    conversationWantsCaptionPacing () {
+        const conv = this.conversation();
+        return !!(conv && typeof conv.wantsCaptionPacing === "function" && conv.wantsCaptionPacing());
     }
 
     voiceNarrateText (text) {
