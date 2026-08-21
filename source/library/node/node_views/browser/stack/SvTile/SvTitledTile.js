@@ -208,6 +208,53 @@
 
             this.setThumbnailView(tv);
             this.leadingContentArea().addSubview(tv);
+            this.addThumbnailStandInGlyphIfNeeded();
+        }
+        return this;
+    }
+
+    /**
+     * @description A quiet "scene" pictogram (mountains + sun) shown in the
+     * reserved thumbnail frame whenever NO image is displayed — an empty
+     * frame reads as broken; the pictogram reads as "an image belongs here".
+     * Drawn inline (no asset), stroked in the theme's dim text token so it
+     * sits back in both themes. Removed the moment a real image lands.
+     * @category Thumbnail
+     */
+    addThumbnailStandInGlyphIfNeeded () {
+        const tv = this.thumbnailView();
+        if (!tv || this._thumbnailStandInGlyph || this.thumbnailHasImage()) {
+            return this;
+        }
+        const g = SvFlexDomView.clone();
+        g.setPosition("absolute");
+        g.setInset("0px");
+        g.setDisplay("flex");
+        g.setAlignItems("center");
+        g.setJustifyContent("center");
+        g.setPointerEvents("none");
+        g.setColor("var(--sv-text-dim)");
+        g.setOpacity("0.55");
+        g.setInnerHtml(
+            "<svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\""
+            + " stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\">"
+            + "<circle cx=\"16.5\" cy=\"7.5\" r=\"2\"/>"
+            + "<path d=\"M3 17.5 L8.5 10.5 L12.5 15 L15 12.2 L21 17.5\"/>"
+            + "</svg>"
+        );
+        this._thumbnailStandInGlyph = g;
+        tv.setPosition("relative");
+        tv.addSubview(g);
+        return this;
+    }
+
+    removeThumbnailStandInGlyph () {
+        if (this._thumbnailStandInGlyph) {
+            const tv = this.thumbnailView();
+            if (tv) {
+                tv.removeSubview(this._thumbnailStandInGlyph);
+            }
+            this._thumbnailStandInGlyph = null;
         }
         return this;
     }
@@ -328,6 +375,7 @@
             this.stopThumbnailShimmer();
             this.clearThumbnailUnavailable();
             this.setupThumbnailViewIfAbsent();
+            this.removeThumbnailStandInGlyph(); // real image incoming — retire the stand-in
             const tv = this.thumbnailView();
             tv.unhideDisplay();
             // Image present: drop the stand-in's faint fill so nothing tints
