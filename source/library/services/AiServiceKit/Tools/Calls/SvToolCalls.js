@@ -126,6 +126,45 @@
     }
 
     /**
+     * @description Re-registers a blocking call that a persisted request
+     * message still owes an answer for, but which this toolkit no longer
+     * holds. The toolkit is NOT persisted — a reload rebuilds it empty — while
+     * externally-completed calls (a roll or choice awaiting the player) are
+     * mid-flight by design across any pause, so their answer can arrive with
+     * no call left to complete. The request message carries the durable facts
+     * (callId, tool name); rebuild the call from them so completing it sends
+     * the result to the AI exactly as if it had never been lost.
+     * @param {String} callId
+     * @param {String} toolName
+     * @param {SvAiResponseMessage|null} aMessage - the message the call was made in, if known
+     * @returns {SvToolCall|null} the registered call, or null if the tool is unknown
+     * @category Tool Calls
+     */
+    resurrectAwaitedCall (callId, toolName, aMessage) {
+        this.assertHasAssistantToolKit();
+        const existing = this.toolCallWithId(callId);
+        if (existing) {
+            return existing;
+        }
+        const toolDef = this.toolDefinitionWithName(toolName);
+        if (!toolDef) {
+            console.warn(this.logPrefix(), "resurrectAwaitedCall: no definition for '" + toolName + "' — cannot re-register " + callId);
+            return null;
+        }
+        const toolCall = SvToolCall.clone();
+        toolCall.setToolCalls(this);
+        toolCall.setMessage(aMessage || null);
+        toolCall.setCallId(callId);
+        toolCall.setToolName(toolName);
+        toolCall.setToolDefinition(toolDef);
+        toolCall.setStatus("calling"); // externally-completed: still awaiting the player's act
+        this.addSubnode(toolCall);
+        this.onToolCallAdded(toolCall);
+        console.log(this.logPrefix(), "resurrected awaited blocking call " + toolName + " (" + callId + ")");
+        return toolCall;
+    }
+
+    /**
      * @description Handles a tool-call tag found inside an ignored block
      * (e.g. <think>) — the model shouldn't emit tool calls there, but when it
      * does we must not leave it hanging on a call that never registered.
