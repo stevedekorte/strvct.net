@@ -117,6 +117,55 @@
         }
 
         /**
+         * @member {Number} focusedLengthHint - the width hint
+         * (nodeMinTileWidth) of the node currently focused inside the
+         * embedded browser, or null when it declares none. The docked panel
+         * follows it (never below preferredLength, never beyond the
+         * available room). Kept fresh by onBrowserViewPathChange.
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("focusedLengthHint", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {Number} lastAvailableLength - the room the owner last
+         * offered via setAvailableLength; clamps the hint-driven docked
+         * width so the companion never overlaps the content column.
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("lastAvailableLength", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {Number} appliedDockedLength - the docked length applyMode
+         * last wrote, so setAvailableLength can report a real change (and
+         * drive one more compaction pass) when the hint moves it.
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("appliedDockedLength", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {SvObservation} browserPathObservation - watches the
+         * embedded browser's onBrowserViewPathChange.
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("browserPathObservation", null);
+            slot.setSlotType("SvObservation");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
          * @member {SvEdgeHandleView} edgeHandleView - the edge pill riding the
          * panel's LEADING edge (the boundary with the content it docks
          * against). An overlay child, so it moves with the panel because it is
@@ -197,10 +246,15 @@
     didChangeNode () {
         super.didChangeNode();
 
+        if (this.browserPathObservation()) {
+            this.browserPathObservation().stopWatching();
+            this.setBrowserPathObservation(null);
+        }
         if (this.contentView()) {
             this.contentView().removeFromParentView();
             this.setContentView(null);
         }
+        this.setFocusedLengthHint(null);
 
         const node = this.node();
         if (node) {
@@ -210,10 +264,67 @@
             if (view.syncFromNode) {
                 view.syncFromNode();
             }
+            if (view.selectedNodePathArray) {
+                // follow the embedded browser's focus so the docked width can
+                // track the focused node's width hint
+                this.setBrowserPathObservation(this.watchForNoteFrom("onBrowserViewPathChange", view));
+                this.syncFocusedLengthHint();
+            }
         }
 
         this.applyMode();
         this.syncTabFromNode();
+        return this;
+    }
+
+    /**
+     * @description The embedded browser navigated — refresh the focused
+     * node's width hint.
+     * @category Layout
+     */
+    onBrowserViewPathChange (/*aNote*/) {
+        this.syncFocusedLengthHint();
+    }
+
+    /**
+     * @description Reads the width hint (nodeMinTileWidth) of the node
+     * currently focused in the embedded browser — the tail of its selected
+     * path — and, when it changed, re-arbitrates the layout so the docked
+     * panel follows it.
+     * @returns {SvCompanionView} The current instance.
+     * @category Layout
+     */
+    syncFocusedLengthHint () {
+        const view = this.contentView();
+        let hint = null;
+        if (view && view.selectedNodePathArray) {
+            const path = view.selectedNodePathArray();
+            const tail = (path && path.length) ? path[path.length - 1] : null;
+            const w = (tail && tail.nodeMinTileWidth) ? tail.nodeMinTileWidth() : 0;
+            hint = (typeof w === "number" && w > 0) ? w : null;
+        }
+        if (hint !== this.focusedLengthHint()) {
+            this.setFocusedLengthHint(hint);
+            this.requestLayoutRearbitration();
+        }
+        return this;
+    }
+
+    /**
+     * @description Asks the owning chain to re-run space arbitration (the
+     * same recompaction toggleExpanded uses) after something that changes
+     * this panel's claim.
+     * @returns {SvCompanionView} The current instance.
+     * @category Layout
+     */
+    requestLayoutRearbitration () {
+        const detail = this.parentView();
+        const stack = (detail && detail.stackView) ? detail.stackView() : null;
+        if (stack && stack.recompactBrowserChain) {
+            stack.recompactBrowserChain();
+        } else if (detail && detail.updateCompanionLayout) {
+            detail.updateCompanionLayout();
+        }
         return this;
     }
 
@@ -287,7 +398,26 @@
         // column (SvNavView.companionHandleView), not in this zero-width box
         // — a gutter here showed as a page-colored bar over the theatre's
         // dark field (playtest, 2026-08-12).
-        return (this.mode() === "docked") ? this.preferredLength() : 0;
+        return (this.mode() === "docked") ? this.dockedLength() : 0;
+    }
+
+    /**
+     * @description The docked size along the dock axis: at least
+     * preferredLength, grown to the focused node's width hint when it has
+     * one, clamped to the room the owner last offered (which is computed
+     * independently of this panel's claim — see
+     * SvDetailView.updateCompanionLayout — so following it cannot
+     * oscillate). Mode arbitration still uses preferredLength alone: a wide
+     * focused node widens the docked panel when there's room; it never
+     * flips the panel to a tab.
+     * @returns {Number} The docked length in px.
+     * @category Layout
+     */
+    dockedLength () {
+        const hint = this.focusedLengthHint();
+        const desired = Math.max(this.preferredLength(), (typeof hint === "number") ? hint : 0);
+        const available = this.lastAvailableLength();
+        return (typeof available === "number" && available > 0) ? Math.min(desired, available) : desired;
     }
 
     /**
@@ -302,6 +432,7 @@
      * @category Layout
      */
     setAvailableLength (availableLength) {
+        this.setLastAvailableLength(availableLength);
         const before = this.mode();
         let mode;
         if (availableLength < this.tabLength()) {
@@ -313,11 +444,15 @@
         } else {
             mode = (availableLength >= this.preferredLength()) ? "docked" : "tab";
         }
-        if (mode !== before) {
+        // A docked panel whose LENGTH moved (focused node's width hint, or
+        // the clamp against new available room) is a layout change too, even
+        // with the mode unchanged.
+        const lengthChanged = (mode === "docked") && (this.dockedLength() !== this.appliedDockedLength());
+        if (mode !== before || lengthChanged) {
             this.setMode(mode);
             this.applyMode();
         }
-        return mode !== before; // report mode change for the compaction fixed point
+        return mode !== before || lengthChanged; // report change for the compaction fixed point
     }
 
     /**
@@ -374,6 +509,7 @@
         // size of the whole companion along the dock axis; collapsed is
         // zero — completely unseen (see currentReservedLength)
         const length = this.currentReservedLength();
+        this.setAppliedDockedLength(mode === "docked" ? length : null);
         this.setBackgroundColor(mode === "docked"
             ? "var(--SvCompanion-bg, rgba(255, 255, 255, 0.03))"
             : "transparent");
