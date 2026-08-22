@@ -287,22 +287,44 @@
     }
 
     /**
-     * @description Reads the width hint (nodeMinTileWidth) of the node
-     * currently focused in the embedded browser — the tail of its selected
-     * path — and, when it changed, re-arbitrates the layout so the docked
-     * panel follows it.
+     * @description The companion-root CHILD on the embedded browser's
+     * selected path, found by walking the path from the tail toward the
+     * root (the same walk SvBrowserView.breadCrumbsHintOwnerOnSelectedPath
+     * uses for its hint). Only the root's own children carry width
+     * authority here: while drilled anywhere inside a child's subtree the
+     * child still owns the width, and a link jump to a node elsewhere in
+     * the model finds no owner (null) rather than inheriting a hint tuned
+     * for some other context.
+     * @returns {SvNode|null}
+     * @category Layout
+     */
+    focusedHintOwnerOnSelectedPath () {
+        const view = this.contentView();
+        const rootNode = this.node();
+        if (!view || !view.selectedNodePathArray || !rootNode || !rootNode.subnodes) {
+            return null;
+        }
+        const path = view.selectedNodePathArray();
+        const children = rootNode.subnodes();
+        for (let i = path.length - 1; i >= 0; i--) {
+            if (children.includes(path[i])) {
+                return path[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @description Reads the width hint (nodeMinTileWidth) of the companion
+     * child that owns the current focus and, when it changed, re-arbitrates
+     * the layout so the docked panel follows it.
      * @returns {SvCompanionView} The current instance.
      * @category Layout
      */
     syncFocusedLengthHint () {
-        const view = this.contentView();
-        let hint = null;
-        if (view && view.selectedNodePathArray) {
-            const path = view.selectedNodePathArray();
-            const tail = (path && path.length) ? path[path.length - 1] : null;
-            const w = (tail && tail.nodeMinTileWidth) ? tail.nodeMinTileWidth() : 0;
-            hint = (typeof w === "number" && w > 0) ? w : null;
-        }
+        const owner = this.focusedHintOwnerOnSelectedPath();
+        const w = (owner && owner.nodeMinTileWidth) ? owner.nodeMinTileWidth() : 0;
+        const hint = (typeof w === "number" && w > 0) ? w : null;
         if (hint !== this.focusedLengthHint()) {
             this.setFocusedLengthHint(hint);
             this.requestLayoutRearbitration();
