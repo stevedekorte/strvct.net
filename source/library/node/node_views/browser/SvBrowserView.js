@@ -416,14 +416,24 @@
      * @category Navigation
      */
     moveToBase () {
-        const node = this.node();
-        const subnodes = (node && node.subnodes) ? node.subnodes() : [];
-        if (node && node.nodeViewShouldAutoSelectFirstSubnode
-            && node.nodeViewShouldAutoSelectFirstSubnode() && subnodes.length > 0) {
-            const first = subnodes.first();
+        // The hint CASCADES: each auto-selecting node on the way down adds
+        // its first child, so nested opt-ins (e.g. the narration companion's
+        // root → Party → the local player's panel) land on real content
+        // rather than an intermediate list. Bounded against cycles.
+        const path = [];
+        let node = this.node();
+        while (node && node.nodeViewShouldAutoSelectFirstSubnode
+            && node.nodeViewShouldAutoSelectFirstSubnode()
+            && node.subnodes && node.subnodes().length > 0
+            && path.length < 8) {
+            const first = node.subnodes().first();
             // tiles navigate by nodeTileLink(), so a link tile's path uses its target
             const target = (first.nodeTileLink && first.nodeTileLink()) ? first.nodeTileLink() : first;
-            this._pendingSelectPath = [target];
+            path.push(target);
+            node = target;
+        }
+        if (path.length > 0) {
+            this._pendingSelectPath = path;
             this._pendingSelectAttempt = 0;
             this.trySelectPendingPath();
         } else {
