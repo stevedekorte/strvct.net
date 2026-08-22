@@ -448,7 +448,14 @@
         const hint = this.focusedLengthHint();
         const desired = Math.max(this.preferredLength(), (typeof hint === "number") ? hint : 0);
         const available = this.lastAvailableLength();
-        return (typeof available === "number" && available > 0) ? Math.min(desired, available) : desired;
+        if (typeof available === "number" && available > 0) {
+            // The hint only ever GROWS the panel from preferredLength toward
+            // the desired width as room allows — never below preferredLength
+            // (the docked panel's historical floor; without it, a tight
+            // window squeezed the handbook to the leftover sliver).
+            return Math.max(this.preferredLength(), Math.min(desired, available));
+        }
+        return desired;
     }
 
     /**
