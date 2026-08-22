@@ -307,8 +307,17 @@
         const path = view.selectedNodePathArray();
         const children = rootNode.subnodes();
         for (let i = path.length - 1; i >= 0; i--) {
-            if (children.includes(path[i])) {
-                return path[i];
+            const node = path[i];
+            if (children.includes(node)) {
+                return node;
+            }
+            // A child LINK owns its linked node's subtree: following the link
+            // puts the LINKED node on the path (the link itself never appears),
+            // but width authority stays with the child tab that was followed.
+            const linkOwner = children.find(c =>
+                typeof c.linkedNode === "function" && c.linkedNode() === node);
+            if (linkOwner) {
+                return linkOwner;
             }
         }
         return null;
