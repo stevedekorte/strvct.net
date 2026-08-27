@@ -197,6 +197,28 @@
     }
 
     /**
+     * @description The width this column claims when a companion's focused
+     * node asks for width (its hint). A node may declare a yield floor —
+     * nodeMinTileWidthWhenYielding() — smaller than its comfortable
+     * nodeMinTileWidth claim (e.g. a narration column that likes 900 but
+     * reads fine at 600); the companion hint may then compress this column
+     * to that floor, never below. Without the declaration this equals
+     * targetWidth(): undeclared columns concede nothing.
+     * @returns {number}
+     * @category Layout
+     */
+    yieldTargetWidth () {
+        const node = this.node();
+        const yieldMin = (node && node.nodeMinTileWidthWhenYielding)
+            ? node.nodeMinTileWidthWhenYielding() : null;
+        if (typeof yieldMin !== "number" || yieldMin <= 0) {
+            return this.targetWidth();
+        }
+        const w = Math.max(270, yieldMin) + this.thumbnailWidthAllowance();
+        return Math.min(w, this.targetWidth());
+    }
+
+    /**
      * @description Extra column width for a leading thumbnail frame when this
      * column's tiles reserve one (frame width + its trailing gap). Checks the
      * first subnode only — columns are effectively homogeneous — to avoid

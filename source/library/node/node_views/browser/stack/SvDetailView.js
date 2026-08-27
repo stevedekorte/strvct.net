@@ -199,6 +199,13 @@
             const total = stack.topViewWidth();
             const navView = stack.navView();
             const contentClaim = navView ? navView.targetWidth() : 0;
+            // Room a focused-node width hint may claim: the content column
+            // yields toward its declared floor (yieldTargetWidth) for a hint,
+            // while docked/tab MODE arbitration below keeps using the
+            // comfortable claim — a hint widens the panel, it never forces
+            // the dock open.
+            const yieldClaim = navView ? navView.yieldTargetWidth() : 0;
+            companion.setHintRoom(total - yieldClaim);
             changed = companion.setAvailableLength(total - contentClaim);
         } else {
             // bottom edge: size against the detail view's own height

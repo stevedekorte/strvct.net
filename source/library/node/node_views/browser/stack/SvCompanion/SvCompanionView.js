@@ -143,6 +143,20 @@
         }
 
         /**
+         * @member {Number} hintRoom - how far a focused-node width hint may
+         * grow the docked panel: the window minus the content column's
+         * YIELD claim (SvNavView.yieldTargetWidth — the content compresses
+         * toward its declared floor for a hint, so the hint overrides the
+         * content's comfortable claim but never its floor).
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("hintRoom", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
          * @member {Number} appliedDockedLength - the docked length applyMode
          * last wrote, so setAvailableLength can report a real change (and
          * drive one more compaction pass) when the hint moves it.
@@ -447,13 +461,21 @@
     dockedLength () {
         const hint = this.focusedLengthHint();
         const desired = Math.max(this.preferredLength(), (typeof hint === "number") ? hint : 0);
+        // A hint may claim into the content column's yieldable zone
+        // (hintRoom > available when the content declares a yield floor):
+        // the user's focus on a width-hungry node overrides the content's
+        // comfortable claim, and column compaction re-fits the content.
         const available = this.lastAvailableLength();
-        if (typeof available === "number" && available > 0) {
+        const hintRoom = this.hintRoom();
+        const room = Math.max(
+            (typeof available === "number") ? available : 0,
+            (typeof hintRoom === "number") ? hintRoom : 0);
+        if (room > 0) {
             // The hint only ever GROWS the panel from preferredLength toward
             // the desired width as room allows — never below preferredLength
             // (the docked panel's historical floor; without it, a tight
             // window squeezed the handbook to the leftover sliver).
-            return Math.max(this.preferredLength(), Math.min(desired, available));
+            return Math.max(this.preferredLength(), Math.min(desired, room));
         }
         return desired;
     }
