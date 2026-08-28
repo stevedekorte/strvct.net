@@ -198,6 +198,40 @@
     }
 
     /**
+     * @description Crumb labels are captured at build time, so a path node
+     * renamed AFTER navigation (a party seat filling in with the chosen
+     * character's name, a session titled by its first scene) left a stale
+     * crumb. Watch the rendered path nodes and rebuild only when a label
+     * actually changed — onUpdatedNode fires constantly on active nodes
+     * (every stream chunk of a chat), so the label comparison is the gate
+     * that keeps this from re-rendering the bar per chunk.
+     * @param {Array} pathNodes
+     * @category Synchronization
+     */
+    watchPathNodeLabels (pathNodes) {
+        (this._pathLabelObservations || []).forEach((o) => o.stopWatching());
+        this._pathLabelObservations = pathNodes.map((n) => this.watchForNoteFrom("onUpdatedNode", n).setSendName("onPathNodeUpdated"));
+        this._watchedPathLabels = new Map(pathNodes.map((n) => [n, this.labelForPathNode(n)]));
+    }
+
+    labelForPathNode (node) {
+        const collapsed = (node && node.nodeCollapsedBreadcrumbTitle) ? node.nodeCollapsedBreadcrumbTitle() : null;
+        return collapsed || this.titleForNode(node);
+    }
+
+    onPathNodeUpdated (aNote) {
+        const n = aNote.sender();
+        if (!this._watchedPathLabels || !this._watchedPathLabels.has(n)) {
+            return;
+        }
+        const label = this.labelForPathNode(n);
+        if (this._watchedPathLabels.get(n) !== label) {
+            this._watchedPathLabels.set(n, label);
+            this.scheduleMethod("setupPathViews");
+        }
+    }
+
+    /**
      * @description The selected node path of this bar's browser, beginning
      * with the browser's root node.
      * @returns {Array} The path nodes.
@@ -220,6 +254,7 @@
         this.removeAllSubviews();
 
         const pathNodes = this.pathNodes();
+        this.watchPathNodeLabels(pathNodes);
 
         // Collapsed mode: the current node may replace the whole path with a
         // single title + back arrow (nodeCollapsedBreadcrumbTitle — e.g. the
