@@ -1,6 +1,6 @@
 # STRVCT
 
-> A naked objects framework for JavaScript with automatic UI generation, persistence, and cloud sync.
+> A naked-objects framework for JavaScript
 
 ## Documentation
 
@@ -50,7 +50,7 @@
 - [Node Lifecycle](/docs/Lifecycle/Node%20Lifecycle/): Creation, three-phase initialization, parent-child relationships, and update notifications.
 - [Persistence Lifecycle](/docs/Lifecycle/Persistence%20Lifecycle/): How objects are stored, loaded, and kept in sync with IndexedDB.
 - [View Synchronization](/docs/Lifecycle/View%20Synchronization/): How views discover nodes, synchronize state, and batch updates efficiently.
-- [Naked Objects](/docs/Naked%20Objects/): Closing the Usability Gap in Naked Objects
+- [Naked Objects](/docs/Naked%20Objects/): From Domain Models to Complete Applications
 - [Nodes](/docs/Nodes/): The object model at the heart of STRVCT.
 - [Notifications](/docs/Notifications/): Event-driven communication between framework layers using observations, scheduling, and weak references.
 - [Broadcaster](/docs/Notifications/Broadcaster/): Lightweight synchronous dispatch for high-frequency internal events.
@@ -80,7 +80,7 @@
 - [Technical Overview](/docs/Technical%20Overview/): High-level architecture and key concepts of the Strvct framework.
 - [Views](/docs/Views/): The view layer: auto-generated UI, custom views, and programmatic styling.
 - [Auto-Generated Views](/docs/Views/Auto-Generated%20Views/): How the view layer connects to model nodes, synchronizes state, and provides navigation — without writing any view code.
-- [Companion View](/docs/Views/Companion%20View/): A persistent panel docked alongside a node's navigation — content beside the columns, collapsing to a thin tab or out of sight as the viewport narrows.
+- [Companion View](/docs/Views/Companion%20View/): A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
 - [Custom Views](/docs/Views/Custom%20Views/): How to create custom view classes when the auto-generated UI doesn't fit.
 - [Programmatic Styling](/docs/Views/Programmatic%20Styling/): Named CSS methods, the chainable API, and why STRVCT avoids CSS files.
 - [Responsive](/docs/Views/Responsive/): How the view layer adapts the master-detail composition to different viewport sizes without per-screen layout code.

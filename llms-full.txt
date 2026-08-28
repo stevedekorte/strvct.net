@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-STRVCT implements the naked objects pattern for JavaScript. You write domain model classes with annotated properties and the framework dynamically generates the user interface as it's being used, handles persistence, and keeps everything synchronized.
+You write the domain model. The framework handles the rest.
 
 See also: /llms.txt (curated index) and /sitemap.xml.
 
@@ -11,13 +11,20 @@ See also: /llms.txt (curated index) and /sitemap.xml.
 <!-- Page: (root) -->
 Source: /
 
-A naked objects framework for JavaScript with automatic UI generation, persistence, and cloud sync.
+A naked-objects framework for JavaScript
 
 ## About
 
-STRVCT implements the [naked objects](http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf) pattern for JavaScript. You write domain model classes with annotated properties and the framework dynamically generates the user interface as it's being used, handles persistence, and keeps everything synchronized.
+You write the domain model.
+The framework handles the rest.
 
-The model layer is completely independent of the UI, allowing the same application code to run in a browser, on a command line, or headlessly in Node.js for testing and server-side processing.
+STRVCT implements the naked-objects pattern: annotated model classes become the single source of truth. From those annotations the framework produces a live interface, manages persistence, and keeps every layer synchronized at runtime. Custom views can still be written when needed; most of the time they are not.
+
+Because the model is independent of the UI, the same application code runs in the browser, on the command line, or headlessly in Node.js. Persistence is transparent (IndexedDB by default, optional cloud sync). Accessibility, internationalization, and gesture handling are derived rather than hand-coded.
+
+Because the model carries explicit annotations and remains independent of the view layer, the same structure that is easy for humans to reason about is also relatively easy for language models to generate and maintain. The parts that models still struggle with most—keeping complex UI, state, and persistence correctly synchronized—are largely handled by the framework rather than generated as fragile glue code.
+
+The result is software whose structure stays close to the domain itself.
 
 For a detailed treatment of this approach, see [Closing the Usability Gap in Naked Objects](docs/Naked%20Objects/).
 
@@ -5416,39 +5423,49 @@ Source: /docs/Naked%20Objects/
 
 # Naked Objects
 
-Closing the Usability Gap in Naked Objects
+From Domain Models to Complete Applications
 
 ## Abstract
 
 Also available as a [PDF](compiled/Closing_the_Usability_Gap_in_Naked_Objects.pdf).
 
-The naked objects pattern promised to generate user interfaces directly from domain models, eliminating bespoke UI code while keeping interface and business logic consistent. The promise is largely unfulfilled. The cause was not automatic generation but its output: generic forms, tables, and menus that lacked the spatial organization and navigational fluency users expect.
+The naked objects pattern promised to derive applications directly from domain models. Instead of maintaining a model, component tree, form schema, persistence mapping, API schema, navigation graph, and agent tool surface as separate descriptions of approximately the same facts, the developer would describe the domain once and let the runtime project it into each required form.
 
-The gap was avoidable. The design space for presenting structured information is narrower than the software industry assumes, and a few composable primitives — tiles, tile stacks, and master-detail views — cover it. The load-bearing primitive is a **recursive, orientation-flexible master-detail view generated as the default**: Miller columns that nest to arbitrary depth, let each level choose its own orientation, collapse automatically on narrow viewports, and are composed from model annotations rather than hand-built per screen. HCI research on mental models, information foraging, and Gestalt perception explains why a deliberately constrained UI grammar turns uniformity into an asset.
+That promise was technically demonstrated but rarely made attractive. Earlier naked-objects systems typically rendered objects as forms and collections as tables, producing complete administrative interfaces without producing a convincing general interaction model. The problem was not derivation. It was the limited grammar into which the model was derived.
 
-We present Strvct, an open-source JavaScript framework built on this idea. Centralizing the model-to-view pipeline yields capabilities that conventional component frameworks pay for per screen: automatic responsive design, headless testability, and annotation-driven persistence with cloud sync. It also makes the domain model natively operable by AI agents — the same annotations that generate the UI expose a constant-size tool surface that never drifts out of sync with the model — which, as agents become routine co-editors of application state, is the economic lever most likely to move naked objects past its twenty-five-year stall. A production application, undreamedof.ai, comprises ~90 domain classes with roughly 90% auto-generated views. Only two custom views remain, both for inherently graphical components: a 3D dice roller and a battle map.
+This paper proposes a stronger account of that grammar. Most structured-information interfaces consist primarily of two operations:
+
+1. **traversing relationships among domain objects**, and
+2. **projecting collections along a small number of semantic dimensions**.
+
+Strvct implements the first operation through recursively composed, orientation-flexible master-detail views generated from the object graph. Tiles and tile stacks provide a uniform summary, editing, and navigation surface; Miller-column-style recursion preserves context at arbitrary depth and collapses automatically on narrow viewports. The second operation suggests a disciplined extension: collections presented as lists, tables, grids, trees, feeds, kanban boards, or timelines—not as unrelated widgets, but as declarative projections of topology, ordering, grouping, density, and spatial arrangement.
+
+The resulting boundary is sharper than “generated UI versus custom UI.” Ordinary information management belongs in the generated grammar. A custom view is appropriate when spatial representation itself carries irreducible domain meaning: a code editor, map, chart, waveform, canvas, 3D scene, or game surface.
+
+We present Strvct, an open-source JavaScript framework built on this model-first architecture. Centralizing the model-to-view pipeline also yields capabilities that component frameworks usually pay for repeatedly: automatic responsive behavior, headless execution, annotation-driven persistence, cloud synchronization, inspection, accessibility hooks, internationalization, and AI operation. The same annotations that generate the human interface expose a constant-size agent tool surface that does not grow with the number of domain classes. A production application, undreamedof.ai, comprises roughly 90 domain classes with about 90% framework-generated views; its remaining custom views are inherently graphical.
 
 ## 1. Introduction
 
-Most application frameworks treat the user interface as a separate engineering problem from the domain model. Each screen is designed, implemented, and maintained on its own. Every new model class or schema change propagates into view code, form layouts, navigation logic, and responsive design. This duplication is structural, not incidental, and its cost grows linearly with the number of domain objects.
+Most application frameworks treat the user interface as a separate engineering problem from the domain model. Each screen is designed, implemented, and maintained as its own artifact. Every new entity or property can propagate into component code, form layouts, validation, serialization, navigation, responsive rules, accessibility metadata, localization, and agent tools. The duplication is structural, not incidental, and its coordination cost grows with the model.
 
 Naked objects [1] proposed a different path: expose domain objects directly to users and generate the interface automatically. Developers write only the domain model; the UI follows. Consistency is guaranteed, because there is no separate representation to fall out of sync — the interface always reflects the model's actual state and shape.
 
 Pawson and Matthews described the pattern in 2002 [1]. Several frameworks have implemented it, most notably Apache Isis (now Apache Causeway) for Java [2]. These implementations proved the core thesis: automatic UI generation from domain models is feasible and produces functionally complete interfaces. Yet adoption stayed confined to internal tools, administrative interfaces, and prototypes.
 
-The reason is perceptual, not technical. Generated interfaces — generic forms for objects, tables for collections, menus for navigation — are correct and complete but *feel wrong*. They lack spatial hierarchy, navigational depth, and responsive behavior. They resemble database administration tools, not the applications people use daily. This usability gap, not any limit of the underlying pattern, has held naked objects back.
+The failure was not merely visual polish. Earlier systems had no sufficiently expressive interaction grammar. Generic forms answer “what properties does this object have?” but not “where am I in the domain?”, “what is this object related to?”, or “how should I understand this collection?” A table is suitable for a ledger and poor for a media library; a list is suitable for search results and poor for a project pipeline. Treating every collection alike discards semantics the model often already contains.
 
 Component frameworks (React, Vue, Svelte) attack the same cost from the opposite direction: rather than eliminating view code, they make it cheaper to write. Component libraries push that further. But the view tree still exists, must be authored, and must be kept in sync with the model. Adding a property still touches a form, a validator, a serializer, and a translation file. Naked objects, done well, eliminates the view tree as an authored artifact. The view is derived. No component library closes that gap.
 
-This paper describes how to close the usability gap. We argue the design space for presenting structured information is narrow, identify a small set of composable primitives that cover it, and present Strvct, a framework demonstrating the approach in production.
+This paper describes how to close that gap without returning to hand-authored screens. We argue that the design space for structured-information applications is narrow in a specific sense: most interaction is object-graph traversal plus collection projection. The vocabulary is richer than forms and tables, but much smaller and more semantic than a general component library.
 
 The contributions are:
 
-1. The **recursive, orientation-flexible, generated master-detail view** as the primitive that closes the usability gap. Miller columns have navigated hierarchies since NeXTSTEP; our contribution is making them *recursive* (columns nest to arbitrary depth), *orientation-flexible* (each level chooses vertical or horizontal), *auto-collapsing* (the chain folds to a breadcrumb on narrow viewports), and the *generated default* (composed from model annotations, not hand-built per screen). This is the mechanism that turns "correct but form-like" generated UIs into ones with the spatial hierarchy and navigational depth users expect.
-2. The *narrow design space* hypothesis: informational UIs converge on a small set of spatial conventions, making uniform application of those conventions an asset rather than a constraint — and making a small fixed grammar of primitives (tiles, tile stacks, and the recursive master-detail view above) sufficient to cover the space.
-3. An annotation system in which independent framework layers (UI, persistence, sync, AI, i18n) read metadata from the same slot declarations without coordinating.
-4. A **natively AI-operable domain model** as a demonstrated consequence of that annotation system: a single pair of tools covers every editable class, so the agent-facing tool surface is constant in the size of the model rather than growing linearly with it.
-5. A working framework, Strvct, and a production application, undreamedof.ai, in which roughly 90% of views across ~90 domain classes are auto-generated.
+1. A **two-part grammar for structured-information UI**: relationship traversal through the domain graph, and semantic projection of collections.
+2. The **recursive, orientation-flexible, generated master-detail view** as the implemented traversal primitive. Miller columns have navigated hierarchies since NeXTSTEP; Strvct makes them recursive, orientation-flexible, auto-collapsing, and generated by default.
+3. A **semantic collection-projection model** in which list, table, grid, tree, feed, kanban, and timeline are presets—or possibly reducible combinations—of a smaller presentation algebra rather than application-specific widgets.
+4. An annotation system in which independent framework layers—UI, persistence, synchronization, AI, accessibility, and internationalization—read metadata from the same slot declarations without coordinating.
+5. A **natively AI-operable domain model** as a demonstrated consequence of that annotation system: a single pair of tools covers every editable class, so the agent-facing tool surface is constant in the size of the model rather than growing linearly with it.
+6. A working framework and production application demonstrating the feasibility of the implemented half of this grammar, while identifying broader collection projections as a testable direction rather than a completed result.
 
 ## 2. The Usability Gap
 
@@ -5466,72 +5483,124 @@ These problems are not inherent to naked objects. They are artifacts of one UI s
 
 ## 3. A Narrow Design Space
 
-Our central hypothesis: *most variation between informational interfaces is accidental, not essential*. The structural geometry of browsing, navigating, and editing data has converged on a small vocabulary. Most of what distinguishes one application from another is visual styling, not spatial logic.
+The narrow-design-space claim is often misunderstood as “all applications look like forms.” The stronger and more useful claim is this:
 
-Survey the informational interfaces where people spend most of their time, and the same conventions recur: hierarchy top-to-bottom, navigation depth left-to-right, containment for ownership, lists for collections. Consider four examples:
+> **Most interaction in structured-information applications consists of traversing relationships among domain objects and projecting collections of those objects along a small number of semantic dimensions.**
 
-- **Email** (Gmail, Outlook): a vertical list of messages on the left, message content on the right. Selecting a message reveals its contents in a detail pane. Folders or labels add a second level of hierarchy. The metaphor is master-detail with optional grouping.
+This describes CRM, project management, accounting, ecommerce administration, healthcare records, knowledge management, messaging, social software, media libraries, and much of calendaring. Their visual styles differ, but their structural operations repeat.
 
-- **Facebook**: a vertical feed of posts, each expandable into comments and replies. A sidebar list navigates between sections (feed, groups, marketplace). Profile pages are vertical stacks of categorized content. The metaphor is list-of-lists with drill-down.
+### 3.1 Relationship Traversal
 
-- **Twitter/X**: a vertical timeline of posts. Selecting one reveals a thread, a vertical stack of replies. A sidebar navigates between timelines (home, explore, notifications). The metaphor is master-detail where both master and detail are vertical lists.
+An application domain is an object graph:
 
-- **Amazon**: a vertical list of search results, each clickable into a product detail page — a vertical stack of sections (images, description, reviews, related items). A hierarchical sidebar handles category browsing. The metaphor is master-detail with nested vertical stacks.
+```text
+Workspace
+├─ Projects
+│  └─ Project
+│     ├─ Tasks
+│     ├─ People
+│     └─ Milestones
+├─ Customers
+└─ Documents
+```
 
-Four different companies built four different applications for four different purposes, yet all use the same spatial logic.
+Users select a collection, select an object, follow a relationship, inspect or edit the next object, and continue. Recursive master-detail navigation makes this traversal spatially legible because earlier context remains visible. On a narrow viewport the same chain becomes push/pop navigation with breadcrumbs.
 
-This convergence is grounded in decades of HCI and cognitive science research.
+This operation is already central to Strvct. It covers object discovery, inspection, editing, settings, and movement through nested ownership and relationships.
 
-**Mental models and spatial metaphors.** Users build internal *mental models* of systems that are overwhelmingly spatial (Norman, 1988; Gentner & Stevens, 1983). They reason about digital information using the primitives they use for physical environments: location, containment, proximity, hierarchy. Tiles, stacks, and master-detail views map directly onto these.
+### 3.2 Collection Projection
 
-**Information foraging and scanning patterns.** Eye-tracking research shows predictable Western reading behavior: an F-pattern for text-heavy pages, a Z-pattern for mixed layouts (Nielsen, 2006; Pernice, 2017). Interfaces aligned with these patterns cut cognitive load; those that fight them raise it. Our primitives reinforce natural scanning order.
+Traversal alone does not answer how a collection should be understood. The same objects may need several presentations:
 
-**Consistency and Gestalt principles.** Jakob Nielsen ranks "Consistency and Standards" among the top usability heuristics (Nielsen, 1994). Gestalt laws of perceptual organization — proximity, similarity, closure, common fate (Wertheimer, 1923; Koffka, 1935) — explain why stacked tiles and recursive nesting feel immediately coherent. Baking these laws into the architecture makes consistency a structural guarantee, not an aspiration.
+```text
+Tasks
+├─ List ordered by priority
+├─ Table showing status, assignee, and due date
+├─ Kanban grouped by status
+└─ Timeline positioned by start and end date
+```
 
-The design space is narrow because human cognition is narrow in how it organizes and navigates information. What feels like creative freedom in traditional UI design is often accidental complexity layered on these constraints. Bespoke UI developers already converge on the same patterns, unconsciously and inconsistently. The variation between hand-crafted interfaces is largely superficial: different styling, spacing, and component libraries atop the same spatial logic.
+These are not four unrelated application features. They are four projections of one collection whose semantics already live in the model.
 
-This supports two claims that must be kept apart, because they are not equally strong:
+The recurring projections are surprisingly few:
 
-- The **coverage claim**: most informational interfaces decompose into tiles, stacks, and master-detail views, so a framework restricted to those primitives can express them. This is a count of domain classes, which the case study (§8) measures directly.
-- The **preference claim**: applying the conventions uniformly is *preferable* to a patchwork of bespoke screens, because users get consistent navigation and the framework cannot produce the arbitrary layouts that create inconsistency. This is the headline, and the weaker claim. It rests on a judgment of *value*, not a count, and we do not measure it here.
+| Projection | Semantic structure |
+| --- | --- |
+| List | Ordered objects in one dimension |
+| Grid | Objects wrapped across two dimensions |
+| Table | Objects × selected properties |
+| Tree | Objects × recursive containment |
+| Feed | Ordered objects with rich or temporal item presentation |
+| Kanban | Objects × categorical property |
+| Timeline | Objects × temporal position or interval |
 
-The two must not substitute for each other. A small percentage of UI *code* spent on bespoke screens (which we can show) does not establish a small percentage of UI *value* lost by generating them (which we cannot).
+They should not necessarily become seven unrelated view classes. A deeper presentation algebra may describe them through orthogonal dimensions:
+
+- **Topology:** flat or hierarchical
+- **Ordering:** explicit, alphabetical, ranked, or temporal
+- **Grouping:** none, property, time interval, or parent
+- **Density:** compact, summary, or rich
+- **Arrangement:** linear, wrapped, columns, matrix, or temporal
+
+Under that account, a feed is a rich linear collection; a table is a compact property matrix; a kanban board is a collection grouped by a categorical property and arranged in columns. The named forms become useful presets over a smaller semantic vocabulary.
+
+### 3.3 Why Semantics Matter
+
+A component library names implementation conventions: tabs, modals, accordions, drawers, cards, toolbars. Those names describe rectangles and interaction mechanics. They say little about the domain.
+
+A semantic projection says something stronger:
+
+- A kanban board groups objects by state and may change that state when an object moves.
+- A timeline maps domain dates or intervals onto time.
+- A table compares selected properties across objects.
+- A tree exposes recursive containment.
+
+Because the mapping has domain meaning, the framework can derive behavior as well as appearance. Dragging a deal between kanban columns can set `deal.stage`. Selecting a table row can resume ordinary object traversal. Moving an event can change its start and end slots. The projection is not a dead-end widget; it remains attached to the same live model.
+
+### 3.4 Why This Space Appears Narrow
+
+Users build spatial mental models of systems (Norman, 1988; Gentner & Stevens, 1983). They use location, containment, proximity, hierarchy, and sequence to reason about digital information. Gestalt principles explain why proximity, similarity, and enclosure make repeated structures coherent (Wertheimer, 1923; Koffka, 1935). Consistency is therefore not merely visual neatness; it reduces the number of interaction rules a user must learn.
+
+The narrowness also comes from the domain. Structured-information applications are primarily about named objects, typed properties, relationships, collections, and actions. Once those facts are explicit, the plausible ways to lay them out are constrained. The industry has created enormous surface variation on top of a much smaller structural vocabulary.
+
+This yields three separate coverage questions:
+
+| Question | Expected coverage |
+| --- | --- |
+| Can the domain be represented as an annotated object graph? | Broadest |
+| Can application navigation follow that graph? | Slightly narrower |
+| Can every primary viewport be generated from standard projections? | Narrowest |
+
+These questions must not be collapsed into one percentage. An IDE can have a natural object model and generated project shell while still requiring a bespoke code editor. A medical system can generate patient navigation and records while retaining a specialized imaging viewer. Custom presentation does not erase the value of a shared model.
 
 ### Scope and Counterexamples
 
-The narrow design space covers a large and important class of applications, but not all. These adversarial cases fall outside it:
+The clean boundary is not “business software versus consumer software.” It is closer to **managing structured information versus manipulating a specialized medium**.
 
-- **Data visualizations and dashboards.** Charts, graphs, heatmaps, and interactive analytics need specialized rendering and direct-manipulation gestures that cannot be derived from domain model structure.
-- **Creative canvases and spatial editors.** Design tools (Figma, Miro), diagramming, CAD, and map editors, where objects have free-form 2D or 3D positions.
-- **Real-time media and games.** Video editors, 3D renderers, audio workstations, and games — including our own case study, where the dice roller and battle map required custom views.
-- **Highly unusual workflows.** Non-hierarchical navigation, complex state machines with many transient modes, or domain-specific interaction metaphors (timeline-based video editing, node-based programming).
+The residual custom surfaces fall into four coherent families:
 
-In our case study (§8), fewer than 10% of domain classes required custom view code (2 of ~90). The rest were generated and felt natural to users. We believe this ratio is representative for many enterprise, productivity, and data-management applications, but we do not claim universality.
+- **Creative surfaces:** rich-text and code editors, drawing canvases, CAD, video editing, and music sequencing.
+- **Scientific or domain visualization:** medical images, waveforms, maps, 3D scenes, network graphs, and molecule viewers.
+- **Quantitative visualization:** charts, plots, heatmaps, and pivots. These may admit their own future semantic grammar, but are not implied by object traversal alone.
+- **Immersive or real-time surfaces:** games, video calls, simulations, and virtual worlds.
 
-**The narrowness is partly true by construction.** We scoped dashboards, canvases, games, and timeline editors *out*, then called the remainder narrow. Some of the narrowness is therefore definitional, not discovered, and an honest reading must say so. The defense is not that the scoping is unbiased but that the class scoped *in* is large and economically central: the navigation and editing shells of email, social, commerce, productivity, line-of-business, and administrative software — the surfaces where most users spend most of their time. A true-by-construction claim about a marginal class would be uninteresting; the same claim about the bulk of everyday informational software is not.
+In these cases geometry itself carries domain meaning. A map cannot be replaced by an inspector because position is part of the information. A code editor cannot be replaced by a property list because editing text with syntax, selection, and spatial context is the task.
 
-**Residue: product or periphery?** Every real application leaves some surface that does not conform. The existence of a residue is never in question. The useful test is whether the residue is the *product* or the *periphery*. The navigation shell — lists, drill-downs, inspectors, settings — is master-detail almost everywhere and rarely what a product is valued for. The differentiator is often the one non-conforming surface: the feed-ranking view, the editor canvas, the map, the chart. Consumer products often concentrate disproportionate value in a few such surfaces, even when those are a small fraction of total screens. This bounds the narrow-space claim precisely: it covers the shell, which is most of the screens, but says nothing about how much of a product's *value* lives in the residue.
+The useful question is therefore not whether a residue exists, but whether it is the product or the periphery. For a CRM, the generated grammar may cover nearly the entire product. For an IDE, it can cover the shell while the editor remains central. For a game, the custom surface is the product and generated UI is supporting infrastructure.
 
-**The pointer analogy, and its honest limit.** The computer mouse won not by being universal but by owning the bulk-of-value tasks — selection, direct manipulation, navigation — while ceding a permanent residue: text entry and keyboard shortcuts. "You can't do everything with a mouse" was true and never counted against it, because the part it could not do was not the point of the tasks it was used for. Generated UIs are in the same position: "not universal" was wrongly deployed as "not valuable." The analogy also marks the boundary honestly. "You can't do everything with X" *is* decisive exactly when the part X cannot do is the whole point. A generated UI is the wrong tool for a competitive-programming editor or a node-based shader graph, where the bespoke surface *is* the product. The question is never whether a residue exists but whether it is product or periphery.
+This is a deliberate trade-off. Refusing arbitrary layouts buys consistency, responsive behavior, accessibility leverage, headless testability, agent interoperability, and low view-layer maintenance. Applications dominated by specialized media should use custom views extensively or choose a different framework. Applications dominated by structured information stand to gain the most.
 
-**Deliberate trade-off.** Refusing arbitrary layouts buys structural consequences a more general system loses: consistency, responsiveness, AI interoperability, and near-zero view-layer maintenance. Applications mostly inside the narrow space gain dramatically lower maintenance cost and higher consistency. Those dominated by adversarial cases are better served by traditional component frameworks.
+## 4. Approach: Graph Navigation and Semantic Projection
 
-Future work could explore hybrid approaches — for example, allowing selected custom view components inside an otherwise auto-generated tile/stack hierarchy — or expand the primitive set in a disciplined way. We have intentionally kept the core grammar minimal.
-
-## 4. Approach: Composable UI Primitives
-
-We define a small set of composable UI primitives that embody the spatial conventions above. Each primitive handles one aspect of presentation. Composed, they cover the navigation and layout patterns of typical informational applications.
-
-The guiding principle is simplicity and power through conceptual unification. Each primitive eliminates distinctions that conventional frameworks maintain separately:
+Strvct's UI approach has two layers. The first is implemented today: tiles, tile stacks, and recursive master-detail views derive navigation and inspection from the model graph. The second is a disciplined direction for expansion: declarative collection projections derived from model semantics. Keeping their status distinct matters; the production case study validates the first, not the complete proposed projection algebra.
 
 | Concept | Unifies |
 | --- | --- |
-| Annotated slots | Properties, form fields, storage records, schema, translation keys, ARIA attributes |
-| Tiles | Summary views, property editors, list items, navigation elements |
-| Master-detail views | Menus, inspectors, drill-downs, settings panels, breadcrumbs, responsive layouts |
-| Domain nodes | Objects, navigation hierarchy, persistence graph, AI-operable surface |
-
-The sections below describe each primitive.
+| Annotated slots | Properties, editors, storage records, schemas, translation context, accessibility metadata |
+| Domain nodes | Objects, navigation hierarchy, persistence graph, and AI-operable surface |
+| Tiles | Summaries, property editors, list items, and navigation affordances |
+| Master-detail views | Relationship traversal, drill-down, context, breadcrumbs, and responsive compaction |
+| Collection projections | Ordering, comparison, grouping, hierarchy, density, and temporal arrangement |
 
 ### 4.1 Tiles
 
@@ -5631,11 +5700,54 @@ Nesting master-detail views with varying orientations produces navigation struct
   </div>
 </div>
 
-Composability is the key insight. Rather than implementing a fixed set of application templates, the framework provides building blocks that compose into appropriate layouts for each part of the domain model.
+Composability is the key insight. Rather than implementing a fixed set of application templates, the framework derives a navigation structure from the object graph and allows each collection to choose a semantically appropriate projection. Selection from any projection returns to the same object-inspection and relationship-traversal grammar.
 
 Real-world evidence for the thesis predates this paper by years. Recursive, auto-collapsing master-detail is now the dominant navigation pattern on phones, watches, and other small screens — settings apps, mail clients, and file browsers that show one column at a time and push or pop columns as the user drills in and backs out. That is exactly the narrow-viewport collapse described in §4.3, arrived at independently by platform designers. Small viewports do not merely *permit* the narrow grammar; they *enforce* it. There is no room for bespoke per-screen layout on a watch face, so designers converge on master-detail collapse whether or not they would choose it on a desktop. The pattern's prevalence on the most constrained devices is evidence that the design space is narrow where it is most tested. The Miller Column pattern [3] has been used since NeXTSTEP for file browsing. Our contribution is not discovering it but making it recursive (columns nest vertically or horizontally), orientation-flexible (each level chooses its own orientation), and the *generated default*, composed from model annotations rather than hand-built per screen.
 
-### 4.5 Examples
+### 4.5 Collection Projections
+
+The current tile stack is the default linear projection. A generalized collection-presentation layer could preserve the same model/view boundary while adding richer arrangements. Conceptually:
+
+```javascript
+collection.setPresentation({
+    layout: "columns",
+    groupBy: "status"
+});
+```
+
+describes a kanban projection, while:
+
+```javascript
+collection.setPresentation({
+    layout: "time",
+    start: "startDate",
+    end: "dueDate"
+});
+```
+
+describes a timeline. These examples illustrate the direction, not a current Strvct API.
+
+The framework—not the model—must remain responsible for viewport decisions, gesture mechanics, and concrete rendering. The model may declare semantic hints such as grouping, ordering, or relevant slots; the view layer chooses how those hints become pixels on a particular platform. This preserves the naked-objects boundary and keeps the same application runnable under web, terminal, or headless user interfaces.
+
+### 4.6 Companion Views: Preserving Secondary Context
+
+Relationship traversal usually advances one selected path through the object graph. Some tasks also need a second context to remain available while that path changes: a conversation beside a session, an inspector beside an editor, reference material beside a document, or guidance beside a workflow.
+
+Strvct implements this through the **companion view**. A model node may answer `nodeCompanionNode()` with another node to present alongside its ordinary master-detail content:
+
+```javascript
+nodeCompanionNode () {
+    return this.referenceMaterial();
+}
+```
+
+This is a semantic relationship, not a layout instruction. The model names the secondary context but does not choose its width, inspect the viewport, reference a view class, or control collapse state. The view layer docks the companion to the right or bottom according to the stack axis, reserves real space for it, and compacts the navigation chain rather than floating the panel over neighboring content. When space becomes scarce, the panel collapses behind an edge handle or disappears entirely; a user may pin it open or closed while sufficient room remains.
+
+By default the companion node receives its own embedded `SvBrowserView`, with isolated navigation and breadcrumbs, so following a relationship inside the companion does not disturb the application's primary path. A node may instead resolve to a specialized view through the ordinary node-view protocol. Companion View therefore demonstrates a bounded form of **hybrid view composition already present in Strvct**: generated navigation and responsive arbitration can contain either another generated object browser or an irreducibly custom representation without creating a parallel application shell.
+
+Companions are not a third peer to graph traversal and collection projection. They are a composition rule: preserve one secondary node context beside the current traversal while the framework continues to own placement, responsiveness, and navigation isolation.
+
+### 4.7 Examples
 
 We decompose four widely-used applications into their constituent views:
 
@@ -5658,7 +5770,7 @@ We decompose four widely-used applications into their constituent views:
   </div>
 </div>
 
-These diagrams are simplifications, not exact reproductions; they capture structural form rather than every navigational element. The four serve very different domains — communication, social media, microblogging, e-commerce — yet all decompose into the same small set of primitives: horizontal menus, vertical lists, and custom content views nested in master-detail relationships. Each is, at its core, a hierarchy of menus interleaved with browsable lists of content nodes and an inspector pane for the selected item, plus a responsive strategy that decides what to show, hide, or collapse for the viewport. The structural variation between them is minimal. What users perceive as difference is mostly visual styling and the domain-specific content view.
+These diagrams are simplifications, not exact reproductions. Their structures combine relationship traversal with collection projection: folders and products as lists or grids, posts as feeds, comments as trees, and selected objects as details. The domain-specific item view may differ, but it remains a projection of the same underlying node rather than an independent state system.
 
 ## 5. From Model to Interface
 
@@ -5869,15 +5981,34 @@ This is an existence proof, not a generalization: one application, one primary d
 
 ### The Crossover Point
 
-Hand-crafted interfaces may look more polished early in an application's life, when screens are few and each gets individual design attention. But as the domain model grows, the cost of maintaining bespoke screens grows with it, and inconsistencies accumulate. At some point — the crossover point — a consistent, automatically generated interface produces a better user experience than a patchwork of hand-crafted screens, because the user can rely on uniform navigation throughout.
+The crossover is not only between generated and hand-crafted interfaces. It is also between document-oriented and object-oriented information management.
 
-The composable primitive approach moves this crossover point earlier by improving the quality of the generated interface. The undreamedof.ai case study suggests it may occur sooner than expected: at ~90 domain classes, roughly 90% of views were generated, and in the primary developer's assessment gave more consistent navigation than hand-crafted screens would have. That is a coverage result. Whether end users *prefer* the uniform interface is the separate preference claim of §3, which this case study does not measure.
+A document is excellent when the dominant operation is reading or writing prose. It scales with content length. It scales less naturally with semantic complexity. As a note acquires typed properties, people, tasks, dates, attachments, actions, repeated object types, and relationships, a document system tends to reconstruct an object model through blocks, databases, properties, templates, relations, filters, and rollups.
+
+The model-first alternative starts at the other end:
+
+```text
+Project
+├─ overview       Rich text
+├─ status         Enum
+├─ owner          Person
+├─ tasks          Kanban or table
+├─ milestones     Timeline
+├─ people         Grid or list
+└─ notes          Feed
+```
+
+Rich text remains important, but becomes one datatype among many rather than the universal container for an application. At low semantic complexity, a notepad may be superior. At high semantic complexity, explicit objects and relationships scale more cleanly and are easier for both people and agents to inspect and manipulate.
+
+There is a parallel engineering crossover. Hand-crafted screens may be economical when there are few of them. As the domain grows, every separately authored representation adds coordination cost and opportunities for drift. A consistent derived interface can eventually become both cheaper to maintain and easier to learn. The undreamedof.ai case study shows coverage at one point on this curve; it does not establish where the crossover occurs for other teams or whether users prefer the result.
 
 ### Adoption versus Coverage
 
 A coverage result and an adoption result are not the same thing, and the distinction governs how this paper's central claim should be read. Everything in §3 and §8 argues *coverage*: the patterns fit most informational UIs. But the reason naked objects stalled for twenty-five years was never that the patterns failed to fit — prior implementations already produced complete, correct interfaces. The binding constraint is **switch cost**. The pointer analogy (§3) is strong on coverage but misleading on adoption: the mouse carried a near-zero relearning tax, whereas adopting a derived-UI framework means giving up the React ecosystem, the component-library commons, and fine-grained per-screen control. "Most UIs fit the patterns" can be entirely true and still not produce pointer-style adoption, because the quantity being weighed is not coverage but the cost of leaving.
 
 **The economic lever.** One force changes the *adoption* arithmetic rather than the *coverage* arithmetic: the shift to agent-mediated development. When an LLM is a routine co-editor of application state, the bespoke-UI path acquires a new recurring obligation — it must also expose, document, and keep in sync a tool surface for every mutable type, a cost that grows with the model and rots against it as the model changes. A derived architecture pays that cost once, structurally, because the tool surface *is* the model (§7.1). This reframes the value proposition from one that is easy to resist ("consistent UIs and lower view-maintenance") to one that React-plus-bespoke cannot match without converging on the same architecture: *natively agent-operable, and stays that way for free*. We present this as the decisive lever precisely because it is the first argument that targets the constraint that actually bound adoption, rather than re-arguing coverage.
+
+The practical adoption question is therefore not whether Strvct can imitate every screen in a mainstream application. It is whether a team gains more by keeping one inspectable model authoritative than it loses by leaving familiar package, component, and tooling ecosystems. Semantic projections improve that exchange because they reduce the amount of ordinary application UI that triggers an escape into custom code. Independent developers and independently chosen applications are still needed to measure it.
 
 ### Strengths
 
@@ -5888,6 +6019,8 @@ This suits exploratory or fast-evolving applications: tools for analysis, resear
 ### Limitations
 
 *Scope.* The approach suits informational and navigational interfaces: browsing, editing, and managing structured data. Inherently graphical interfaces — data visualizations, design canvases, game renderers, timeline editors — need domain-specific rendering and fall outside the auto-generation pipeline. Strvct supports custom view classes for these, but each is a return to the costs the approach was meant to eliminate.
+
+*Projection maturity.* Strvct's recursive master-detail grammar is implemented and production-tested. The broader collection-projection algebra described in §3 and §4.5 is a proposal. Until those projections exist as framework-level behavior, the coverage gains argued here remain a hypothesis rather than a result.
 
 *Locale.* The spatial conventions we rely on reflect Western reading order. Right-to-left layouts are within the framework's flexbox-based rendering but not validated end-to-end.
 
@@ -5903,21 +6036,29 @@ This suits exploratory or fast-evolving applications: tools for analysis, resear
 
 ### Future Directions
 
-*Hybrid view composition.* Letting custom view components participate in the auto-generated tile/stack hierarchy would close the gap for the adversarial cases of §3: embedding a chart, a canvas, or a 3D viewport at a known node in the navigation tree without losing the structural guarantees of the surrounding interface.
+*Build semantic collection projections.* List, table, grid, tree, feed, kanban, and timeline should be explored as projections over the same collection and slot metadata. The aim is not seven isolated widgets but the smallest orthogonal vocabulary of topology, grouping, ordering, density, and arrangement that can derive them.
+
+*Test the projection grammar adversarially.* Take representative screens from CRM, project management, accounting, knowledge management, ecommerce, healthcare, messaging, developer tools, social software, media libraries, calendars, and analytics. Score domain representability, navigation fit, projection fit, and custom code separately. The useful result is not a promotional percentage but the smallest reusable grammar that covers ordinary informational interaction.
+
+*Generalize hybrid view composition.* Companion View already demonstrates one bounded form: a model-named node becomes either an isolated generated browser or a specialized view inside the responsive master-detail shell. Future work should generalize that mechanism so charts, editors, canvases, maps, and 3D viewports can participate at other well-defined points in the generated graph without becoming a parallel application architecture.
 
 *Server-side execution variants.* Pairing Strvct's headless mode with a server-side coordinator could support workloads that exceed pure-client constraints — large datasets, heavy compute, strict multi-user concurrency — while keeping the same model and annotations as the source of truth.
 
-*Empirical studies.* Controlled comparisons against component-based frameworks, measuring mental-model formation, task completion time, and maintenance cost as the model evolves, would replace the existence proof in §8 with quantitative evidence.
-
-*Disciplined primitive expansion.* Adding primitives for patterns the current set does not cover — timelines, graphs, free-form 2D positions — while preserving the narrow-design-space property: each new primitive should express a generalizable spatial pattern, not a one-off layout.
+*Independent use and usability studies.* External developers should build nontrivial applications of their own choosing with minimal guidance. Controlled comparisons should measure onboarding time, task completion, navigation errors, maintenance after model changes, accessibility, and the amount and significance—not merely the count—of custom UI.
 
 ## 11. Conclusion
 
-The naked objects pattern has offered a compelling proposition for twenty-five years: write the domain model, and the rest follows. Its limited adoption is not a failure of this proposition but of the UI strategies prior implementations chose. Generic forms and tables were sufficient for internal tools but never met the expectations of modern consumer software.
+The naked objects pattern has offered a compelling proposition for twenty-five years: write the domain model, and let the application follow. Its limited adoption does not show that derivation is impossible. It shows that deriving every object into a form and every collection into a table is not enough.
 
-The gap is closable because the design space is narrow. A small set of composable primitives — tiles, tile stacks, and recursively nested master-detail views — covers the navigation and editing patterns shared by most informational applications. The same annotation system that drives the UI drives persistence, synchronization, AI tool surfaces, and translation without per-layer coordination. Strvct demonstrates this in a production application of ~90 domain classes, with roughly 90% of views auto-generated and custom views only where the narrow-space hypothesis predicts.
+The stronger grammar has two operations: traverse relationships through an object graph, and project collections along semantic dimensions. Strvct implements the first through tiles, tile stacks, and recursive master-detail navigation. List, table, grid, tree, feed, kanban, and timeline suggest a disciplined route toward the second. They are not a conventional widget catalog. They are recurring spatial meanings that can remain attached to the model's properties, relationships, and actions.
 
-We close with a prediction. The pressure that may finally push naked objects past its twenty-five-year stall is economic, not aesthetic, and it bears on the constraint that actually bound adoption — switch cost — rather than on coverage. As AI agents become routine co-editors of application state, the cost of keeping a bespoke UI synchronized with a model an LLM can rewrite at any moment, and of maintaining a separate agent-facing tool surface for every mutable type, will exceed the cost of generating both UI and tool surface from the model in the first place. The applications that survive this transition will be the ones whose UI is a projection of their model, not an authored artifact running alongside it.
+This formulation gives custom views a principled boundary. They are not an escape hatch for ordinary page layout. They are the right representation when geometry or a specialized medium is itself part of the domain: editors, maps, charts, waveforms, canvases, 3D scenes, and games.
+
+The same authoritative model can then drive more than pixels. It can drive persistence, synchronization, schema, inspection, translation context, accessibility behavior, headless tests, and AI tools. This is the central architectural claim: these are not separate features coordinated by convention; they are projections of one explicitly described domain.
+
+Strvct's production case study is an existence proof for that architecture, not a general validation of every proposed projection or usability claim. The next evidence must come from external developers, adversarial applications, and measurements that distinguish domain coverage, navigation coverage, viewport coverage, and product value.
+
+The economic prediction remains. As AI agents become routine authors and operators of application state, maintaining independent model, UI, persistence, and tool descriptions becomes increasingly fragile. A system whose interface and agent surface are derived from the model pays that coordination cost structurally, once. The durable application architecture will be the one in which the UI is a live projection of the domain, not an authored artifact that merely attempts to mirror it.
 
 ## References
 
@@ -10912,11 +11053,11 @@ Source: /docs/Views/Companion%20View/
 
 # Companion View
 
-A persistent panel docked alongside a node's navigation — content beside the columns, collapsing to a thin tab or out of sight as the viewport narrows.
+A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
 
 ## Overview
 
-A *companion* is a second region the view layer shows next to a node's master-detail navigation: a chat panel beside a session's columns, an inspector beside an editor, a reference pane beside a document. It is not a popover or a modal — it lives in normal layout flow, reserves real space, and the navigation columns compact to make room for it rather than being covered by it.
+A *companion* is a second region the view layer shows next to a node's master-detail navigation: a chat panel beside a session's columns, an inspector beside an editor, a reference pane beside a document. It is not a popover or modal. While docked it lives in normal layout flow, reserves real space, and causes the navigation columns to compact rather than covering them.
 
 As with the rest of the framework, the model contributes only a *node*; every decision about where that node appears, how wide it is, and when it collapses lives in the view layer. A node opts in by answering the optional protocol method:
 
@@ -10930,13 +11071,13 @@ nodeCompanionNode () {
 
 ## The Three States
 
-A companion is always in exactly one of three modes, driven entirely by available space and the user's pin:
+A companion is always in exactly one of three modes, driven by available space and the user's pin:
 
-- **docked** — content is shown beside (or, in a vertical stack, beneath) a thin caret strip. The columns compact to fit; the companion reserves its full width. The caret offers to collapse the panel.
-- **tab** — only the caret strip is shown; the content is hidden. The caret offers to expand the panel.
-- **hidden** — nothing is shown at all. The window is too narrow for even the strip, so the navigation content gets the full width.
+- **docked** — content is shown beside the columns or beneath them. The companion reserves its full length, the columns compact to fit, and an inset edge handle offers to collapse it.
+- **tab** — the panel and its former tab strip occupy zero space. An edge handle attached to the adjacent navigation column offers to expand it.
+- **hidden** — neither panel nor edge handle is shown. The window is too narrow to offer the companion without compromising the primary content.
 
-The companion **never floats over neighboring content**. Docking takes real layout space and the columns compact to fit — the same compaction described in [Responsive](../Responsive/), now accounting for the companion's reserved length as well. This is a deliberate contrast with the slide-over drawer pattern: predictable layout beats overlap.
+The companion **never floats over neighboring content**. Docking takes real layout space and the columns compact to fit—the same compaction described in [Responsive](../Responsive/), now accounting for the companion's reservation. The edge handle may straddle a boundary as an affordance, but the companion content itself never becomes a slide-over drawer.
 
 ## Class Structure
 
@@ -10947,15 +11088,18 @@ SvStackView
 └── SvDetailView                       ← owns the space arbitration
     ├── childStackView                 ← the flexible region: child stack / inspector
     └── SvCompanionView (node = nodeCompanionNode())
-        ├── contentView                ← the companion node's view (default SvBrowserView)
-        └── SvCompanionTabView          ← the collapsed form: caret strip + badge
+        ├── contentView                 ← the companion node's view (default SvBrowserView)
+        ├── SvCompanionTabView          ← retained internally; visible strip retired
+        └── SvEdgeHandleView            ← collapse handle while docked
 ```
 
-- **`SvDetailView`** is the always-present second child of an `SvStackView` (after the nav column). It creates an `SvCompanionView` whenever the stack's node answers `nodeCompanionNode()`, lays its children out along the stack's axis, and owns the space arbitration between the flexible child stack and the companion's reserved length. Compaction sees that reservation through `companionReservedLength()`.
+- **`SvDetailView`** is the always-present second child of an `SvStackView` after the navigation column. It creates an `SvCompanionView` whenever the stack's node answers `nodeCompanionNode()`, lays its children out along the stack's axis, and owns space arbitration between the flexible child stack and the companion. Horizontal compaction sees the reservation through `companionReservedWidth()`.
 
-- **`SvCompanionView`** (extends `SvNodeView`) is bound to the companion root node. It owns its content view and its tab, and runs the docked/tab/hidden state machine internally — so from the outside it is just one child whose size animates between panel length and tab length. Its content view is resolved through the node-view protocol: an explicit `nodeViewClassName()` wins, otherwise the default is an embedded `SvBrowserView` with its own breadcrumbs and **isolated navigation** (`setHandlesGlobalNavRequests(false)`), so navigating inside the companion never disturbs the outer app.
+- **`SvCompanionView`** (extends `SvNodeView`) is bound to the companion root node. It owns its content view and docked edge handle and runs the docked/tab/hidden state machine internally. From the outside it is one child whose size animates between its docked length and zero. Its content view is resolved through the node-view protocol: an explicit `nodeViewClassName()` wins; otherwise the default is an embedded `SvBrowserView` with its own breadcrumbs and **isolated navigation** (`setHandlesGlobalNavRequests(false)`), so navigating inside the companion never disturbs the outer app.
 
-- **`SvCompanionTabView`** (extends `SvFlexDomView`) is the thin strip that hugs the dock edge. It shows a single chevron affordance and an optional attention badge — deliberately no title, since the strip is too narrow to render one legibly. Tapping it toggles the companion open or closed.
+- **`SvEdgeHandleView`** provides the visible affordance. While docked, the companion owns a handle on its leading edge. While collapsed, the deepest adjacent `SvNavView` owns the handle because the companion itself is zero-width. Both handles target the same `SvCollapsibleRegionProtocol` interface.
+
+- **`SvCompanionTabView`** remains in the implementation for state and badge plumbing, but its visible strip is retired. It is always hidden by `applyMode()`. Consequently the aggregate attention badge has no visible home while the companion is collapsed; this is an acknowledged unfinished detail rather than current UI behavior.
 
 ## Space Arbitration and Pinning
 
@@ -10963,13 +11107,13 @@ The detail view hands the companion the space it may use along the dock axis, an
 
 | Condition | Resulting mode |
 | --- | --- |
-| less than the tab length | `hidden` (drop the strip too; content gets full width) |
+| less than the handle viability threshold (`tabLength`) | `hidden` (drop the handle too; content gets full width) |
 | user pinned **docked** | `docked` |
 | user pinned **tab** | `tab` |
 | auto: fits the preferred length | `docked` |
 | auto: doesn't fit | `tab` |
 
-Tapping the tab calls `toggleExpanded()`, which records the choice in `userMode` (the *pin*) and flips between docked and tab. A pin survives window resizes — only a too-narrow window (which forces `hidden`) overrides it. With no pin, the companion auto-arbitrates: docked when the preferred width fits, a tab when it doesn't.
+Activating either edge handle calls `toggleExpanded()`, which records the choice in `userMode` (the *pin*) and flips between docked and tab. A pin survives window resizes; only a too-narrow window, which forces `hidden`, overrides it. With no pin, the companion auto-arbitrates: docked when its preferred length fits and collapsed when it does not. Meta-Backslash toggles the deepest visible companion in the active browser chain.
 
 `setAvailableLength()` returns whether the mode actually changed, which lets compaction iterate to a fixed point: reserving space for a newly docked companion can shrink the columns, which can change what fits, and so on until the layout settles.
 
@@ -10983,24 +11127,24 @@ A related subtlety: an embedded content browser that first laid out while the co
 
 The state machine is axis-independent. The owning detail view sets the companion's `edge` from the stack's direction:
 
-- **`edge: "right"`** — a horizontal stack docks the companion at the right, with a *vertical* tab strip; the caret points left/right (`◂` to expand, `▸` to collapse).
-- **`edge: "bottom"`** — a vertical stack docks it beneath the content, with a *horizontal* tab strip; the caret points up/down (`▴` to expand, `▾` to collapse).
+- **`edge: "right"`** — a horizontal stack docks the companion at the right and configures a vertical boundary handle.
+- **`edge: "bottom"`** — a vertical stack docks it beneath the content and configures a horizontal boundary handle.
 
-The caret always points the way a tap moves the panel, so the affordance reads correctly at either edge.
+`SvEdgeHandleView` configures its orientation and expansion state from the region protocol, so the same affordance works at either edge.
 
-## Badge
+## Attention Badge Status
 
-The tab can show an aggregate attention badge driven by the node-view protocol: when `node.nodeViewShouldBadge()` is `true`, `node.nodeViewBadgeTitle()` supplies the text (a string renders a chip; an empty string renders a dot; `null`/`false` hides it). Aggregating state across the companion subtree into a single badge value is the node's responsibility — the view only renders what the protocol reports.
+The retained tab object still receives aggregate attention state through the node-view protocol: `nodeViewShouldBadge()` decides whether attention is needed and `nodeViewBadgeTitle()` supplies its text. Aggregating state across the companion subtree remains the node's responsibility. Because the visible tab strip has been retired, however, this badge is not currently displayed. A future implementation may move that signal to the edge handle.
 
 ## Theming
 
-The panel and its tab expose CSS variables for skinning:
+The panel retains these CSS variables for skinning:
 
 | Variable | Applies to |
 | --- | --- |
 | `--SvCompanion-bg` | the companion panel background |
-| `--SvCompanionTab-color` | the tab's chevron / text color |
-| `--SvCompanionTab-border-color` | the tab's border color |
+| `--SvCompanionTab-color` | legacy tab styling; retained but the strip is hidden |
+| `--SvCompanionTab-border-color` | legacy tab border styling |
 
 
 ---

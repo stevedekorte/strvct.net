@@ -1,10 +1,10 @@
 # Companion View
 
-A persistent panel docked alongside a node's navigation — content beside the columns, collapsing to a thin tab or out of sight as the viewport narrows.
+A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
 
 ## Overview
 
-A *companion* is a second region the view layer shows next to a node's master-detail navigation: a chat panel beside a session's columns, an inspector beside an editor, a reference pane beside a document. It is not a popover or a modal — it lives in normal layout flow, reserves real space, and the navigation columns compact to make room for it rather than being covered by it.
+A *companion* is a second region the view layer shows next to a node's master-detail navigation: a chat panel beside a session's columns, an inspector beside an editor, a reference pane beside a document. It is not a popover or modal. While docked it lives in normal layout flow, reserves real space, and causes the navigation columns to compact rather than covering them.
 
 As with the rest of the framework, the model contributes only a *node*; every decision about where that node appears, how wide it is, and when it collapses lives in the view layer. A node opts in by answering the optional protocol method:
 
@@ -18,13 +18,13 @@ nodeCompanionNode () {
 
 ## The Three States
 
-A companion is always in exactly one of three modes, driven entirely by available space and the user's pin:
+A companion is always in exactly one of three modes, driven by available space and the user's pin:
 
-- **docked** — content is shown beside (or, in a vertical stack, beneath) a thin caret strip. The columns compact to fit; the companion reserves its full width. The caret offers to collapse the panel.
-- **tab** — only the caret strip is shown; the content is hidden. The caret offers to expand the panel.
-- **hidden** — nothing is shown at all. The window is too narrow for even the strip, so the navigation content gets the full width.
+- **docked** — content is shown beside the columns or beneath them. The companion reserves its full length, the columns compact to fit, and an inset edge handle offers to collapse it.
+- **tab** — the panel and its former tab strip occupy zero space. An edge handle attached to the adjacent navigation column offers to expand it.
+- **hidden** — neither panel nor edge handle is shown. The window is too narrow to offer the companion without compromising the primary content.
 
-The companion **never floats over neighboring content**. Docking takes real layout space and the columns compact to fit — the same compaction described in [Responsive](../Responsive/), now accounting for the companion's reserved length as well. This is a deliberate contrast with the slide-over drawer pattern: predictable layout beats overlap.
+The companion **never floats over neighboring content**. Docking takes real layout space and the columns compact to fit—the same compaction described in [Responsive](../Responsive/), now accounting for the companion's reservation. The edge handle may straddle a boundary as an affordance, but the companion content itself never becomes a slide-over drawer.
 
 ## Class Structure
 
@@ -35,15 +35,18 @@ SvStackView
 └── SvDetailView                       ← owns the space arbitration
     ├── childStackView                 ← the flexible region: child stack / inspector
     └── SvCompanionView (node = nodeCompanionNode())
-        ├── contentView                ← the companion node's view (default SvBrowserView)
-        └── SvCompanionTabView          ← the collapsed form: caret strip + badge
+        ├── contentView                 ← the companion node's view (default SvBrowserView)
+        ├── SvCompanionTabView          ← retained internally; visible strip retired
+        └── SvEdgeHandleView            ← collapse handle while docked
 ```
 
-- **`SvDetailView`** is the always-present second child of an `SvStackView` (after the nav column). It creates an `SvCompanionView` whenever the stack's node answers `nodeCompanionNode()`, lays its children out along the stack's axis, and owns the space arbitration between the flexible child stack and the companion's reserved length. Compaction sees that reservation through `companionReservedLength()`.
+- **`SvDetailView`** is the always-present second child of an `SvStackView` after the navigation column. It creates an `SvCompanionView` whenever the stack's node answers `nodeCompanionNode()`, lays its children out along the stack's axis, and owns space arbitration between the flexible child stack and the companion. Horizontal compaction sees the reservation through `companionReservedWidth()`.
 
-- **`SvCompanionView`** (extends `SvNodeView`) is bound to the companion root node. It owns its content view and its tab, and runs the docked/tab/hidden state machine internally — so from the outside it is just one child whose size animates between panel length and tab length. Its content view is resolved through the node-view protocol: an explicit `nodeViewClassName()` wins, otherwise the default is an embedded `SvBrowserView` with its own breadcrumbs and **isolated navigation** (`setHandlesGlobalNavRequests(false)`), so navigating inside the companion never disturbs the outer app.
+- **`SvCompanionView`** (extends `SvNodeView`) is bound to the companion root node. It owns its content view and docked edge handle and runs the docked/tab/hidden state machine internally. From the outside it is one child whose size animates between its docked length and zero. Its content view is resolved through the node-view protocol: an explicit `nodeViewClassName()` wins; otherwise the default is an embedded `SvBrowserView` with its own breadcrumbs and **isolated navigation** (`setHandlesGlobalNavRequests(false)`), so navigating inside the companion never disturbs the outer app.
 
-- **`SvCompanionTabView`** (extends `SvFlexDomView`) is the thin strip that hugs the dock edge. It shows a single chevron affordance and an optional attention badge — deliberately no title, since the strip is too narrow to render one legibly. Tapping it toggles the companion open or closed.
+- **`SvEdgeHandleView`** provides the visible affordance. While docked, the companion owns a handle on its leading edge. While collapsed, the deepest adjacent `SvNavView` owns the handle because the companion itself is zero-width. Both handles target the same `SvCollapsibleRegionProtocol` interface.
+
+- **`SvCompanionTabView`** remains in the implementation for state and badge plumbing, but its visible strip is retired. It is always hidden by `applyMode()`. Consequently the aggregate attention badge has no visible home while the companion is collapsed; this is an acknowledged unfinished detail rather than current UI behavior.
 
 ## Space Arbitration and Pinning
 
@@ -51,13 +54,13 @@ The detail view hands the companion the space it may use along the dock axis, an
 
 | Condition | Resulting mode |
 | --- | --- |
-| less than the tab length | `hidden` (drop the strip too; content gets full width) |
+| less than the handle viability threshold (`tabLength`) | `hidden` (drop the handle too; content gets full width) |
 | user pinned **docked** | `docked` |
 | user pinned **tab** | `tab` |
 | auto: fits the preferred length | `docked` |
 | auto: doesn't fit | `tab` |
 
-Tapping the tab calls `toggleExpanded()`, which records the choice in `userMode` (the *pin*) and flips between docked and tab. A pin survives window resizes — only a too-narrow window (which forces `hidden`) overrides it. With no pin, the companion auto-arbitrates: docked when the preferred width fits, a tab when it doesn't.
+Activating either edge handle calls `toggleExpanded()`, which records the choice in `userMode` (the *pin*) and flips between docked and tab. A pin survives window resizes; only a too-narrow window, which forces `hidden`, overrides it. With no pin, the companion auto-arbitrates: docked when its preferred length fits and collapsed when it does not. Meta-Backslash toggles the deepest visible companion in the active browser chain.
 
 `setAvailableLength()` returns whether the mode actually changed, which lets compaction iterate to a fixed point: reserving space for a newly docked companion can shrink the columns, which can change what fits, and so on until the layout settles.
 
@@ -71,21 +74,21 @@ A related subtlety: an embedded content browser that first laid out while the co
 
 The state machine is axis-independent. The owning detail view sets the companion's `edge` from the stack's direction:
 
-- **`edge: "right"`** — a horizontal stack docks the companion at the right, with a *vertical* tab strip; the caret points left/right (`◂` to expand, `▸` to collapse).
-- **`edge: "bottom"`** — a vertical stack docks it beneath the content, with a *horizontal* tab strip; the caret points up/down (`▴` to expand, `▾` to collapse).
+- **`edge: "right"`** — a horizontal stack docks the companion at the right and configures a vertical boundary handle.
+- **`edge: "bottom"`** — a vertical stack docks it beneath the content and configures a horizontal boundary handle.
 
-The caret always points the way a tap moves the panel, so the affordance reads correctly at either edge.
+`SvEdgeHandleView` configures its orientation and expansion state from the region protocol, so the same affordance works at either edge.
 
-## Badge
+## Attention Badge Status
 
-The tab can show an aggregate attention badge driven by the node-view protocol: when `node.nodeViewShouldBadge()` is `true`, `node.nodeViewBadgeTitle()` supplies the text (a string renders a chip; an empty string renders a dot; `null`/`false` hides it). Aggregating state across the companion subtree into a single badge value is the node's responsibility — the view only renders what the protocol reports.
+The retained tab object still receives aggregate attention state through the node-view protocol: `nodeViewShouldBadge()` decides whether attention is needed and `nodeViewBadgeTitle()` supplies its text. Aggregating state across the companion subtree remains the node's responsibility. Because the visible tab strip has been retired, however, this badge is not currently displayed. A future implementation may move that signal to the edge handle.
 
 ## Theming
 
-The panel and its tab expose CSS variables for skinning:
+The panel retains these CSS variables for skinning:
 
 | Variable | Applies to |
 | --- | --- |
 | `--SvCompanion-bg` | the companion panel background |
-| `--SvCompanionTab-color` | the tab's chevron / text color |
-| `--SvCompanionTab-border-color` | the tab's border color |
+| `--SvCompanionTab-color` | legacy tab styling; retained but the strip is hidden |
+| `--SvCompanionTab-border-color` | legacy tab border styling |
