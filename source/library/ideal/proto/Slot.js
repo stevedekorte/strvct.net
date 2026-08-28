@@ -105,7 +105,11 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("canInspect", false);
         this.simpleNewSlot("canEditInspection", true);
         this.simpleNewSlot("label", null); // visible label on inspector
+        this.simpleNewSlot("displayDecimalPlaces", null); // inspector toFixed only; stored Number is unchanged
+        this.simpleNewSlot("displayPrefix", null); // tile chrome left of the value view; not part of the edit string
+        this.simpleNewSlot("displaySuffix", null); // tile chrome right of the value view; not part of the edit string
         this.simpleNewSlot("allowsNullValue", false); // used for validation
+        this.simpleNewSlot("isInheritedResource", false); // Inherited Resources protocol: SvNode.nodeInheritedResource() consults ONLY annotated slots (null = inherit up nodeResourceParent(); any non-null value = the answer)
         this.simpleNewSlot("allowsUndefinedValue", false); // used for validation
 
         // valid values
@@ -808,6 +812,15 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 field.setValueMethod(this.name());
                 field.setValueIsEditable(this.canEditInspection());
                 field.setCanDelete(false);
+                if (Type.isNumber(this.displayDecimalPlaces()) && field.setDisplayDecimalPlaces) {
+                    field.setDisplayDecimalPlaces(this.displayDecimalPlaces());
+                }
+                if (this.displayPrefix() && field.setValuePrefix) {
+                    field.setValuePrefix(this.displayPrefix());
+                }
+                if (this.displaySuffix() && field.setValuePostfix) {
+                    field.setValuePostfix(this.displaySuffix());
+                }
 
                 if (Type.isString(this.valueWhiteSpace())) {
                     field.setValueWhiteSpace(this.valueWhiteSpace());
@@ -1102,10 +1115,12 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
     /**
      * @category Getter
-     * @description Getter for lazy slots: identical to autoGetter until the
-     * slot holds an SvStoreRef stub (placed there by loadFromRecord), in which
-     * case it materializes the stored value on first access. Materialization
-     * is synchronous — the store's records map is fully in memory after open.
+     * @description Getter for lazy slots. Two first-access paths:
+     *   - SvStoreRef (from loadFromRecord): materialize the stored subtree
+     *   - null/undefined with a proto: clone the default (so clone() itself
+     *     does not build the graph — only a getter does)
+     * Store-ref materialization is synchronous — the store's records map is
+     * fully in memory after open.
      */
     lazySlotGetter () {
         const slot = this;
@@ -1115,8 +1130,71 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             if (v && v instanceof SvStoreRef) {
                 return slot.onInstanceMaterializeLazySlot(this);
             }
+            if (v && typeof(SvLazyJsonRef) !== "undefined" && v instanceof SvLazyJsonRef) {
+                return slot.onInstanceMaterializeLazyJson(this);
+            }
+            if (Type.isNullOrUndefined(v)) {
+                return slot.onInstanceMaterializeLazyDefault(this);
+            }
             return v;
         };
+    }
+
+    /**
+     * @category Lazy Loading
+     * @description First access of a lazy slot that still has no value (fresh
+     * clone, never stored). Clones finalInitProto or initProto and writes it
+     * through the setter so didUpdateSlot/dirty run like any other init.
+     * Null-without-proto stays null (explicit allowsNullValue slots).
+     */
+    onInstanceMaterializeLazyDefault (anInstance) {
+        const proto = this.finalInitProtoClass() || this._initProto;
+        if (!proto) {
+            return this.onInstanceRawGetValue(anInstance);
+        }
+        const newValue = proto.clone();
+        if (Type.isBoolean(this.isVisible()) && Type.isFunction(newValue.setIsVisible)) {
+            newValue.setIsVisible(this.isVisible());
+        }
+        this.onInstanceSetValue(anInstance, newValue);
+        if (newValue.setOwnerNode) {
+            newValue.setOwnerNode(anInstance);
+        }
+        return newValue;
+    }
+
+    /**
+     * @category Lazy Loading
+     * @description First access of a lazy slot that still holds JSON from
+     * deserializeFromJson. Clones the proto, applies the dict, writes through
+     * the setter. Does not clone an empty default just to merge into it.
+     */
+    onInstanceMaterializeLazyJson (anInstance) {
+        const ref = this.onInstanceRawGetValue(anInstance);
+        assert(ref instanceof SvLazyJsonRef, "onInstanceMaterializeLazyJson called without an SvLazyJsonRef in slot '" + this.name() + "'");
+        const proto = this.finalInitProtoClass() || this._initProto;
+        assert(proto, "lazy JSON slot '" + this.name() + "' has no proto to materialize");
+        const newValue = proto.clone();
+        if (Type.isBoolean(this.isVisible()) && Type.isFunction(newValue.setIsVisible)) {
+            newValue.setIsVisible(this.isVisible());
+        }
+        if (newValue.deserializeFromJson) {
+            const path = ref.jsonPathComponents() || [];
+            newValue.deserializeFromJson(ref.json(), ref.filterName(), path);
+        }
+        Slot.beginLazySlotMaterialization();
+        try {
+            this.onInstanceSetValue(anInstance, newValue);
+        } finally {
+            Slot.endLazySlotMaterialization();
+        }
+        if (newValue.setOwnerNode) {
+            newValue.setOwnerNode(anInstance);
+        }
+        if (anInstance.didMaterializeSlot) {
+            anInstance.didMaterializeSlot(this);
+        }
+        return newValue;
     }
 
     /**
@@ -1629,11 +1707,11 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     onInstanceFinalInitSlot (anInstance) {
         assert(this.slotType() !== null, " slotType is null for " + anInstance.svType() + "." + this.name());
 
-        if (this.isLazy() && (this.onInstanceRawGetValue(anInstance) instanceof SvStoreRef)) {
-            // The stored value is pending materialization. It counts as "loaded"
-            // here, so skip finalInitProto default-creation — and read only the
-            // RAW value above: the getter would materialize the whole subtree at
-            // boot, defeating the laziness.
+        if (this.isLazy()) {
+            // Skip default-creation for both store stubs AND fresh nulls.
+            // clone() must not build the lazy graph; the getter creates it
+            // on first access (or loadFromRecord plants an SvStoreRef).
+            // Read only the RAW value: the getter would materialize now.
             assert(!this.isSubnode(), "lazy slot '" + this.name() + "' cannot be isSubnode — subnode slots need their value in the node graph at load time");
             if (this.isSubnodeField()) {
                 assert(anInstance.shouldStoreSubnodes() === false, "error on slot definition '" + this.name() + "' subnode fields are not supported with shouldStoreSubnodes");
@@ -1772,8 +1850,10 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const initProto = this._initProto;
 
         if (initProto) {
-            // initProto and isLazy compose: init creates the default for fresh
-            // instances; loadFromRecord raw-replaces it with a stub on stored ones.
+            // initProto stays eager: e.g. a lazy subnodes slot still needs an
+            // empty SvSubnodesArray so init() can watchSubnodes(). loadFromRecord
+            // raw-replaces it with an SvStoreRef on stored instances. Heavy
+            // graphs use finalInitProto (skipped for lazy — see finalInit).
             const obj = initProto.clone();
             this.onInstanceSetValue(anInstance, obj);
         } /*

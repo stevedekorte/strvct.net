@@ -153,10 +153,29 @@
         this.replaceFiles();
         this.convertToAbsoluteMarkdown();
         this.replaceTableOfContents(); // so it's not treated as a method
+        this.replaceResources(); // after files (included files may reference resources), before methods
         this.replaceMethods(); // this ordering prevents methods from containing string with {{file$fileName}}
 
         this.assertValidOutputString();
         return this.outputString();
+    }
+
+    // --- replace resources ---
+
+    /**
+     * @description Replaces every {{resource$name}} with the promptTarget's
+     * nodeInheritedResource(name) — the Inherited Resources walk (null/
+     * undeclared resolves to an empty string, so the template reads the same
+     * whether or not any level has an opinion). No-op when the target does
+     * not participate in the protocol.
+     * @category Compose
+     */
+    replaceResources () {
+        const target = this.promptTarget();
+        this.setOutputString(this.outputString().replace(/\{\{resource\$([A-Za-z0-9_]+)\}\}/g, (m, name) => {
+            const v = (target && target.nodeInheritedResource) ? target.nodeInheritedResource(name) : null;
+            return (typeof v === "string") ? v : "";
+        }));
     }
 
     // --- replace files ---
