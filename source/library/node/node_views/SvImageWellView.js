@@ -965,6 +965,11 @@
         if (dataUrl === this.finalDataUrl()) {
             return this;
         }
+        // A superseded fetch can resolve to null after a good image is
+        // already on screen (reload race). Don't wipe the reveal.
+        if (!dataUrl && this.finalDataUrl()) {
+            return this;
+        }
         this.setFinalDataUrl(dataUrl);
         if (dataUrl) {
             const front = this.frontLayer();

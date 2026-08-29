@@ -260,8 +260,30 @@
 
         this.setValueView(v);
         this.valueViewContainer().addSubview(v);
-        //this.valueSectionView().addSubview(v)
+        this.syncValueViewBorderPolicy();
         return v;
+    }
+
+    // SvTextView.syncBorder is the only writer of the value-view border.
+    // Hooked setters (isEditable, canHitEnter) call it after this method, so
+    // the policy must match valueEditableBorder / valueUneditableBorder or
+    // the first sync paints none and later selection-only syncs leave a box.
+    syncValueViewBorderPolicy () {
+        const v = this.valueView();
+        if (!v || !v.setShowsBorderWhenEditable) {
+            return this;
+        }
+        v.setShowsBorderWhenEditable(true);
+        if (v.setEditableBorder) {
+            v.setEditableBorder(this.valueEditableBorder());
+        }
+        if (v.setUneditableBorder) {
+            v.setUneditableBorder(this.valueUneditableBorder());
+        }
+        if (v.syncBorder) {
+            v.syncBorder();
+        }
+        return this;
     }
 
     /**
@@ -387,6 +409,97 @@
      */
     visibleValue () {
         return this.node().visibleValue();
+    }
+
+    /**
+     * @description Prefix/suffix chrome for the value row. Node override
+     * displayPrefixOfSlotNamed wins; otherwise the field/slot annotation.
+     * Never concatenated into visibleValue (that string is the edit buffer).
+     * @returns {String}
+     * @category Display
+     */
+    resolvedDisplayPrefix () {
+        return this.resolvedDisplayChrome("displayPrefixOfSlotNamed", "valuePrefix", "displayPrefix");
+    }
+
+    resolvedDisplaySuffix () {
+        return this.resolvedDisplayChrome("displaySuffixOfSlotNamed", "valuePostfix", "displaySuffix");
+    }
+
+    resolvedDisplayChrome (targetMethodName, fieldSlotName, slotAnnoName) {
+        const field = this.node();
+        if (!field) {
+            return "";
+        }
+        const target = field.target ? field.target() : null;
+        const slotName = field.valueMethod ? field.valueMethod() : null;
+        if (target && slotName && target[targetMethodName]) {
+            const v = target[targetMethodName](slotName);
+            if (!Type.isNullOrUndefined(v)) {
+                return v;
+            }
+        }
+        if (field[fieldSlotName]) {
+            const v = field[fieldSlotName]();
+            if (v) {
+                return v;
+            }
+        }
+        if (target && slotName && target.thisPrototype) {
+            const slot = target.thisPrototype().slotNamed(slotName);
+            if (slot && slot[slotAnnoName]) {
+                return slot[slotAnnoName]() || "";
+            }
+        }
+        return "";
+    }
+
+    syncValueDisplayChrome () {
+        const container = this.valueViewContainer();
+        if (!container) {
+            return this;
+        }
+        const prefix = this.resolvedDisplayPrefix();
+        const suffix = this.resolvedDisplaySuffix();
+        this.setDisplayChromeAttr(container, "data-display-prefix", prefix);
+        this.setDisplayChromeAttr(container, "data-display-suffix", suffix);
+        this.layoutValueDisplayChrome(prefix, suffix);
+        return this;
+    }
+
+    layoutValueDisplayChrome (prefix, suffix) {
+        const hasChrome = !!(prefix || suffix);
+        const container = this.valueViewContainer();
+        container.setFlexDirection("row");
+        container.setFlexWrap("nowrap");
+        container.setAlignItems(hasChrome ? "baseline" : "flex-start");
+        const valueView = this.valueView();
+        if (!valueView) {
+            return this;
+        }
+        if (valueView.setWidth) {
+            valueView.setWidth(hasChrome ? "auto" : "100%");
+        }
+        if (prefix && valueView.setPaddingLeft) {
+            valueView.setPaddingLeft("0");
+        }
+        if (suffix && valueView.setPaddingRight) {
+            valueView.setPaddingRight("0");
+        }
+        return this;
+    }
+
+    setDisplayChromeAttr (view, name, value) {
+        const element = view.element();
+        if (!element) {
+            return this;
+        }
+        if (value) {
+            element.setAttribute(name, value);
+        } else {
+            element.removeAttribute(name);
+        }
+        return this;
     }
 
     /**
@@ -650,6 +763,7 @@
 
         const newValue = this.visibleValue();
 
+        this.syncValueViewBorderPolicy();
         valueView.setValue(newValue);
         valueView.setIsEditable(this.nodeValueIsEditable());
         valueView.setIsDisplayHidden(!node.valueIsVisible());
@@ -686,17 +800,13 @@
         if (this.nodeValueIsEditable()) {
             //valueView.setColor(this.editableColor())
             valueView.setColor(this.currentColor());
-            //valueView.setBorder("1px solid #444")
-            //valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
-            valueView.setBorder(this.valueEditableBorder());
             valueView.setPaddingLeft("0.5em").setPaddingRight("0.5em");
         } else {
             //console.log(this.logPrefix(), "fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
             valueView.setColor(this.uneditableColor());
-            //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
-            valueView.setBorder(this.valueUneditableBorder());
             //valueView.setPaddingLeft("0em").setPaddingRight("0em")
         }
+        this.syncValueDisplayChrome();
 
         if (valueView.setCanHitEnter) {
             if (node.acceptsValueInput) {

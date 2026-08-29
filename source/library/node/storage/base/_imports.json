@@ -4,5 +4,6 @@
     "SvSubObjectPool.js",
     "SvPersistentObjectPool.js",
     "SvBlobPool.js",
-    "SvStoreRef.js"
+    "SvStoreRef.js",
+    "SvLazyJsonRef.js"
 ]

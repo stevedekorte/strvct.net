@@ -415,12 +415,20 @@
     visibleTextWithoutProgress (raw) {
         const withoutProgress = raw.replace(/<narration-progress(?![\w-])[^>]*>[\s\S]*?<\/narration-progress>/gi, "");
         const tags = this.mechanicalTagNames().join("|");
-        return withoutProgress
+        const withoutMechanical = withoutProgress
             .replace(new RegExp("<(" + tags + ")\\b[^>]*>[\\s\\S]*?<\\/\\1>", "gi"), "")
-            .replace(/<!--[\s\S]*?-->/g, "")
+            .replace(/<!--[\s\S]*?-->/g, "");
+        if (this.hasVisibleMediaMarkup(withoutMechanical)) {
+            return " ";
+        }
+        return withoutMechanical
             .replace(/<[^>]+>/g, "")
             .replace(/&nbsp;/gi, " ")
             .trim();
+    }
+
+    hasVisibleMediaMarkup (html) {
+        return /<(img|svg|video|picture|figure|canvas)\b/i.test(String(html || ""));
     }
 
     hasLaterUserVisibleCompleteMessage () {

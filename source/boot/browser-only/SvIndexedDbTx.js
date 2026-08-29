@@ -181,12 +181,39 @@
      */
     newTx () {
         assert(this.tx() === null);
-        const tx = this.db().transaction(this.storeName(), "readwrite", this.options());
+        const db = this.db();
+        if (!db) {
+            throw this.connectionClosingError();
+        }
+        let tx;
+        try {
+            tx = db.transaction(this.storeName(), "readwrite", this.options());
+        } catch (error) {
+            if (this.thisClass().isConnectionClosingError(error)) {
+                throw this.connectionClosingError();
+            }
+            throw error;
+        }
         tx.onerror    = (error) => {
             throw new Error(error);
         };
         this.setTx(tx);
         return tx;
+    }
+
+    static isConnectionClosingError (error) {
+        const message = error && error.message ? String(error.message) : "";
+        return /connection is closing/i.test(message);
+    }
+
+    isConnectionClosingError (error) {
+        return this.thisClass().isConnectionClosingError(error);
+    }
+
+    connectionClosingError () {
+        const error = new Error(this.svType() + " cannot begin a transaction: IndexedDB connection is closing");
+        error.name = "InvalidStateError";
+        return error;
     }
 
     /**

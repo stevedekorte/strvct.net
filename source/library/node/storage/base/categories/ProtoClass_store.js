@@ -66,10 +66,22 @@
                     // Read RAW: the getter would materialize the subtree just to
                     // save it. An unmaterialized stub writes back its original
                     // ref unchanged — a never-touched subtree round-trips a save
-                    // without ever being loaded.
+                    // without ever being loaded. A still-null lazy default must
+                    // also skip the getter, or clone() cheapness is undone by
+                    // the first persist.
                     const rawValue = slot.onInstanceRawGetValue(this);
                     if (rawValue instanceof SvStoreRef) {
                         aRecord.entries.push([slotName, { "*": rawValue.pid() }]);
+                        return;
+                    }
+                    if (typeof(SvLazyJsonRef) !== "undefined" && rawValue instanceof SvLazyJsonRef) {
+                        // Stringify so the store walker never sees nested JSON
+                        // dicts — those are reserved for { "*": pid } pointers.
+                        aRecord.entries.push([slotName, { "*lazyJson": JSON.stableStringify(rawValue.json()) }]);
+                        return;
+                    }
+                    if (Type.isNullOrUndefined(rawValue)) {
+                        aRecord.entries.push([slotName, aStore.refValue(null)]);
                         return;
                     }
                 }
@@ -128,7 +140,12 @@
                     // TODO: add something the schedule a didMutate?
                     console.warn("no setter for slot '" + slot.name() + "'?");
                 } else {
-                    if (slot.isLazy() && !Type.isNull(v) && v["*"] !== undefined) {
+                    if (slot.isLazy() && !Type.isNull(v) && v["*lazyJson"] !== undefined) {
+                        const payload = v["*lazyJson"];
+                        const json = Type.isString(payload) ? JSON.parse(payload) : payload;
+                        const ref = SvLazyJsonRef.clone().setJson(json);
+                        slot.onInstanceRawSetValue(this, ref);
+                    } else if (slot.isLazy() && !Type.isNull(v) && v["*"] !== undefined) {
                         // Lazy slot: don't unref (that would deserialize the whole
                         // subtree). Park an SvStoreRef stub in the slot; the lazy
                         // getter materializes it on first access. Raw set: the stub

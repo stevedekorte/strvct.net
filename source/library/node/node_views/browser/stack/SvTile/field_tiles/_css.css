@@ -58,3 +58,53 @@ SvFieldValueView br {
     white-space: nowrap;
 }
 
+/* Display prefix/suffix are chrome on the value CONTAINER, not the
+   editable value view — so they never enter the edit/commit string.
+   nowrap + auto width: a 100% value view would wrap onto the next
+   line and leave $ and USD on the first. */
+.ValueViewContainer[data-display-prefix],
+.ValueViewContainer[data-display-suffix] {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    justify-content: flex-start;
+    column-gap: 0;
+}
+
+.ValueViewContainer[data-display-prefix]::before {
+    content: attr(data-display-prefix);
+    flex: 0 0 auto;
+    white-space: pre;
+    margin: 0;
+    padding: 0;
+    color: var(--sv-text);
+}
+
+.ValueViewContainer[data-display-suffix]::after {
+    content: attr(data-display-suffix);
+    flex: 0 0 auto;
+    white-space: pre;
+    margin: 0;
+    padding: 0;
+    color: var(--sv-text);
+}
+
+.ValueViewContainer[data-display-prefix] > .SvFieldValueView,
+.ValueViewContainer[data-display-suffix] > .SvFieldValueView {
+    width: auto !important;
+    flex: 0 0 auto;
+    min-width: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* SvTextView defaults to 0.5em horizontal padding; that reads as a
+   stray space between $ and the number (and again before USD). */
+.ValueViewContainer[data-display-prefix] > .SvFieldValueView {
+    padding-left: 0 !important;
+}
+
+.ValueViewContainer[data-display-suffix] > .SvFieldValueView {
+    padding-right: 0 !important;
+}
+

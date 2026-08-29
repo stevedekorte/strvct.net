@@ -474,7 +474,7 @@
      * @returns {boolean} Whether drops are accepted
      */
     acceptsDrop () {
-        console.log(this.svTypeId() + ".acceptsDrop(): returning true");
+        //console.log(this.svTypeId() + ".acceptsDrop(): returning true");
         return true;
     }
 

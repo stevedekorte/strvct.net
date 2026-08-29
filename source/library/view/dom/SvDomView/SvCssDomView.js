@@ -1075,7 +1075,7 @@
     }
 
     setBackgroundRepeat (s) {
-        assert(Type.isString(s));
+        assert(Type.isNull(s) || Type.isString(s));
         this.setCssProperty("background-repeat", s);
         return this;
     }
@@ -1752,7 +1752,7 @@
     // flex align-items (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
 
     validAlignItemsPropertyValues () {
-        return new Set([null, "flex-start", "center", "flex-end", "space-between", "space-around", "stretch"]);
+        return new Set([null, "flex-start", "center", "flex-end", "space-between", "space-around", "stretch", "baseline"]);
     }
 
     setAlignItems (v) {

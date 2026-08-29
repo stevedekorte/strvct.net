@@ -231,7 +231,12 @@ class SvWindowErrorPanel extends Object {
                 const style = errorPanelDiv.style;
                 style.position = "relative"; // Changed from fixed since it's now inside backdrop
                 style.backgroundColor = "var(--sv-surface, rgb(25, 25, 25))"; // boot-safe theming: dark fallback for pre-theme errors
-                style.color = "var(--sv-text, black)";
+                // WHITE, not black. The fallback applies exactly when no theme is
+                // loaded — which is when this panel matters most, since it reports
+                // boot errors — and the line above falls back to a near-black
+                // surface. Black text on rgb(25,25,25) made the error unreadable in
+                // the one case the panel exists for. Line ~298 already used white.
+                style.color = "var(--sv-text, white)";
                 style.width = "fit-content";
                 style.height = "fit-content";
                 style.fontFamily = "inherit";
@@ -296,7 +301,7 @@ class SvWindowErrorPanel extends Object {
             // Create text container on the right
             html += "<div style='flex:1;'>";
             html += `<div style='color:var(--sv-text, white); font-weight:bold; font-size:1.2em; padding-bottom:0.5em;'>${errorTitle}</div>`;
-            html += `<div style="color:var(--sv-text-muted, #888);">${errorMessage}</div>`;
+            html += `<div style="color:var(--sv-text-muted, #aaa);">${errorMessage}</div>`;
             html += "</div>";
 
             messageDiv.innerHTML = html;
@@ -333,10 +338,10 @@ class SvWindowErrorPanel extends Object {
             {
                 const style = detailsContent.style;
                 style.display = "none";
-                style.color = "var(--sv-text-muted, #999)";
+                style.color = "var(--sv-text-muted, #aaa)";
                 style.fontSize = "0.7em";
                 style.fontFamily = "monospace";
-                style.backgroundColor = "var(--sv-selection-bg, #1a1a1a)";
+                style.backgroundColor = "var(--sv-selection-bg, rgba(128, 128, 128, 0.12))";
                 style.padding = "0.5em";
                 style.borderRadius = "4px";
                 style.marginTop = "0.5em";
@@ -399,7 +404,7 @@ class SvWindowErrorPanel extends Object {
                 copyButton.appendChild(clipboardImg);
 
                 copyButton.addEventListener("mouseenter", () => {
-                    copyButton.style.backgroundColor = "var(--sv-selection-active-bg, #333)";
+                    copyButton.style.backgroundColor = "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))";
                 });
 
                 copyButton.addEventListener("mouseleave", () => {
@@ -459,8 +464,8 @@ class SvWindowErrorPanel extends Object {
                 style.textAlign = "center";
                 style.cursor = "pointer";
                 style.transition = "all 0.2s ease";
-                style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, #444)" : "var(--sv-surface, rgb(25, 25, 25))";
-                style.color = isPrimary ? "var(--sv-text, #fff)" : "var(--sv-text-muted, #aaa)";
+                style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-surface, rgb(25, 25, 25))";
+                style.color = isPrimary ? "var(--sv-text, white)" : "var(--sv-text-muted, #aaa)";
                 style.border = "1px solid var(--sv-hairline, #444)";
                 style.borderRadius = "0";
                 style.padding = "0.5em 1.5em";
@@ -468,11 +473,11 @@ class SvWindowErrorPanel extends Object {
                 button.textContent = label;
 
                 button.addEventListener("mouseenter", () => {
-                    button.style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, #555)" : "var(--sv-selection-bg, #333)";
+                    button.style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-selection-bg, rgba(128, 128, 128, 0.12))";
                 });
 
                 button.addEventListener("mouseleave", () => {
-                    button.style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, #444)" : "var(--sv-surface, rgb(25, 25, 25))";
+                    button.style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-surface, rgb(25, 25, 25))";
                 });
 
                 button.addEventListener("click", clickHandler);

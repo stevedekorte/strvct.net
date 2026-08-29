@@ -390,6 +390,7 @@
     }
 
     async promiseClose () {
+        SvSyncScheduler.shared().unscheduleTargetAndMethod(this, "commitStoreDirtyObjects");
         const map = this.kvMap();
         if (map.isOpen()) {
             map.close(); // this is synchronous in indexeddb
@@ -760,6 +761,7 @@
      * @returns {SvObjectPool}
      */
     close () {
+        SvSyncScheduler.shared().unscheduleTargetAndMethod(this, "commitStoreDirtyObjects");
         SvObjectPool.openPools().delete(this);
         this.removeMutationObservations();
         this.setActiveObjects(new SvEnumerableWeakMap());
@@ -1045,26 +1047,36 @@
      * @returns {void}
      */
     async commitStoreDirtyObjects () {
+        if (!this.isOpen()) {
+            return;
+        }
         this.logDebug("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
 
         if (this.hasDirtyObjects()) {
-            //console.log(this.svType() + " --- commitStoreDirtyObjects ---");
-
-            //this.logDebug("--- commitStoreDirtyObjects begin ---");
-            await this.kvMap().promiseBegin();
-            const storeCount = this.storeDirtyObjects();
-            await this.kvMap().promiseCommit();
-            this.logDebug("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects");
-            this.logDebug("--- commitStoreDirtyObjects total objects: " + this.kvMap().count());
-
-            //this.show("AFTER commitStoreDirtyObjects");
-
-            if (this._forcedDirtyObjectsSet) {
-                if (this._forcedDirtyObjectsSet.size !== 0) {
-                    this.scheduleStore();
-                } else {
-                    this._forcedDirtyObjectsSet = null;
+            try {
+                await this.kvMap().promiseBegin();
+                if (!this.isOpen()) {
+                    this.kvMap().revert();
+                    return;
                 }
+                const storeCount = this.storeDirtyObjects();
+                await this.kvMap().promiseCommit();
+                this.logDebug("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects");
+                this.logDebug("--- commitStoreDirtyObjects total objects: " + this.kvMap().count());
+
+                if (this._forcedDirtyObjectsSet) {
+                    if (this._forcedDirtyObjectsSet.size !== 0) {
+                        this.scheduleStore();
+                    } else {
+                        this._forcedDirtyObjectsSet = null;
+                    }
+                }
+            } catch (error) {
+                if (!this.isOpen() || SvIndexedDbTx.isConnectionClosingError(error)) {
+                    console.warn(this.logPrefix(), "skipping store: IndexedDB connection is closing");
+                    return;
+                }
+                throw error;
             }
         }
     }

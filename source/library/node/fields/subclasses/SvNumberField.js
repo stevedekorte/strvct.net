@@ -98,6 +98,18 @@
             slot.setInspectorPath("NumberField");
             //slot.setSyncsToView(true)
         }
+
+        /**
+         * @member {Number|null} displayDecimalPlaces
+         * Inspector formatting only (visibleValue / summaryValue toFixed).
+         * Does not round or clamp the stored Number.
+         */
+        {
+            const slot = this.newSlot("displayDecimalPlaces", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+            slot.setDuplicateOp("copyValue");
+        }
     }
 
     /**
@@ -217,6 +229,26 @@
         }
 
         return errors.length ? errors.join("\n") : null;
+    }
+
+    /**
+     * @description Display form of the number. Uses displayDecimalPlaces when
+     * set so a money slot can keep full precision internally and still render
+     * as "85.57" instead of "85.57140007749635".
+     * @returns {String|Number}
+     * @category Display
+     */
+    visibleValue () {
+        const v = this.value();
+        const places = this.displayDecimalPlaces();
+        if (Type.isNumber(v) && Type.isNumber(places)) {
+            return v.toFixed(places);
+        }
+        return v;
+    }
+
+    summaryValue () {
+        return this.visibleValue();
     }
 
 }.initThisClass());

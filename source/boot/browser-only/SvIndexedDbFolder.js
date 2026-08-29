@@ -203,7 +203,9 @@
         const request = this.indexedDB().open(this.path(), this.version());
 
         request.onsuccess = (event) => {
-            this.setDb(event.target.result);
+            const db = event.target.result;
+            this.attachConnectionWatchers(db);
+            this.setDb(db);
             openPromise.callResolveFunc();
         };
 
@@ -245,6 +247,7 @@
             console.warn(this.logPrefix(), this.svType() + ".onOpenUpgradeNeeded() db error ", event);
         };
 
+        this.attachConnectionWatchers(db);
         this.setDb(db);
 
         const objectStore = db.createObjectStore(this.storeName(), { keyPath: "key" }, false);
@@ -259,11 +262,31 @@
      * Closes the database.
      * @returns {SvIndexedDbFolder} - Returns this instance.
      */
-    close () {
-        if (this.isOpen()) {
-            this.db().close();
+    attachConnectionWatchers (db) {
+        db.onversionchange = () => {
+            db.close();
+            this.clearDbIfSame(db);
+        };
+        db.onclose = () => {
+            this.clearDbIfSame(db);
+        };
+        return this;
+    }
+
+    clearDbIfSame (db) {
+        if (this.db() === db) {
             this.setDb(null);
             this.setPromiseForOpen(null);
+        }
+        return this;
+    }
+
+    close () {
+        const db = this.db();
+        if (db) {
+            this.setDb(null);
+            this.setPromiseForOpen(null);
+            db.close();
         }
         return this;
     }

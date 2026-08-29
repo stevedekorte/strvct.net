@@ -280,7 +280,7 @@
     acceptsDrop (event) {
         const cv = this.scrollContentView();
         const result = cv && cv.acceptsDrop ? cv.acceptsDrop(event) : false;
-        console.log("SvScrollView: acceptsDrop: event:", event.type, "result:", result);
+        //console.log("SvScrollView: acceptsDrop: event:", event.type, "result:", result);
         return result;
     }
 

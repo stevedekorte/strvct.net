@@ -209,30 +209,39 @@
     async applyChangesToTx (tx) {
         assert(!this.isApplying());
         this.setIsApplying(true);
-
-        tx.setTxId(this.newTxId());
-        tx.setIsDebugging(this.isDebugging());
-        tx.begin();
-        this.changedKeySet().forEachK((k) => {
-            const v = this.at(k);
-            if (!this.has(k)) {
-                tx.removeAt(k);
-            } else {
-                const isUpdate = this.snapshot().has(k);
-                if (isUpdate) {
-                    tx.atUpdate(k, v);
-                } else {
-                    tx.atAdd(k, v);
-                }
+        try {
+            if (!this.idb() || !this.idb().isOpen()) {
+                return;
             }
-        });
+            tx.setTxId(this.newTxId());
+            tx.setIsDebugging(this.isDebugging());
+            tx.begin();
+            this.changedKeySet().forEachK((k) => {
+                const v = this.at(k);
+                if (!this.has(k)) {
+                    tx.removeAt(k);
+                } else {
+                    const isUpdate = this.snapshot().has(k);
+                    if (isUpdate) {
+                        tx.atUpdate(k, v);
+                    } else {
+                        tx.atAdd(k, v);
+                    }
+                }
+            });
 
-        super.applyChanges(); // do this last as it will clear the snapshot
+            super.applyChanges(); // do this last as it will clear the snapshot
 
-        this.logDebug(() => "---- " + this.svType() + " committed tx with " + count + " writes ----");
-
-        await tx.promiseCommit();
-        this.setIsApplying(false);
+            await tx.promiseCommit();
+        } catch (error) {
+            if (SvIndexedDbTx.isConnectionClosingError(error)) {
+                console.warn(this.logPrefix(), "skipping commit: IndexedDB connection is closing");
+                return;
+            }
+            throw error;
+        } finally {
+            this.setIsApplying(false);
+        }
     }
 
     /**

@@ -1,3 +1,4 @@
 [
-    "peerjs/peerjs1.3.2.min.js"
+    "peerjs/peerjs1.3.2.min.js",
+    "peerjs/UiAttribution.json"
 ]

@@ -19,17 +19,6 @@
     }
 
     /**
-     * @description Initializes the SvPointerFieldTile instance.
-     * @returns {SvPointerFieldTile} The initialized instance.
-     * @category Initialization
-     */
-    init () {
-        super.init();
-        this.makeNoteRightArrow();
-        return this;
-    }
-
-    /**
      * @description Updates the subviews of the SvPointerFieldTile.
      * @returns {SvPointerFieldTile} The instance after updating subviews.
      * @category UI Update
@@ -37,7 +26,11 @@
     updateSubviews () {
         super.updateSubviews();
 
-        //let node = this.node()
+        if (this.shouldShowNavArrow()) {
+            this.makeNoteRightArrow();
+        } else {
+            this.hideNoteRightArrow();
+        }
 
         if (this.isSelected()) {
             this.noteView().setOpacity(1);
@@ -48,6 +41,21 @@
         this.applyStyles();
 
         return this;
+    }
+
+    shouldShowNavArrow () {
+        const node = this.node();
+        if (!node || !node.nodeTileLink) {
+            return false;
+        }
+        const linked = node.nodeTileLink();
+        if (!linked) {
+            return false;
+        }
+        if (linked.nodeCanNavInto && !linked.nodeCanNavInto()) {
+            return false;
+        }
+        return true;
     }
 
 }.initThisClass());

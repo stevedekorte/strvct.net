@@ -40,6 +40,15 @@
             slot.setSlotType("Boolean");
         }
 
+        {
+            // Document-style fields (handbook HTML, etc.) stay visually
+            // unselected — they are not nav tiles.
+            const slot = this.newSlot("nodeTilePaintsSelectionLook", true);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+        }
+
         /**
          * @member {string} key - The key of the field.
          */

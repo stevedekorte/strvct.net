@@ -46,6 +46,10 @@
             const slot = this.newSlot("progressiveSyncEpoch", 0);
             slot.setSlotType("Number");
         }
+        {
+            const slot = this.newSlot("imageFetchRetryCount", 0);
+            slot.setSlotType("Number");
+        }
     }
 
     /**
@@ -180,9 +184,21 @@
             return this;
         }
 
-        // Keep the reserved box visible throughout work.
         this.valueViewContainer().setDisplay("");
         well.setIsDisplayHidden(false);
+
+        // A finished image on reload must not reserve the 3:2 hole. That
+        // padding-top box is for in-flight generation; after complete it
+        // was the empty rectangle (height:0 + 66% padding, no layers).
+        if (this.nodeHasImageToFetch() && !(field.progressiveImageIsWorking && field.progressiveImageIsWorking())) {
+            if (well.setIsWorking) {
+                well.setIsWorking(false);
+            }
+            if (well.setAspectRatioString) {
+                well.setAspectRatioString(null);
+            }
+            return this;
+        }
 
         if (well.setAspectRatioString) {
             well.setAspectRatioString(field.progressiveImageAspectRatio());
@@ -237,30 +253,65 @@
         const well = this.imageWellView();
         const field = this.node();
 
-        // Failed terminal: the (sync) syncProgressiveFromNode already tore the
-        // well down. Don't resolve/re-apply preview or final images — that would
-        // rebuild the very layers applyFailedState() just cleared.
         if (field.progressiveImageHasFailed && field.progressiveImageHasFailed()) {
+            return this;
+        }
+
+        // A conversation-level didUpdateNode (progress-tag hide, TV band,
+        // load hygiene) resyncs every tile and used to bump this epoch,
+        // cancelling the blob fetch and leaving the reserved box empty.
+        // Once this well has a final, later storms must not restart it.
+        if (well.finalDataUrl && well.finalDataUrl()) {
             return this;
         }
 
         this.setProgressiveSyncEpoch(this.progressiveSyncEpoch() + 1);
         const epoch = this.progressiveSyncEpoch();
 
-        // Resolve final + preview concurrently (independent); application order
-        // is enforced inside the well.
         const [finalUrl, previewUrl] = await Promise.all([
             this.asyncResolveFinalUrl(),
             this.asyncResolvePreviewUrl()
         ]);
 
         if (this.progressiveSyncEpoch() !== epoch) {
-            return this; // a newer pass superseded this one mid-await
+            return this;
+        }
+
+        if (finalUrl) {
+            this.setImageFetchRetryCount(0);
+            if (well.applyProgressiveImageData) {
+                well.applyProgressiveImageData(finalUrl, previewUrl);
+            }
+            return this;
+        }
+
+        if (well.finalDataUrl && well.finalDataUrl()) {
+            return this;
+        }
+
+        if (this.nodeHasImageToFetch()) {
+            return this.scheduleImageFetchRetry();
         }
 
         if (well.applyProgressiveImageData) {
-            well.applyProgressiveImageData(finalUrl, previewUrl);
+            well.applyProgressiveImageData(null, previewUrl);
         }
+        return this;
+    }
+
+    nodeHasImageToFetch () {
+        const field = this.node();
+        return !!(field && field.hasLoaded && field.hasLoaded());
+    }
+
+    scheduleImageFetchRetry () {
+        const n = this.imageFetchRetryCount();
+        if (n >= 8) {
+            return this;
+        }
+        this.setImageFetchRetryCount(n + 1);
+        const delayMs = 200 * (n + 1);
+        this.addTimeout(() => this.asyncSyncProgressiveFromNode(), delayMs, "imageWellFetchRetry");
         return this;
     }
 
@@ -274,13 +325,39 @@
         try {
             const value = this.node().value();
             if (value && value.asyncDataUrl) {
-                return await value.asyncDataUrl();
+                const dataUrl = await value.asyncDataUrl();
+                if (dataUrl) {
+                    return dataUrl;
+                }
             }
             if (typeof value === "string" && value.length > 0) {
                 return value;
             }
+            const publicUrl = await this.asyncResolvePublicUrl();
+            if (publicUrl) {
+                return publicUrl;
+            }
         } catch (error) {
             console.warn("SvImageWellFieldTile: failed to load final image:", error.message);
+        }
+        return null;
+    }
+
+    async asyncResolvePublicUrl () {
+        const field = this.node();
+        const imageNode = field && field.imageNode ? field.imageNode() : null;
+        if (!imageNode) {
+            return null;
+        }
+        if (imageNode.publicUrl && imageNode.publicUrl()) {
+            return imageNode.publicUrl();
+        }
+        if (imageNode.asyncPublicUrl) {
+            try {
+                return await imageNode.asyncPublicUrl();
+            } catch (error) {
+                return null;
+            }
         }
         return null;
     }

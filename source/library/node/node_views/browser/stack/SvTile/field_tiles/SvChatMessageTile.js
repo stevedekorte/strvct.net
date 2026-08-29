@@ -334,10 +334,17 @@
     }
 
     progressFadedOpacity () {
-        return "0.2";
+        return "var(--narration-progress-faded-opacity)";
+    }
+
+    shouldAnimateNarrationProgress () {
+        return false;
     }
 
     shouldSkipDisplayExitAnimation () {
+        if (!this.shouldAnimateNarrationProgress()) {
+            return true;
+        }
         if (typeof document !== "undefined" && document.hidden) {
             return true;
         }

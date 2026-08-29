@@ -42,12 +42,6 @@
             slot.setSlotType("Boolean");
         }
 
-        {
-            const slot = this.newSlot("hasCompletedFirstDisplayLifetimeSweep", false);
-            slot.setSlotType("Boolean");
-            slot.setShouldStoreSlot(false);
-        }
-
     }
 
     /**
@@ -320,12 +314,11 @@
     }
 
     /**
-   * @description One pass over the messages: refresh the view of any message
-   * whose derived expiry state TRANSITIONED (exactly one refresh per
-   * transition — the tile runs the exit animation off it), then arm ONE
-   * timer for the earliest pending time-based expiry. Never a timer per
-   * message. Expiry is derived (see SvConversationMessage.isDisplayExpired);
-   * this sweep only decides WHEN views need to re-read it.
+   * @description One pass over the messages: record expiry transitions and
+   * arm ONE timer for the earliest pending time-based expiry. Never a timer
+   * per message. Does not didUpdateNode — v1 hide is tag-only on the chat
+   * tile, and a message notify bubbles to the conversation and storms the
+   * column (cancelling in-flight image loads).
    * @returns {SvConversation}
    * @category Display Lifetime
    */
@@ -337,7 +330,6 @@
             // here after teardown nulled the subnodes. Nothing to sweep.
             return this;
         }
-        const notifyViews = this.hasCompletedFirstDisplayLifetimeSweep();
         let nextExpiryTime = null;
         messages.forEach(m => {
             if (!m.isDisplayExpired) {
@@ -346,13 +338,13 @@
             const expired = m.isDisplayExpired();
             if (expired !== m.wasDisplayExpired()) {
                 m.setWasDisplayExpired(expired);
-                // First sweep after load: tiles have not painted yet and will
-                // snap on first syncFromNode. didUpdateNode here storms the
-                // column and cancels in-flight progressive image loads
-                // (SvImageWellFieldTile epoch).
-                if (notifyViews) {
-                    m.didUpdateNode();
-                }
+                // Tag-only hide: do NOT didUpdateNode. That bubbles to the
+                // conversation (SvNode.didUpdateNode → parent) and rebuilds
+                // the column, which bumps SvImageWellFieldTile's progressive
+                // epoch and cancels in-flight blob loads — reopening a
+                // session then showed a blank well where the scene image
+                // should be. Chat tiles snap/fade progress tags themselves
+                // (CSS on first paint, JS while live).
             }
             if (!expired) {
                 const t = m.displayExpiryTime();
@@ -362,7 +354,6 @@
             }
         });
         this.armDisplayLifetimeTimer(nextExpiryTime);
-        this.setHasCompletedFirstDisplayLifetimeSweep(true);
         return this;
     }
 

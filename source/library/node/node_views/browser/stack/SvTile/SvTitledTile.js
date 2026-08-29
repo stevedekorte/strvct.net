@@ -520,7 +520,7 @@
         nv.setString(this.node().translatedValueOfSlotNamed("note"));
         // Clear any background image that might have been set (e.g. right arrow)
         nv.setBackgroundImageUrlPath(null);
-        nv.setBackgroundSizeWH(null, null);
+        nv.setBackgroundSize(null);
         nv.setWidth("fit-content");
         nv.setHeight("fit-content");
         nv.setMinAndMaxWidth(null);
@@ -678,6 +678,16 @@
 
         nv.setMinAndMaxWidth(10);
         nv.setMinAndMaxHeight(10);
+        return this;
+    }
+
+    hideNoteRightArrow () {
+        const nv = this.noteView();
+        nv.setBackgroundImageUrlPath(null);
+        nv.setBackgroundSize(null);
+        nv.setBackgroundRepeat(null);
+        nv.setMinAndMaxWidth(null);
+        nv.setMinAndMaxHeight(null);
         return this;
     }
 

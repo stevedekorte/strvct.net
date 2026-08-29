@@ -253,31 +253,7 @@
                 }
                 else {
                     if (slot.finalInitProto()) {
-                        const node = slot.onInstanceGetValue(this);
-
-                        if (node) {
-                            if (Type.isPrimitiveJsonType(v)) {
-                                // just set the slot if it's a primitive
-                                slot.onInstanceSetValue(this, v);
-                            } else if (node.jsonId() === v.jsonId || node.jsonId() === undefined) {
-                                // otherwise, make sure jsonId's match
-                                node.deserializeFromJson(v, filterName, jsonPathComponents.concat(k));
-                            } else {
-                                // if not, something is wrong
-
-                                // since jsonId is created on finalInit, this could be set even if it really should be null
-                                //console.warn(this.svType() + ".deserializeFromJson() found slot with jsonId mismatch: " + node.jsonId() + " !== " + v.jsonId, " at path: " + jsonPathComponents.concat(k).join("/"));
-
-                                node.deserializeFromJson(v, filterName, jsonPathComponents.concat(k));
-                            }
-                        } else {
-                            if (Type.isNull(v) && (slot.allowsNullValue() || slot.isRequired() === false)) {
-                                // no problemo
-                            } else {
-                                const newNode = slot.finalInitProto().clone().deserializeFromJson(v, filterName, jsonPathComponents.concat(k));
-                                slot.onInstanceSetValue(this, newNode);
-                            }
-                        }
+                        this.applyJsonToProtoSlot(slot, v, filterName, jsonPathComponents.concat(k));
                     } else {
                         if (Type.isNull(v)) {
                             if (slot.allowsNullValue()) {
@@ -378,6 +354,64 @@
         return this;
     }
 
+    applyJsonToProtoSlot (slot, v, filterName, jsonPath) {
+        if (slot.isLazy()) {
+            this.applyJsonToLazyProtoSlot(slot, v, filterName, jsonPath);
+            return this;
+        }
+        const node = slot.onInstanceGetValue(this);
+        if (node) {
+            if (Type.isPrimitiveJsonType(v)) {
+                slot.onInstanceSetValue(this, v);
+            } else {
+                node.deserializeFromJson(v, filterName, jsonPath);
+            }
+            return this;
+        }
+        if (Type.isNull(v) && (slot.allowsNullValue() || slot.isRequired() === false)) {
+            return this;
+        }
+        const newNode = slot.finalInitProto().clone().deserializeFromJson(v, filterName, jsonPath);
+        slot.onInstanceSetValue(this, newNode);
+        return this;
+    }
+
+    applyJsonToLazyProtoSlot (slot, v, filterName, jsonPath) {
+        if (Type.isNull(v) && (slot.allowsNullValue() || slot.isRequired() === false)) {
+            slot.onInstanceRawSetValue(this, null);
+            return this;
+        }
+        if (Type.isPrimitiveJsonType(v)) {
+            slot.onInstanceSetValue(this, v);
+            return this;
+        }
+        const existing = slot.onInstanceRawGetValue(this);
+        if (this.canMergeJsonIntoSlotValue(existing)) {
+            existing.deserializeFromJson(v, filterName, jsonPath);
+            return this;
+        }
+        const ref = SvLazyJsonRef.clone()
+            .setJson(v)
+            .setFilterName(filterName)
+            .setJsonPathComponents(jsonPath);
+        slot.onInstanceRawSetValue(this, ref);
+        this.markAsDirty();
+        return this;
+    }
+
+    canMergeJsonIntoSlotValue (existing) {
+        if (!existing || !existing.deserializeFromJson) {
+            return false;
+        }
+        if (typeof(SvStoreRef) !== "undefined" && existing instanceof SvStoreRef) {
+            return false;
+        }
+        if (typeof(SvLazyJsonRef) !== "undefined" && existing instanceof SvLazyJsonRef) {
+            return false;
+        }
+        return true;
+    }
+
     jsonReferencedValueSet (refs = new Set()) {
         if (this.shouldStoreSubnodes()) {
             this.subnodes().slice(0).forEach(sn => {
@@ -476,6 +510,13 @@
         } else {
             slots.forEach(slot => {
                 const slotName = slot.name();
+                if (slot.isLazy()) {
+                    const raw = slot.onInstanceRawGetValue(this);
+                    if (typeof(SvLazyJsonRef) !== "undefined" && raw instanceof SvLazyJsonRef) {
+                        dict[slotName] = raw.json();
+                        return;
+                    }
+                }
                 const value = slot.onInstanceGetValue(this);
 
                 if (value && value.serializeToJson) {

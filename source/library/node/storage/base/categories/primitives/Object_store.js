@@ -143,6 +143,8 @@
     refsPidsForJsonStore (puuids = new Set()) {
         if (Object.hasOwn(this, "*")) {
             puuids.add(this["*"]);
+        } else if (Object.hasOwn(this, "*lazyJson")) {
+            // Deferred JSON parked in a lazy slot — inline payload, no pid refs.
         } else {
             throw new Error("dictionaries are reserved for pointers, but we found a non-pointer");
         }

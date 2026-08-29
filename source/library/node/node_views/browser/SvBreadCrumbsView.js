@@ -331,27 +331,25 @@
             return this;
         }
 
-        // Start from everything visible (back included, so its width counts
-        // while we decide what to hide).
-        views.forEach(v => v.unhideDisplay());
-
         // Subview order: [back, crumb, sep, crumb, sep, …, currentCrumb].
-        // Hide leading (crumb, separator) pairs left-to-right until the rest
-        // fits. The current crumb (last subview) is never hidden.
-        let i = 1;
-        while (e.scrollWidth > e.clientWidth && i < views.length - 1) {
-            views[i].hideDisplay(); // crumb
-            if (i + 1 < views.length - 1) {
-                views[i + 1].hideDisplay(); // its trailing separator
-            }
-            i += 2;
+        // Try the full path with the back button hidden. Only if that overflows
+        // do we show ← and drop leading (crumb, separator) pairs. The current
+        // crumb is never hidden.
+        views.forEach(v => v.unhideDisplay());
+        back.hideDisplay();
+        if (e.scrollWidth <= e.clientWidth) {
+            e.scrollLeft = e.scrollWidth;
+            return this;
         }
 
-        // Always keep the back button while there is a parent to return to.
-        // Compaction used to hide it whenever the full path fit, which left a
-        // narrow companion (often a single visible column) with no way back.
-        if (!this.canNavigateBack()) {
-            back.hideDisplay();
+        back.unhideDisplay();
+        let i = 1;
+        while (e.scrollWidth > e.clientWidth && i < views.length - 1) {
+            views[i].hideDisplay();
+            if (i + 1 < views.length - 1) {
+                views[i + 1].hideDisplay();
+            }
+            i += 2;
         }
 
         // Fallback for a single crumb wider than the bar: keep its tail visible.
