@@ -5438,7 +5438,7 @@ This paper proposes a stronger account of that grammar. Most structured-informat
 1. **traversing relationships among domain objects**, and
 2. **projecting collections along a small number of semantic dimensions**.
 
-Strvct implements the first operation through recursively composed, orientation-flexible master-detail views generated from the object graph. Tiles and tile stacks provide a uniform summary, editing, and navigation surface; Miller-column-style recursion preserves context at arbitrary depth and collapses automatically on narrow viewports. They already cover recursive hierarchy, ordered lists, and feed-like rich-item sequences. The remaining projection hypothesis is smaller than a catalog of named widgets: matrix mappings, categorical grouping, and continuous-axis mappings may account for tables, kanban boards, timelines, calendars, and related forms through declarative combinations of arrangement, semantic slot mappings, item presentation, and interaction rules.
+Strvct implements the first operation through recursively composed, orientation-flexible master-detail views generated from the object graph. Tiles and tile stacks provide a uniform summary, editing, and navigation surface; Miller-column-style recursion preserves context at arbitrary depth and collapses automatically on narrow viewports. They already cover recursive hierarchy, ordered lists, and feed-like rich-item sequences. Three additional projection families—matrix mappings, categorical grouping, and continuous-axis mappings—may account for tables, kanban boards, timelines, calendars, and related forms through declarative combinations of arrangement, semantic slot mappings, item presentation, and interaction rules.
 
 The resulting boundary is sharper than “generated UI versus custom UI.” Ordinary information management belongs in the generated grammar. A custom view is appropriate when spatial representation itself carries irreducible domain meaning: a code editor, map, chart, waveform, canvas, 3D scene, or game surface.
 
@@ -5522,7 +5522,7 @@ Tasks
 
 These are not four unrelated application features. They are four projections of one collection whose semantics already live in the model.
 
-The original candidate list—list, grid, table, tree, feed, kanban, and timeline—overcounts the underlying ideas. Several forms collapse into behavior Strvct already has or into layout variants of it:
+Several familiar interface forms reduce to behavior Strvct already provides or to layout variants of it:
 
 - **Feed** is an ordered tile stack with temporal or ranked ordering and rich item tiles.
 - **Tree** is the existing recursive relationship topology. An inline expanded tree changes where levels appear, not the underlying navigation semantics.
@@ -5540,7 +5540,7 @@ This leaves three principal missing projection families, plus one open boundary:
 
 A matrix shares geometry across several products without erasing their interaction differences. A table maps objects × slots. A spreadsheet adds addressable cells, ranges, formulas, fill operations, and recalculation. A pivot maps grouped domain dimensions onto both axes. These may share a projection family while retaining specialized behavior.
 
-The candidate algebra can be described through orthogonal choices:
+The projection algebra consists of orthogonal choices:
 
 - **Arrangement:** linear, wrapped, matrix, categorical columns, or continuous axis
 - **Semantic mapping:** which slots determine order, group, axis position, or extent
@@ -6025,7 +6025,7 @@ There is a parallel engineering crossover. Hand-crafted screens may be economica
 
 A coverage result and an adoption result are not the same thing, and the distinction governs how this paper's central claim should be read. Everything in §3 and §8 argues *coverage*: the patterns fit most informational UIs. But the reason naked objects stalled for twenty-five years was never that the patterns failed to fit — prior implementations already produced complete, correct interfaces. The binding constraint is **switch cost**. The pointer analogy (§3) is strong on coverage but misleading on adoption: the mouse carried a near-zero relearning tax, whereas adopting a derived-UI framework means giving up the React ecosystem, the component-library commons, and fine-grained per-screen control. "Most UIs fit the patterns" can be entirely true and still not produce pointer-style adoption, because the quantity being weighed is not coverage but the cost of leaving.
 
-**The economic lever.** One force changes the *adoption* arithmetic rather than the *coverage* arithmetic: the shift to agent-mediated development. When an LLM is a routine co-editor of application state, the bespoke-UI path acquires a new recurring obligation — it must also expose, document, and keep in sync a tool surface for every mutable type, a cost that grows with the model and rots against it as the model changes. A derived architecture pays that cost once, structurally, because the tool surface *is* the model (§7.1). This reframes the value proposition from one that is easy to resist ("consistent UIs and lower view-maintenance") to one that React-plus-bespoke cannot match without converging on the same architecture: *natively agent-operable, and stays that way for free*. We present this as the decisive lever precisely because it is the first argument that targets the constraint that actually bound adoption, rather than re-arguing coverage.
+**The economic lever.** Agent-mediated development changes the *adoption* arithmetic rather than the *coverage* arithmetic. When an LLM is a routine co-editor of application state, the bespoke-UI path acquires a recurring obligation: it must expose, document, and keep synchronized a tool surface for every mutable type, a cost that grows with the model and decays as the model changes. A derived architecture pays that cost once, structurally, because the tool surface *is* the model (§7.1). The value proposition is therefore not only consistent UI and lower view maintenance, but an application that is natively agent-operable and remains aligned as its domain evolves. A bespoke architecture can achieve the same property only by introducing a shared model-derived interface of its own.
 
 The practical adoption question is therefore not whether Strvct can imitate every screen in a mainstream application. It is whether a team gains more by keeping one inspectable model authoritative than it loses by leaving familiar package, component, and tooling ecosystems. Semantic projections improve that exchange because they reduce the amount of ordinary application UI that triggers an escape into custom code. Independent developers and independently chosen applications are still needed to measure it.
 
@@ -6069,7 +6069,7 @@ This suits exploratory or fast-evolving applications: tools for analysis, resear
 
 The naked objects pattern has offered a compelling proposition for twenty-five years: write the domain model, and let the application follow. Its limited adoption does not show that derivation is impossible. It shows that deriving every object into a form and every collection into a table is not enough.
 
-The stronger grammar has two operations: traverse relationships through an object graph, and project collections along semantic dimensions. Strvct already implements recursive hierarchy, linear tile collections, and feed-like rich-item sequences through tiles, tile stacks, and master-detail navigation. The principal missing families now appear smaller: matrix, categorical grouping, and continuous-axis mapping, with quantitative visualization as an open boundary. Tables, spreadsheets, pivots, kanban boards, timelines, and calendars are not necessarily peer widgets; they may be configurations of recurring spatial and semantic mappings attached to the model's properties, relationships, and actions.
+The stronger grammar has two operations: traverse relationships through an object graph, and project collections along semantic dimensions. Strvct already implements recursive hierarchy, linear tile collections, and feed-like rich-item sequences through tiles, tile stacks, and master-detail navigation. The principal unimplemented families are matrix, categorical grouping, and continuous-axis mapping, with quantitative visualization as an open boundary. Tables, spreadsheets, pivots, kanban boards, timelines, and calendars are not necessarily peer widgets; they may be configurations of recurring spatial and semantic mappings attached to the model's properties, relationships, and actions.
 
 This formulation gives custom views a principled boundary. They are not an escape hatch for ordinary page layout. They are the right representation when geometry or a specialized medium is itself part of the domain: editors, maps, charts, waveforms, canvases, 3D scenes, and games.
 
