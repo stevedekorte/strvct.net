@@ -209,6 +209,31 @@ function testLens () {
     check(locs5[0].sublocations.some(x => typeof x === "object" && x._lod === undefined),
         "deep target emitted at full through the carrier chain");
 
+    console.log("\nComputed summary extras (lensSummaryExtraEntries)");
+    const t3 = buildTree();
+    const crypt3 = t3.root.descendantWithJsonId("loc-crypt");
+    crypt3.lensSummaryExtraEntries = function () {
+        return [["vitals", "computed at-a-glance line"], ["sublocations", "MUST NOT SHADOW"]];
+    };
+    const extrasSummary = SvClientStateLens.fromJson({
+        select: [{ nodes: ["loc-crypt"], lod: "summary" }],
+        default: "omit"
+    }, t3.root);
+    const view6 = t3.root.serializeWithLens(extrasSummary, "omit", 0);
+    const crypt6 = view6.campaign.locations[0];
+    check(crypt6 && crypt6.vitals === "computed at-a-glance line",
+        "summary emission carries the computed extra entry");
+    check(crypt6.sublocations !== "MUST NOT SHADOW" && typeof crypt6.sublocations === "object",
+        "an extra whose key matches a real emitted child does not shadow it");
+    const extrasFull = SvClientStateLens.fromJson({
+        select: [{ nodes: ["loc-crypt"], lod: "full" }],
+        default: "omit"
+    }, t3.root);
+    const view7 = t3.root.serializeWithLens(extrasFull, "omit", 0);
+    const crypt7 = view7.campaign.locations[0];
+    check(crypt7 && crypt7.vitals === undefined,
+        "full emission does not carry summary extras (real data is already there)");
+
     console.log("\nLens errors are self-describing");
     let err = null;
     try {

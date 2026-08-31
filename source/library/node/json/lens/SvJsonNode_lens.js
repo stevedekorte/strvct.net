@@ -184,8 +184,28 @@
             if (this.jsonId && dict.jsonId === undefined) {
                 dict.jsonId = this.jsonId();
             }
+            this.lensSummaryExtraEntries().forEach(([key, value]) => {
+                if (dict[key] === undefined) { // computed extras never shadow real slots
+                    dict[key] = value;
+                }
+            });
         }
         return dict;
+    }
+
+    /**
+     * @description Computed entries a class contributes to its lens "summary"
+     * emission, as [key, jsonValue] pairs. Where summarySlotNames FILTERS
+     * which slots emit, this ADDS derived facts the slots can't carry — an
+     * at-a-glance line computed from nested children (a character's vitals,
+     * its equipped gear) that a summary reader needs without raising the
+     * whole subtree. Summary LOD only: full emission already carries the
+     * real data, and a handle stays minimal. Keys never shadow real slots.
+     * @returns {Array} [key, jsonValue] pairs; [] contributes nothing.
+     * @category Lens
+     */
+    lensSummaryExtraEntries () {
+        return [];
     }
 
     lensChildNodes () {
