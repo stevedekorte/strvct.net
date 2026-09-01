@@ -110,28 +110,8 @@
         if (local && local > cloud) {
             return true; // Local changes pending
         }
-        // Only children this collection could actually push. Unloaded
-        // placeholders can carry a stale local>cloud stamp (a later
-        // didUpdateNode after hydrate) while isChildCloudSyncable
-        // refuses to save them — counting those as unsaved work left
-        // hasUnsavedCloudChanges true forever (upload icon stuck,
-        // close blocked, sync finished in 0.0s).
-        return this.subnodes().canDetect(item => this.childNeedsCloudSync(item));
-    }
-
-    /**
-     * @description Whether a child is unsaved work this collection can
-     * push. Cloud folders (isChildCloudSyncable) skip unloaded
-     * placeholders; other array nodes fall back to the child's own flag.
-     * @param {SvNode} item
-     * @returns {Boolean}
-     * @category Sync
-     */
-    childNeedsCloudSync (item) {
-        if (typeof this.isChildCloudSyncable === "function") {
-            return this.isChildCloudSyncable(item);
-        }
-        return !!(item.needsCloudSync && item.needsCloudSync());
+        // Check if any item needs sync
+        return this.subnodes().canDetect(item => item.needsCloudSync && item.needsCloudSync());
     }
 
     /**

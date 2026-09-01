@@ -68,34 +68,6 @@
         return this.path().pathExtension();
     }
 
-    nodeExpectsThumbnail () {
-        return true;
-    }
-
-    /**
-     * @description Root-relative URL for this CAM image so the tile can
-     * paint a thumbnail without fetching a data URL for every file.
-     * @returns {String|null}
-     * @category Thumbnail
-     */
-    resourceUrl () {
-        const p = this.path();
-        if (!p) {
-            return null;
-        }
-        if (p.startsWith("http") || p.startsWith("data:") || p.startsWith("/")) {
-            return p;
-        }
-        return "/" + p;
-    }
-
-    async asyncNodeThumbnailUrl () {
-        if (this.dataURL()) {
-            return this.dataURL();
-        }
-        return this.resourceUrl();
-    }
-
     /**
      * @description Loads the image data.
      * @returns {SvURLImage} The current instance.

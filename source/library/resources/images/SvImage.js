@@ -75,28 +75,6 @@
         return this.path().pathExtension();
     }
 
-    nodeExpectsThumbnail () {
-        return true;
-    }
-
-    resourceUrl () {
-        const p = this.path();
-        if (!p) {
-            return null;
-        }
-        if (p.startsWith("http") || p.startsWith("data:") || p.startsWith("/")) {
-            return p;
-        }
-        return "/" + p;
-    }
-
-    async asyncNodeThumbnailUrl () {
-        if (this.hasDataURL()) {
-            return this.dataURL();
-        }
-        return this.resourceUrl();
-    }
-
     onUpdateSlotDataURL () {
         this.setHexSha256Hash(null);
         // we'll lazily calculate the hash if/when needed

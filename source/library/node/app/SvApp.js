@@ -748,19 +748,6 @@
         console.log(this.logPrefix(), s);
     }
 
-    /**
-     * @description Navigate to the purchase-credits UI, then return to
-     * optionalNode (or the current nav leaf). Framework apps have no
-     * wallet — the Uo subclass implements this. Call on the shared
-     * instance: SvApp.shared().navToPurchaseCreditsThenReturn(node).
-     * @param {SvNode} [optionalNode] - node to return to after purchase
-     * @returns {SvApp}
-     * @category Credits
-     */
-    navToPurchaseCreditsThenReturn (/*optionalNode*/) {
-        throw new Error(this.svType() + ".shared().navToPurchaseCreditsThenReturn is not implemented");
-    }
-
     // General Cloud APIs
     // These are here so services which need them don't have to be tied directly to
     // the service that provide them. The app can override these to route them appropriately.

@@ -623,17 +623,6 @@ Midjourney
         this.setNodeCanReorderSubnodes(false);
     }
 
-    /**
-     * @description Midjourney rejects a published banned-word list; Krea does
-     * not. Scene gen asks the prompt class (this method) rather than switching
-     * on the generator name.
-     * @returns {Boolean}
-     * @category Capabilities
-     */
-    sterilizesBannedWords () {
-        return true;
-    }
-
     setOmniRefImagePublicUrl (publicUrl) {
         this.omniRefImageNode().setPublicUrl(publicUrl);
         return this;
