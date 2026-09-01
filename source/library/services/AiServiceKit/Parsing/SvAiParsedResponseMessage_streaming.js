@@ -239,6 +239,14 @@
                 !shouldIgnore && // a <sentence> nested in <think>/<scene-description> is meta-content — the tag dispatch above already skips it, but this block ran regardless and TTS spoke the AI's thoughts aloud
         this.tagsToSpeak().includes(nodeTag)
             ) {
+                if (streamNode.detectAncestor(node => node.name() === "table-talk")) {
+                    // Channel marker: the speak-time notes (onSpeakingText)
+                    // carry only the text, and the sentence's channel is only
+                    // knowable HERE at parse time. Surfaces that separate
+                    // meta speech from fiction (a theatre's top strip) match
+                    // the spoken text against these markers.
+                    this.postNoteNamed("onTableTalkSentence").setInfo(text);
+                }
                 const speak = text; //this.spokenContentOfText(text); // no longer needed as we only speak tags which contain no subtags
                 //console.log("speak: '" + speak.clipWithEllipsis(15) + "'");
 
