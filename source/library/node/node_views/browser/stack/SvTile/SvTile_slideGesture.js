@@ -38,7 +38,9 @@
      * @category Appearance
      */
     underContentViewColor () {
-        return "black";
+        // Revealed as the content view slides left. Must follow the theme:
+        // a literal black is a hole on parchment (and any light page).
+        return "var(--sv-bg)";
     }
 
     /**

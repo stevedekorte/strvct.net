@@ -117,7 +117,7 @@
      */
     valuePlaceholderText () {
         if (!this.isComplete() && this.isFirstAssistantResponse()) {
-            return "Setting up the conversation…";
+            return "Setting up the conversation"; // no ellipsis — the animated dots follow it
         }
         return null;
     }

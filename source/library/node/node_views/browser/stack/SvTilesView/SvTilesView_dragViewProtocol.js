@@ -252,7 +252,7 @@
         //this.logDebug("newTilePlaceHolder")
         if (!this.tilePlaceHolder()) {
             const ph = SvDomView.clone().setElementClassName("TilePlaceHolder"); // classname not for css rule, just a note for debugging
-            ph.setBackgroundColor("black");
+            ph.setBackgroundColor("var(--sv-bg)");
 
             //ph.setTransition("top 0s, left 0s, max-height 1s, min-height 1s");
             ph.setTransition("top 0s, left 0s");
