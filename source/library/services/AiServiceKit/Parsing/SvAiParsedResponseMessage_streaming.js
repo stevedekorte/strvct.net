@@ -223,13 +223,14 @@
                 // otherwise ignore these
             } else {
                 this.sendStreamTag(nodeTag, text);
-                /*
-        if (nodeTag === "narration-progress") { // incremental safe
-          // post a note that the ResponseMessageTile can use to control visibility of the progress notes
-          this.postNoteNamed("onNarrationProgress").setInfo(streamNode.textContent());
-          // if there is a watching tile, it should make this note visisble and hide all others within itself
-        }
-        */
+                if (nodeTag === "narration-progress") {
+                    // Working-status mirror: broadcast the progress line so
+                    // status surfaces (e.g. a theatre's top strip) can show
+                    // it without re-parsing content. Display-only by
+                    // construction — the voice path speaks only sentence
+                    // tags, so progress notes are never narrated.
+                    this.postNoteNamed("onNarrationProgress").setInfo(text);
+                }
             }
 
             this.updateContent(reader.rootNode().innerHtml()); // update so we can highlight the text when speaking
