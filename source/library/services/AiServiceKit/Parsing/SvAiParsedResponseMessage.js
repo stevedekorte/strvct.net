@@ -105,6 +105,39 @@
         return isVisibleToUser && super.isVisible() && (this.role() !== "system" /*|| SvApp.shared().developerMode() */);
     }
 
+    /**
+     * @description Placeholder shown by the tile while this message has no
+     * visible content yet (data-placeholder renders only on :empty). The
+     * conversation's FIRST assistant response takes the longest to arrive —
+     * reasoning and state reads precede any visible token — so it alone
+     * announces itself instead of showing bare typing dots. View-only: the
+     * text never enters the message content or the transcript.
+     * @returns {String|null}
+     * @category Display
+     */
+    valuePlaceholderText () {
+        if (!this.isComplete() && this.isFirstAssistantResponse()) {
+            return "Setting up the conversation…";
+        }
+        return null;
+    }
+
+    /**
+     * @description Whether this is the conversation's first assistant-role
+     * message. False without a conversation (detached/preview contexts).
+     * @returns {Boolean}
+     * @category Display
+     */
+    isFirstAssistantResponse () {
+        const conversation = this.conversation();
+        if (!conversation || typeof conversation.messages !== "function") {
+            return false;
+        }
+        const first = conversation.messages().detect((m) =>
+            typeof m.role === "function" && m.role() === "assistant");
+        return first === this;
+    }
+
     tagDelegate () {
     // return the conversation's tagDelegate if it has one
         const conversation = this.conversation();
