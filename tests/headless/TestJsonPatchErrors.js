@@ -125,10 +125,52 @@ function testGroupMissingKeyErrors () {
     check(subMsg !== null && subMsg.includes("sublocations"), "…and lists the actual child keys");
 }
 
+function testMoveIntoOwnSubtreeRejected () {
+    console.log("\nMove into own subtree is rejected (RFC 6902 prefix rule)");
+
+    const SvJsonArrayNode = SvGlobals.get("SvJsonArrayNode");
+    const SvJsonGroup = SvGlobals.get("SvJsonGroup");
+
+    // Patches enter through a group root (as patchClientState does); the
+    // guard fires in applyPatch before any path navigation or mutation.
+    const room = SvJsonGroup.clone();
+    room.setShouldStoreSubnodes(true);
+    const contents = SvJsonArrayNode.clone();
+    contents.setTitle("contents");
+    room.addSubnode(contents);
+    const item = SvJsonGroup.clone();
+    item.setTitle("Alatar's Signet Ring");
+    contents.addSubnode(item);
+
+    // The live incident: move /contents/0 → /contents/0/contents/0 cloned the
+    // ring into itself, then the source removal destroyed both. The guard
+    // must reject BEFORE any mutation.
+    const nestMsg = errorMessageFrom(() => room.applyJsonPatches([
+        { op: "move", from: "/contents/0", path: "/contents/0/contents/0" }
+    ]));
+    check(nestMsg !== null && nestMsg.includes("Illegal move"), "move into own descendant throws");
+    check(nestMsg !== null && nestMsg.includes("RFC 6902"), "…and the error cites the rule");
+    check(contents.subnodes().length === 1 && contents.subnodes()[0].title() === "Alatar's Signet Ring",
+        "…and the source is untouched (guard fired before mutation)");
+
+    // Exact-equal from/path: an RFC no-op, but our add-then-remove shape
+    // would destroy the value — reject it as the caller mistake it is.
+    const equalMsg = errorMessageFrom(() => room.applyJsonPatches([
+        { op: "move", from: "/contents/0", path: "/contents/0" }
+    ]));
+    check(equalMsg !== null && equalMsg.includes("Illegal move"), "move onto itself throws");
+
+    // Segment-boundary safety: "/0" must not be treated as a prefix of "/02".
+    const boundaryMsg = errorMessageFrom(() =>
+        SvGlobals.get("SvJsonPatchError").assertMoveNotIntoOwnSubtree({ op: "move", from: "/0", path: "/02" }));
+    check(boundaryMsg === null, "sibling path sharing a name prefix is not rejected");
+}
+
 (async () => {
     await boot();
     testArrayBoundsErrors();
     testGroupMissingKeyErrors();
+    testMoveIntoOwnSubtreeRejected();
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);
 })().catch((e) => {

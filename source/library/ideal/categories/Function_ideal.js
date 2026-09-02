@@ -266,13 +266,16 @@ Function.prototype.resultReminderMethodName = function () {
 //   "outcome-only"     - the payload never ships, newest included; the live
 //                        view rides a never-stored request trailer instead
 //                        (getClientState — Plans/Cache-Safe Standing View)
-//   "recent-window:N"  - results older than the last N messages are stripped
+//   "recent-responses:N" - a result survives until N assistant responses
+//                        follow it, then is stripped. Counted in assistant
+//                        messages, not raw messages — the current delivery
+//                        (no response after it yet) is never stripped.
 // Stripped results have json.result replaced by resultRetentionNote (or a
 // generic note); the tool CALL stays visible in the assistant text.
 
 Function.prototype.setResultRetentionPolicy = function (aString) {
     assert(Type.isString(aString));
-    assert(aString === "keep" || aString === "keep-newest-only" || aString === "outcome-only" || aString.startsWith("recent-window:"),
+    assert(aString === "keep" || aString === "keep-newest-only" || aString === "outcome-only" || aString.startsWith("recent-responses:"),
         "invalid result retention policy '" + aString + "'");
     this.setMetaProperty("resultRetentionPolicy", aString);
     return this;

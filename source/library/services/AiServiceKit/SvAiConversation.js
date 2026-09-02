@@ -1120,10 +1120,17 @@
    *                        instead (see appendEphemeralUserContent). The
    *                        .error and .reminder fields are untouched, so call
    *                        errors still ship frozen in place.
-   *   "recent-window:N"  — results older than the last N messages are stripped
-   *                        (recent errors matter, old successes don't; keep N
-   *                        small so the rewritten region stays confined to the
-   *                        tail for the prompt cache).
+   *   "recent-responses:N" — a result survives until N ASSISTANT responses
+   *                        follow it, then is stripped (recent errors matter,
+   *                        old successes don't; keep N small so the rewritten
+   *                        region stays confined to the tail for the prompt
+   *                        cache). Counted in assistant messages, NOT raw
+   *                        messages: a raw-message window shrank to under one
+   *                        turn during chained tool sequences, stripping peek
+   *                        results before the model ever read them (GM bug
+   *                        report 2026-09-02). A result with no assistant
+   *                        response after it is the current delivery and is
+   *                        NEVER stripped.
    *
    * Stripping replaces json.result with the tool's setResultRetentionNote (or
    * a generic note); the CALL stays visible in the assistant text, so what
@@ -1137,7 +1144,16 @@
         if (!toolDefinitions) {
             return messages;
         }
+        let assistantRoleName = "assistant";
+        try {
+            if (this.service()) {
+                assistantRoleName = this.service().serviceRoleNameForRole("assistant");
+            }
+        } catch (e) { // eslint-disable-line no-unused-vars
+            // no chat model wired (headless fixture) — the generic name is right
+        }
         const seenNewestOfTool = new Set();
+        let assistantResponsesAfter = 0; // assistant messages strictly after the message being filtered
         for (let index = messages.length - 1; index >= 1; index--) { // skip index 0 (may be a system message)
             const m = messages[index];
             m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
@@ -1167,14 +1183,14 @@
                         seenNewestOfTool.add(toolName); // newest survives, whatever its age
                         return content;
                     }
-                } else if (policy.startsWith("recent-window:")) {
+                } else if (policy.startsWith("recent-responses:")) {
                     const windowSize = parseInt(policy.split(":")[1], 10);
                     if (!(windowSize > 0)) {
-                        console.warn(this.logPrefix(), "invalid recent-window retention policy '" + policy + "' on tool '" + toolName + "' — keeping result");
+                        console.warn(this.logPrefix(), "invalid recent-responses retention policy '" + policy + "' on tool '" + toolName + "' — keeping result");
                         return content;
                     }
-                    if (index >= messages.length - windowSize) {
-                        return content; // still within the window
+                    if (assistantResponsesAfter < windowSize) {
+                        return content; // the model hasn't had N responses to act on it yet
                     }
                 } else {
                     console.warn(this.logPrefix(), "unknown result retention policy '" + policy + "' on tool '" + toolName + "' — keeping result");
@@ -1185,6 +1201,9 @@
                 resultJson.result = note;
                 return JSON.stableStringifyWithStdOptions(resultJson, null, 2);
             });
+            if (m.role === assistantRoleName) {
+                assistantResponsesAfter++;
+            }
         }
         return messages;
     }

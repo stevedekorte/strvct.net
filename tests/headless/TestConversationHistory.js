@@ -251,18 +251,33 @@ function testResultRetention () {
         "keep-newest-only: older result stripped with the tool's note");
     check(messages[3].content.includes("NEW"), "keep-newest-only: newest survives at any depth");
 
-    // recent-window:N — results older than the last N messages stripped
-    method.setResultRetentionPolicy("recent-window:2");
+    // recent-responses:N — a result is stripped once N assistant responses
+    // follow it; the current delivery (nothing after it yet) always survives.
+    method.setResultRetentionPolicy("recent-responses:1");
     messages = [
         { role: "system", content: "You are the GM." },
         toolResultDict("pushHistory", "OLD"),
-        { role: "user", content: "filler 1" },
+        { role: "assistant", content: "I acted on the old result." },
         toolResultDict("pushHistory", "NEW"),
         { role: "user", content: "filler 2" }
     ];
     conv.onFilterJsonHistory(messages);
-    check(!messages[1].content.includes("OLD"), "recent-window: aged-out result stripped");
-    check(messages[3].content.includes("NEW"), "recent-window: result within the window survives");
+    check(!messages[1].content.includes("OLD"), "recent-responses: result with an assistant response after it ages out");
+    check(messages[3].content.includes("NEW"), "recent-responses: the current delivery always survives");
+
+    // The unit is assistant responses, NOT raw messages: any number of
+    // non-assistant messages after a result must not age it (the old
+    // raw-message window stripped peek results before first read).
+    messages = [
+        { role: "system", content: "You are the GM." },
+        toolResultDict("pushHistory", "FRESH"),
+        { role: "user", content: "filler 1" },
+        { role: "user", content: "filler 2" },
+        { role: "user", content: "filler 3" },
+        { role: "user", content: "filler 4" }
+    ];
+    conv.onFilterJsonHistory(messages);
+    check(messages[1].content.includes("FRESH"), "recent-responses: user messages alone never age a result out");
 
     // unknown tool names pass through untouched
     messages = [

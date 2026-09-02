@@ -352,7 +352,17 @@
 
         const lod = lens.effectiveLodFor(this, inheritedLod);
 
-        if (lod === "omit" || lod === "handle") {
+        // An EXPLICIT handle directive on a collection lists every child's
+        // handle line (a navigation skeleton — names, jsonIds, counts), with
+        // raised descendants still rendering raised via the MAX-LOD law.
+        // Only nodes NO directive covers take the carrier/collapse paths
+        // below: without this distinction, a collection that was both an
+        // explicit handle target and an ancestor of a raised child pruned
+        // all sibling handles to "+N more", forcing the model to guess
+        // array indices from memory (GM bug report 2026-09-02).
+        const isExplicitHandleListing = (lod === "handle" && lens.isTarget(this));
+
+        if (!isExplicitHandleListing && (lod === "omit" || lod === "handle")) {
             if (lens.isAncestor(this)) {
                 return this.lensCarrierJson(lens, depthRemaining, pathComponents, visitedSet);
             }

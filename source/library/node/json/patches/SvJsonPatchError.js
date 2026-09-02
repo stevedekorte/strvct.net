@@ -13,6 +13,36 @@
 (class SvJsonPatchError extends Error {
 
     /**
+     * @description Rejects a move whose destination lies at or inside its own
+     * source. RFC 6902: "from" MUST NOT be a proper prefix of "path" — a
+     * location cannot be moved into one of its children. Our move is
+     * implemented as clone-into-destination then remove-source, so without
+     * this guard a self-nesting move inserts the clone INSIDE the source and
+     * the source removal then destroys both (seen live: an item moved to
+     * /contents/0/contents/0 was erased). The exact-equal case is an RFC
+     * no-op, but the same add-then-remove shape would destroy the value, and
+     * it is certainly a caller mistake — so both reject. Raw JSON-pointer
+     * string comparison is segment-safe: escaped segments (~0/~1) never
+     * contain a raw "/".
+     * @param {Object} operation - The JSON patch operation.
+     * @category Validation
+     */
+    static assertMoveNotIntoOwnSubtree (operation) {
+        if (!operation || operation.op !== "move" || typeof operation.from !== "string" || typeof operation.path !== "string") {
+            return;
+        }
+        if (operation.path === operation.from || operation.path.startsWith(operation.from + "/")) {
+            throw new SvJsonPatchError(
+                `Illegal move: destination path "${operation.path}" is ${operation.path === operation.from ? "the same as" : "inside"} the source "${operation.from}" (RFC 6902: 'from' must not be a prefix of 'path'). Moving a node into itself or its own descendant would destroy it. To nest an item inside a new container, add the container first, then move the item into it by a path that is not under the item's own path.`,
+                operation,
+                null,
+                null,
+                null
+            );
+        }
+    }
+
+    /**
      * @description Creates a new SvJsonPatchError with detailed context.
      * @param {string} message - The error message.
      * @param {Object} operation - The JSON patch operation that failed.

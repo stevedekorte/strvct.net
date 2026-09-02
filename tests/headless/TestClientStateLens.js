@@ -175,6 +175,30 @@ function testLens () {
     check(tombOut !== undefined && tombOut._lod === undefined, "tomb itself is full (MAX-LOD beats the omit region)");
     check(tomb.jsonId() === "loc-tomb", "sanity: tomb id");
 
+    console.log("\nExplicit handle directive on a collection lists every child (no '+N more')");
+    // GM bug report 2026-09-02: a collection that was both an explicit handle
+    // target and an ancestor of a raised child took the carrier path and
+    // pruned all sibling handles, forcing index-guessing. An explicit handle
+    // directive is a navigation skeleton: every child's handle line renders,
+    // raised children still render raised.
+    const listing = SvClientStateLens.fromJson({
+        select: [
+            { under: "sublocs-1", lod: "handle", depth: 1 },
+            { nodes: ["loc-tomb"], lod: "full" }
+        ],
+        default: "omit"
+    }, root);
+    const view3b = root.serializeWithLens(listing, "omit", 0);
+    const subsListed = view3b.campaign.locations[0].sublocations;
+    check(Array.isArray(subsListed) && subsListed.length === 2, "both children render — nothing pruned");
+    check(!subsListed.some(x => typeof x === "string"), "no '+N more' marker under an explicit handle directive");
+    const hallLine = subsListed.find(x => x.jsonId === "loc-hall");
+    check(hallLine !== undefined && hallLine._lod === "handle", "unraised sibling renders as a handle line with its jsonId");
+    // Full emission carries no _lod marker (and an empty fixture group dumps
+    // as {}), so the raised child is the non-handle entry.
+    const tombListed = subsListed.find(x => x._lod === undefined);
+    check(tombListed !== undefined, "raised sibling still renders full (MAX-LOD), not as a handle line");
+
     console.log("\nSummary depth propagation (session-start lens shape)");
     const breadth = SvClientStateLens.fromJson({
         select: [{ under: "/campaign/locations", lod: "summary", depth: 2 }],

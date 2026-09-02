@@ -23,6 +23,7 @@
      */
     applyPatch (operation, rootNode = null) {
         try {
+            SvJsonPatchError.assertMoveNotIntoOwnSubtree(operation);
             const pathSegments = this.parsePathSegments(operation.path);
             const targetInfo = this.findTargetForPath(pathSegments);
 
