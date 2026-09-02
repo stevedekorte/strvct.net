@@ -122,6 +122,15 @@
         const body = this.bodyJson();
         body.stream = true;
         body.max_tokens = this.chatModel().outputTokenLimit(); // current max output tokens allowed by Groq
+        // Effort (adaptive-thinking models): the model entry chooses the
+        // level; omitted = the API default (high). NOTE: never add a
+        // `thinking` param here — Fable-family models reject any explicit
+        // thinking config, and omitting it means adaptive on every current
+        // model.
+        const effort = this.chatModel().outputEffort ? this.chatModel().outputEffort() : null;
+        if (effort) {
+            body.output_config = { effort: effort };
+        }
         return this;
     }
 

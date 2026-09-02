@@ -29,6 +29,21 @@
     modelsJson () {
         return [
             {
+                "name": "claude-fable-5-1",
+                "title": "Claude Fable 5.1",
+                "subtitle": "",
+                // Deliberately BELOW the model's 1M window: input beyond 200k
+                // bills at Anthropic's long-context premium, and this limit is
+                // also what the conversation's compaction pressure keys off —
+                // 200k keeps sessions out of the premium tier entirely.
+                "inputTokenLimit": 200000,
+                "notes": "Most capable Anthropic model ($10/$50 per MTok; cache read $1, write $12.50). Thinking is always on — NEVER send a thinking param (400 on any explicit config except adaptive). temperature/top_p/top_k not supported. Safety classifiers can return stop_reason 'refusal'. Requires 30-day data retention at the org level. Supports all five effort levels via output_config.effort.",
+                "outputTokenLimit": 128000,
+                "effort": "medium", // game choice: latency/cost balance (default would be high)
+                "supportsTemperature": false,
+                "supportsTopP": false
+            },
+            {
                 "name": "claude-sonnet-5",
                 "title": "Claude Sonnet 5",
                 "subtitle": "",

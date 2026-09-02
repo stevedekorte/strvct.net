@@ -165,7 +165,7 @@
         }
         const node = root.descendantWithJsonId(ref);
         if (!node) {
-            throw new Error("lens: no node with jsonId '" + ref + "' under this root. Use a jsonId from the latest getClientState result, or a root-relative path like \"/party\".");
+            throw new Error("lens: no node with jsonId '" + ref + "' under this root. Use a jsonId from your current view (e.g. the <standing-view> block or a recent query result), or a root-relative path like \"/party\".");
         }
         return node;
     }

@@ -112,6 +112,21 @@
             slot.setIsSubnodeField(false);
         }
 
+        /**
+     * @member {String} outputEffort - the effort level requests on this model
+     * should ask for (e.g. "low"|"medium"|"high"|"xhigh"|"max"), or null to
+     * use the provider's default. Set from the model json's "effort" key;
+     * consumed by request classes whose provider supports an effort control
+     * (Anthropic output_config.effort; xAI reasoning_effort could ride it).
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("outputEffort", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setIsSubnodeField(false);
+        }
+
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
     }
@@ -197,6 +212,10 @@
         const otl = json.outputTokenLimit;
         if (!Type.isUndefined(otl)) {
             this.setOutputTokenLimit(otl);
+        }
+
+        if (!Type.isUndefined(json.effort)) {
+            this.setOutputEffort(json.effort);
         }
         //console.log(">>>>>>>>>>>>>>>> " + this.title() + " outputTokenLimit:" + this.outputTokenLimit());
 
