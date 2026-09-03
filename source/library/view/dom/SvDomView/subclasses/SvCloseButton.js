@@ -46,7 +46,8 @@
         //this.setDisplay("table") // to center svg
 
         const iv = SvgIconView.clone().setIconName("close");
-        iv.setColor("white");
+        // SvgIconView already paints via --sv-icon-color; do not force white
+        // (that assumed a black swipe-delete trough).
 
         iv.setMinAndMaxWidth(10);
         iv.setMinAndMaxHeight(10);
