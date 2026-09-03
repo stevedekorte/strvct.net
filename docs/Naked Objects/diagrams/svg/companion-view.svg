@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="700px" height="260px" viewBox="-1 -1 702 262" role="img" aria-labelledby="title desc">
+  <title id="title">Companion View</title>
+  <desc id="desc">A primary browser path and a docked companion browser with its own breadcrumbs and isolated navigation path.</desc>
+  <defs/>
+  <g fill="none" stroke="#000000" stroke-width="1" vector-effect="non-scaling-stroke">
+    <rect x="0" y="0" width="700" height="260"/>
+    <rect x="0" y="0" width="700" height="30"/>
+    <rect x="0" y="30" width="470" height="230"/>
+
+    <rect x="10" y="40" width="140" height="30"/>
+    <rect x="10" y="80" width="140" height="30"/>
+    <rect x="10" y="120" width="140" height="30"/>
+    <rect x="0" y="30" width="160" height="230" stroke-dasharray="3 3"/>
+
+    <rect x="170" y="50" width="140" height="30"/>
+    <rect x="170" y="90" width="140" height="30"/>
+    <rect x="170" y="130" width="140" height="30"/>
+    <rect x="160" y="40" width="160" height="220" stroke-dasharray="3 3"/>
+
+    <rect x="330" y="50" width="130" height="200"/>
+
+    <rect x="470" y="30" width="230" height="230" stroke-dasharray="3 3"/>
+    <rect x="480" y="40" width="210" height="210"/>
+    <rect x="480" y="40" width="210" height="30"/>
+
+    <rect x="490" y="80" width="85" height="30"/>
+    <rect x="490" y="120" width="85" height="30"/>
+    <rect x="490" y="160" width="85" height="30"/>
+    <rect x="480" y="70" width="105" height="180" stroke-dasharray="3 3"/>
+
+    <rect x="595" y="90" width="85" height="150"/>
+
+    <rect x="466" y="120" width="8" height="50"/>
+  </g>
+
+  <g fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+    <text x="350" y="19">Primary Breadcrumbs</text>
+    <text x="80" y="59">A</text>
+    <text x="240" y="69">B</text>
+    <text x="395" y="145">Detail View</text>
+
+    <text x="585" y="59">Companion Breadcrumbs</text>
+    <text x="532.5" y="99">C</text>
+    <text x="637.5" y="170">Detail View</text>
+
+  </g>
+</svg>
