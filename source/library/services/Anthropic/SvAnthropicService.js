@@ -47,9 +47,27 @@
                 "name": "claude-sonnet-5",
                 "title": "Claude Sonnet 5",
                 "subtitle": "",
-                "inputTokenLimit": 1000000,
-                "notes": "Adaptive-thinking model family: temperature/top_p/top_k are not supported (400 if set). Effort defaults to high.",
+                // The model's window is 1M and there is no long-context
+                // premium (4.6-and-later models bill the full window at
+                // standard rates). This lower cap is a deliberate game
+                // choice: it is what the conversation's compaction pressure
+                // keys off, and it bounds per-turn input cost. Raise it if
+                // long sessions start compacting away context you want kept.
+                "inputTokenLimit": 200000,
+                "notes": "Game default model ($2/$10 per MTok; cache read $0.20, write $2.50). Adaptive-thinking model family: temperature/top_p/top_k are not supported (400 if set). Effort accepts low/medium/high/xhigh/max and defaults to high.",
                 "outputTokenLimit": 128000,
+                "effort": "medium", // game choice: latency/cost balance (default would be high)
+                "supportsTemperature": false,
+                "supportsTopP": false
+            },
+            {
+                "name": "claude-opus-5",
+                "title": "Claude Opus 5",
+                "subtitle": "",
+                "inputTokenLimit": 1000000,
+                "notes": "Used for simulated players / AI-run party members, kept distinct from the GM model to reduce self-collusion ($5/$25 per MTok; cache read $0.50, write $6.25). Adaptive thinking is on by default; disabling it requires effort high or below. Effort accepts low/medium/high/xhigh/max and defaults to high. temperature/top_p/top_k are not supported. Priority Tier is not supported.",
+                "outputTokenLimit": 128000,
+                "effort": "medium", // a simulated player does not need the default high
                 "supportsTemperature": false,
                 "supportsTopP": false
             },
