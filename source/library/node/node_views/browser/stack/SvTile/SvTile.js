@@ -745,30 +745,29 @@
     makeOrientationDown () {
 
         // stackview is down so tiles are left to right
-        //this.logDebug("makeOrientationDown")
 
         this.setDisplay("inline-block");
-        //this.setWidth("fit-content")
-        //this.setWidth("170px")
 
-        //this.setMinAndMaxWidth("17em");
-        this.setMinAndMaxWidth("100%");
-        //this.setWidth("fit-content")
-        this.setWidth("-webkit-fill-available");
-
-        this.setMaxWidth(null);
+        // Each tile takes only the width its content needs, so a row of tiles
+        // reads as a row (tabs, a breadcrumb) instead of each tile claiming
+        // the whole column and pushing its siblings off the edge — which is
+        // what "100% + -webkit-fill-available" did here (2026-09-03: the
+        // first horizontal column in the app put tab 2 and 3 past the
+        // viewport). A SOLE tile still fills, which is the breadcrumb case
+        // the old code was written for.
+        const isOnlyTile = this.parentView() && this.parentView().subviews
+            && this.parentView().subviews().length === 1;
+        if (isOnlyTile) {
+            this.setMinAndMaxWidth("100%");
+            this.setWidth("-webkit-fill-available");
+            this.setMaxWidth(null);
+        } else {
+            this.setMinWidth(null);
+            this.setMaxWidth(null);
+            this.setWidth("fit-content");
+        }
 
         this.setMinAndMaxHeight("100%");
-
-
-        //this.setMinAndMaxWHeight(null) // new
-        //this.setWidth("100%") // want 100% if single item, like breadcrumb
-        // otherwise, the stack view should figure out the widths using one of
-        // several policy options?
-        //this.setHeight("fit-content")
-        //this.setHeight("100%")
-        //this.setBorderRight("1px solid rgba(255, 255, 255, 0.3)")
-        //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
 
 
         if (this.stackView()) {
