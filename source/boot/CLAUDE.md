@@ -1,110 +1,77 @@
-# STRVCT Boot System Documentation
+# STRVCT Boot System
 
-## Overview
+`source/boot/` is the part of the framework that loads the rest of it: the boot
+loader, the resource manager, and the index builder that produces the files the
+resource manager reads. Nothing here may depend on `source/library/` — it runs
+before the library exists.
 
-The boot system is responsible for building and loading resources for the STRVCT framework. It uses a content-addressable memory (CAM) system for efficient resource loading and caching.
+## Two generated files
 
-## Index-Builder System
+The build writes two files into `build/`; the runtime reads them. Never hand-edit either.
 
-The index-builder creates two key files that enable the framework's resource loading:
-- `_index.json` - Metadata catalog with paths, sizes, and content hashes for all resources
-- `_cam.json.zip` - Compressed content-addressable memory bundle with actual file contents
+- `_index.json` — catalog of every resource declared through the `_imports.json`
+  tree: path, size, SHA-256 content hash. Binary files (images, audio, fonts) are
+  listed here but their bytes are not bundled; they load individually at runtime.
+- `_cam.json.zip` — compressed content-addressable bundle (`hash → file text`) of
+  the text resources: `js`, `css`, `svg`, `json`, `txt`, `html` (the list is in
+  `ImportsIndexer.computeCam()`). Identical content is stored once.
 
-### Key Components
+A `.hash` sidecar is written next to each so the runtime can check freshness
+without fetching the payload.
 
-#### ImportsIndexer.js
-- Main indexer that recursively walks through `_imports.json` files
-- Creates the index and CAM files in the `build/` directory
-- Starts from the root `_imports.json` and follows all references
+## Commands (from the strvct root)
 
-#### SvResourceIndexer.js
-- Command-line tool that generates `_imports.json` files for resource directories
-- Used to index assets like icons, sounds, images, etc.
-- Example usage: `node SvResourceIndexer.js ./resources/icons ./resources/sounds`
+```bash
+# Rebuild build/_index.json and build/_cam.json.zip. Run after adding/removing
+# files or editing any _imports.json. Headless tests boot from this index and
+# fail confusingly when it is stale.
+node source/boot/index-builder/ImportsIndexer.js
 
-#### SvResourcesFolder.js
-- Helper class used by SvResourceIndexer
-- Recursively scans directories and creates `_imports.json` files
-- File filtering rules:
-  - Excludes files starting with `.` (hidden files)
-  - Excludes files starting with `_`
-  - Must have a file extension
-  - Excludes `.DS_Store` files
+# Generate _imports.json for asset directories (icons, sounds, images, …).
+# SvResourcesFolder does the walk: skips dotfiles, files starting with "_",
+# extensionless files, and .DS_Store.
+node source/boot/index-builder/SvResourceIndexer.js ./resources/icons ./resources/sounds
 
-## CAM File Selection
-
-The `computeCam()` method in ImportsIndexer determines which files get included in the CAM:
-
-```javascript
-computeCam () {
-    const paths = this.pathsWithExtensions(["js", "css", "svg", "json", "txt"]); // file extensions to include in cam
-    const cam = {};
-    paths.forEach(path => {
-        const fullPath = nodePath.join(process.cwd(), path);
-        const value = fs.readFileSync(fullPath, "utf8"); // TODO: encode this in case it's binary?
-        const hash = this.hashForData(value);
-        cam[hash] = value;
-    });
-    return cam;
-}
+# Write app-version.json (git hash, tag, timestamp) into the *site* folder that
+# contains this strvct checkout — used by the app, not by strvct itself.
+sh source/boot/index-builder/RecordGitHash.sh
 ```
 
-### Important Notes:
+## `_imports.json`
 
-1. **Two-Stage Process**:
-   - ALL files referenced in `_imports.json` are indexed in `_index.json`
-   - Only text-based files (js, css, svg, json, txt) have content stored in `_cam.json`
+A JSON array of paths relative to the file, in load order. Entries are either
+files or another `_imports.json` to descend into:
 
-2. **Binary Files**:
-   - Binary files (images, audio, etc.) are tracked in the index but not included in CAM
-   - They're loaded separately at runtime when needed
-   - Current implementation only handles UTF-8 text files
-
-3. **Content-Addressable Storage**:
-   - Files are stored by their SHA-256 hash
-   - Enables deduplication - identical files stored only once
-   - Allows efficient caching based on content
-
-## _imports.json Format
-
-Simple JSON array of relative paths:
 ```json
 [
     "SomeClass.js",
+    "SomeClass_category.js",
     "subfolder/_imports.json",
     "styles.css",
     "data.json"
 ]
 ```
 
-## Build Process
+Order matters twice over: a base class must precede its categories, and CSS is
+evaluated in declaration order so the cascade is preserved. Path components
+named `browser-only` or `server-only` exclude a resource from the other
+environment (`StrvctFile.canUseInCurrentEnv()`).
 
-The build is typically run via:
-```bash
-# From GameServer directory
-node ./site/strvct/source/boot/index-builder/ImportsIndexer.js
-node ./site/strvct/source/boot/index-builder/SvResourceIndexer.js ./strvct/resources/icons ./strvct/resources/sounds
-```
+## Runtime sequence
 
-## Runtime Loading
+1. `SvBootLoader` evaluates the boot files.
+2. `SvResourceManager` fetches the small `_index.json`.
+3. For each resource it checks `SvHashCache` by content hash; only on a miss does
+   it download `_cam.json.zip`.
+4. CSS resources are evaluated sequentially in declaration order; JS resources in
+   dependency order; each resource once, even if several modules import it.
+5. Every eval'd chunk ends with `//# sourceURL=strvct/…` (emitted by
+   `SvHelpers.evalStringFromSourceUrl()`, `SvUrlResource.evalDataAsJS()` /
+   `evalDataAsCss()`, and `SvBootLoader`) so DevTools and editors can map it.
+   Format rules are in the root `CLAUDE.md` under Debugging.
 
-At runtime:
-1. SvResourceManager loads the small `_index.json` first
-2. Checks SvHashCache for cached content using hashes
-3. Downloads `_cam.json.zip` if needed
-4. Extracts and evaluates resources in dependency order
-5. CSS evaluated sequentially, JS in dependency order
+## Adding a resource type to the bundle
 
-## Adding New Resource Types
-
-To include new file types in the CAM:
-1. Add the extension to the array in `computeCam()`: `["js", "css", "svg", "json", "txt", "newtype"]`
-2. Ensure the file type can be read as UTF-8 text
-3. For binary files, they would need base64 encoding (not currently implemented)
-
-## Performance Considerations
-
-- The CAM system enables efficient caching - unchanged files don't need re-downloading
-- Compression reduces network transfer size
-- Content hashing allows cache validation without timestamps
-- Index file is small and loads quickly to determine what needs updating
+Add the extension to the array in `ImportsIndexer.computeCam()`. Only UTF-8 text
+can go in the CAM today; a binary type would need base64 encoding, which is not
+implemented — leave binaries index-only and let them load on demand.

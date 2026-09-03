@@ -1,16 +1,78 @@
 # STRVCT Framework Guide
 
+STRVCT is a naked-objects framework for JavaScript: you write annotated domain
+model classes (nodes with slots), and the framework derives the UI, persistence,
+navigation, and model↔view synchronization from them. `README.md` has the pitch;
+`docs/` has the depth. This file holds the rules and the lessons.
+
 When **reviewing changes or PRs** to this framework, also read `REVIEW.md`
 (repo root): design altitude, capability-vs-state gating, retroactive slot
 defaults, view re-creation tolerance, async/timing hazards, and the evidence
 bar for framework changes.
 
-## Framework Overview
+## Orientation
 
-- Naked objects pattern implementation for JavaScript
-- Node-based object hierarchy with automatic UI generation
-- Reactive properties via slot system
-- Notification-based synchronization between components
+### Repository layout
+
+```
+source/boot/            Boot loader, resource manager, index builder (see source/boot/CLAUDE.md)
+source/library/ideal/   Base runtime: ProtoClass, slots, protocols, categories on JS builtins
+source/library/node/    Model layer: SvNode, SvStorableNode, fields, node_views, storage (object pools)
+source/library/view/    View layer: SvDomView hierarchy (view/dom), events, geometry, webbrowser
+source/library/notification/  SvNotificationCenter, SvBroadcaster, SvSyncScheduler
+source/library/storage/ SvPersistentAtomicMap / SvPersistentAsyncMap (IndexedDB-backed key-value layers)
+source/library/cloudfs/ Cloud file system sync (Firebase Storage backend, write-ahead log)
+source/library/services/  AI providers (Anthropic, Gemini, …), Firebase, media, proxies
+source/library/orm/     Server-only SQL ORM (see source/library/orm/CLAUDE.md)
+source/library/{i18n,errors,credentials,resources,image,audio,media,cli}/
+external-libs/          Vendored third-party source, loaded via _imports.json
+docs/                   Generated site (edit _index.md, not index.html); colvmn/ is the generator
+tests/headless/         Standalone Node.js tests, one file per test
+webserver/              Minimal HTTPS dev server
+build/                  Generated _index.json / _cam.json.zip — never hand-edit
+npm-pkg/                Bootstrap package so external build systems can load strvct; not the framework
+```
+
+### Version control
+
+This directory is a **git submodule of the app repo** (`.git` here is a gitdir
+pointer into the parent's `.git/`). Run git commands from the strvct root, not
+the parent. A framework change ships as a strvct commit plus a submodule pin
+bump in the app repo, in the same release — see "Important" at the end.
+
+### Commands
+
+```bash
+# Rebuild the resource index (required after adding/removing files or editing _imports.json;
+# headless tests boot from build/_index.json and fail confusingly if it is stale)
+node source/boot/index-builder/ImportsIndexer.js
+
+# Headless tests: no runner — each file is a standalone script. `npm test` is a stub.
+node tests/headless/TestCategorySlots.js
+
+# Lint (eslint.config.js; see Coding Style)
+npx eslint source tests
+
+# Regenerate docs/ HTML, sitemap.xml, llms.txt, llms-full.txt after editing any _index.md/_index.json
+node colvmn/static-gen.js
+
+# Class hierarchy → docs/class-hierarchy-tree.txt
+just class-tree
+```
+
+If a headless boot fails with `Image is not defined`, the `canvas` native module
+in `node_modules/` was built for another platform — run `npm install`.
+
+### Where to read more
+
+`docs/` covers: Naked Objects (design essay), Technical Overview, Implementation
+Overview, Getting Started, Comparing to React, Lifecycle (Boot, Node, App,
+Persistence, View Synchronization, Headless Execution), Notifications, Persistence
+(Local Object Pools, Cloud Object Pools, Local and Cloud Blob Storage), Views,
+Slots, Nodes, Events and Gestures, Services, Programming Idioms (Async Patterns,
+Categories, Protocols, Style Guide), Accessibility, Internationalization,
+Inspectors and Debugging, Reference, Future Work. When the docs cover a topic in
+more detail than this file, prefer the docs.
 
 ## Model / View Separation (CRITICAL)
 
@@ -46,281 +108,144 @@ Use the naked-objects pattern as much as possible, and keep STRVCT **between the
 - **React to app lifecycle via environment-agnostic hooks.** Models override `SvModel` lifecycle hooks (`onAppDidGoOnline` / `onAppDidGoOffline`, `onAppWillSuspend`, `onAppWillTerminate`) routed through `SvApp`; the environment layer translates concrete signals (browser events, headless `SIGTERM`/`SIGINT`) into them. The same model code then works under any UI and headless. See `docs/Lifecycle/App Lifecycle`.
 - **Wait on UI readiness — don't poll.** When model code needs the UI ready (e.g. to post a navigation request), `await SvApp.shared().promiseUserInterfaceReady()` and check `ui.providesNavigation()`. Never poll the DOM or retry. Headless resolves with a non-navigable UI, so the code cleanly skips UI-only work.
 
-## Core Features
+## Classes
 
-### Class Definition
+### Definition pattern
 
-- Classes are defined using ES6 class syntax inside an IIFE:
-  ```javascript
-  (class ClassName extends ParentClass {
-      // Class definition
-  }.initThisClass());
-  ```
-- Core class methods:
-  - `initPrototypeSlots()`: Defines instance properties using slots
-  - `initPrototype()`: Sets up general class behavior
-  - `init()`: Basic instance initialization
-  - `finalInit()`: Complex initialization and object relationships
-- Static methods defined with `static` keyword
-- Singleton pattern with `static shared()` method
-- Class registration via `.initThisClass()` call
-
-### Class Definition Format
-
-- Always use the self-initializing class pattern:
-
-  ```javascript
-  (class MyClass extends ParentClass {
-    // Class methods and properties
-  }.initThisClass());
-  ```
-
-- Always include `static jsonSchemaDescription()` for model classes
-- Implement required initialization methods in this order:
-
-  1. `initPrototypeSlots()` - Define all instance properties
-  2. `initPrototype()` - Configure class-wide settings
-  3. `init()` - Basic initialization
-  4. `finalInit()` - Post-initialization setup
-
-- Return `this` from all initialization methods to support method chaining
-- **IMPORTANT**: `initPrototypeSlots()` and `initPrototype()` should NEVER call `super`. The framework automatically calls these methods on the entire class hierarchy from base to derived class.
-- Other initialization methods (`init()`, `finalInit()`, etc.) SHOULD call their parent methods with `super.methodName()`
-
-### Category System
-
-STRVCT supports a category system that allows extending existing classes with additional functionality without modifying the original class files. This promotes clean separation of concerns and modular code organization.
-
-#### Creating Category Classes
-
-Categories are implemented as classes that extend the target class and use `.initThisCategory()` instead of `.initThisClass()`:
+Every class is an ES6 class inside an IIFE that registers itself:
 
 ```javascript
-// Base class
 (class MyClass extends ParentClass {
-    initPrototypeSlots() {
-        // Core functionality slots
+
+    static jsonSchemaDescription () {
+        return "One sentence: what an instance represents.";
     }
-    
-    coreMethod() {
-        // Core functionality
+
+    initPrototypeSlots () {
+        // slot declarations — see Slots
     }
+
+    initPrototype () {
+        // class-wide configuration: setShouldStore, setTitle, setNodeCanAddSubnode, …
+    }
+
+    init () {
+        super.init();
+        // primitives only
+        return this;
+    }
+
+    finalInit () {
+        super.finalInit();
+        // child objects and relationships
+        return this;
+    }
+
 }.initThisClass());
-
-// Category class extending MyClass
-(class MyClass_patches extends MyClass {
-    // Additional functionality
-    patchMethod() {
-        // Patch-related functionality
-    }
-}.initThisCategory());
 ```
 
-#### Loading Order Requirements
+- Model classes always include `static jsonSchemaDescription()`.
+- **`initPrototypeSlots()` and `initPrototype()` NEVER call `super`.** The framework calls them on every class in the hierarchy, base to derived. `init()`, `finalInit()`, `afterInit()` DO call `super`.
+- Return `this` from initialization methods.
+- Singletons expose `static shared()`. Class-level properties use `this.newClassSlot()`.
+- Framework classes carry the `Sv` prefix (categories on JS builtins and `external-libs/` are exempt).
 
-**CRITICAL**: Base classes must be loaded before their categories. In `_imports.json` files:
+### Categories
 
-```json
-[
-    "MyClass.js",           // Base class first
-    "MyClass_patches.js",   // Category second
-    "MyClass_utilities.js"  // Additional categories after
-]
-```
-
-#### Category Naming Convention
-
-- Use underscore to separate the base class name from the category name
-- Examples: `SvJsonGroup_patches.js`, `SvJsonArrayNode_patches.js`, `JsonGroup_clientState.js`
-- Category names should describe the functionality they add
-
-#### Benefits of Categories
-
-1. **Separation of Concerns**: Keep different types of functionality in separate files
-2. **Maintainability**: Easier to locate and modify specific functionality
-3. **Clean Base Classes**: Core classes remain focused on essential functionality
-4. **Modularity**: Categories can be added or removed independently
-5. **Framework Organization**: Distinguish between core framework and extended functionality
-
-#### Example Usage
+A category extends an existing class with more methods from a separate file, using `.initThisCategory()` instead of `.initThisClass()`:
 
 ```javascript
-// JsonGroup.js - Core JSON functionality
-(class SvJsonGroup extends SvJsonIdNode {
-    asJson() { /* core JSON methods */ }
-}.initThisClass());
-
-// SvJsonGroup_patches.js - JSON Patch functionality
 (class SvJsonGroup_patches extends SvJsonGroup {
-    applyJsonPatches(patches) { /* patch methods */ }
-}.initThisCategory());
-
-// JsonGroup_clientState.js - Tool call functionality  
-(class JsonGroup_clientState extends SvJsonGroup {
-    patchClientState(toolCall) { /* tool methods */ }
+    applyJsonPatches (patches) { /* … */ }
 }.initThisCategory());
 ```
 
-### Slot System
+- File and class name: `BaseClass_categoryName` (`SvJsonGroup_patches.js`). The name should say what the category adds.
+- **Loading order is a hard requirement**: the base class must appear before its categories in `_imports.json`.
+- A category may declare its own slots and setup via `initPrototypeSlots_<categoryName>()` and `initPrototype_<categoryName>()` (e.g. `initPrototypeSlots_errorRecovery`). The framework installs them when the category is initialized; `tests/headless/TestCategorySlots.js` guards this.
+- Use categories to keep base classes focused and to separate concerns (patches, client state, streaming, …), not to hide app-specific logic in the framework.
 
-- Properties declared with `this.newSlot("propertyName", defaultValue)`
-- Configure slots with additional methods:
-  - `setSlotType("String")` - Document expected type. This is used for type checking.
-  - `setFinalInitProto(SomeClass)` - Auto-initialize property during object initialization
-  - `setSyncsToView(true)` - Updates views when property changes
-  - `setShouldStoreSlot(true)` - Persist property to storage
-- Class properties with `this.newClassSlot()`
+### Protocols
 
-### Subnodes vs. Subnode Fields
+Interfaces are `Protocol` subclasses named `NameProtocol`; conformance is verified at runtime. See `docs/Programming Idioms/Protocols`.
 
-The framework provides two different ways to handle child objects:
+## Slots
 
-1. **Stored Subnodes** (`setIsSubnode(true)`):
-   - Creates a permanent parent-child relationship
-   - The child object is added to the parent's subnodes array
-   - Typically used with `shouldStoreSubnodes(true)` for collections
-   - Best for arrays of similar objects (e.g., items in a list)
-   - Common pattern: Classes extending `SvJsonArrayNode`
+Declare instance properties in `initPrototypeSlots()`, one block scope per slot:
 
-2. **Subnode Fields** (`setIsSubnodeField(true)`):
-   - Creates temporary UI navigation tiles
-   - The actual data remains in the parent's slot
-   - Field objects are non-stored (`shouldStore(false)`)
-   - Provides clickable navigation in the UI inspector
-   - Best for structured objects with named properties
-   - Common pattern: Classes extending `SvStorableNode` with `shouldStoreSubnodes(false)`
-
-Example distinction:
 ```javascript
-// For collections - use stored subnodes
-class ItemList extends SvJsonArrayNode {
-    initPrototype() {
-        this.setShouldStoreSubnodes(true); // Stores actual items
-    }
-}
-
-// For structured objects - use subnode fields
-class ConfigObject extends SvStorableNode {
-    initPrototypeSlots() {
-        const slot = this.newSlot("settings", null);
-        slot.setFinalInitProto(SettingsObject);
-        slot.setIsSubnodeField(true); // Creates UI navigation
-    }
-    initPrototype() {
-        this.setShouldStoreSubnodes(false); // Data in slots, not subnodes
-    }
+{
+    const slot = this.newSlot("propertyName", defaultValue);
+    slot.setSlotType("String");           // type; used for validation and editor selection
+    slot.setShouldStoreSlot(true);        // persist
+    slot.setCanEditInspection(true);      // editable in the inspector
+    slot.setSyncsToView(true);            // re-sync the view when it changes
 }
 ```
 
-### Slot Definition Guidelines
+Other common configuration:
 
-- Declare instance properties in `initPrototypeSlots()` with `this.newSlot()`
-- Always wrap each slot definition in block scope:
+- `setFinalInitProto(SomeClass)` — create an instance during `finalInit()` **unless one was loaded from storage**. This is how child objects get defaults without a separate "restored" code path.
+- `setIsSubnode(true)` — the slot's value is also a child in `subnodes`, so it appears in navigation.
+- `setIsSubnodeField(true)` — show the slot as a navigable field tile; the data stays in the slot.
+- `this.newSubnodeFieldSlot("name", SomeClass)` (on `SvJsonGroup` subclasses) — declares a stored, JSON-archived, view-synced slot with `setFinalInitProto(SomeClass)` in one call.
+- `setLabel("…")` — display label (translated at the model→view boundary).
 
-  ```javascript
-  {
-    const slot = this.newSlot("propertyName", defaultValue);
-    slot.setSlotType("String"); // Document expected type
-    // Additional slot configuration...
-  }
-  ```
+### Subnodes vs. subnode fields
 
-- For subnode properties, use the convenience method:
+Two ways to hold child objects; pick one per class:
 
-  ```javascript
-  {
-    const slot = this.newSubnodeFieldSlot("propertyName", PropertyClass);
-    // Additional slot configuration...
-  }
-  ```
+1. **Stored subnodes** (`setIsSubnode(true)` on a slot, or a collection with `setShouldStoreSubnodes(true)`): a real parent–child relationship; the children live in the `subnodes` array. Use for collections of similar objects — typically classes extending `SvJsonArrayNode`.
+2. **Subnode fields** (`setIsSubnodeField(true)`): temporary tiles for UI navigation; the data stays in the parent's slots and the field objects are not stored. Use for structured objects with named properties — typically `SvStorableNode` subclasses with `setShouldStoreSubnodes(false)`.
 
-- Configure slots with additional methods:
-  - `setSlotType("String")` - Document expected type
-  - `setFinalInitProto(SomeClass)` - Auto-initialize property during object initialization
-    - Creates instance of specified class during object initialization phase
-    - Initialization happens in the `finalInitSlots()` method, not on property access
-    - Won't override loaded objects during deserialization
-  - `setIsSubnode(true)` - Add property to subnodes array
-  - `setShouldStoreSlot(true)` - Persist property to storage
-  - `setSyncsToView(true)` - Updates view when property changes
-  - `setIsSubnodeField(true)` - Show property in summary view
-  - `setCanEditInspection(true)` - Allow property to be edited in inspector
+**Do not combine them.** A node that uses subnode field slots must not call `setShouldStoreSubnodes(true)`; field tiles are UI organization, not data. If you need stored children, make them real node types.
 
-### Protocol System
+## Instance Lifecycle
 
-- Interface definitions via `Protocol` subclasses
-- Runtime verification of interface compliance
-- Method requirement declarations
-- Protocol naming convention: `NameProtocol`
+Three phases, identical for new and deserialized objects:
 
-### Instance Initialization
+1. `init()` — primitives and slot defaults.
+2. `finalInit()` — complex child objects and relationships. `setFinalInitProto` slots are filled here, only if not already loaded.
+3. `afterInit()` — the object graph is complete.
 
-- Three-phase initialization process:
-  1. `init()`: Basic setup, primitive values, parent class initialization
-  2. `finalInit()`: Complex initialization, object instances, relationships
-  3. `afterInit()`: Post-initialization tasks
-- `ProtoClass.clone()` handles the full sequence
-- `finalInit()` is critical for persistence (called after deserialization)
+- New instances: `SomeClass.clone()` runs all three.
+- From storage: `instanceFromRecordInStore()` allocates and runs `init()`; `loadFromRecord()` fills stored slots (references resolved by puuid); then `finalInit()` and, once the whole graph is loaded, `afterInit()`.
+- Schema evolution follows from the above: a **new slot** on an old record gets its default; a **removed slot** in a record is dropped with a console warning and the object is re-saved; a stored value the setter **rejects** is logged and the default kept; a record whose **class no longer exists** loads as `null`. **Renames** look like remove+add and lose data unless the old slot is kept declared long enough to copy it in `finalInit()`. There is no versioned migration system.
 
-## Instance Initialization Lifecycle
+## Notifications
 
-- Three-phase initialization process:
-  1. `init()`: Basic setup, primitive values, parent class initialization
-  2. `finalInit()`: Complex initialization, object instances, relationships
-  3. `afterInit()`: Post-initialization tasks
-- For creating new instances:
-  - `ProtoClass.clone()` handles the full sequence automatically
-  - Subclasses typically override `init()` for custom initialization logic
-- For persistence:
-  - After deserializing from storage, `finalInit()` is called explicitly
-  - Handles reconstruction of object relationships and hierarchies
-  - Uses `setFinalInitProto(SomeClass)` to create default instances when needed
-  - Ensures partially loaded objects still have complete structure
-  - Preserves parent-child relationships via `isSubnode` and `setOwnerNode`
+The reactivity backbone. Components: `SvNotification` (name, sender, info), `SvNotificationCenter` (global dispatcher), `SvObservation` (a subscription; held weakly, so there is no unsubscribe step), `SvBroadcaster`, and `SvSyncScheduler` (batches and dedupes sync actions at the end of the event loop and detects sync loops).
 
-### UI/View System
+Common hooks on nodes: `didUpdateSlot(aSlot, oldValue, newValue)` for any slot; `didUpdateSlot<SlotName>(oldValue, newValue)` for one slot (e.g. `didUpdateSlotAxis`) — the framework calls it by name, so declaring the method is the subscription; `didChangeSubnodeList()` when children are added, removed, or reordered; `scheduleSyncToView()` to coalesce a view refresh into the end of the event loop.
 
-- NodeView connects model nodes to visual representation
-- View hierarchy mirrors node hierarchy
-- Views found by naming convention (NodeNameView)
-- Bidirectional synchronization via notifications
-- CSS variables defined by nodes and applied to views
+```javascript
+// post
+SvNotificationCenter.shared().post(this, "myNotificationName", { extraInfo: value });
 
-## UI/View System
+// observe
+const observation = SvNotificationCenter.shared().newObservation()
+    .setObserver(this)
+    .setName("myNotificationName")
+    .setTarget(targetObject)
+    .setAction("handleNotification");
+```
 
-- Implements Naked Objects pattern — the UI is **not precompiled, templated, or code-generated**
-- Views are created **lazily at runtime** as the user navigates: a view for a node is only instantiated when that node becomes visible in the UI. There is no upfront rendering pass and no static view tree.
-- The entire UI is **dynamic and mutable at runtime** — model changes (adding/removing subnodes, changing slot values, restructuring the node graph) are immediately reflected in the UI through the notification system. The view layer is a live projection of the model, not a snapshot.
-- Core components:
-  - `NodeView`: Connects model nodes to visual representation
-  - `ViewableNode`: Base class for nodes that have a visual representation
-  - `TileContainer`: Manages specific UI layouts for nodes
-- Bidirectional communication:
-  - Node → View: Changes in node data trigger view updates via notifications
-  - View → Node: User interactions in views call action methods on nodes, which then update their own internal state
-- View discovery and creation:
-  - When a node needs to be displayed, the framework searches for a view class by naming convention (e.g., `NodeNameView` for `NodeName`), falling back up the inheritance chain
-  - Nodes can specify custom view class via `nodeViewClass()`
-  - View hierarchy mirrors node hierarchy automatically
-- Properties control UI behavior:
-  - `slot.setSyncsToView(true)` - Updates view when property changes
-  - `slot.setIsSubnode(true)` - Adds property to visual hierarchy
-  - `setNodeIsVertical(true/false)` - Controls subnode visual layout direction
-- CSS variables can be defined by nodes and applied to views
-- Scheduled synchronization batches updates for efficiency
-- See `docs/Views/`, `docs/Lifecycle/View Synchronization/`, and `docs/Naked Objects/` for detailed documentation
+Communication pattern: model → view by notification (push); view → model by calling action methods on nodes (command); model ↔ model through the notification center (publish/subscribe). See `docs/Notifications/`.
 
-### Notification System
+## Views
 
-- Central to framework's reactivity
-- Components:
-  - `SvNotification`: Event object with name, sender, and info
-  - `SvNotificationCenter`: Global event dispatcher
-  - `SvObservation`: Subscription to specific notifications
-- Common notification patterns:
-  - Property changes via `didUpdateSlot()`
-  - Node hierarchy changes
-  - View updates
+The UI is **not precompiled, templated, or code-generated**. Views are created lazily at runtime as the user navigates — a node gets a view only when it becomes visible — and the view tree is a live projection of the model: adding/removing subnodes or changing slots is reflected immediately through notifications.
+
+- `SvNodeView` connects a node to its DOM representation; `SvViewableNode` is the node-side base; `SvTileContainer` and the column/stack views manage layout.
+- **View discovery is by naming convention with superclass fallback.** For a node class `Contact`, a list looks for `ContactTile` and a selected node looks for `ContactView`; if neither exists the search walks up the node's superclass chain (`firstAncestorClassWithPostfix`) to the framework defaults. Nodes can override with `nodeViewClassName` / `nodeTileClassName` or `nodeViewClass()`.
+- View hierarchy mirrors node hierarchy. `setNodeIsVertical(true/false)` sets a node's subnode layout direction.
+- Styling is programmatic (`setBackgroundColor()`, …) with themes as swappable dictionaries; nodes can define CSS variables that views apply.
+- Views never modify model internals; they call action methods the model defines.
+
+The `SvDomView` hierarchy, one capability per layer:
+`SvElementDomView → SvCssDomView → SvSubviewsDomView → SvListenerDomView → SvVisibleDomView → SvGesturableDomView → SvResponderDomView → SvControlDomView → SvSelectableDomView → SvEditableDomView → SvDomView → SvFlexDomView → SvStyledDomView → SvNodeView`
+
+See `docs/Views/`, `docs/Lifecycle/View Synchronization/`, and `docs/Naked Objects/`.
 
 ## DOM Reads and Writes: never interleave them (CRITICAL for view code)
 
@@ -384,401 +309,87 @@ Note the detector only sees reads that go through the framework accessors. Direc
 `element().scrollTop` style access bypasses it, so prefer the accessors in new
 code.
 
-## Notification System Details
+## Persistence
 
-- Central to framework's reactivity and component communication
-- Key components:
-  - `SvNotification`: Event object with name, sender, and info
-  - `SvNotificationCenter`: Global event dispatcher
-  - `SvObservation`: Subscription to specific notifications
-- Common notification patterns:
-  - Property changes: `this.didUpdateSlot(slot, oldValue, newValue)`
-  - Node hierarchy changes: `this.didAddSubnode()`, `this.willRemoveSubnode()`
-  - View updates: `this.postNeedsDisplay()`, `this.scheduleSyncToView()`
-- Sending notifications:
-  ```javascript
-  SvNotificationCenter.shared().post(this, "myNotificationName", {extraInfo: value})
-  ```
-- Observing notifications:
-  ```javascript
-  const observation = SvNotificationCenter.shared().newObservation()
-    .setObserver(this)
-    .setName("myNotificationName")
-    .setTarget(targetObject)
-    .setAction("handleNotification")
-  ```
+Object graphs persist through `SvPersistentObjectPool` over a `SvPersistentAtomicMap` cache layer, on IndexedDB in the browser and on an IndexedDB shim (`node-indexeddb-lmdb`) in Node.
 
-### Persistence System
+- Opt in per class with `this.setShouldStore(true)` and per slot with `slot.setShouldStoreSlot(true)`; collections add `setShouldStoreSubnodes(true)`.
+- Objects are referenced by persistent unique ids (puuids). Slot changes call `didMutate()`, which marks the object dirty; dirty objects commit in a batch at the end of the event loop. Unreachable objects are garbage-collected.
+- Serialization hooks, if you must customize them: `recordForStore(aStore)`, `loadFromRecord(aRecord, aStore)`, `instanceFromRecordInStore(aRecord, aStore)`, `refValue(v)` / `unrefValue(v)`.
+- Load order is the lifecycle above: allocate + `init()` → `loadFromRecord()` → `finalInit()` → `afterInit()`.
+- Pools can additionally sync to Firebase Storage through a write-ahead log of delta files (`source/library/cloudfs/`). See `docs/Persistence/`.
 
-- Based on `PersistentObjectPool` and `SvStorableNode`
-- IndexedDB with cache layer (`PersistentAtomicMap`)
-- Object references via persistent unique IDs (puuids)
-- Changes auto-commit at the end of event loop
-- See full persistence system documentation in section below
+**Storage serialization is not JSON exchange.** `serializeToJson()` / `deserializeFromJson()` / `asJson()` / `setJson()` / `applyJsonPatches()` produce a human-readable representation for clients, AI services, import/export, and clipboard; they omit system metadata and are independent of what the store records.
 
-## Persistence System
+### Blobs
 
-- Based on `PersistentObjectPool` and `SvStorableNode`
-- Uses IndexedDB with a cache layer (`PersistentAtomicMap`)
-- Key configuration steps:
-  - Enable persistence with `this.setShouldStore(true)` on node classes
-  - Mark slots for storage with `slot.setShouldStoreSlot(true)`
-  - Object references handled via persistent unique IDs (puuids)
-- Serialization and storage lifecycle:
-  - `recordForStore(aStore)`: Creates a serialized record of an object for persistence
-  - `loadFromRecord(aRecord, aStore)`: Populates an object from a stored record
-  - `instanceFromRecordInStore(aRecord, aStore)`: Creates new instance from stored record
-  - `addDirtyObject(anObject)`: Marks object as needing to be saved
-  - `didMutate()`: Called when an object is modified (usually via `didUpdateSlot`)
-  - `shouldStoreSlot(slotName)`: Controls which slots get persisted
-  - `refValue(v)/unrefValue(v)`: Handles object references via persistent UUIDs
-- Integration with initialization lifecycle:
-  1. **Instance Creation**: `instanceFromRecordInStore` creates a blank instance
-  2. **Basic Initialization**: `init()` is called to set up basic properties
-  3. **Data Loading**: `loadFromRecord` populates the instance with stored data
-  4. **Final Initialization**: `finalInit()` sets up complex relationships:
-     - Properties with `setFinalInitProto()` only create instances if not loaded from storage
-     - Subnode relationships reconstructed through reference resolution
-     - Parent/child references re-established with `setOwnerNode()` as needed
-  5. **Post-Initialization**: `afterInit()` called after all objects are loaded
-- Performance features:
-  - Changes auto-commit at the end of event loop
-  - Dirty tracking to only persist modified objects
-  - Object pooling for memory efficiency
-  - Optimistic locking for concurrent modifications
+Binary data goes through `SvBlobPool` (content-addressed by SHA-256, separate database, deduplicated, weak in-memory cache), not into object records:
 
-### Blob Storage System
+- Objects store the **hash string**, never the `Blob`: `const hash = await SvBlobPool.shared().asyncStoreBlob(blob); this.setImageHash(hash);` and later `await SvBlobPool.shared().asyncGetBlob(this.imageHash())`.
+- Implement `referencedBlobHashesSet()` on any class that holds blob hashes; the object pool's GC uses it to collect orphaned blobs.
 
-The framework includes a separate content-addressable blob storage system (`SvBlobPool`) that works alongside the object persistence system:
+Full API and metadata format: `docs/Persistence/Local and Cloud Blob Storage`.
 
-- **Architecture**:
-  - `SvBlobPool`: Global singleton for managing binary data (images, audio, etc.)
-  - Uses separate database from ObjectPool (`defaultBlobStore` vs `defaultDataStore`)
-  - Objects store blob references (SHA-256 hashes), not the actual binary data
-  - Automatic deduplication - identical content stored only once
+## Resource Loading
 
-- **Storage format**:
-  - Data key: `{hash}` → ArrayBuffer
-  - Metadata key: `{hash}/meta` → JSON with contentType, size, timestamps, custom metadata
-  - Hierarchical key structure enables future extensions (e.g., `{hash}/thumbnail`)
+**STRVCT does not use npm or ES modules in the browser.** Do not convert framework files to `import`/`require`. Every browser-side dependency is vendored as source in `external-libs/`. The root `package.json` holds Node-only dependencies (canvas, level, node-indexeddb-lmdb, xhr2, yargs) for headless execution and tooling. `npm-pkg/` is a bootstrap shim for external build systems, not the framework.
 
-- **Key features**:
-  - Content-addressable storage using SHA-256 hashing
-  - Weak reference cache for active blobs (memory efficient)
-  - Metadata storage compatible with Firebase Storage format
-  - Async operations (doesn't block ObjectPool's synchronous API)
-  - Works with both IndexedDB (browser) and LevelDB (Node.js)
-  - Garbage collection support via `asyncCollectUnreferencedKeySet()`
+- Each directory declares its files, in load order, in `_imports.json`; a base class precedes its categories.
+- `ImportsIndexer` walks the `_imports.json` tree and writes `build/_index.json` (paths + SHA-256 hashes) and `build/_cam.json.zip` (compressed content-addressable bundle). At runtime `SvResourceManager` loads the small index, serves hits from `SvHashCache`, downloads the bundle only on a miss, then evals CSS in declaration order and JS in dependency order. Each resource is evaluated once.
+- Path components `browser-only` / `server-only` exclude a resource from the other environment automatically (`StrvctFile.canUseInCurrentEnv()`).
 
-- **Usage pattern**:
-  ```javascript
-  // Store a blob with metadata
-  const hash = await SvBlobPool.shared().asyncStoreBlob(blob, {
-    author: "user123"
-  });
-
-  // Object stores only the hash reference
-  myObject.setImageHash(hash);
-
-  // Retrieve blob later
-  const blob = await SvBlobPool.shared().asyncGetBlob(hash);
-
-  // Query just metadata without loading blob data
-  const metadata = await SvBlobPool.shared().asyncGetMetadata(hash);
-  ```
-
-- **Integration with ObjectPool**:
-  - Objects implement `referencedBlobHashesSet()` to report which blobs they reference
-  - ObjectPool calls `SvBlobPool.shared().asyncCollectUnreferencedKeySet()` during GC
-  - Orphaned blobs (no longer referenced by any object) are automatically removed
-  - Keeps blob storage synchronized with object lifecycle
-
-- **Working with blobs in your objects**:
-  - Objects should store blob **hashes** (strings), not Blob objects themselves
-  - When you have a new Blob, store it and save the returned hash:
-    ```javascript
-    const hash = await SvBlobPool.shared().asyncStoreBlob(blob);
-    this.setImageHash(hash);  // Store the hash in your object
-    ```
-  - To retrieve the Blob later, use the stored hash:
-    ```javascript
-    const blob = await SvBlobPool.shared().asyncGetBlob(this.imageHash());
-    ```
-  - Implement `referencedBlobHashesSet()` to support garbage collection:
-    ```javascript
-    referencedBlobHashesSet () {
-        const hashes = new Set();
-        if (this.imageHash()) {
-            hashes.add(this.imageHash());
-        }
-        if (this.thumbnailHash()) {
-            hashes.add(this.thumbnailHash());
-        }
-        return hashes;
-    }
-    ```
-  - The Blob object returned by `asyncGetBlob()` does NOT have a hash property
-  - The hash is stored separately in your object's properties (e.g., `_imageHash`)
-  - This separation keeps blobs ephemeral while hashes provide persistent references
-
-### JSON Serialization for Data Exchange
-
-- Separate from storage serialization, used for:
-  - Data exchange between clients
-  - Communication with AI services
-  - Import/export functionality
-  - Clipboard operations
-- Core JSON methods:
-  - `serializeToJson(...)`: Converts object to a plain JavaScript object suitable for JSON
-  - `deserializeFromJson(json, ...)`: Updates object from a JSON representation
-  - `applyJsonPatches(patches)`: Applies JSON patch format changes
-  - `mergeJson(json)`: Merges JSON data with existing object state
-- Format considerations:
-  - Created for human readability and editability
-  - Typically omits system properties and metadata
-  - May include type information for proper reconstruction
-  - Can handle circular references with specific patterns
-- Used with AI integration:
-  - Character JSON sent to AI for updates
-  - AI returns patches or complete objects
-  - Changes applied through `applyJsonPatches()`
-  - Handles collaborative editing between user and AI
-
-## Resource Loading System
-
-- CRITICAL: STRVCT does not use npm for browser resource loading
-  - Strvct does not use a conventional JS import/require system, so when writing/editing strvct files, do *not* convert them to use import/require. 
-  - The `npm-pkg/` directory is only for allowing external build systems to easily include enough of strvct to "boot" the rest using strvct's own resource loading system.
-  - The root `package.json` contains Node.js-only dependencies (canvas, level, node-indexeddb-lmdb, xhr2, yargs) used for headless execution and tooling — these are not used in the browser.
-  - All browser-side dependencies are contained as source in `external-libs/`, are part of the repo, and are in a form which can be loaded and eval'd in a browser.
-- Two-file architecture for efficient loading:
-  - `_index.json`: Metadata catalog with paths and content hashes
-  - `_cam.json.zip`: Compressed content-addressable memory bundle
-- Build process:
-  1. `ImportsIndexer` scans `_imports.json` files for resource declarations
-  2. Creates hash-indexed content bundle (`_cam.json`)
-  3. Compresses bundle for network efficiency (`_cam.json.zip`)
-  4. Generates separate resource index file (`_index.json`)
-- Runtime behavior:
-  1. `SvResourceManager` loads the small index file first
-  2. Checks client-side cache (via `SvHashCache`) using content hashes
-  3. Downloads compressed bundle only if cache is empty
-  4. CSS resources evaluated sequentially (order matters)
-  5. JS resources evaluated in dependency order
-- Enables incremental loading and efficient caching based on content hashes
-- Resource declaration:
-  - Resources and their dependencies declared in `_imports.json` files
-  - Each module/directory can have its own `_imports.json` specifying needed resources
-  - File format supports dependencies between resources (loading order requirements)
-- Dependency resolution:
-  - Resources loaded in proper order based on their dependencies
-  - Circular dependencies detected and reported
-  - CSS files evaluated in declaration order (cascading preserved)
-  - JavaScript files evaluated according to dependencies
-  - Single resource only loaded once even if required by multiple modules
-
-## Documentation Style
-
-- Code uses JSDoc-style comments with custom extensions
-- Class documentation uses descriptive block comments:
-  ```javascript
-  /**
-   * A class that represents a player character.
-   * @class Character
-   * @extends SvStorableNode
-   * @category Characters
-   */
-  ```
-- Method documentation includes purpose and parameters:
-  ```javascript
-  /**
-   * Calculates the ability score modifier based on the ability score.
-   * @param {Number} score - The ability score value
-   * @returns {Number} The calculated modifier
-   * @category Ability Scores
-   */
-  ```
-- Use `@category` tag to group related methods
-- Important implementation notes use `// NOTE: explanation` format
-- Use `@private` for internal methods not meant to be called externally
-- Use `@deprecated` for methods scheduled for removal
-
-## Key Classes
-
-### Base Classes
-
-- `ProtoClass`: Base class with slot system
-- `SvNode`: Base node class
-- `ViewableNode`: Node with view capabilities
-- `SvStorableNode`: Persistent node
-
-### View System
-
-- `DomView`: Base view class
-- `NodeView`: Connects nodes to DOM
-- `StyledDomView`: View with CSS styling
-
-### Services
-
-- `AiService`: Base class for AI service integration
-- `SvNotificationCenter`: Event dispatcher
-- `SvResourceManager`: Handles resource loading
-- `PersistentObjectPool`: Manages object persistence
-
-## Development Workflow
-
-1. Define model classes (nodes) with properties as slots
-2. Configure views or use default view generation
-3. Enable persistence where needed
-4. Implement layered communication pattern:
-   - Model → View: Notification system for property changes (push)
-   - View → Model: Action methods on nodes triggered by user interactions (command)
-   - Between models: Notification center for loose coupling (publish/subscribe)
-
-## Debugging STRVCT Applications
-
-### Dynamic Code Evaluation and Source Mapping
-STRVCT uses a custom resource loading system that evaluates JavaScript and CSS at runtime. For debugging to work properly:
-
-1. **SourceURL Comments**: All dynamically evaluated code must include sourceURL comments:
-   ```javascript
-   //# sourceURL=strvct/path/to/file.js
-   ```
-
-2. **Format Requirements**:
-   - **No leading slash**: `strvct/path/to/file.js` (not `/strvct/path/to/file.js`)
-   - **URL encoding required**: Use `encodeURI()` for paths with spaces or special characters
-   - **No quotes**: Chrome DevTools fails if the path is quoted
-   - **Relative to site directory**: Paths should be relative to the webRoot for VSCode mapping
-
-3. **Implementation**: The boot system handles this in three locations:
-   - `source/boot/SvHelpers.js` - `evalStringFromSourceUrl()` for general JS evaluation
-   - `source/boot/SvUrlResource.js` - `evalDataAsJS()` and `evalDataAsCss()` for resources
-   - `source/boot/SvBootLoader.js` - Boot file evaluation
-
-### VSCode Debugging Configuration
-The framework works with VSCode's Chrome debugger extension:
-
-1. **Path Mapping**: Configure `.vscode/launch.json` with appropriate `pathMapping`:
-   ```json
-   "pathMapping": {
-       "/": "${webRoot}/"
-   },
-   "webRoot": "${workspaceFolder}/Servers/GameServer/site"
-   ```
-
-2. **No Source Maps**: Do NOT enable `sourceMaps` - STRVCT uses sourceURL comments, not source maps
-
-3. **Certificate Handling**: Modern Chrome no longer supports `--ignore-certificate-errors`
-   - Trust certificates in system keychain, or
-   - Click through security warnings, or  
-   - Use HTTP for local development
-
-This setup ensures eval'd code files are editable in the debugger regardless of where the project is located on disk.
+Build details and how to add resource types: `source/boot/CLAUDE.md`.
 
 ## Node.js Headless Execution
 
-The STRVCT framework supports headless execution in Node.js environments for testing and server-side usage.
+The model layer, persistence, and boot all run in Node.js. Use `SvPlatform.isNodePlatform()` for the rare runtime branch; prefer `browser-only` / `server-only` directory placement so the resource loader selects the right file.
 
-### Browser API Polyfills
+- Shims for the few browser APIs the framework needs live in `source/library/ideal/categories/server-only/` (`RangeShim`, `FileReaderShim`, `FontFaceShim`, `ImageShim`, `XMLHttpRequestShim`). Guard each with `if (typeof SomeAPI === "undefined")`.
+- **Do not** polyfill `document`, `window`, or otherwise simulate a browser. Add a minimal shim only for a specific API the framework cannot do without.
 
-When running in Node.js, some browser APIs are not available. The framework handles this through minimal polyfills:
+See `docs/Lifecycle/Headless Execution`.
 
-**Available Shims** (in `source/library/ideal/categories/server-only/`):
-- `RangeShim.js` - Minimal DOM Range API polyfill
-- `FileReaderShim.js` - Basic FileReader API polyfill for file operations
-- `FontFaceShim.js` - FontFace API polyfill
-- `ImageShim.js` - Image constructor polyfill
-- `XMLHttpRequestShim.js` - XMLHttpRequest polyfill
+## Debugging
 
-**Important Guidelines:**
-- **DO NOT** create polyfills for `document`, `window`, or other major DOM objects
-- **DO NOT** attempt to simulate a complete browser environment in Node.js
-- **DO** create minimal shims only for specific APIs that are essential for framework operation
-- **DO** place all Node.js-specific polyfills in `source/library/ideal/categories/server-only/`
-- **DO** check for existence before defining: `if (typeof SomeAPI === 'undefined')`
+Code is eval'd at runtime, so every evaluated chunk must end with a sourceURL comment for DevTools and editors to map it:
 
-The framework is designed to gracefully handle the absence of browser APIs in headless environments. Most browser-specific functionality should be conditionally executed based on environment detection using `SvPlatform.isNodePlatform()`.
-
-### Environment-Specific Resource Loading
-
-The framework includes a path-based convention system to automatically exclude environment-specific resources:
-
-**Path Component Conventions:**
-- `browser-only` - Excluded in Node.js environments
-- `server-only` - Excluded in browser environments
-
-**Usage:**
 ```javascript
-// Check if a file should be loaded in current environment
-StrvctFile.with('path/to/browser-only/SomeClass.js').canUseInCurrentEnv() // false in Node.js
-
-// Automatic filtering in SvResourceManager
-this.jsResources() // Returns only environment-appropriate resources
-this.cssResources() // Returns only environment-appropriate resources
+//# sourceURL=strvct/path/to/file.js
 ```
 
-**Directory Structure Examples:**
-```
-strvct/source/library/view/browser-only/    # Excluded in Node.js
-strvct/source/library/testing/server-only/ # Excluded in browser
-```
+- No leading slash; `encodeURI()` paths with spaces; no quotes; relative to the served web root.
+- The boot system emits these in `source/boot/SvHelpers.js` (`evalStringFromSourceUrl()`), `source/boot/SvUrlResource.js` (`evalDataAsJS()` / `evalDataAsCss()`), and `source/boot/SvBootLoader.js`.
+- VSCode: use the Chrome debugger with `"pathMapping": { "/": "${webRoot}/" }` and `webRoot` set to the directory you serve; do **not** enable `sourceMaps`. Trust the dev certificate in the system keychain (Chrome no longer honors `--ignore-certificate-errors`) or use HTTP locally.
 
-This system prevents browser-specific code from causing errors in Node.js and allows for clean separation of environment-specific functionality.
-
-## Key Patterns
-
-- Node hierarchy for model representation
-- Notification-based synchronization between layers
-- Automatic UI generation from node structure
-- NodeView connects nodes to their visual representation
+Runtime inspection: `?thrash=1` (above) for forced layouts; sync-loop detection in `SvSyncScheduler` reports the cycle rather than hanging. See `docs/Inspectors and Debugging`.
 
 ## Coding Style
 
-### ESLint Configuration
-The framework uses ESLint for code consistency. Key rules to follow:
-- **ALWAYS include space before function parentheses**: `function (args)` not `function(args)`
-  - This applies to: function declarations, function expressions, async functions, and method definitions
-  - Example: `initPrototype () {` not `initPrototype() {`
-  - Example: `async function loadData () {` not `async function loadData() {`
-  - Example: `methodName () {` not `methodName() {`
-- **Use consistent indentation** (4 spaces for application code, may vary in framework)
-- **Semicolons required** at the end of statements
-- **No debugger statements** in production code
-- The project disables `no-undef` checks (framework uses dynamic evaluation)
-- ESLint is configured via `eslint.config.js`
+ESLint (`eslint.config.js`, `no-undef` disabled because of dynamic evaluation):
 
-### Framework-Specific Conventions
-- Use the Map class instead of dictionaries for maps
-- All custom Strvct framework classes (not including categories of JS classes) should have the "Sv" prefix to indicate they are part of the STRVCT framework
-- External code in the external-libs folder is exempt from naming conventions
-- Follow the formatting examples in existing code
+- **Space before function parentheses**, everywhere: `initPrototype () {`, `async function loadData () {`, `methodName () {`.
+- 4-space indent, semicolons, no `debugger` in committed code.
 
-## Detailed Documentation
+Conventions:
 
-The `docs/` directory contains browsable HTML documentation covering:
+- `Sv` prefix on framework classes. `Map` instead of plain-object dictionaries.
+- Ivars (`_x`) are touched only by their own accessors; method names never start with `_`; boolean getters read as predicates.
+- JSDoc on classes and methods: `@description`, `@param`, `@returns`, `@category` (groups related members), `@private`, `@deprecated`. Implementation notes as `// NOTE: …`.
 
-- **Architecture**: Naked Objects, Technical Overview, Implementation Overview
-- **Guides**: Getting Started, Comparing to React
-- **Core Systems**: Lifecycle (Boot, Node, App, Persistence, View Sync), Notifications (Center, Broadcaster, Slot Hooks, Scheduler), Persistence (Local Pools, Cloud Pools, Blob Storage), Views, Events and Gestures
-- **Services**: AI Services, Cloud Storage, Media, Proxies, Home Assistant
-- **Programming Idioms**: Async Patterns (Promise.clone, Array iteration), Categories, Slot Patterns
-- **Reference**: Classes, Modules, Protocols
-- **Other**: Internationalization, Inspirations, Future Work
-
-When the docs system covers a topic in more detail than this file, prefer reading the docs for current information.
-
-### Docs Generation
-
-The `docs/` HTML pages are **generated** from `_index.md` (or `_index.json`) source files by the `colvmn` layout engine. **Do not edit `index.html` files directly** — edit the corresponding `_index.md` source instead, then regenerate:
-
-```bash
-node colvmn/static-gen.js
+```javascript
+/**
+ * @description Calculates the ability modifier for a score.
+ * @param {Number} score - The ability score value
+ * @returns {Number} The modifier
+ * @category Ability Scores
+ */
 ```
 
-This regenerates all `index.html` files, `sitemap.xml`, `llms.txt`, and `llms-full.txt` from their source files. Always run this after editing any `_index.md` or `_index.json` file in the docs tree.
+## Docs
 
-# Important
+`docs/` pages are **generated** from `_index.md` / `_index.json` by the `colvmn` layout engine. Never edit `index.html`; edit the source, then `node colvmn/static-gen.js` (also rewrites `sitemap.xml`, `llms.txt`, `llms-full.txt`). Details: `colvmn/CLAUDE.md`.
+
+## Important
 
 - **Keep strvct's CODE general — no app-specific knowledge.** It is a framework, and it should stay one: nothing in here should know about characters, sessions, campaigns, or how undreamedof.ai happens to be built. When the app needs framework behavior that depends on app facts, the app supplies them — through a node hint (`nodeContentMaxWidth()`, `nodeShowsScrollbar()`), a protocol, a token, or a delegate. Those indirections are worth their cost.
 
