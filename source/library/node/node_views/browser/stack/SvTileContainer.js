@@ -4,8 +4,8 @@
 /** * @class SvTileContainer
  * @extends SvNodeView
  * @classdesc SvTileContainer is a container for SvTile objects. It manages the layout and orientation of tiles based on its parent view.
- 
- 
+
+
  */
 
 "use strict";
@@ -121,6 +121,12 @@
                 const tileClass = this.subviewProtoForSubnode(aNode);
                 if (tile.thisClass() !== tileClass) {
                     this.setupTile();
+                } else if (tile.node() !== aNode) {
+                    // same tile class, different node (a swappable slot like
+                    // SvNavView's header rebinding) — re-point the tile or it
+                    // keeps rendering the OLD node
+                    tile.setNode(aNode);
+                    tile.scheduleSyncToNode();
                 }
             } else {
                 this.setupTile();

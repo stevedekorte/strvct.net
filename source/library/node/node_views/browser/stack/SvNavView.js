@@ -649,6 +649,7 @@
             }
         }
 
+        this.syncHeaderFooterBindings();
         this.headerView().syncFromNode();
         this.footerView().syncFromNode();
         this.syncCollapsibleRegions();
@@ -662,6 +663,29 @@
         }
 
         //console.log(this.svTypeId(), " syncFromNode done");
+        return this;
+    }
+
+    /**
+     * @description Re-resolves the node's headerNode()/footerNode() and
+     * rebinds the header/footer views when they changed. The bindings were
+     * previously made only in setNode(), so a node that SWAPS its header
+     * mid-life (UoAiChat: TV band ⇄ "Recover from Errors" action) left the
+     * view showing the old node forever — the model swapped back after a
+     * successful recovery but the button stayed on screen. Mirrors
+     * headerRegion()/footerRegion(), which already re-resolve per sync for
+     * the edge handles. Idempotent: setNode is called only on change.
+     * @returns {SvNavView}
+     * @category Node Management
+     */
+    syncHeaderFooterBindings () {
+        const node = this.node();
+        if (node && node.headerNode && this.headerView().node() !== node.headerNode()) {
+            this.headerView().setNode(node.headerNode());
+        }
+        if (node && node.footerNode && this.footerView().node() !== node.footerNode()) {
+            this.footerView().setNode(node.footerNode());
+        }
         return this;
     }
 
