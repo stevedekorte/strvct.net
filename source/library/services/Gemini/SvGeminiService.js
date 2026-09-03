@@ -35,6 +35,20 @@
     modelsJson () {
         return [
             {
+                // Rates at https://ai.google.dev/gemini-api/docs/pricing#gemini-3.8-flash
+                // (retrieved 2026-09-03): $0.75/$3.75 per MTok intro through
+                // 2026-12-31 (then $1.50/$7.50); cache read $0.075. Output
+                // pricing covers thinking tokens. Window is 1,048,576; the
+                // lower cap here is a deliberate game choice (compaction
+                // pressure + per-turn input cost bound), matching the
+                // Anthropic game-default entry.
+                "name": "gemini-3.8-flash",
+                "title": "Gemini 3.8 Flash",
+                "inputTokenLimit": 200000,
+                "outputTokenLimit": 65536,
+                "notes": "Game default model ($0.75/$3.75 per MTok intro through 2026-12-31, then $1.50/$7.50; cache read $0.075). Thinking tokens bill as output. thinking_level low|medium|high (no token budgets)."
+            },
+            {
                 // GA 2026-07-21 (blog.google Gemini 3.6 Flash announcement).
                 // Token limits not stated in the announcement; family values.
                 "name": "gemini-3.6-flash",
