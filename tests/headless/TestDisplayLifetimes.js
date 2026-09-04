@@ -156,7 +156,15 @@ function testSweepTransitionsAndTimer () {
         conv.sweepDisplayLifetimes();
         conv.sweepDisplayLifetimes(); // second sweep: no transition, no refresh
     });
-    check(updates === 1, "exactly one didUpdateNode across two sweeps (transition fired once)");
+    // The sweep deliberately does NOT didUpdateNode on an expiry transition
+    // (SvConversation.sweepDisplayLifetimes, 2026-08-28): a message notify
+    // bubbles to the conversation, rebuilds the column, bumps
+    // SvImageWellFieldTile's progressive epoch and cancels in-flight blob
+    // loads — reopening a session showed a blank scene-image well. The hide is
+    // tag-only; chat tiles animate it themselves. This assertion used to
+    // expect 1 and was left behind by that fix; it now guards against
+    // reintroducing the column storm.
+    check(updates === 0, "no didUpdateNode from the sweep — the hide is tag-only (got " + updates + ")");
 
     // timer arms only when a resolved-but-unexpired time policy is pending
     const pending = addMessage(conv, "resolved recently");
