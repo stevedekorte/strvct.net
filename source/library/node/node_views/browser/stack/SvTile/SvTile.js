@@ -748,13 +748,14 @@
 
         this.setDisplay("inline-block");
 
-        // Each tile takes only the width its content needs, so a row of tiles
-        // reads as a row (tabs, a breadcrumb) instead of each tile claiming
-        // the whole column and pushing its siblings off the edge — which is
-        // what "100% + -webkit-fill-available" did here (2026-09-03: the
-        // first horizontal column in the app put tab 2 and 3 past the
-        // viewport). A SOLE tile still fills, which is the breadcrumb case
-        // the old code was written for.
+        // Width along the row, per the parent's nodeChildrenTileWidth hint:
+        // 0 (default) = auto-fit, each tile as wide as its content; N = at
+        // least N wide, still growing for a long label. Previously every
+        // tile claimed "100% + -webkit-fill-available" — the full column
+        // width EACH — so siblings ran off the edge the first time the app
+        // used a real horizontal column (the companion's tabs, 2026-09-03).
+        // A SOLE tile still fills, which is the breadcrumb case that code
+        // was written for.
         const isOnlyTile = this.parentView() && this.parentView().subviews
             && this.parentView().subviews().length === 1;
         if (isOnlyTile) {
@@ -762,7 +763,10 @@
             this.setWidth("-webkit-fill-available");
             this.setMaxWidth(null);
         } else {
-            this.setMinWidth(null);
+            const hinted = this.stackView() && this.stackView().node()
+                ? (this.stackView().node().nodeChildrenTileWidth() || 0)
+                : 0;
+            this.setMinWidth(hinted > 0 ? hinted : null);
             this.setMaxWidth(null);
             this.setWidth("fit-content");
         }

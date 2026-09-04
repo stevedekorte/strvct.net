@@ -315,6 +315,7 @@
                     this.showNoteView();
                     this.hideNoteIconView();
                 }
+                this.syncTrailingContentAreaReservation();
             }
         } else {
             this.titleView().setIsEditable(false);
@@ -660,6 +661,30 @@
 
         this.setIsDisplayHidden(!node.isVisible());
 
+        return this;
+    }
+
+    /**
+     * @description The trailing region reserves 3em for a note / count badge
+     * / disclosure arrow. When it holds NOTHING, that reservation is dead
+     * space — invisible in a vertical list (the tile spans its column either
+     * way) but 60px per tile in a horizontal row, which is what pushed the
+     * companion's third tab off the panel (2026-09-03). Mirrors the leading
+     * thumbnail region, which already collapses when unused. Reads only view
+     * state this tile owns (no geometry), so it is layout-safe.
+     * @returns {SvTitledTile}
+     * @category Layout
+     */
+    syncTrailingContentAreaReservation () {
+        const rv = this.bottomContentArea();
+        if (!rv) {
+            return this;
+        }
+        const noteView = this.noteView();
+        const iconView = this.noteIconView();
+        const hasNote = !!(noteView && !noteView.isDisplayHidden() && noteView.innerHtml().length > 0);
+        const hasIcon = !!(iconView && !iconView.isDisplayHidden());
+        rv.setMinWidth(hasNote || hasIcon ? "3em" : "0px");
         return this;
     }
 

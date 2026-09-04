@@ -154,6 +154,30 @@
         }
 
         /**
+         * @member {number} nodeChildrenTileWidth - the width THIS node's
+         * child tiles take along a HORIZONTAL row (a tab bar, a breadcrumb),
+         * as a minimum: each tile is at least this wide and still grows for a
+         * long label. 0 (default) = auto-fit, each tile as wide as its own
+         * content — adaptive, and the right default.
+         *
+         * The main-axis twin of nodeMinTileHeight, which a horizontal row
+         * already reads off the PARENT for its tiles' height. Deliberately
+         * NOT nodeMinTileWidth: that slot already means "the width of my
+         * column when I am the column" (SvNavView reads it), and one slot
+         * carrying both meanings is the trap nodeMinTileHeight fell into.
+         * Ignored in vertical columns, where a tile spans its column.
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("nodeChildrenTileWidth", 0);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(true);
+            slot.setInspectorPath("Node/Viewable/Style");
+            slot.setSlotType("Number");
+            slot.setSyncsToView(true);
+        }
+
+        /**
          * @member {boolean} acceptsFileDrop
          * @category Interaction
          */
