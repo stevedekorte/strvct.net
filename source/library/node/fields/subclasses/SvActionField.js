@@ -209,8 +209,13 @@
             const infoMethodName = this.methodName() + "ActionInfo";
             const method = t[infoMethodName];
             if (method) {
-                const infoDict = method.apply(t, []);
-                this.setActionInfo(infoDict);
+                // Contained: an actionInfo method that raises would otherwise abort
+                // the entire sync pass, not just this button. See
+                // SvField.resultOfTargetMethod().
+                const infoDict = this.resultOfTargetMethod(t, infoMethodName, null);
+                if (infoDict) {
+                    this.setActionInfo(infoDict);
+                }
             } else {
                 //console.warn(this.logPrefix(), "ActionField missing method with this name: ", infoMethodName);
             }

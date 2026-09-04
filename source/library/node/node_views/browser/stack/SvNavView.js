@@ -686,11 +686,18 @@
      */
     syncHeaderFooterBindings () {
         const node = this.node();
-        if (node && node.headerNode && this.headerView().node() !== node.headerNode()) {
-            this.headerView().setNode(node.headerNode());
+        if (!node) {
+            return this;
         }
-        if (node && node.footerNode && this.footerView().node() !== node.footerNode()) {
-            this.footerView().setNode(node.footerNode());
+        // headerView/footerView default to null and are guarded everywhere else in
+        // this class; this method must do the same.
+        const header = this.headerView();
+        if (header && node.headerNode && header.node() !== node.headerNode()) {
+            header.setNode(node.headerNode());
+        }
+        const footer = this.footerView();
+        if (footer && node.footerNode && footer.node() !== node.footerNode()) {
+            footer.setNode(node.footerNode());
         }
         return this;
     }

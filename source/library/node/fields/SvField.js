@@ -29,6 +29,19 @@
 
 (class SvField extends SvJsonGroup {
 
+    /**
+     * @description Class-level setup.
+     *
+     * reportedTargetMethodErrors holds keys ("<TargetClass>.<method>") of
+     * sync-path model methods already reported as throwing, so the warning is
+     * emitted once instead of on every sync pass.
+     * @category Class Initialization
+     * @static
+     */
+    static initClass () {
+        this.newClassSlot("reportedTargetMethodErrors", new Set());
+    }
+
     initPrototypeSlots () {
 
         /**
@@ -512,13 +525,65 @@
 
         //console.log(this.logPrefix(), "target = " + target.svType() + " getter = '" + getter + "'")
         if (target[slotName]) {
-            const value = target[slotName].apply(target);
-            return value;
+            return this.resultOfTargetMethod(target, slotName, null);
         } else {
             console.warn(this.svType() + " target " + target.svType() + " missing slot '" + slotName + "'");
         }
 
         return null;
+    }
+
+    /**
+     * @description Calls a model method that feeds this field during view sync,
+     * containing any exception it raises.
+     *
+     * These calls are reflective and happen inside SvSyncScheduler's pass, so an
+     * exception does not merely blank one tile — it aborts the whole pass, and
+     * every other view queued behind this one silently stops updating. That is
+     * the wrong blast radius for a model getter that is only computing a label,
+     * and it makes the resulting bug report ("the UI froze") point nowhere near
+     * the method at fault.
+     *
+     * A model method that throws is still a bug in that model, so the failure is
+     * reported rather than swallowed — once per target class + method, because a
+     * sync pass repeats and would otherwise flood the console.
+     *
+     * @param {Object} target - The node the method belongs to
+     * @param {String} methodName - The method to call
+     * @param {*} fallback - What to return if it raises
+     * @returns {*} The method's result, or the fallback
+     * @category Synchronization
+     */
+    resultOfTargetMethod (target, methodName, fallback) {
+        try {
+            return target[methodName].apply(target);
+        } catch (error) {
+            SvField.warnOnceAboutTargetMethodError(target, methodName, error);
+            return fallback;
+        }
+    }
+
+    /**
+     * @description Reports a throwing sync-path model method once per
+     * target class + method name.
+     * @param {Object} target - The node whose method raised
+     * @param {String} methodName - The method that raised
+     * @param {Error} error - The exception
+     * @category Synchronization
+     */
+    static warnOnceAboutTargetMethodError (target, methodName, error) {
+        const targetType = target.svType ? target.svType() : typeof target;
+        const key = targetType + "." + methodName;
+        const reported = this.reportedTargetMethodErrors();
+        if (reported.has(key)) {
+            return;
+        }
+        reported.add(key);
+        console.warn("SvField: " + key + "() raised during view sync and was contained "
+            + "(this field shows its fallback; other views in the pass are unaffected). "
+            + "A method feeding a field should tolerate being called at any point in the "
+            + "node's life — including while detached from its parent. Error: "
+            + (error && error.message ? error.message : error), error);
     }
 
     // --- async value methods ---
@@ -565,7 +630,7 @@
 
         if (target && slotName) {
             if (target[slotName]) {
-                return target[slotName].apply(target);
+                return this.resultOfTargetMethod(target, slotName, this._note);
             } else {
                 console.warn(this.svType() + " target " + target.svType() + " missing note getter slot '" + slotName + "'");
             }
