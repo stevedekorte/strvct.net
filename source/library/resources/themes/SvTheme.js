@@ -263,6 +263,7 @@
         this.tokens().setTokenDict(json.tokens);
         this.lightTokens().setTokenDict(json.light);
         this.darkTokens().setTokenDict(json.dark);
+        this.postNoteNamed("onThemeDidChange"); // a rebuilt theme repaints if it is the one on screen
         return this;
     }
 

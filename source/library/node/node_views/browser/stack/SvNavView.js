@@ -264,12 +264,11 @@
         this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s");
 
         const borderStyle = "1px solid var(--sv-hairline)";
-        const backgroundColor = "rgba(255, 255, 255, 0.03)";
 
         {
             const v = SvTileContainer.clone();
             v.setBorderBottom(borderStyle);
-            v.setBackgroundColor(backgroundColor);
+            v.setBackgroundColor(this.headerFilmBackground());
             // hug content: never grow into the scroll area's free space
             // (otherwise an empty conversation renders a huge header/footer)
             v.setFlexGrow(0);
@@ -284,10 +283,12 @@
         {
             const v = SvTileContainer.clone();
             v.setBorderTop(borderStyle);
-            // A REAL page ground, not a translucent wash: the footer (chat
-            // input) can sit over a theatre-dark column, and ink-colored text
-            // needs the page behind it to stay readable there.
-            v.setBackgroundColor("var(--sv-surface)");
+            // Transparent like every other leaf, so the footer (chat input)
+            // inherits whatever surface encloses the column — a realm's panel,
+            // the page. It used to paint the page ground because the theatre
+            // darkened the WHOLE column; the theatre now darkens only the
+            // header and scroll area (applyHeaderRegionExpanded), so nothing
+            // sits behind the input but the enclosing surface.
             v.setFlexGrow(0);
             v.setFlexShrink(0);
             this.setFooterView(v);
@@ -793,6 +794,37 @@
     }
 
     /**
+     * @description The header's resting look: a faint film over whatever
+     * surface encloses the column, so it reads as chrome without owning a
+     * color of its own.
+     * @returns {String}
+     * @category Theme
+     */
+    headerFilmBackground () {
+        return "rgba(255, 255, 255, 0.03)";
+    }
+
+    /**
+     * @description Paints the header and scroll area in a named surface while
+     * a region is expanded, or restores their resting looks when the name is
+     * null. Never the footer (see init).
+     * @param {String|null} surfaceName
+     * @returns {SvNavView}
+     * @category Theme
+     */
+    paintExpandedRegionSurface (surfaceName) {
+        if (surfaceName) {
+            const surface = this.backgroundValueForSurfaceName(surfaceName);
+            this.headerView().setBackgroundColor(surface);
+            this.scrollView().setBackgroundColor(surface);
+        } else {
+            this.headerView().setBackgroundColor(this.headerFilmBackground());
+            this.scrollView().setBackgroundColor("transparent");
+        }
+        return this;
+    }
+
+    /**
      * @description Theatre-mode flex swap: expanded, the header region takes
      * the space remaining in the column (flex 1 1 0, sliding via the grow
      * transition) and the scroll area collapses to zero — never a fixed
@@ -818,16 +850,17 @@
         const region = this.headerRegion();
         const hasRegion = !!region;
 
-        // Paint the whole column in the expanded region's SURFACE (a theatre
-        // names "theatre", the theme decides what that is — never a color from
-        // the model): fractional-scale rounding leaves sub-pixel seams
-        // above/below the flexed header, and this is what stops the page
-        // showing through them (the EdgeControls prototype's own fix; whether
-        // the seam is real, and whether the region could paint it itself, is
-        // Stage 1 of Plans/Theme Environment).
+        // Paint the header AND the scroll area in the expanded region's
+        // SURFACE (a theatre names "theatre"; the theme decides what that is —
+        // never a color from the model): fractional-scale rounding leaves
+        // sub-pixel seams between the flexed header and the scroll area, and
+        // painting both the same hides them. The footer is NOT painted — it
+        // stays transparent so the chat input keeps the enclosing surface
+        // behind its ink (Plans/Theme Environment, Stage 1). Collapsing
+        // restores the header's film and the scroll area's transparency.
         const surfaceName = (expanded && region && typeof region.expandedRegionSurfaceName === "function")
             ? region.expandedRegionSurfaceName() : null;
-        this.setBackgroundColor(this.backgroundValueForSurfaceName(surfaceName)); // "transparent" restores the column's normal ground
+        this.paintExpandedRegionSurface(surfaceName);
 
         if (expanded) {
             header.setHeight("auto"); // clear fit-content so flex sizes it (definite, so the tile's 100% resolves)
