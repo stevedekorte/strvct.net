@@ -120,6 +120,18 @@
             const slot = this.newSlot("nodeToStackCache", null);
             slot.setSlotType("Map");
         }
+
+        /**
+         * @member {String|null} appliedSurfaceName - the
+         * nodeContainerSurfaceName last painted, so a repeated sync does not
+         * rewrite an unchanged value. View-side bookkeeping, never stored.
+         * @category Theme
+         */
+        {
+            const slot = this.newSlot("appliedSurfaceName", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     init () {
@@ -302,12 +314,35 @@
         this.setDirection(this.node().nodeOrientation());
 
         this.syncOrientation();
+        this.syncSurfaceFromNode();
         //this.navView().syncFromNodeNow();
         this.syncFromNavSelection();
         this.detailView().syncCompanionFromNode(this.node());
 
         //this.setupColumnGroupColors();
         //this.fitColumns();
+        return this;
+    }
+
+    /**
+     * @description Paints this stack view from its node's
+     * nodeContainerSurfaceName. A stack view IS a node's detail region — its
+     * own column of children plus, through the detail view, every deeper
+     * column — so one paint here is inherited by all of them, because tiles,
+     * columns and the breadcrumb bar are transparent by default. A deeper
+     * node that names its own surface paints its own stack view and overrides
+     * from there down. Null paints nothing, so the enclosing surface shows.
+     * @returns {SvStackView}
+     * @category Theme
+     */
+    syncSurfaceFromNode () {
+        const node = this.node();
+        const name = (node && node.nodeContainerSurfaceName) ? node.nodeContainerSurfaceName() : null;
+        if (name === this.appliedSurfaceName()) {
+            return this;
+        }
+        this.setAppliedSurfaceName(name);
+        this.setBackgroundColor(this.backgroundValueForSurfaceName(name));
         return this;
     }
 

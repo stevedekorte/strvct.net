@@ -215,6 +215,23 @@
             state.applyBorderStylesToView(this); // apply only border styles
             state.applyNonBorderStylesToView(this.contentView()); // apply non border styles
         }
+        this.repaintSurfaceOverThemeState();
+        return this;
+    }
+
+    /**
+     * @description The theme state just wrote the content view's background
+     * (unselected is "transparent"), which erases a named surface. Selection
+     * looks win while they last; otherwise the surface is put back. A
+     * same-value write is free, so no guard is needed here.
+     * @returns {SvTile}
+     * @category Theme
+     */
+    repaintSurfaceOverThemeState () {
+        const name = this.appliedSurfaceName();
+        if (name && !this.looksSelected()) {
+            this.contentView().setBackgroundColor(this.backgroundValueForSurfaceName(name));
+        }
         return this;
     }
 
@@ -641,7 +658,9 @@
      *
      * Skipped entirely when the node names no surface, so the selection and
      * slide-gesture backgrounds (which write the same property) are untouched
-     * on the overwhelming majority of tiles that stay transparent.
+     * on the overwhelming majority of tiles that stay transparent. While the
+     * tile looks selected the selection background stays; applyStyles puts
+     * the surface back when the selection look ends.
      * @returns {SvTile}
      * @category Theme
      */
@@ -655,7 +674,9 @@
             return this; // idempotent: syncs repeat, writes should not
         }
         this.setAppliedSurfaceName(name);
-        this.contentView().setBackgroundColor(this.backgroundValueForSurfaceName(name));
+        if (!this.looksSelected()) {
+            this.contentView().setBackgroundColor(this.backgroundValueForSurfaceName(name));
+        }
         return this;
     }
 

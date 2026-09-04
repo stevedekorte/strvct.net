@@ -123,6 +123,19 @@
      * @returns {Boolean}
      * @category Navigation
      */
+    /**
+     * @description Wears a theme's tokens: publishes them where every view and
+     * every piece of model-authored markup inherits them (Plans/Theme
+     * Environment Stage 3). Nothing to publish onto without a document.
+     * @param {Object} tokenDict - { "--sv-text": "#111", … }
+     * @param {String} colorScheme - "light" or "dark"
+     * @returns {SvUserInterface}
+     * @category Theme
+     */
+    publishThemeTokens (/*tokenDict, colorScheme*/) {
+        return this;
+    }
+
     providesNavigation () {
         return false;
     }

@@ -44,6 +44,7 @@
     --sv-surface-raised: #232323;     /* a tile that should sit above its list */
     --sv-surface-notice: rgba(200, 160, 60, 0.10);   /* wants attention */
     --sv-surface-danger: rgba(200, 70, 70, 0.12);    /* something is wrong */
+    --sv-surface-theatre: #0d0c0b;    /* a media field: dark in every theme */
 
     /* VIEW-NAMESPACED tokens, defined here for the first time. These were
        referenced by their views with an inline rgba() fallback and defined
@@ -109,8 +110,27 @@
     --sv-speaking-bg: transparent;
     --sv-scroll-link-color: #b0b0b0;
 
-    --sv-font: HoeflerTitling;
-    --sv-chat-font: inherit;
+    /* FACES — typographic roles (Plans/Theme Environment, Stage 2). Stylesheets
+       and chat markup name a role, never a family, so a theme can give
+       narration a manuscript face while buttons keep the UI face — or, as
+       Parchment does, set every role to one face. A theme that authors only
+       --sv-face-body leaves the rest at these defaults.
+         ui       controls, labels, tiles, breadcrumbs — the application's voice
+         body     long-form reading: narration, articles
+         display  titles and speaker names (Parchment: small caps)
+         stage    the table's voice: out-of-story talk between players and GM
+         clerk    the system's voice: tool calls, status lines, dice requests */
+    --sv-face-ui: HoeflerTitling;
+    --sv-face-body: HoeflerTitling;
+    --sv-face-display: HoeflerTitling;
+    --sv-face-display-tracking: normal;   /* letter-spacing that suits the display face */
+    --sv-face-stage: HoeflerTitling;
+    --sv-face-clerk: sans-serif;
+
+    /* --sv-font is the UI face in EVERY theme; a theme changes the face by
+       redefining --sv-face-ui, never this. */
+    --sv-font: var(--sv-face-ui);
+    --sv-chat-font: var(--sv-face-body);
 
     /* chat chrome — the app theme overrides these wholesale */
     --sv-chat-msg-bg: rgba(255, 255, 255, 0.05);

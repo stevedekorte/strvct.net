@@ -1,6 +1,7 @@
 [
     "SvThemeFolder.js",
     "SvThemeClass.js",
+    "SvThemeTokens.js",
     "SvTheme.js",
     "SvDefaultTheme.js",
     "SvThemeResources.js",

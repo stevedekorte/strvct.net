@@ -91,6 +91,8 @@
 
             .SvBreadCrumbLabel {
                 font-size: 0.9em;
+                font-family: var(--sv-face-display);
+                letter-spacing: var(--sv-face-display-tracking);
                 color: var(--SvBreadCrumbs-color, rgba(255, 255, 255, 0.5));
                 transition: color 0.15s;
                 cursor: pointer;

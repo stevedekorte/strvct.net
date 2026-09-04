@@ -17,9 +17,10 @@
  *   - showsEdgeHandle() -> Boolean — false hides the handle entirely (e.g. a
  *     band with no content yet has no boundary to mark).
  *   - collapsibleRegionLabel() -> String — the handle's accessible name.
- *   - expandedRegionBackgroundCss() -> String — a CSS color the whole column
- *     is painted while the region is expanded (e.g. a theatre's near-black),
- *     so sub-pixel rounding seams can never show the page through it.
+ *   - expandedRegionSurfaceName() -> String — the name of the SURFACE the
+ *     whole column is painted while the region is expanded (e.g. "theatre"),
+ *     resolved by the theme to var(--sv-surface-<name>), so sub-pixel rounding
+ *     seams can never show the page through it. A name, never a color.
  */
 (class SvCollapsibleRegionProtocol extends Protocol {
 

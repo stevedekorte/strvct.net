@@ -195,7 +195,7 @@
         {
             const slot = this.newSlot("nodeTileSurfaceName", null);
             slot.setDuplicateOp("copyValue");
-            slot.setShouldStoreSlot(true);
+            slot.setShouldStoreSlot(false); // a hint, not data: classes set it in init; never stamped onto records
             slot.setInspectorPath("Node/Viewable/Style");
             slot.setSlotType("String");
             slot.setAllowsNullValue(true);
@@ -222,7 +222,7 @@
         {
             const slot = this.newSlot("nodeContainerSurfaceName", null);
             slot.setDuplicateOp("copyValue");
-            slot.setShouldStoreSlot(true);
+            slot.setShouldStoreSlot(false); // a hint, not data: classes set it in init; never stamped onto records
             slot.setInspectorPath("Node/Viewable/Style");
             slot.setSlotType("String");
             slot.setAllowsNullValue(true);

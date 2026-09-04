@@ -80,7 +80,7 @@
         labelView.setPadding("12px 20px");
         labelView.setBorderRadius("8px");
         labelView.setFontSize("14px");
-        labelView.setFontFamily("sans-serif");
+        labelView.setFontFamily("var(--sv-face-ui)");
         labelView.setBoxShadow("0 4px 12px rgba(0, 0, 0, 0.3)");
         labelView.setMaxWidth("300px");
         labelView.setTextAlign("center");

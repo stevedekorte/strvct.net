@@ -97,6 +97,31 @@
     }
 
     /**
+     * @description Installs (or replaces) the one style sheet with this id, so a
+     * caller that republishes — the theme's token sheet on every navigation —
+     * never accumulates stale sheets. Appended to head, so it is the LAST
+     * sheet and its :root block wins ties against every earlier default.
+     * @param {string} id - element id for the sheet
+     * @param {string} cssCode - the CSS
+     * @returns {SvWebDocument}
+     * @category Styling
+     */
+    setStyleSheetStringForId (id, cssCode) {
+        if (SvPlatform.isNodePlatform() || typeof document === "undefined") {
+            return this;
+        }
+        const existing = document.getElementById(id);
+        if (existing) {
+            existing.remove();
+        }
+        const styleElement = document.createElement("style");
+        styleElement.id = id;
+        styleElement.textContent = cssCode;
+        document.head.appendChild(styleElement);
+        return this;
+    }
+
+    /**
      * @description Displays debug information about the document's style sheets.
      * @returns {SvWebDocument} The current SvWebDocument instance.
      * @category Debugging

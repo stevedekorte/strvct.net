@@ -211,6 +211,36 @@
 
 
     /**
+     * @description The CSS that wears a token set: one :root block, so the
+     * custom properties inherit to every element — views and model-authored
+     * chat markup alike — and a closer element can still override one.
+     * @param {Object} tokenDict - { "--sv-text": "#111", … }
+     * @param {String} colorScheme - "light" or "dark"
+     * @returns {String}
+     * @category Theme
+     */
+    static cssTextForThemeTokens (tokenDict, colorScheme) {
+        const lines = Object.keys(tokenDict).map(name => "    " + name + ": " + tokenDict[name] + ";");
+        lines.unshift("    color-scheme: " + (colorScheme === "dark" ? "dark" : "light") + ";");
+        return ":root {\n" + lines.join("\n") + "\n}\n";
+    }
+
+    /**
+     * @description Publishes a theme's tokens at the document root, replacing
+     * whatever theme was worn before. A write only — no measurement — so it is
+     * safe on the navigation path.
+     * @param {Object} tokenDict
+     * @param {String} colorScheme
+     * @returns {SvWebUserInterface}
+     * @category Theme
+     */
+    publishThemeTokens (tokenDict, colorScheme) {
+        const css = this.thisClass().cssTextForThemeTokens(tokenDict, colorScheme);
+        SvWebDocument.shared().setStyleSheetStringForId("sv-theme-tokens", css);
+        return this;
+    }
+
+    /**
      * @description Sets up the document theme
      * @category UI
      */

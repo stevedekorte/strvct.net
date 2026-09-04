@@ -1,6 +1,7 @@
 [
     "SvNode.js",
     "SvNode_inheritedResources.js",
+    "SvNode_uiTheme.js",
     "SvTitledNode.js",
     "SvTranslatableNode.js",
     "SvInspectableNode.js",

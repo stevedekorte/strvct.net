@@ -25,7 +25,9 @@
         // 3: token colors admitted to validColors — v2's rebuild had them
         //    coerced back to "inherit" by options-field validation, leaving
         //    the selected state styleless in every theme
-        return 3;
+        // 4: SvTheme gained token folders as subnodes (Plans/Theme
+        //    Environment Stage 3); theme classes are now filtered by class
+        return 4;
     }
 
     /**
@@ -61,7 +63,7 @@
     finalInit () {
         super.finalInit();
         if (this.setupVersion() !== this.thisClass().defaultsVersion()) {
-            this.removeAllSubnodes(); // stale stored defaults — rebuild below
+            this.removeThemeClasses(); // stale stored defaults — rebuild below (token folders are slots, untouched)
         }
         this.setupAsDefault();
     }
@@ -72,7 +74,7 @@
      * @category Configuration
      */
     setupAsDefault () {
-        if (!this.hasSubnodes()) {
+        if (this.themeClasses().length === 0) {
             //debugger
             this.setTitle("DefaultTheme");
             const defaultThemeClass = SvThemeClass.clone().setupAsDefault();

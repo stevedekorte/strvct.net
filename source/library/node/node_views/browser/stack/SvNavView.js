@@ -818,13 +818,16 @@
         const region = this.headerRegion();
         const hasRegion = !!region;
 
-        // Paint the whole column in the expanded region's surface color (a
-        // theatre's near-black): fractional-scale rounding leaves sub-pixel
-        // seams above/below the flexed header, and this is what stops the
-        // page showing through them (the EdgeControls prototype's own fix).
-        const surface = (expanded && region && typeof region.expandedRegionBackgroundCss === "function")
-            ? region.expandedRegionBackgroundCss() : null;
-        this.setBackgroundColor(surface); // null restores the column's normal (transparent) ground
+        // Paint the whole column in the expanded region's SURFACE (a theatre
+        // names "theatre", the theme decides what that is — never a color from
+        // the model): fractional-scale rounding leaves sub-pixel seams
+        // above/below the flexed header, and this is what stops the page
+        // showing through them (the EdgeControls prototype's own fix; whether
+        // the seam is real, and whether the region could paint it itself, is
+        // Stage 1 of Plans/Theme Environment).
+        const surfaceName = (expanded && region && typeof region.expandedRegionSurfaceName === "function")
+            ? region.expandedRegionSurfaceName() : null;
+        this.setBackgroundColor(this.backgroundValueForSurfaceName(surfaceName)); // "transparent" restores the column's normal ground
 
         if (expanded) {
             header.setHeight("auto"); // clear fit-content so flex sizes it (definite, so the tile's 100% resolves)

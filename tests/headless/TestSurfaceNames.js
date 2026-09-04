@@ -76,6 +76,11 @@ async function main () {
     check(slot.slotType() === "String", "typed as String (a name, not a color)");
     check(slot.allowsNullValue() === true, "null allowed — that IS the default surface");
     check(slot.syncsToView() === true, "syncsToView, so renaming a surface repaints");
+    console.log("\n...and are never persisted (decided 2026-09-04): a class sets them in init; a stored hint gets stamped onto every record");
+    ["nodeTileSurfaceName", "nodeContainerSurfaceName"].forEach((name) => {
+        const s = SvViewableNode.prototype.slotNamed(name);
+        check(s.shouldStoreSlot() === false, name + " has shouldStoreSlot false");
+    });
 
     console.log("\nName resolution: a name becomes a THEME lookup, never a literal");
     // Resolution lives on SvCssDomView so both readers share one rule.
@@ -95,10 +100,28 @@ async function main () {
     check(/, transparent\)$/.test(unknown),
         "an unthemed name falls back to transparent: " + unknown);
 
+    console.log("\nEvery container level reads the container hint, so any node's detail region can name its surface");
+    // SvBrowserView paints a root; SvStackView paints a node's detail region
+    // (its own column plus everything deeper) — the cascade the plan describes.
+    ["SvBrowserView", "SvStackView"].forEach((className) => {
+        const cls = SvGlobals.get(className);
+        check(cls && typeof cls.prototype.syncSurfaceFromNode === "function", className + ".syncSurfaceFromNode exists");
+    });
+    const SvTile = SvGlobals.get("SvTile");
+    check(typeof SvTile.prototype.syncSurfaceFromNode === "function", "SvTile.syncSurfaceFromNode exists");
+    check(typeof SvTile.prototype.repaintSurfaceOverThemeState === "function",
+        "SvTile.repaintSurfaceOverThemeState exists — the theme state's unselected background must not erase a named surface");
+
+    console.log("\nA collapsible region names its expanded surface, never a color");
+    const SvNavView = SvGlobals.get("SvNavView");
+    const navSrc = SvNavView.prototype.applyHeaderRegionExpanded.toString();
+    check(navSrc.includes("expandedRegionSurfaceName") && !navSrc.includes("expandedRegionBackgroundCss"),
+        "SvNavView asks the region for expandedRegionSurfaceName (the CSS-value hook is gone)");
+
     console.log("\nThe framework ships defaults for the named surfaces it documents");
     const fs = require("fs");
     const css = fs.readFileSync(path.join(strvctRoot, "_css.css"), "utf8");
-    ["panel", "chrome", "raised", "notice", "danger"].forEach((name) => {
+    ["panel", "chrome", "raised", "notice", "danger", "theatre"].forEach((name) => {
         check(css.includes("--sv-surface-" + name + ":"),
             "--sv-surface-" + name + " has a default in strvct/_css.css");
     });
