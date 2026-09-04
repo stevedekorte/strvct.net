@@ -230,7 +230,7 @@ class SvWindowErrorPanel extends Object {
             {
                 const style = errorPanelDiv.style;
                 style.position = "relative"; // Changed from fixed since it's now inside backdrop
-                style.backgroundColor = "var(--sv-surface, rgb(25, 25, 25))"; // boot-safe theming: dark fallback for pre-theme errors
+                style.backgroundColor = "var(--sv-surface, #191919)"; // boot-safe theming: dark fallback for pre-theme errors
                 // WHITE, not black. The fallback applies exactly when no theme is
                 // loaded — which is when this panel matters most, since it reports
                 // boot errors — and the line above falls back to a near-black
@@ -464,7 +464,7 @@ class SvWindowErrorPanel extends Object {
                 style.textAlign = "center";
                 style.cursor = "pointer";
                 style.transition = "all 0.2s ease";
-                style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-surface, rgb(25, 25, 25))";
+                style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-surface, #191919)";
                 style.color = isPrimary ? "var(--sv-text, white)" : "var(--sv-text-muted, #aaa)";
                 style.border = "1px solid var(--sv-hairline, #444)";
                 style.borderRadius = "0";
@@ -477,7 +477,7 @@ class SvWindowErrorPanel extends Object {
                 });
 
                 button.addEventListener("mouseleave", () => {
-                    button.style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-surface, rgb(25, 25, 25))";
+                    button.style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-surface, #191919)";
                 });
 
                 button.addEventListener("click", clickHandler);

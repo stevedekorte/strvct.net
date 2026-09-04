@@ -287,7 +287,7 @@
             // A REAL page ground, not a translucent wash: the footer (chat
             // input) can sit over a theatre-dark column, and ink-colored text
             // needs the page behind it to stay readable there.
-            v.setBackgroundColor("var(--sv-bg)");
+            v.setBackgroundColor("var(--sv-surface)");
             v.setFlexGrow(0);
             v.setFlexShrink(0);
             this.setFooterView(v);

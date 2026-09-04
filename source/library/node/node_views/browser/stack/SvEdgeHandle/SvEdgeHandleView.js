@@ -249,7 +249,7 @@
             [100, 0], [97, 19], [88, 34], [73, 47],
             [54, 60], [34, 73], [15, 87], [0, 100]
         ].map(([alpha, at]) => {
-            return "color-mix(in srgb, var(--sv-bg) " + alpha + "%, transparent) " + at + "%";
+            return "color-mix(in srgb, var(--sv-surface) " + alpha + "%, transparent) " + at + "%";
         }).join(", ");
         this.setBackgroundImage("linear-gradient(to bottom, " + stops + ")");
         return this;

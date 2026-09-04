@@ -9,13 +9,13 @@
  * @extends SvFlexDomView
  * @classdesc The "continue reading" affordance shown when scroll content
  * extends below the viewport: a full-width gradient that dissolves the
- * content into the page background (via --sv-bg, so it follows the theme)
+ * content into the page background (via --sv-surface, so it follows the theme)
  * with a centered italic link — "Continue to the latest ⌄" — that
  * smooth-scrolls to the bottom. Both fade in/out together, driven by the
  * owning SvScrollView through showButton()/hideButton().
  *
  * Themeable via:
- *     --sv-bg          gradient dissolve color (page background)
+ *     --sv-surface          gradient dissolve color (page background)
  *     --sv-text-muted  link color (opaque muted gray, like placeholder text)
  */
 (class SvScrollToBottomButton extends SvFlexDomView {
@@ -75,8 +75,8 @@
         // 55% → solid). color-mix keeps it theme-correct from one token.
         this.setBackgroundImage(
             "linear-gradient(to bottom, transparent 0%, "
-            + "color-mix(in srgb, var(--sv-bg) 94%, transparent) 55%, "
-            + "var(--sv-bg) 100%)");
+            + "color-mix(in srgb, var(--sv-surface) 94%, transparent) 55%, "
+            + "var(--sv-surface) 100%)");
 
         this.setOpacity(0);
         this.setTransition("opacity 180ms ease");

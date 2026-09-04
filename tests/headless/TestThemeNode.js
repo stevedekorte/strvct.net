@@ -79,19 +79,19 @@ async function main () {
     console.log("\nAppearances layer over shared tokens");
     theme.setThemeJson({
         tokens: { "--sv-face-body": "IMFellEnglish", "--uo-measure": "68ch" },
-        light: { "--sv-bg": "#eeeade", "--sv-text": "#1c1c1c" },
-        dark: { "--sv-bg": "#1c1c1c", "--sv-text": "#ece7da" }
+        light: { "--sv-surface": "#eeeade", "--sv-text": "#1c1c1c" },
+        dark: { "--sv-surface": "#1c1c1c", "--sv-text": "#ece7da" }
     });
     const light = theme.tokenDictForAppearance("light");
     const dark = theme.tokenDictForAppearance("dark");
-    check(light["--sv-bg"] === "#eeeade" && light["--sv-face-body"] === "IMFellEnglish" && light["--uo-measure"] === "68ch", "light = shared + light values");
-    check(dark["--sv-bg"] === "#1c1c1c" && dark["--sv-face-body"] === "IMFellEnglish", "dark = shared + dark values");
+    check(light["--sv-surface"] === "#eeeade" && light["--sv-face-body"] === "IMFellEnglish" && light["--uo-measure"] === "68ch", "light = shared + light values");
+    check(dark["--sv-surface"] === "#1c1c1c" && dark["--sv-face-body"] === "IMFellEnglish", "dark = shared + dark values");
     check(theme.resolvedAppearance("dark") === "dark", "a theme with both appearances honors the request");
 
     const darkOnly = SvTheme.clone();
-    darkOnly.setThemeJson({ tokens: {}, light: {}, dark: { "--sv-bg": "#191919" } });
+    darkOnly.setThemeJson({ tokens: {}, light: {}, dark: { "--sv-surface": "#191919" } });
     check(darkOnly.resolvedAppearance("light") === "dark", "a theme that authored only dark shows dark when light is asked for");
-    check(darkOnly.tokenDictForAppearance("light")["--sv-bg"] === "#191919", "…and publishes the dark values");
+    check(darkOnly.tokenDictForAppearance("light")["--sv-surface"] === "#191919", "…and publishes the dark values");
     const neutral = SvTheme.clone();
     check(neutral.resolvedAppearance("light") === "light", "a theme with neither appearance leaves the request alone");
 
@@ -100,15 +100,15 @@ async function main () {
     check(JSON.stringify(Object.keys(json).sort()) === JSON.stringify(["dark", "light", "tokens"]), "themeJson has tokens/light/dark");
     const copy = SvTheme.clone().copyThemeFrom(theme);
     check(JSON.stringify(copy.themeJson()) === JSON.stringify(json), "copyThemeFrom reproduces the token folders");
-    copy.lightTokens().setValueNamed("--sv-bg", "#ffffff");
-    check(theme.lightTokens().valueNamed("--sv-bg") === "#eeeade", "…as a COPY: editing the copy leaves the source alone");
+    copy.lightTokens().setValueNamed("--sv-surface", "#ffffff");
+    check(theme.lightTokens().valueNamed("--sv-surface") === "#eeeade", "…as a COPY: editing the copy leaves the source alone");
     check(theme.specVersion() === 0, "a hand-made theme has specVersion 0");
 
     console.log("\nThe UI publishes one :root block with a color-scheme");
-    const css = SvWebUserInterface.cssTextForThemeTokens({ "--sv-bg": "#eeeade", "--sv-face-body": "IMFellEnglish" }, "light");
+    const css = SvWebUserInterface.cssTextForThemeTokens({ "--sv-surface": "#eeeade", "--sv-face-body": "IMFellEnglish" }, "light");
     check(css.startsWith(":root {") && css.trim().endsWith("}"), "CSS is a single :root block");
     check(css.includes("color-scheme: light;"), "…declaring the color scheme");
-    check(css.includes("--sv-bg: #eeeade;") && css.includes("--sv-face-body: IMFellEnglish;"), "…with every token as a custom property");
+    check(css.includes("--sv-surface: #eeeade;") && css.includes("--sv-face-body: IMFellEnglish;"), "…with every token as a custom property");
     check(SvWebUserInterface.cssTextForThemeTokens({}, "dark").includes("color-scheme: dark;"), "dark requests declare dark");
 
     console.log("\nuiTheme is an inherited resource, resolved up the resource chain");

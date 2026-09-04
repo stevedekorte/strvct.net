@@ -187,7 +187,7 @@
     // --- state ---
 
     restingTickColor () {
-        return this.isInverted() ? "var(--sv-bg)" : "var(--sv-text)";
+        return this.isInverted() ? "var(--sv-surface)" : "var(--sv-text)";
     }
 
     /**

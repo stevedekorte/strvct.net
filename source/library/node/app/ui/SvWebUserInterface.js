@@ -262,7 +262,7 @@
      */
     setupNormalDocTheme () {
         const doc = SvDocumentBody.shared();
-        doc.setBackgroundColor("var(--sv-bg)");
+        doc.setBackgroundColor("var(--sv-surface)");
         doc.setFontFamily("var(--sv-font)");
 
         //doc.setFontFamily("EB Garamond");

@@ -132,7 +132,7 @@
             newTile.contentView().setMinAndMaxHeight(64);
             newTile.setTransition("all 0.3s");
             newTile.contentView().setTransition("all 0s");
-            newTile.setBackgroundColor("var(--sv-bg)");
+            newTile.setBackgroundColor("var(--sv-surface)");
 
             // set new tile view height to zero and
             const minHeight = SvTile.defaultHeight();
@@ -162,7 +162,7 @@
             //this.logDebug(".onPinchMove() s = ", s)
             const minHeight = SvTile.defaultHeight();
             const newTile = this.subviewForNode(this._temporaryPinchSubnode);
-            //newTile.setBackgroundColor("var(--sv-bg)")
+            //newTile.setBackgroundColor("var(--sv-surface)")
             newTile.setMinAndMaxHeight(s);
             const t = Math.floor(s / 2 - minHeight / 2);
             newTile.contentView().setTopPx(t);

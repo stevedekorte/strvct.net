@@ -27,8 +27,7 @@
     See docs/Plans/Theme Token Unification.
 */
 :root {
-    --sv-bg: #191919;
-    --sv-surface: #191919;
+    --sv-surface: #191919;   /* the page ground — the outermost surface; the named surfaces below are shades of it */
 
     /* NAMED SURFACES for the nodeTileSurfaceName / nodeContainerSurfaceName
        hints. A node names a surface ("panel"), never a color, and the view
@@ -179,7 +178,7 @@ html, body {
     margin: 0px;
     border: 0px;
 
-    background-color: var(--sv-bg);
+    background-color: var(--sv-surface);
     zoom: 100%;
 
     font-size: 20px;
