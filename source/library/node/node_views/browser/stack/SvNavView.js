@@ -547,7 +547,13 @@
         this.setFlexShrink(0);
 
         this.setMinAndMaxWidth("100%");
-        this.setMinAndMaxHeight("5em");
+        // A horizontal row's height follows the same node hint its TILES do
+        // (SvTile.makeOrientationDown reads nodeMinTileHeight off this node),
+        // so a node that wants a shorter row — a tab bar sized to match the
+        // breadcrumbs above it — sets ONE hint and both agree. Falls back to
+        // the historical 5em when the node carries no hint.
+        const hintedHeight = this.node() ? (this.node().nodeMinTileHeight() || 0) : 0;
+        this.setMinAndMaxHeight(hintedHeight > 0 ? hintedHeight : "5em");
 
         if (this.node()) {
             if (this.node().nodeFillsRemainingWidth()) {

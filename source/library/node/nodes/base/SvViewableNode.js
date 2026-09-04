@@ -262,7 +262,15 @@
         if (this.nodeChildrenAlignment() === "Start") {
             this.setNodeChildrenAlignment("flex-start");
         }
-        this.setNodeMinTileHeight(80);
+        // The 80px default, applied ONLY when nothing has chosen a height.
+        // This used to stamp unconditionally, which silently overwrote any
+        // value a class declared in initPrototype (where every other style
+        // hint is declared) — the hint could only be set from a subclass's
+        // own finalInit, and nobody could tell why. 0 is the slot default,
+        // i.e. "nobody chose"; a deliberate -1/other value is left alone.
+        if (this.nodeMinTileHeight() === 0) {
+            this.setNodeMinTileHeight(80);
+        }
     }
 
     /**
