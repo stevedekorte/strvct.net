@@ -779,10 +779,20 @@
             const node = this.stackView().node();
             if (node) {
                 const h = node.nodeMinTileHeight();
-                //console.log("node " + this.node().title() + " height " + h)
                 if (h) {
                     this.setMinAndMaxHeight(h);
-                    //this.contentView().setMinAndMaxHeight(h)
+                    // …and let the content box match, so its own minimum
+                    // (SvTitledTile reserves 5em for a list row) cannot stand
+                    // taller than the tile. When it did, the vertically
+                    // centred label centred inside the TALLER box and so sat
+                    // below the tile's middle — the companion's 60px tabs
+                    // read as bottom-aligned (2026-09-03). Min only: a tile
+                    // that genuinely needs more still grows its own way.
+                    if (this.contentView()) {
+                        // setMinHeight takes a CSS string (setMinAndMaxHeight
+                        // above converts numbers itself); the hint is a Number.
+                        this.contentView().setMinHeight(Type.isNumber(h) ? this.pxNumberToString(h) : h);
+                    }
                 }
             }
         }
