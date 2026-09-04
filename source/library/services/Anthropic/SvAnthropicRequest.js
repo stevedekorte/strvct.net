@@ -243,6 +243,14 @@
         } else if (type === "ping") {
             // a keep alive message?
             // example: {"type": "message_stop"}
+        } else if (type === "uo_billing") {
+            // OUR frame, not Anthropic's: the proxy appends it after settling
+            // the request, so the figure covers the real usage (cache reads
+            // and writes included) rather than the pre-flight estimate.
+            // example: {"type": "uo_billing", "vendorCostUsd": 0.2134, "model": "claude-sonnet-5"}
+            if (Type.isNumber(json.vendorCostUsd)) {
+                this.setVendorCostUsd(json.vendorCostUsd);
+            }
         } else {
             console.warn(this.svType() + " WARNING: don't know what to do with this JsonChunk", json);
         }

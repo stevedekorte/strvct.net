@@ -15,6 +15,25 @@
    */
     initPrototypeSlots () {
     /**
+     * @member {String} requestInfo - the developer-mode provenance line for
+     * this response ("model · $cost · time · in / out"). Kept OUT of the
+     * message's value: content() IS value(), so writing it there would put
+     * telemetry into the message itself — stored as prose, truncated into
+     * subtitles, and stripped back out again by every reader. It is composed
+     * once when the stream ends and appended by visibleValue() at display
+     * time. Stored, because the request object it came from is transient and
+     * the line should survive a reload.
+     * @category Display
+     */
+        {
+            const slot = this.newSlot("requestInfo", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setSyncsToView(true);
+        }
+
+    /**
      * @member {Boolean} didAttemptFailover - Whether this turn already switched
      * to the failover model. Per-message so a failing failover parks the turn
      * instead of ping-ponging between providers.
@@ -578,7 +597,7 @@
    * @category Event Handling
    */
     onRequestComplete (aRequest) {
-        this.appendRequestInfo(aRequest);
+        this.captureRequestInfo(aRequest);
         this.markAsComplete();
     }
 
@@ -630,44 +649,119 @@
    * @category Event Handling
    */
     onStreamEnd (request) {
-        this.appendRequestInfo(request || this.request());
+        this.captureRequestInfo(request || this.request());
         this.setIsComplete(true);
         this.sendDelegateMessage("onMessageUpdate");
     }
 
-    appendRequestInfo (aRequest) {
+    /**
+   * Compose the provenance line and keep it beside the message rather than
+   * inside it. The request is transient (shutdown() clears it, and it never
+   * survives a reload), so the composed string is what we hold on to.
+   * @param {SvAiRequest} [aRequest]
+   * @returns {SvAiResponseMessage}
+   * @category Display
+   */
+    captureRequestInfo (aRequest) {
         const request = aRequest || this.request();
-        if (!request) {
-            return this;
-        }
-        const current = this.content() || "";
-        if (current.includes("<request-info")) {
+        if (!request || this.requestInfo()) {
             return this;
         }
         const line = this.requestInfoLine(request);
-        if (!line) {
-            return this;
+        if (line) {
+            this.setRequestInfo(line);
+            this.directDidUpdateNode(); // the value did not change, so ask for the re-render
         }
-        this.setContent(current + "<request-info>" + line + "</request-info>");
         return this;
     }
 
+    /**
+   * The message as displayed: its value, plus the provenance line as a
+   * sibling tag. The tag is styled (and hidden outside developer mode) by
+   * ChatCss, and stripping it is unnecessary now that it never enters the
+   * value. Legacy messages that still carry <request-info> in their stored
+   * content keep rendering it from there.
+   *
+   * Safe as a display-only override because a response message is never
+   * editable (valueIsEditable() is false), so this string is never used as an
+   * edit buffer that could be written back.
+   * @returns {String}
+   * @category Display
+   */
+    visibleValue () {
+        const value = super.visibleValue();
+        const line = this.requestInfo();
+        if (!line || typeof value !== "string") {
+            return value;
+        }
+        return value + "<request-info>" + line + "</request-info>";
+    }
+
+    /**
+   * One line of provenance for a completed response, shown in developer mode:
+   *   claude-opus-5 · $0.1234 · 3.1s · 143k in / 831 out
+   * Each field is dropped when it is unknown, so the separators never bracket
+   * an empty slot.
+   * @param {SvAiRequest} request
+   * @returns {String}
+   * @category Display
+   */
     requestInfoLine (request) {
         const parts = [];
+
+        const modelName = request.chatModelNameOrNull ? request.chatModelNameOrNull() : null;
+        if (modelName) {
+            parts.push(modelName);
+        }
+
+        const cost = request.vendorCostDescription ? request.vendorCostDescription() : null;
+        if (cost) {
+            parts.push(cost);
+        }
+
+        const ms = this.requestElapsedMs(request);
+        if (ms) {
+            parts.push(this.compactDuration(ms));
+        }
+
+        const tokens = this.tokenCountsDescription(request);
+        if (tokens) {
+            parts.push(tokens);
+        }
+
+        return parts.join(" · ");
+    }
+
+    requestElapsedMs (request) {
+        if (request.elapsedMs) {
+            return request.elapsedMs();
+        }
+        return request.elapsedSeconds ? request.elapsedSeconds() * 1000 : 0;
+    }
+
+    tokenCountsDescription (request) {
+        const counts = [];
         const inTok = request.inputTokenCount ? request.inputTokenCount() : 0;
         const outTok = request.outputTokenCount ? request.outputTokenCount() : 0;
         if (inTok) {
-            parts.push(this.compactCount(inTok) + " in");
+            counts.push(this.compactCount(inTok) + " in");
         }
         if (outTok) {
-            parts.push(this.compactCount(outTok) + " out");
+            counts.push(this.compactCount(outTok) + " out");
         }
-        const secs = request.elapsedSeconds ? request.elapsedSeconds() : 0;
-        if (secs) {
-            parts.push(secs + "s");
-        }
-        return parts.join(", ");
+        return counts.join(" / ");
     }
+
+    /**
+   * @param {Number} ms
+   * @returns {String} e.g. "3.1s" — one decimal, so a fast request does not
+   * round to a bare "0s" and a slow one stays readable.
+   * @category Display
+   */
+    compactDuration (ms) {
+        return (ms / 1000).toFixed(1) + "s";
+    }
+
 
     compactCount (n) {
         if (n >= 1000) {

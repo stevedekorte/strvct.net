@@ -132,11 +132,50 @@
             slot.setShouldStoreSlot(false);
         }
 
+        /**
+     * @member {Number} requestEndedAtMs - when the response finished arriving.
+     * Stamped on the completing path only, so a continuation (a request that
+     * ran out of tokens and is still going) leaves it null until it truly ends
+     * and elapsedSeconds() keeps counting.
+     */
+        {
+            const slot = this.newSlot("requestEndedAtMs", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+        }
+
         {
             const slot = this.newSlot("usageJson", null);
             slot.setSlotType("JSON Object");
             slot.setAllowsNullValue(true);
             slot.setShouldStoreSlot(false);
+        }
+
+        /**
+     * @member {Number} vendorCostUsd - what we expect the VENDOR to bill us
+     * for this request, in USD, before the account markup. Not from the
+     * provider: no AI API reports dollars, only tokens. Our proxy settles the
+     * real usage against its rate table and reports the result on the response
+     * stream (Servers/Firebase/functions/src/routes/proxy.js,
+     * writeVendorCostFrame), so this stays null for any request that did not
+     * go through it. What the player is actually debited (markup included)
+     * lives in the wallet ledger, not here.
+     *
+     * The full float is kept; the "$" and the four decimals are declared here
+     * and applied by the field's visibleValue(), so the inspector and the
+     * request-info line render it the same way and neither re-rounds by hand.
+     */
+        {
+            const slot = this.newSlot("vendorCostUsd", null);
+            slot.setLabel("Vendor Cost");
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+            slot.setDisplayPrefix("$");
+            slot.setDisplayDecimalPlaces(4); // enough that a cheap request is not "$0.00"
+            slot.setIsSubnodeField(true);
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -785,6 +824,7 @@
             return;
         }
 
+        this.setRequestEndedAtMs(Date.now()); // before onStreamEnd — that is where the info line is built
         this.finalizeStreamContent();
         this.sendDelegateMessage("onStreamEnd");
         this.sendDelegateMessage("onRequestComplete");
@@ -971,12 +1011,76 @@
         return Math.round((byteCount || 0) / 4);
     }
 
-    elapsedSeconds () {
+    elapsedMs () {
         const began = this.requestBeganAtMs();
         if (!began) {
             return 0;
         }
-        return Math.max(1, Math.round((Date.now() - began) / 1000));
+        // Prefer the recorded end. Measuring against Date.now() means the
+        // number keeps growing for as long as the request object is alive, so
+        // a line rebuilt after the fact would report the wrong duration.
+        const ended = this.requestEndedAtMs() || Date.now();
+        return Math.max(0, ended - began);
+    }
+
+    elapsedSeconds () {
+        const ms = this.elapsedMs();
+        if (!ms) {
+            return 0;
+        }
+        return Math.max(1, Math.round(ms / 1000));
+    }
+
+    /**
+   * @description The display form of a slot that declares its own formatting
+   * (decimals, prefix, suffix). SvNumberField.visibleValue() does the
+   * rounding, so a view never re-invents it and the inspector and any line we
+   * compose always agree.
+   * @param {String} slotName
+   * @returns {String|null}
+   * @category Display
+   */
+    displayStringForSlotNamed (slotName) {
+        const slot = this.thisPrototype().slotNamed(slotName);
+        const field = slot ? this.existingSubnodeFieldForSlot(slot) : null;
+        if (!field) {
+            return null;
+        }
+        const value = field.visibleValue();
+        if (Type.isNullOrUndefined(value)) {
+            return null;
+        }
+        return (field.valuePrefix() || "") + value + (field.valuePostfix() || "");
+    }
+
+    /**
+   * @description e.g. "$0.1234", or null when nothing was reported.
+   * @returns {String|null}
+   * @category Display
+   */
+    vendorCostDescription () {
+        const cost = this.vendorCostUsd();
+        if (!Type.isNumber(cost) || cost <= 0) {
+            return null;
+        }
+        return this.displayStringForSlotNamed("vendorCostUsd");
+    }
+
+    /**
+   * @description The model this request was sent to, for display.
+   * @returns {String|null}
+   * @category Display
+   */
+    chatModelNameOrNull () {
+        try {
+            const model = this.chatModel ? this.chatModel() : null;
+            if (!model) {
+                return null;
+            }
+            return (model.modelName ? model.modelName() : null) || (model.title ? model.title() : null);
+        } catch {
+            return null; // display only — never let it break a completed turn
+        }
     }
 
     copyBody () {
