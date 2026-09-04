@@ -30,6 +30,47 @@
     --sv-bg: #191919;
     --sv-surface: #191919;
 
+    /* NAMED SURFACES for the nodeTileSurfaceName / nodeContainerSurfaceName
+       hints. A node names a surface ("panel"), never a color, and the view
+       resolves it to var(--sv-surface-<name>) — so light/dark and a theme swap
+       need no model change, and varying a tile or a whole region by node needs
+       no view subclass.
+
+       Deliberately close to --sv-surface here: the framework's job is that an
+       unthemed name still reads as a surface rather than as a hole. An app
+       theme overrides these; an unknown name falls back to transparent. */
+    --sv-surface-panel: #1f1f1f;      /* a docked side panel / companion */
+    --sv-surface-chrome: #151515;     /* toolbars and breadcrumb bars */
+    --sv-surface-raised: #232323;     /* a tile that should sit above its list */
+    --sv-surface-notice: rgba(200, 160, 60, 0.10);   /* wants attention */
+    --sv-surface-danger: rgba(200, 70, 70, 0.12);    /* something is wrong */
+
+    /* VIEW-NAMESPACED tokens, defined here for the first time. These were
+       referenced by their views with an inline rgba() fallback and defined
+       nowhere in Classic — only inside the app's two parchment blocks. So
+       Classic was styled by literals buried in view code that no theme could
+       reach, which is exactly what "Classic must be an explicit token set"
+       exists to prevent. They also escaped TestThemeTokens, which looked only
+       for lowercase --sv-/--uo-.
+
+       Values below are the fallbacks they already resolved to in Classic, so
+       Classic is unchanged; the point is that they are now overridable. Their
+       inline fallbacks can be dropped as the token-unification stages proceed.
+       See docs/Plans/Theme Token Unification. */
+    --SvBadge-bg: rgb(240, 192, 0);
+    --SvBadge-color: #191919;
+
+    --SvBreadCrumbs-bg: transparent;        /* shows the container's surface */
+    --SvBreadCrumbs-color: rgba(255, 255, 255, 0.5);
+    --SvBreadCrumbs-current-color: rgba(255, 255, 255, 0.85);
+    --SvBreadCrumbs-separator-color: rgba(255, 255, 255, 0.3);
+    --SvBreadCrumbs-border-color: #333;
+
+    --SvCompanion-bg: transparent;          /* the content paints the panel */
+    --SvCompanionTab-background-color: rgba(255, 255, 255, 0.035);
+    --SvCompanionTab-border-color: rgba(255, 255, 255, 0.08);
+    --SvCompanionTab-color: rgba(255, 255, 255, 0.5);
+
     --sv-text: #f4f4ec;
     --sv-text-muted: #b0b0b0;
     --sv-text-dim: #888888;

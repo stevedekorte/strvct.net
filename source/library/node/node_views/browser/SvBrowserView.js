@@ -57,6 +57,18 @@
         }
 
         /**
+         * @member {String|null} appliedSurfaceName - the
+         * nodeContainerSurfaceName last painted, so a repeated sync does not
+         * rewrite an unchanged value. View-side bookkeeping, never stored.
+         * @category Theme
+         */
+        {
+            const slot = this.newSlot("appliedSurfaceName", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
          * @member {SvStackView} stackView - the Miller-column stack rooted at this browser's node
          * @category UI
          */
@@ -175,8 +187,32 @@
      */
     syncFromNode () {
         this.syncCssFromNode();
+        this.syncSurfaceFromNode();
         this.stackView().syncFromNode();
         return false;
+    }
+
+    /**
+     * @description Paints this browser from its node's
+     * nodeContainerSurfaceName, which colors the whole region: the breadcrumb
+     * bar and every tile inside are transparent by default, so they show this
+     * background rather than each needing one of their own.
+     *
+     * This is what lets the app's browser and a companion's browser — the SAME
+     * view class, with different nodes — read as different surfaces without a
+     * subclass of this view, of the breadcrumb bar, or of any tile.
+     * @returns {SvBrowserView}
+     * @category Theme
+     */
+    syncSurfaceFromNode () {
+        const node = this.node();
+        const name = (node && node.nodeContainerSurfaceName) ? node.nodeContainerSurfaceName() : null;
+        if (name === this.appliedSurfaceName()) {
+            return this;
+        }
+        this.setAppliedSurfaceName(name);
+        this.setBackgroundColor(this.backgroundValueForSurfaceName(name));
+        return this;
     }
 
     /**

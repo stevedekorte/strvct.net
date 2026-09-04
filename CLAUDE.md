@@ -99,6 +99,16 @@ STRVCT is a **naked objects** framework. The entire UI is auto-generated from th
 
 This boundary is load-bearing for the framework's automatic-UI claim. Treat any model file `import` or reference that touches view classes / browser globals as a bug.
 
+### A custom view class is the LAST resort (the other direction)
+
+The rule above stops models reaching into views. This one stops views multiplying: **a hand-written view/tile subclass is UI that is no longer derived from the model** — it stops following the theme, and it has to be maintained once per context where it appears. Varying a look by *where a node is shown* must never mean a subclass per place.
+
+So when a look or layout need appears, ask **"what hint would express this?"** before "which view do I subclass?" The `node*` hints are the alternative, and each one that exists is a view class nobody had to write: `nodeMinTileHeight`, `nodeChildrenTileWidth`, `nodeMinTileWidth`, `nodeContentMaxWidth`, `nodeShowsScrollbar`, `nodeTileSurfaceName`, `nodeContainerSurfaceName`, `cssVariableDict`, `themeClassName`.
+
+Preference order: existing hint → new hint read by the generic view → `themeClassName` (per-state looks) → a view class, only for genuinely bespoke DOM/canvas work.
+
+A new hint should name a **role**, not a value: `nodeTileSurfaceName` returns `"panel"`, and the view resolves it to `var(--sv-surface-panel, transparent)`. The model names intent, the theme owns the palette — so light/dark and a theme swap need no model change, and an unthemed name degrades to transparent rather than to a wrong color. Returning a literal color from a node is the mistake this shape avoids.
+
 ## Platform Abstraction (swappable UIs)
 
 Use the naked-objects pattern as much as possible, and keep STRVCT **between the app and the UI platform** — so the same app can run under different UIs (a web DOM UI, a terminal UI, or headless) by swapping the user-interface implementation, not the app. Keep platform assumptions out of app and model code:

@@ -42,6 +42,18 @@
         }
         {
             /**
+             * @member {String|null} appliedSurfaceName
+             * @description The nodeTileSurfaceName last written to the content
+             * view, so a repeated sync does not rewrite an unchanged value and
+             * a cleared name can be reset exactly once. View-side bookkeeping,
+             * never stored.
+             */
+            const slot = this.newSlot("appliedSurfaceName", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            /**
              * @member {SvDomView} closeButtonView
              * @description The close button view.
              */
@@ -615,9 +627,35 @@
         if (node) {
             this.setIsDisplayHidden(!node.isVisible());
             this.syncAriaFromNode();
+            this.syncSurfaceFromNode();
         }
         this.updateSubviews();
         this.syncOrientation();
+        return this;
+    }
+
+    /**
+     * @description Applies the node's nodeTileSurfaceName as this tile's
+     * background, so a node can ask for a distinct look WITHOUT a tile
+     * subclass. Named surface, not a color — the theme owns the palette.
+     *
+     * Skipped entirely when the node names no surface, so the selection and
+     * slide-gesture backgrounds (which write the same property) are untouched
+     * on the overwhelming majority of tiles that stay transparent.
+     * @returns {SvTile}
+     * @category Theme
+     */
+    syncSurfaceFromNode () {
+        const node = this.node();
+        const name = (node && node.nodeTileSurfaceName) ? node.nodeTileSurfaceName() : null;
+        if (!name && !this.appliedSurfaceName()) {
+            return this; // nothing asked for, nothing applied before
+        }
+        if (name === this.appliedSurfaceName()) {
+            return this; // idempotent: syncs repeat, writes should not
+        }
+        this.setAppliedSurfaceName(name);
+        this.contentView().setBackgroundColor(this.backgroundValueForSurfaceName(name));
         return this;
     }
 

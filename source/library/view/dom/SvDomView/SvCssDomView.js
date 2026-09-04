@@ -3131,6 +3131,28 @@
 
 
     /**
+     * @description Resolves a theme SURFACE NAME to a background value.
+     *
+     * The single rule both surface-name readers share (SvTile for a node's own
+     * tile, container views for the panel showing it): a name resolves to
+     * var(--sv-surface-<name>), falling back to transparent so an unknown or
+     * not-yet-themed name is invisible rather than wrong. A null name is
+     * transparent — the element paints nothing and shows its container.
+     *
+     * A name and not a color, deliberately: the model names a role, the theme
+     * owns the palette, and light/dark plus theme swaps need no model change.
+     * @param {String|null} name - the surface name, or null
+     * @returns {String} a CSS background-color value
+     * @category Theme
+     */
+    backgroundValueForSurfaceName (name) {
+        if (!name) {
+            return "transparent";
+        }
+        return "var(--sv-surface-" + name + ", transparent)";
+    }
+
+    /**
      * @description Applies CSS variables from a dictionary.
      * @param {Object} dict - The dictionary of CSS variables.
      */

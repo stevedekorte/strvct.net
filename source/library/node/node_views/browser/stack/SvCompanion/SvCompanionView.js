@@ -41,7 +41,13 @@
  * The badge is driven by the node's nodeViewShouldBadge() / nodeViewBadgeTitle()
  * protocol (aggregation across the companion subtree is the node's business).
  *
- * Background can be themed via --SvCompanion-bg.
+ * Background: TRANSPARENT by default. The panel's look comes from its content
+ * view, which paints the surface its node names (nodeContainerSurfaceName) —
+ * one name colors the panel, its breadcrumb bar and its tiles. This view used
+ * to paint an unconditional rgba(255,255,255,0.03) film, which read as a grey
+ * wash over a light theme and could only ever be one color for every
+ * companion. --SvCompanion-bg remains for a theme that wants panel chrome
+ * distinct from its content.
  */
 
 (class SvCompanionView extends SvNodeView {
@@ -204,7 +210,7 @@
         this.setFlexGrow(0);
         this.setFlexShrink(0);
         this.setOverflow("hidden"); // content stays within the panel; never floats over neighbors
-        this.setBackgroundColor("var(--SvCompanion-bg, rgba(255, 255, 255, 0.03))");
+        this.setBackgroundColor("var(--SvCompanion-bg, transparent)");
         // Prototype-parity motion: the panel SLIDES between its docked width
         // and zero (the flexing content column follows per layout, no second
         // transition needed). Size is applied via setMinAndMaxWidth/Height,
@@ -571,7 +577,7 @@
         const length = this.currentReservedLength();
         this.setAppliedDockedLength(mode === "docked" ? length : null);
         this.setBackgroundColor(mode === "docked"
-            ? "var(--SvCompanion-bg, rgba(255, 255, 255, 0.03))"
+            ? "var(--SvCompanion-bg, transparent)"
             : "transparent");
         if (vertical) {
             this.setMinAndMaxWidth(length);

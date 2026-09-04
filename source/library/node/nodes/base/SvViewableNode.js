@@ -178,6 +178,58 @@
         }
 
         /**
+         * @member {string|null} nodeTileSurfaceName - the name of the SURFACE
+         * this node's own tile sits on, looked up in the theme. null (default)
+         * = transparent, so the tile shows whatever its container paints.
+         *
+         * A name, never a color: the node says "notice", the theme decides what
+         * that looks like in each palette, so light/dark and a theme swap need
+         * no model change. Resolves to var(--sv-surface-<name>).
+         *
+         * This exists so varying a tile's look by node does NOT require a tile
+         * subclass — a custom view class breaks the naked-objects derivation
+         * (it stops following the theme and has to be maintained per context),
+         * so it is the last resort, and a hint like this is the first.
+         * @category Style
+         */
+        {
+            const slot = this.newSlot("nodeTileSurfaceName", null);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(true);
+            slot.setInspectorPath("Node/Viewable/Style");
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setSyncsToView(true);
+        }
+
+        /**
+         * @member {string|null} nodeContainerSurfaceName - the name of the
+         * surface the CONTAINER showing this node's children sits on, looked up
+         * in the theme. null (default) = transparent.
+         *
+         * The container's twin of nodeTileSurfaceName, and deliberately
+         * separate: one names the look of this node AS A ROW in its parent's
+         * list, the other the look of the panel that displays it. Collapsing
+         * them into one slot is the trap nodeMinTileHeight fell into.
+         *
+         * Because tiles and the breadcrumb bar are transparent by default, this
+         * one name colors a whole region — every tile inside inherits it by
+         * simply not painting. That is how two instances of the SAME view class
+         * (the app's breadcrumbs and the companion's) end up different colors
+         * without a subclass of either.
+         * @category Style
+         */
+        {
+            const slot = this.newSlot("nodeContainerSurfaceName", null);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(true);
+            slot.setInspectorPath("Node/Viewable/Style");
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setSyncsToView(true);
+        }
+
+        /**
          * @member {boolean} acceptsFileDrop
          * @category Interaction
          */
