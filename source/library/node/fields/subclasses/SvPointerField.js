@@ -79,22 +79,43 @@
     }
 
     /**
-     * @description Gets the title of the value object.
-     * @returns {string} The title of the value object.
+     * @description The pointed-to node's title — or, when there is no node,
+     * this field's key, so an inspector row for an unset slot still says
+     * what it is rather than rendering blank.
+     * @returns {string}
      * @category Data Access
      */
     title () {
-        const title = this.proxyGetter("title");
-        return title;
+        return this.value() ? this.proxyGetter("title") : this.key();
     }
 
     /**
-     * @description Gets the subtitle of the value object.
-     * @returns {string} The subtitle of the value object.
+     * @description The pointed-to node's subtitle — or what an unset value
+     * means here: "(inherited)" for an inherited-resource slot (null means
+     * inherit up nodeResourceParent()), "(none)" otherwise.
+     * @returns {string}
      * @category Data Access
      */
     subtitle () {
-        return this.proxyGetter("subtitle");
+        return this.value() ? this.proxyGetter("subtitle") : this.nullValueSubtitle();
+    }
+
+    nullValueSubtitle () {
+        const slot = this.ownerSlot();
+        const inherits = slot && slot.isInheritedResource && slot.isInheritedResource();
+        return inherits ? "(inherited)" : "(none)";
+    }
+
+    /**
+     * @description The slot on the owner this field reads, when the inspector
+     * built it from one; null for a free-standing pointer field.
+     * @returns {Slot|null}
+     * @category Data Access
+     */
+    ownerSlot () {
+        const owner = this.ownerNode();
+        const name = this.valueMethod();
+        return (owner && name && owner.thisPrototype) ? owner.thisPrototype().slotNamed(name) : null;
     }
 
     /**

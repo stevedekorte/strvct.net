@@ -150,6 +150,31 @@ async function main () {
     check(child.uiTheme() === null && child.nodeInheritedResource("uiTheme") === theme, "inheritUiTheme clears the slot and the walk reaches the genre again");
     check(folder.customizeUiTheme() === null, "a node without the slot cannot customize");
 
+    console.log("\nCustomizing with nothing inherited starts from the theme on screen");
+    const SvThemeResources = SvGlobals.get("SvThemeResources");
+    const lone = SvGlobals.get("TTRealm").clone();
+    SvThemeResources.shared().setDisplayedTheme(theme);
+    const fromScreen = lone.customizeUiTheme();
+    check(fromScreen !== theme && JSON.stringify(fromScreen.themeJson()) === JSON.stringify(theme.themeJson()), "…a copy of the displayed theme, not three empty folders");
+    SvThemeResources.shared().setDisplayedTheme(null);
+    const bare = SvGlobals.get("TTRealm").clone().customizeUiTheme();
+    check(bare !== null && Object.keys(bare.tokens().tokenDict()).length === 0, "…and empty only when nothing is displayed either");
+
+    console.log("\nAn inspector row for an unset theme says what it is");
+    const SvPointerField = SvGlobals.get("SvPointerField");
+    const row = SvPointerField.clone();
+    row.setKey("Theme");
+    row.setOwnerNode(realm);
+    row.setTarget(realm);
+    row.setValueMethod("uiTheme");
+    realm.setUiTheme(null);
+    check(row.title() === "Theme" && row.subtitle() === "(inherited)", "null on an inherited-resource slot reads 'Theme / (inherited)' (was a blank tile)");
+    realm.setUiTheme(theme);
+    check(row.title() === theme.title() && row.subtitle() === "theme", "…and the theme's own title once set");
+    const plain = SvPointerField.clone();
+    plain.setKey("Owner");
+    check(plain.title() === "Owner" && plain.subtitle() === "(none)", "a free-standing pointer to nothing reads '(none)'");
+
     console.log("\n" + pass + " passed, " + fail + " failed");
     process.exit(fail === 0 ? 0 : 1);
 }

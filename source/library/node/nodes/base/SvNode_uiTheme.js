@@ -27,9 +27,11 @@
 
     /**
      * @description Makes this node own its theme: a COPY of the theme it
-     * currently inherits (or an empty theme if none), so later edits to the
-     * source never change this node under its users. No-op when it already
-     * owns one.
+     * currently inherits — or, when nothing up the chain names one, of the
+     * theme the UI is wearing right now (SvThemeResources.displayedTheme),
+     * so "customize" always starts from what the creator is looking at
+     * rather than from three empty folders. Later edits to the source never
+     * change this node under its users. No-op when it already owns one.
      * @returns {SvTheme|null} the owned theme
      * @category Theme
      */
@@ -41,9 +43,9 @@
             return this.uiTheme();
         }
         const theme = SvTheme.clone();
-        const inherited = this.nodeInheritedResource("uiTheme");
-        if (inherited) {
-            theme.copyThemeFrom(inherited);
+        const source = this.nodeInheritedResource("uiTheme") || SvThemeResources.shared().displayedTheme();
+        if (source) {
+            theme.copyThemeFrom(source);
         }
         theme.setTitle(this.title() + " theme");
         this.setUiTheme(theme);
