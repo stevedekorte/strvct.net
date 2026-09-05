@@ -211,7 +211,24 @@
             }
         }
 
-        return url;
+        return this.thisClass().withSseAlt(url);
+    }
+
+    /**
+     * @description Asks Gemini for a server-sent-event stream (`alt=sse`:
+     * `data: {…}` lines) instead of its default streamed JSON array. Two
+     * reasons: the proxy can only append its settled-cost frame to an event
+     * stream (appending to a JSON array would corrupt it), and every other
+     * vendor here already streams SSE, so the request reader is one shape.
+     * @param {String} url
+     * @returns {String}
+     * @category API Communication
+     */
+    static withSseAlt (url) {
+        if (url.includes("alt=sse")) {
+            return url;
+        }
+        return url + (url.includes("?") ? "&" : "?") + "alt=sse";
     }
 
     /**
@@ -224,7 +241,7 @@
         url = url.replaceAll("{model id}", this.defaultChatModel().modelName());
         url = url.replaceAll("{generate response method}", "streamGenerateContent");
         url = url.replaceAll("{api key}", "[API_KEY]");
-        return url;
+        return this.thisClass().withSseAlt(url);
     }
 
     /**

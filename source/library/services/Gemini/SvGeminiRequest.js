@@ -157,9 +157,16 @@
    */
     readXhrLines () {
         try {
-            const newText = this.readRemaining();
-            if (newText) {
-                this.jsonStreamReader().onStreamJson(newText);
+            if (this.isSseResponseText(this.currentXhrRequest().responseText())) {
+                this.readSseLines();
+            } else {
+                // A JSON body: Gemini's streamed array when alt=sse was not
+                // honored, or an error object (errors are never SSE). The
+                // incremental JSON reader handles both as before.
+                const newText = this.readRemaining();
+                if (newText) {
+                    this.jsonStreamReader().onStreamJson(newText);
+                }
             }
         } catch (error) {
             console.error(this.svType() + " readXhrLines error:", error);
@@ -169,6 +176,39 @@
             this.xhrPromise().callRejectFuncIfPending(Error.normalizeError(error));
         }
     }
+    /**
+   * @description Whether a response body is a server-sent-event stream
+   * (`alt=sse`: lines of `data: {…}`) rather than JSON. Decided from the
+   * first non-blank characters, so an error body — always JSON — keeps the
+   * JSON path.
+   * @param {String} responseText
+   * @returns {Boolean}
+   * @category Data Processing
+   */
+    isSseResponseText (responseText) {
+        const head = (responseText || "").trimStart();
+        return head.startsWith("data:") || head.startsWith("event:");
+    }
+
+    /**
+   * @description Reads the SSE lines received so far: each `data:` line is
+   * one JSON chunk (a Gemini response object, or the proxy's billing frame);
+   * `event:` lines and blanks separate them and carry nothing.
+   * @category Data Processing
+   */
+    readSseLines () {
+        let line = this.readNextXhrLine();
+        while (line !== undefined) {
+            line = line.trim();
+            if (line.startsWith("data:")) {
+                this.onStreamJsonChunk(JSON.parse(line.after("data:")));
+            } else if (line.length && !line.startsWith("event:")) {
+                console.warn(this.svType() + " WARNING: don't know what to do with this line: [" + line + "]");
+            }
+            line = this.readNextXhrLine();
+        }
+    }
+
     /**
    * @description Handles errors from the JSON stream reader.
    * @param {SvJsonStreamReader} reader - The JSON stream reader instance.
@@ -198,6 +238,9 @@
    * @category Data Processing
    */
     onStreamJsonChunk (json) {
+        if (this.consumesBillingChunk(json)) {
+            return; // the proxy's settled-cost frame (SvAiRequest)
+        }
         const candidates = json.candidates;
 
         if (candidates) {

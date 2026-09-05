@@ -134,6 +134,9 @@
    * @category Streaming
    */
     onStreamJsonChunk (json) {
+        if (this.consumesBillingChunk(json)) {
+            return; // the proxy's settled-cost frame (SvAiRequest) — also Groq, DeepSeek, xAI
+        }
         if (json.error) {
             console.warn("ERROR: " + json.error.message);
             this.xhrPromise().callRejectFunc(new Error(json.error.message));

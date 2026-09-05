@@ -1366,6 +1366,29 @@
     }
 
     /**
+   * @category Billing
+   * @description OUR frame, not the vendor's: the proxy appends
+   * `{"type": "uo_billing", "vendorCostUsd": …}` to every event-stream
+   * response after settling the request, so the figure covers real usage
+   * (cache reads and writes included) rather than the pre-flight estimate.
+   * Every vendor's onStreamJsonChunk consults this FIRST — the frame looks
+   * the same whichever vendor is behind the proxy, and a handler that only
+   * knows its vendor's shapes would otherwise warn and drop it (which is
+   * how Groq, DeepSeek and xAI turns showed no cost, 2026-09-04).
+   * @param {Object} json - a streamed chunk
+   * @returns {Boolean} true when the chunk was the billing frame and is consumed
+   */
+    consumesBillingChunk (json) {
+        if (!json || json.type !== "uo_billing") {
+            return false;
+        }
+        if (Type.isNumber(json.vendorCostUsd)) {
+            this.setVendorCostUsd(json.vendorCostUsd);
+        }
+        return true;
+    }
+
+    /**
    * @category XHR
    * @description Returns true if the request is active
    * @returns {boolean}
