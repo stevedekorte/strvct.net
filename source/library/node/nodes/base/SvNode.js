@@ -1154,18 +1154,21 @@
         //this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes());
         if (this.hasDoneInit()) {
             this.didUpdateNode();
-            // ALSO notify mutation observers (e.g., SvObjectPool /
-            // SvSubObjectPool) that this node changed. Without this,
-            // adding a subnode triggers view updates but storage
-            // observers never learn the parent is dirty — so the BFS
-            // during the next save doesn't reach newly-added subnodes
-            // and their streaming mutations are silently dropped.
-            // SvHookedArray notifies the parent via onDidMutateObject,
-            // but the parent must in turn forward that to its own
-            // observers for the storage layer to track it.
-            if (this.didMutate) {
-                this.didMutate("subnodes");
-            }
+            // No storage relay here, deliberately. Storage does not need this
+            // node to report the change: the subnodes array is itself an
+            // active stored object (shouldStore true, referenced from this
+            // node's record), so SvObjectPool observes the ARRAY directly —
+            // the same hooked-array mutation that brought us here also
+            // dirties the array in the pool, and serializing the array
+            // enrolls any new child, whose later slot writes are then
+            // observed. This node's own record ({"*": arrayPid}) does not
+            // change on an append, so re-recording it would write an
+            // identical record. Pinned by TestSubnodeAppendPersistence, in
+            // the base pool and the sub-object pool, with this node's
+            // didMutate silenced. (A relay to didMutate("subnodes") lived
+            // here 2026-05 → 2026-09 on the theory that the pool observed
+            // only the node; a whole-array replacement still reaches storage
+            // through the slot setter — see didUpdateSlotSubnodes.)
         }
         return this;
     }
@@ -1929,10 +1932,11 @@
         if (isMaterialization) {
             // Materialization write-back: the assigned list IS the stored
             // list. The UI half of didChangeSubnodeList still applies (views
-            // must render the loaded subnodes); the store half —
-            // didMutate("subnodes") — must not, because a load is not an
-            // edit. Inlines the UI half; keep in sync with
-            // didChangeSubnodeList.
+            // must render the loaded subnodes); nothing may reach storage,
+            // because a load is not an edit (the slot setter's didMutate is
+            // already skipped for an SvStoreRef → value transition, see
+            // SvStorableNode.didUpdateSlot). Inlines the UI half; keep in
+            // sync with didChangeSubnodeList.
             this.scheduleMethod("onDidReorderSubnodes");
             this.didUpdateNodeIfInitialized();
             return this;
