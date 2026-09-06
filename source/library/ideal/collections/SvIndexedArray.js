@@ -164,6 +164,13 @@
                 return;
             }
 
+            // NOTE: this branch is currently unreachable in effect. removeAt
+            // brackets a hooked splice, whose wrapper calls didMutate("splice")
+            // FIRST and with no value — that call falls through to
+            // setNeedsReindex(true) below, so by the time "removeAt" arrives
+            // with its value, _needsReindex is already set and the guard above
+            // skips this block. Measured 2026-09-06. Correct (a lazy full
+            // reindex), just not incremental. Same fix as SvSortedArray's note.
             if (slotName === "removeAt") {
                 if (!this.contains(optionalValue)) {
                     // No copies of this value in the array,

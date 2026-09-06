@@ -93,6 +93,14 @@
      * @category Query
      */
     needsResortOnForSlot (slotName) {
+        // NOTE: the removeAt / remove entries below are currently ineffective.
+        // Array_ideal.removeAt brackets a hooked splice, so didMutate arrives
+        // TWICE: first as "splice" (from the primitive's wrapper, not on this
+        // list — so a resort runs), then as "removeAt". Measured 2026-09-06:
+        // one removeAt on a sorted array costs one resort. Correct result,
+        // wasted work. The fix is a re-entrancy depth in the mutation hooks
+        // so only the outermost call emits; deferred to the transaction
+        // design, which needs that same "outermost mutation" notion.
         const nonOrderChangingSlots = [
             "pop",
             "shift",
