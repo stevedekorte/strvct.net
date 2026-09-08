@@ -6,8 +6,8 @@
 /** * @class SvTilesView_keyboard
  * @extends SvTilesView
  * @classdesc SvTilesView_keyboard class for handling keyboard controls and arrow navigation in SvTilesView
- 
- 
+
+
  */
 
 (class SvTilesView_keyboard extends SvTilesView {
