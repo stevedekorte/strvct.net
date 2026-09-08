@@ -82,6 +82,20 @@
         }
 
         /**
+         * @member {Boolean} showsLinkedSubtitle - whether this link presents the
+         * LINKED node's subtitle as its own (the default), or only its own
+         * label. False for a link that acts as a tab or a button, where the
+         * target's description would bloat the tile.
+         * @category Node Information
+         */
+        {
+            const slot = this.newSlot("showsLinkedSubtitle", true);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+        }
+
+        /**
          * @member {string} unlinkedSubtitle
          * @description Subtitle shown when no node is linked. Defaults to a
          * drop-to-link affordance; override to show a loading state.
@@ -204,6 +218,16 @@
     }
 
     subtitle () {
+        if (!this.showsLinkedSubtitle()) {
+            // A link used as a TAB or a button wants its own label and nothing
+            // else. Borrowing the target's subtitle makes such a tile as wide
+            // and as tall as the target's description — a character-sheet link
+            // read "Me / Human (Standard) / 11th level Wizard" and took twice
+            // the width of its siblings. The unlinked hint ("drop tile to
+            // link") is suppressed too: it is guidance for a drop target, not
+            // for a tab.
+            return null;
+        }
         const ln = this.linkedNode();
         if (ln) {
             return ln.subtitle();
