@@ -133,6 +133,17 @@
             slot.setIsSubnodeField(true);
         }
 
+        /**
+         * @member {SvElevenLabsService} elevenLabsService - text to speech only (Plans/Multi-Voice Narration)
+         * @category AI Service
+         */
+        {
+            const slot = this.newSlot("elevenLabsService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(SvElevenLabsService);
+            slot.setIsSubnodeField(true);
+        }
+
 
         /**
          * @member {SvOpenAiService} openAiService

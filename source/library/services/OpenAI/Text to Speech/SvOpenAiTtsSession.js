@@ -135,6 +135,25 @@
             slot.setValidValues(validValuesJson);
         }
 
+        {
+            /**
+       * @member {string} elevenLabsModelId
+       * @description The ElevenLabs speech model used when a voice ref names
+       * that vendor (Plans/Multi-Voice Narration M2). Flash v2.5 is the live
+       * narration choice; v3 is the most expressive and not real-time.
+       */
+            const slot = this.newSlot("elevenLabsModelId", "eleven_flash_v2_5");
+            slot.setInspectorPath("");
+            slot.setLabel("ElevenLabs model");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setValidValues(["eleven_flash_v2_5", "eleven_turbo_v2_5", "eleven_multilingual_v2", "eleven_v3"]);
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("{value}\n{key}");
+        }
+
         // instructions
         {
             const slot = this.newSlot("instructions", "Dungeon Master narration. Cinematic and vivid but easy to follow. Slightly slower than normal with short pauses after sentences and a longer pause before reveals. Vary intonation for tension and wonder; confident downward cadence on statements. Enunciate fantasy names. Clearly emphasize numbers, dice results, and status conditions. Use subtle, consistent NPC voices without going cartoonish. Read the text verbatim and completely: when text begins with a name followed by a colon (a list entry like 'Dirk: a tenth-level fighter'), SPEAK the name and continue — never treat it as a speaker label or stage direction to omit.");
@@ -454,8 +473,29 @@
    * @description Generates TTS and queues the resulting sound.
    * @returns {SvWaSound} The generated sound.
    */
-    generate (voiceOverride = null) {
-        const request = this.newRequest(voiceOverride);
+    /**
+   * @description One speech request for a VOICE SPEC: null (the session's own
+   * OpenAI voice), an OpenAI voice name, or { service, voiceId } naming a
+   * vendor. All vendors' requests join the same request queue and the same
+   * audio queue, so a narration can switch vendors per sentence and still
+   * play in order.
+   * @param {null|string|Object} voiceSpec
+   * @returns {SvOpenAiTtsRequest} (or a vendor subclass of it)
+   * @category Requests
+   */
+    newRequestForVoiceSpec (voiceSpec) {
+        if (voiceSpec && voiceSpec.service === "elevenlabs") {
+            const request = SvElevenLabsTtsRequest.clone();
+            request.setDelegate(this);
+            request.setupForVoice(voiceSpec.voiceId, this.prompt(), this.elevenLabsModelId());
+            return request;
+        }
+        const openAiVoice = (voiceSpec && voiceSpec.service === "openai") ? voiceSpec.voiceId : voiceSpec;
+        return this.newRequest(Type.isString(openAiVoice) ? openAiVoice : null);
+    }
+
+    generate (voiceSpec = null) {
+        const request = this.newRequestForVoiceSpec(voiceSpec);
         this.ttsRequestQueue().push(request);
         const sound = request.sound();
         sound.setTranscript(this.prompt());

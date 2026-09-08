@@ -110,6 +110,17 @@ async function main () {
         check(plain.bodyJson().voice === session.voice(), "no override → the session's stored voice (" + session.voice() + ")");
         check(overridden.bodyJson().voice === "onyx", "override → that voice on the request only");
         check(session.voice() === "fable", "…and the stored voice slot is untouched (still " + session.voice() + ")");
+
+        console.log("\nA voice spec picks the vendor; every vendor's request joins the same queues");
+        const viaSpec = session.newRequestForVoiceSpec({ service: "openai", voiceId: "sage" });
+        check(viaSpec.svType() === "SvOpenAiTtsRequest" && viaSpec.bodyJson().voice === "sage", "{ service: openai } → an OpenAI request in that voice");
+        const eleven = session.newRequestForVoiceSpec({ service: "elevenlabs", voiceId: "JBFqnCBsd6RMkjVDRZzb" });
+        check(eleven.svType() === "SvElevenLabsTtsRequest", "{ service: elevenlabs } → an ElevenLabs request");
+        check(eleven.apiUrl().startsWith("https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb"), "…addressed to that voice: " + eleven.apiUrl());
+        check(eleven.bodyJson().text === "Hello there." && eleven.bodyJson().model_id === "eleven_flash_v2_5", "…carrying the text and the session's ElevenLabs model");
+        check(session.newRequestForVoiceSpec(null).bodyJson().voice === "fable", "null spec → the narrator's own voice");
+        const SvElevenLabsService = SvGlobals.get("SvElevenLabsService");
+        check(SvElevenLabsService.speechModelIds().includes("eleven_v3") && SvElevenLabsService.defaultSpeechModelId() === "eleven_flash_v2_5", "the vendor lists its speech models; Flash v2.5 is the live default");
     }
 
     console.log("\n" + pass + " passed, " + fail + " failed");
