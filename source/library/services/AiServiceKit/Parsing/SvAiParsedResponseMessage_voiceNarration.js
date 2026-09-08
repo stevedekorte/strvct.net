@@ -73,10 +73,43 @@
         return !!(conv && typeof conv.wantsCaptionPacing === "function" && conv.wantsCaptionPacing());
     }
 
-    voiceNarrateText (text) {
+    /**
+     * @description The speaker of a speakable node, or null for the narrator
+     * (Plans/Multi-Voice Narration). Nearest-first: the node's own `speaker`
+     * attribute, else the nearest enclosing <quote>'s. The value is whatever
+     * the markup carried (the app treats it as a character jsonId); this
+     * layer never interprets it. Pure — no use of this — so it is testable
+     * on a bare stream node.
+     * @param {SvStreamNode} streamNode
+     * @returns {String|null}
+     * @category Voice Narration
+     */
+    speakerIdForStreamNode (streamNode) {
+        const speakerOf = (node) => {
+            const attrs = node.attributes ? node.attributes() : null;
+            const id = attrs ? attrs.speaker : null;
+            return (typeof id === "string" && id.trim().length) ? id.trim() : null;
+        };
+        const own = speakerOf(streamNode);
+        if (own) {
+            return own;
+        }
+        const quote = streamNode.detectAncestor(node => !node.isTextNode() && node.name() === "quote" && speakerOf(node));
+        return quote ? speakerOf(quote) : null;
+    }
+
+    /**
+     * @description Queues text for speech. speakerId (may be null = narrator)
+     * rides along so the session can choose the voice; the sound and the
+     * caption channel are unchanged.
+     * @param {String} text
+     * @param {String|null} speakerId
+     * @category Voice Narration
+     */
+    voiceNarrateText (text, speakerId = null) {
         const controller = this.narrationController();
         if (!controller) { return; }
-        const sound = controller.queueNarrationSegment(text);
+        const sound = controller.queueNarrationSegment(text, speakerId ? { speakerId: speakerId } : undefined);
         if (!sound) { return; }
         // we want to follow when the sound starts/stops playing so we can
         // highlight/unhighlight the text in the chat view

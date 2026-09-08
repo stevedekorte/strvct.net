@@ -82,7 +82,7 @@
         }
 
         {
-            const validVoices = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"];
+            const validVoices = SvOpenAiTtsSession.validVoiceNames();
             /**
        * @member {string} voice
        * @description The voice to use for TTS.
@@ -395,14 +395,34 @@
    * @description Creates a new TTS request.
    * @returns {SvOpenAiTtsRequest} A new TTS request instance.
    */
-    newRequest () {
+    /**
+   * @description The voices the speech endpoint accepts (2026). The stored
+   * `voice` slot picks the session's narrator from this list; a per-request
+   * override (generate(voiceName)) must also come from it.
+   * @returns {string[]}
+   * @category Voices
+   */
+    static validVoiceNames () {
+        return ["alloy", "ash", "ballad", "coral", "echo", "fable", "nova", "onyx", "sage", "shimmer", "verse"];
+    }
+
+    /**
+   * @description Builds one speech request. voiceOverride, when given, speaks
+   * this request in that voice instead of the session's narrator voice — how
+   * a character's sheet-defined voice is honored per sentence without
+   * touching the stored setting (Plans/Multi-Voice Narration).
+   * @param {string|null} voiceOverride - a name from validVoiceNames(), or null
+   * @returns {SvOpenAiTtsRequest}
+   * @category Requests
+   */
+    newRequest (voiceOverride = null) {
         const request = SvOpenAiTtsRequest.clone();
         request.setApiUrl(this.endpoint());
         request.setDelegate(this);
 
         const bodyJson = {
             model: this.ttsModel(),
-            voice: this.voice(),
+            voice: voiceOverride || this.voice(),
             input: this.ttsSafeInput(),
             response_format: this.responseFormat(),
             speed: this.speed(),
@@ -434,8 +454,8 @@
    * @description Generates TTS and queues the resulting sound.
    * @returns {SvWaSound} The generated sound.
    */
-    generate () {
-        const request = this.newRequest();
+    generate (voiceOverride = null) {
+        const request = this.newRequest(voiceOverride);
         this.ttsRequestQueue().push(request);
         const sound = request.sound();
         sound.setTranscript(this.prompt());

@@ -255,7 +255,7 @@
                         this.playTtsPauseMs(50); // pause for location name
                     }
 
-                    this.voiceNarrateText(speak);
+                    this.voiceNarrateText(speak, this.speakerIdForStreamNode(streamNode)); // null = narrator
 
                     if (nodeTag !== "sentence") {
                         this.playTtsPauseMs(15);
