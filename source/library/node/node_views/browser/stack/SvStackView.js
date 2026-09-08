@@ -614,6 +614,32 @@
      * @returns {SvStackView} The stack view.
      * @category Navigation
      */
+    /**
+     * @description Handler for the model's `nodeBecameInvisible` note — the
+     * visibility sibling of nodeBecameOrphan below, routed here by the same
+     * name-based dispatch.
+     *
+     * Hiding a node does not remove it from its parent's subnodes; only its
+     * tile is display:none. So without this, a selected node that hides itself
+     * keeps its content in the columns to the right of a tab that is no longer
+     * visible — e.g. a companion's Party tab that hides when the party drops to
+     * one member. Fold this column and everything right of it back into the
+     * previous column's (now visible-only) selection.
+     * @param {SvNotification} aNote - The nodeBecameInvisible notification.
+     * @returns {SvStackView} The stack view.
+     * @category Navigation
+     */
+    nodeBecameInvisible (aNote) {
+        const prev = this.previousStackView();
+        if (prev) {
+            prev.didChangeNavSelection();
+        }
+        // A root column whose node hides itself has nothing to collapse back
+        // to; unlike orphaning that is not alarming (a root can be legitimately
+        // hidden by its owner), so it passes quietly.
+        return this;
+    }
+
     nodeBecameOrphan (aNote) {
         const prev = this.previousStackView();
         if (prev) {

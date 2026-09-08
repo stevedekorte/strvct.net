@@ -278,6 +278,7 @@
             const slot = this.newSlot("isVisible", true);
             slot.setSlotType("Boolean");
             slot.setSyncsToView(true);
+            slot.setDoesHookSetter(true); // see didUpdateSlotIsVisible
         }
 
 
@@ -554,6 +555,30 @@
      * away, error). Model announces the fact; the view decides what to do.
      * @category Lifecycle
      */
+    /**
+     * @description A node that hides itself must not remain the selection.
+     * Hiding leaves the node in its parent's subnodes — only its tile is
+     * display:none — so a selected node that goes invisible would keep its
+     * content on screen under a tab that is no longer there. Posts
+     * `nodeBecameInvisible` so a bound column can fold itself away.
+     *
+     * Same division of labour as nodeBecameOrphan: the model announces the
+     * fact, the view decides what to do, and the note is dispatched by name to
+     * whichever view defines a handler (only SvStackView does). Unlike
+     * orphaning this needs no end-of-loop check — a visibility transition is
+     * definitive, and a node that hides and re-shows within one loop posts
+     * both notes, leaving the column re-derived either way.
+     * @param {Boolean} oldValue
+     * @param {Boolean} newValue
+     * @category Lifecycle
+     */
+    didUpdateSlotIsVisible (oldValue, newValue) {
+        if (oldValue !== false && newValue === false) {
+            this.postNoteNamed("nodeBecameInvisible");
+        }
+        return this;
+    }
+
     checkForOrphan () {
         if (this.parentNode() !== null) {
             return; // re-homed this event loop (reparent / replace-then-readd) — not an orphan
