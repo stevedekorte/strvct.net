@@ -129,6 +129,15 @@
      */
     toggle () {
         // The OptionNodeTile knows to call this
+        if (!this.effectiveUserEditability()) {
+            // A read-only subtree must not accept a new pick. The picker stays
+            // navigable and still SHOWS which value is set — it just cannot
+            // change it. Gating the USER path here rather than setIsPicked
+            // keeps the programmatic path intact: syncFromTarget uses it to
+            // display the target's current value, and that must still work in
+            // a read-only subtree. See docs/Plans/Editability Cascade.
+            return this;
+        }
         this.setIsPicked(!this.isPicked());
         return this;
     }

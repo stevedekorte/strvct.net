@@ -453,7 +453,11 @@
      */
     deleteTile (aTile) {
         let sNode = aTile.node();
-        if (sNode && sNode.canDelete()) {
+        // offersUserEdit folds in the editability cascade. The close button and
+        // the slide gesture both go through SvTile.canDelete(), which already
+        // does this; the keyboard path read the node's RAW canDelete() and so
+        // deleted from read-only subtrees the other two refused.
+        if (sNode && sNode.offersUserEdit(sNode.canDelete())) {
             sNode.performNodeAction("delete");
         }
         return this;
