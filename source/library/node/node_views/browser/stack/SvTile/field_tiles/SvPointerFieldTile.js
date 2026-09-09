@@ -4,8 +4,8 @@
 /** * @class SvPointerFieldTile
  * @extends SvTitledTile
  * @classdesc Represents a pointer field tile in the browser stack.
- 
- 
+
+
  */
 
 (class SvPointerFieldTile extends SvTitledTile {
@@ -55,7 +55,7 @@
         if (linked.nodeCanNavInto && !linked.nodeCanNavInto()) {
             return false;
         }
-        return true;
+        return linked.canNavTo ? linked.canNavTo() : true;
     }
 
 }.initThisClass());

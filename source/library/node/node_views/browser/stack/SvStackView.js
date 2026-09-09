@@ -1262,7 +1262,7 @@
             return false;
         }
 
-        return true; // Default Miller Column behavior: detail column for selected node.
+        return node.canNavTo ? node.canNavTo() : true;
     }
 
     /**

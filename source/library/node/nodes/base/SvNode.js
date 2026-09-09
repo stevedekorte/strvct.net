@@ -2856,8 +2856,12 @@
     }
 
     canNavTo () {
-        return this.hasSubnodes() || this.hasHeaderOrFooter() || this.nodeCanAddSubnode();
+        if (!this.nodeCanNavInto()) {
+            return false;
+        }
+        return this.hasSubnodes() || this.hasHeaderOrFooter() || this.nodeCanAddSubnode()
+            || Boolean(this.nodeViewClassName && this.nodeViewClassName())
+            || Boolean(this.nodeCompanionNode());
     }
 
 }.initThisClass());
-
