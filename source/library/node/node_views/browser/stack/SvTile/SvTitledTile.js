@@ -175,6 +175,39 @@
     }
 
     /**
+     * @description Whether this tile shows a leading thumbnail.
+     *
+     * Two questions, and they belong to different owners. The NODE says
+     * whether it has a portrait at all (nodeExpectsThumbnail, duck-typed —
+     * absent means no). The TILE says whether a portrait fits, and in a
+     * horizontal row it does not: a thumbnail belongs in a vertical LIST row,
+     * which is wide and short with room beside the title, whereas a tile in a
+     * horizontal row is a TAB — narrow, where a portrait either dominates it
+     * or forces it wide. The companion's "Me" tab measured 218px against its
+     * 98px sibling for exactly this reason.
+     *
+     * Deliberately NOT a node hint. A hint would have to be spelled
+     * "hide the thumbnail when I am laid out horizontally", which asks the
+     * model a question only the view can answer, and would then be repeated at
+     * every call site to say the same thing. The layout already knows.
+     *
+     * Icons are unaffected: they render through the note-icon / SvgIconView
+     * channel, not through thumbnailView, so a horizontal row can still carry
+     * one. If some tab ever genuinely wants a portrait, that is the moment to
+     * add an OPT-IN hint — the default is right nearly always, so opting out
+     * is the wrong direction.
+     * @returns {Boolean}
+     * @category Thumbnail
+     */
+    showsThumbnail () {
+        const node = this.node();
+        if (!node || !node.nodeExpectsThumbnail || !node.nodeExpectsThumbnail()) {
+            return false;
+        }
+        return this.direction() !== "down"; // "down" = laid out as a horizontal row
+    }
+
+    /**
      * @description Sets up the thumbnail view if it doesn't exist
      * @returns {SvTitledTile}
      * @category UI
@@ -291,13 +324,11 @@
             this.subtitleView().setIsDisplayHidden(!this.hasSubtitle());
 
             if (node) {
-                // Reserve the leading thumbnail frame synchronously when the
-                // node expects a thumbnail (optional duck-typed method; absent
-                // => false). This keeps the title/subtitle from shifting when
-                // the image resolves asynchronously, and keeps tiles in a
+                // Reserve the leading thumbnail frame synchronously when this
+                // tile shows one. That keeps the title/subtitle from shifting
+                // when the image resolves asynchronously, and keeps tiles in a
                 // column aligned whether or not each currently has an image.
-                const expectsThumbnail = node.nodeExpectsThumbnail ? node.nodeExpectsThumbnail() : false;
-                if (expectsThumbnail) {
+                if (this.showsThumbnail()) {
                     this.setupThumbnailViewIfAbsent();
                     this.thumbnailView().unhideDisplay();
                 } else if (this.thumbnailView()) {
@@ -308,7 +339,10 @@
                 // Note / note-icon live in the trailing region, independent of
                 // the (now leading) thumbnail — so e.g. an option's "✓" is no
                 // longer hidden when the option also has an image.
-                if (node.noteIconName() && !node.noteIsSubnodeCount()) {
+                const iconName = node.noteIconName();
+                const isNavigationIcon = iconName === "right-arrow" || iconName === "right-gray";
+                const canShowIcon = !isNavigationIcon || !node.canNavTo || node.canNavTo();
+                if (iconName && canShowIcon && !node.noteIsSubnodeCount()) {
                     this.hideNoteView();
                     this.showNoteIconView();
                 } else {
@@ -341,6 +375,13 @@
         if (!node || !node.asyncNodeThumbnailUrl) {
             return this;
         }
+        if (!this.showsThumbnail()) {
+            // Nothing to fill — and this MUST return before the fetch, because
+            // the fill path calls tv.unhideDisplay() once an image resolves,
+            // which would undo the hide the synchronous pass just applied.
+            // Skipping it also spares a blob fetch per tab.
+            return this;
+        }
         // A thumbnail is decorative and this runs fire-and-forget (see caller).
         // Every await below can reject — a missing/failed blob fetch, an image
         // that won't decode, or the view being torn down mid-await when the
@@ -354,10 +395,8 @@
             // "no image", indistinguishable from an actual missing one. Only
             // when nothing is displayed yet: periodic re-syncs must not flash
             // placeholder over a visible thumbnail.
-            if (node.nodeExpectsThumbnail && node.nodeExpectsThumbnail()) {
-                this.setupThumbnailViewIfAbsent();
-                this.startThumbnailShimmerIfNeeded();
-            }
+            this.setupThumbnailViewIfAbsent();
+            this.startThumbnailShimmerIfNeeded();
             const imageUrl = await node.asyncNodeThumbnailUrl();
             if (this.node() !== node) {
                 this.stopThumbnailShimmer(); // recycled: the new node's own pass owns the state
@@ -576,8 +615,8 @@
      */
     showNoteIconView () {
         const v = this.noteIconView();
+        v.unhideDisplay();
         if (v.iconName() != this.node().noteIconName()) {
-            v.unhideDisplay();
             v.setIconName(this.node().noteIconName());
             //v.setDoesMatchParentColor(true)
 
