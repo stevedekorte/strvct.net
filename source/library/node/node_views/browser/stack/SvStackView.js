@@ -1045,7 +1045,18 @@
             //console.log("SvStackView " + this.node().title() + " compactNavAsNeeded");
 
             const wasCollapsed = this.navView().isCollapsed();
-            const maxWidth = this.topViewWidth(); // our subviews need to fit into this width
+            // The width our subviews must fit into. availableNavWidth, not
+            // topViewWidth: an EMBEDDED browser (the narration companion) can
+            // be asked to compact before its container has been laid out, and
+            // topViewWidth then reads 0 — so every column "overflowed" and the
+            // first content column collapsed to display:none. Nothing re-ran
+            // compaction once the container had its width, and the Me tab's
+            // sheet stayed blank until the user clicked a tab (2026-09-08,
+            // reproduced by tests/e2e/companion-me-tab-inapp-probe.spec.js).
+            // availableNavWidth falls back to the window width while unlaid,
+            // which errs toward showing a column rather than hiding it; the
+            // nav's own targetWidth is capped by the same measure.
+            const maxWidth = this.navView().availableNavWidth();
 
             // Calculate the sum WITHOUT this nav view
             // const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
