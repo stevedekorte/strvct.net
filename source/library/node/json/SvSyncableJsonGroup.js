@@ -224,16 +224,17 @@
 
     /**
      * @description Returns metadata for cloud storage.
-     * Subclasses can override to include additional metadata.
-     * @returns {Object} Metadata object with title, subtitle, type, lastModified
+     * Subclasses override to include bounded JSON description fields. Keep
+     * this deterministic: storage associates the result with its snapshot.
+     * Do not include timestamps, private notes, full documents, or assets.
+     * @returns {Object} Metadata object with title, subtitle and type
      * @category Sync
      */
     cloudMetadata () {
         return {
             type: this.svType(),
             title: this.title ? this.title() : this.jsonId(),
-            subtitle: this.subtitle ? this.subtitle() : "",
-            lastModified: Date.now()
+            subtitle: this.subtitle ? this.subtitle() : ""
         };
     }
 

@@ -213,6 +213,7 @@
             title: item.title ? item.title() : item.jsonId(),
             subtitle: item.subtitle ? item.subtitle() : "",
             thumbnailUrl: null,
+            ...(item.cloudMetadata ? item.cloudMetadata() : {}),
             lastModified: Date.now()
         };
 

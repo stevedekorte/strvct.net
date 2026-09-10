@@ -76,6 +76,11 @@
             slot.setSlotType("Boolean");
         }
         {
+            const slot = this.newSlot("metadataProvider", null);
+            slot.setSlotType("Function");
+            slot.setComment("Optional synchronous cloudMetadata producer for snapshot saves");
+        }
+        {
             const slot = this.newSlot("onLeaseLost", null);
             slot.setSlotType("Function");
             slot.setComment("Called once when another writer steals our lease");
@@ -216,7 +221,7 @@
      * @param {*} content
      * @returns {Promise<{deletedDeltas:number, headSeq:number}>}
      */
-    async asyncWriteSnapshot (content) {
+    async asyncWriteSnapshot (content, metadata = undefined) {
         if (!this.isOpen()) {
             const e = new Error("session not open");
             e.code = "failed-precondition";
@@ -228,9 +233,13 @@
             e.svIsConflict = true;
             throw e;
         }
+        if (metadata === undefined) {
+            metadata = this.metadataProvider() ? this.metadataProvider()() : null;
+        }
         const result = await this.executeWithRetry(() => this.backend().coalesceDocument({
             nodeId: this.nodeId(),
-            newPool: content
+            newPool: content,
+            metadata
         }));
         // headSeq is reset by coalesce; reflect that in our local lease.
         const lease = this.currentLease() || {};
