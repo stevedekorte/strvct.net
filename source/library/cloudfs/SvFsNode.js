@@ -78,6 +78,12 @@
             slot.setComment("server-set on create; locked against client updates after that");
         }
         {
+            const slot = this.newSlot("documentMetadata", null);
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+            slot.setComment("Snapshot summary envelope: schemaVersion, sourceHash, fields; null when missing or invalidated.");
+        }
+        {
             const slot = this.newSlot("rawData", null);
             slot.setSlotType("Object");
             slot.setComment("the original backend payload, for debugging / forward-compat fields");
@@ -114,6 +120,7 @@
     applyData (data) {
         if (!data) return this;
         this.setRawData(data);
+        this.setDocumentMetadata(data.documentMetadata || null);
         if ("id" in data) this.setId(data.id);
         if ("parentId" in data) this.setParentId(data.parentId);
         if ("sortKey" in data) this.setSortKey(data.sortKey);
