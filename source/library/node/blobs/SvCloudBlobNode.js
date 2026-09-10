@@ -407,12 +407,17 @@
      */
     didUpdateSlotValueHash (oldValue, newValue) {
         super.didUpdateSlotValueHash(oldValue, newValue);
-        if (oldValue !== null && newValue !== null && oldValue !== newValue) {
-            this.setHasInCloud(false); // old content's cloud state does not describe the new hash
-            this.setDownloadUrl(null); // old content's URL
-            this.clearPushToCloudPromise(); // abandon any in-flight push of the old bytes
-            this.scheduleFetchForNewContent();
+        if (newValue === null || newValue === oldValue) {
+            return;
         }
+        if (oldValue !== null) {
+            // REPLACING content: the previous hash's cloud state and URL
+            // describe bytes this node no longer claims.
+            this.setHasInCloud(false);
+            this.setDownloadUrl(null);
+            this.clearPushToCloudPromise(); // abandon any in-flight push of the old bytes
+        }
+        this.scheduleFetchForNewContent();
     }
 
     /**
@@ -434,20 +439,33 @@
      * Found" on the receiving side. The blob path pulls from the cloud BY HASH,
      * which is exactly what a receiver needs. blobValue syncsToView, so the view
      * repaints when the bytes land.
+     *
+     * FIRST content counts too (2026-09-10). This used to be reached only when
+     * one hash REPLACED another, on the theory that the authoring side is the
+     * one whose hash moves old -> null -> new. But so does a receiver seeing
+     * content for the first time: a newly generated portrait arrives as a whole
+     * new artwork item whose imageNode goes null -> hash, and that was silently
+     * excluded — the client held a hash and no bytes, and nothing fetched them.
+     * Every hash change to a non-null value now schedules; the authoring side is
+     * excluded by onScheduledFetchForNewContent's blobValue check instead, which
+     * is the accurate test (it asks "do I have the bytes?" rather than inferring
+     * it from the shape of the transition).
      * @category Cloud Storage
      */
     scheduleFetchForNewContent () {
-        // No blobValue check here: super's hook has ALREADY dropped the cached
-        // bytes by this point, precisely because they belonged to the old hash.
-        // The authoring side is excluded by the both-non-null guard instead — its
-        // hash moves old -> null -> new — so anything reaching here needs bytes it
-        // does not have.
+        // No blobValue check HERE: when one hash replaces another, super's hook
+        // has already dropped the cached bytes, but on a first-content set the
+        // author still holds them. Deciding at run time covers both — see
+        // onScheduledFetchForNewContent.
         SvSyncScheduler.shared().scheduleTargetAndMethod(this, "onScheduledFetchForNewContent");
     }
 
     onScheduledFetchForNewContent () {
         if (this.blobValue()) {
-            return; // something supplied them between the schedule and now
+            // Either something supplied the bytes between the schedule and now,
+            // or this IS the authoring side (asyncJustSetBlobValue sets the blob
+            // before it computes the hash, so the bytes are already in hand).
+            return;
         }
         // fire and forget: a miss is already logged by the pull path, and a
         // failure here must not break whatever applied the update
