@@ -89,6 +89,32 @@
         }
 
         /**
+         * @member {ResizeObserver|null} containerResizeObserver - an EMBEDDED
+         * browser's "window" is its container. The main browser recompacts on
+         * window resize; an embedded one (the narration companion) must
+         * recompact when its container's width changes — docking, undocking,
+         * a sibling column growing — none of which resize the window.
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("containerResizeObserver", null);
+            slot.setSlotType("ResizeObserver");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {Number|null} lastContainerWidth - the container width the
+         * observer last acted on, so height-only changes (a footer growing)
+         * and repeat callbacks at the same width do not recompact.
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("lastContainerWidth", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
          * @member {SvObservation} navigateToNodeObs
          * @category Observation
          */
@@ -506,7 +532,83 @@
         }
 
         this.setIsRegisteredForKeyboard(handles); // for app-level shortcuts like Option-D
+        this.syncContainerResizeObserver(!handles);
         return this;
+    }
+
+    // --- container resize (embedded browsers) ---
+
+    /**
+     * @description Starts or stops watching this browser's own element for
+     * width changes. Only embedded browsers watch: the main browser's
+     * container is the window, which SvStackView.onWindowResize already
+     * covers.
+     *
+     * Why this exists (2026-09-09): the companion's embedded browser laid its
+     * columns out while the panel was still arbitrating its width, so
+     * compaction ran against 0 (column hidden) or against the window-width
+     * fallback (column at its default 270 instead of filling the 437 panel),
+     * and nothing re-ran once the panel had its real width. A timed relayout
+     * on the tab→docked transition (SvCompanionView.relayoutDockedContent)
+     * guessed at when that would be; a companion that MOUNTS docked fires it
+     * before the content exists. Observing the container is the general
+     * answer and needs no guess.
+     * @param {Boolean} shouldWatch
+     * @returns {SvBrowserView}
+     * @category Layout
+     */
+    syncContainerResizeObserver (shouldWatch) {
+        const observer = this.containerResizeObserver();
+        if (shouldWatch && !observer && typeof ResizeObserver !== "undefined") {
+            const ro = new ResizeObserver((entries) => this.onContainerResize(entries));
+            ro.observe(this.element());
+            this.setContainerResizeObserver(ro);
+        } else if (!shouldWatch && observer) {
+            observer.disconnect();
+            this.setContainerResizeObserver(null);
+            this.setLastContainerWidth(null);
+        }
+        return this;
+    }
+
+    /**
+     * @description ResizeObserver callback. Reads the width the observer hands
+     * over (contentRect — no measurement, so no forced layout here) and
+     * schedules one recompaction when it has actually changed and is real.
+     * @param {ResizeObserverEntry[]} entries
+     * @returns {SvBrowserView}
+     * @category Layout
+     */
+    onContainerResize (entries) {
+        const entry = entries && entries.length ? entries[entries.length - 1] : null;
+        const w = entry && entry.contentRect ? Math.round(entry.contentRect.width) : null;
+        if (w === null || w === this.lastContainerWidth()) {
+            return this;
+        }
+        this.setLastContainerWidth(w);
+        if (w > 0) {
+            this.scheduleMethod("recompactForContainer");
+        }
+        return this;
+    }
+
+    /**
+     * @description Re-runs this browser's own compaction chain (browser-scoped
+     * by construction) now that its container has a new width.
+     * @returns {SvBrowserView}
+     * @category Layout
+     */
+    recompactForContainer () {
+        const stack = this.stackView();
+        if (stack && stack.recompactBrowserChain) {
+            stack.recompactBrowserChain();
+        }
+        return this;
+    }
+
+    prepareToRetire () {
+        this.syncContainerResizeObserver(false);
+        return super.prepareToRetire();
     }
 
     onRequestNavigateToNode (aNote) {
