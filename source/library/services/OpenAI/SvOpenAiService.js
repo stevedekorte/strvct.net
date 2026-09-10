@@ -33,6 +33,15 @@
    */
     modelsJson () {
         return [
+            {
+                "name": "gpt-6-astra",
+                "title": "GPT-6 Astra",
+                // Keep the app's compaction budget at 200k (API context: 1.05M).
+                "inputTokenLimit": 200000,
+                "outputTokenLimit": 128000,
+                "supportsTemperature": false,
+                "supportsTopP": false
+            },
 
             {
                 "name": "gpt-5.2",
