@@ -513,7 +513,8 @@
                 if (slot.isLazy()) {
                     const raw = slot.onInstanceRawGetValue(this);
                     if (typeof(SvLazyJsonRef) !== "undefined" && raw instanceof SvLazyJsonRef) {
-                        dict[slotName] = raw.json();
+                        // Copy raw JSON without materializing the lazy model subtree.
+                        dict[slotName] = JSON.parse(JSON.stringify(raw.json()));
                         return;
                     }
                 }
@@ -538,7 +539,9 @@
                         if (item && item.serializeToJson) {
                             return item.serializeToJson(filterName, jsonPathComponents.concat(slotName), visitedSet);
                         }
-                        return item; // primitives or null
+                        // Plain nested JSON must not alias the live slot value.
+                        return item !== null && typeof item === "object"
+                            ? JSON.parse(JSON.stringify(item)) : item;
                     }).filter(item => item !== undefined);
                     assert(Type.isJsonType(result), "array result is not a JSON type");
                     dict[slotName] = result;

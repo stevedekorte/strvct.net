@@ -264,6 +264,8 @@
             const v = infoDict.subtitle;
             if (v !== undefined) {
                 assert(Type.isString(v) || Type.isNull(v), "subtitle must be a string or null");
+                // Actions use their explicit status, not SvJsonGroup child summaries.
+                this.setNodeSubtitleIsChildrenSummary(false);
                 this.setSubtitle(v);
             }
         }
