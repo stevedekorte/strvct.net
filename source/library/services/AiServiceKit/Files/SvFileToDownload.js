@@ -4,7 +4,13 @@
 /**
  * @class SvFileToDownload
  * @extends SvSummaryNode
- * @classdesc Represents a single image to download.
+ * @classdesc One file fetched by URL, with its bytes and load state.
+ *
+ * SHARED across every image service - ImaginePro, Krea, and anything else
+ * that downloads a generated result. It lived under ImaginePro/ for historical
+ * reasons, which made a Krea download look like it ran through a competitor's
+ * code; it is plain AiServiceKit infrastructure and now sits with the rest of
+ * it, next to SvXhrRequest, which it uses to do the fetching.
  */
 
 (class SvFileToDownload extends SvSummaryNode {
