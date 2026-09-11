@@ -491,7 +491,23 @@
                     console.log("\n" + SvNotificationCenter.shared().shortDescription() + ":\n" + SvNotificationCenter.shared().notesDescription());
                     console.log(" --- ");
                 }
-                assert (count < maxCount);
+                if (count >= maxCount) {
+                    // A DEEP CASCADE, not a loop: a genuine loop is caught
+                    // earlier, per action, by scheduleTargetAndMethod's
+                    // LOOP DETECTED throw (same target+method re-scheduled
+                    // from inside its own processing). Ten passes can be
+                    // legitimate — opening a session materializes lazy
+                    // character sections, each bubbles an update, observers
+                    // re-sync, views re-style (2026-09-10, a client hit 10).
+                    // Asserting here threw out of the event handler and
+                    // dropped the rest of the pass. Yield instead: leave the
+                    // remaining actions queued for the next tick so the UI
+                    // stays live and the cascade finishes on its own.
+                    console.warn("SvSyncScheduler: " + count + " passes in one fullSyncNow; deferring "
+                        + this.actionCount() + " remaining action(s) to the next tick");
+                    this.setTimeoutIfNeeded();
+                    break;
+                }
             }
 
             this.logDebug(" --- fullSyncNow end --- ");
