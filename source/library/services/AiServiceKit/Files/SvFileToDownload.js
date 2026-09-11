@@ -290,6 +290,15 @@
 
         request.setTimeoutPeriodInMs(120 * 1000);
 
+        // Opt in to SvXhrRequest's automatic retry (off by default). A transient
+        // 502 - from the image host, or from our own /proxy when its upstream
+        // socket dies - used to kill the whole generation, because the enclosing
+        // Promise.all over the download urls rejects on the first failure.
+        // Retrying is safe here and nowhere else on this path: this is a GET of
+        // finished, immutable bytes for a job that has already been billed, so
+        // repeating it cannot duplicate work or charge the player twice.
+        request.setMaxRetries(3);
+
         try {
             await request.asyncSend();
 

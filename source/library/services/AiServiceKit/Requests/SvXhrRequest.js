@@ -18,6 +18,7 @@
  *   - isStreaming (default false)
  *   - requestId (default puuid)
  *   - retryDelaySeconds
+ *   - maxRetries (default 0 - automatic retry is opt-in, see the slot comment)
  *
  * Delegate protocol:
  *
@@ -140,15 +141,52 @@
             slot.setSummaryFormat("{key}:\n{value}");
         }
 
-        // max retries
+        // Automatic retry is OPT-IN: 0 means "never retry automatically", and
+        // setMaxRetries(n) turns it on for a request the caller knows is safe to
+        // repeat. Blanket retry is not safe here:
+        //   - SvAiRequest composes an SvXhrRequest and consumes it incrementally,
+        //     so a silent restart would re-deliver the prefix it already read.
+        //   - A non-idempotent POST (an image job submit) can be re-charged: our
+        //     proxy reports a 502 for a socket error that may fire AFTER the
+        //     upstream accepted the request and created a billable job.
+        // Changing the default from 3 to 0 takes NOTHING away, because the 3
+        // was inert: maxRetries was read in exactly one place
+        // (hasExceededMaxRetries), which was called in exactly one place
+        // (retryIfApplicable), which had no callers at all. No request has ever
+        // retried automatically. 0 is therefore the value that PRESERVES the
+        // old behavior; leaving it at 3 would have silently switched on three
+        // automatic retries for every XHR in the framework, streaming AI
+        // requests included.
+        //
+        // The manual "Retry Request" inspector action is a separate path and is
+        // unaffected: retryRequest() has never consulted maxRetries.
+        //
+        // This slot is not stored (setShouldStoreSlot(false) below), so changing
+        // the default does not reach any record already on disk or in the cloud.
         {
-            const slot = this.newSlot("maxRetries", 3);
+            const slot = this.newSlot("maxRetries", 0);
             slot.setLabel("Max Retries");
             slot.setInspectorPath("Settings");
             slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Number");
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+            slot.setSummaryFormat("{key}:\n{value}");
+        }
+
+        // True only while the asyncSend() loop is waiting out the backoff delay
+        // between attempts. There is no live XHR to cancel in that window, so
+        // abort() consults this to stop the loop instead of doing nothing.
+        {
+            const slot = this.newSlot("isWaitingToRetry", false);
+            slot.setLabel("Is Waiting To Retry");
+            slot.setInspectorPath("State");
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Boolean");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
             slot.setSummaryFormat("{key}:\n{value}");
@@ -590,8 +628,34 @@
 
 
     async asyncSend () { // does not throw errors - sets error if there is one. Caller must check hasError() and error()
-        this.setXhrPromise(Promise.clone());
         this.setCompletionPromise(Promise.clone());
+
+        while (true) {
+            await this.asyncSendOneAttempt();
+            if (!this.shouldRetryAfterAttempt()) {
+                break;
+            }
+            await this.asyncWaitForRetryDelay();
+            if (this.didAbort()) {
+                throw new Error("aborted"); // same rejection a mid-flight abort gives
+            }
+            this.prepareForRetryAttempt();
+        }
+
+        this.finishAfterFinalAttempt();
+    }
+
+    /**
+   * @category XHR
+   * @description Performs one attempt: builds the XHR, sends it, and waits for it
+   * to settle. The outcome is left on the request (error / status) for
+   * shouldRetryAfterAttempt() and finishAfterFinalAttempt() to classify.
+   * Rejects only when the request was aborted, which is how this class has always
+   * reported an abort to its caller.
+   * @returns {Promise}
+   */
+    async asyncSendOneAttempt () {
+        this.setXhrPromise(Promise.clone());
 
         this.setError(null); // clear error (in case we are retrying)
         assert(!this.xhr());
@@ -718,9 +782,82 @@
         }
 
         await this.xhrPromise(); // wait for the request to complete
+    }
 
+    /**
+   * @category XHR
+   * @description Whether the attempt that just finished ended in an error - a
+   * transport-level error, or an error status code.
+   * @returns {Boolean}
+   */
+    didAttemptFail () {
+        return Boolean(this.hasErrorStatusCode() || this.error());
+    }
+
+    /**
+   * @category XHR
+   * @description Whether the failed attempt that just finished should be sent
+   * again. Automatic retry is opt-in per request (see the maxRetries slot), so
+   * this is false by default no matter what the error was.
+   * @returns {Boolean}
+   */
+    shouldRetryAfterAttempt () {
+        if (!this.didAttemptFail()) {
+            return false;
+        }
+
+        if (this.maxRetries() < 1) {
+            return false; // automatic retry not enabled for this request
+        }
+
+        if (this.hasExceededMaxRetries()) {
+            return false;
+        }
+
+        return this.shouldAutoRetryForCurrentError();
+    }
+
+    /**
+   * @category XHR
+   * @description Waits out the backoff delay before the next attempt.
+   * @returns {Promise}
+   */
+    async asyncWaitForRetryDelay () {
+        const seconds = this.currentRetryDelaySeconds();
+        console.log(this.logPrefix(), "retrying in " + seconds + " seconds (retry "
+            + (this.retryCount() + 1) + " of " + this.maxRetries() + ")");
+        this.setIsWaitingToRetry(true);
+        await new Promise((resolve) => this.addTimeout(resolve, seconds * 1000));
+        this.setIsWaitingToRetry(false);
+    }
+
+    /**
+   * @category XHR
+   * @description Clears the per-attempt state so another attempt can be sent.
+   * Deliberately leaves completionPromise and didAbort alone: the completion
+   * promise spans all attempts, and an aborted request is never retried.
+   * @returns {SvXhrRequest}
+   */
+    prepareForRetryAttempt () {
+        this.setRetryCount(this.retryCount() + 1);
+        this.setError(null);
+        this.setDidTimeout(false);
+        this.setXhr(null);
+        this.setXhrPromise(null);
+        this.setStatus("retrying");
+        return this;
+    }
+
+    /**
+   * @category XHR
+   * @description Classifies the final outcome and tells the caller once. These
+   * delegate messages and the completionPromise resolution must happen exactly
+   * once per asyncSend(), after the LAST attempt - a caller that saw
+   * onRequestFailure for attempt 1 would give up while a retry was still in flight.
+   */
+    finishAfterFinalAttempt () {
         // only have a status error
-        if (this.hasErrorStatusCode() || this.error()) {
+        if (this.didAttemptFail()) {
             // If we don't already have an error set by onXhrError, create one
             if (!this.error()) {
                 const m = JSON.stringify(this.readableJsonState(), null, 2);
@@ -1035,12 +1172,8 @@
    * @description Retries the request
    */
     retryRequest () {
-        this.setRetryCount(this.retryCount() + 1);
-        this.setError(null);
-        this.setXhr(null);
-        this.setXhrPromise(null);
-        this.setCompletionPromise(null);
-        this.setStatus("retrying");
+        this.prepareForRetryAttempt();
+        this.setCompletionPromise(null); // asyncSend() makes a fresh one
         this.asyncSend();
     }
 
@@ -1075,31 +1208,7 @@
         }
     }
 
-    // --- retry helpers ---
-
-    // NOTE: not yet wired to any error path — kept correct for future use.
-    // (Was dead AND broken: referenced undefined vars and the max-retries
-    // predicate below was inverted, so if ever called it would only have
-    // retried AFTER retries were exhausted, then thrown a ReferenceError.)
-    retryIfApplicable () {
-        if (this.shouldAutoRetryForCurrentError() && !this.hasExceededMaxRetries()) {
-            const seconds = this.currentRetryDelaySeconds();
-            this.retryWithDelay(seconds);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-   * @description Retries the request with a delay
-   * @param {number} seconds
-   */
-    retryWithDelay (seconds) {
-        console.log(this.logPrefix(), ".retryWithDelay(" + seconds + " seconds)");
-        this.addTimeout(() => {
-            this.retryRequest();
-        }, seconds * 1000);
-    }
+    // --- retry helpers (used by the asyncSend() attempt loop) ---
 
     hasExceededMaxRetries () {
         return this.retryCount() >= this.maxRetries();
@@ -1465,6 +1574,12 @@
     abort () {
         if (this.isActive()) {
             this.xhr().abort();
+        } else if (this.isWaitingToRetry()) {
+            // Between attempts there is no XHR to cancel, and without this an
+            // abort during the backoff window would be silently ignored and the
+            // next attempt sent anyway. The previous attempt's xhrPromise has
+            // already settled, so onXhrAbort()'s reject of it is a no-op.
+            this.onXhrAbort();
         }
         return this;
     }
