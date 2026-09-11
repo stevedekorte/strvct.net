@@ -4,7 +4,8 @@
 /**
 * @class SvFilesToDownload
 * @extends SvSummaryNode
-* @classdesc Collection of ImageToDownload nodes.
+* @classdesc Collection of SvFileToDownload nodes. Shared by every image
+* service, not specific to any one of them.
 */
 
 (class SvFilesToDownload extends SvSummaryNode {

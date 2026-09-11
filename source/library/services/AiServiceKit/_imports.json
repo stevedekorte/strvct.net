@@ -1,6 +1,7 @@
 [
     "ImageEditor/_imports.json",
     "Requests/_imports.json",
+    "Files/_imports.json",
     "SvAiChatModel.js",
     "SvAiChatModels.js",
     "SvConversation.js",

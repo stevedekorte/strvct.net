@@ -281,6 +281,9 @@
             const request = SvXhrRequest.clone();
             request.setUrl(proxyEndpoint);
             request.setMethod("GET");
+            // NOTE: deliberately NO setMaxRetries() here. A failed poll already
+            // retries at this level (schedulePoll, bounded by maxPollAttempts);
+            // a second retry underneath would multiply that attempt budget.
             // No Content-Type on a GET: Firebase returns 400 for a GET that
             // declares a body content type.
             request.setHeaders({
@@ -470,6 +473,11 @@
      * @category Results
      */
     async downloadImageUrls (imageUrls) {
+        // RETRIED, though nothing here says setMaxRetries: each image is an
+        // SvFileToDownload (images() is an SvFilesToDownload), and that class
+        // opts in to SvXhrRequest's automatic retry on its own behalf. A
+        // transient 502 on one image therefore no longer rejects this
+        // Promise.all and loses the whole generation.
         const authToken = await this.service().apiKeyOrUserAuthToken();
         const promises = imageUrls.map(async (imageUrl, index) => {
             const image = this.images().add();

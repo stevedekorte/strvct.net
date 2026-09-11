@@ -4,7 +4,13 @@
 /**
  * @class SvFileToDownload
  * @extends SvSummaryNode
- * @classdesc Represents a single image to download.
+ * @classdesc One file fetched by URL, with its bytes and load state.
+ *
+ * SHARED across every image service - ImaginePro, Krea, and anything else
+ * that downloads a generated result. It lived under ImaginePro/ for historical
+ * reasons, which made a Krea download look like it ran through a competitor's
+ * code; it is plain AiServiceKit infrastructure and now sits with the rest of
+ * it, next to SvXhrRequest, which it uses to do the fetching.
  */
 
 (class SvFileToDownload extends SvSummaryNode {
@@ -283,6 +289,15 @@
         request.setResponseType("arraybuffer"); // Request binary data as ArrayBuffer (better Node.js compatibility)
 
         request.setTimeoutPeriodInMs(120 * 1000);
+
+        // Opt in to SvXhrRequest's automatic retry (off by default). A transient
+        // 502 - from the image host, or from our own /proxy when its upstream
+        // socket dies - used to kill the whole generation, because the enclosing
+        // Promise.all over the download urls rejects on the first failure.
+        // Retrying is safe here and nowhere else on this path: this is a GET of
+        // finished, immutable bytes for a job that has already been billed, so
+        // repeating it cannot duplicate work or charge the player twice.
+        request.setMaxRetries(3);
 
         try {
             await request.asyncSend();

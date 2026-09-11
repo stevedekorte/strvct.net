@@ -817,6 +817,11 @@
         request.setBody(JSON.stringify(bodyJson));
         this.setXhrRequest(request);
 
+        // NOTE: deliberately NO setMaxRetries() here. This POST creates a
+        // billable job, and the proxy raises its own 502 on a socket error that
+        // can fire after Krea has already accepted the request — so an automatic
+        // retry would charge the player for a job they will never see.
+
         await request.asyncSend();
 
         if (request.hasError()) {
