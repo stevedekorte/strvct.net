@@ -1,7 +1,7 @@
 [
     "SvDomCssInspector.js",
     "SvCssColor.js",
+    "SvRenderedText.js",
     "Node-helpers.js",
     "TapeMeasures/_imports.json"
 ]
-
