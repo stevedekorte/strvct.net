@@ -29,6 +29,15 @@
  * deserialize path via Slot.onInstanceSetValue(), which is what
  * SvJsonGroup.setSlotsJson() uses during envelope deserialization.
  *
+ * The same hook has a SECOND job (SvCloudBlobNode): after the content identity
+ * changes, go and fetch the new bytes rather than waiting for a view to ask.
+ * That half was governed by the same both-non-null guard and so covered only
+ * REPLACEMENT — a receiver seeing content for the FIRST time (null → hash, how
+ * a newly generated portrait arrives at a client) was silently skipped, leaving
+ * it holding a hash and no bytes. The fetch now fires for every change to a
+ * non-null hash, with the authoring side excluded by the run-time blobValue
+ * check instead of by the shape of the transition.
+ *
  * Usage (from the strvct root):
  *   node source/boot/index-builder/ImportsIndexer.js   # if index is stale
  *   node tests/headless/TestBlobHashChange.js
@@ -176,6 +185,94 @@ function testDeserializePathClears () {
     check(node.publicUrl() === null, "stale publicUrl cleared through the deserialize path");
 }
 
+// --- fetch-for-new-content scheduling (SvCloudBlobNode) ---
+
+/**
+ * Runs fn with scheduleFetchForNewContent counted rather than scheduled, and
+ * returns how many times it was reached. Counting the SCHEDULE (not the async
+ * fetch) keeps the test off the network while still asserting the decision.
+ */
+function countingFetchSchedules (fn) {
+    const proto = SvGlobals.get("SvCloudBlobNode").prototype;
+    const original = proto.scheduleFetchForNewContent;
+    let count = 0;
+    proto.scheduleFetchForNewContent = function () { count += 1; return this; };
+    try { fn(); } finally { proto.scheduleFetchForNewContent = original; }
+    return count;
+}
+
+function testFetchScheduledOnReplacement () {
+    console.log("\nFetch: replacing one hash with another schedules a fetch");
+
+    const node = SvGlobals.get("SvImageNode").clone();
+    node.setValueHash(HASH_A);
+    const count = countingFetchSchedules(() => node.setValueHash(HASH_B));
+    check(count === 1, "hash A → B schedules a fetch");
+}
+
+function testFetchScheduledOnFirstContent () {
+    console.log("\nFetch: FIRST content (null → hash) schedules a fetch");
+
+    // A client receiving newly generated artwork: the imageNode arrives with a
+    // hash it has never held bytes for. This was the gap — the old guard read
+    // null → hash as "the author computing its own hash" and skipped it.
+    const node = SvGlobals.get("SvImageNode").clone();
+    check(node.valueHash() === null, "precondition: valueHash is null");
+    check(node.blobValue() === null, "precondition: no bytes in hand");
+    const count = countingFetchSchedules(() => node.setValueHash(HASH_A));
+    check(count === 1, "null → hash schedules a fetch for a receiver");
+}
+
+function testNoFetchOnClearOrNoOp () {
+    console.log("\nFetch: clearing the hash, or re-setting it, schedules nothing");
+
+    const node = SvGlobals.get("SvImageNode").clone();
+    node.setValueHash(HASH_A);
+    check(countingFetchSchedules(() => node.setValueHash(null)) === 0,
+        "hash → null schedules nothing (there is no content to fetch)");
+    node.setValueHash(HASH_A);
+    check(countingFetchSchedules(() => node.setValueHash(HASH_A)) === 0,
+        "re-setting the same hash schedules nothing");
+}
+
+function testAuthorWithBytesDoesNotFetch () {
+    console.log("\nFetch: the authoring side no-ops at run time (it has the bytes)");
+
+    // asyncJustSetBlobValue sets the blob BEFORE computing the hash, so on the
+    // machine that made the content the bytes are already in hand when the
+    // hash lands. The schedule still happens; the scheduled method is what
+    // declines — an accurate "do I have the bytes?" test rather than one
+    // inferred from the shape of the hash transition.
+    const node = SvGlobals.get("SvImageNode").clone();
+    const fakeBlob = { marker: "authored-bytes" };
+    node._blobValue = fakeBlob;
+    node.setValueHash(HASH_A);
+
+    let fetched = false;
+    const originalAsync = node.asyncBlobValue;
+    node.asyncBlobValue = function () { fetched = true; return Promise.resolve(fakeBlob); };
+    node.onScheduledFetchForNewContent();
+    node.asyncBlobValue = originalAsync;
+
+    check(fetched === false, "author holding the bytes does not fetch them again");
+}
+
+function testReceiverWithoutBytesFetches () {
+    console.log("\nFetch: a receiver holding only a hash does fetch");
+
+    const node = SvGlobals.get("SvImageNode").clone();
+    node.setValueHash(HASH_A);
+    check(node.blobValue() === null, "precondition: hash but no bytes");
+
+    let fetched = false;
+    const originalAsync = node.asyncBlobValue;
+    node.asyncBlobValue = function () { fetched = true; return Promise.resolve(null); };
+    node.onScheduledFetchForNewContent();
+    node.asyncBlobValue = originalAsync;
+
+    check(fetched === true, "receiver with no bytes pulls them by hash");
+}
+
 async function main () {
     console.log("TestBlobHashChange: booting strvct…");
     await boot();
@@ -187,6 +284,12 @@ async function main () {
     testNullToHashKeepsBlob();
     testSameHashIsNoOp();
     testDeserializePathClears();
+
+    testFetchScheduledOnReplacement();
+    testFetchScheduledOnFirstContent();
+    testNoFetchOnClearOrNoOp();
+    testAuthorWithBytesDoesNotFetch();
+    testReceiverWithoutBytesFetches();
 
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);
