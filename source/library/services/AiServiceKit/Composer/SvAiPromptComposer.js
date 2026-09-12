@@ -151,7 +151,6 @@
         this.setOutputString(this.inputString());
 
         this.replaceFiles();
-        this.convertToAbsoluteMarkdown();
         this.replaceTableOfContents(); // so it's not treated as a method
         this.replaceResources(); // after files (included files may reference resources), before methods
         this.replaceMethods(); // this ordering prevents methods from containing string with {{file$fileName}}
@@ -180,152 +179,15 @@
 
     // --- replace files ---
 
+    /**
+     * @description Resolves every {{file$name}} include, nesting each part's
+     * headings under the heading that encloses the include — see
+     * SvMarkdownIncludes for the rule. Roots start at level 1.
+     * @category Compose
+     */
     replaceFiles () {
-    // file all file names of the form {{file$fileName}} and replace them with the contents of the file using .contentsOfFileNamed()
-    // repeat on inputString until no more {{file$fileName}} are found
-    // limit to 1000 iterations
-        for (let i = 0; i < 1000; i++) {
-            if (!this.replaceNextFile()) {
-                return;
-            }
-        }
-        throw new Error("Too many iterations during replaceFiles");
-    }
-
-    /**
-     * @description An included file's contents, with its headings made RELATIVE
-     * so they nest under whatever section includes it.
-     *
-     * A part is written as a standalone document: its own hierarchy starting at
-     * `#`. Converting to relative markers here means the existing
-     * convertToAbsoluteMarkdown() pass — which runs after every include is
-     * flattened — resolves them against the enclosing level, so the part's `#`
-     * becomes a child of the heading it was included under.
-     *
-     * Without this, an absolute heading inside a part RESETS the level (see
-     * SvMarkdownRelative), so the part's content rendered SHALLOWER than the
-     * section containing it. That was live: `=#= Combat Encounters` followed by
-     * a part whose headings began at `##` put 593 lines of content one level
-     * above their own section, and the table of contents built from those
-     * headings misdescribed the document.
-     *
-     * Parts already written with relative markers are unaffected — the
-     * conversion only matches `^#{1,6} ` and leaves `>#>` / `=#=` / `<#<`
-     * alone — so both styles compose correctly and no migration is forced.
-     * @param {String} fileName
-     * @returns {String}
-     * @category Compose
-     */
-    nestedContentsOfFileNamed (fileName) {
-        const contents = this.normalizedHeadingDepth(this.contentsOfFileNamed(fileName));
-        return new SvMarkdownRelative().setInputString(contents).convertAbsoluteToRelative().outputString();
-    }
-
-    /**
-     * @description Shifts a part's absolute headings so its SHALLOWEST becomes
-     * `#`, preserving the gaps between them.
-     *
-     * Without this, a part is silently required to start at `#`: one beginning
-     * at `##` (as CombatEncountersPrompt does) nests two levels below its
-     * section instead of one, skipping a level. Normalizing means a part nests
-     * at exactly +1 however its author numbered it, so "start at `#`" stops
-     * being a rule anyone has to know.
-     *
-     * Leaves relative-marker parts alone — they contain no `^#` headings to
-     * find, so minLevel stays null and the text is returned untouched.
-     * @param {String} text
-     * @returns {String}
-     * @category Compose
-     */
-    normalizedHeadingDepth (text) {
-        const headingRegex = /^(#{1,6})(\s)/;
-        let minLevel = null;
-        text.split("\n").forEach((line) => {
-            const m = line.match(headingRegex);
-            if (m && (minLevel === null || m[1].length < minLevel)) {
-                minLevel = m[1].length;
-            }
-        });
-        if (minLevel === null || minLevel === 1) {
-            return text;
-        }
-        const shift = minLevel - 1;
-        return text.split("\n").map((line) => {
-            const m = line.match(headingRegex);
-            return m ? line.replace(headingRegex, "#".repeat(m[1].length - shift) + m[2]) : line;
-        }).join("\n");
-    }
-
-    replaceNextFile () {
-        let string = this.outputString();
-        // console.log("\n=== Debug replaceNextFile ===");
-        // console.log("Full string:", string);
-
-        if (string.includes("{{file$")) {
-            // console.log("\nFound {{file$ in string");
-            // First find the complete pattern
-            const fullPattern = /\{\{file\$([^{}]+?)\}\}/;
-            // console.log("Using pattern:", fullPattern);
-            const match = string.match(fullPattern);
-            // console.log("Match result:", match);
-
-            if (!match) {
-                // If no match, let's check what parts we do have
-                const lines = string.split("\n");
-                const problematicLineIndex = lines.findIndex(line => line.includes("{{file$"));
-                const lineNumber = problematicLineIndex + 1;
-                const problematicLine = lines[problematicLineIndex];
-
-                // console.log("\nAnalyzing problematic line:");
-                // console.log("Line content:", JSON.stringify(problematicLine));
-                // console.log("Line length:", problematicLine.length);
-                // console.log("Character codes:", [...problematicLine].map(c => c.charCodeAt(0)));
-
-                // Check specific parts of the pattern
-                const openingBrace = problematicLine.includes("{{");
-                const filePrefix = problematicLine.includes("{{file$");
-                const closingBrace = problematicLine.includes("}}");
-
-                // console.log("Pattern parts found:");
-                // console.log("- Opening braces {{:", openingBrace);
-                // console.log("- file$ prefix:", filePrefix);
-                // console.log("- Closing braces }}:", closingBrace);
-
-                let detailedError = `Invalid file reference format found on line ${lineNumber}:\n` +
-                           `  ${problematicLine}\n` +
-                           "Pattern analysis:\n";
-
-                if (!openingBrace) detailedError += '  - Missing opening braces "{{"\n';
-                if (!filePrefix) detailedError += '  - Missing "file$" prefix\n';
-                if (!closingBrace) detailedError += '  - Missing closing braces "}}"\n';
-
-                detailedError += "\nThe file reference must be in the format {{file$filename.txt}} with matching opening and closing braces.";
-
-                throw new Error(detailedError);
-            }
-
-            const fileName = match[1];
-            // console.log("\nExtracted filename:", fileName);
-
-            try {
-                const fileContents = this.nestedContentsOfFileNamed(fileName);
-                string = string.replaceAll(`{{file$${fileName}}}`, fileContents);
-                this.setOutputString(string);
-                return true;
-            } catch (error) {
-                // console.log("Error reading file:", error);
-                const lines = string.split("\n");
-                const problematicLineIndex = lines.findIndex(line => line.includes(`{{file$${fileName}}}`));
-                const lineNumber = problematicLineIndex + 1;
-
-                throw new Error(
-                    `Error processing file reference on line ${lineNumber}:\n` +
-          `  ${lines[problematicLineIndex]}\n` +
-          `${error.message}`
-                );
-            }
-        }
-        return false;
+        const includes = new SvMarkdownIncludes().setContentsOfFileNamed((name) => this.contentsOfFileNamed(name));
+        this.setOutputString(includes.resolve(this.outputString(), 1));
     }
 
     // --- replace methods ---
@@ -386,13 +248,6 @@
         } else {
             throw new Error(this.svType() + "Unable to format value: " + value);
         }
-    }
-
-    // --- convert relative to absolute markdown ---
-
-    convertToAbsoluteMarkdown () {
-        const absoluteHeaders = new SvMarkdownRelative().setInputString(this.outputString()).convertRelativeToAbsolute().outputString();
-        this.setOutputString(absoluteHeaders);
     }
 
     // --- table of contents ---

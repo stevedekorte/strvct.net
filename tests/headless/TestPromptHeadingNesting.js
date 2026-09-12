@@ -3,19 +3,16 @@
 "use strict";
 
 /**
- * Headless test: an included prompt part nests UNDER the section that includes it.
+ * Headless test: SvMarkdownIncludes nests an included prompt part's headings
+ * at the level of the insertion point in the INCLUDING file.
  *
- * The defect this guards (live until 2026-09-12): a part written with ordinary
- * markdown headings rendered one level SHALLOWER than its own section, because
- * SvMarkdownRelative treats an absolute heading as a level RESET. In the real
- * prompt, `=#= Combat Encounters` followed by a part whose headings began at
- * `##` put 593 lines of content above their own section, and the table of
- * contents derived from those headings misdescribed the document.
- *
- * Plain markdown is what an author naturally writes — four parts already did —
- * so the format had to stop punishing it. SvAiPromptComposer now converts an
- * included part's headings to relative at splice time
- * (`nestedContentsOfFileNamed`), letting the existing resolver nest them.
+ * Why this exists (2026-09-12): the retired relative-marker notation resolved
+ * headings against a running level carried across the flattened document, so
+ * every sibling include started where the previous one's content ended. Depth
+ * compounded silently — the production session prompt reached ten heading
+ * levels, fifty-one headings past markdown's `######`. Anchoring to the
+ * including file's own heading is the rule that stops that, and this test
+ * pins each clause of it.
  *
  * Usage (from the strvct root):
  *   node tests/headless/TestPromptHeadingNesting.js
@@ -33,132 +30,117 @@ const check = (c, m) => {
 };
 
 global.SvGlobals = { globals: () => global };
-eval(fs.readFileSync(path.join(strvctRoot, "source/library/ideal/markdown/SvMarkdownRelative.js"), "utf8"));
+eval(fs.readFileSync(path.join(strvctRoot, "source/library/ideal/markdown/SvMarkdownIncludes.js"), "utf8"));
 
-const resolve = (s) => new SvMarkdownRelative().setInputString(s).convertRelativeToAbsolute().outputString();
-// Mirrors SvAiPromptComposer.nestedContentsOfFileNamed: normalize the part's
-// shallowest heading to `#`, then make it relative.
-function normalize (text) {
-    const re = /^(#{1,6})(\s)/;
-    let min = null;
-    text.split("\n").forEach(l => { const m = l.match(re); if (m && (min === null || m[1].length < min)) { min = m[1].length; } });
-    if (min === null || min === 1) { return text; }
-    const shift = min - 1;
-    return text.split("\n").map(l => { const m = l.match(re); return m ? l.replace(re, "#".repeat(m[1].length - shift) + m[2]) : l; }).join("\n");
+/** Compose `root` against an in-memory file map. */
+function compose (root, files) {
+    const includes = new SvMarkdownIncludes().setContentsOfFileNamed((name) => {
+        if (!Object.hasOwn(files, name)) { throw new Error("no such file " + name); }
+        return files[name];
+    });
+    return includes.resolve(root, 1);
 }
-const nest = (s) => new SvMarkdownRelative().setInputString(normalize(s)).convertAbsoluteToRelative().outputString();
+
 const levelOf = (line) => (line.match(/^(#+)\s/) || [null, ""])[1].length;
 
-/** Heading level for a given title in resolved output. */
-function levelFor (resolved, title) {
-    const line = resolved.split("\n").find(l => l.includes(title));
+/** Heading level for a given title in composed output, or null. */
+function levelFor (out, title) {
+    const line = out.split("\n").find(l => /^#+ /.test(l) && l.includes(title));
     return line ? levelOf(line) : null;
 }
 
-function testPartNestsUnderItsSection () {
-    console.log("\nA part written in plain markdown nests under its section");
+function testPartAnchorsToTheInsertionPoint () {
+    console.log("\nA part's # renders at the level of the nearest preceding heading in the including file");
 
     const part = ["# Combat Basics", "## When Combat Begins", "### Prerequisite", "## When Round Ends"].join("\n");
-    const host = ["## SPECIFIC TASK DETAILS", ">#> Session Response Workflow", "=#= Combat Encounters", nest(part)].join("\n");
-    const out = resolve(host);
+    const out = compose(["## SPECIFIC TASK", "### Combat Encounters", "{{file$part.txt}}"].join("\n"), { "part.txt": part });
 
-    const section = levelFor(out, "Combat Encounters");
-    const first = levelFor(out, "Combat Basics");
-    const nested = levelFor(out, "When Combat Begins");
-    const deepest = levelFor(out, "Prerequisite");
-    const backOut = levelFor(out, "When Round Ends");
-
-    check(section === 3, "the including section resolves to ### (" + section + ")");
-    check(first === section + 1, "the part's top heading is a CHILD of it (" + first + " vs " + section + ")");
-    check(nested === first + 1, "the part's internal hierarchy is preserved one deeper");
-    check(deepest === nested + 1, "…and deeper again");
-    check(backOut === nested, "…and coming back out returns to the right level");
+    check(levelFor(out, "Combat Basics") === 3, "# in the part = the anchor level (3)");
+    check(levelFor(out, "When Combat Begins") === 4, "## = one deeper");
+    check(levelFor(out, "Prerequisite") === 5, "### = two deeper");
+    check(levelFor(out, "When Round Ends") === 4, "coming back out returns to the right level");
 }
 
-function testTheOriginalDefectIsGone () {
-    console.log("\nThe original inversion no longer happens");
+function testContainedPartOpensAtTwo () {
+    console.log("\nA part that opens at ## is CONTAINED by the heading above the include");
 
-    // Splicing raw (the old behaviour) vs nested (the new one).
-    const part = ["## Always End a Combat Response", "### Prerequisite"].join("\n");
-    const prefix = ["## SPECIFIC TASK DETAILS", ">#> Session Response Workflow", "=#= Combat Encounters"];
-
-    const oldWay = resolve(prefix.concat([part]).join("\n"));
-    const newWay = resolve(prefix.concat([nest(part)]).join("\n"));
-
-    const oldContent = levelFor(oldWay, "Always End a Combat Response");
-    const oldSection = levelFor(oldWay, "Combat Encounters");
-    check(oldContent < oldSection, "precondition: splicing raw DID invert (" + oldContent + " above " + oldSection + ")");
-
-    const newContent = levelFor(newWay, "Always End a Combat Response");
-    const newSection = levelFor(newWay, "Combat Encounters");
-    check(newContent === newSection + 1,
-        "nested splicing puts content exactly ONE level below its section (" + newContent + " under " + newSection + ")");
+    const out = compose(["## NOTES ON THE TOOLS", "{{file$tool.txt}}"].join("\n"), { "tool.txt": "## Dice Roll Tool\n### Core Mechanics" });
+    check(levelFor(out, "Dice Roll Tool") === 3, "its top heading is a child of the section");
+    check(levelFor(out, "Core Mechanics") === 4, "…and its child follows");
 }
 
-function testRelativePartsAreUntouched () {
-    console.log("\nParts already using relative markers are unaffected");
+function testSiblingIncludesDoNotCompound () {
+    console.log("\nSibling includes all anchor to the SAME heading — depth never compounds");
 
-    const existing = [">#> Result Handling", "=#= Tool Errors", "<#< Back out"].join("\n");
-    check(nest(existing).trim() === existing.trim(),
-        "relative markers pass through unchanged, so no migration is forced");
+    const deep = "# A\n## B\n### C\n#### D";
+    const root = ["## SECTION", "{{file$deep.txt}}", "{{file$deep.txt}}", "{{file$deep.txt}}"].join("\n");
+    const out = compose(root, { "deep.txt": deep });
+    const aLevels = out.split("\n").filter(l => /^#+ A$/.test(l)).map(levelOf);
+    check(aLevels.length === 3 && aLevels.every(n => n === 2), "each sibling's # lands at 2 (" + aLevels.join(",") + ")");
+    check(Math.max(...out.split("\n").map(levelOf)) === 5, "the deepest heading is 5, not 5+3+3");
 }
 
-function testPartStartingDeeperStillNestsByOne () {
-    console.log("\nA part whose headings start at ## still nests by exactly one");
+function testAnchorSetsLevelAndEmitsNothing () {
+    console.log("\nA heading titled only '---' is a level anchor: it sets the level and emits nothing");
 
-    // CombatEncountersPrompt begins at ##, not #. Without normalization it
-    // would land two levels below its section, skipping a level.
-    const part = ["## Always End a Combat Response", "### Prerequisite"].join("\n");
-    const out = resolve(["## ROOT", ">#> Section", nest(part)].join("\n"));
-    const section = levelFor(out, "Section");
-    check(levelFor(out, "Always End a Combat Response") === section + 1,
-        "its top heading is one below the section regardless of where it started");
-    check(levelFor(out, "Prerequisite") === section + 2, "…and its child follows");
+    const root = ["## SHARED", "### HOW TO", "{{file$how.txt}}", "", "### ---", "{{file$peer.txt}}", "## ---", "{{file$peer.txt}}"].join("\n");
+    const out = compose(root, { "how.txt": "## Procedure", "peer.txt": "# Peer\n## Sub" });
+    const peerLevels = out.split("\n").filter(l => /^#+ Peer$/.test(l)).map(levelOf);
+    check(peerLevels.join(",") === "3,2", "the same part lands at 3 under '### ---' and at 2 under '## ---' (" + peerLevels.join(",") + ")");
+    check(!/^#+ ---$/m.test(out), "no '---' heading reaches the output");
+    check(levelFor(out, "Procedure") === 4, "a titled heading still anchors the include after it");
 }
 
-function testNoHeadingLevelJumps () {
-    console.log("\nResolved output never skips a heading level");
+function testAnchorsShiftWithTheirOwnParent () {
+    console.log("\nAn anchor inside an included part is shifted like any heading of that part");
 
-    const part = ["# A", "## B", "### C"].join("\n");
-    const out = resolve(["## ROOT", ">#> Section", nest(part)].join("\n"));
-    const levels = out.split("\n").map(levelOf).filter(n => n > 0);
-    const jumps = levels.filter((n, i) => i > 0 && n - levels[i - 1] > 1);
-    check(jumps.length === 0, "no jump deeper than one level (" + levels.join(",") + ")");
+    // ObjectMessageToolPrompt's shape: a part with its own anchor, itself included.
+    const files = {
+        "outer.txt": "## Object Message Tool\n## ---\n{{file$inner.txt}}",
+        "inner.txt": "# Protocols\n## Detail"
+    };
+    const out = compose(["## NOTES", "{{file$outer.txt}}"].join("\n"), files);
+    check(levelFor(out, "Object Message Tool") === 3, "the outer part's ## is contained by NOTES (3)");
+    check(levelFor(out, "Protocols") === 3, "its '## ---' anchor is shifted to 3, so the inner part's # lands at 3");
+    check(levelFor(out, "Detail") === 4, "…and the inner part's ## at 4");
 }
 
-/**
- * The guard that actually holds the composer to this. The checks above exercise
- * SvMarkdownRelative directly, so they would keep passing if the composer
- * stopped calling it — which is exactly the regression worth catching.
- *
- * Note what is NOT used here: asserting on the flattened composed output. Two
- * attempts failed to detect the original defect (a level SKIP is the wrong
- * fingerprint, since a reset goes shallower; an EMPTY SECTION is wrong too,
- * since the section has a short body before the included headings). Flattening
- * destroys the include boundaries the assertion would need, so the guard has to
- * run through the composer with a known include.
- */
-function testTheComposerActuallyNestsIncludes () {
-    console.log("\nThe composer nests an included part (wiring guard)");
+function testNonHeadingLinesAndInlineIncludesPassThrough () {
+    console.log("\nBody text passes through; an include with no headings splices inline");
 
-    const composerPath = path.join(strvctRoot, "source/library/services/AiServiceKit/Composer/SvAiPromptComposer.js");
-    const src = fs.readFileSync(composerPath, "utf8");
-    check(/nestedContentsOfFileNamed\s*\(fileName\)/.test(src),
-        "replaceNextFile splices through nestedContentsOfFileNamed, not raw contents");
-    check(/convertAbsoluteToRelative/.test(src),
-        "…which converts the part's headings to relative");
-    check(/normalizedHeadingDepth/.test(src),
-        "…after normalizing its shallowest heading to '#'");
+    const out = compose(["# Root", "<json>", "{{file$names.json}}", "</json>", "Text with {{file$frag.txt}} inline."].join("\n"),
+        { "names.json": "[\"Goblin\"]", "frag.txt": "a fragment" });
+    check(out.includes("<json>\n[\"Goblin\"]\n</json>"), "a headingless include is spliced verbatim");
+    check(out.includes("Text with a fragment inline."), "an inline include is replaced in place");
+}
+
+function testCycleIsReported () {
+    console.log("\nAn include cycle is reported, not looped forever");
+
+    let message = null;
+    try { compose("{{file$a.txt}}", { "a.txt": "{{file$b.txt}}", "b.txt": "{{file$a.txt}}" }); }
+    catch (e) { message = e.message; }
+    check(message !== null && /^include cycle: a\.txt -> b\.txt -> a\.txt$/.test(message), "the error names the chain (" + message + ")");
+}
+
+function testTheComposerUsesIt () {
+    console.log("\nSvAiPromptComposer resolves includes through SvMarkdownIncludes (wiring guard)");
+
+    const src = fs.readFileSync(path.join(strvctRoot, "source/library/services/AiServiceKit/Composer/SvAiPromptComposer.js"), "utf8");
+    check(/new SvMarkdownIncludes\(\)/.test(src), "replaceFiles constructs SvMarkdownIncludes");
+    check(!/SvMarkdownRelative|convertToAbsoluteMarkdown/.test(src), "no relative-marker machinery remains");
 }
 
 function main () {
     console.log("TestPromptHeadingNesting:");
-    testPartNestsUnderItsSection();
-    testTheOriginalDefectIsGone();
-    testPartStartingDeeperStillNestsByOne();
-    testRelativePartsAreUntouched();
-    testNoHeadingLevelJumps();
-    testTheComposerActuallyNestsIncludes();
+    testPartAnchorsToTheInsertionPoint();
+    testContainedPartOpensAtTwo();
+    testSiblingIncludesDoNotCompound();
+    testAnchorSetsLevelAndEmitsNothing();
+    testAnchorsShiftWithTheirOwnParent();
+    testNonHeadingLinesAndInlineIncludesPassThrough();
+    testCycleIsReported();
+    testTheComposerUsesIt();
     console.log("\n" + pass + " passed, " + fail + " failed");
     process.exit(fail === 0 ? 0 : 1);
 }
