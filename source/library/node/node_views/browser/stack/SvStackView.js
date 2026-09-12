@@ -1262,6 +1262,21 @@
             return false;
         }
 
+        // Selecting a tile IS opening its node, so ask the node to prepare
+        // BEFORE judging whether it has anything to show. A node that fills
+        // its subnodes on first access (UoSrdCreatures populates 300+
+        // placeholders in prepareForFirstAccess) has zero subnodes until
+        // asked; judging it first made canNavTo() false, the column never
+        // opened, and nothing ever asked — so it could never be opened at
+        // all (2026-09-12, three days after canNavTo replaced the always-
+        // true default here). This is the same first-access hook the new
+        // column's own view would fire, just moved ahead of the decision;
+        // it is NOT the tile-render path, which must stay lazy (a cloud
+        // document hydrating on selection is right, on list render wrong).
+        if (node.prepareToAccess) {
+            node.prepareToAccess();
+        }
+
         return node.canNavTo ? node.canNavTo() : true;
     }
 
