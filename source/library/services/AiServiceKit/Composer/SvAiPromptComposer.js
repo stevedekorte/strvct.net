@@ -192,6 +192,70 @@
         throw new Error("Too many iterations during replaceFiles");
     }
 
+    /**
+     * @description An included file's contents, with its headings made RELATIVE
+     * so they nest under whatever section includes it.
+     *
+     * A part is written as a standalone document: its own hierarchy starting at
+     * `#`. Converting to relative markers here means the existing
+     * convertToAbsoluteMarkdown() pass — which runs after every include is
+     * flattened — resolves them against the enclosing level, so the part's `#`
+     * becomes a child of the heading it was included under.
+     *
+     * Without this, an absolute heading inside a part RESETS the level (see
+     * SvMarkdownRelative), so the part's content rendered SHALLOWER than the
+     * section containing it. That was live: `=#= Combat Encounters` followed by
+     * a part whose headings began at `##` put 593 lines of content one level
+     * above their own section, and the table of contents built from those
+     * headings misdescribed the document.
+     *
+     * Parts already written with relative markers are unaffected — the
+     * conversion only matches `^#{1,6} ` and leaves `>#>` / `=#=` / `<#<`
+     * alone — so both styles compose correctly and no migration is forced.
+     * @param {String} fileName
+     * @returns {String}
+     * @category Compose
+     */
+    nestedContentsOfFileNamed (fileName) {
+        const contents = this.normalizedHeadingDepth(this.contentsOfFileNamed(fileName));
+        return new SvMarkdownRelative().setInputString(contents).convertAbsoluteToRelative().outputString();
+    }
+
+    /**
+     * @description Shifts a part's absolute headings so its SHALLOWEST becomes
+     * `#`, preserving the gaps between them.
+     *
+     * Without this, a part is silently required to start at `#`: one beginning
+     * at `##` (as CombatEncountersPrompt does) nests two levels below its
+     * section instead of one, skipping a level. Normalizing means a part nests
+     * at exactly +1 however its author numbered it, so "start at `#`" stops
+     * being a rule anyone has to know.
+     *
+     * Leaves relative-marker parts alone — they contain no `^#` headings to
+     * find, so minLevel stays null and the text is returned untouched.
+     * @param {String} text
+     * @returns {String}
+     * @category Compose
+     */
+    normalizedHeadingDepth (text) {
+        const headingRegex = /^(#{1,6})(\s)/;
+        let minLevel = null;
+        text.split("\n").forEach((line) => {
+            const m = line.match(headingRegex);
+            if (m && (minLevel === null || m[1].length < minLevel)) {
+                minLevel = m[1].length;
+            }
+        });
+        if (minLevel === null || minLevel === 1) {
+            return text;
+        }
+        const shift = minLevel - 1;
+        return text.split("\n").map((line) => {
+            const m = line.match(headingRegex);
+            return m ? line.replace(headingRegex, "#".repeat(m[1].length - shift) + m[2]) : line;
+        }).join("\n");
+    }
+
     replaceNextFile () {
         let string = this.outputString();
         // console.log("\n=== Debug replaceNextFile ===");
@@ -244,8 +308,7 @@
             // console.log("\nExtracted filename:", fileName);
 
             try {
-                const fileContents = this.contentsOfFileNamed(fileName);
-                // console.log("Successfully read file contents, length:", fileContents.length);
+                const fileContents = this.nestedContentsOfFileNamed(fileName);
                 string = string.replaceAll(`{{file$${fileName}}}`, fileContents);
                 this.setOutputString(string);
                 return true;
