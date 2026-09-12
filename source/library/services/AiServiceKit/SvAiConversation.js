@@ -1113,13 +1113,18 @@
    *                        prompts: each new call rewrites the PREVIOUS newest
    *                        in place — a mid-history byte edit that busts the
    *                        provider prompt-cache prefix from that message on.
-   *   "outcome-only"     — the payload NEVER ships, newest included: every
-   *                        result is stubbed to the retention note from the
-   *                        first send, so historical bytes never change. The
-   *                        live payload rides a never-stored request trailer
-   *                        instead (see appendEphemeralUserContent). The
-   *                        .error and .reminder fields are untouched, so call
-   *                        errors still ship frozen in place.
+   *   "outcome-only"     — a result is a CALL OUTCOME, never a payload: a
+   *                        small result (a bounded envelope, see
+   *                        outcomeOnlyResultLimit) ships as stored, newest
+   *                        and oldest alike; anything larger — a legacy tree
+   *                        persisted before the policy existed — is stubbed
+   *                        to the retention note from the first send. Either
+   *                        way a given message's outbound bytes never change
+   *                        between requests. The live payload rides a
+   *                        never-stored request trailer instead (see
+   *                        appendEphemeralUserContent). The .error and
+   *                        .reminder fields are untouched, so call errors
+   *                        ship frozen in place.
    *   "recent-responses:N" — a result survives until N ASSISTANT responses
    *                        follow it, then is stripped (recent errors matter,
    *                        old successes don't; keep N small so the rewritten
@@ -1173,11 +1178,14 @@
                     return content;
                 }
                 if (policy === "outcome-only") {
-                    // Fall through to the stub — every result, newest included,
-                    // from the FIRST send, so this tag's outbound bytes never
-                    // change between requests (cache-prefix stability). The
-                    // .error/.reminder fields below survive: only .result is
-                    // replaced.
+                    if (this.isOutcomeEnvelope(resultJson.result)) {
+                        return content; // the model sees WHAT the call did; bytes are already stable
+                    }
+                    // A payload masquerading as an outcome (legacy stored
+                    // tree): stub it from the FIRST send, newest included, so
+                    // this tag's outbound bytes never change between requests.
+                    // The .error/.reminder fields below survive: only .result
+                    // is replaced.
                 } else if (policy === "keep-newest-only") {
                     if (!seenNewestOfTool.has(toolName)) {
                         seenNewestOfTool.add(toolName); // newest survives, whatever its age
@@ -1206,6 +1214,29 @@
             }
         }
         return messages;
+    }
+
+    /**
+     * @description The largest serialized .result an "outcome-only" tool may
+     * ship in place. Outcomes are a few hundred bytes ({ adopted, note });
+     * the payloads the policy exists to keep out of history are kilobytes.
+     * @returns {Number}
+     * @category Session State
+     */
+    outcomeOnlyResultLimit () {
+        return 1024;
+    }
+
+    /**
+     * @description Whether a stored tool result is small enough to be an
+     * outcome envelope rather than a payload.
+     * @param {*} result
+     * @returns {Boolean}
+     * @category Session State
+     */
+    isOutcomeEnvelope (result) {
+        const serialized = JSON.stringify(result === undefined ? null : result);
+        return serialized.length <= this.outcomeOnlyResultLimit();
     }
 
     /**

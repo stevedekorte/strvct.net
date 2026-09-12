@@ -292,37 +292,51 @@ function testResultRetention () {
 }
 
 function testOutcomeOnly () {
-    console.log("\noutcome-only: the payload never ships, newest included (Cache-Safe Standing View)");
+    console.log("\noutcome-only: outcomes ship, payloads never do, bytes never change (Cache-Safe Standing View)");
     const conv = newConversation();
     conv.prepareForFirstAccess();
     const method = conv.pushHistory;
     method.setResultRetentionPolicy("outcome-only");
     method.setResultRetentionNote("outcome recorded — see <standing-view> at the end of the request");
 
+    const outcome = { adopted: true, note: "Lens adopted as your standing view; the live render is at the end of the request." };
+    const legacyTree = "X".repeat(conv.outcomeOnlyResultLimit() + 1); // a payload persisted before the policy existed
     const buildRequest = () => [
         { role: "system", content: "You are the GM." },
-        toolResultDict("pushHistory", "OLD"),
+        toolResultDict("pushHistory", legacyTree),
         { role: "user", content: "filler 1" },
-        toolResultDict("pushHistory", "NEW"),
+        toolResultDict("pushHistory", outcome),
         { role: "user", content: "filler 2" }
     ];
 
     const pass1 = buildRequest();
     conv.onFilterJsonHistory(pass1);
-    check(!pass1[1].content.includes("OLD") && !pass1[3].content.includes("NEW"),
-        "every payload stubbed — the NEWEST result too (nothing survives to be rewritten later)");
-    check(pass1[1].content.includes("outcome recorded") && pass1[3].content.includes("outcome recorded"),
-        "stubs carry the tool's retention note");
+    check(!pass1[1].content.includes("XXXX") && pass1[1].content.includes("outcome recorded"),
+        "a payload-sized result is stubbed to the retention note from the first send");
+    check(pass1[3].content.includes("Lens adopted as your standing view"),
+        "a small outcome envelope ships as stored — the model learns WHAT the call did");
 
     // The core cache invariant: the same stored message produces byte-identical
     // outbound content on every request — no slice→stub transition, ever.
     const pass2 = buildRequest();
     conv.onFilterJsonHistory(pass2);
     check(pass1[1].content === pass2[1].content && pass1[3].content === pass2[3].content,
-        "outbound bytes for a tool result are identical across requests");
+        "outbound bytes for a tool result are identical across requests (stub and envelope alike)");
+
+    // Age is irrelevant: an old envelope is not stubbed, a new payload is not kept.
+    const aged = [
+        { role: "system", content: "sys" },
+        toolResultDict("pushHistory", outcome),
+        { role: "assistant", content: "a" }, { role: "assistant", content: "b" }, { role: "assistant", content: "c" },
+        toolResultDict("pushHistory", legacyTree),
+        { role: "user", content: "filler" }
+    ];
+    conv.onFilterJsonHistory(aged);
+    check(aged[1].content.includes("Lens adopted") && !aged[5].content.includes("XXXX"),
+        "the envelope/payload decision depends on size only, never on age or recency");
 
     // Call errors ship frozen in place: only .result is stubbed.
-    const errPayload = { callId: "c-err", toolName: "pushHistory", result: "PAYLOAD", status: "error", error: "bad lens: no node at /nowhere" };
+    const errPayload = { callId: "c-err", toolName: "pushHistory", result: legacyTree, status: "error", error: "bad lens: no node at /nowhere" };
     const errMessages = [
         { role: "system", content: "sys" },
         { role: "user", content: "<tool-call-result>\n" + JSON.stringify(errPayload, null, 2) + "\n</tool-call-result>" },
@@ -330,11 +344,67 @@ function testOutcomeOnly () {
     ];
     conv.onFilterJsonHistory(errMessages);
     check(errMessages[1].content.includes("bad lens: no node at /nowhere"), "call error ships in place (.error is not stubbed)");
-    check(!errMessages[1].content.includes("PAYLOAD"), "an errored call's result payload is still stubbed");
+    check(!errMessages[1].content.includes("XXXX"), "an errored call's payload-sized result is still stubbed");
 
     // keep-newest-only regression: unused vocabulary, contract kept honest —
     // covered above in testResultRetention (newest survives, older stubbed).
     method.setResultRetentionPolicy("keep");
+}
+
+/**
+ * The guarantee the plan may state, and the one it may not. outcome-only makes
+ * getClientState's historical bytes stable, but a recent-responses tool that
+ * ages out in the same history still rewrites ITS message — a bounded,
+ * near-tail cache bust that the plan must own rather than claim away.
+ */
+function testRetentionBoundaryCrossing () {
+    console.log("\nCrossing another tool's retention boundary leaves outcome-only bytes stable (and does rewrite that tool's)");
+    const conv = newConversation();
+    conv.prepareForFirstAccess();
+    conv.pushHistory.setResultRetentionPolicy("outcome-only");
+    conv.pushHistory.setResultRetentionNote("outcome recorded");
+
+    // A second tool with a short window, registered like an assisted root's tools would be.
+    if (!SvGlobals.globals().TestPeekTools) {
+        (class TestPeekTools extends SvGlobals.get("SvNode") {
+            initPrototypeSlots () {
+                const tool = this.methodNamed("peek");
+                tool.setDescription("one-off peek");
+                tool.setReturnTypes(["object"]);
+                tool.setIsToolable(true);
+                tool.setResultRetentionPolicy("recent-responses:1");
+                tool.setResultRetentionNote("peek removed to save tokens");
+            }
+            peek () { return {}; }
+        }).initThisClass();
+    }
+    conv.assistantToolKit().toolDefinitions().addToolsForInstance(SvGlobals.get("TestPeekTools").clone());
+
+    const outcome = { adopted: true, note: "Lens adopted." };
+    const stored = [
+        { role: "system", content: "sys" },
+        toolResultDict("pushHistory", outcome),
+        { role: "assistant", content: "Reading the view." },
+        toolResultDict("peek", { hp: 12, name: "Grib" }),
+    ];
+    // Request N: the peek is the current delivery (no assistant response after it yet).
+    const requestN = stored.map(m => ({ ...m }));
+    requestN.push({ role: "user", content: "player line" });
+    conv.onFilterJsonHistory(requestN);
+    check(requestN[3].content.includes("Grib"), "request N: the peek result ships (current delivery)");
+
+    // Request N+1: one assistant response later, the peek crosses its retention boundary.
+    const requestN1 = stored.map(m => ({ ...m }));
+    requestN1.push({ role: "assistant", content: "Grib has 12 hp." }, { role: "user", content: "next line" });
+    conv.onFilterJsonHistory(requestN1);
+    check(!requestN1[3].content.includes("Grib") && requestN1[3].content.includes("peek removed"),
+        "request N+1: the peek result is rewritten in place — a real, bounded prefix change owned by recent-responses");
+    check(requestN[1].content === requestN1[1].content,
+        "the outcome-only message's bytes are identical across the boundary — standing-view refreshes never rewrite historical state results");
+    check(requestN[0].content === requestN1[0].content && requestN[2].content === requestN1[2].content,
+        "everything before the aged-out peek is unchanged: the bust starts AT that message, not earlier");
+
+    conv.pushHistory.setResultRetentionPolicy("keep");
 }
 
 function testConversationEphemeralAppend () {
@@ -366,6 +436,7 @@ async function main () {
     testHistory();
     testResultRetention();
     testOutcomeOnly();
+    testRetentionBoundaryCrossing();
     testConversationEphemeralAppend();
 
     console.log("\n" + passed + " passed, " + failed + " failed");
