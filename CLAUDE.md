@@ -319,6 +319,31 @@ Note the detector only sees reads that go through the framework accessors. Direc
 `element().scrollTop` style access bypasses it, so prefer the accessors in new
 code.
 
+## Reading what the user sees
+
+`innerText` answers "what text nodes are here", which is **not** "what does the
+reader see". Two divergences produce false bug reports:
+
+- **CSS generated content is invisible to it** — and to text selection. A rule
+  as small as `sentence::after { content: ' ' }` makes a captured narration read
+  "survivor.Next" while the page renders it correctly, and makes a user's *copy*
+  of that narration lose the spaces too.
+- **Visibility is state-dependent.** Content can be shown only while a response
+  streams, or only in developer mode (`SvApp.developerMode()` drives a few CSS
+  variables). A capture means nothing without knowing which state produced it.
+
+So: **CSS generated content is for decoration only** — labels, brackets,
+spinners. Anything that is part of what the reader reads belongs in the DOM.
+`TestNoProseInCssContent` enforces this and requires each text-bearing
+`content:` rule to be declared decoration or tracked as a known issue.
+
+And when capturing text for a test, probe or bug report, use
+`SvRenderedText.captureJson()` rather than `innerText`. It includes generated
+content, skips non-rendered subtrees, and **stamps the developer-mode flag** so
+the capture is self-describing — it deliberately does not decide what is
+"player-visible", because that is legitimately different per mode. To answer a
+player-visibility question, capture with developer mode off (the default).
+
 ## Persistence
 
 Object graphs persist through `SvPersistentObjectPool` over a `SvPersistentAtomicMap` cache layer, on IndexedDB in the browser and on an IndexedDB shim (`node-indexeddb-lmdb`) in Node.
