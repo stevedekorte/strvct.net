@@ -103,8 +103,7 @@ Notes: The tool definitions below describe the available tools and their behavio
 
 **Important**: When making a tool call, you only use the "parameters" schema. The other properties (returns, isSilentSuccess, etc.) are documentation to help you understand the tool's behavior - they are NOT part of your actual tool call.
 
->#> 
-=#= List of Tools
+### List of Tools
 
 The following tools are available for you to use:
 `);
@@ -114,7 +113,7 @@ The following tools are available for you to use:
 
         parts.push(`
         
-=#= How to Use These Definitions
+### How to Use These Definitions
 
 When making a tool call, use only the "parameters" schema from the definition. For example, for the rollRequest tool:
 
