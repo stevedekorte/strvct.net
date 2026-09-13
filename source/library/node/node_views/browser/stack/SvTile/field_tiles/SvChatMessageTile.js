@@ -284,6 +284,35 @@
     }
 
     /**
+     * @description Attributes the CONVERSATION wants stamped on this
+     * message's tile, for CSS to act on — duck-typed
+     * `messageTileAttributes(message)` returning {name: value|null}; null
+     * removes. Presentation-only: the conversation derives them from the
+     * transcript (e.g. "this message repeats an awareness line already shown
+     * this turn"), so nothing is stored and the message bytes the model
+     * sees are untouched.
+     * @returns {SvChatMessageTile}
+     * @category Synchronization
+     */
+    syncHostAttributesFromNode () {
+        const node = this.node();
+        const conversation = node && node.conversation && node.conversation();
+        if (!conversation || typeof conversation.messageTileAttributes !== "function") {
+            return this;
+        }
+        const attributes = conversation.messageTileAttributes(node) || {};
+        Object.keys(attributes).forEach((name) => {
+            const value = attributes[name];
+            if (value === null || value === undefined) {
+                this.element().removeAttribute(name);
+            } else {
+                this.setAttribute(name, String(value));
+            }
+        });
+        return this;
+    }
+
+    /**
      * @description Synchronizes the tile with its node.
      * @returns {SvChatInputTile} The current instance.
      * @category Synchronization
@@ -296,6 +325,7 @@
         if (node && node.role) {
             this.setAttribute("data-role", node.role());
         }
+        this.syncHostAttributesFromNode();
         // Live tiles that already showed progress keep the animate bit so
         // a same-chunk complete does not CSS-snap the tag. Reload snaps.
         if (this.hasBeenShownUnexpired()) {

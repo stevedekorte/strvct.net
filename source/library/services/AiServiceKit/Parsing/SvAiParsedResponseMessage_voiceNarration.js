@@ -22,6 +22,34 @@
         return ["sentence"];
     }
 
+    /**
+     * @description Tags whose sentences are shown but never spoken (nor
+     * caption-paced). The conversation decides — duck-typed
+     * `unspokenTagNames()`, like `wantsCaptionPacing` — so this layer names
+     * no app tags. Default: none.
+     * @returns {Set<String>}
+     * @category Voice Narration
+     */
+    tagsNotToSpeakInsideSet () {
+        const conv = this.conversation();
+        const names = (conv && typeof conv.unspokenTagNames === "function") ? conv.unspokenTagNames() : [];
+        return new Set(names || []);
+    }
+
+    /**
+     * @description Whether a speakable node sits inside an unspoken tag.
+     * @param {SvStreamNode} streamNode
+     * @returns {Boolean}
+     * @category Voice Narration
+     */
+    isInsideUnspokenTag (streamNode) {
+        const set = this.tagsNotToSpeakInsideSet();
+        if (set.size === 0) {
+            return false;
+        }
+        return !!streamNode.detectAncestor(node => !node.isTextNode() && set.has(node.name()));
+    }
+
     // --- voice narration ---
 
     playTtsPauseMs (ms) {
