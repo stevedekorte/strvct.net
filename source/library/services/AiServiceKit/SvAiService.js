@@ -248,6 +248,17 @@
    * @returns {Array} The same array.
    * @category Request Handling
    */
+    /**
+     * @description The one-line assistant spacer that keeps roles alternating
+     * before an ephemeral user trailer. Mechanical on purpose — see
+     * appendEphemeralUserContent.
+     * @returns {String}
+     * @category Request Handling
+     */
+    ephemeralSpacerContent () {
+        return "<think>(context notes follow)</think>";
+    }
+
     appendEphemeralUserContent (messages, text) {
         const userRole = this.userRoleName();
         const last = messages.length ? messages[messages.length - 1] : null;
@@ -256,9 +267,14 @@
             return messages;
         }
         if (this.requiresAlternatingRoles() && last && last.role === userRole) {
-            // Non-empty by requirement (Anthropic rejects empty content) and
-            // self-describing prose, not a fake tag models might echo.
-            messages.push({ role: this.assistantRoleName(), content: "(context notes follow)", isEphemeral: true });
+            // Non-empty by requirement (Anthropic rejects empty content).
+            // Wrapped in <think>: the model DID echo the bare prose
+            // "(context notes follow)" as its whole reply when a tool result
+            // left it nothing to add (Gemini, prod 2026-09-13, twice in one
+            // session — the spacer reads as its own previous turn, so it
+            // becomes the template for "say nothing"). A think-only echo is
+            // mechanical content the chat already hides.
+            messages.push({ role: this.assistantRoleName(), content: this.ephemeralSpacerContent(), isEphemeral: true });
         }
         messages.push({ role: userRole, content: text, isEphemeral: true });
         return messages;
