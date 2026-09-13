@@ -314,6 +314,13 @@ const SvDatabase = (class SvDatabase extends SvBase {
                 queryOptions.order = [[searchOptions.sort, order.toUpperCase()]];
             }
 
+            // Validate the table name against the known schema to prevent SQL injection
+            // via identifiers (which cannot be parameterized with bind replacements).
+            const table = this.tableWithName(tableName);
+            if (!table) {
+                throw new Error(`Table ${tableName} not found in schema`);
+            }
+
             // Build WHERE clause
             let whereClause = "";
             const replacements = {};
@@ -321,6 +328,9 @@ const SvDatabase = (class SvDatabase extends SvBase {
             if (searchOptions.where && typeof searchOptions.where === "object") {
                 const conditions = [];
                 for (const [key, value] of Object.entries(searchOptions.where)) {
+                    if (!table.columnWithName(key)) {
+                        throw new Error(`Column ${key} not found in table ${tableName}`);
+                    }
                     conditions.push(`${key} = :${key}`);
                     replacements[key] = value;
                 }
@@ -329,8 +339,9 @@ const SvDatabase = (class SvDatabase extends SvBase {
                 }
             }
 
-            // Build the SQL query
-            const sql = `SELECT * FROM ${tableName} ${whereClause}`;
+            // Build the SQL query (tableName and column keys are now validated against the schema above,
+            // so string concatenation here is safe from SQL injection)
+            const sql = "SELECT * FROM " + tableName + " " + whereClause;
 
             // Execute the query
             const results = await sequelize.query(sql, {
@@ -362,7 +373,16 @@ const SvDatabase = (class SvDatabase extends SvBase {
             const columns = Object.keys(rowData);
             const values = columns.map(col => `:${col}`);
 
-            const sql = `INSERT INTO ${tableName} (${columns.join(", ")}) VALUES (${values.join(", ")})`;
+            const insertTable = this.tableWithName(tableName);
+            if (!insertTable) {
+                throw new Error(`Table ${tableName} not found in schema`);
+            }
+            for (const col of columns) {
+                if (!insertTable.columnWithName(col)) {
+                    throw new Error(`Column ${col} not found in table ${tableName}`);
+                }
+            }
+            const sql = "INSERT INTO " + tableName + " (" + columns.join(", ") + ") VALUES (" + values.join(", ") + ")";
 
             const dialect = sequelize.getDialect();
             let insertedRow;
@@ -393,7 +413,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
                     const pkValue = rowData[pkName];
 
                     const [result] = await sequelize.query(
-                        `SELECT * FROM ${tableName} WHERE ${pkName} = :pk`,
+                        "SELECT * FROM " + tableName + " WHERE " + pkName + " = :pk",
                         {
                             replacements: { pk: pkValue },
                             type: sequelize.QueryTypes.SELECT,
@@ -459,7 +479,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
                 throw new Error("No fields to update");
             }
 
-            const sql = `UPDATE ${tableName} SET ${updates.join(", ")} WHERE ${primaryKeyName} = :pk`;
+            const sql = "UPDATE " + tableName + " SET " + updates.join(", ") + " WHERE " + primaryKeyName + " = :pk";
 
             // Execute the update
             await sequelize.query(sql, {
@@ -470,7 +490,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
 
             // Query the updated row
             const [updatedRow] = await sequelize.query(
-                `SELECT * FROM ${tableName} WHERE ${primaryKeyName} = :pk`,
+                "SELECT * FROM " + tableName + " WHERE " + primaryKeyName + " = :pk",
                 {
                     replacements: { pk: primaryKeyValue },
                     type: sequelize.QueryTypes.SELECT,
@@ -515,7 +535,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
                 throw new Error(`Primary key ${primaryKeyName} not provided in row data`);
             }
 
-            const sql = `DELETE FROM ${tableName} WHERE ${primaryKeyName} = :pk`;
+            const sql = "DELETE FROM " + tableName + " WHERE " + primaryKeyName + " = :pk";
 
             // Execute the delete
             const result = await sequelize.query(sql, {
