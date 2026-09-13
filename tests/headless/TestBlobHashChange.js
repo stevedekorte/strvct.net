@@ -273,6 +273,46 @@ function testReceiverWithoutBytesFetches () {
     check(fetched === true, "receiver with no bytes pulls them by hash");
 }
 
+/**
+ * A push whose content is REPLACED mid-flight (asyncJustSetBlobValue /
+ * didUpdateSlotValueHash clear the promise slot to abandon it) must still
+ * settle its own promise and must not describe the cloud state of the new
+ * bytes. Before the fix, asyncPushToCloud re-read the slot after the await
+ * and dereferenced null ("Cannot read properties of null (reading
+ * 'callRejectFunc')" — dev, 2026-09-13, a regenerated image landing during
+ * the previous upload).
+ */
+async function testInFlightPushSurvivesReplacement () {
+    console.log("\nA push abandoned mid-flight settles and leaves the new bytes' cloud state alone");
+    const SvApp = SvGlobals.get("SvApp");
+    const originalShared = SvApp.shared;
+    let resolveUpload = null;
+    SvApp.shared = () => ({ asyncPublicUrlForBlob: () => new Promise((resolve) => { resolveUpload = resolve; }) });
+    try {
+        const node = SvGlobals.get("SvCloudBlobNode").clone();
+        node._blobValue = { marker: "old-bytes" };
+        const push = node.asyncPushToCloud();
+        check(node.pushToCloudPromise() !== null, "precondition: the push holds the promise slot while in flight");
+        node.clearPushToCloudPromise(); // new content arrived: the push is abandoned
+        resolveUpload("https://example.com/old-bytes");
+        let settled = "resolved";
+        try { await push; } catch (e) { settled = "rejected: " + e.message; }
+        check(settled === "resolved", "the abandoned push settles its own promise (" + settled + ")");
+        check(node.hasInCloud() === false && node.downloadUrl() === null, "…and does not mark the NEW bytes as in the cloud");
+
+        // A push that stays current records the cloud state and clears the slot.
+        const fresh = SvGlobals.get("SvCloudBlobNode").clone();
+        fresh._blobValue = { marker: "bytes" };
+        const push2 = fresh.asyncPushToCloud();
+        resolveUpload("https://example.com/bytes");
+        const url = await push2;
+        check(url === "https://example.com/bytes" && fresh.hasInCloud() === true && fresh.downloadUrl() === url, "a current push records downloadUrl + hasInCloud");
+        check(fresh.pushToCloudPromise() === null, "…and releases the promise slot");
+    } finally {
+        SvApp.shared = originalShared;
+    }
+}
+
 async function main () {
     console.log("TestBlobHashChange: booting strvct…");
     await boot();
@@ -290,6 +330,7 @@ async function main () {
     testNoFetchOnClearOrNoOp();
     testAuthorWithBytesDoesNotFetch();
     testReceiverWithoutBytesFetches();
+    await testInFlightPushSurvivesReplacement();
 
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);

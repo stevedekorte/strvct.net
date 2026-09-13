@@ -134,7 +134,7 @@
         try {
             const file = await SvApp.shared().cloudStorageService().asyncPublicFileForHash(hash);
             return await file.asyncDoesExist();
-        } catch (e) {
+        } catch {
             return false;
         }
     }
@@ -194,17 +194,31 @@
         if (!blob) {
             throw new Error(this.logPrefix() + " asyncPushToCloud: no blob value to push");
         }
-        this.setPushToCloudPromise(Promise.clone());
+        // Hold the promise LOCALLY. While the upload is in flight the content
+        // can be replaced (asyncJustSetBlobValue / didUpdateSlotValueHash
+        // clear the slot to abandon this push), and reading the slot back
+        // after the await then dereferenced null — "Cannot read properties
+        // of null (reading 'callRejectFunc')" on dev 2026-09-13, a regenerated
+        // image landing mid-upload. Settle the promise we made; only clear the
+        // slot if it is still ours (a newer push may have taken it).
+        const promise = Promise.clone();
+        this.setPushToCloudPromise(promise);
         try {
             const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
-            this.setDownloadUrl(publicUrl);
-            this.setHasInCloud(true);
-            this.pushToCloudPromise().callResolveFunc();
-            this.clearPushToCloudPromise();
+            if (this.pushToCloudPromise() === promise) {
+                // Only the push that is still current may describe the cloud
+                // state; an abandoned one uploaded bytes that are no longer ours.
+                this.setDownloadUrl(publicUrl);
+                this.setHasInCloud(true);
+                this.clearPushToCloudPromise();
+            }
+            promise.callResolveFunc();
             return publicUrl;
         } catch (error) {
-            this.pushToCloudPromise().callRejectFunc(error);
-            this.clearPushToCloudPromise();
+            if (this.pushToCloudPromise() === promise) {
+                this.clearPushToCloudPromise();
+            }
+            promise.callRejectFunc(error);
             throw error;
         }
     }
@@ -231,7 +245,7 @@
         try {
             const hostname = new URL(url).hostname;
             return hostname === "localhost" || hostname === "127.0.0.1";
-        } catch (e) {
+        } catch {
             return false;
         }
     }
