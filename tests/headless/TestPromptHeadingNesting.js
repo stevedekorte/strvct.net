@@ -114,6 +114,18 @@ function testNonHeadingLinesAndInlineIncludesPassThrough () {
     check(out.includes("Text with a fragment inline."), "an inline include is replaced in place");
 }
 
+function testParsedJsonIncludeIsSerialized () {
+    console.log("\nAn include whose contents arrive PARSED (a .json resource) is spliced as JSON text");
+
+    // SvFileResources returns .json files parsed; the resolver must not try to
+    // split an array into lines (prod 2026-09-12: line.match is not a function).
+    const out = compose(["# Root", "<json>", "{{file$names.json}}", "</json>"].join("\n"), { "names.json": ["Aboleth", "Goblin Boss"] });
+    check(out.includes('<json>\n["Aboleth","Goblin Boss"]\n</json>'), "the array is serialized as a JSON array, not coerced or split");
+    let message = null;
+    try { compose("{{file$empty.json}}", { "empty.json": null }); } catch (e) { message = e.message; }
+    check(message !== null && /empty contents for include empty\.json/.test(message), "a null include is an error that names the file");
+}
+
 function testCycleIsReported () {
     console.log("\nAn include cycle is reported, not looped forever");
 
@@ -139,6 +151,7 @@ function main () {
     testAnchorSetsLevelAndEmitsNothing();
     testAnchorsShiftWithTheirOwnParent();
     testNonHeadingLinesAndInlineIncludesPassThrough();
+    testParsedJsonIncludeIsSerialized();
     testCycleIsReported();
     testTheComposerUsesIt();
     console.log("\n" + pass + " passed, " + fail + " failed");

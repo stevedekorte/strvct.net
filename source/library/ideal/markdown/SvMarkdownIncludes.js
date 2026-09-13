@@ -127,7 +127,29 @@ class SvMarkdownIncludes extends Object {
         } catch (error) {
             throw new Error("Error including " + nextChain.join(" -> ") + ": " + error.message);
         }
-        return this.resolveInChain(contents, level, nextChain);
+        return this.resolveInChain(this.includeText(contents, fileName), level, nextChain);
+    }
+
+    /**
+     * @description The text form of an include's contents. The resource
+     * system hands back a `.json` file PARSED (an array or object), not its
+     * source text — the old replaceAll coerced that to a comma-joined string
+     * by accident. Serialize it as JSON instead, which is what a `<json>`
+     * block around such an include always meant. (Prod regression
+     * 2026-09-12: "line.match is not a function" on every new session, from
+     * `{{file$SrdCreatureNames.json}}`.)
+     * @param {*} contents
+     * @param {String} fileName
+     * @returns {String}
+     */
+    includeText (contents, fileName) {
+        if (typeof contents === "string") {
+            return contents;
+        }
+        if (contents === null || contents === undefined) {
+            throw new Error("empty contents for include " + fileName);
+        }
+        return JSON.stringify(contents);
     }
 
 }
