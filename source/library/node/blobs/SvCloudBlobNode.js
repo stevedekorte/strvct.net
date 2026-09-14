@@ -87,6 +87,20 @@
     /**
      * Initializes the prototype for the SvBlobNode class.
      */
+    /**
+     * @description Whether this node points at content — a blob hash we can
+     * fetch, or a public URL. An empty string is NOT a reference: an AI patch
+     * creating an artwork item lands here with valueHash "" / publicUrl "",
+     * and every "generate missing artwork" path once skipped those items as
+     * already illustrated (20 locations with prompts and no pictures, 2026-09-14).
+     * @returns {Boolean}
+     * @category Blob Content
+     */
+    hasContentReference () {
+        const present = (v) => typeof v === "string" && v.length > 0;
+        return present(this.valueHash()) || present(this.publicUrl());
+    }
+
     initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);

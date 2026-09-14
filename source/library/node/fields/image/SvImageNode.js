@@ -232,7 +232,7 @@
     }
 
     hasImage () {
-        return this.valueHash() !== null || this.publicUrl() !== null; // we either have the blob or can get it from the blob pool with the hash
+        return this.hasContentReference(); // we either have the blob or can get it from the blob pool with the hash
     }
 
     async asyncImageObject () {

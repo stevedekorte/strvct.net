@@ -181,7 +181,7 @@
     }
 
     hasVideo () {
-        return this.valueHash() !== null || this.publicUrl() !== null;
+        return this.hasContentReference();
     }
 
     setBlobFromDataURL (dataURL) {

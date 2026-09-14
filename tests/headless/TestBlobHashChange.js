@@ -89,6 +89,21 @@ function seedBlob (node, hash) {
     return fakeBlob;
 }
 
+function testEmptyReferenceIsNoContent () {
+    console.log("\nSvCloudBlobNode: an empty hash/url is not content (hasImage / hasVideo)");
+    const image = SvGlobals.get("SvImageNode").clone();
+    check(image.hasImage() === false, "fresh image node has no image");
+    image.setValueHash(""); image.setPublicUrl("");
+    check(image.hasImage() === false, "valueHash \"\" / publicUrl \"\" is still no image (AI-created artwork items arrive this way)");
+    image.setValueHash(HASH_A);
+    check(image.hasImage() === true, "a real hash is an image");
+    const video = SvGlobals.get("SvVideoNode").clone();
+    video.setValueHash("");
+    check(video.hasVideo() === false, "video: empty hash is no video");
+    video.setPublicUrl("https://example.com/v.mp4");
+    check(video.hasVideo() === true, "video: a public url is content");
+}
+
 function testBaseClearsOnHashChange () {
     console.log("\nSvBlobNode: different non-null hash clears the stale blob");
 
@@ -318,6 +333,7 @@ async function main () {
     await boot();
 
     testBaseClearsOnHashChange();
+    testEmptyReferenceIsNoContent();
     testCloudResetsBookkeeping();
     testImageResetsPublicUrl();
     testHashToNullKeepsBlob();
