@@ -446,6 +446,13 @@ class SvWindowErrorPanel extends Object {
             detailsContainer.appendChild(detailsHeader);
             detailsContainer.appendChild(detailsContent);
 
+            // A tester's own account of what happened. The technical report
+            // has already been sent (handleWindowError → sendErrorReport);
+            // this files a second, linked report carrying their words, which
+            // is the part a stack trace never has. Optional, one line, and
+            // it thanks them instead of leaving a dead button.
+            const noteContainer = this.newUserNoteContainer(errorInfo);
+
             // Create action buttons container
             const buttonsContainer = document.createElement("div");
             {
@@ -518,6 +525,7 @@ class SvWindowErrorPanel extends Object {
             // Assemble the error panel
             errorPanelDiv.appendChild(messageDiv);
             errorPanelDiv.appendChild(detailsContainer);
+            errorPanelDiv.appendChild(noteContainer);
             errorPanelDiv.appendChild(buttonsContainer);
 
             // Add error panel to backdrop
@@ -533,6 +541,95 @@ class SvWindowErrorPanel extends Object {
     }
 
     /**
+     * @description The "what were you doing?" row: a one-line field and a
+     * Send button. Sending files a user-note report linked to the error by
+     * its message, then swaps the row for a thank-you. Plain DOM, boot-safe
+     * styling (the panel exists for pre-theme errors too).
+     * @param {Object} errorInfo - The error information object.
+     * @returns {HTMLElement}
+     * @category UI
+     */
+    newUserNoteContainer (errorInfo) {
+        const container = document.createElement("div");
+        {
+            const style = container.style;
+            style.margin = "0.75em 2em 0 2em";
+            style.display = "flex";
+            style.gap = "0.5em";
+            style.alignItems = "center";
+        }
+        const input = document.createElement("input");
+        {
+            input.type = "text";
+            input.placeholder = "What were you doing when this happened? (optional)";
+            input.setAttribute("aria-label", "What were you doing when this happened?");
+            const style = input.style;
+            style.flex = "1";
+            style.fontFamily = "inherit";
+            style.fontSize = "0.9em";
+            style.padding = "0.5em 0.75em";
+            style.color = "var(--sv-text, white)";
+            style.backgroundColor = "var(--sv-selection-bg, rgba(128, 128, 128, 0.12))";
+            style.border = "1px solid var(--sv-hairline, #444)";
+            style.borderRadius = "0.33em";
+            style.outline = "none";
+        }
+        const send = document.createElement("div");
+        {
+            send.textContent = "Send";
+            const style = send.style;
+            style.cursor = "pointer";
+            style.fontSize = "0.9em";
+            style.padding = "0.5em 1em";
+            style.border = "1px solid var(--sv-hairline, #444)";
+            style.borderRadius = "0.33em";
+            style.color = "var(--sv-text-muted, #aaa)";
+            style.userSelect = "none";
+        }
+        const submit = () => {
+            const note = input.value.trim();
+            if (note.length === 0) {
+                input.focus();
+                return;
+            }
+            this.sendUserNote(errorInfo, note);
+            container.innerHTML = "";
+            const thanks = document.createElement("div");
+            thanks.textContent = "Thanks — your note was sent with the report.";
+            thanks.style.color = "var(--sv-text-muted, #aaa)";
+            thanks.style.fontSize = "0.9em";
+            container.appendChild(thanks);
+        };
+        send.addEventListener("click", submit);
+        input.addEventListener("keydown", (e) => { if (e.key === "Enter") { submit(); } });
+        container.appendChild(input);
+        container.appendChild(send);
+        return container;
+    }
+
+    /**
+     * @description Files the tester's note as its own report, linked to the
+     * error it accompanies by message and source.
+     * @param {Object} errorInfo
+     * @param {String} note
+     * @category Error Reporting
+     */
+    sendUserNote (errorInfo, note) {
+        if (!SvGlobals.has("SvErrorReport")) {
+            console.warn("SvErrorReport not defined, so the user note cannot be sent:", note);
+            return;
+        }
+        SvErrorReport.asyncSend(new Error("User note for: " + (errorInfo.message || "unknown error")), {
+            kind: "user-note",
+            note: note,
+            forMessage: errorInfo.message || null,
+            forSource: errorInfo.sourceName || null,
+            url: (typeof window !== "undefined" && window.location) ? window.location.href : null
+        });
+    }
+
+    /**
+     * @description Send error report to server.    /**
      * @description Send error report to server.
      * @param {Object} errorInfo - The error information object.
      * @param {SvErrorDefinition} errorDefinition - The matching error definition (if any).
