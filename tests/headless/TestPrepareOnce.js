@@ -31,5 +31,14 @@ async function boot () { const b = (p) => import(pathToFileURL(path.join(strvctR
     check(JSON.stringify(request.bodyJson()) === once, "…and leaves the body byte-identical");
     request.setBodyJson({ temperature: 0.7, top_p: 0.9, messages: [{ role: "user", content: "again" }] });
     check(request.hasPreparedBody() === false, "installing a new body clears the prepared flag");
+    // Oversized system prompt: Gemini caps system_instruction (400 INVALID_ARGUMENT
+    // above ~350k chars since 2026-09-14) but takes the same text as the first user turn.
+    const big = "x".repeat(service.systemInstructionMaxChars() + 1);
+    request.setBodyJson({ temperature: 0.7, top_p: 0.9, messages: [{ role: "system", content: big }, { role: "user", content: "Hello." }] });
+    service.prepareToSendRequest(request);
+    const body = request.bodyJson();
+    check(body.system_instruction === undefined, "an oversized system prompt is not sent as system_instruction");
+    check(body.contents[0].role === "user" && body.contents[0].parts[0].text.startsWith(big) && /Please begin the conversation now\.$/.test(body.contents[0].parts[0].text), "…it opens the first user turn, ending with the kickoff line");
+    check(body.contents[1].parts[0].text === "Hello.", "the real first user message follows it");
     console.log("\n" + pass + " passed, " + fail + " failed"); process.exit(fail === 0 ? 0 : 1);
 })().catch(e => { console.error("Test run failed:", e); process.exit(1); });

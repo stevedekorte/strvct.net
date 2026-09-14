@@ -319,6 +319,41 @@
    * @category API Communication
    */
     /**
+     * @description The largest system prompt Gemini's `system_instruction`
+     * accepts. On 2026-09-14 Gemini began answering 400 INVALID_ARGUMENT to
+     * any request whose system_instruction exceeded roughly 350–375k chars
+     * (the same bytes had been accepted hours earlier); the same text as the
+     * first user turn is accepted at any length. 300k leaves margin.
+     * @returns {Number} characters
+     * @category Request Preparation
+     */
+    systemInstructionMaxChars () {
+        return 300000;
+    }
+
+    /**
+     * @description Moves the conversation's system message into the Gemini
+     * body: as `system_instruction` when it fits, otherwise as the opening
+     * user turn (the model treats both as the standing brief). Either way the
+     * first user turn ends with the kickoff line so the model begins.
+     * @param {Object} geminiBody
+     * @param {Object} firstMessage - the system message, rewritten in place to a user turn
+     * @category Request Preparation
+     */
+    placeSystemMessage (geminiBody, firstMessage) {
+        const kickoff = "Please begin the conversation now.";
+        const text = firstMessage.content;
+        firstMessage.role = this.userRoleName();
+        if (text.length <= this.systemInstructionMaxChars()) {
+            geminiBody.system_instruction = { parts: [{ text: text }] };
+            firstMessage.content = kickoff;
+        } else {
+            firstMessage.content = text + "\n\n" + kickoff;
+        }
+        return this;
+    }
+
+    /**
    * @description Gemini's contents mapping asserts user/model roles and two
    * consecutive user contents can fail, so an ephemeral user trailer after a
    * stored user message needs a (model-role) spacer.
@@ -367,15 +402,7 @@
         if (messages.length > 0) {
             const firstMessage = messages.first();
             if (firstMessage.role === this.systemRoleName()) {
-                geminiBody.system_instruction = {
-                    parts: [
-                        {
-                            text: firstMessage.content
-                        }
-                    ]
-                };
-                firstMessage.role = this.userRoleName();
-                firstMessage.content = "Please begin the conversation now.";
+                this.placeSystemMessage(geminiBody, firstMessage);
             }
         }
 
