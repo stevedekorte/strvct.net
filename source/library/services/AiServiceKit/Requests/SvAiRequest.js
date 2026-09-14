@@ -87,6 +87,12 @@
             slot.setSlotType("JSON Object");
             slot.setShouldStoreSlot(true);
         }
+        {
+            // Whether the CURRENT body has been through the provider's
+            // prepareToSendRequest. Not stored; reset by setBodyJson.
+            const slot = this.newSlot("hasPreparedBody", false);
+            slot.setSlotType("Boolean");
+        }
 
         /**
      * @member {String} body - The request body as a string.
@@ -703,6 +709,17 @@
     }
 
     /**
+     * @description A new body is unprepared, whoever installs it (the
+     * conversation composing a request, or a provider's prepare replacing
+     * the body with its own shape — Gemini's setBodyJson(geminiBody) lands
+     * here mid-prepare, and the flag is set to true right after).
+     * @category Request Preparation
+     */
+    didUpdateSlotBodyJson (/* oldValue, newValue */) {
+        this.setHasPreparedBody(false);
+    }
+
+    /**
    * Sends the request and streams the response
    * @returns {Promise}
    */
@@ -712,8 +729,20 @@
             //this.logDebug(" asyncSendAndStreamResponse() isContinuation");
         }
 
-        this.service().prepareToSendRequest(this); // give anthropic a chance to ensure alternating user/assistant messages
-        this.stripEphemeralFlags(); // AFTER prep (merge + cache markers read the flag), before the bytes go out
+        // Prepare the body ONCE. A retry (retryRequest → here) used to prepare
+        // again, and a provider's prepare is not idempotent: Gemini replaces
+        // the body (messages → contents) and rewrites the system message in
+        // place, so the second pass read `.length` of undefined — every new
+        // session died with the error modal whenever Gemini answered
+        // "overloaded" (dev, caught by the post-deploy smoke gate 2026-09-14;
+        // the same code was on prod). Anthropic's merge + cache markers would
+        // also double up. The flag is per body: anything that rebuilds the
+        // body must clear it (see setBodyJson).
+        if (!this.hasPreparedBody()) {
+            this.service().prepareToSendRequest(this); // give anthropic a chance to ensure alternating user/assistant messages
+            this.stripEphemeralFlags(); // AFTER prep (merge + cache markers read the flag), before the bytes go out
+            this.setHasPreparedBody(true);
+        }
 
         this.setError(null); // clear error (in case we are retrying)
         assert(!this.currentXhrRequest());

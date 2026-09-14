@@ -334,6 +334,9 @@
 
 
         const bodyJson = aRequest.bodyJson();
+        if (!Array.isArray(bodyJson.messages) && Array.isArray(bodyJson.contents)) {
+            return this; // already in Gemini shape — a second prepare must be a no-op, not a crash
+        }
         const geminiBody = {};
 
         // DANGEROUS_CONTENT covers violence — essential for a tabletop RPG with
