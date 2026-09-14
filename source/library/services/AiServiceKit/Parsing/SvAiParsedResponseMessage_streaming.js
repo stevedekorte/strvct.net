@@ -238,7 +238,8 @@
             if (
                 !shouldIgnore && // a <sentence> nested in <scene-description> is meta-content — the tag dispatch above already skips it, but this block ran regardless and TTS spoke the AI's thoughts aloud
                 this.tagsToSpeak().includes(nodeTag) &&
-                !this.isInsideUnspokenTag(streamNode) // shown, not spoken — the conversation's unspokenTagNames (e.g. a scene-awareness line)
+                !this.isInsideUnspokenTag(streamNode) && // shown, not spoken — the conversation's unspokenTagNames (e.g. a scene-awareness line)
+                !this.isVetoedByConversation(text, streamNode) // e.g. a table-talk line repeated within one player turn
             ) {
                 if (streamNode.detectAncestor(node => node.name() === "table-talk")) {
                     // Channel marker: the speak-time notes (onSpeakingText)

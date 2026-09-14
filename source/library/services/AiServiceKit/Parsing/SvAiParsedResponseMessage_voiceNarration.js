@@ -37,6 +37,26 @@
     }
 
     /**
+     * @description Whether the conversation vetoes speaking this sentence —
+     * duck-typed `shouldSpeakSentence(text, info)` with
+     * `{ message, inTableTalk }`, so an app can silence a line that repeats
+     * one already spoken this turn without this layer knowing the rule.
+     * Default: speak.
+     * @param {String} text
+     * @param {SvStreamNode} streamNode
+     * @returns {Boolean}
+     * @category Voice Narration
+     */
+    isVetoedByConversation (text, streamNode) {
+        const conv = this.conversation();
+        if (!conv || typeof conv.shouldSpeakSentence !== "function") {
+            return false;
+        }
+        const inTableTalk = !!streamNode.detectAncestor(node => !node.isTextNode() && node.name() === "table-talk");
+        return conv.shouldSpeakSentence(text, { message: this, inTableTalk }) === false;
+    }
+
+    /**
      * @description Whether a speakable node sits inside an unspoken tag.
      * @param {SvStreamNode} streamNode
      * @returns {Boolean}
