@@ -301,6 +301,18 @@
             slot.setSlotType("Object");
         }
 
+        {
+            /**
+       * @member {Object} customHeaders
+       * @description Optional per-request headers forwarded to each TTS request
+       *   this session spawns. App-agnostic pass-through; default null → no header.
+       */
+            const slot = this.newSlot("customHeaders", null);
+            slot.setSlotType("JSON Object");
+            slot.setShouldStoreSlot(false);
+            slot.setAllowsNullValue(true);
+        }
+
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
         this.setSubnodeClasses([]);
@@ -438,6 +450,7 @@
         const request = SvOpenAiTtsRequest.clone();
         request.setApiUrl(this.endpoint());
         request.setDelegate(this);
+        request.setCustomHeaders(this.customHeaders());
 
         const bodyJson = {
             model: this.ttsModel(),

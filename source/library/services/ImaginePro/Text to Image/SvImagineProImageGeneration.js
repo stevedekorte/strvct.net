@@ -103,6 +103,19 @@
         }
 
         /**
+     * @member {Object} customHeaders
+     * @description Optional per-request headers forwarded to the status-poll
+     *   requests. App-agnostic pass-through; default null → no header.
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("customHeaders", null);
+            slot.setSlotType("JSON Object");
+            slot.setShouldStoreSlot(false);
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
      * @member {number} pollInterval
      * @description The interval in milliseconds between polls.
      * @category Configuration
@@ -254,10 +267,14 @@
             const request = SvXhrRequest.clone();
             request.setUrl(proxyEndpoint);
             request.setMethod("GET");
-            request.setHeaders({
+            const headers = {
                 "Authorization": `Bearer ${apiKey}`
                 // Don't send Content-Type for GET requests - it causes Firebase to return 400
-            });
+            };
+            if (this.customHeaders()) {
+                Object.assign(headers, this.customHeaders());
+            }
+            request.setHeaders(headers);
 
             await request.asyncSend();
 
