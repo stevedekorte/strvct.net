@@ -153,6 +153,27 @@
             slot.setCanEditInspection(true);
         }
 
+        /**
+     * @member {Map} extraQueryParameters - Query parameters added to every
+     * generated proxy URL alongside the target-url parameter. Runtime only:
+     * never stored, never synced to a view, never sent in cloud json.
+     *
+     * This is how an app attaches request metadata that the PROXY SERVER
+     * reads and the vendor must never see — attribution tags, for example.
+     * The proxy strips them when it forwards the target url, so anything put
+     * here stays between the client and our own server.
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("extraQueryParameters", null);
+            slot.setSlotType("Map");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+            slot.setShouldJsonArchive(false);
+            slot.setSyncsToView(false);
+            slot.setIsInCloudJson(false);
+        }
+
         //this.setSubnodeClasses([ProxyRequest]);
 
         this.setShouldStore(true);
@@ -163,6 +184,37 @@
         this.setNodeCanReorderSubnodes(false);
         this.setNodeCanEditTitle(true);
         this.setSubtitle("");
+    }
+
+    /**
+   * @description Initializes the instance.
+   * @returns {SvProxyServer} The current instance for method chaining.
+   * @category Initialization
+   */
+    init () {
+        super.init();
+        this.setExtraQueryParameters(new Map()); // per-instance, not the shared prototype value
+        return this;
+    }
+
+    /**
+   * @description Adds, replaces, or removes one extra query parameter that
+   * every generated proxy URL will carry. A null or undefined value removes
+   * the parameter rather than sending an empty one.
+   * @param {string} name - The query parameter name.
+   * @param {*} value - The value to send, or null to stop sending it.
+   * @returns {SvProxyServer} The current instance for method chaining.
+   * @category Configuration
+   */
+    setExtraQueryParameter (name, value) {
+        assert(Type.isString(name) && name.length > 0, "name is required");
+        const parameters = this.extraQueryParameters();
+        if (Type.isNullOrUndefined(value)) {
+            parameters.delete(name);
+        } else {
+            parameters.set(name, value);
+        }
+        return this;
     }
 
     /**
@@ -289,6 +341,7 @@
         try {
             const url = new URL(urlString);
             url.searchParams.set(this.parameterName(), parameterValue);
+            this.applyExtraQueryParameters(url);
             resultUrl = url.toString();
         } catch (e) {
             this.setError(e.message);
@@ -298,6 +351,20 @@
 
         this.setError("");
         return resultUrl;
+    }
+
+    /**
+   * @description Writes this server's extra query parameters onto a proxy
+   * URL being built.
+   * @param {URL} url - The proxy URL under construction.
+   * @returns {SvProxyServer} The current instance for method chaining.
+   * @category URL Generation
+   */
+    applyExtraQueryParameters (url) {
+        this.extraQueryParameters().forEach((value, name) => {
+            url.searchParams.set(name, String(value));
+        });
+        return this;
     }
 
     /**
