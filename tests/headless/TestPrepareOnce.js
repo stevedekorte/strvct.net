@@ -21,6 +21,11 @@ async function boot () { const b = (p) => import(pathToFileURL(path.join(strvctR
     service.prepareToSendRequest(request);
     const once = JSON.stringify(request.bodyJson());
     check(Array.isArray(request.bodyJson().contents) && request.bodyJson().system_instruction, "first prepare produced Gemini shape (contents + system_instruction)");
+    // `parts` is a repeated field. Gemini accepted a bare {text} object for it
+    // until 2026-09-14, then every request 400'd ("invalid argument") on dev
+    // and prod at once; the shape must be an array in every message.
+    check(request.bodyJson().contents.every(m => Array.isArray(m.parts) && m.parts.every(p => typeof p.text === "string")), "every contents[].parts is an array of {text} parts");
+    check(Array.isArray(request.bodyJson().system_instruction.parts), "system_instruction.parts is an array");
     let threw = null; try { service.prepareToSendRequest(request); } catch (e) { threw = e.message; }
     check(threw === null, "a second prepare does not throw (" + (threw || "ok") + ")");
     check(JSON.stringify(request.bodyJson()) === once, "…and leaves the body byte-identical");

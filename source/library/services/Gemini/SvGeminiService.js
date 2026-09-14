@@ -385,16 +385,18 @@
             let role = message.role.toLowerCase();
             assert([this.assistantRoleName(), this.userRoleName()].includes(role), "Invalid message role: " + message.role);
 
-            // Handle both string content and array content (for vision API)
+            // Handle both string content and array content (for vision API).
+            // `parts` is a repeated field: ALWAYS an array. Gemini's JSON
+            // parser used to accept a bare {text} object here and stopped on
+            // 2026-09-14 ("Request contains an invalid argument", 400) — every
+            // new session on dev and prod failed until this was an array.
             let parts;
             if (Array.isArray(message.content)) {
                 // Content is already an array of parts (e.g., for vision API with text + images)
                 parts = message.content;
             } else {
                 // Content is a simple string, wrap it in the parts format
-                parts = {
-                    text: message.content
-                };
+                parts = [{ text: message.content }];
             }
 
             return {
