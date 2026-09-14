@@ -358,7 +358,7 @@
                     .find((n) => this.tagsToIgnoreInsideSet().has(n));
 
                 if (tagName.toLowerCase() === "tool-call" && ignoredAncestor) {
-                    // A tool call inside <think>/<scene-description> is never
+                    // A tool call inside <scene-description> is never
                     // executed, but silently dropping it leaves the AI waiting
                     // forever on a call that was never registered. Collect it
                     // and report it back after the walk (after the walk so

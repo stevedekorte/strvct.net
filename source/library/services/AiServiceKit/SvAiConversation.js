@@ -514,7 +514,7 @@
    * @category User Projection
    */
     mechanicalTagNames () {
-        return ["think", "tool-call", "tool-call-result", "request-info"];
+        return ["tool-call", "tool-call-result", "request-info", "no-op"];
     }
 
     /**
@@ -1284,13 +1284,13 @@
 
     /**
      * @description Handles a tool-call tag found inside an ignored block (e.g.
-     * <think>) — sent by SvAiParsedResponseMessage at message completion. The
+     * <scene-description>) — sent by SvAiParsedResponseMessage at message completion. The
      * call is never executed; it either settles as an error the AI can react
      * to, or attaches a warning to the registered duplicate. See
      * SvToolCalls.handleOrphanedToolCallTagFromMessage.
      * @param {string} innerTagString - The tool call JSON string.
      * @param {SvAiResponseMessage} aMessage - The message the tag was found in.
-     * @param {string} contextTagName - The ignored ancestor tag name (e.g. "think").
+     * @param {string} contextTagName - The ignored ancestor tag name (e.g. "scene-description").
      * @category Tool Calls
      */
     onOrphanedToolCallTag (innerTagString, aMessage, contextTagName) {

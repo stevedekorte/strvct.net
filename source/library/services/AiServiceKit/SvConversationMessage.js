@@ -869,7 +869,7 @@
         if (conv && typeof conv.mechanicalTagNames === "function") {
             return conv.mechanicalTagNames();
         }
-        return ["think", "tool-call", "tool-call-result"]; // keep in sync with SvAiConversation.mechanicalTagNames
+        return ["tool-call", "tool-call-result", "no-op"]; // keep in sync with SvAiConversation.mechanicalTagNames
     }
 
     /**

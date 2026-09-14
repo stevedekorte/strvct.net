@@ -166,7 +166,7 @@
 
     /**
      * @description Handles a tool-call tag found inside an ignored block
-     * (e.g. <think>) — the model shouldn't emit tool calls there, but when it
+     * (e.g. <scene-description>) — the model shouldn't emit tool calls there, but when it
      * does we must not leave it hanging on a call that never registered.
      * NEVER executes the call. Instead:
      *   - a duplicate of an already-registered call (same callId, or same
@@ -175,16 +175,16 @@
      *   - otherwise the call settles immediately as completed-with-error on
      *     its own callId, telling the AI to re-emit it outside the block
      *     (parse errors settle through the normal parse-error path, with the
-     *     inside-<think> context prepended via sourceContextTagName).
+     *     inside-ignored-tag context prepended via sourceContextTagName).
      * @param {string} innerTagString - The tool call JSON string.
      * @param {SvAiResponseMessage} aMessage - The message the tag was found in.
-     * @param {string} contextTagName - The ignored ancestor tag name (e.g. "think").
+     * @param {string} contextTagName - The ignored ancestor tag name (e.g. "scene-description").
      * @returns {SvToolCall|null} The settled or warned call, or null if dropped.
      * @category Tool Calls
      */
     handleOrphanedToolCallTagFromMessage (innerTagString, aMessage, contextTagName) {
         this.assertHasAssistantToolKit();
-        const ctx = contextTagName || "think";
+        const ctx = contextTagName || "scene-description";
 
         const toolCall = SvToolCall.clone();
         toolCall.setToolCalls(this);

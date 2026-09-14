@@ -44,7 +44,8 @@
         el.innerHTML = this.content();
         let matches = el.elementsOfTag(tagName);
         const results = [];
-        matches = matches.select(e => !Element_hasParentWithTag(e, "think"));
+        const ignored = [...this.tagsToIgnoreInsideSet()];
+        matches = matches.select(e => !ignored.some(tag => Element_hasParentWithTag(e, tag)));
         matches.forEach((e) => results.push(e.innerHTML));
         return results;
     }

@@ -256,7 +256,7 @@
      * @category Request Handling
      */
     ephemeralSpacerContent () {
-        return "<think>(context notes follow)</think>";
+        return "<no-op></no-op>";
     }
 
     appendEphemeralUserContent (messages, text) {
@@ -268,12 +268,11 @@
         }
         if (this.requiresAlternatingRoles() && last && last.role === userRole) {
             // Non-empty by requirement (Anthropic rejects empty content).
-            // Wrapped in <think>: the model DID echo the bare prose
-            // "(context notes follow)" as its whole reply when a tool result
-            // left it nothing to add (Gemini, prod 2026-09-13, twice in one
-            // session — the spacer reads as its own previous turn, so it
-            // becomes the template for "say nothing"). A think-only echo is
-            // mechanical content the chat already hides.
+            // Mechanical on purpose: the model DID echo a bare prose spacer
+            // as its whole reply when a tool result left it nothing to add
+            // (Gemini, prod 2026-09-13, twice in one session — the spacer
+            // reads as its own previous turn, so it becomes the template for
+            // "say nothing"). An echo of <no-op> IS the legal empty reply.
             messages.push({ role: this.assistantRoleName(), content: this.ephemeralSpacerContent(), isEphemeral: true });
         }
         messages.push({ role: userRole, content: text, isEphemeral: true });

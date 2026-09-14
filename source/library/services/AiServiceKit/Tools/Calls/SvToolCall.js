@@ -208,7 +208,7 @@ Example Tool call format:
 
         {
             const slot = this.newSlot("warning", null);
-            slot.setDescription("A warning to include with the result — for issues that didn't fail the call (e.g. a duplicate copy of this call was found inside a <think> block).");
+            slot.setDescription("A warning to include with the result — for issues that didn't fail the call (e.g. a duplicate copy of this call was found inside an ignored block such as <scene-description>).");
             slot.setSlotType("String");
             slot.setAllowsNullValue(true);
             slot.setShouldJsonArchive(false);
@@ -228,7 +228,7 @@ Example Tool call format:
 
         {
             const slot = this.newSlot("sourceContextTagName", null);
-            slot.setDescription("When set (e.g. 'think'), this tool call's tag was found inside that (ignored) block instead of at the top level of the response — it is reported back to the AI but never executed.");
+            slot.setDescription("When set (e.g. 'scene-description'), this tool call's tag was found inside that (ignored) block instead of at the top level of the response — it is reported back to the AI but never executed.");
             slot.setSlotType("String");
             slot.setAllowsNullValue(true);
             slot.setShouldJsonArchive(false);
@@ -775,7 +775,7 @@ Example Tool call format:
     /**
      * @description Attaches a warning to this call. Warnings ride back to the AI
      * inside the call's tool-call-result (for issues that don't fail the call,
-     * e.g. a duplicate copy of the call found inside a <think> block). If the
+     * e.g. a duplicate copy of the call found inside an ignored block). If the
      * result already exists (call settled, response not yet sent), the warning
      * is copied onto it directly.
      * @param {string} warningText - The warning to add.

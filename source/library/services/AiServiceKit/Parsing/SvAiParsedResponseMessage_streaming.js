@@ -60,7 +60,7 @@
     }
 
     /**
-     * @description Tool-call tags found inside ignored blocks (e.g. <think>)
+     * @description Tool-call tags found inside ignored blocks (e.g. <scene-description>)
      * during streaming — collected here and reported at stream end. Lazy plain
      * ivar (not a slot): transient per-stream parser state, like the reader.
      * @returns {Array} The collected orphaned tool call tag records.
@@ -143,7 +143,7 @@
         }
 
         // Report tool calls that were emitted inside ignored blocks (e.g.
-        // <think>) — never executed, but the AI must hear back (an error on
+        // <scene-description>) — never executed, but the AI must hear back (an error on
         // the orphan's own callId, or a warning on the registered duplicate)
         // or it waits forever on a call that never registered. Done after
         // finalization so all top-level calls have registered for dedup.
@@ -184,7 +184,7 @@
     }
 
     tagsToIgnoreInsideSet () {
-        return new Set(["think", "scene-description"]);
+        return new Set(["scene-description"]);
     }
 
     onHtmlStreamReaderPopNode (reader, streamNode) {
@@ -209,7 +209,7 @@
 
             if (shouldIgnore) {
                 if (nodeTag === "tool-call") {
-                    // A tool call inside <think>/<scene-description> is never
+                    // A tool call inside <scene-description> is never
                     // executed, but silently dropping it leaves the AI waiting
                     // forever on a call that never registered. Collect it and
                     // report at stream end (after any top-level copies of the
@@ -236,7 +236,7 @@
             this.updateContent(reader.rootNode().innerHtml()); // update so we can highlight the text when speaking
 
             if (
-                !shouldIgnore && // a <sentence> nested in <think>/<scene-description> is meta-content — the tag dispatch above already skips it, but this block ran regardless and TTS spoke the AI's thoughts aloud
+                !shouldIgnore && // a <sentence> nested in <scene-description> is meta-content — the tag dispatch above already skips it, but this block ran regardless and TTS spoke the AI's thoughts aloud
                 this.tagsToSpeak().includes(nodeTag) &&
                 !this.isInsideUnspokenTag(streamNode) // shown, not spoken — the conversation's unspokenTagNames (e.g. a scene-awareness line)
             ) {
