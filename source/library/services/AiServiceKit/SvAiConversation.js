@@ -273,10 +273,34 @@
             return ancestor.defaultChatModel();
         }
 
+        // The object this conversation assists may name a default too. An
+        // assistant held in a subnode-field slot has NO parent chain, so the
+        // walk above never reached it — a campaign's defaultChatModel()
+        // (GPT-6 Astra) was dead code and its assistant fell through to the
+        // services default (Gemini) for every authored campaign (2026-09-14).
+        const assisted = this.assistedObjectDefaultChatModel();
+        if (assisted) {
+            return assisted;
+        }
+
         // Final fallback to the global services default
         const model = SvServices.shared().defaultChatModel();
         assert(model, "no default chat model");
         return model;
+    }
+
+    /**
+     * @description The default model named by the assisted object, when it
+     * declares one (defaultChatModel()); null otherwise.
+     * @returns {SvAiChatModel|null}
+     * @category Configuration
+     */
+    assistedObjectDefaultChatModel () {
+        const assisted = this.assistedObject ? this.assistedObject() : null;
+        if (assisted && typeof assisted.defaultChatModel === "function") {
+            return assisted.defaultChatModel() || null;
+        }
+        return null;
     }
 
     /**
