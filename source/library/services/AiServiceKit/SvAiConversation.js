@@ -227,7 +227,7 @@
 
         {
             const tool = this.methodNamed("pushHistory");
-            tool.setDescription("Files the settled conversation buffer (everything since the last push) as one titled history episode. The filed messages leave your visible transcript once a newer episode supersedes them, replaced by a one-line record marker; the record itself stays queryable — expand it anytime with a one-off queryClientState peek {select: [{under: <its jsonId>, lod: \"full\"}], default: \"omit\"} — your standing view is untouched. Give records meaningful titles: they are your only index into the past.");
+            tool.setDescription("Files the settled conversation buffer (everything since the last push) as one titled history episode. The filed messages leave your visible transcript once a newer episode supersedes them, replaced by a one-line record marker; the record itself stays queryable — expand it anytime with a one-off peekClientState peek {select: [{under: <its jsonId>, lod: \"full\"}], default: \"omit\"} — your standing view is untouched. Give records meaningful titles: they are your only index into the past.");
             tool.addParameter("title", "string", "Short episode title, named for what the episode was (e.g. the location just departed).");
             tool.addParameter("subtitle", "string", "OPTIONAL. One line on what happened — outcomes, open threads, notable changes.");
             tool.setReturnTypes(["null"]);
@@ -711,6 +711,32 @@
     }
 
     /**
+   * @description Called by a response message once, at the start of request
+   * preparation (SvAiResponseMessage.newRequest), before the history is
+   * composed and filtered. Subclasses reconcile derived request state here
+   * so composition and estimation can render it without side effects.
+   * @param {SvAiResponseMessage} responseMessage
+   * @returns {SvAiConversation}
+   * @category Message Handling
+   */
+    onWillComposeRequest (/*responseMessage*/) {
+        return this;
+    }
+
+    /**
+   * @description Retention for a tool result whose tool is no longer
+   * registered (a retired tool name in an old transcript): { policy, note }
+   * or null. Lets a rename keep old envelopes composing byte-for-byte under
+   * the policy they were stored with. Base: none.
+   * @param {String} toolName
+   * @returns {Object|null}
+   * @category Session State
+   */
+    retiredToolRetentionPolicy (/*toolName*/) {
+        return null;
+    }
+
+    /**
    * @description Parks a turn request made while a response is still
    * streaming (see the deferredTurnRequestMessage slot). Latest trigger
    * wins: the AI reads full history, so one deferred turn covers them all.
@@ -1112,7 +1138,7 @@
    * @description The {role, content} dict marking a filed episode in the
    * AI-visible history: the block's lens handle (jsonId, title, subtitle,
    * count) wrapped in a history-record tag. Expanding it back is an ordinary
-   * getClientState expand-by-id on the jsonId.
+   * peekClientState expand-by-id on the jsonId.
    * @param {SvAiConversationHistoryBlock} block
    * @returns {Object}
    * @category History
@@ -1130,7 +1156,7 @@
    *
    *   "keep" (default)   — results are never stripped (events: rolls, images).
    *   "keep-newest-only" — only the newest result survives, at ANY age.
-   *                        NOTE: currently unused vocabulary (getClientState
+   *                        NOTE: currently unused vocabulary (the view tools
    *                        moved to "outcome-only" — Plans/Cache-Safe Standing
    *                        View). Kept deliberately with its contract tested;
    *                        do not "simplify it away". Its flaw for cacheable
@@ -1197,7 +1223,8 @@
                     return content;
                 }
                 const toolDef = toolDefinitions.toolDefinitionWithName(toolName);
-                const policy = (toolDef && toolDef.resultRetentionPolicy) ? toolDef.resultRetentionPolicy() : "keep";
+                const retired = toolDef ? null : this.retiredToolRetentionPolicy(toolName);
+                const policy = (toolDef && toolDef.resultRetentionPolicy) ? toolDef.resultRetentionPolicy() : (retired ? retired.policy : "keep");
                 if (!policy || policy === "keep") {
                     return content;
                 }
@@ -1229,6 +1256,7 @@
                     return content;
                 }
                 const note = (toolDef && toolDef.resultRetentionNote && toolDef.resultRetentionNote())
+                    || (retired && retired.note)
                     || "result removed to save tokens (results of this tool are retained only briefly; call it again if needed)";
                 resultJson.result = note;
                 return JSON.stableStringifyWithStdOptions(resultJson, null, 2);

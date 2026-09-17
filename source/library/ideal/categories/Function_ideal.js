@@ -265,7 +265,7 @@ Function.prototype.resultReminderMethodName = function () {
 //                        SvAiConversation.onFilterJsonHistory doc)
 //   "outcome-only"     - the payload never ships, newest included; the live
 //                        view rides a never-stored request trailer instead
-//                        (getClientState — Plans/Cache-Safe Standing View)
+//                        (pinClientState — Plans/Client State Lens)
 //   "recent-responses:N" - a result survives until N assistant responses
 //                        follow it, then is stripped. Counted in assistant
 //                        messages, not raw messages — the current delivery

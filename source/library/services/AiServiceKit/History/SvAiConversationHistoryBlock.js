@@ -14,7 +14,7 @@
  *
  * In the AI-visible message array a superseded block appears only as its
  * handle-dict marker (lensHandleJson); drilling back in is an ordinary
- * getClientState expand-by-id on the block's jsonId.
+ * peekClientState expand-by-id on the block's jsonId.
  */
 (class SvAiConversationHistoryBlock extends SvJsonGroup {
 

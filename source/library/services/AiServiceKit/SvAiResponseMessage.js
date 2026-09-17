@@ -57,6 +57,14 @@
             slot.setSlotType("SvAiChatModel");
         }
 
+        {
+            // True when the message completed on a terminal request error (no
+            // response was produced). Transient: a reloaded message is history.
+            const slot = this.newSlot("didFailRequest", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+        }
+
         /**
      * @member {SvAiRequest} request - The associated request object.
      * @category Data
@@ -321,6 +329,14 @@
     newRequest () {
         const request = this.requestClass().clone(); // SvAiRequest class
         request.setChatModel(this.chatModel());
+        // Request preparation begins: the conversation may reconcile derived
+        // request state (e.g. an app's engine-owned standing-view pins) ONCE
+        // here, so that jsonHistory() below renders prepared state without
+        // side effects.
+        const conversation = this.conversation();
+        if (conversation && typeof conversation.onWillComposeRequest === "function") {
+            conversation.onWillComposeRequest(this);
+        }
         //request.setService(this.service());
 
         request.setDelegate(this);
@@ -437,6 +453,7 @@
         // Marking the message complete unblocks the chat for the next input.
         // Covers stop errors (blocked / malformed / etc.) and transport errors.
         this.setContent(this.requestErrorNoticeText(aRequest));
+        this.setDidFailRequest(true); // completes WITHOUT a response: response-completion accounting must skip it
         this.setIsComplete(true);
         this.sendDelegateMessage("onMessageUpdate");
     }

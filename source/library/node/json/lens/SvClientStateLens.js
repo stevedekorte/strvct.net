@@ -9,8 +9,9 @@
  * @extends ProtoClass
  * @classdesc
  * A declarative level-of-detail projection over a JSON node tree — the read
- * interface the AI uses to scope `getClientState` instead of dumping the
- * whole session. See docs/Plans "ClientState Query and Patches".
+ * interface the AI uses to scope its standing view (pinClientState) and
+ * one-off peeks (peekClientState) instead of dumping the whole session.
+ * See docs/Plans "Client State Lens".
  *
  * A lens is a set of directives, each a selector at a LOD:
  *

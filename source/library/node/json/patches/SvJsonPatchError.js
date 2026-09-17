@@ -157,7 +157,7 @@
 
         if (this.message.includes("No child found") || this.message.includes("not found")) {
             suggestions.push("Check that the path exists in the current JSON structure");
-            suggestions.push("Use getClientState tool to inspect the current structure");
+            suggestions.push("Read the standing-view block at the end of this request, or peekClientState, to inspect the current structure");
         }
 
         if (this.message.includes("Array index") && this.message.includes("out of bounds")) {

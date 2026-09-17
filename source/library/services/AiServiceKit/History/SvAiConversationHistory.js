@@ -12,7 +12,7 @@
  * slot. The AI files episodes with the pushHistory tool; the newest block
  * stays inline in the AI-visible message array (one-episode lookback),
  * older blocks collapse to their handle markers and are re-read via
- * getClientState expand-by-id.
+ * peekClientState expand-by-id.
  */
 (class SvAiConversationHistory extends SvJsonArrayNode {
 
