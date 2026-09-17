@@ -505,9 +505,17 @@
      * @category JSON Patch
      */
     moveDirectly (fromPath, key, rootNode /*, operation = null*/) {
+        // Move the LIVE node when the source is a container element (see
+        // SvJsonGroup_patches.moveDirectly): same object, same puuid, every
+        // stored slot and reference kept. Detach first, then attach — RFC 6902
+        // order — so a same-array move lands at the intended index.
+        const live = rootNode.detachNodeAtPath ? rootNode.detachNodeAtPath(fromPath) : null;
+        if (live) {
+            this.addNodeDirectly(key, live);
+            return this;
+        }
         const sourceValue = rootNode.getValueAtPath(fromPath);
-        // Deep clone the value to avoid reference sharing
-        const clonedValue = JSON.parse(JSON.stringify(sourceValue));
+        const clonedValue = JSON.parse(JSON.stringify(sourceValue)); // deep clone: no reference sharing
         this.addDirectly(key, clonedValue);
         rootNode.removeValueAtPath(fromPath);
         return this;
@@ -521,6 +529,27 @@
      * @returns {SvJsonArrayNode} This node.
      * @category JSON Patch
      */
+    /**
+     * @description Attaches an already-live node into this array at the
+     * index (or appends for "-") — the move target half of moveDirectly.
+     * @param {string} key - The array index or "-".
+     * @param {Object} node - The live node.
+     * @returns {SvJsonArrayNode} This node.
+     * @category JSON Patch
+     */
+    addNodeDirectly (key, node) {
+        const index = this.validateArrayIndex(key, "add");
+        if (index === -1 || index >= this.subnodes().length) {
+            if (index > this.subnodes().length) {
+                throw new Error(`Cannot move to array index ${index}: beyond array end (length: ${this.subnodes().length})`);
+            }
+            this.addSubnode(node);
+            return this;
+        }
+        this.addSubnodeAt(node, index);
+        return this;
+    }
+
     copyDirectly (fromPath, key, rootNode /*, operation = null*/) {
         const sourceValue = rootNode.getValueAtPath(fromPath);
         // Deep clone the value to avoid reference sharing

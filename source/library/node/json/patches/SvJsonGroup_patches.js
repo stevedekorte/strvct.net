@@ -511,11 +511,45 @@
    * @category JSON Patch
    */
     moveDirectly (fromPath, key, rootNode) {
+        // A move MOVES the live node when the source is a container element
+        // (an array item or a titled subnode): same object, same puuid, every
+        // stored slot — schema-visible or not — and every live reference kept.
+        // The old serialize-clone-remove implementation silently dropped every
+        // stored-but-not-in-schema slot (a character's pinned map cell, its
+        // portrait, its arrival direction) and gave holders of the object a
+        // dead reference. Slot-valued sources keep the JSON path.
+        const live = rootNode.detachNodeAtPath ? rootNode.detachNodeAtPath(fromPath) : null;
+        if (live) {
+            this.addNodeDirectly(key, live);
+            return this;
+        }
         const sourceValue = rootNode.getValueAtPath(fromPath);
-        // Deep clone the value to avoid reference sharing
-        const clonedValue = JSON.parse(JSON.stringify(sourceValue));
+        const clonedValue = JSON.parse(JSON.stringify(sourceValue)); // deep clone: no reference sharing
         this.addDirectly(key, clonedValue);
         rootNode.removeValueAtPath(fromPath);
+        return this;
+    }
+
+    /**
+   * @description Attaches an already-live node under this object (the move
+   * target half of moveDirectly): as a titled subnode, or as the value of the
+   * named slot.
+   * @param {string} key - The property name.
+   * @param {Object} node - The live node.
+   * @returns {JsonGroup} This node.
+   * @category JSON Patch
+   */
+    addNodeDirectly (key, node) {
+        if (this.shouldStoreSubnodes()) {
+            node.setTitle(key);
+            this.addSubnode(node);
+            return this;
+        }
+        const slot = this.getSlot(key);
+        if (!slot) {
+            throw new Error(`Cannot move into slot '${key}': not found on ${this.svType()}`);
+        }
+        slot.onInstanceSetValue(this, node);
         return this;
     }
 
@@ -725,6 +759,51 @@
         const key = pathSegments[pathSegments.length - 1];
 
         targetNode.removeDirectly(key);
+    }
+
+    /**
+   * @description The move-source half of moveDirectly: when the value at the
+   * path is a container element — an array item, or a titled subnode of a
+   * shouldStoreSubnodes group — removes it from its container and returns the
+   * LIVE node, untouched, for re-attachment elsewhere. Returns null when the
+   * path names a slot value (or nothing), in which case the caller falls back
+   * to the JSON clone-and-remove path.
+   * @param {string} path - The JSON pointer path.
+   * @returns {Object|null}
+   * @category JSON Patch
+   */
+    detachNodeAtPath (path) {
+        const pathSegments = this.parsePathSegments(path);
+        if (pathSegments.length === 0) {
+            return null;
+        }
+        const container = this.nodeAtPath(pathSegments.slice(0, -1));
+        const key = pathSegments[pathSegments.length - 1];
+        if (!container) {
+            return null;
+        }
+        if (container.subnodes && container.subnodes().at && !(container.shouldStoreSubnodes && container.getSlot && container.getSlot(key))) {
+            const index = parseInt(key, 10);
+            const node = Number.isInteger(index) ? container.subnodes().at(index) : null;
+            if (!node || !node.asJson) {
+                return null;
+            }
+            if (container.shouldStoreSubnodes && container.shouldStoreSubnodes() && !container.validateArrayIndex) {
+                // a titled-subnodes group addressed by index — not a supported source
+                return null;
+            }
+            container.removeSubnode(node);
+            return node;
+        }
+        if (container.shouldStoreSubnodes && container.shouldStoreSubnodes() && container.firstSubnodeWithTitle) {
+            const node = container.firstSubnodeWithTitle(key);
+            if (!node) {
+                return null;
+            }
+            container.removeSubnode(node);
+            return node;
+        }
+        return null;
     }
 
 }.initThisCategory());
