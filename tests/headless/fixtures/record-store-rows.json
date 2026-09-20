@@ -1,0 +1,65 @@
+{
+  "description": "The worked example of Plans/Record Store §3 as rows in the local shape: a home, three folders, a campaign pool with its near records, a default character pool, and a session pool whose party holds a far ref. payloadJson is today's record format (type + entries), abbreviated.",
+  "rows": [
+    { "poolId": "home-u123", "objectId": "home-u123", "parentId": null, "orderKey": null, "ownerUid": "u123", "version": 41, "modifiedVersion": 41, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoModel\",\"entries\":[[\"genres\",{\"**\":\"genre-4nQq\"}]]}" },
+
+    { "poolId": "genre-4nQq", "objectId": "genre-4nQq", "parentId": "home-u123", "orderKey": "a", "ownerUid": "u123", "version": 3, "modifiedVersion": 3, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoGenre\",\"entries\":[[\"name\",\"Sword & Sorcery\"]]}" },
+
+    { "poolId": "realm-ZF36", "objectId": "realm-ZF36", "parentId": "genre-4nQq", "orderKey": "a", "ownerUid": "u123", "version": 12, "modifiedVersion": 12, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoRealm\",\"entries\":[[\"name\",\"The Thondrian Age\"],[\"campaigns\",{\"**\":\"lib-ZF36\"}],[\"defaultCharacters\",{\"**\":\"defchars-ZF36\"}]]}" },
+
+    { "poolId": "lib-ZF36", "objectId": "lib-ZF36", "parentId": "realm-ZF36", "orderKey": "10", "ownerUid": "u123", "version": 7, "modifiedVersion": 7, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoCampaigns\",\"entries\":[]}" },
+
+    { "poolId": "defchars-ZF36", "objectId": "defchars-ZF36", "parentId": "realm-ZF36", "orderKey": "20", "ownerUid": "u123", "version": 2, "modifiedVersion": 2, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoDefaultCharacters\",\"entries\":[]}" },
+
+    { "poolId": "camp-Crypt", "objectId": "camp-Crypt", "parentId": "lib-ZF36", "orderKey": "Crypt", "ownerUid": "u123", "version": 1234, "modifiedVersion": 1234, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoCampaign\",\"entries\":[[\"title\",\"Crypt of Alatar\"],[\"details\",{\"*\":\"r-det\"}],[\"locations\",{\"*\":\"r-locs\"}]]}" },
+    { "poolId": "camp-Crypt", "objectId": "r-det", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 1200, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoCampaignDetails\",\"entries\":[[\"name\",\"Crypt of Alatar\"]]}" },
+    { "poolId": "camp-Crypt", "objectId": "r-locs", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 1230, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoLocations\",\"entries\":[[\"subnodes\",[{\"*\":\"r-loc1\"}]]]}" },
+    { "poolId": "camp-Crypt", "objectId": "r-loc1", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 1230, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoLocation\",\"entries\":[[\"name\",\"Antechamber\"],[\"artwork\",{\"*\":\"r-art1\"}],[\"creatures\",[{\"*\":\"r-npc1\"}]]]}" },
+    { "poolId": "camp-Crypt", "objectId": "r-art1", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 1234, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoLocationArtworkItem\",\"entries\":[[\"image\",{\"#\":\"sha256:e6b6\"}]]}" },
+    { "poolId": "camp-Crypt", "objectId": "r-npc1", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 1210, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoCharacter\",\"entries\":[[\"name\",\"Alatar\"]]}" },
+
+    { "poolId": "char-de07", "objectId": "char-de07", "parentId": "defchars-ZF36", "orderKey": "Finn", "ownerUid": "u123", "version": 9, "modifiedVersion": 9, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoCharacter\",\"entries\":[[\"name\",\"Finnan\"]]}" },
+
+    { "poolId": "sess-abc", "objectId": "sess-abc", "parentId": "home-u456", "orderKey": "s1", "ownerUid": "u456", "version": 88, "modifiedVersion": 88, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoHostSession\",\"entries\":[[\"party\",{\"*\":\"r-party\"}],[\"aiChat\",{\"*\":\"r-chat\"}]]}" },
+    { "poolId": "sess-abc", "objectId": "r-party", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 80, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoParty\",\"entries\":[[\"subnodes\",[{\"**\":\"char-de07\"}]]]}" },
+    { "poolId": "sess-abc", "objectId": "r-chat", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 88, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoAiChat\",\"entries\":[]}" },
+    { "poolId": "sess-abc", "objectId": "r-msg-42", "parentId": "r-chat", "orderKey": "0042", "ownerUid": null, "version": null, "modifiedVersion": 87, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoAiChatMessage\",\"entries\":[[\"value\",{\"#\":\"sha256:9a1c\"}],[\"speaker\",{\"*\":\"r-party\"}]]}" },
+    { "poolId": "sess-abc", "objectId": "r-msg-43", "parentId": "r-chat", "orderKey": "0043", "ownerUid": null, "version": null, "modifiedVersion": 88, "isDeleted": false,
+      "payloadJson": "{\"type\":\"UoAiChatMessage\",\"entries\":[[\"value\",\"You enter the antechamber.\"]]}" },
+
+    { "poolId": "sess-abc", "objectId": "r-msg-41", "parentId": "r-chat", "orderKey": "0041", "ownerUid": null, "version": null, "modifiedVersion": 86, "isDeleted": true,
+      "payloadJson": null }
+  ],
+  "invalidRows": [
+    { "why": "tombstone with a payload",
+      "row": { "poolId": "p", "objectId": "x", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 1, "isDeleted": true, "payloadJson": "{}" } },
+    { "why": "parentId without orderKey",
+      "row": { "poolId": "p", "objectId": "x", "parentId": "folder", "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 1, "isDeleted": false, "payloadJson": "{}" } },
+    { "why": "version on a non-root row",
+      "row": { "poolId": "p", "objectId": "x", "parentId": null, "orderKey": null, "ownerUid": null, "version": 3, "modifiedVersion": 1, "isDeleted": false, "payloadJson": "{}" } },
+    { "why": "ownerUid on a non-root row",
+      "row": { "poolId": "p", "objectId": "x", "parentId": null, "orderKey": null, "ownerUid": "u1", "version": null, "modifiedVersion": 1, "isDeleted": false, "payloadJson": "{}" } },
+    { "why": "live root without ownerUid and version",
+      "row": { "poolId": "p", "objectId": "p", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 1, "isDeleted": false, "payloadJson": "{}" } },
+    { "why": "missing objectId",
+      "row": { "poolId": "p", "objectId": "", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 1, "isDeleted": false, "payloadJson": "{}" } },
+    { "why": "unknown column",
+      "row": { "poolId": "p", "objectId": "x", "parentId": null, "orderKey": null, "ownerUid": null, "version": null, "modifiedVersion": 1, "isDeleted": false, "payloadJson": "{}", "dirty": true } }
+  ]
+}

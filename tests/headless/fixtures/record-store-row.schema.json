@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Record Store row (local shape)",
+  "description": "One row of the records table as a client stores and exchanges it: the cloud row minus the columns a client never reads (scopeId, generationId, state, snapshotJson, minDeltaVersion). The root row of a pool is the row whose objectId equals its poolId. See Plans/Record Store §3.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["poolId", "objectId", "parentId", "orderKey", "ownerUid", "version", "modifiedVersion", "isDeleted", "payloadJson"],
+  "properties": {
+    "poolId": { "type": "string", "minLength": 1, "description": "the pool: the root object's id" },
+    "objectId": { "type": "string", "minLength": 1, "description": "the puuid; equals poolId on the root row" },
+    "parentId": { "type": ["string", "null"], "description": "owning collection node: a folder for a child pool's root, a windowed collection for its elements; null on the home root and on every core record" },
+    "orderKey": { "type": ["string", "null"], "description": "fractional sort key under parentId; null iff parentId is null" },
+    "ownerUid": { "type": ["string", "null"], "description": "root row only" },
+    "version": { "type": ["integer", "null"], "minimum": 0, "description": "root row only, server-owned: the content sequence, mirrored down" },
+    "modifiedVersion": { "type": "integer", "minimum": 0, "description": "the pool version that last wrote this row" },
+    "isDeleted": { "type": "boolean", "description": "tombstone; true iff payloadJson is null" },
+    "payloadJson": { "type": ["string", "null"], "description": "the serialized record, byte-for-byte; null iff isDeleted" }
+  }
+}

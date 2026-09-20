@@ -1,4 +1,5 @@
 [
     "base/_imports.json",
+    "records/_imports.json",
     "nodes/_imports.json"
 ]
