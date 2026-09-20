@@ -15,6 +15,40 @@
     // --- Native JSON Patch Support ---
 
     /**
+     * @description Navigates the rest of a path inside a plain JSON value (a "JSON Object"
+     * slot): objects by key, arrays by index. The result names the slot holding the
+     * value and the segments from it to the target container, so a write can rebuild
+     * the slot value along that path (see executeOperationOnObjectSlot).
+     * @param {Object|Array} value - The slot's plain value.
+     * @param {Array} segments - The remaining path segments.
+     * @param {Array} fullPath - The original path, for error reporting.
+     * @param {string} slotName - The slot holding the value.
+     * @returns {Object} { node, parentNode, slotName, plainPath }
+     * @category JSON Patch
+     */
+    plainValueAtPath (value, segments, fullPath, slotName) {
+        let node = value;
+        segments.forEach((segment) => {
+            const next = this.plainChildForSegment(node, segment);
+            if (next === undefined) {
+                throw new SvJsonPatchError(`No key '${segment}' inside the plain value of '${slotName}'`, null, fullPath, segment, this);
+            }
+            node = next;
+        });
+        return { node: node, parentNode: this, slotName: slotName, plainPath: segments };
+    }
+
+    plainChildForSegment (node, segment) {
+        if (Type.isArray(node)) {
+            return node[parseInt(segment, 10)];
+        }
+        if (Type.isDictionary(node)) {
+            return node[segment];
+        }
+        return undefined;
+    }
+
+    /**
    * @description Applies an array of JSON patch operations to this node.
    * @param {Array} patches - Array of JSON patch operations.
    * @returns {JsonGroup} This node.
@@ -26,6 +60,11 @@
         if (patches.length === 0) {
             return this;
         }
+
+        // Stage-1 preflight (Plans/Client Transactions § Sequencing, step 0):
+        // refuse a batch with a definite error BEFORE applying anything —
+        // nothing is applied, so nothing needs undoing.
+        this.preflightJsonPatches(patches);
 
         let failedIndex = 0;
         try {
@@ -53,6 +92,224 @@
         }
     }
 
+    // --- stage-1 preflight ---------------------------------------------------
+    // Walks every operation against the CURRENT tree before any is applied and
+    // refuses the whole batch on a definite error: a malformed operation, an
+    // unknown slot, a path through a missing or null container that no earlier
+    // operation in the batch creates, a non-numeric array index, an index past
+    // the end of an array no earlier operation touched, a value whose shape
+    // cannot fit the slot. What depends on earlier operations (indices in an
+    // array the batch already changed, targets the batch creates, values the
+    // deserializer must judge) is left to apply time. A refused batch applied
+    // NOTHING, and the error says so; until Client Transactions exist this is
+    // the stopgap that keeps most bad batches from half-applying.
+
+    preflightJsonPatches (patches) {
+        const created = new Set();       // "/a/b" paths an earlier operation adds
+        const touchedArrays = new Set(); // "/a/b" array paths an earlier operation inserted into or removed from
+        for (let i = 0; i < patches.length; i++) {
+            const operation = patches[i];
+            const failure = this.preflightOperation(operation, created, touchedArrays);
+            if (failure) {
+                throw this.newPreflightError(i, operation, failure);
+            }
+            this.notePreflightEffects(operation, created, touchedArrays);
+        }
+        return this;
+    }
+
+    preflightOperation (operation, created, touchedArrays) {
+        const shape = this.preflightShape(operation);
+        if (shape) {
+            return shape;
+        }
+        const segments = this.parsePathSegments(operation.path);
+        if (segments.length === 0) {
+            return "the path must name a slot or element, not the root";
+        }
+        if (operation.op === "move" || operation.op === "copy") {
+            const fromSegments = this.parsePathSegments(operation.from);
+            const from = this.preflightNavigate(fromSegments, created, touchedArrays);
+            if (from.failure) {
+                return "'from' " + from.failure;
+            }
+        }
+        const container = this.preflightNavigate(segments.slice(0, -1), created, touchedArrays);
+        if (container.failure) {
+            return container.failure;
+        }
+        return this.preflightKey(operation, container, segments[segments.length - 1]);
+    }
+
+    preflightShape (operation) {
+        const ops = ["add", "replace", "remove", "move", "copy"];
+        if (!Type.isDictionary(operation)) {
+            return "operation must be an object like { op, path, value }";
+        }
+        if (!ops.includes(operation.op)) {
+            return "unsupported op '" + operation.op + "' (use add, replace, remove, move or copy)";
+        }
+        if (!Type.isString(operation.path) || !operation.path.startsWith("/")) {
+            return "path must be a JSON pointer string starting with '/'";
+        }
+        if ((operation.op === "add" || operation.op === "replace") && operation.value === undefined) {
+            return operation.op + " requires a value";
+        }
+        if ((operation.op === "move" || operation.op === "copy") && (!Type.isString(operation.from) || !operation.from.startsWith("/"))) {
+            return operation.op + " requires a 'from' JSON pointer";
+        }
+        if (operation.op === "move") {
+            try {
+                SvJsonPatchError.assertMoveNotIntoOwnSubtree(operation);
+            } catch (e) {
+                return e.message; // "Illegal move … (RFC 6902 …)"
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @description Non-throwing navigation for the preflight. Returns
+     * { kind: "group" | "subnodes" | "array" | "object" | "created" | "unknown", node }
+     * or { failure } when the path definitely cannot resolve.
+     */
+    preflightNavigate (segments, created, touchedArrays) {
+        let current = this;
+        let joined = "";
+        for (let i = 0; i < segments.length; i++) {
+            const segment = segments[i];
+            joined += "/" + segment;
+            if (created.has(joined)) {
+                return { kind: "created", node: null };
+            }
+            if (current === null || current === undefined) {
+                return { failure: "path passes through '" + joined + "' which has no value" };
+            }
+            if (this.preflightIsArray(current)) {
+                const index = parseInt(segment, 10);
+                if (segment === "-" || !Number.isInteger(index) || String(index) !== segment || index < 0) {
+                    return { failure: "'" + segment + "' is not a valid array index at '" + joined + "' (arrays need 0, 1, 2 …; '-' only as the last segment of an add)" };
+                }
+                const parentPath = joined.slice(0, joined.length - segment.length - 1);
+                if (touchedArrays.has(parentPath)) {
+                    return { kind: "unknown", node: null }; // an earlier operation changed this array; ranges are checked at apply time
+                }
+                if (index >= current.subnodes().length) {
+                    return { failure: "index " + index + " is out of bounds at '" + joined + "' (" + current.elementsSummaryString() + ")" };
+                }
+                current = current.subnodes().at(index);
+            } else if (this.preflightIsSubnodeGroup(current)) {
+                const child = current.firstSubnodeWithTitle(segment);
+                if (!child) {
+                    return { failure: "no subnode '" + segment + "' at '" + joined + "' (available: [" + current.subnodes().map(sn => sn.title()).join(", ") + "])" };
+                }
+                current = child;
+            } else if (this.preflightIsSlotGroup(current)) {
+                const slot = current.getSlot(segment);
+                if (!slot) {
+                    return { failure: "unknown slot '" + segment + "' on " + current.svType() + " at '" + joined + "' (available: [" + current.thisClass().jsonSchemaSlots().map(sl => sl.name()).join(", ") + "])" };
+                }
+                current = slot.onInstanceGetValue(current);
+                if (current === null || current === undefined) {
+                    return { failure: "slot '" + segment + "' at '" + joined + "' has no value; add it first (in an earlier operation of this batch) before writing inside it" };
+                }
+            } else if (Type.isDictionary(current)) {
+                return { kind: "object", node: current }; // a plain JSON object slot: navigable, not validated deeper
+            } else {
+                return { failure: "cannot navigate into '" + joined + "' (a " + (typeof current) + " value)" };
+            }
+        }
+        if (this.preflightIsArray(current)) { return { kind: "array", node: current }; }
+        if (this.preflightIsSubnodeGroup(current)) { return { kind: "subnodes", node: current }; }
+        if (this.preflightIsSlotGroup(current)) { return { kind: "group", node: current }; }
+        if (Type.isDictionary(current)) { return { kind: "object", node: current }; }
+        return { failure: "target is a " + (typeof current) + " value, not a container" };
+    }
+
+    preflightIsArray (node) {
+        return !!(node && node.validateArrayIndex && node.subnodes);
+    }
+
+    preflightIsSubnodeGroup (node) {
+        return !!(node && node.firstSubnodeWithTitle && node.shouldStoreSubnodes && node.shouldStoreSubnodes() && !node.validateArrayIndex);
+    }
+
+    preflightIsSlotGroup (node) {
+        return !!(node && node.getSlot && node.thisClass && node.thisClass().jsonSchemaSlots);
+    }
+
+    preflightKey (operation, container, key) {
+        const op = operation.op;
+        if (container.kind === "created" || container.kind === "unknown" || container.kind === "object" || container.kind === "subnodes") {
+            return null;
+        }
+        if (container.kind === "array") {
+            const inserts = op === "add" || op === "move" || op === "copy"; // the destination of a move/copy is an add (RFC 6902)
+            if (key === "-") {
+                return inserts ? null : "'/-' can only be used with add, move or copy (use a numeric index for " + op + ")";
+            }
+            const index = parseInt(key, 10);
+            if (!Number.isInteger(index) || String(index) !== key || index < 0) {
+                return "'" + key + "' is not a valid array index (arrays need 0, 1, 2 …, or '-' to append with add)";
+            }
+            const length = container.node.subnodes().length;
+            if (inserts && index > length) {
+                return op + " index " + index + " is beyond the end of the array (length " + length + "; use " + length + " or '-' to append)";
+            }
+            if (!inserts && index >= length) {
+                return op + " index " + index + " is out of bounds (" + container.node.elementsSummaryString() + ")";
+            }
+            return null;
+        }
+        // slot-backed group
+        const slot = container.node.getSlot(key);
+        if (!slot) {
+            return "unknown slot '" + key + "' on " + container.node.svType() + " (available: [" + container.node.thisClass().jsonSchemaSlots().map(sl => sl.name()).join(", ") + "]) — never invent field names";
+        }
+        if (op === "add" || op === "replace") {
+            return this.preflightValueFitsSlot(operation.value, slot);
+        }
+        return null;
+    }
+
+    preflightValueFitsSlot (value, slot) {
+        const type = slot.slotType();
+        const isContainer = Type.isDictionary(value) || Type.isArray(value);
+        if (["String", "Number", "Boolean"].includes(type) && isContainer) {
+            return "slot '" + slot.name() + "' holds a " + type + "; an object or array value cannot go there";
+        }
+        if (slot.finalInitProtoClass && slot.finalInitProtoClass() && value !== null && !isContainer) {
+            return "slot '" + slot.name() + "' holds a " + type + " object; a bare " + (typeof value) + " cannot go there";
+        }
+        return null;
+    }
+
+    notePreflightEffects (operation, created, touchedArrays) {
+        const path = "/" + this.parsePathSegments(operation.path).join("/");
+        const parentPath = path.slice(0, path.lastIndexOf("/")) || "/";
+        if (operation.op === "add" || operation.op === "copy" || operation.op === "move") {
+            created.add(path);
+            touchedArrays.add(parentPath);
+        }
+        if (operation.op === "remove" || operation.op === "move") {
+            const removed = operation.op === "move" ? "/" + this.parsePathSegments(operation.from).join("/") : path;
+            touchedArrays.add(removed.slice(0, removed.lastIndexOf("/")) || "/");
+        }
+    }
+
+    newPreflightError (index, operation, failure) {
+        const details = {
+            error: "operation " + index + ": " + failure,
+            failedOpIndex: index,
+            operation: operation,
+            refusedBeforeApply: true,
+            stateNote: "REFUSED before applying anything: NO operation in this batch was applied. Fix the failing operation and re-send the WHOLE batch."
+        };
+        const error = new Error("JSON Patch refused: " + JSON.stringify(details, null, 2));
+        error.patchError = details;
+        return error;
+    }
+
     /**
    * @description Applies a single JSON patch operation to this node.
    * @param {Object} operation - The JSON patch operation.
@@ -69,7 +326,7 @@
             // Check if the target node supports JSON patch operations
             if (!targetInfo.node.executeDirectOperation) {
                 // Special handling for plain Object slots
-                if (targetInfo.parentNode && targetInfo.slotName && typeof targetInfo.node === "object" && !Array.isArray(targetInfo.node)) {
+                if (targetInfo.parentNode && targetInfo.slotName && (Type.isDictionary(targetInfo.node) || Type.isArray(targetInfo.node))) {
                     return this.executeOperationOnObjectSlot(operation, targetInfo);
                 }
 
@@ -134,7 +391,8 @@
             node: result.node,
             key: targetKey,
             parentNode: result.parentNode,
-            slotName: result.slotName
+            slotName: result.slotName,
+            plainPath: result.plainPath
         };
     }
 
@@ -178,14 +436,8 @@
                 // If there's still path remaining, this is an error for non-object types
                 if (remainingPath.length > 0) {
                     // Special case for plain objects - we can navigate into them
-                    if (typeof childNode === "object" && !Array.isArray(childNode)) {
-                        // For plain objects, we need to handle navigation differently
-                        // Return the object as the parent for the next level
-                        return {
-                            node: childNode,
-                            parentNode: this,
-                            slotName: nextSegment
-                        };
+                    if (Type.isDictionary(childNode) || Type.isArray(childNode)) {
+                        return this.plainValueAtPath(childNode, remainingPath, fullPath, nextSegment);
                     }
 
                     const nodeType = childNode.svType ? childNode.svType() : typeof childNode;
@@ -317,63 +569,86 @@
     }
 
     /**
-   * @description Executes a JSON patch operation on a plain Object slot.
+   * @description Executes a JSON patch operation inside a plain "JSON Object" slot. The
+   * slot value is never mutated in place: it is copied along the path to the target
+   * container, the operation is applied to the copy, and the slot is set to the new
+   * value so the change is observed like any other slot write.
    * @param {Object} operation - The patch operation.
-   * @param {Object} targetInfo - Information about the target (node, parentNode, slotName, key).
+   * @param {Object} targetInfo - { node, parentNode, slotName, plainPath, key }.
    * @returns {JsonGroup} The parent node.
    * @category JSON Patch
    */
     executeOperationOnObjectSlot (operation, targetInfo) {
-        const { node: objectValue, parentNode, slotName, key } = targetInfo;
-        const op = operation.op;
-        const value = operation.value;
-
-        // Create a new object to avoid mutating the original
-        const newObject = Object.assign({}, objectValue);
-
-        switch (op) {
-            case "add":
-            case "replace":
-                newObject[key] = value;
-                break;
-            case "remove":
-                delete newObject[key];
-                break;
-            case "test":
-                if (newObject[key] !== value) {
-                    throw new SvJsonPatchError(
-                        `Test operation failed: expected ${JSON.stringify(value)}, got ${JSON.stringify(newObject[key])}`,
-                        operation,
-                        null,
-                        key,
-                        objectValue
-                    );
-                }
-                return parentNode;
-            default:
-                throw new SvJsonPatchError(
-                    `Unsupported operation '${op}' for plain Object slots`,
-                    operation,
-                    null,
-                    key,
-                    objectValue
-                );
-        }
-
-        // Update the slot with the modified object
+        const { parentNode, slotName, key } = targetInfo;
         const slot = parentNode.getSlot(slotName);
         if (!slot) {
-            throw new SvJsonPatchError(
-                `Cannot find slot '${slotName}' to update`,
-                operation,
-                null,
-                slotName,
-                parentNode
-            );
+            throw new SvJsonPatchError(`Cannot find slot '${slotName}' to update`, operation, null, slotName, parentNode);
         }
-
-        slot.onInstanceSetValue(parentNode, newObject);
+        const { root, target } = this.copyPlainValueAlongPath(slot.onInstanceGetValue(parentNode), targetInfo.plainPath || []);
+        if (operation.op === "test") {
+            this.testPlainValue(operation, target, key);
+            return parentNode;
+        }
+        this.mutatePlainValue(operation, target, key);
+        slot.onInstanceSetValue(parentNode, root);
         return parentNode;
+    }
+
+    copyPlainValueAlongPath (root, segments) {
+        const copy = (v) => (Type.isArray(v) ? v.slice() : Object.assign({}, v));
+        const newRoot = copy(root);
+        let target = newRoot;
+        segments.forEach((segment) => {
+            const k = Type.isArray(target) ? parseInt(segment, 10) : segment;
+            target[k] = copy(target[k]);
+            target = target[k];
+        });
+        return { root: newRoot, target: target };
+    }
+
+    mutatePlainValue (operation, target, key) {
+        if (Type.isArray(target)) {
+            return this.mutatePlainArray(operation, target, key);
+        }
+        switch (operation.op) {
+            case "add":
+            case "replace":
+                target[key] = operation.value;
+                return;
+            case "remove":
+                delete target[key];
+                return;
+            default:
+                throw new SvJsonPatchError(`Unsupported operation '${operation.op}' inside a plain Object slot`, operation, null, key, target);
+        }
+    }
+
+    mutatePlainArray (operation, target, key) {
+        const index = key === "-" ? target.length : parseInt(key, 10);
+        const limit = operation.op === "add" ? target.length : target.length - 1;
+        if (!Number.isInteger(index) || index < 0 || index > limit) {
+            throw new SvJsonPatchError(`Index '${key}' is out of bounds for a plain array of length ${target.length}`, operation, null, key, target);
+        }
+        switch (operation.op) {
+            case "add":
+                target.splice(index, 0, operation.value);
+                return;
+            case "replace":
+                target[index] = operation.value;
+                return;
+            case "remove":
+                target.splice(index, 1);
+                return;
+            default:
+                throw new SvJsonPatchError(`Unsupported operation '${operation.op}' inside a plain array`, operation, null, key, target);
+        }
+    }
+
+    testPlainValue (operation, target, key) {
+        const actual = Type.isArray(target) ? target[parseInt(key, 10)] : target[key];
+        if (JSON.stringify(actual) !== JSON.stringify(operation.value)) {
+            throw new SvJsonPatchError(`Test operation failed: expected ${JSON.stringify(operation.value)}, got ${JSON.stringify(actual)}`, operation, null, key, target);
+        }
     }
 
     /**
@@ -640,15 +915,9 @@
             throw new Error(`Slot '${key}' not found`);
         }
 
-        if (slot.finalInitProto()) {
-            const currentNode = slot.onInstanceGetValue(this);
-
-            if (currentNode && currentNode.setJson) {
-                currentNode.setJson(value);
-            } else {
-                const newNode = slot.finalInitProto().clone().setJson(value);
-                slot.onInstanceSetValue(this, newNode);
-            }
+        const nodeClass = this.jsonNodeClassForSlot(slot, value);
+        if (nodeClass) {
+            this.setJsonNodeSlotValue(slot, nodeClass, value);
         } else {
             if (Type.isNull(value)) {
                 if (slot.allowsNullValue()) {
@@ -668,6 +937,46 @@
             }
         }
 
+        return this;
+    }
+
+    /**
+     * @description The node class a JSON value for this slot is materialized as: the
+     * slot's finalInitProto when it has one; otherwise, for an object or array value,
+     * the slot's declared type when that is a JSON node class (a nullable typed slot
+     * that starts empty and is created by an add); otherwise null — a primitive or
+     * plain "JSON Object" slot, which takes the value as is.
+     * @param {Slot} slot
+     * @param {*} value - The JSON value being written.
+     * @returns {Function|null}
+     * @category JSON Patch
+     */
+    jsonNodeClassForSlot (slot, value) {
+        if (slot.finalInitProto()) {
+            return slot.finalInitProto();
+        }
+        if (!Type.isDictionary(value) && !Type.isArray(value)) {
+            return null;
+        }
+        const typeClass = slot.slotTypeClass();
+        return (typeClass && typeClass.prototype && typeClass.prototype.setJson) ? typeClass : null;
+    }
+
+    /**
+     * @description Writes a JSON value into a node-valued slot: into the existing node
+     * when there is one, otherwise into a new instance of nodeClass.
+     * @param {Slot} slot
+     * @param {Function} nodeClass
+     * @param {*} value
+     * @category JSON Patch
+     */
+    setJsonNodeSlotValue (slot, nodeClass, value) {
+        const currentNode = slot.onInstanceGetValue(this);
+        if (currentNode && currentNode.setJson) {
+            currentNode.setJson(value);
+        } else {
+            slot.onInstanceSetValue(this, nodeClass.clone().setJson(value));
+        }
         return this;
     }
 
