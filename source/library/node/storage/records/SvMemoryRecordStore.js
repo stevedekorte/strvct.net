@@ -46,6 +46,10 @@
         return this;
     }
 
+    supportsCommitProtocol () {
+        return true;
+    }
+
     // --- read side ---
 
     async asyncOpen (poolId) {

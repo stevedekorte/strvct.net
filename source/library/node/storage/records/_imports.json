@@ -1,5 +1,6 @@
 [
     "SvRecordRow.js",
     "SvRecordStoreProtocol.js",
-    "SvMemoryRecordStore.js"
+    "SvMemoryRecordStore.js",
+    "SvLocalRecordStore.js"
 ]
