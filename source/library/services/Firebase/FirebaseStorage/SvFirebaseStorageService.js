@@ -426,48 +426,125 @@
         return file.downloadUrl();
     }
 
-    async asyncBlobForHash (hash) {
-        // Per-hash in-flight dedup + shared negative cache. SvCloudBlobNode
-        // keeps a static missing-hash cache, but it only fills in AFTER a
-        // probe resolves — at boot, every view holding an image node for the
-        // SAME missing hash (campaign tile, session tile, TV band) fired its
-        // own dev+prod fallback probe concurrently before the first 404
-        // landed: a 404 storm per dead artwork ref. All concurrent callers
-        // now share ONE probe, and a definitively-missing hash short-circuits
-        // here for the TTL as well.
+    /**
+     * @description Per-hash in-flight probe promises (hash → promise) so all
+     * concurrent callers for one hash share ONE fetch. SvCloudBlobNode keeps a
+     * static missing-hash cache, but it only fills in AFTER a probe resolves —
+     * at boot, every view holding an image node for the SAME missing hash
+     * (campaign tile, session tile, TV band) fired its own dev+prod fallback
+     * probe concurrently before the first 404 landed: a 404 storm per dead
+     * artwork ref. Non-persisted; lazily created.
+     * @returns {Map<String, Promise>}
+     * @category Blob Storage
+     */
+    blobFetchPromises () {
         if (!this._blobFetchPromises) {
-            this._blobFetchPromises = new Map(); // hash → in-flight promise
-            this._missingBlobHashes = new Map(); // hash → last-miss ms
+            this._blobFetchPromises = new Map();
         }
-        const missTtlMs = 60000;
-        const lastMiss = this._missingBlobHashes.get(hash);
-        if (lastMiss && (Date.now() - lastMiss) < missTtlMs) {
+        return this._blobFetchPromises;
+    }
+
+    /**
+     * @description Negative cache of definitively-missing hashes (hash →
+     * last-miss ms), so a dead reference short-circuits for the TTL instead of
+     * re-probing on every render. Non-persisted; lazily created.
+     * @returns {Map<String, Number>}
+     * @category Blob Storage
+     */
+    missingBlobHashes () {
+        if (!this._missingBlobHashes) {
+            this._missingBlobHashes = new Map();
+        }
+        return this._missingBlobHashes;
+    }
+
+    /**
+     * @description How long a definitive miss is remembered. Short, because a
+     * multiplayer host uploads a blob moments after (or before) the envelope
+     * naming it reaches guests, so a miss is often just a lost race.
+     * @returns {Number} TTL in ms.
+     * @category Blob Storage
+     */
+    missingBlobHashTtlMs () {
+        return 60000;
+    }
+
+    /**
+     * @description Whether this hash missed recently enough to still be
+     * short-circuited.
+     * @param {String} hash - The hex sha256 content hash.
+     * @returns {Boolean}
+     * @category Blob Storage
+     */
+    hashIsMarkedMissing (hash) {
+        const lastMiss = this.missingBlobHashes().get(hash);
+        return !!lastMiss && (Date.now() - lastMiss) < this.missingBlobHashTtlMs();
+    }
+
+    /**
+     * @description Drops a hash from the negative cache so the next fetch
+     * probes for real. Called when something PROVES the blob should now exist
+     * (a host envelope naming the hash arrives, a stalled fetch escalates) —
+     * the cached miss is then stale by definition.
+     * @param {String} hash - The hex sha256 content hash.
+     * @returns {SvFirebaseStorageService}
+     * @category Blob Storage
+     */
+    forgetMissingBlobHash (hash) {
+        this.missingBlobHashes().delete(hash);
+        return this;
+    }
+
+    /**
+     * @description Fetches the blob for a content hash from the public blob
+     * store, sharing one in-flight probe per hash and honoring the negative
+     * cache. Returns null (no throw) for a hash the cache calls missing.
+     * @param {String} hash - The hex sha256 content hash.
+     * @param {Object} [options] - Fetch options.
+     * @param {Boolean} [options.force] - Skip the negative cache (the in-flight
+     * dedup still applies). For a caller that KNOWS the blob should be there
+     * now, a cached miss is stale by definition.
+     * @returns {Promise<Blob|null>} The blob, or null when known-missing.
+     * @category Blob Storage
+     */
+    async asyncBlobForHash (hash, options = {}) {
+        if (options.force !== true && this.hashIsMarkedMissing(hash)) {
             return null; // known-missing; don't re-probe for the TTL
         }
-        let promise = this._blobFetchPromises.get(hash);
+        let promise = this.blobFetchPromises().get(hash);
         if (!promise) {
-            promise = (async () => {
-                const file = await this.asyncPublicFileForHash(hash);
-                try {
-                    await file.asyncDownloadIfNeeded(); // throws on 404
-                } catch (error) {
-                    // Record only DEFINITIVE not-found (mirrors
-                    // SvCloudBlobNode.errorIsDefinitiveNotFound's intent) —
-                    // transient failures must stay retryable.
-                    const msg = (error && error.message) || "";
-                    if (/object-not-found|does not exist|\b404\b/.test(msg)) {
-                        this._missingBlobHashes.set(hash, Date.now());
-                    }
-                    throw error; // callers classify/report as before
-                }
-                this._missingBlobHashes.delete(hash);
-                return file.blob();
-            })().finally(() => {
-                this._blobFetchPromises.delete(hash);
-            });
-            this._blobFetchPromises.set(hash, promise);
+            promise = this.asyncProbeBlobForHash(hash);
+            this.blobFetchPromises().set(hash, promise);
         }
         return promise;
+    }
+
+    /**
+     * @description The single shared probe for one hash: download the public
+     * blob file, recording a DEFINITIVE not-found in the negative cache
+     * (mirrors SvCloudBlobNode.errorIsDefinitiveNotFound's intent — transient
+     * failures must stay retryable) and clearing it on success.
+     * @param {String} hash - The hex sha256 content hash.
+     * @returns {Promise<Blob>} The blob; rejects as the download does.
+     * @category Blob Storage
+     */
+    asyncProbeBlobForHash (hash) {
+        return (async () => {
+            const file = await this.asyncPublicFileForHash(hash);
+            try {
+                await file.asyncDownloadIfNeeded(); // throws on 404
+            } catch (error) {
+                const msg = (error && error.message) || "";
+                if (/object-not-found|does not exist|\b404\b/.test(msg)) {
+                    this.missingBlobHashes().set(hash, Date.now());
+                }
+                throw error; // callers classify/report as before
+            }
+            this.forgetMissingBlobHash(hash);
+            return file.blob();
+        })().finally(() => {
+            this.blobFetchPromises().delete(hash);
+        });
     }
 
     async asyncPublicUrlForHash (hash) {

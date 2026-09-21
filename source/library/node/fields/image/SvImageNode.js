@@ -155,8 +155,18 @@
         return null;
     }
 
-    async asyncDataUrl () {
-        const blob = await this.asyncBlobValue();
+    /**
+     * @description The image as a data URL, or null when no bytes are
+     * available.
+     * @param {Object} [options] - Lookup options, passed to asyncBlobValue.
+     * @param {Boolean} [options.force] - Bypass the missing-hash negative
+     * caches and re-probe the cloud (for a caller that knows the hash should be
+     * fetchable now — e.g. a view retrying a stalled fetch).
+     * @returns {Promise<String|null>} The data URL, or null.
+     * @category Image
+     */
+    async asyncDataUrl (options) {
+        const blob = await this.asyncBlobValue(options);
         if (blob) {
             return await blob.asyncAsDataUrl();
         }

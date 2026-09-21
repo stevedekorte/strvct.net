@@ -242,7 +242,16 @@
         }
     }
 
-    async asyncBlobValue () {
+    /**
+     * @description The blob bytes for this node: the in-memory value, else a
+     * lazy read from the local blob pool. Accepts (and ignores) the options
+     * argument SvCloudBlobNode's override uses — there is no cloud probe here,
+     * so nothing to force.
+     * @param {Object} [options] - Lookup options (unused at this level).
+     * @returns {Promise<Blob|null>} The blob, or null when unavailable.
+     * @category Blob Storage
+     */
+    async asyncBlobValue (/*options*/) {
         const blob = this.blobValue();
         if (blob) {
             return blob;
