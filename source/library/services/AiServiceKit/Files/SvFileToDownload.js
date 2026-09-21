@@ -213,7 +213,7 @@
     }
 
     /**
-   * @description Alias for hasLoaded() to match Leonardo interface.
+   * @description Alias for hasLoaded().
    * @returns {boolean} True if loaded, false otherwise.
    * @category Status
    */

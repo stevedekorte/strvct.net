@@ -43,20 +43,6 @@
         }
 
         /**
-         * @member {SvLeonardoService} leonardoService
-         * @category AI Service
-         */
-        /*
-        {
-            const slot = this.newSlot("leonardoService", null);
-            slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(SvLeonardoService);
-            slot.setIsSubnodeField(true);
-            slot.setSlotType("SvLeonardoService");
-        }
-        */
-
-        /**
          * @member {SvAnthropicService} anthropicService
          * @category AI Service
          */

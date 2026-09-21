@@ -126,10 +126,9 @@
         {
             const slot = this.newSlot("dataUrl", null);
             slot.setIsInJsonSchema(false);
-            slot.setShouldJsonArchive(true);
+            slot.setShouldJsonArchive(false); // a preview derived from the blob (built on first access), never data of its own
             slot.setLabel("Image");
-            slot.setShouldStoreSlot(true);
-            slot.setDuplicateOp("duplicate");
+            slot.setShouldStoreSlot(false);
             slot.setCanEditInspection(true);
             slot.setSyncsToView(true);
             slot.setSlotType("String");
