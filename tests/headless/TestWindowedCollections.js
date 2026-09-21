@@ -82,6 +82,12 @@ function defineClasses () {
                 slot.setShouldStoreSlot(true);
                 slot.setFinalInitProto(SvGlobals.get("TestWinChat"));
             }
+            {
+                const slot = this.newSlot("conversation", null); // a windowed SvAiConversation, set by the conversation check
+                slot.setSlotType("SvStorableNode");
+                slot.setAllowsNullValue(true);
+                slot.setShouldStoreSlot(true);
+            }
         }
     }).initThisClass();
 }
@@ -163,9 +169,34 @@ async function main () {
     const lostElements = gone.filter(g => !g.endsWith(":SvSubnodesArray")); // the chat's never-referenced array row is an orphan and rightly swept
     check(lostElements.length === 0 && store.hasRow(pool.poolId(), m8.puuid()) && store.hasRow(pool.poolId(), attached.puuid()) && chat2.subnodeCount() === 7, "collect kept every element row and what elements reference (" + before + " → " + pool.count() + "; swept: " + gone.join(",") + ")");
 
+    console.log("\nA windowed conversation wires each loaded window's messages to itself");
+    {
+        const SvAiConversation = SvGlobals.get("SvAiConversation");
+        (class TestWinConversation extends SvAiConversation {
+            initPrototype () { this.setShouldStore(true); this.setShouldStoreSubnodes(true); this.setSubnodesAreWindowed(true); }
+            windowSize () { return 2; }
+        }).initThisClass();
+        const SvConversationMessage = SvGlobals.get("SvConversationMessage");
+        const conv = SvGlobals.get("TestWinConversation").clone();
+        session2.setConversation(conv);
+        ["c1", "c2", "c3"].forEach(() => { conv.addSubnode(SvConversationMessage.clone()); });
+        await pool.commitStoreDirtyObjects();
+        await pool.promiseClose();
+        store.pools().clear();
+        pool = SvPersistentObjectPool.clone();
+        pool.setName("TestWindowedCollections");
+        pool.setRecordStore(store);
+        await pool.promiseOpen();
+        const conv2 = pool.rootOrIfAbsentFromClosure(() => { throw new Error("root should exist"); }).conversation();
+        conv2.prepareToAccess();
+        check(conv2.messages().length === 2 && conv2.messages().every(m => m.conversation() === conv2), "the newest window's messages know their conversation");
+        conv2.loadOlderWindow(5);
+        check(conv2.messages().length === 3 && conv2.messages().every(m => m.conversation() === conv2), "…and so do an older window's");
+    }
+
     console.log("\nThe pool.json shape carries placements");
     const json = pool.asJson();
-    check(typeof json._placements === "string" && Object.keys(JSON.parse(json._placements)).length === 7, "asJson holds the seven elements' placements");
+    check(typeof json._placements === "string" && Object.values(JSON.parse(json._placements)).filter(p => p[0] === chat2.puuid()).length === 7, "asJson holds the chat's seven placements");
     const memory = SvObjectPool.fromCloudJson(json);
     const chat3 = memory.rootObject().chat();
     chat3.prepareToAccess();

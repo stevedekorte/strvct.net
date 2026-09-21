@@ -224,6 +224,24 @@
     }
 
     /**
+     * @description Windowed-collection load hook (SvNode.loadWindowBefore).
+     * When the messages are a windowed collection, neither finalInit nor the
+     * lazy materialization hook sees them — each window's messages get their
+     * conversation back-pointer here, as they would have from addSubnode.
+     * @param {Array} elements - the messages just loaded
+     * @category Initialization
+     */
+    didLoadWindow (elements) {
+        super.didLoadWindow(elements);
+        elements.forEach((m) => {
+            if (m && typeof m.setConversation === "function") {
+                m.setConversation(this);
+            }
+        });
+        return this;
+    }
+
+    /**
    * @description Lazy-slot materialization hook (see ProtoClass). When a
    * subclass marks the subnodes slot lazy, the message wiring that finalInit
    * skipped runs here, at first access.
