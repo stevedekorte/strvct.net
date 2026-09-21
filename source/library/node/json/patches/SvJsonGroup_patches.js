@@ -148,6 +148,14 @@
         if (container.failure) {
             return container.failure;
         }
+        const containerPath = "/" + segments.slice(0, -1).join("/");
+        if (container.kind === "array" && touchedArrays.has(containerPath)) {
+            // An earlier operation of this batch changed this array's length, so
+            // its ranges are only known at apply time: a batch that adds
+            // /items/0 then /items/1 to an empty list is valid. (Refusing it here
+            // dropped every replica state diff after the 2026-09-21 release.)
+            return this.preflightKey(operation, { kind: "unknown", node: null }, segments[segments.length - 1]);
+        }
         return this.preflightKey(operation, container, segments[segments.length - 1]);
     }
 

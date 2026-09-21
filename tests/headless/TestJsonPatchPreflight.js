@@ -209,6 +209,12 @@ async function main () {
     r = refusal(root, [{ op: "remove", path: "/items/0" }, { op: "replace", path: "/items/1/name", value: "C" }]);
     check(r === null && root.items().subnodes().at(1).name() === "C", "a later index in an array an earlier op removed from is not range-checked");
     root = newRoot();
+    r = refusal(root, [{ op: "add", path: "/items/3", value: { name: "d" } }, { op: "add", path: "/items/4", value: { name: "e" } }, { op: "replace", path: "/items/4/name", value: "E" }]);
+    check(r === null && root.items().subnodes().length === 5 && root.items().subnodes().at(4).name() === "E", "adds at successive end indices of one array in one batch are not range-checked against the pre-batch length (a replica state diff does this)" + (r ? " — refused: " + r : ""));
+    root = newRoot();
+    r = refusal(root, [{ op: "remove", path: "/items/0" }, { op: "remove", path: "/items/0" }, { op: "add", path: "/items/1", value: { name: "z" } }]);
+    check(r === null && root.items().subnodes().map(n => n.name()).join(",") === "c,z", "an add at the end index after removals in the same batch passes (got " + root.items().subnodes().map(n => n.name()).join(",") + ")");
+    root = newRoot();
     root.details().setExtra({ nested: { deep: 1 } });
     r = refusal(root, [{ op: "replace", path: "/details/extra/nested/deep", value: 2 }]);
     check(r === null && root.details().extra().nested.deep === 2, "a plain-object slot is navigable without deeper validation");
