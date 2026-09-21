@@ -192,7 +192,15 @@
         });
     }
 
-    async asyncImportPoolJson (json, rootKey = "root") {
+    placementsFromCloudJson (json, placementsKey) {
+        const raw = json[placementsKey];
+        if (!raw) {
+            return {};
+        }
+        return Type.isString(raw) ? JSON.parse(raw) : raw;
+    }
+
+    async asyncImportPoolJson (json, rootKey = "root", placementsKey = "_placements") {
         const poolId = json[rootKey];
         assert(poolId, "pool.json has no root pointer");
         const live = this.pools().get(poolId);
@@ -202,12 +210,17 @@
         }
         const existing = this.rootRowForPool(poolId);
         await this.asyncDeletePool(poolId);
+        const placements = this.placementsFromCloudJson(json, placementsKey);
         const rows = [];
         Object.keys(json).forEach((pid) => {
-            if (pid === rootKey) {
+            if (pid === rootKey || pid === placementsKey) {
                 return;
             }
             const row = SvRecordRow.newRow({ poolId: poolId, objectId: pid, payloadJson: json[pid] });
+            if (placements[pid]) {
+                row.parentId = placements[pid][0];
+                row.orderKey = placements[pid][1];
+            }
             if (pid === poolId) {
                 row.ownerUid = existing ? existing.ownerUid : (this.homePool() ? this.homePool().ownerUid() : "local");
                 row.version = existing ? existing.version : 0;
@@ -391,6 +404,40 @@
         return this.allRows().length;
     }
 
+    // --- windowed collections (Plans/Record Store §6) ---
+
+    /**
+     * @description The rows placed under a node of the same pool, newest first
+     * before `beforeKey` (or from the end when null), at most `limit`, returned in
+     * ascending order.
+     * @category Windowed
+     */
+    windowedRowsForNode (poolId, nodeId, beforeKey, limit) {
+        let rows = this.rowsForPool(poolId).filter(row => row.parentId === nodeId && !row.isDeleted);
+        if (!Type.isNullOrUndefined(beforeKey)) {
+            rows = rows.filter(row => row.orderKey < beforeKey);
+        }
+        rows.sort((a, b) => SvRecordRow.compareChildren(a, b));
+        if (Number.isInteger(limit) && rows.length > limit) {
+            rows = rows.slice(rows.length - limit);
+        }
+        return rows;
+    }
+
+    windowedRowCountForNode (poolId, nodeId) {
+        return this.rowsForPool(poolId).filter(row => row.parentId === nodeId && !row.isDeleted).length;
+    }
+
+    placementsForPool (poolId) {
+        const placements = {};
+        this.rowsForPool(poolId).forEach((row) => {
+            if (row.parentId && !row.isDeleted && row.objectId !== poolId) {
+                placements[row.objectId] = [row.parentId, row.orderKey];
+            }
+        });
+        return placements;
+    }
+
     // --- settings ---
 
     settingAt (name) {
@@ -438,13 +485,18 @@
      * defaults; the root row is owned locally until the cloud says otherwise.
      * @category Import
      */
-    loadFromCloudJson (poolId, json, rootKey) {
+    loadFromCloudJson (poolId, json, rootKey, placementsKey = "_placements") {
         const dict = {};
+        const placements = this.placementsFromCloudJson(json, placementsKey);
         Object.keys(json).forEach((pid) => {
-            if (pid === rootKey) {
+            if (pid === rootKey || pid === placementsKey) {
                 return;
             }
             const row = SvRecordRow.newRow({ poolId: poolId, objectId: pid, payloadJson: json[pid] });
+            if (placements[pid]) {
+                row.parentId = placements[pid][0];
+                row.orderKey = placements[pid][1];
+            }
             if (pid === poolId) {
                 row.ownerUid = "local";
                 row.version = 0;

@@ -192,6 +192,17 @@
         }
 
         {
+            // Record Store (Plans/Record Store §6): a collection whose elements are
+            // records of the containing pool loaded by range, not with the pool — a
+            // session's chat. The node's record holds no subnodes ref; each element's
+            // row carries parentId = this node and an order key; subnodes() is what is
+            // loaded, subnodeCount() what the store holds.
+            const slot = this.newSlot("subnodesAreWindowed", false);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Boolean");
+        }
+
+        {
             const slot = this.newSlot("subnodeClasses", []); //.setInitProto([]) // ui will present creator node if more than one option
             slot.setAllowsNullValue(false);
             slot.setSlotType("Array");
@@ -548,6 +559,94 @@
             await child.asyncEnsureLoaded();
         }
         return child || null;
+    }
+
+    // --- windowed collections (Plans/Record Store §6) ---
+
+    /**
+     * @description How many of the newest elements a windowed collection loads
+     * when first accessed; older ones load by range on request.
+     * @category Record Store
+     */
+    windowSize () {
+        return 200;
+    }
+
+    windowedPool () {
+        return SvObjectPool.poolOfObject(this) || null;
+    }
+
+    /**
+     * @description Whether the store holds elements this node has not loaded.
+     * @category Record Store
+     */
+    hasUnloadedSubnodes () {
+        return this.subnodesAreWindowed() && this.subnodeCount() > (this._subnodes ? this._subnodes.length : 0);
+    }
+
+    /**
+     * @description Loads the newest window of a windowed collection from the
+     * local store (synchronous: the store's rows are in memory) — the whole
+     * collection when it is smaller than the window. A load, not an edit:
+     * nothing is dirtied; the views are told through the update note.
+     * @category Record Store
+     */
+    loadLatestWindow () {
+        return this.loadWindowBefore(null, this.windowSize());
+    }
+
+    /**
+     * @description Loads up to `limit` elements older than the oldest loaded one
+     * (or than `beforeKey`) and inserts them at the front, in order.
+     * @returns {Number} how many were loaded
+     * @category Record Store
+     */
+    loadOlderWindow (limit) {
+        const first = this._subnodes ? this._subnodes.first() : null;
+        const pool = this.windowedPool();
+        const firstKey = (first && pool) ? pool.orderKeyForPid(first.puuid()) : null;
+        return this.loadWindowBefore(firstKey, limit || this.windowSize());
+    }
+
+    loadWindowBefore (beforeKey, limit) {
+        const pool = this.windowedPool();
+        if (!pool || !this.subnodesAreWindowed()) {
+            return 0;
+        }
+        pool.beginWindowLoad(); // attaching the loaded elements is a load, not an edit: no enrollment, no dirtying
+        let loaded;
+        try {
+            loaded = pool.loadWindowedElements(this, beforeKey, limit);
+            if (loaded.length > 0) {
+                this.insertLoadedElementsAtFront(loaded);
+            }
+        } finally {
+            pool.endWindowLoad();
+        }
+        if (loaded.length > 0) {
+            this.didLoadWindow(loaded);
+        }
+        return loaded.length;
+    }
+
+    insertLoadedElementsAtFront (elements) {
+        const array = this.subnodes();
+        const known = new Set(array);
+        const fresh = elements.filter(e => !known.has(e));
+        array.unhooked_splice(0, 0, ...fresh); // a load: the array is not a stored object here and must not dirty
+        fresh.forEach(e => e.setParentNode(this));
+        this.scheduleMethod("onDidReorderSubnodes");
+        if (this.hasDoneInit()) {
+            const note = this.didUpdateNodeNote();
+            if (note) {
+                note.post(); // views re-read; never didUpdateNode(), which walks application hooks
+            }
+        }
+        return this;
+    }
+
+    didLoadWindow (/*elements*/) {
+        // subclasses: hygiene that ran on materialization before (a chat's stale drafts)
     }
 
     /**

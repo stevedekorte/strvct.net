@@ -166,6 +166,44 @@
         if (wasPoolRoot && !newValue) {
             this.scheduleMethod("deletePoolIfDetached");
         }
+        const joinsWindow = newValue && newValue.subnodesAreWindowed && newValue.subnodesAreWindowed();
+        if (joinsWindow) {
+            this.enrollAsWindowedElement(newValue);
+        }
+        const leavesWindow = oldValue && oldValue.subnodesAreWindowed && oldValue.subnodesAreWindowed() && !newValue;
+        if (leavesWindow) {
+            this.scheduleMethod("deleteWindowedRowIfDetached");
+        }
+        return this;
+    }
+
+    /**
+     * @description An element of a windowed collection is not referenced by any
+     * record (membership is its row's parentId), so it joins the pool when it is
+     * attached — enrollment on attach (Plans/Record Store §4) — unless the attach
+     * is a window load, which is not an edit.
+     * @category Record Store
+     */
+    enrollAsWindowedElement (collection) {
+        const pool = SvObjectPool.poolOfObject(collection);
+        if (!pool || pool.isLoadingWindow() || !this.shouldStore()) {
+            return this;
+        }
+        if (!pool.hasActiveObject(this)) {
+            pool.addActiveObject(this);
+        }
+        pool.addDirtyObject(this);
+        return this;
+    }
+
+    deleteWindowedRowIfDetached () {
+        if (this.parentNode()) {
+            return this;
+        }
+        const pool = SvObjectPool.poolOfObject(this);
+        if (pool && pool.hasRecordForPid(this.puuid())) {
+            pool.asyncDeleteRecordRow(this.puuid()); // its subtree is swept by the next collect
+        }
         return this;
     }
 
@@ -213,6 +251,12 @@
      * @category Node Structure
      */
     subnodeCount () {
+        if (this.subnodesAreWindowed()) {
+            const pool = this.windowedPool();
+            if (pool) {
+                return pool.windowedElementCount(this); // what the store holds, loaded or not
+            }
+        }
         if (this.slotIsPendingMaterialization("subnodes")) {
             return this.subnodes().length; // asking for the count is asking for the value
         }
@@ -229,6 +273,9 @@
      */
     prepareForFirstAccess () {
         super.prepareForFirstAccess();
+        if (this.subnodesAreWindowed()) {
+            this.loadLatestWindow();
+        }
         return this;
     }
 

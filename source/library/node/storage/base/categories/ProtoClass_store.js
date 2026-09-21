@@ -62,6 +62,13 @@
 
         this.allSlotsMap().forEachKV((slotName, slot) => {
             if (slot.shouldStoreSlotOnInstance(this)) {
+                if (slotName === "subnodes" && this.subnodesAreWindowed && this.subnodesAreWindowed()) {
+                    // Record Store §6: membership is the elements' rows (parentId = this
+                    // node), not a ref in this record; elements attached before this node
+                    // had a pool are enrolled now so their rows get written.
+                    aStore.enrollWindowedElementsOf(this);
+                    return;
+                }
                 if (slot.isLazy()) {
                     // Read RAW: the getter would materialize the subtree just to
                     // save it. An unmaterialized stub writes back its original

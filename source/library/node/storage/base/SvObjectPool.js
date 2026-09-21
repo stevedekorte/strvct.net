@@ -67,7 +67,7 @@
         const pool = this.clone();
         pool.recordStore().kvMap().open();
         pool.setPoolId(json[pool.rootKey()]);
-        pool.recordStore().loadFromCloudJson(pool.poolId(), json, pool.rootKey());
+        pool.recordStore().loadFromCloudJson(pool.poolId(), json, pool.rootKey(), pool.placementsKey());
         pool.loadStoredRoot();
         SvObjectPool.openPools().add(pool); // register so blob GC knows about this pool's references
         return pool;
@@ -1091,8 +1091,16 @@
         this.forEachRecordJson((pid, jsonString) => { json[pid] = jsonString; });
         if (this.poolId()) {
             json[this.rootKey()] = this.poolId();
+            const placements = this.recordStore().placementsForPool(this.poolId());
+            if (Object.keys(placements).length > 0) {
+                json[this.placementsKey()] = JSON.stringify(placements); // a string, like every other value in the shape
+            }
         }
         return json;
+    }
+
+    placementsKey () {
+        return "_placements"; // windowed elements' { pid: [parentId, orderKey] } in the pool.json shape
     }
 
     forEachRecordJson (fn) {
@@ -2000,6 +2008,101 @@
     }
 
     /**
+     * @description An element of a windowed collection is placed under its
+     * collection node with an order key between its stored neighbours' keys; a
+     * key, once assigned, is kept. Any other record has no placement.
+     * @category Storing
+     */
+    placementForWindowedElement (obj, existing) {
+        const parent = (obj && obj.parentNode) ? obj.parentNode() : null;
+        if (!parent || !parent.subnodesAreWindowed || !parent.subnodesAreWindowed()) {
+            return { parentId: null, orderKey: null };
+        }
+        if (existing && existing.parentId === parent.puuid() && existing.orderKey) {
+            return { parentId: existing.parentId, orderKey: existing.orderKey };
+        }
+        const siblings = parent._subnodes || [];
+        const index = siblings.indexOf(obj);
+        let before = null;
+        for (let i = index - 1; i >= 0; i--) {
+            before = this.orderKeyForPid(siblings[i].puuid());
+            if (before) { break; }
+        }
+        let after = null;
+        for (let i = index + 1; i < siblings.length; i++) {
+            after = this.orderKeyForPid(siblings[i].puuid());
+            if (after) { break; }
+        }
+        return { parentId: parent.puuid(), orderKey: SvOrderKey.keyBetween(before, after) };
+    }
+
+    orderKeyForPid (pid) {
+        const row = this.rowForPid(pid);
+        return (row && row.orderKey) ? row.orderKey : null;
+    }
+
+    /**
+     * @description Elements attached to a windowed node before it had a pool join
+     * the pool when the node is stored (the node's record holds no ref to them).
+     * @category Storing
+     */
+    enrollWindowedElementsOf (node) {
+        const elements = node._subnodes || [];
+        elements.forEach((element) => {
+            if (element && element.shouldStore && element.shouldStore() && !this.hasActiveObject(element)) {
+                this.addActiveObject(element);
+                this.addDirtyObject(element);
+            }
+        });
+        return this;
+    }
+
+    // --- windowed collections: loading by range (Plans/Record Store §6) ---
+
+    isLoadingWindow () {
+        return (this._windowLoadDepth || 0) > 0;
+    }
+
+    beginWindowLoad () {
+        this._windowLoadDepth = (this._windowLoadDepth || 0) + 1;
+        return this;
+    }
+
+    endWindowLoad () {
+        this._windowLoadDepth = Math.max(0, (this._windowLoadDepth || 0) - 1);
+        return this;
+    }
+
+    /**
+     * @description The newest `limit` elements of a windowed node older than
+     * beforeKey (all of them when beforeKey is null), materialized as loads —
+     * nothing dirtied, in order.
+     * @category Windowed Collections
+     */
+    loadWindowedElements (node, beforeKey, limit) {
+        const rows = this.recordStore().windowedRowsForNode(this.poolId(), node.puuid(), beforeKey, limit);
+        this.beginWindowLoad();
+        try {
+            const objects = rows.map(row => this.objectForPid(row.objectId)).filter(obj => !Type.isNullOrUndefined(obj));
+            if (!this.isFinalizing() && this.loadingPids().count() > 0) {
+                this.didInitLoadingPids();
+            }
+            return objects;
+        } finally {
+            this.endWindowLoad();
+        }
+    }
+
+    windowedElementCount (node) {
+        return this.recordStore().windowedRowCountForNode(this.poolId(), node.puuid());
+    }
+
+    async asyncDeleteRecordRow (pid) {
+        await this.recordStore().asyncDelete([{ poolId: this.poolId(), objectId: pid }]);
+        return this;
+    }
+
+    /**
      * @description A value is far when it is the root of another pool: a direct
      * subnode of a collection whose subnodesArePools (a document in a folder),
      * or an object already active in a different pool.
@@ -2190,15 +2293,15 @@
             */
 
 
-            this.putRecordJson(puuid, jsonString);
+            this.putRecordJson(puuid, jsonString, obj);
             this.storeBlobsReferencedByObject(obj);
         }
         return this;
     }
 
-    putRecordJson (puuid, jsonString) { // private — inside a record store batch
+    putRecordJson (puuid, jsonString, obj = null) { // private — inside a record store batch
         this.ensurePoolId();
-        this.recordStore().putRowInBatch(this.rowForRecordJson(puuid, jsonString));
+        this.recordStore().putRowInBatch(this.rowForRecordJson(puuid, jsonString, obj));
         return this;
     }
 
@@ -2208,14 +2311,15 @@
      * modifiedVersion kept from the existing row (server-owned, mirrored).
      * @category Storing
      */
-    rowForRecordJson (puuid, jsonString) {
+    rowForRecordJson (puuid, jsonString, obj = null) {
         const existing = this.rowForPid(puuid);
         const isRoot = puuid === this.poolId();
+        const placement = isRoot ? { parentId: this.parentNodeId(), orderKey: this.orderKey() } : this.placementForWindowedElement(obj, existing);
         return SvRecordRow.newRow({
             poolId: this.poolId(),
             objectId: puuid,
-            parentId: isRoot ? this.parentNodeId() : null,
-            orderKey: isRoot ? this.orderKey() : null,
+            parentId: placement.parentId,
+            orderKey: placement.orderKey,
             ownerUid: isRoot ? this.ownerUid() : null,
             version: isRoot ? ((existing && Number.isInteger(existing.version)) ? existing.version : 0) : null,
             modifiedVersion: existing ? existing.modifiedVersion : 0,
@@ -2289,6 +2393,7 @@
         this.logDebug(() => "--- begin collect --- with " + this.count() + " pids");
         this.setMarkedSet(new Set());
         this.markPid(this.rootPid());
+        this.markWindowedElements();
         const deleteCount = this.sweep();
         this.setMarkedSet(null);
         this.logDebug(() => "--- end collect --- collecting " + deleteCount + " pids ---");
@@ -2300,6 +2405,27 @@
         this.logDebug(() => " ---- keys count after commit: " + remainingCount + " ---");
         this.setIsDebugging(isDebugging);
         return remainingCount;
+    }
+
+    /**
+     * @description Elements of windowed collections are not referenced by any
+     * record: a row whose parentId is a marked node is reachable, and so is what
+     * it references. Repeats until no row is newly marked (an element may itself
+     * be a windowed collection).
+     * @category Collection
+     */
+    markWindowedElements () {
+        let marked = true;
+        while (marked) {
+            marked = false;
+            this.recordStore().rowsForPool(this.poolId()).forEach((row) => {
+                if (row.parentId && !row.isDeleted && this.markedSet().has(row.parentId) && !this.markedSet().has(row.objectId)) {
+                    this.markPid(row.objectId);
+                    marked = true;
+                }
+            });
+        }
+        return this;
     }
 
     markPid (pid) { // private
