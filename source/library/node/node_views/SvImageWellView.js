@@ -46,6 +46,50 @@
 (class SvImageWellView extends SvNodeView {
 
     /**
+     * @description Whether progressive-well transitions are traced to the
+     * console. Class-level (not a slot) so it can be flipped for every well at
+     * once from the browser console. Unset (the default) follows the app's
+     * developerMode: the trace is a debugging aid, and it is verbose enough
+     * — a line per aspect / working / preview / final transition — that a
+     * player's console should not carry it.
+     * @returns {Boolean}
+     * @category Debugging
+     */
+    static isProgressiveLoggingEnabled () {
+        if (this._isProgressiveLoggingEnabled != null) {
+            return this._isProgressiveLoggingEnabled === true; // explicitly overridden from the console
+        }
+        return this.appIsInDeveloperMode();
+    }
+
+    /**
+     * @description Whether the app reports developer mode, tolerating contexts
+     * that have no app at all (headless tests, pre-boot views).
+     * @returns {Boolean}
+     * @category Debugging
+     */
+    static appIsInDeveloperMode () {
+        try {
+            const app = SvApp.shared();
+            return !!(app && app.developerMode && app.developerMode());
+        } catch {
+            return false; // no app in this context
+        }
+    }
+
+    /**
+     * @description Turns progressive-well console tracing on or off for every
+     * well, overriding the developerMode default. Pass null to fall back to it.
+     * @param {Boolean|null} aBool
+     * @returns {SvImageWellView} The class.
+     * @category Debugging
+     */
+    static setIsProgressiveLoggingEnabled (aBool) {
+        this._isProgressiveLoggingEnabled = aBool;
+        return this;
+    }
+
+    /**
      * @description Initializes prototype slots for the SvImageWellView.
      * @category Initialization
      */
@@ -516,6 +560,32 @@
     // ===================================================================
 
     /**
+     * @description Console trace of a progressive-well transition, for debugging
+     * host↔guest image sync from the browser console (no geometry reads). The
+     * owning tile's "[ImageWellTile <id>] sync … well=<svTypeId>" line maps this
+     * well back to its node.
+     * @param {String} message
+     * @returns {SvImageWellView}
+     * @category Debugging
+     */
+    logProgressive (message) {
+        if (SvImageWellView.isProgressiveLoggingEnabled()) {
+            console.log("[ImageWell " + this.svTypeId() + "] " + message + " state=" + this.renderState());
+        }
+        return this;
+    }
+
+    /**
+     * @description A loggable stand-in for a data URL — never the full payload.
+     * @param {String|null} url
+     * @returns {String} A short prefix plus the length, or "null".
+     * @category Debugging
+     */
+    shortUrl (url) {
+        return url ? url.slice(0, 24) + "…(" + url.length + ")" : "null";
+    }
+
+    /**
      * @description The fade duration in seconds, derived from fadeDurationMs.
      * @returns {Number} The fade duration in seconds.
      * @category Progressive Loading
@@ -568,7 +638,9 @@
         if (str === this._aspectRatioString) {
             return this;
         }
+        const old = this._aspectRatioString;
         this._aspectRatioString = str;
+        this.logProgressive("setAspectRatioString " + str + " (was " + old + ")");
         const wh = this.parsedAspectRatio(str);
         if (wh) {
             this.applyAspectRatioBox(wh[0], wh[1]);
@@ -615,6 +687,7 @@
      * @category Progressive Loading
      */
     restoreNaturalBox () {
+        this.logProgressive("restoreNaturalBox");
         this.clearBackLayer();
         this.clearFrontLayer();
         this.removeShimmer();
@@ -639,6 +712,7 @@
      * @category Progressive Loading
      */
     applyFailedState () {
+        this.logProgressive("applyFailedState");
         this.setIsWorking(false);
         this.clearBackLayer();
         this.clearFrontLayer();
@@ -698,6 +772,7 @@
             return this;
         }
         this._isWorking = aBool;
+        this.logProgressive("setIsWorking " + aBool);
         if (aBool) {
             // We're about to display a non-terminal state (faint fill + shimmer),
             // so a later final reveal is a transition this view witnessed.
@@ -825,48 +900,89 @@
         if (dataUrl === this.previewDataUrl()) {
             return this;
         }
+        // Natural mode (null aspect) has no reserved box to fill, and an
+        // absolutely-positioned blurred layer over the natural <img> would
+        // re-blur an already-finished image. Ignore the preview entirely.
+        if (this.parsedAspectRatio(this.aspectRatioString()) === null && dataUrl) {
+            this.logProgressive("applyPreviewDataUrl ignored (natural mode)");
+            return this;
+        }
         this.setPreviewDataUrl(dataUrl);
         if (dataUrl) {
-            // Installing a blurred preview counts as witnessed PROGRESS only
-            // while generation is actually in flight (isWorking). A preview
-            // covering mere fetch latency for an already-complete image
-            // (reload, scroll-back, late join — the final's blob resolves a
-            // sync later) is not a transition worth animating: the final must
-            // snap in sharp, not play the focus-pull reveal.
-            if (this.isWorking()) {
-                this.setWitnessedProgress(true);
-            }
-            // Crossfade the new blurred layer in over the outgoing one (which
-            // stays opaque underneath and is removed once the incoming fade
-            // completes, so the box never shows through). removeOutgoingBackLayer
-            // is null-safe, so the very first image takes this same path with no
-            // previous layer.
-            this.removeOutgoingBackLayer();
-            const oldLayer = this.backLayerView();
-            this.setOutgoingBackLayerView(oldLayer); // null on first image
-            const newLayer = this.newPreviewLayerForUrl(dataUrl); // opacity 0, above oldLayer
-            this.setBackLayerView(newLayer);
-            this.flushStyleThen(() => {
-                if (this.backLayerView() === newLayer) {
-                    newLayer.setOpacity(1);
-                }
-            }, newLayer);
-            this.addWeakTimeout(() => {
-                if (this.outgoingBackLayerView() === oldLayer) {
-                    this.removeOutgoingBackLayer();
-                }
-            }, this.fadeDurationMs() + 100);
+            this.installPreviewLayer(dataUrl);
         } else {
-            // Preview cleared. Keep the visible blurred layer as a backdrop while
-            // a final image is present/revealing (applyFinalDataUrl removes it
-            // once its crossfade completes) or while still working (a final is
-            // imminent) — clearing it now would flash the empty box under the
-            // slowly-fading-in final. Only clear outright when nothing else will.
-            if (!this.finalDataUrl() && !this.isWorking()) {
-                this.clearBackLayer();
-            }
+            this.clearUnneededBackLayer();
         }
         this.updateBackgroundFill();
+        return this;
+    }
+
+    /**
+     * @description Installs a new blurred preview layer for the url and starts
+     * the crossfade over any layer already showing. removeOutgoingBackLayer is
+     * null-safe, so the very first image takes this same path with no previous
+     * layer.
+     * @param {String} dataUrl - The preview data URL (non-null).
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    installPreviewLayer (dataUrl) {
+        this.logProgressive("applyPreviewDataUrl add " + this.shortUrl(dataUrl));
+        // Installing a blurred preview counts as witnessed PROGRESS only while
+        // generation is actually in flight (isWorking). A preview covering mere
+        // fetch latency for an already-complete image (reload, scroll-back, late
+        // join — the final's blob resolves a sync later) is not a transition
+        // worth animating: the final must snap in sharp, not play the reveal.
+        if (this.isWorking()) {
+            this.setWitnessedProgress(true);
+        }
+        this.removeOutgoingBackLayer();
+        const oldLayer = this.backLayerView();
+        this.setOutgoingBackLayerView(oldLayer); // null on first image
+        const newLayer = this.newPreviewLayerForUrl(dataUrl); // opacity 0, above oldLayer
+        this.setBackLayerView(newLayer);
+        this.scheduleBackLayerCrossfade(newLayer, oldLayer);
+        return this;
+    }
+
+    /**
+     * @description Fades the incoming preview layer up (after a style flush so
+     * the transition runs) and drops the outgoing layer once that fade has
+     * completed, so the reserved box is never revealed between images.
+     * @param {SvFlexDomView} newLayer - The incoming layer.
+     * @param {SvFlexDomView|null} oldLayer - The outgoing layer, if any.
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    scheduleBackLayerCrossfade (newLayer, oldLayer) {
+        this.flushStyleThen(() => {
+            if (this.backLayerView() === newLayer) {
+                newLayer.setOpacity(1);
+            }
+        }, newLayer);
+        this.addWeakTimeout(() => {
+            if (this.outgoingBackLayerView() === oldLayer) {
+                this.removeOutgoingBackLayer();
+            }
+        }, this.fadeDurationMs() + 100);
+        return this;
+    }
+
+    /**
+     * @description Handles a preview clear. Keeps the visible blurred layer as a
+     * backdrop while a final image is present/revealing (applyFinalDataUrl
+     * removes it once its crossfade completes) or while still working (a final is
+     * imminent) — clearing it now would flash the empty box under the
+     * slowly-fading-in final. Only clears outright when nothing else will.
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    clearUnneededBackLayer () {
+        const cleared = !this.finalDataUrl() && !this.isWorking();
+        if (cleared) {
+            this.clearBackLayer();
+        }
+        this.logProgressive("applyPreviewDataUrl clear (backLayer " + (cleared ? "removed" : "kept") + ")");
         return this;
     }
 
@@ -950,73 +1066,140 @@
      * @category Progressive Loading
      */
     applyFinalDataUrl (dataUrl) {
-        // Natural-size terminal: no reserved box (null aspect ratio). Render the
-        // final via the base single-image path — an SvImageView that sizes to
-        // the image — exactly as a non-progressive well would. No reserved box,
-        // no crossfade, no animation. This is the plain "shown" state for a node
-        // that supplies no aspect ratio (e.g. a completed message that predates
-        // the aspect slot).
         if (this.parsedAspectRatio(this.aspectRatioString()) === null) {
-            this.setImageDataUrl(dataUrl);
-            this.setFinalDataUrl(dataUrl);
-            return this;
+            return this.applyNaturalFinalDataUrl(dataUrl);
         }
-
         if (dataUrl === this.finalDataUrl()) {
             return this;
         }
         // A superseded fetch can resolve to null after a good image is
         // already on screen (reload race). Don't wipe the reveal.
         if (!dataUrl && this.finalDataUrl()) {
+            this.logProgressive("applyFinalDataUrl ignored null (final already shown)");
             return this;
         }
         this.setFinalDataUrl(dataUrl);
         if (dataUrl) {
-            const front = this.frontLayer();
-            this.setFrontLayerImageUrl(dataUrl);
-            if (!this.witnessedProgress()) {
-                // Cold completion: this view never displayed a placeholder for
-                // this content (late join, reload, scroll-back through recreated
-                // history), so there is no transition to animate — snap the final
-                // in at full opacity, no blur, no timers. Disable the layer's
-                // transition so the 0→1 flip doesn't animate.
-                front.setTransition("none");
-                front.setOpacity(1);
-                front.setFilter("blur(0px)");
-                front.setTransform("scale(1)");
-                this.clearBackLayer();
-                this.removeShimmer();
-            } else {
-                // Witnessed a placeholder → focus-pull reveal: start blurred,
-                // scaled up and transparent, then animate opacity 0→1, blur → 0
-                // and scale → 1 together.
-                front.setOpacity(0);
-                front.setFilter("blur(" + this.blurRadiusPx() + "px)"); // start blurred, matching the preview
-                front.setTransform("scale(1.06)"); // hide blurred edges bleeding past the box
-                const revealedOverLayer = this.backLayerView();
-                this.flushStyleThen(() => {
-                    // Fade in while sharpening and settling — image + blur as one.
-                    front.setOpacity(1);
-                    front.setFilter("blur(0px)");
-                    front.setTransform("scale(1)");
-                }, front);
-                // After the reveal completes, drop the preview we revealed over.
-                // Re-validate first: a newer preview installed during the reveal
-                // replaces backLayerView(), and must be left in place (otherwise
-                // this stale timer would delete it).
-                this.addWeakTimeout(() => {
-                    if (this.backLayerView() === revealedOverLayer) {
-                        this.clearBackLayer();
-                    }
-                }, this.finalFadeDurationMs() + 100);
-                // The final image is here: stop working indicators.
-                this.removeShimmer();
-            }
+            this.revealFinalDataUrl(dataUrl);
         } else if (this.frontLayerView()) {
+            this.logProgressive("applyFinalDataUrl clear");
             this.frontLayerView().removeAllSubviews(); // drop the <img>
             this.frontLayerView().setOpacity(0);
         }
         this.updateBackgroundFill();
+        return this;
+    }
+
+    /**
+     * @description Natural-size terminal: no reserved box (null aspect ratio).
+     * Renders the final via the base single-image path — an SvImageView that
+     * sizes to the image — exactly as a non-progressive well would. No reserved
+     * box, no crossfade, no animation. This is the plain "shown" state for a node
+     * that supplies no aspect ratio (e.g. a completed message that predates the
+     * aspect slot). setImageDataUrl already removed every subview, so the
+     * back-layer / preview slots are reconciled here rather than left populated
+     * pointing at detached layers.
+     * @param {String|null} dataUrl - The final image data URL, or null.
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    applyNaturalFinalDataUrl (dataUrl) {
+        this.logProgressive("applyFinalDataUrl natural " + this.shortUrl(dataUrl));
+        this.setImageDataUrl(dataUrl);
+        this.setFinalDataUrl(dataUrl);
+        this.clearBackLayer();
+        this.removeShimmer();
+        return this;
+    }
+
+    /**
+     * @description Puts the final image into the front layer and picks how it
+     * arrives: a cold snap when this view never witnessed progress, a focus-pull
+     * reveal when it did.
+     * @param {String} dataUrl - The final image data URL (non-null).
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    revealFinalDataUrl (dataUrl) {
+        const front = this.frontLayer();
+        this.setFrontLayerImageUrl(dataUrl);
+        if (!this.witnessedProgress()) {
+            this.snapFinalLayer(front, dataUrl);
+        } else {
+            this.focusPullFinalLayer(front, dataUrl);
+        }
+        // The final is here, so whatever the owner last said, nothing is working
+        // now (an owner that keeps a mid-story well "working" through the blob
+        // download relies on this to end it).
+        this.setIsWorking(false);
+        return this;
+    }
+
+    /**
+     * @description Cold completion: this view never displayed a placeholder for
+     * this content (late join, reload, scroll-back through recreated history), so
+     * there is no transition to animate — snap the final in at full opacity, no
+     * blur, no timers. The layer's transition is disabled so the 0→1 flip doesn't
+     * animate.
+     * @param {SvFlexDomView} front - The front layer.
+     * @param {String} dataUrl - The final image data URL, for the log line.
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    snapFinalLayer (front, dataUrl) {
+        this.logProgressive("applyFinalDataUrl snap " + this.shortUrl(dataUrl));
+        front.setTransition("none");
+        front.setOpacity(1);
+        front.setFilter("blur(0px)");
+        front.setTransform("scale(1)");
+        this.clearBackLayer();
+        this.removeShimmer();
+        return this;
+    }
+
+    /**
+     * @description Witnessed a placeholder → focus-pull reveal: start blurred,
+     * scaled up and transparent, then animate opacity 0→1, blur → 0 and scale → 1
+     * together, so image and blur transition as one over the preview underneath.
+     * @param {SvFlexDomView} front - The front layer.
+     * @param {String} dataUrl - The final image data URL, for the log line.
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    focusPullFinalLayer (front, dataUrl) {
+        this.logProgressive("applyFinalDataUrl reveal " + this.shortUrl(dataUrl));
+        front.setOpacity(0);
+        front.setFilter("blur(" + this.blurRadiusPx() + "px)"); // start blurred, matching the preview
+        front.setTransform("scale(1.06)"); // hide blurred edges bleeding past the box
+        const revealedOverLayer = this.backLayerView();
+        this.flushStyleThen(() => {
+            // Fade in while sharpening and settling — image + blur as one.
+            front.setOpacity(1);
+            front.setFilter("blur(0px)");
+            front.setTransform("scale(1)");
+        }, front);
+        this.scheduleRevealCompletion(revealedOverLayer);
+        this.removeShimmer(); // the final image is here: stop working indicators
+        return this;
+    }
+
+    /**
+     * @description After the reveal completes, drops the preview we revealed
+     * over. Re-validates first: a newer preview installed during the reveal
+     * replaces backLayerView(), and must be left in place (otherwise this stale
+     * timer would delete it).
+     * @param {SvFlexDomView|null} revealedOverLayer - The layer the final revealed over.
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    scheduleRevealCompletion (revealedOverLayer) {
+        this.addWeakTimeout(() => {
+            const cleared = this.backLayerView() === revealedOverLayer;
+            if (cleared) {
+                this.clearBackLayer();
+            }
+            this.logProgressive("reveal complete, back layer " + (cleared ? "cleared" : "kept (newer preview)"));
+        }, this.finalFadeDurationMs() + 100);
         return this;
     }
 
