@@ -3,5 +3,6 @@
     "SvRecordRow.js",
     "SvRecordStoreProtocol.js",
     "SvMemoryRecordStore.js",
-    "SvLocalRecordStore.js"
+    "SvLocalRecordStore.js",
+    "SvCloudRecordStore.js"
 ]

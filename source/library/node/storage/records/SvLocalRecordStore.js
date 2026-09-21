@@ -150,6 +150,48 @@
      * forgotten first: the caller owns replacing its objects.
      * @category Import
      */
+    /**
+     * @description Replaces a pool's rows with rows read from a cloud backing
+     * (asyncOpen's `{ root, records }`): server-owned columns arrive with them
+     * and are kept as the mirror. Opens the pool and reads its root.
+     * @category Import
+     */
+    async asyncImportOpenedPool (opened) {
+        const poolId = opened.root.poolId;
+        const live = this.pools().get(poolId);
+        if (live) {
+            live.close();
+            this.forgetPool(poolId);
+        }
+        await this.asyncDeletePool(poolId);
+        const rows = [opened.root].concat(opened.records).map(row => this.localRowFromCloudRow(row));
+        await this.asyncPut(rows);
+        const pool = this.openPoolWithId(poolId);
+        pool.setLastSyncedSnapshot(Object.assign({}, pool.asJson()));
+        await pool.asyncPrefetchTextBlobsForRows(rows);
+        pool.readRootObject();
+        return pool;
+    }
+
+    /**
+     * @description The local row is the cloud row minus the columns a client
+     * never reads (Plans/Record Store §3).
+     * @category Import
+     */
+    localRowFromCloudRow (row) {
+        return SvRecordRow.newRow({
+            poolId: row.poolId,
+            objectId: row.objectId,
+            parentId: row.parentId === undefined ? null : row.parentId,
+            orderKey: row.orderKey === undefined ? null : row.orderKey,
+            ownerUid: row.ownerUid === undefined ? null : row.ownerUid,
+            version: row.version === undefined ? null : row.version,
+            modifiedVersion: row.modifiedVersion || 0,
+            isDeleted: !!row.isDeleted,
+            payloadJson: row.isDeleted ? null : row.payloadJson
+        });
+    }
+
     async asyncImportPoolJson (json, rootKey = "root") {
         const poolId = json[rootKey];
         assert(poolId, "pool.json has no root pointer");

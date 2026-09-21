@@ -688,6 +688,95 @@
     }
 
     /**
+     * @description The commit protocol against a cloud record store (Plans/Record
+     * Store §7): the records changed since lastSyncedSnapshot become writes and
+     * deletes, sent with the root row's version as baseVersion. On "committed"
+     * the new version is mirrored onto the root row (server-owned, written through
+     * the non-dirtying path) and the snapshot advances; on "conflict" nothing
+     * changes and the caller reloads; a refusal is returned as is.
+     * @param {SvCloudRecordStore} cloudStore
+     * @param {Object} [options] { create: { scopeId } } for a pool's first commit
+     * @returns {Promise<Object>} { status: "committed"|"conflict"|"refused"|"unchanged", version?, reason? }
+     * @category Cloud Mirror
+     */
+    async asyncCommitToCloud (cloudStore, options = {}) {
+        await this.asyncFlushDirty();
+        const rootRow = this.rowForPid(this.poolId());
+        assert(rootRow, "the pool has no root row to commit");
+        const delta = this.collectDelta();
+        const changed = delta === null ? this.wholePoolAsDelta() : delta;
+        if (changed.isEmpty) {
+            return { status: "unchanged", version: rootRow.version || 0 };
+        }
+        const commit = {
+            poolId: this.poolId(),
+            baseVersion: Number.isInteger(rootRow.version) ? rootRow.version : 0,
+            requestId: Object.newUuid(),
+            writes: Object.keys(changed.writes).map(pid => this.cloudWriteForRecord(pid, changed.writes[pid])),
+            deletes: changed.deletes.map(pid => ({ poolId: this.poolId(), objectId: pid }))
+        };
+        if (options.create) {
+            commit.create = options.create;
+        }
+        const result = await cloudStore.asyncCommit(commit);
+        if (result && result.status === "committed") {
+            await this.mirrorCloudVersion(result.version, commit);
+            this.updateLastSyncedSnapshot();
+        }
+        return result;
+    }
+
+    /**
+     * @description When the delta is not worth it (no snapshot, or most records
+     * changed) every current record is written — and, unlike a whole pool.json
+     * upload, the records the snapshot had and the pool no longer has are still
+     * deleted: a commit never replaces the cloud's set, it changes it.
+     * @category Cloud Mirror
+     */
+    wholePoolAsDelta () {
+        const writes = {};
+        this.forEachRecordJson((pid, jsonString) => { writes[pid] = jsonString; });
+        const snapshot = this.lastSyncedSnapshot() || {};
+        const deletes = Object.keys(snapshot).filter(pid => pid !== this.rootKey() && !Object.hasOwn(writes, pid));
+        return { writes: writes, deletes: deletes, isEmpty: Object.keys(writes).length === 0 && deletes.length === 0 };
+    }
+
+    cloudWriteForRecord (pid, jsonString) {
+        const write = { poolId: this.poolId(), objectId: pid, payloadJson: jsonString };
+        if (pid === this.poolId()) {
+            write.parentId = this.parentNodeId();
+            write.orderKey = this.orderKey();
+        }
+        return write;
+    }
+
+    /**
+     * @description After a commit the server's version and each written row's
+     * modifiedVersion are mirrored down — server-owned columns, not content, so
+     * nothing is marked dirty.
+     * @category Cloud Mirror
+     */
+    async mirrorCloudVersion (version, commit) {
+        const store = this.recordStore();
+        await store.asyncBeginBatch();
+        commit.writes.forEach((write) => {
+            const row = store.rowForKey(this.poolId(), write.objectId);
+            if (row) {
+                row.modifiedVersion = version;
+                if (write.objectId === this.poolId()) { row.version = version; }
+                store.putRowInBatch(row);
+            }
+        });
+        const rootRow = store.rowForKey(this.poolId(), this.poolId());
+        if (rootRow && rootRow.version !== version) {
+            rootRow.version = version;
+            store.putRowInBatch(rootRow);
+        }
+        await store.asyncCommitBatch();
+        return this;
+    }
+
+    /**
      * @description Makes an object the root of this pool and stores its closure
      * now — a pool built from a live graph (an export, a test fixture).
      * @param {Object} rootObj
