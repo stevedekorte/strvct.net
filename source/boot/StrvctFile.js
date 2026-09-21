@@ -68,6 +68,16 @@ class StrvctFile extends Object {
         this._path = "";
         /**
          * @private
+         * @type {string|null} query appended to the browser URL (cache-busting by content hash)
+         */
+        this._urlQuery = null;
+        /**
+         * @private
+         * @type {string|null} fetch() cache mode for browser loads
+         */
+        this._fetchCacheMode = null;
+        /**
+         * @private
          * @type {string|null}
          * @description Cached file content after loading
          */
@@ -144,6 +154,41 @@ class StrvctFile extends Object {
     setPath (path) {
         this._path = path;
         return this;
+    }
+
+    /**
+     * @description A query string appended to the browser URL (e.g. "h=<content hash>"),
+     * so a resource's URL changes with its content and an HTTP cache can never
+     * answer a request for one version with the bytes of another.
+     * @param {string} query
+     * @returns {StrvctFile}
+     * @category Instance Configuration
+     */
+    setUrlQuery (query) {
+        this._urlQuery = query;
+        return this;
+    }
+
+    /**
+     * @description The fetch() cache mode for browser loads ("no-cache" revalidates,
+     * "reload" bypasses); null for the browser default.
+     * @param {string|null} mode
+     * @returns {StrvctFile}
+     * @category Instance Configuration
+     */
+    setFetchCacheMode (mode) {
+        this._fetchCacheMode = mode;
+        return this;
+    }
+
+    browserUrl () {
+        const baseUrl = StrvctFile.baseUrl();
+        const url = baseUrl ? `${baseUrl}/${this._path.replace(/^\//, "")}` : this._path;
+        return this._urlQuery ? url + (url.includes("?") ? "&" : "?") + this._urlQuery : url;
+    }
+
+    fetchOptions () {
+        return this._fetchCacheMode ? { cache: this._fetchCacheMode } : {};
     }
 
     /**
@@ -227,13 +272,10 @@ class StrvctFile extends Object {
      */
     async asyncLoadBrowser () {
         //console.log("🔍 asyncLoadBrowser file: " + this._path);
-        const baseUrl = StrvctFile.baseUrl();
-        const fullUrl = baseUrl ?
-            `${baseUrl}/${this._path.replace(/^\//, "")}` :
-            this._path;
+        const fullUrl = this.browserUrl();
 
         try {
-            const response = await fetch(fullUrl);
+            const response = await fetch(fullUrl, this.fetchOptions());
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
@@ -273,13 +315,10 @@ class StrvctFile extends Object {
      * @category File Loading
      */
     async asyncLoadArrayBufferBrowser () {
-        const baseUrl = StrvctFile.baseUrl();
-        const fullUrl = baseUrl ?
-            `${baseUrl}/${this._path.replace(/^\//, "")}` :
-            this._path;
+        const fullUrl = this.browserUrl();
 
         try {
-            const response = await fetch(fullUrl);
+            const response = await fetch(fullUrl, this.fetchOptions());
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }

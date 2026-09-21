@@ -207,7 +207,7 @@
 
                 assert(this.data() === null, "this.data() should be null");
 
-                await this.promiseJustLoad(); // data is ArrayBuffer
+                await this.promiseJustLoadVerified(h); // data is ArrayBuffer, proven to be the index's version
 
                 try {
                     await hc.promiseAtPut(h, this.data());
@@ -238,9 +238,65 @@
      * @returns {Promise<SvUrlResource>} A promise that resolves with the loaded resource.
      * @category Loading
      */
+    setUrlQuery (query) {
+        this._urlQuery = query;
+        return this;
+    }
+
+    setFetchCacheMode (mode) {
+        this._fetchCacheMode = mode;
+        return this;
+    }
+
+    /**
+     * Loads over the network and proves the bytes are the version the index
+     * names before they are cached under that hash. A browser HTTP cache
+     * answers by URL: after a deploy it can hand back the previous version of
+     * a file for as long as the hosting's max-age, and storing those bytes
+     * under the new hash poisoned the hash cache until the file's next change
+     * (seen in production 2026-09-21: a new UoBookPage.js evaluated against a
+     * stale Slot.js). The URL now carries the hash, so it cannot be answered
+     * from an older entry; a mismatch anyway refetches bypassing every cache,
+     * and a second mismatch throws rather than caching wrong bytes.
+     * @param {string} hash - the index's sha256 hex of the resource
+     * @category Loading
+     */
+    async promiseJustLoadVerified (hash) {
+        this.setUrlQuery("h=" + hash);
+        await this.promiseJustLoad();
+        if (await this.dataMatchesHash(hash)) {
+            return this;
+        }
+        console.warn(this.logPrefix() + "content of '" + this.path() + "' does not match its index hash (a stale HTTP cache?) — refetching, bypassing caches");
+        this._data = null;
+        this.setFetchCacheMode("reload");
+        await this.promiseJustLoad();
+        if (await this.dataMatchesHash(hash)) {
+            return this;
+        }
+        throw new Error("resource '" + this.path() + "' does not match its index hash after a cache-bypassing fetch — the served build is inconsistent; not caching it");
+    }
+
+    async dataMatchesHash (hash) {
+        const subtle = globalThis.crypto && globalThis.crypto.subtle;
+        if (!subtle || !this._data) {
+            return true; // no digest available here (an old runtime): trust the fetch, as before
+        }
+        const digest = await subtle.digest("SHA-256", this._data);
+        const hex = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, "0")).join("");
+        return hex === hash;
+    }
+
     async promiseJustLoad () {
         try {
-            const data = await StrvctFile.with(this.path()).asyncLoadArrayBuffer();
+            const file = StrvctFile.with(this.path());
+            if (this._urlQuery) {
+                file.setUrlQuery(this._urlQuery);
+            }
+            if (this._fetchCacheMode) {
+                file.setFetchCacheMode(this._fetchCacheMode);
+            }
+            const data = await file.asyncLoadArrayBuffer();
             this._data = data;
             this.constructor._totalBytesLoaded += data.byteLength;
             this.constructor._totalUrlsLoaded += 1;

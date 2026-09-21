@@ -133,6 +133,7 @@
         // Start the single-transaction cache warm-load now so it overlaps the
         // index fetch; promiseLoadCamIfNeeded awaits the same shared promise.
         if (SvGlobals.has("SvHashCache")) {
+            await this.promiseClearStaleCacheGeneration();
             SvHashCache.shared().promiseWarmLoad();
         }
         await this.promiseLoadIndex();
@@ -168,7 +169,9 @@
         let resource = null;
         if (SvGlobals.has("SvHashCache")) {
             try {
-                const hashResource = await SvUrlResource.with(path + ".hash").promiseLoad();
+                // Revalidated every boot (64 bytes): a normal reload must see a new
+                // deploy, not the HTTP cache's copy of the previous index hash.
+                const hashResource = await SvUrlResource.with(path + ".hash").setFetchCacheMode("no-cache").promiseLoad();
                 const hash = hashResource.dataAsText().trim();
                 if (/^[0-9a-f]{64}$/.test(hash)) {
                     this._indexHash = hash;
@@ -288,6 +291,36 @@
     }
 
     /**
+     * @description The hash cache's format/trust generation. Bump it when the
+     * cache may hold entries that must not be trusted: generation 2 (2026-09-21)
+     * clears caches poisoned by unverified network loads (see
+     * SvUrlResource.promiseJustLoadVerified). Browser only; a one-time clear.
+     * @returns {string}
+     * @category Resource Loading
+     */
+    static hashCacheGeneration () {
+        return "2";
+    }
+
+    async promiseClearStaleCacheGeneration () {
+        try {
+            if (typeof localStorage === "undefined") {
+                return;
+            }
+            const key = "SvHashCacheGeneration";
+            const wanted = SvResourceManager.hashCacheGeneration();
+            if (localStorage.getItem(key) === wanted) {
+                return;
+            }
+            console.log(this.logPrefix(), "hash cache generation " + JSON.stringify(localStorage.getItem(key)) + " → " + wanted + ": clearing the hash cache once");
+            await SvHashCache.shared().promiseClear();
+            localStorage.setItem(key, wanted);
+        } catch (error) {
+            console.warn(this.logPrefix(), "hash cache generation check failed (continuing):", error && error.message);
+        }
+    }
+
+    /**
      * @category Resource Loading
      * @description Loads the CAM.
      * @returns {Promise<void>}
@@ -297,7 +330,13 @@
             this._promiseForLoadCam = Promise.clone();
             try {
                 const path = "build/_cam.json.zip";
-                const resource = await SvUrlResource.clone().setPath(path).promiseLoad();
+                // The bundle's URL carries the index hash: a new index always
+                // fetches its own bundle, never the HTTP cache's previous one.
+                const resource = SvUrlResource.clone().setPath(path);
+                if (this._indexHash) {
+                    resource.setUrlQuery("h=" + this._indexHash);
+                }
+                await resource.promiseLoad();
                 const cam = resource.dataAsJson();
                 this.bootPerfMark("camDownloaded");
 
