@@ -20,7 +20,7 @@ source/library/ideal/   Base runtime: ProtoClass, slots, protocols, categories o
 source/library/node/    Model layer: SvNode, SvStorableNode, fields, node_views, storage (object pools)
 source/library/view/    View layer: SvDomView hierarchy (view/dom), events, geometry, webbrowser
 source/library/notification/  SvNotificationCenter, SvBroadcaster, SvSyncScheduler
-source/library/storage/ SvPersistentAtomicMap / SvPersistentAsyncMap (IndexedDB-backed key-value layers)
+source/library/storage/ SvPersistentAtomicMap / SvPersistentAsyncMap (IndexedDB-backed key-value layers under node/storage/records)
 source/library/cloudfs/ Cloud file system sync (Firebase Storage backend, write-ahead log)
 source/library/services/  AI providers (Anthropic, Gemini, …), Firebase, media, proxies
 source/library/orm/     Server-only SQL ORM (see source/library/orm/CLAUDE.md)
@@ -346,13 +346,16 @@ player-visibility question, capture with developer mode off (the default).
 
 ## Persistence
 
-Object graphs persist through `SvPersistentObjectPool` over a `SvPersistentAtomicMap` cache layer, on IndexedDB in the browser and on an IndexedDB shim (`node-indexeddb-lmdb`) in Node.
+Object graphs persist as **records in pools**: `SvLocalRecordStore` (`node/storage/records/`) holds every pool's rows in one database over a `SvPersistentAtomicMap` cache layer, on IndexedDB in the browser and on an IndexedDB shim (`node-indexeddb-lmdb`) in Node. A pool is one document (its root's puuid is the pool id); the app's model is the home pool (`SvPersistentObjectPool`); every cloud document is its own pool, reached from its folder by a far ref `{ "**": poolId }` (`setSubnodesArePools(true)` on the folder).
 
 - Opt in per class with `this.setShouldStore(true)` and per slot with `slot.setShouldStoreSlot(true)`; collections add `setShouldStoreSubnodes(true)`.
+- An unbounded collection declares `setSubnodesAreWindowed(true)`: membership lives on the elements' rows (`parentId` + order key), reads are windows (`loadLatestWindow`, `loadOlderWindow`), and a window load dirties nothing. Every hook that keyed on "subnodes materialized" needs a `didLoadWindow(elements)` twin — `SvConversation` wires message back-pointers there. Append at `appendIndex()` (the loaded array's length), never at `subnodeCount()` (the store's count).
+- Stored strings are capped at 16 KB (warn, or throw in audit mode); long text is a `BlobString` slot that spills to a content-addressed text blob above 32 KB; a collection past 1,000 elements warns — the signal to window it.
+- `pool.transaction(fn)` (`ideal/transactions/`) rolls in-memory state back whole when `fn` throws; patches use it behind `SvTransactionContext.setPatchesUseTransactions`.
 - Objects are referenced by persistent unique ids (puuids). Slot changes call `didMutate()`, which marks the object dirty; dirty objects commit in a batch at the end of the event loop. Unreachable objects are garbage-collected.
 - Serialization hooks, if you must customize them: `recordForStore(aStore)`, `loadFromRecord(aRecord, aStore)`, `instanceFromRecordInStore(aRecord, aStore)`, `refValue(v)` / `unrefValue(v)`.
 - Load order is the lifecycle above: allocate + `init()` → `loadFromRecord()` → `finalInit()` → `afterInit()`.
-- Pools can additionally sync to Firebase Storage through a write-ahead log of delta files (`source/library/cloudfs/`). See `docs/Persistence/`.
+- Pools sync to the cloud as `pool.json` plus a write-ahead log of delta files (`source/library/cloudfs/`), or as records through `SvCloudRecordStore`'s commit protocol. Blob GC counts references from every pool's rows, open or not. See `docs/Persistence/`.
 
 **Storage serialization is not JSON exchange.** `serializeToJson()` / `deserializeFromJson()` / `asJson()` / `setJson()` / `applyJsonPatches()` produce a human-readable representation for clients, AI services, import/export, and clipboard; they omit system metadata and are independent of what the store records.
 

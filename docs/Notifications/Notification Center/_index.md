@@ -113,6 +113,10 @@ Observations can also match broadly:
 - `setSender(null)` — match notifications with the specified name from any sender
 - Both null — match all notifications (useful for debugging)
 
+### Matching cost
+
+The center keeps its observations indexed by sender (a `WeakMap`, so an index entry never keeps a sender alive) and by name, maintained as observations start and stop watching. A post computes the four intersections of those sets (sender × name, sender × any-name, any-sender × name, any-sender × any-name), walking each from its smaller side, so a post costs about the number of observations on that sender — not the number of observations in the application. An application with a large model can carry tens of thousands of live observations; rebuilding the indexes per queue drain used to block the main thread for seconds at that scale.
+
 ## SvNotification
 
 Each notification is an `SvNotification` instance with three properties:

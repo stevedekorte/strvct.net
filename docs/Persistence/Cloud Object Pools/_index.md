@@ -100,7 +100,7 @@ This is a "local wins" strategy — local changes always take priority.
 
 ### How It Works
 
-For complex object graphs where many interrelated objects need to be synced together, `SvSubObjectPool` serializes the entire pool as a single JSON document. The pool maps persistent unique IDs (puuids) to serialized object records:
+For complex object graphs where many interrelated objects need to be synced together, the document's own `SvObjectPool` serializes itself as a single JSON document (`asJson()`). The pool maps persistent unique IDs (puuids) to serialized object records, plus `root` (the pool id) and `_placements` (the parent and order key of every placed row, so windowed collections survive the round trip):
 
 ```json
 {
@@ -113,7 +113,7 @@ This is stored at `/users/{userId}/{collectionName}/{poolId}/pool.json`.
 
 ### Write Ahead Log
 
-To avoid uploading the entire pool on every save, `SvSubObjectPool` tracks changes since the last sync and produces incremental deltas:
+To avoid uploading the entire pool on every save, the pool tracks changes since the last synced snapshot (`collectDelta()`) and produces incremental deltas:
 
 ```json
 {
@@ -155,15 +155,19 @@ The primary cloud-aware sync class. Configured with a user ID, folder name, and 
 - Retry logic with exponential backoff
 - Orphaned file cleanup
 
-### SvSubObjectPool
+### SvObjectPool (a document's pool)
 
-An in-memory `SvObjectPool` (not backed by IndexedDB) designed for cloud sync. Provides:
+Every cloud document is its own `SvObjectPool` over the shared local record store (see [Local Object Pools](../Local%20Object%20Pools/)); the former in-memory `SvSubObjectPool` is retired. The pool provides:
 
 - `asyncSaveToCloud()` — saves with delta or full upload optimization
-- `collectDelta()` — produces incremental changes vs. last synced snapshot
+- `collectDelta()` — produces incremental changes vs. the last synced snapshot
 - `asyncCompactToCloud()` — consolidates deltas into a single pool file
-- `fromCloudJson(json)` — reconstructs the pool from cloud data
-- `asJson()` — serializes the complete pool for upload
+- `asJson()` — serializes the complete pool (records, `root`, `_placements`) for upload
+- `SvLocalRecordStore.asyncImportPoolJson(json)` — imports a downloaded pool into the local store and opens it; `SvObjectPool.fromCloudJson(json)` opens one in memory instead
+
+### Records as documents (the record cloud)
+
+The second backing keeps each record as its own cloud document instead of one `pool.json`: `SvCloudRecordStore` speaks the store protocol over the backend's `callFunction` — `asyncOpen(poolId)`, `asyncReadChanges(poolId, sinceVersion)`, `asyncChildren(nodeId, range)` and the commit protocol `asyncCommit({ poolId, baseVersion, requestId, writes, deletes })`, whose outcomes are `committed`, `conflict` (someone else's commit landed first; reload and retry) or `refused`. `SvObjectPool.asyncCommitToCloud(cloudStore)` sends the pool's delta at the mirrored version and mirrors the server's version back onto the local root row; `SvLocalRecordStore.asyncImportOpenedPool(opened)` brings a pool down. The application chooses per document class which backing it uses.
 
 ### SvSyncCollectionSource
 
@@ -177,11 +181,11 @@ Abstract base class for collection syncing. Defines the interface for:
 
 | Component | Backing Store | Cloud Sync | Purpose |
 |-----------|--------------|------------|---------|
-| `SvPersistentObjectPool` | IndexedDB | No | Local app state (singleton, never synced directly) |
-| `SvSubObjectPool` | In-memory | Yes | Session-level cloud sync with delta support |
+| `SvPersistentObjectPool` | The record store (IndexedDB) | No | The home pool: local app state, never synced directly |
+| A document's `SvObjectPool` | The same record store | Yes | One cloud document; delta or whole-pool upload, or the record cloud's commit protocol |
 | `SvCloudSyncSource` | Firebase Storage | Yes | Collection-level cloud sync with manifests |
 
-The local `SvPersistentObjectPool` is the ground truth for the running application. Cloud sync operates alongside it — collections push individual items, while sessions create a `SvSubObjectPool` snapshot for upload.
+The local record store is the ground truth for the running application. Cloud sync operates alongside it — collections push individual items, while each document's pool uploads its own snapshot or delta.
 
 ## Auto-Sync Triggers
 
