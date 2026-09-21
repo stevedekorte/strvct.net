@@ -744,8 +744,11 @@
     cloudWriteForRecord (pid, jsonString) {
         const write = { poolId: this.poolId(), objectId: pid, payloadJson: jsonString };
         if (pid === this.poolId()) {
-            write.parentId = this.parentNodeId();
-            write.orderKey = this.orderKey();
+            const root = this.rootObject();
+            // the root may name a cloud placement of its own (a folder id that is
+            // the same on every device) instead of the local folder node's puuid
+            write.parentId = (root && root.cloudParentId) ? root.cloudParentId() : this.parentNodeId();
+            write.orderKey = write.parentId ? (this.orderKey() || SvOrderKey.keyBetween(null, null)) : null;
         }
         return write;
     }
