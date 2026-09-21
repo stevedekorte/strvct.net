@@ -1,4 +1,5 @@
 [
+    "SvOrderKey.js",
     "SvRecordRow.js",
     "SvRecordStoreProtocol.js",
     "SvMemoryRecordStore.js",

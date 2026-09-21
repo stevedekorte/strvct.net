@@ -153,6 +153,34 @@
      * @returns {SvStorableNode} Returns this instance.
      * @category Node Structure
      */
+    /**
+     * @description Pools are deleted explicitly and deletion cascades down the
+     * ownership tree (Plans/Record Store §3): a pool root detached from its
+     * folder loses its pool — unless it is re-attached before the end of the
+     * event loop (a move, a placeholder swap that keeps the instance).
+     * @category Record Store
+     */
+    didUpdateSlotParentNode (oldValue, newValue) {
+        super.didUpdateSlotParentNode(oldValue, newValue);
+        const wasPoolRoot = oldValue && oldValue.subnodesArePools && oldValue.subnodesArePools();
+        if (wasPoolRoot && !newValue) {
+            this.scheduleMethod("deletePoolIfDetached");
+        }
+        return this;
+    }
+
+    deletePoolIfDetached () {
+        if (this.parentNode()) {
+            return this; // re-attached
+        }
+        const pool = SvObjectPool.poolOfObject(this);
+        const isCurrent = pool && pool.recordStore().pools().get(pool.poolId()) === pool; // not a stale instance whose pool was re-imported
+        if (isCurrent && !pool.isHomePool() && pool.poolId() === this.puuid()) {
+            pool.asyncDeletePool();
+        }
+        return this;
+    }
+
     didChangeSubnodeList () {
         super.didChangeSubnodeList();
         //this.updateLazySubnodeCount()

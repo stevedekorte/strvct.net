@@ -72,9 +72,39 @@
 
     async promiseOpen () {
         const wasOpen = this.isOpen();
+        this.recordStore().setHomePool(this);
         await super.promiseOpen();
+        if (this.poolId()) {
+            this.recordStore().registerPool(this);
+        }
         if (!wasOpen && this.isOpen()) {
             this.deleteLegacyDatabase(); // the pre-records database of the same name: a reset, not a migration
+            await this.asyncCollectChildPools();
+        }
+        return this;
+    }
+
+    setRootPid (pid) {
+        super.setRootPid(pid);
+        this.recordStore().registerPool(this);
+        return this;
+    }
+
+    /**
+     * @description Every other pool in the store (documents in folders) collects
+     * its own records by reachability from its own root, as this pool just did.
+     * @category Open
+     */
+    async asyncCollectChildPools () {
+        const store = this.recordStore();
+        for (const poolId of store.poolIds()) {
+            if (poolId === this.poolId() || !store.rootRowForPool(poolId)) {
+                continue;
+            }
+            const pool = store.poolForId(poolId);
+            if (pool) {
+                await pool.promiseCollect();
+            }
         }
         return this;
     }

@@ -127,6 +127,10 @@
         return !!scopeRootId && this.pendingCloudDeletes().some(d => d.scopeRootId === scopeRootId);
     }
 
+    initPrototype () {
+        this.setSubnodesArePools(true); // each child document is the root of its own pool (Plans/Record Store §6)
+    }
+
     init () {
         super.init();
         // Loading state is on by default; the first asyncSyncFromCloud

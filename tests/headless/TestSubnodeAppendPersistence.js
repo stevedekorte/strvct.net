@@ -73,7 +73,6 @@ function silenceRelay (node) {
 async function main () {
     await boot();
     const SvObjectPool = SvGlobals.get("SvObjectPool");
-    const SvSubObjectPool = SvGlobals.get("SvSubObjectPool");
     const SvStorableNode = SvGlobals.get("SvStorableNode");
 
     (0, eval)(`
@@ -112,7 +111,7 @@ async function main () {
 
     console.log("\nSub-object pool, the reported scenario: a response message appended, then streamed into");
     for (const relay of ["silenced", "enabled"]) {
-        const pool = SvSubObjectPool.clone();
+        const pool = SvObjectPool.clone();
         const parent = newParent();
         parent.addSubnode(newChild("seed"));
         await pool.initializeFromRoot(parent);

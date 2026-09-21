@@ -43,6 +43,17 @@
             slot.setSlotType("SvAtomicMap");
             slot.setDescription("row key → row JSON string; a settings key → its value string");
         }
+        {
+            const slot = this.newSlot("pools", null);
+            slot.setSlotType("Map");
+            slot.setDescription("poolId → the open SvObjectPool over this store's rows");
+        }
+        {
+            const slot = this.newSlot("homePool", null);
+            slot.setSlotType("SvObjectPool");
+            slot.setAllowsNullValue(true);
+            slot.setDescription("the pool whose root is the app's model; child pools share its blob pool");
+        }
     }
 
     initPrototype () {
@@ -52,7 +63,115 @@
     init () {
         super.init();
         this.setKvMap(SvPersistentAtomicMap.clone());
+        this.setPools(new Map());
         return this;
+    }
+
+    // --- pools over this store ---
+
+    registerPool (pool) {
+        this.pools().set(pool.poolId(), pool);
+        return this;
+    }
+
+    forgetPool (poolId) {
+        this.pools().delete(poolId);
+        return this;
+    }
+
+    /**
+     * @description The open pool for an id, opening it when its rows are here;
+     * null when the store has no such pool.
+     * @category Pools
+     */
+    poolForId (poolId) {
+        if (this.pools().has(poolId)) {
+            return this.pools().get(poolId);
+        }
+        if (!this.rootRowForPool(poolId)) {
+            return null;
+        }
+        return this.openPoolWithId(poolId);
+    }
+
+    openPoolWithId (poolId) {
+        const row = this.rootRowForPool(poolId);
+        const pool = this.newPoolWithId(poolId);
+        if (row) {
+            pool.setParentNodeId(row.parentId);
+            pool.setOrderKey(row.orderKey);
+            pool.setOwnerUid(row.ownerUid);
+        }
+        pool.openSync();
+        return pool;
+    }
+
+    newChildPool (poolId, parentNodeId, orderKey) {
+        const pool = this.newPoolWithId(poolId);
+        pool.setParentNodeId(parentNodeId);
+        pool.setOrderKey(orderKey);
+        if (this.homePool()) {
+            pool.setOwnerUid(this.homePool().ownerUid());
+        }
+        pool.openSync();
+        return pool;
+    }
+
+    newPoolWithId (poolId) {
+        const pool = SvObjectPool.clone();
+        pool.setRecordStore(this);
+        pool.setPoolId(poolId);
+        pool.setName(this.name());
+        if (this.homePool()) {
+            pool.setBlobPool(this.homePool().blobPool());
+        }
+        this.registerPool(pool);
+        return pool;
+    }
+
+    /**
+     * @description Root rows of the pools placed under any of the given node ids
+     * — the children of a folder, for a deletion cascade.
+     * @category Pools
+     */
+    childPoolRootRows (nodeIdSet) {
+        return this.allRows().filter(row => SvRecordRow.isRoot(row) && row.parentId !== null && nodeIdSet.has(row.parentId));
+    }
+
+    /**
+     * @description Replaces a pool's rows with a cloud pool.json (record JSON by
+     * puuid plus a root pointer) and opens it. A live pool of the same id is
+     * forgotten first: the caller owns replacing its objects.
+     * @category Import
+     */
+    async asyncImportPoolJson (json, rootKey = "root") {
+        const poolId = json[rootKey];
+        assert(poolId, "pool.json has no root pointer");
+        const live = this.pools().get(poolId);
+        if (live) {
+            live.close();
+            this.forgetPool(poolId);
+        }
+        const existing = this.rootRowForPool(poolId);
+        await this.asyncDeletePool(poolId);
+        const rows = [];
+        Object.keys(json).forEach((pid) => {
+            if (pid === rootKey) {
+                return;
+            }
+            const row = SvRecordRow.newRow({ poolId: poolId, objectId: pid, payloadJson: json[pid] });
+            if (pid === poolId) {
+                row.ownerUid = existing ? existing.ownerUid : (this.homePool() ? this.homePool().ownerUid() : "local");
+                row.version = existing ? existing.version : 0;
+                row.parentId = existing ? existing.parentId : null;
+                row.orderKey = existing ? existing.orderKey : null;
+            }
+            rows.push(row);
+        });
+        await this.asyncPut(rows);
+        const pool = this.openPoolWithId(poolId);
+        pool.readRootObject();
+        return pool;
     }
 
     /**

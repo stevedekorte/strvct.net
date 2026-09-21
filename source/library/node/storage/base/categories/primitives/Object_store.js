@@ -159,8 +159,9 @@
      * @category Data Storage
      */
     defaultStore () {
-        const store = SvPersistentObjectPool.sharedPool();
-        return store;
+        // the pool this object is active in (a document's own pool), else the home pool
+        const own = SvObjectPool.poolOfObject(this);
+        return own ? own : SvPersistentObjectPool.sharedPool();
     }
 
     /**

@@ -182,6 +182,16 @@
         }
 
         {
+            // Record Store (Plans/Record Store §6): a collection whose elements are
+            // roots of their own pools — a folder of documents. Its subnodes are
+            // stored as far refs { "**": poolId }; each element's records live in
+            // the element's pool with the element's puuid as the pool id.
+            const slot = this.newSlot("subnodesArePools", false);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Boolean");
+        }
+
+        {
             const slot = this.newSlot("subnodeClasses", []); //.setInitProto([]) // ui will present creator node if more than one option
             slot.setAllowsNullValue(false);
             slot.setSlotType("Array");
@@ -505,6 +515,18 @@
      * @param {SvNode} aNode - The new parent node.
      * @returns {SvNode} This instance.
      */
+    /**
+     * @description True when this node is the root of its own pool: a direct
+     * subnode of a collection whose subnodesArePools. (The home root has no
+     * parent and is its pool's root by construction.)
+     * @returns {Boolean}
+     * @category Record Store
+     */
+    isPoolRoot () {
+        const parent = this.parentNode();
+        return !!(parent && parent.subnodesArePools && parent.subnodesArePools());
+    }
+
     setParentNode (aNode) {
         assert(aNode !== this); // sanity check
 

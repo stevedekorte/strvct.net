@@ -88,6 +88,32 @@
      * Uses SvEnumerableWeakSet to allow pools to be garbage collected when no longer referenced.
      * @returns {SvEnumerableWeakSet}
      */
+    /**
+     * @description The pool an object is active in, or undefined. Objects belong
+     * to one pool; the registry is filled when a pool adds an active object.
+     * @param {Object} anObject
+     * @returns {SvObjectPool|undefined}
+     * @category Registry
+     */
+    static poolOfObject (anObject) {
+        return this.objectPoolRegistry().get(anObject);
+    }
+
+    static objectPoolRegistry () {
+        if (!this._objectPoolRegistry) {
+            this._objectPoolRegistry = new WeakMap();
+        }
+        return this._objectPoolRegistry;
+    }
+
+    static compactionThreshold () {
+        return 20; // deltas appended to a cloud document before it is folded back into pool.json
+    }
+
+    static fullUploadThreshold () {
+        return 0.5; // the changed fraction of records above which a whole pool.json beats a delta
+    }
+
     static openPools () {
         if (!this._openPools) {
             this._openPools = new SvEnumerableWeakSet();
@@ -180,6 +206,11 @@
             const slot = this.newSlot("orderKey", null);
             slot.setSlotType("String");
             slot.setDescription("root row placement: this pool's sort key under its parent, or null");
+        }
+        {
+            const slot = this.newSlot("lastSyncedSnapshot", null);
+            slot.setSlotType("Object");
+            slot.setDescription("cloud mirror: the pool.json (record JSON by puuid) as last uploaded or downloaded, for delta collection");
         }
         {
             const slot = this.newSlot("ownerUid", "local");
@@ -426,6 +457,111 @@
 
     hasOpened () {
         return this._hasOpened === true;
+    }
+
+    /**
+     * @description Opens a pool whose rows are already in an open record store:
+     * nothing to await. Used for child pools reached through far refs.
+     * @category Open
+     */
+    openSync () {
+        assert(this.recordStore().isOpen(), "the record store must be open");
+        this._hasOpened = true;
+        SvObjectPool.openPools().add(this);
+        return this;
+    }
+
+    /**
+     * @description Deletes this pool: its rows, and — cascading down the
+     * ownership tree — every pool whose root row is placed under one of this
+     * pool's nodes. Live objects are released from the registry.
+     * @category Deleting
+     */
+    async asyncDeletePool () {
+        const store = this.recordStore();
+        const childRoots = store.childPoolRootRows(this.allPidsSet());
+        for (const row of childRoots) {
+            const child = store.poolForId(row.poolId);
+            if (child) {
+                await child.asyncDeletePool();
+            } else {
+                await store.asyncDeletePool(row.poolId);
+            }
+        }
+        SvSyncScheduler.shared().unscheduleTargetAndMethod(this, "commitStoreDirtyObjects");
+        this.removeMutationObservations();
+        this.setActiveObjects(new SvEnumerableWeakMap());
+        this.setDirtyObjects(new Map());
+        SvObjectPool.openPools().delete(this);
+        store.forgetPool(this.poolId());
+        await store.asyncDeletePool(this.poolId());
+        return this;
+    }
+
+    // --- cloud mirror: pool.json snapshots and deltas ---
+
+    /**
+     * @description Compares the pool's current pool.json against lastSyncedSnapshot.
+     * @returns {Object|null} { writes, deletes, timestamp, isEmpty } or null when a full upload is better (no snapshot, or most records changed).
+     * @category Cloud Mirror
+     */
+    collectDelta () {
+        const snapshot = this.lastSyncedSnapshot();
+        if (!snapshot) {
+            return null;
+        }
+        const currentJson = this.asJson();
+        const writes = {};
+        const deletes = [];
+        Object.keys(currentJson).forEach((key) => {
+            if (!Object.hasOwn(snapshot, key) || snapshot[key] !== currentJson[key]) {
+                writes[key] = currentJson[key];
+            }
+        });
+        Object.keys(snapshot).forEach((key) => {
+            if (!Object.hasOwn(currentJson, key)) {
+                deletes.push(key);
+            }
+        });
+        const totalChanges = Object.keys(writes).length + deletes.length;
+        if (totalChanges === 0) {
+            return { writes: {}, deletes: [], timestamp: Date.now(), isEmpty: true };
+        }
+        const totalRecords = Object.keys(currentJson).length;
+        if (totalRecords > 0 && totalChanges / totalRecords > SvObjectPool.fullUploadThreshold()) {
+            return null;
+        }
+        return { writes: writes, deletes: deletes, timestamp: Date.now() };
+    }
+
+    updateLastSyncedSnapshot () {
+        this.setLastSyncedSnapshot(Object.assign({}, this.asJson()));
+        return this;
+    }
+
+    /**
+     * @description Makes an object the root of this pool and stores its closure
+     * now — a pool built from a live graph (an export, a test fixture).
+     * @param {Object} rootObj
+     * @returns {Promise<SvObjectPool>}
+     * @category Storing
+     */
+    async initializeFromRoot (rootObj) {
+        assert(rootObj, "rootObj is required");
+        this.setRootObject(rootObj);
+        await this.commitStoreDirtyObjects();
+        return this;
+    }
+
+    /**
+     * @description Stores every dirty object now (the scheduled pass, run early).
+     * @category Storing
+     */
+    async asyncFlushDirty () {
+        if (this.hasDirtyObjects()) {
+            await this.commitStoreDirtyObjects();
+        }
+        return this;
     }
 
     /**
@@ -794,13 +930,17 @@
         }
 
         if (!this.hasActiveObject(anObject)) {
-            //const title = anObject.title ? anObject.title() : "-";
-            //this.logDebug(() => anObject.svDebugId() + ".addMutationObserver(" + this.svDebugId() + " '" + title + "')");
+            const other = SvObjectPool.poolOfObject(anObject);
+            if (other && other !== this && other.hasActiveObject(anObject)) {
+                console.warn(this.logPrefix() + "addActiveObject: " + anObject.svTypeId() + " is already active in pool " + other.poolId() + " — moving it to " + this.poolId());
+                other.activeObjects().delete(anObject.puuid());
+                other.dirtyObjects().delete(anObject.puuid());
+                anObject.removeMutationObserver(other);
+            }
             anObject.addMutationObserver(this);
             this.activeObjects().set(anObject.puuid(), anObject);
-            //this.addDirtyObject(anObject);
+            SvObjectPool.objectPoolRegistry().set(anObject, this);
         }
-
         return true;
     }
 
@@ -824,7 +964,12 @@
      * @returns {SvObjectPool}
      */
     removeMutationObservations () {
-        this.activeObjects().forEachKV((puuid, obj) => obj.removeMutationObserver(this)); // activeObjects is super set of dirtyObjects
+        this.activeObjects().forEachKV((puuid, obj) => {
+            obj.removeMutationObserver(this); // activeObjects is super set of dirtyObjects
+            if (SvObjectPool.poolOfObject(obj) === this) {
+                SvObjectPool.objectPoolRegistry().delete(obj);
+            }
+        });
         return this;
     }
 
@@ -1536,10 +1681,31 @@
         if (Type.isLiteral(v)) {
             return v;
         }
+        const farPoolId = v.getOwnProperty("**");
+        if (farPoolId) {
+            return this.farObjectForPoolId(farPoolId);
+        }
         const puuid = v.getOwnProperty("*");
         assert(puuid);
         const obj = this.objectForPid(puuid);
         return obj;
+    }
+
+    /**
+     * @description Resolves a far ref { "**": poolId }: the root of that pool,
+     * opened from the same record store when its rows are local (synchronous —
+     * the store's map is in memory), undefined when the pool is not here.
+     * @category References
+     */
+    farObjectForPoolId (poolId) {
+        const pool = this.recordStore().poolForId(poolId);
+        if (!pool) {
+            if (this.shouldReportMissingPid(poolId)) {
+                console.log(this.logPrefix() + "far ref to pool " + poolId + " which is not in the local store");
+            }
+            return undefined;
+        }
+        return pool.rootObject() || pool.readRootObject();
     }
 
     /**
@@ -1570,17 +1736,81 @@
             return null;
         }
 
+        if (this.isFarObject(v)) {
+            this.ensureChildPoolForRoot(v);
+            return { "**": v.puuid() };
+        }
         if (!this.hasActiveObject(v)) {
             this.addActiveObject(v);
             this.addDirtyObject(v);
         } else {
-            // Already in the identity map, so the branch above won't queue it
-            // — but "known to the pool" is not the same question as "will be
-            // written". If it isn't, we are about to mint a dangling pointer.
             this.warnIfRefWillDangle(v);
         }
         const ref = { "*": v.puuid() };
         return ref;
+    }
+
+    /**
+     * @description A value is far when it is the root of another pool: a direct
+     * subnode of a collection whose subnodesArePools (a document in a folder),
+     * or an object already active in a different pool.
+     * @category References
+     */
+    isFarObject (v) {
+        if (v === this.rootObject()) {
+            return false;
+        }
+        if (v.isPoolRoot && v.isPoolRoot()) {
+            return true;
+        }
+        const pool = SvObjectPool.poolOfObject(v);
+        return !!(pool && pool !== this && pool.rootObject() === v);
+    }
+
+    /**
+     * @description The pool a folder's element is the root of, created in this
+     * pool's record store on first reference and placed under the folder node
+     * with an order key between its siblings' keys.
+     * @category References
+     */
+    ensureChildPoolForRoot (v) {
+        const store = this.recordStore();
+        let pool = store.poolForId(v.puuid());
+        if (!pool) {
+            const placement = this.placementForPoolRoot(v);
+            pool = store.newChildPool(v.puuid(), placement.parentNodeId, placement.orderKey);
+            pool.setRootObject(v);
+            pool.storeDirtyObjects(); // its first rows land in the same batch as the far ref that names it
+            return pool;
+        }
+        if (!pool.rootObject()) {
+            pool.setRootObject(v);
+        }
+        const folder = v.parentNode();
+        if (folder && pool.parentNodeId() !== folder.puuid()) {
+            const placement = this.placementForPoolRoot(v); // moved to another folder: re-place the root row
+            pool.setParentNodeId(placement.parentNodeId);
+            pool.setOrderKey(placement.orderKey);
+            pool.addDirtyObject(v);
+        }
+        return pool;
+    }
+
+    placementForPoolRoot (v) {
+        const folder = v.parentNode();
+        if (!folder) {
+            return { parentNodeId: null, orderKey: null };
+        }
+        const siblings = folder.subnodes();
+        const index = siblings.indexOf(v);
+        const keyOf = (node) => {
+            const pool = node ? this.recordStore().poolForId(node.puuid()) : null;
+            return pool ? pool.orderKey() : null;
+        };
+        const before = index > 0 ? keyOf(siblings.at(index - 1)) : null;
+        const after = index < siblings.length - 1 ? keyOf(siblings.at(index + 1)) : null;
+        const orderKey = (before !== null || after === null) ? SvOrderKey.keyBetween(before, after) : SvOrderKey.keyBetween(null, after);
+        return { parentNodeId: folder.puuid(), orderKey: orderKey };
     }
 
     /**
@@ -1814,7 +2044,9 @@
         this.setMarkedSet(null);
         this.logDebug(() => "--- end collect --- collecting " + deleteCount + " pids ---");
         await this.recordStore().asyncCommitBatch();
-        this.scheduleMethod("asyncCollectBlobs"); // we need to let the object finish initializing before we can ask them for their blob references
+        if (this.isHomePool()) {
+            this.scheduleMethod("asyncCollectBlobs"); // blobs are store-wide (every pool's references count), so the home pool collects them once
+        }
         const remainingCount = this.count();
         this.logDebug(() => " ---- keys count after commit: " + remainingCount + " ---");
         this.setIsDebugging(isDebugging);
@@ -2008,6 +2240,9 @@
      * @returns {Promise<number>}
      */
     async asyncCollectBlobs () {
+        if (!this.blobPool().isOpen()) {
+            return 0;
+        }
         const keySet = this.allBlobHashesSet();
         const removedCount = await this.blobPool().asyncCollectUnreferencedKeySet(keySet);
         return removedCount;
