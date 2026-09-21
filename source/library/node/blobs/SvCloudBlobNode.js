@@ -353,6 +353,33 @@
         return true;
     }
 
+    /**
+     * @description Clears BOTH negative caches for a hash: this class's static
+     * missing-hash map AND the cloud storage service's own independent one. A
+     * stale entry in EITHER silently blocks a pull (the service's returns null
+     * without throwing, so upstream sees "no blob" rather than "missing"), so
+     * clearing one alone is not enough. Call this when something PROVES the
+     * blob should now be fetchable — an envelope naming the hash arrives, or a
+     * stalled fetch escalates.
+     * @param {String} hash - The hex sha256 content hash.
+     * @returns {SvCloudBlobNode} The class.
+     * @category Blob Storage
+     */
+    static forgetMissingHash (hash) {
+        if (!hash) { return this; }
+        this.missingHashes().delete(hash);
+        try {
+            const service = SvApp.shared().cloudStorageService();
+            if (service && service.forgetMissingBlobHash) {
+                service.forgetMissingBlobHash(hash);
+            }
+        } catch {
+            // No cloud storage service in this context (headless, pre-boot);
+            // the static map above is cleared either way.
+        }
+        return this;
+    }
+
     errorIsDefinitiveNotFound (error) {
         if (!error) { return false; }
         const code = error.code || "";
@@ -383,7 +410,10 @@
             return null;
         }
         try {
-            const blob = await SvApp.shared().asyncBlobForHash(hash);
+            // Forward `force` so a forced pull also bypasses the cloud storage
+            // service's own (independent, silent) negative cache — otherwise a
+            // forced retry short-circuits there and looks like a clean miss.
+            const blob = await SvApp.shared().asyncBlobForHash(hash, { force: forceRetry });
             if (blob) {
                 this.setBlobValue(blob);
                 this.setHasInCloud(true);
@@ -502,7 +532,18 @@
         });
     }
 
-    async asyncBlobValue (forceRetry = false) {
+    /**
+     * @description The blob bytes for this node, looked up through the full
+     * chain: in-memory value → local blob pool → cloud pull by hash.
+     * @param {Object} [options] - Lookup options.
+     * @param {Boolean} [options.force] - Bypass the negative caches (this
+     * class's static missing-hash map and the storage service's own) and
+     * re-probe the cloud. For a caller that KNOWS the hash should be fetchable.
+     * @returns {Promise<Blob|null>} The blob, or null when unavailable.
+     * @category Blob Storage
+     */
+    async asyncBlobValue (options = {}) {
+        const forceRetry = options.force === true;
         const blob = await this.blobValue();
         if (blob) {
             return blob;

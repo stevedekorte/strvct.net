@@ -24,6 +24,19 @@
  * that would leak presentation into the model. Conformance is a stable
  * capability declared once via addProtocol(); it must not depend on mutable
  * runtime state that flips between syncs.
+ *
+ * OPTIONAL EXTENSION — onProgressiveImageFetchStalled(attempt, hash):
+ * a consumer that cannot resolve the final image, though the node asserts one
+ * exists, tells the node so (after a few attempts, then periodically while it
+ * keeps failing). The node owns the remedy — clearing a negative cache, asking
+ * a multiplayer host to re-publish — because only it knows where its bytes
+ * come from; the view knows only the symptom. It is NOT declared as a protocol
+ * method below: addProtocol() throws on any declared method an adopter is
+ * missing, which would make this mandatory, and a node with no recovery to
+ * offer must stay conformant. Consumers therefore probe for it with a
+ * `typeof node.onProgressiveImageFetchStalled === "function"` check.
+ * @param {Number} attempt - 1-based fetch attempt that just failed.
+ * @param {String|null} hash - The final image's content hash, when known.
  */
 
 (class SvProgressiveImageSourceProtocol extends Protocol {

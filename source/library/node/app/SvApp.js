@@ -797,9 +797,17 @@
         return await this.cloudStorageService().asyncPublicUrlForBlob(blob);
     }
 
-    async asyncBlobForHash (hash) {
-        const arrayBuffer = await this.cloudStorageService().asyncBlobForHash(hash);
-        return arrayBuffer;
+    /**
+     * @description Fetches the blob for a content hash from cloud storage.
+     * @param {String} hash - The hex sha256 content hash.
+     * @param {Object} [options] - Passed through to the cloud storage service
+     * (e.g. `{ force: true }` to bypass its negative cache for a hash the
+     * caller knows should now be fetchable).
+     * @returns {Promise<Blob|null>} The blob, or null when known-missing.
+     * @category Cloud Storage
+     */
+    async asyncBlobForHash (hash, options) {
+        return await this.cloudStorageService().asyncBlobForHash(hash, options);
     }
 
 }.initThisClass());
