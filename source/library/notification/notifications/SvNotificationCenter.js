@@ -199,7 +199,8 @@
          */
         {
             const slot = this.newSlot("senderIndex", null);
-            slot.setSlotType("Map");
+            slot.setSlotType("WeakMap");
+            slot.setDescription("sender → Set of the observations naming it; weak so an index entry never keeps a sender alive");
         }
 
         /**
@@ -210,6 +211,7 @@
         {
             const slot = this.newSlot("nameIndex", null);
             slot.setSlotType("Map");
+            slot.setDescription("note name → Set of the observations naming it");
         }
 
         /**
@@ -220,6 +222,7 @@
         {
             const slot = this.newSlot("nullSenderMatchSet", null);
             slot.setSlotType("Set");
+            slot.setDescription("the observations with no sender (they match every sender)");
         }
 
         /**
@@ -230,6 +233,7 @@
         {
             const slot = this.newSlot("nullNameMatchSet", null);
             slot.setSlotType("Set");
+            slot.setDescription("the observations with no name (they match every name)");
         }
     }
 
@@ -245,6 +249,7 @@
         this.setObservationsMap(new Map());
         this.setNotifications([]);
         this.setNoteSet(new Set());
+        this.resetIndexes();
     }
 
     /**
@@ -318,6 +323,7 @@
     addObservation (obs) {
         if (!this.hasObservation(obs)) {
             this.observationsMap().set(obs.obsHash(), obs);
+            this.indexObservation(obs);
             /*
             if (obs.sender() !== null && obs.sender().svType() === "SvFirestoreDatabaseService") {
                 console.log("----------- " + obs.observer().svTypeId() + " now observing " + obs.sender().svTypeId());
@@ -394,7 +400,9 @@
      * @returns {SvNotificationCenter} the notification center
      */
     removeObservation (anObservation) {
-        this.observationsMap().delete(anObservation.obsHash());
+        if (this.observationsMap().delete(anObservation.obsHash())) {
+            this.unindexObservation(anObservation);
+        }
         /*
         const filtered = this.observations().filter(obs => !obs.isEqual(anObservation))
         this.setObservations(filtered)
@@ -408,7 +416,87 @@
      * @returns {SvNotificationCenter} the notification center
      */
     removeObserver (anObserver) {
-        this.observationsMap().selectInPlaceKV((key, obs) => obs.observer() !== anObserver);
+        this.observations().forEach((obs) => {
+            if (obs.observer() === anObserver) {
+                this.removeObservation(obs);
+            }
+        });
+        return this;
+    }
+
+    // --- observation indexes ---
+    //
+    // Matching a note against the observations used to rebuild two indexes over
+    // every observation on every queue drain and copy whole index sets per post:
+    // with ~50,000 live observations (a large catalog) that was seconds of main
+    // thread per drain. The indexes are now maintained as observations come and
+    // go, and a post walks the smaller side of each intersection.
+
+    resetIndexes () {
+        this.setSenderIndex(new WeakMap());
+        this.setNameIndex(new Map());
+        this.setNullSenderMatchSet(new Set());
+        this.setNullNameMatchSet(new Set());
+        return this;
+    }
+
+    /**
+     * @description The set of observations with this sender, created on demand.
+     * A sender is an object (an observation holds it by WeakRef), so it keys the
+     * weak index.
+     * @category Indexing
+     * @private
+     */
+    senderSetFor (sender, createIfAbsent) {
+        if (Type.isNullOrUndefined(sender)) {
+            return this.nullSenderMatchSet();
+        }
+        let set = this.senderIndex().get(sender);
+        if (!set && createIfAbsent) {
+            set = new Set();
+            this.senderIndex().set(sender, set);
+        }
+        return set || null;
+    }
+
+    nameSetFor (name, createIfAbsent) {
+        if (Type.isNullOrUndefined(name)) {
+            return this.nullNameMatchSet();
+        }
+        let set = this.nameIndex().get(name);
+        if (!set && createIfAbsent) {
+            set = new Set();
+            this.nameIndex().set(name, set);
+        }
+        return set || null;
+    }
+
+    indexObservation (obs) {
+        this.senderSetFor(obs.sender(), true).add(obs);
+        this.nameSetFor(obs.name(), true).add(obs);
+        return this;
+    }
+
+    /**
+     * @description Removes an observation from the indexes. A sender that was
+     * collected derefs to nothing: its entry in the weak sender index died with
+     * it, so there is nothing to remove there.
+     * @category Indexing
+     * @private
+     */
+    unindexObservation (obs) {
+        const senderSet = this.senderSetFor(obs.sender(), false);
+        if (senderSet) {
+            senderSet.delete(obs);
+        }
+        const name = obs.name();
+        const nameSet = this.nameSetFor(name, false);
+        if (nameSet) {
+            nameSet.delete(obs);
+            if (nameSet.size === 0 && !Type.isNullOrUndefined(name)) {
+                this.nameIndex().delete(name);
+            }
+        }
         return this;
     }
 
@@ -501,7 +589,6 @@
 
         if (!this.isProcessing()) {
             this.setIsProcessing(true);
-            this.calcIndexes();
             //console.log(this.logPrefix(), "processPostQueue " + this.notifications().length);
             const notes = this.notifications();
             this.setNotifications([]);
@@ -547,23 +634,16 @@
     }
 
     /**
-     * @description calculates the indexes
+     * @description Rebuilds the indexes from the observations map. The indexes
+     * are maintained incrementally; this is the recovery path (and what a test
+     * compares against).
      * @returns {SvNotificationCenter} the notification center
+     * @category Indexing
      */
     calcIndexes () {
-        const senderIndex = this.observationsMap().indexedByMethod("sender");
-        this.setSenderIndex(senderIndex);
-
-        const nameIndex = this.observationsMap().indexedByMethod("name");
-        this.setNameIndex(nameIndex);
-
-        const emptySet = SvImmutableSet.emptySet();
-
-        const nullSenderMatchSet = this.senderIndex().get(null) || emptySet;
-        this.setNullSenderMatchSet(nullSenderMatchSet);
-
-        const nullNameMatchSet = this.nameIndex().get(null) || emptySet;
-        this.setNullNameMatchSet(nullNameMatchSet);
+        this.resetIndexes();
+        this.observations().forEach(obs => this.indexObservation(obs));
+        return this;
     }
 
     /**
@@ -608,24 +688,45 @@
     }
 
     /**
-     * @description returns the observations matching the notification
+     * @description The observations matching a note: those naming its sender or
+     * no sender, and its name or no name. Four intersections of indexed sets,
+     * each walked from its smaller side — the sets are never copied. Delivery
+     * order: sender-agnostic observers first, then the sender's own, as before.
      * @param {SvNotification} note the notification to match
-     * @returns {SvImmutableSet} the observations matching the notification
+     * @returns {Set} the matching observations
+     * @category Posting
      */
     observationsMatchingNotification (note) {
-        // use our observation indexes for fast matching with the notification
-        // IMPORTANT: assumes calcIndexes() has been called before modifying observations
-
-        const emptySet = SvImmutableSet.emptySet();
-
-        const senderMatchSet = this.senderIndex().get(note.sender()) || emptySet;
-        const nameMatchSet = this.nameIndex().get(note.name()) || emptySet;
-
-        const fullSenderMatchSet = this.nullSenderMatchSet().union(senderMatchSet);
-        const fullNameMatchSet = this.nullNameMatchSet().union(nameMatchSet);
-
-        const matching = fullSenderMatchSet.intersection(fullNameMatchSet);
+        const senderSet = this.senderSetFor(note.sender(), false);
+        const nameSet = this.nameSetFor(note.name(), false);
+        const nullSenders = this.nullSenderMatchSet();
+        const nullNames = this.nullNameMatchSet();
+        const matching = new Set();
+        this.collectIntersection(nullSenders, nullNames, matching);
+        this.collectIntersection(nullSenders, nameSet, matching);
+        if (senderSet !== nullSenders) {
+            this.collectIntersection(senderSet, nullNames, matching);
+            this.collectIntersection(senderSet, nameSet, matching);
+        }
         return matching;
+    }
+
+    collectIntersection (a, b, into) {
+        if (!a || !b || a.size === 0 || b.size === 0) {
+            return into;
+        }
+        if (a === b) {
+            a.forEach(obs => into.add(obs));
+            return into;
+        }
+        const small = a.size <= b.size ? a : b;
+        const large = small === a ? b : a;
+        small.forEach((obs) => {
+            if (large.has(obs)) {
+                into.add(obs);
+            }
+        });
+        return into;
     }
 
     /*
