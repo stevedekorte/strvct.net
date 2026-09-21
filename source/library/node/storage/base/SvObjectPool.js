@@ -503,6 +503,53 @@
         return this;
     }
 
+    // --- transactions (Plans/Client Transactions, M1) ---
+
+    /**
+     * @description Runs fn inside a transaction on this pool: fn is synchronous;
+     * commit when it returns, rollback and rethrow when it throws. Nested on the
+     * same pool it joins the open transaction; an inner throw poisons the whole
+     * transaction even when an outer callback catches it.
+     * @param {Function} fn
+     * @returns {*} fn's result
+     * @category Transactions
+     */
+    transaction (fn) {
+        assert(this.storingPids() === null, "a transaction cannot begin during a store pass");
+        const outer = SvTransactionContext.current();
+        if (outer) {
+            assert(outer.pool() === this, "a nested transaction must be on the same pool");
+            try {
+                return fn();
+            } catch (error) {
+                outer.setIsRollbackOnly(true);
+                throw error;
+            }
+        }
+        const transaction = SvTransaction.clone().setPool(this).begin();
+        SvTransactionContext.push(transaction);
+        let result;
+        try {
+            result = fn();
+        } catch (error) {
+            SvTransactionContext.pop(transaction);
+            transaction.rollback();
+            throw error;
+        }
+        SvTransactionContext.pop(transaction);
+        if (transaction.isRollbackOnly()) {
+            transaction.rollback();
+            throw new Error("transaction poisoned by an inner failure — rolled back");
+        }
+        transaction.commit();
+        return result;
+    }
+
+    currentTransaction () {
+        const transaction = SvTransactionContext.current();
+        return (transaction && transaction.pool() === this) ? transaction : null;
+    }
+
     // --- BlobString: spilled text (Plans/Record Store §5) ---
 
     /**
@@ -1041,6 +1088,7 @@
             anObject.addMutationObserver(this);
             this.activeObjects().set(anObject.puuid(), anObject);
             SvObjectPool.objectPoolRegistry().set(anObject, this);
+            SvTransactionContext.noteEnrolled(anObject, this);
         }
         return true;
     }
@@ -1345,6 +1393,11 @@
         if (!this.isOpen()) {
             return;
         }
+        const transaction = this.currentTransaction();
+        if (transaction) {
+            transaction.setWasStoreDeferred(true); // the guard is at execution: commit reschedules, rollback writes nothing
+            return;
+        }
         this.logDebug("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
 
         if (this.hasDirtyObjects()) {
@@ -1593,6 +1646,9 @@
             obj = aClass.instanceFromRecordInStore(aRecord, this);
         } finally {
             this._loadingRecordStack.pop();
+        }
+        if (obj) {
+            SvTransactionContext.noteLoaded(obj); // loaded, not allocated: a rollback never retires it
         }
         if (obj === null) {
             // maybe the class shouldStore is false?
@@ -2119,7 +2175,7 @@
      * @returns {Object}
      */
     flushIfNeeded () {
-        if (this.hasDirtyObjects()) {
+        if (this.hasDirtyObjects() && !this.currentTransaction()) {
             this.storeDirtyObjects();
             assert(!this.hasDirtyObjects());
         }

@@ -65,7 +65,15 @@
         // refuse a batch with a definite error BEFORE applying anything —
         // nothing is applied, so nothing needs undoing.
         this.preflightJsonPatches(patches);
+        const pool = SvObjectPool.poolOfObject(this);
+        if (pool && SvTransactionContext.patchesUseTransactions()) {
+            // Client Transactions: the batch applies whole or not at all
+            return pool.transaction(() => this.applyJsonPatchesNow(patches));
+        }
+        return this.applyJsonPatchesNow(patches);
+    }
 
+    applyJsonPatchesNow (patches) {
         let failedIndex = 0;
         try {
             for (let i = 0; i < patches.length; i++) {
@@ -83,7 +91,9 @@
                 // effects of earlier add/copy ops (seen live: a failed
                 // mid-batch op after an NPC-instantiating copy).
                 errorDetails.failedOpIndex = failedIndex;
-                errorDetails.stateNote = "NOT atomic: the " + failedIndex + " operation(s) BEFORE the failing one were applied and remain in effect; the failing operation and all AFTER it were NOT applied. When correcting, re-send ONLY the fixed failing operation and the ones after it — re-sending an earlier add/copy would duplicate its effect.";
+                errorDetails.stateNote = SvTransactionContext.current()
+                    ? "ROLLED BACK: this batch applied nothing (every earlier operation was undone). Fix the failing operation and re-send the WHOLE batch."
+                    : "NOT atomic: the " + failedIndex + " operation(s) BEFORE the failing one were applied and remain in effect; the failing operation and all AFTER it were NOT applied. When correcting, re-send ONLY the fixed failing operation and the ones after it — re-sending an earlier add/copy would duplicate its effect.";
                 const enhancedError = new Error(`JSON Patch failed: ${JSON.stringify(errorDetails, null, 2)}`);
                 enhancedError.patchError = errorDetails;
                 throw enhancedError;

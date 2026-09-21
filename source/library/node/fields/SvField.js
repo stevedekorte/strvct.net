@@ -381,6 +381,9 @@
      * @param {Object} newValue - The new target.
      */
     didUpdateSlotTarget (oldValue, newValue) {
+        if (oldValue && newValue && oldValue !== newValue) {
+            SvTransactionContext.assertNoneOpen("rebinding an observed field target"); // the observation is not raw-restorable
+        }
         if (oldValue) {
             const obs = this.didUpdateNodeObs();
             if (obs) {

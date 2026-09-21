@@ -386,6 +386,9 @@
             this.subnodes(); // materialize the stored array so copyFrom merges into it
         }
         if (this._subnodes === null) {
+            if (typeof SvTransactionContext !== "undefined") {
+                SvTransactionContext.snapshotObjectIfNeeded(this);
+            }
             this._subnodes = subnodes;
         } else {
             this._subnodes.copyFrom(subnodes);
@@ -569,6 +572,9 @@
             }
 
             const oldNode = this._parentNode;
+            if (typeof SvTransactionContext !== "undefined") {
+                SvTransactionContext.snapshotObjectIfNeeded(this); // parentNode is assigned directly, not through the setter
+            }
             this._parentNode = aNode;
             this.didUpdateSlotParentNode(oldNode, aNode);
 
@@ -1211,6 +1217,9 @@
      * @description Handle the reordering of subnodes.
      */
     onDidReorderSubnodes () {
+        if (!this._subnodes) {
+            return this; // no array yet (never accessed, or restored to its pre-access state)
+        }
         if (this.slotIsPendingMaterialization("subnodes")) {
             // A stale action from before the load parked the stub (init created
             // a default array, scheduling this; loadFromRecord replaced it).

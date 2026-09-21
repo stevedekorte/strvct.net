@@ -356,6 +356,7 @@
         // via the optional cloudDeleteDescriptor() hook.
         const isDeletion = aSubnode && typeof aSubnode.isBeingDeleted === "function" && aSubnode.isBeingDeleted();
         if (isDeletion) {
+            SvTransactionContext.assertNoneOpen("queuing a cloud delete"); // an effect a rollback cannot undo
             this.addPendingCloudDelete(this.cloudDeleteDescriptorForChild(aSubnode));
         }
         return super.removeSubnode(aSubnode);

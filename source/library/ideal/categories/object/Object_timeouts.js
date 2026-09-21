@@ -73,6 +73,9 @@
         }, msDelay);
         tidInfo[0] = optionalName ? optionalName : tid;
         tidInfo[1] = tid;
+        if (typeof SvTransactionContext !== "undefined") {
+            SvTransactionContext.noteTimeout(this, tid); // cleared if the transaction rolls back
+        }
         if (!tids.has(tidInfo[0])) {
             tids.set(tidInfo[0], tid);
         } else {
@@ -196,6 +199,9 @@
         }, msDelay);
         tidInfo[0] = optionalName ? optionalName : tid;
         tidInfo[1] = tid;
+        if (typeof SvTransactionContext !== "undefined") {
+            SvTransactionContext.noteTimeout(this, tid); // cleared if the transaction rolls back
+        }
         if (!tids.has(tidInfo[0])) {
             tids.set(tidInfo[0], tid);
         } else {

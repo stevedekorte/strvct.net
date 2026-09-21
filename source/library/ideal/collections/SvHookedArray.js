@@ -44,6 +44,7 @@
         // and use hooked methods instead of operators for those
         return new Set([
             "copyWithin",
+            "fill",
             "pop",
             "push",
             "reverse",

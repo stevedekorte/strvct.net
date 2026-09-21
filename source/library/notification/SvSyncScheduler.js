@@ -252,6 +252,9 @@
             }
 
             this.actions().atIfAbsentPut(newAction.actionsKey(), newAction);
+            if (typeof SvTransactionContext !== "undefined") {
+                SvTransactionContext.noteScheduledAction(newAction); // cancelled if the transaction rolls back
+            }
 	    	this.setTimeoutIfNeeded();
             return true;
         }

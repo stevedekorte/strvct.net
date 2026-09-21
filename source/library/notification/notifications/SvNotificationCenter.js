@@ -442,6 +442,9 @@
             */
             this.noteSet().add(note);
             this.notifications().push(note);
+            if (typeof SvTransactionContext !== "undefined") {
+                SvTransactionContext.notePostedNote(note); // removed from the queue if the transaction rolls back
+            }
             SvSyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1);
         }
         return this;
@@ -451,6 +454,21 @@
      * @description creates a new notification
      * @returns {SvNotification} the new notification
      */
+    /**
+     * @description Drops queued notes that have not been delivered yet (a rolled-back
+     * transaction's notes would announce events that never happened).
+     * @param {Set} noteSet
+     * @category Posting
+     */
+    removeQueuedNotes (noteSet) {
+        if (noteSet.size === 0) {
+            return this;
+        }
+        this.setNotifications(this.notifications().filter(note => !noteSet.has(note)));
+        noteSet.forEach(note => this.noteSet().delete(note));
+        return this;
+    }
+
     newNote () {
         return SvNotification.clone().setCenter(this);
     }

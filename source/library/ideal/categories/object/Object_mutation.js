@@ -129,14 +129,9 @@
      * @category Mutation
      */
     willMutate () {
-        /*
-        const mos = this._mutationObservers;
-        if (mos) {
-            mos.forEach(v => {
-                v.onWillMutateObject(this);
-            })
+        if (typeof SvTransactionContext !== "undefined") {
+            SvTransactionContext.snapshotCollectionIfNeeded(this); // Client Transactions: first-touch capture of a collection
         }
-        */
     }
 
     /**

@@ -56,6 +56,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("methodForOnFinalized", null);
         this.simpleNewSlot("methodForShouldStoreSlot", null);
         this.simpleNewSlot("methodForFailedLazyLoad", null); // for lazy slots — see onInstanceFailedLazyLoad
+        this.simpleNewSlot("isTransactional", true); // Client Transactions: captured on first touch inside a transaction; false for derived caches and view bookkeeping
         this.simpleNewSlot("isBlobString", false); // Record Store §5: a String slot whose long values spill to a text blob at serialization (no cap)
         //this.simpleNewSlot("methodNameCache", null)
 
@@ -1176,6 +1177,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const proto = this.finalInitProtoClass() || this._initProto;
         assert(proto, "lazy JSON slot '" + this.name() + "' has no proto to materialize");
         const newValue = proto.clone();
+        if (typeof SvTransactionContext !== "undefined") {
+            SvTransactionContext.noteLoaded(newValue); // a load, not an allocation: never retired by a rollback
+        }
         if (Type.isBoolean(this.isVisible()) && Type.isFunction(newValue.setIsVisible)) {
             newValue.setIsVisible(this.isVisible());
         }
