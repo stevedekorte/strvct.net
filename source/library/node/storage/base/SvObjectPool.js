@@ -2049,20 +2049,57 @@
             const key = stored.get(siblings[i].puuid());
             if (key) { upcoming = key; }
         }
+        // The array is the truth of the order. A stored key that does not
+        // follow the previous element's key (the collection was re-sorted, or
+        // an earlier build placed elements out of order) is re-keyed like an
+        // unplaced element, and its row is rewritten in this batch — never an
+        // assertion in the store pass, which would lose the save.
         const pending = new Map();
         let previous = null;
         siblings.forEach((sibling, i) => {
             const key = stored.get(sibling.puuid());
-            if (key) {
+            if (key && (previous === null || key > previous)) {
                 previous = key;
                 return;
             }
-            const assigned = SvOrderKey.keyBetween(previous, nextStoredKey[i]);
+            let upper = nextStoredKey[i];
+            if (upper !== null && previous !== null && upper <= previous) {
+                upper = this.firstStoredKeyAfter(siblings, i, stored, previous); // rare: the misordered case
+            }
+            const assigned = SvOrderKey.keyBetween(previous, upper);
             pending.set(sibling.puuid(), assigned);
+            if (key) {
+                this.rekeyPlacedRow(sibling.puuid(), assigned);
+            }
             previous = assigned;
         });
         this._pendingPlacements.set(parent, pending);
         return pending;
+    }
+
+    firstStoredKeyAfter (siblings, index, stored, previous) {
+        for (let j = index + 1; j < siblings.length; j++) {
+            const key = stored.get(siblings[j].puuid());
+            if (key && key > previous) {
+                return key;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @description Rewrites an already-placed element's row with a new order key
+     * (inside the store pass's batch), so the store's order follows the array's.
+     * @category Storing
+     */
+    rekeyPlacedRow (pid, orderKey) {
+        const store = this.recordStore();
+        const row = store.rowForKey(this.poolId(), pid);
+        if (row) {
+            row.orderKey = orderKey;
+            store.putRowInBatch(row);
+        }
+        return this;
     }
 
     orderKeyForPid (pid) {

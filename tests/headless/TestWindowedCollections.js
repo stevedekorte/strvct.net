@@ -234,9 +234,34 @@ async function main () {
         chat2.prepareToAccess(); chat2.loadOlderWindow(10);
     }
 
+    console.log("\nThe array is the truth of the order: a re-sorted collection re-keys its rows instead of asserting");
+    {
+        const array = chat2.subnodes();
+        const first = array.first();
+        array.unhooked_splice(0, 1); array.unhooked_splice(1, 0, first); // [m2, m1, m3, …] — as a re-sort would leave it
+        const inserted = newMessage("m-between");
+        chat2.addSubnodeAt(inserted, 2); // between m1 (now out of key order) and m3
+        let threw = null;
+        try { await pool.commitStoreDirtyObjects(); } catch (e) { threw = e; }
+        check(threw === null, "the store pass survives an array order that disagrees with the stored keys" + (threw ? " (threw: " + threw.message + ")" : ""));
+        const keysNow = chat2.subnodes().map(m => store.rowForKey(pool.poolId(), m.puuid()).orderKey);
+        check(keysNow.every((k, i) => i === 0 || keysNow[i - 1] < k), "every row's key now follows the array order (" + keysNow.join(",") + ")");
+        await pool.promiseClose();
+        await new Promise(resolve => setTimeout(resolve, 100)); // the blob pool's LevelDB releases its lock after close returns
+        store.pools().clear();
+        pool = SvPersistentObjectPool.clone();
+        pool.setName("TestWindowedCollections");
+        pool.setRecordStore(store);
+        await pool.promiseOpen();
+        session2 = pool.rootOrIfAbsentFromClosure(() => { throw new Error("root should exist"); });
+        chat2 = session2.chat();
+        chat2.prepareToAccess(); chat2.loadOlderWindow(20);
+        check(texts(chat2) === "m3,m2,m-between,m4,m5,m6,m7,m8", "a reopen loads the re-keyed order (" + texts(chat2) + ")"); // m1 was removed earlier; m2 was moved after m3
+    }
+
     console.log("\nThe pool.json shape carries placements");
     const json = pool.asJson();
-    check(typeof json._placements === "string" && Object.values(JSON.parse(json._placements)).filter(p => p[0] === chat2.puuid()).length === 7, "asJson holds the chat's seven placements");
+    check(typeof json._placements === "string" && Object.values(JSON.parse(json._placements)).filter(p => p[0] === chat2.puuid()).length === 8, "asJson holds the chat's eight placements");
     const memory = SvObjectPool.fromCloudJson(json);
     const chat3 = memory.rootObject().chat();
     chat3.prepareToAccess();
@@ -246,7 +271,7 @@ async function main () {
     const imported = await store2.asyncImportPoolJson(json);
     const chat4 = imported.rootObject().chat();
     chat4.loadLatestWindow(); chat4.loadOlderWindow(10);
-    check(texts(chat4) === "m2,m3,m4,m5,m6,m7,m8" && chat4.subnodeCount() === 7, "an imported pool has every element placed (" + texts(chat4) + ")");
+    check(texts(chat4) === "m3,m2,m-between,m4,m5,m6,m7,m8" && chat4.subnodeCount() === 8, "an imported pool has every element placed, in the re-keyed order (" + texts(chat4) + ")");
 
     console.log("\nSeveral elements added in one tick, before any store pass, keep their order");
     {
