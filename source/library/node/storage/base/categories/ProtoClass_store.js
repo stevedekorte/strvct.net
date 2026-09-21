@@ -153,6 +153,17 @@
             const v = entry[1];
 
             const slot = this.thisPrototype().slotNamed(k);
+
+            if (k === "subnodes" && slot && this.subnodesAreWindowed && this.subnodesAreWindowed()) {
+                // A record written before this collection was windowed still
+                // carries its inline element list. Load it whole (the old
+                // shape), and re-save: the next store pass writes the record
+                // without the ref and enrolls the elements as placed rows —
+                // the same one-time re-save the stale-slot path below does.
+                slot.onInstanceSetValue(this, aStore.unrefValue(v));
+                SvObjectPool.forceAddDirtyObjectToAllPools(this);
+                return;
+            }
             // TODO: replace with slot.onInstanceSetValueFromEntry(this, entry, aStore)
 
             if (slot) {

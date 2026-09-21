@@ -135,8 +135,8 @@ async function main () {
     pool.setName("TestWindowedCollections");
     pool.setRecordStore(store);
     await pool.promiseOpen();
-    const session2 = pool.rootOrIfAbsentFromClosure(() => { throw new Error("root should exist"); });
-    const chat2 = session2.chat();
+    let session2 = pool.rootOrIfAbsentFromClosure(() => { throw new Error("root should exist"); });
+    let chat2 = session2.chat();
     check(chat2._subnodes === null || chat2._subnodes.length === 0, "the chat comes up with no elements loaded");
     check(chat2.subnodeCount() === 7 && chat2.hasUnloadedSubnodes(), "the store knows the count and the node knows it has unloaded elements");
     chat2.prepareToAccess(); // what a view does before showing a node: the newest window (3)
@@ -192,6 +192,46 @@ async function main () {
         check(conv2.messages().length === 2 && conv2.messages().every(m => m.conversation() === conv2), "the newest window's messages know their conversation");
         conv2.loadOlderWindow(5);
         check(conv2.messages().length === 3 && conv2.messages().every(m => m.conversation() === conv2), "…and so do an older window's");
+    }
+
+    console.log("\nA collection stored before it was windowed (an inline subnodes ref) still loads, and the next store pass windows it");
+    {
+        const SvStorableNode = SvGlobals.get("SvStorableNode");
+        (class TestLegacyChat extends SvStorableNode {
+            initPrototype () { this.setShouldStoreSubnodes(true); } // NOT windowed yet: stores its subnodes inline, as the old build did
+            windowSize () { return 2; }
+        }).initThisClass();
+        const legacy = SvGlobals.get("TestLegacyChat").clone();
+        session2.setConversation(legacy);
+        ["l1", "l2", "l3"].forEach(t => legacy.addSubnode(newMessage(t)));
+        await pool.commitStoreDirtyObjects();
+        check(pool.recordForPid(legacy.puuid()).entries.some(e => e[0] === "subnodes"), "the legacy record carries an inline subnodes ref");
+        await pool.promiseClose();
+        SvGlobals.get("TestLegacyChat").prototype.setSubnodesAreWindowed(true); // the new build: the class is windowed now
+        store.pools().clear();
+        pool = SvPersistentObjectPool.clone();
+        pool.setName("TestWindowedCollections");
+        pool.setRecordStore(store);
+        await pool.promiseOpen();
+        const legacy2 = pool.rootOrIfAbsentFromClosure(() => { throw new Error("root should exist"); }).conversation();
+        legacy2.prepareToAccess();
+        check(texts(legacy2) === "l1,l2,l3", "the old inline list loads whole (" + texts(legacy2) + ")");
+        legacy2.addSubnode(newMessage("l4"));
+        await pool.commitStoreDirtyObjects();
+        check(!pool.recordForPid(legacy2.puuid()).entries.some(e => e[0] === "subnodes") && legacy2.subnodeCount() === 4, "after a store pass the record has no subnodes ref and every element is a placed row (" + legacy2.subnodeCount() + ")");
+        await pool.promiseClose();
+        await new Promise(resolve => setTimeout(resolve, 100)); // the blob pool's LevelDB releases its lock after close returns
+        store.pools().clear();
+        pool = SvPersistentObjectPool.clone();
+        pool.setName("TestWindowedCollections");
+        pool.setRecordStore(store);
+        await pool.promiseOpen();
+        const legacy3 = pool.rootOrIfAbsentFromClosure(() => { throw new Error("root should exist"); }).conversation();
+        legacy3.prepareToAccess();
+        check(texts(legacy3) === "l3,l4" && legacy3.loadOlderWindow(10) === 2 && texts(legacy3) === "l1,l2,l3,l4", "…and it reopens as a windowed collection (" + texts(legacy3) + ")");
+        session2 = pool.rootOrIfAbsentFromClosure(() => { throw new Error("root should exist"); });
+        chat2 = session2.chat();
+        chat2.prepareToAccess(); chat2.loadOlderWindow(10);
     }
 
     console.log("\nThe pool.json shape carries placements");
