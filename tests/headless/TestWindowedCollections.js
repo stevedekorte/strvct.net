@@ -176,6 +176,20 @@ async function main () {
     const chat4 = imported.rootObject().chat();
     chat4.loadLatestWindow(); chat4.loadOlderWindow(10);
     check(texts(chat4) === "m2,m3,m4,m5,m6,m7,m8" && chat4.subnodeCount() === 7, "an imported pool has every element placed (" + texts(chat4) + ")");
+
+    console.log("\nSeveral elements added in one tick, before any store pass, keep their order");
+    {
+        const chatFresh = SvGlobals.get("TestWinChat").clone(); // a new chat under a stored root: the store holds none of its elements yet
+        session2.setChat(chatFresh);
+        ["a1", "a2", "a3"].forEach(t => chatFresh.addSubnode(newMessage(t)));
+        check(texts(chatFresh) === "a1,a2,a3", "three adds in one tick stay in insertion order (" + texts(chatFresh) + ")");
+        await pool.commitStoreDirtyObjects();
+        chatFresh.addSubnode(newMessage("a4")); chatFresh.addSubnode(newMessage("a5"));
+        check(texts(chatFresh) === "a1,a2,a3,a4,a5", "…and after a store pass, with the store's count behind the array again (" + texts(chatFresh) + ")");
+        session2.setChat(chat2);
+        await pool.commitStoreDirtyObjects();
+    }
+
     await pool.promiseClose();
 }
 

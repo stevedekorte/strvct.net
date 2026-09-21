@@ -831,6 +831,19 @@
     }
 
     /**
+     * @description The index a new subnode is appended at: the loaded array's
+     * length. Never subnodeCount() — for a windowed collection that is the
+     * store's count, which lags the array until the store pass runs (and is
+     * larger than it when only a window is loaded), so a second element added
+     * in the same tick would land before the first.
+     * @returns {Number}
+     * @category Node Structure
+     */
+    appendIndex () {
+        return this.subnodes().length;
+    }
+
+    /**
 
      * @description Add a subnode to this instance without any checks.
      * @param {SvNode} aSubnode - The subnode to add.
@@ -838,7 +851,7 @@
      */
     justAddSubnode (aSubnode) {
         assert(!this.hasSubnode(aSubnode));
-        return this.justAddSubnodeAt(aSubnode, this.subnodeCount());
+        return this.justAddSubnodeAt(aSubnode, this.appendIndex());
     }
 
     /**
@@ -954,7 +967,7 @@
      */
     addSubnode (aSubnode) {
         assert(!this.hasSubnode(aSubnode), "addSubnode: subnode already exists");
-        return this.addSubnodeAt(aSubnode, this.subnodeCount());
+        return this.addSubnodeAt(aSubnode, this.appendIndex());
     }
 
     /**
@@ -1817,7 +1830,7 @@
      * @returns {SvNode|null} The added subnode, or null if no subnode was added.
      */
     justAdd () {
-        return this.justAddAt(this.subnodeCount());
+        return this.justAddAt(this.appendIndex());
     }
 
     /**
@@ -1842,7 +1855,7 @@
      */
     add (noArg) {
         assert(noArg === undefined);
-        return this.addAt(this.subnodeCount());
+        return this.addAt(this.appendIndex());
     }
 
     /**
