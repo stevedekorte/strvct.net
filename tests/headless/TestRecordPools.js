@@ -190,6 +190,16 @@ async function main () {
     await poolA2.promiseCollect();
     check(!store.hasRow(docA2.puuid(), "stray-1") && poolA2.hasRecordForPid(docA2.subnodes().first().puuid()), "an unreachable row is swept from its pool; reachable ones stay");
     check(home.count() === countBefore, "the home pool was not touched");
+    {
+        const hash = "ab".repeat(32); // a blob referenced only from a child pool's row
+        const noteRow = SvRecordRow.newRow({ poolId: docA2.puuid(), objectId: "blob-holder", payloadJson: JSON.stringify({ type: "TestPoolNote", entries: [["text", hash]] }) });
+        await store.asyncPut([noteRow]);
+        const wasOpen = SvObjectPool.openPools().has(poolA2);
+        SvObjectPool.openPools().delete(poolA2); // the child pool is not open (a document not yet imported at boot)
+        check(home.allBlobHashesSet().has(hash), "the home pool's blob references include a hash held only by a closed child pool's row");
+        if (wasOpen) { SvObjectPool.openPools().add(poolA2); }
+        await store.asyncDelete([{ poolId: docA2.puuid(), objectId: "blob-holder" }]);
+    }
 
     console.log("\nMoving a document between folders re-places its pool");
     const other = root2.otherFolder();

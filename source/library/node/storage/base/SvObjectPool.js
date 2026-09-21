@@ -2678,17 +2678,35 @@
     }
 
     allBlobHashesSet () {
-        // Collect blob hashes from ALL open pools, not just this one: pools
-        // share the SvBlobPool, so every pool's references count.
+        // Every pool in the local store counts, open or not: pools share the
+        // blob store, and a session, character or catalog document that is not
+        // open at boot still owns its images. (Walking only the open pools
+        // evicted every catalog image on the first boot after the records
+        // cutover, before the child pools had been imported — a one-time
+        // re-download of the whole catalog.)
         //
-        // Walks RECORDS, not instances (materializing the store to ask each
+        // Walks ROWS, not instances (materializing the store to ask each
         // object would defeat slot lazy loading). Blob hashes are hex sha256
         // strings, so scanning record JSON for 64-hex tokens is a conservative
-        // superset — a blob can never be wrongly deleted. ACTIVE instances are
-        // still asked directly, which covers hashes added since the last save.
+        // superset — a blob can never be wrongly deleted. ACTIVE instances of
+        // the open pools are still asked directly, which covers hashes added
+        // since the last save.
         const hashesSet = new Set();
-        SvObjectPool.openPools().forEach(pool => {
-            hashesSet.addAll(pool.localBlobHashesSet());
+        const hexHashRegex = /[0-9a-f]{64}/g;
+        this.recordStore().allRows().forEach((row) => {
+            if (!row.isDeleted && row.payloadJson) {
+                const matches = row.payloadJson.match(hexHashRegex);
+                if (matches) {
+                    matches.forEach(h => hashesSet.add(h));
+                }
+            }
+        });
+        SvObjectPool.openPools().forEach((pool) => {
+            pool.activeObjects().forEachKV((pid, obj) => {
+                if (obj && obj.referencedBlobHashesSet) {
+                    hashesSet.addAll(obj.referencedBlobHashesSet());
+                }
+            });
         });
         return hashesSet;
     }
