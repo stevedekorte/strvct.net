@@ -1582,6 +1582,7 @@
         }
 
         this.setStoringPids(null);
+        this._pendingPlacements = null;
         this._midStoreDirtyStacks = null;
 
         // pids that got through this pass WITHOUT re-deferring have settled —
@@ -2021,19 +2022,47 @@
         if (existing && existing.parentId === parent.puuid() && existing.orderKey) {
             return { parentId: existing.parentId, orderKey: existing.orderKey };
         }
+        const key = this.pendingPlacementsFor(parent).get(obj.puuid()) || SvOrderKey.keyBetween(null, null);
+        return { parentId: parent.puuid(), orderKey: key };
+    }
+
+    /**
+     * @description Keys for every not-yet-placed element of a windowed node,
+     * computed in one pass over its loaded elements (each between the nearest
+     * placed neighbours) the first time the store pass needs one — a
+     * 5,000-message append is O(n), not a walk per element. Cleared with the pass.
+     * @category Storing
+     */
+    pendingPlacementsFor (parent) {
+        if (!this._pendingPlacements) {
+            this._pendingPlacements = new Map();
+        }
+        if (this._pendingPlacements.has(parent)) {
+            return this._pendingPlacements.get(parent);
+        }
+        const stored = this.recordStore().orderKeysForNode(this.poolId(), parent.puuid()); // pid → orderKey
         const siblings = parent._subnodes || [];
-        const index = siblings.indexOf(obj);
-        let before = null;
-        for (let i = index - 1; i >= 0; i--) {
-            before = this.orderKeyForPid(siblings[i].puuid());
-            if (before) { break; }
+        const nextStoredKey = new Array(siblings.length).fill(null);
+        let upcoming = null;
+        for (let i = siblings.length - 1; i >= 0; i--) {
+            nextStoredKey[i] = upcoming;
+            const key = stored.get(siblings[i].puuid());
+            if (key) { upcoming = key; }
         }
-        let after = null;
-        for (let i = index + 1; i < siblings.length; i++) {
-            after = this.orderKeyForPid(siblings[i].puuid());
-            if (after) { break; }
-        }
-        return { parentId: parent.puuid(), orderKey: SvOrderKey.keyBetween(before, after) };
+        const pending = new Map();
+        let previous = null;
+        siblings.forEach((sibling, i) => {
+            const key = stored.get(sibling.puuid());
+            if (key) {
+                previous = key;
+                return;
+            }
+            const assigned = SvOrderKey.keyBetween(previous, nextStoredKey[i]);
+            pending.set(sibling.puuid(), assigned);
+            previous = assigned;
+        });
+        this._pendingPlacements.set(parent, pending);
+        return pending;
     }
 
     orderKeyForPid (pid) {

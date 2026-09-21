@@ -424,6 +424,16 @@
         return rows;
     }
 
+    orderKeysForNode (poolId, nodeId) {
+        const keys = new Map();
+        this.rowsForPool(poolId).forEach((row) => {
+            if (row.parentId === nodeId && !row.isDeleted && row.orderKey) {
+                keys.set(row.objectId, row.orderKey);
+            }
+        });
+        return keys;
+    }
+
     windowedRowCountForNode (poolId, nodeId) {
         return this.rowsForPool(poolId).filter(row => row.parentId === nodeId && !row.isDeleted).length;
     }
