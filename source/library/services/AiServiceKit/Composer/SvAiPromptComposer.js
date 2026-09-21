@@ -86,6 +86,7 @@
             slot.setShouldStoreSlot(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
+            slot.setIsBlobString(true); // long text spills to a text blob (Record Store §5)
             slot.setIsSubnodeField(true);
             slot.setSyncsToView(true);
             slot.setCanEditInspection(false);

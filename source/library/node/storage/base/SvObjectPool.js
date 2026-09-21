@@ -440,6 +440,7 @@
             this._hasOpened = true;
             this.blobPool().setName(this.name() + "/blobs");
             await this.blobPool().asyncOpen();
+            await this.asyncPrefetchTextBlobsForRows(this.isHomePool() ? this.recordStore().allRows() : this.recordStore().rowsForPool(this.poolId()));
             await this.onPoolOpenSuccess();
             SvObjectPool.openPools().add(this);
         } catch (error) {
@@ -449,8 +450,12 @@
 
     async promiseClose () {
         SvSyncScheduler.shared().unscheduleTargetAndMethod(this, "commitStoreDirtyObjects");
+        SvSyncScheduler.shared().unscheduleTargetAndMethod(this, "asyncCollectBlobs");
         if (this.recordStore().isOpen()) {
             this.recordStore().close(); // synchronous in indexeddb
+        }
+        if (this.isHomePool() && this.blobPool().isOpen()) {
+            await this.blobPool().close(); // child pools share it; the home pool owns it
         }
         this._hasOpened = false;
     }
@@ -496,6 +501,102 @@
         store.forgetPool(this.poolId());
         await store.asyncDeletePool(this.poolId());
         return this;
+    }
+
+    // --- BlobString: spilled text (Plans/Record Store §5) ---
+
+    /**
+     * @description Names a spilled string's blob and stores the bytes: the record
+     * keeps { "#": hash }. The hash is computed synchronously (the store pass is
+     * synchronous); the blob store computes the same digest of the same bytes.
+     * @category Text Blobs
+     */
+    hashForSpilledText (text) {
+        const hash = text.hexSha256Sync();
+        const store = this.recordStore();
+        if (!store.textBlobs().has(hash)) {
+            store.textBlobs().set(hash, text);
+            if (this.blobPool().isOpen()) {
+                this.blobPool().asyncStoreBlob(new Blob([text], { type: "text/plain" })).catch((e) => {
+                    console.warn(this.logPrefix() + "could not store text blob " + hash.slice(0, 8) + ": " + (e && e.message));
+                });
+            }
+        }
+        return hash;
+    }
+
+    /**
+     * @description The text behind a { "#": hash } entry, from the store's text
+     * blob cache filled at open (asyncPrefetchTextBlobs); a blob that never
+     * arrived reads as an empty string (logged once).
+     * @category Text Blobs
+     */
+    textForSpilledHash (hash) {
+        const text = this.recordStore().textBlobs().get(hash);
+        if (text === undefined) {
+            if (this.shouldReportMissingPid(hash)) {
+                console.warn(this.logPrefix() + "spilled text blob " + hash.slice(0, 8) + " is not available — reading it as empty");
+            }
+            return "";
+        }
+        return text;
+    }
+
+    /**
+     * @description Loads every text blob the given rows refer to into the store's
+     * cache before any record is materialized — spilled text is fetched with its
+     * record, never on access. Blobs missing locally are asked of the missing-
+     * text-blob fetcher (the app's cloud blob path) when one is installed.
+     * @param {Array} rows
+     * @category Text Blobs
+     */
+    async asyncPrefetchTextBlobsForRows (rows) {
+        const store = this.recordStore();
+        const hashes = new Set();
+        const pattern = /"#":"([0-9a-f]{64})"/g;
+        rows.forEach((row) => {
+            if (!row.payloadJson) { return; }
+            let match;
+            while ((match = pattern.exec(row.payloadJson)) !== null) {
+                if (!store.textBlobs().has(match[1])) { hashes.add(match[1]); }
+            }
+        });
+        for (const hash of hashes) {
+            const text = await this.asyncFetchTextBlob(hash);
+            if (Type.isString(text)) {
+                store.textBlobs().set(hash, text);
+            }
+        }
+        return this;
+    }
+
+    async asyncFetchTextBlob (hash) {
+        try {
+            if (this.blobPool().isOpen()) {
+                const blob = await this.blobPool().asyncGetBlob(hash);
+                if (blob) { return await blob.text(); }
+            }
+            const fetcher = SvObjectPool.missingTextBlobFetcher();
+            if (fetcher) {
+                const text = await fetcher(hash);
+                if (Type.isString(text) && this.blobPool().isOpen()) {
+                    this.blobPool().asyncStoreBlob(new Blob([text], { type: "text/plain" })).catch(() => {});
+                }
+                return text;
+            }
+        } catch (e) {
+            console.warn(this.logPrefix() + "text blob " + hash.slice(0, 8) + " fetch failed: " + (e && e.message));
+        }
+        return null;
+    }
+
+    static setMissingTextBlobFetcher (fn) {
+        this._missingTextBlobFetcher = fn; // async (hash) → text | null; the app installs its cloud blob path
+        return this;
+    }
+
+    static missingTextBlobFetcher () {
+        return this._missingTextBlobFetcher || null;
     }
 
     // --- cloud mirror: pool.json snapshots and deltas ---
@@ -2243,9 +2344,15 @@
         if (!this.blobPool().isOpen()) {
             return 0;
         }
-        const keySet = this.allBlobHashesSet();
-        const removedCount = await this.blobPool().asyncCollectUnreferencedKeySet(keySet);
-        return removedCount;
+        try {
+            const keySet = this.allBlobHashesSet();
+            return await this.blobPool().asyncCollectUnreferencedKeySet(keySet);
+        } catch (error) {
+            if (!this.blobPool().isOpen() || /not open/i.test(error && error.message)) {
+                return 0; // the blob store closed while the collection ran (shutdown, a test's reopen)
+            }
+            throw error;
+        }
     }
 
 

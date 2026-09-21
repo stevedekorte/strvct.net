@@ -183,7 +183,27 @@
 
     didChangeSubnodeList () {
         super.didChangeSubnodeList();
-        //this.updateLazySubnodeCount()
+        this.warnIfSubnodeCountIsLarge();
+        return this;
+    }
+
+    /**
+     * @description Record size discipline (Plans/Record Store §5): a collection
+     * past this many elements is a signal to window it. A console warning, never
+     * a throw — play must not halt on a long list. Windowed candidates (a chat,
+     * its history) answer Infinity.
+     * @category Record Size
+     */
+    subnodeCountWarningThreshold () {
+        return 1000;
+    }
+
+    warnIfSubnodeCountIsLarge () {
+        const count = this._subnodes ? this._subnodes.length : 0;
+        if (count > this.subnodeCountWarningThreshold() && !this._warnedSubnodeCount) {
+            this._warnedSubnodeCount = true;
+            console.warn(this.logPrefix() + "collection has " + count + " subnodes (over " + this.subnodeCountWarningThreshold() + ") — a candidate for a windowed collection (Plans/Record Store §6)");
+        }
         return this;
     }
 

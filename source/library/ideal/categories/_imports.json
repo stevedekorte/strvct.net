@@ -7,6 +7,7 @@
     "Array_ideal.js",
     "Date_ideal.js",
     "String_ideal.js",
+    "String_sha256.js",
     "Number_ideal.js",
     "Boolean_ideal.js",
     "Set_ideal.js",

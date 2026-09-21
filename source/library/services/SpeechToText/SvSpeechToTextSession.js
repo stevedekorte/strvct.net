@@ -141,6 +141,7 @@
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
+            slot.setIsBlobString(true); // long text spills to a text blob (Record Store §5)
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
             slot.setSummaryFormat("{value}");
@@ -157,6 +158,7 @@
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
+            slot.setIsBlobString(true); // long text spills to a text blob (Record Store §5)
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
             slot.setSummaryFormat("{value}");
@@ -173,6 +175,7 @@
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
+            slot.setIsBlobString(true); // long text spills to a text blob (Record Store §5)
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
             slot.setSummaryFormat("{value}");

@@ -214,6 +214,11 @@ async function main () {
     check(store.rootRowForPool(docB2.puuid()) === null && !store.hasRow(docB2.puuid(), noteBPid) && store.poolForId(docB2.puuid()) === null, "a detached document's pool and its records are gone");
     check(labels(folder2) === "a" && (await store.asyncChildren(folder2.puuid())).length === 1, "the folder keeps only the remaining document");
 
+    console.log("\nThe async path walker");
+    docA2.setTitle("a");
+    check((await folder2.asyncNodeAtPath(["a"])) === docA2, "asyncNodeAtPath walks by title into a pooled folder's document");
+    check((await folder2.asyncNodeAtPath(["zzz"])) === null && (await folder2.asyncNodeAtPath(["a", "nope"])) === null, "…and answers null for a missing step at any depth");
+
     console.log("\nA pool round-trips through the cloud pool.json shape");
     const json = poolA2.asJson();
     check(json.root === docA2.puuid() && Object.keys(json).length === poolA2.count() + 1, "asJson is every record's JSON by puuid plus the root pointer");

@@ -21,6 +21,7 @@
         {
             const slot = this.newSlot("sourceText", "");
             slot.setSlotType("String");
+            slot.setIsBlobString(true); // long text spills to a text blob (Record Store §5)
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
         }
@@ -32,6 +33,7 @@
         {
             const slot = this.newSlot("targetText", "");
             slot.setSlotType("String");
+            slot.setIsBlobString(true); // long text spills to a text blob (Record Store §5)
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
         }

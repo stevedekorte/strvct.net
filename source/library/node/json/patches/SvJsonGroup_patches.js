@@ -186,6 +186,9 @@
                 return { failure: "path passes through '" + joined + "' which has no value" };
             }
             if (this.preflightIsArray(current)) {
+                if (current.subnodesArePools && current.subnodesArePools()) {
+                    return { failure: "JSON patch paths do not cross pool boundaries: '" + joined + "' enters a document that is its own pool (Record Store §6) — address it through its own assistant or tool" };
+                }
                 const index = parseInt(segment, 10);
                 if (segment === "-" || !Number.isInteger(index) || String(index) !== segment || index < 0) {
                     return { failure: "'" + segment + "' is not a valid array index at '" + joined + "' (arrays need 0, 1, 2 …; '-' only as the last segment of an add)" };

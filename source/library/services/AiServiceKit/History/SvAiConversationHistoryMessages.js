@@ -18,6 +18,10 @@
         return "The messages of one filed conversation-history episode, in chronological order.";
     }
 
+    subnodeCountWarningThreshold () {
+        return Infinity; // a windowed-collection candidate by design (Plans/Record Store §5)
+    }
+
     initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(true);

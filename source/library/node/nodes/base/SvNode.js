@@ -516,6 +516,38 @@
      * @returns {SvNode} This instance.
      */
     /**
+     * @description Walks a path of subnode titles, awaiting at steps that load
+     * on demand: a document placeholder hydrating (asyncEnsureLoaded), later a
+     * far pool opening or a window loading (Plans/Record Store §6). Everything
+     * already loaded is walked synchronously.
+     * @param {Array<String>} segments - subnode titles from this node down
+     * @returns {Promise<SvNode|null>}
+     * @category Record Store
+     */
+    async asyncNodeAtPath (segments) {
+        let node = this;
+        for (const segment of segments) {
+            const next = await node.asyncSubnodeWithTitle(segment);
+            if (!next) {
+                return null;
+            }
+            node = next;
+        }
+        return node;
+    }
+
+    async asyncSubnodeWithTitle (title) {
+        if (this.prepareToAccess) {
+            this.prepareToAccess();
+        }
+        const child = this.firstSubnodeWithTitle(title);
+        if (child && typeof child.asyncEnsureLoaded === "function") {
+            await child.asyncEnsureLoaded();
+        }
+        return child || null;
+    }
+
+    /**
      * @description True when this node is the root of its own pool: a direct
      * subnode of a collection whose subnodesArePools. (The home root has no
      * parent and is its pool's root by construction.)

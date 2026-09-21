@@ -49,6 +49,11 @@
             slot.setDescription("poolId → the open SvObjectPool over this store's rows");
         }
         {
+            const slot = this.newSlot("textBlobs", null);
+            slot.setSlotType("Map");
+            slot.setDescription("hash → text of every spilled BlobString the open pools refer to (filled at open, before materialization)");
+        }
+        {
             const slot = this.newSlot("homePool", null);
             slot.setSlotType("SvObjectPool");
             slot.setAllowsNullValue(true);
@@ -64,6 +69,7 @@
         super.init();
         this.setKvMap(SvPersistentAtomicMap.clone());
         this.setPools(new Map());
+        this.setTextBlobs(new Map());
         return this;
     }
 
@@ -170,6 +176,7 @@
         });
         await this.asyncPut(rows);
         const pool = this.openPoolWithId(poolId);
+        await pool.asyncPrefetchTextBlobsForRows(rows);
         pool.readRootObject();
         return pool;
     }

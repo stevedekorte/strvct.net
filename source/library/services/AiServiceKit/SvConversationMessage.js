@@ -36,6 +36,7 @@
         {
             const slot = this.overrideSlot("value", "");
             //slot.setInitValue("");
+            slot.setIsBlobString(true); // a long message body spills to a text blob (Plans/Record Store §5)
             slot.setShouldJsonArchive(true);
             slot.setCanInspect(true);
             slot.setInspectorPath("Node/Field/Value");

@@ -145,6 +145,8 @@
             puuids.add(this["*"]);
         } else if (Object.hasOwn(this, "**")) {
             // a far ref names another pool's root: not a pid of this pool, never keeps a pool alive
+        } else if (Object.hasOwn(this, "#")) {
+            // a spilled BlobString names a text blob by hash (Record Store §5): blobs are collected by inventory, not by pid
         } else if (Object.hasOwn(this, "*lazyJson")) {
             // Deferred JSON parked in a lazy slot — inline payload, no pid refs.
         } else {

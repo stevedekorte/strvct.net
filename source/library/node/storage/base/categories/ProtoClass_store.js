@@ -86,6 +86,10 @@
                     }
                 }
                 const v = slot.onInstanceGetValue(this);
+                if (slot.isBlobString() && Type.isString(v) && v.length > Slot.blobStringSpillLength()) {
+                    aRecord.entries.push([slotName, { "#": aStore.hashForSpilledText(v) }]); // Record Store §5: the record holds a ref to a text blob
+                    return;
+                }
                 if (Type.isPromise(v)) {
                     throw new Error(this.svType() + " '" + slotName + "' slot is set to shouldStore, but contains a Promise value which cannot be stored");
                 }
@@ -127,6 +131,16 @@
      * @category Storage
      */
     loadFromRecord (aRecord, aStore) {
+        Slot.beginLoadingRecords(); // loads tolerate what is on disk (the stored String cap applies to sets)
+        try {
+            this.loadEntriesFromRecord(aRecord, aStore);
+        } finally {
+            Slot.endLoadingRecords();
+        }
+        return this;
+    }
+
+    loadEntriesFromRecord (aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
             const k = entry[0];
             const v = entry[1];
@@ -155,6 +169,8 @@
                         assert(pid, this.svType() + " lazy slot '" + slot.name() + "' has a ref entry without a pid");
                         const storeRef = SvStoreRef.clone().setPid(pid).setStore(aStore);
                         slot.onInstanceRawSetValue(this, storeRef);
+                    } else if (slot.isBlobString() && !Type.isNull(v) && v["#"] !== undefined) {
+                        slot.onInstanceSetValue(this, aStore.textForSpilledHash(v["#"])); // prefetched with the pool's rows
                     } else if (slot.slotType() === "JSON Object") {
                         if (Type.isString(v)) {
                             // properly serialized JSON object

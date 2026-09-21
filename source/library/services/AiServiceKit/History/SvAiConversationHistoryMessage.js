@@ -47,6 +47,7 @@
         {
             const slot = this.newSlot("content", null);
             slot.setSlotType("String");
+            slot.setIsBlobString(true); // the copy of a long message body spills too
             slot.setAllowsNullValue(true);
             slot.setShouldStoreSlot(true);
             slot.setIsInJsonSchema(true);

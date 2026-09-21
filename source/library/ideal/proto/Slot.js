@@ -56,6 +56,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("methodForOnFinalized", null);
         this.simpleNewSlot("methodForShouldStoreSlot", null);
         this.simpleNewSlot("methodForFailedLazyLoad", null); // for lazy slots — see onInstanceFailedLazyLoad
+        this.simpleNewSlot("isBlobString", false); // Record Store §5: a String slot whose long values spill to a text blob at serialization (no cap)
         //this.simpleNewSlot("methodNameCache", null)
 
         // getter
@@ -1219,6 +1220,79 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * can trigger a getter that materializes another) compose correctly.
      * @returns {Boolean}
      */
+    /**
+     * @description Record size discipline (Plans/Record Store §5): a stored
+     * String slot holds at most this many characters; the setter throws above
+     * it (a programmer error, or an AI patch that should fail and be shortened),
+     * and the cap reaches the assistants' schema as maxLength. Values already on
+     * disk are tolerated on load and re-serialized as they are.
+     * @category Record Size
+     */
+    static storedStringCapLength () {
+        return 16384;
+    }
+
+    /**
+     * @description A BlobString spills to a content-addressed text blob above
+     * this length; below it the value stays inline in the record.
+     * @category Record Size
+     */
+    static blobStringSpillLength () {
+        return 32768;
+    }
+
+    static beginLoadingRecords () {
+        this._loadingRecordsDepth = (this._loadingRecordsDepth || 0) + 1;
+    }
+
+    static endLoadingRecords () {
+        this._loadingRecordsDepth = Math.max(0, (this._loadingRecordsDepth || 0) - 1);
+    }
+
+    static isLoadingRecords () {
+        return (this._loadingRecordsDepth || 0) > 0;
+    }
+
+    /**
+     * @description Whether an over-cap set throws (tests, and the audit of stored
+     * String slots) or warns once per slot (the shipped default until every slot
+     * that legitimately holds long text is declared a BlobString — play must not
+     * halt on a long string).
+     * @category Record Size
+     */
+    static setStoredStringCapThrows (aBool) {
+        this._storedStringCapThrows = aBool;
+        return this;
+    }
+
+    static storedStringCapThrows () {
+        return this._storedStringCapThrows === true;
+    }
+
+    onInstanceExceededStoredStringCap (anInstance, v) {
+        const message = anInstance.svType() + "." + this.setterName() + "(): value of " + v.length + " characters exceeds the stored String cap of "
+            + Slot.storedStringCapLength() + " (shorten it, or declare the slot a BlobString)";
+        if (Slot.storedStringCapThrows()) {
+            throw new Error(message);
+        }
+        if (!this._warnedStoredStringCap) {
+            this._warnedStoredStringCap = true;
+            console.warn(message + " — stored inline for now; Record Store §5 audit item\n" + new Error("over-cap set site").stack);
+        }
+        return this;
+    }
+
+    /**
+     * @description Whether a value is over the stored String cap for this slot:
+     * only stored String slots that are not BlobStrings are capped, and only on
+     * set — a load tolerates what is already on disk.
+     * @category Record Size
+     */
+    exceedsStoredStringCap (v) {
+        return this.slotType() === "String" && this.shouldStoreSlot() && !this.isBlobString()
+            && Type.isString(v) && v.length > Slot.storedStringCapLength() && !Slot.isLoadingRecords();
+    }
+
     static isMaterializingAnyLazySlot () {
         return (this._materializingLazySlotCount || 0) > 0;
     }
@@ -1530,6 +1604,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const slot = this;
         return function (newValue, invalidSecondArgumentCatcher) {
             assert(invalidSecondArgumentCatcher === undefined, "autoSetter() should not be called with a 2nd argument");
+            if (slot.exceedsStoredStringCap(newValue)) {
+                slot.onInstanceExceededStoredStringCap(this, newValue);
+            }
             const valueDescription = function (v) {
                 let vString = String(v);
                 vString = vString.length < 20 ? vString : (vString.slice(0, 20) + "...");
@@ -2096,6 +2173,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const pattern = this.jsonSchemaPattern();
         if (pattern) {
             schema.pattern = pattern;
+        }
+        if (this.slotType() === "String" && this.shouldStoreSlot() && !this.isBlobString()) {
+            schema.maxLength = Slot.storedStringCapLength();
         }
 
         this.jsonSchemeAddRanges(schema);

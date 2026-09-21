@@ -90,6 +90,13 @@ function defineClasses () {
         }
     }).initThisClass();
 
+    (class TestPfDocs extends SvJsonArrayNode {
+        initPrototype () {
+            this.setSubnodeClasses([SvGlobals.get("TestPfItem")]);
+            this.setSubnodesArePools(true); // a folder of documents (Record Store §6)
+        }
+    }).initThisClass();
+
     (class TestPfRoot extends SvJsonGroup {
         initPrototypeSlots () {
             {
@@ -118,6 +125,13 @@ function defineClasses () {
                 slot.setSlotType("String");
                 slot.setIsInJsonSchema(true);
                 slot.setShouldStoreSlot(true);
+            }
+            {
+                const slot = this.newSlot("docs", null);
+                slot.setFinalInitProto(SvGlobals.get("TestPfDocs"));
+                slot.setIsSubnode(true);
+                slot.setIsInJsonSchema(true);
+                slot.setSlotType("TestPfDocs");
             }
         }
     }).initThisClass();
@@ -179,6 +193,10 @@ async function main () {
     expectRefused(root, [{ op: "replace", path: "/label", value: { a: 1 } }], 0, "holds a String", "an object into a String slot");
     expectRefused(root, [{ op: "replace", path: "/details", value: "just a string" }], 0, "bare string", "a bare string into a group slot");
     expectRefused(root, [{ op: "add", path: "/", value: {} }], 0, "not the root", "the root as a target");
+    const doc = SvGlobals.get("TestPfItem").clone(); doc.setName("doc"); root.docs().addSubnode(doc);
+    expectRefused(root, [{ op: "replace", path: "/docs/0/name", value: "x" }], 0, "do not cross pool boundaries", "a path into a document that is its own pool");
+    expectRefused(root, [{ op: "copy", from: "/docs/0", path: "/items/-" }], 0, "do not cross pool boundaries", "a copy from inside a pooled folder");
+    check(refusal(root, [{ op: "replace", path: "/label", value: "still fine" }]) === null && root.label() === "still fine", "the folder itself stays addressable; only its documents are behind the boundary");
 
     console.log("\nWhat the preflight must not refuse");
     root = newRoot();
