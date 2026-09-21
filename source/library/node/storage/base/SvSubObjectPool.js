@@ -162,7 +162,7 @@
      */
     async initializeFromRoot (rootObj) {
         assert(rootObj, "rootObj is required");
-        this.kvMap().open();
+        this.recordStore().kvMap().open();
 
         // Set the root object - this adds it as active and dirty
         this._rootObject = rootObj;
@@ -170,9 +170,9 @@
         this.addDirtyObject(rootObj);
 
         // Store all dirty objects (this will recursively store referenced objects)
-        await this.kvMap().promiseBegin();
+        await this.recordStore().asyncBeginBatch();
         this.storeDirtyObjects();
-        await this.kvMap().promiseCommit();
+        await this.recordStore().asyncCommitBatch();
 
         return this;
     }
@@ -297,9 +297,9 @@
      */
     async asyncFlushDirty () {
         if (this.hasDirtyObjects()) {
-            await this.kvMap().promiseBegin();
+            await this.recordStore().asyncBeginBatch();
             this.storeDirtyObjects();
-            await this.kvMap().promiseCommit();
+            await this.recordStore().asyncCommitBatch();
         }
         return this;
     }
@@ -349,9 +349,9 @@
 
         // Store any pending dirty objects first
         if (this.hasDirtyObjects()) {
-            await this.kvMap().promiseBegin();
+            await this.recordStore().asyncBeginBatch();
             this.storeDirtyObjects();
-            await this.kvMap().promiseCommit();
+            await this.recordStore().asyncCommitBatch();
         }
 
         // Collect delta to determine upload strategy

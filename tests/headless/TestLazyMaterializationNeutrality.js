@@ -210,7 +210,7 @@ async function testNewObjectCreatedDuringMaterializationStillStores () {
     check(!pool.dirtyObjects().has(doc.puuid()), "…while the materializing doc's own write-back echo was still filtered (derived)");
 
     await pool.commitStoreDirtyObjects();
-    check(pool.kvMap().hasKey(created.puuid()), "the new object was stored by the next commit");
+    check(pool.hasRecordForPid(created.puuid()), "the new object was stored by the next commit");
 }
 
 async function testMissingRecordFailureHandling () {

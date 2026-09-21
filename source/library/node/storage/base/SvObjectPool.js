@@ -65,7 +65,9 @@
      */
     static fromCloudJson (json) {
         const pool = this.clone();
-        pool.kvMap().fromJson(json);
+        pool.recordStore().kvMap().open();
+        pool.setPoolId(json[pool.rootKey()]);
+        pool.recordStore().loadFromCloudJson(pool.poolId(), json, pool.rootKey());
         pool.loadStoredRoot();
         SvObjectPool.openPools().add(pool); // register so blob GC knows about this pool's references
         return pool;
@@ -160,8 +162,29 @@
          * @default null
          */
         {
-            const slot = this.newSlot("kvMap", null);
-            slot.setSlotType("SvAtomicMap");
+            const slot = this.newSlot("recordStore", null);
+            slot.setSlotType("SvLocalRecordStore");
+            slot.setDescription("the record store holding this pool's rows (shared by every pool of one app)");
+        }
+        {
+            const slot = this.newSlot("poolId", null);
+            slot.setSlotType("String");
+            slot.setDescription("the root object's puuid; the key prefix of every row of this pool");
+        }
+        {
+            const slot = this.newSlot("parentNodeId", null);
+            slot.setSlotType("String");
+            slot.setDescription("root row placement: the owning collection node's id, or null for the home pool");
+        }
+        {
+            const slot = this.newSlot("orderKey", null);
+            slot.setSlotType("String");
+            slot.setDescription("root row placement: this pool's sort key under its parent, or null");
+        }
+        {
+            const slot = this.newSlot("ownerUid", "local");
+            slot.setSlotType("String");
+            slot.setDescription("root row: the account that owns the pool; \"local\" until signed in");
         }
 
         /**
@@ -319,7 +342,7 @@
      */
     init () {
         super.init();
-        this.setKvMap(ideal.SvAtomicMap.clone());
+        this.setRecordStore(SvLocalRecordStore.clone().useMemoryMap());
         this.setActiveObjects(new SvEnumerableWeakMap());
         this.setDirtyObjects(new Map());
         this.setLoadingPids(new Set());
@@ -373,13 +396,17 @@
      * @returns {Promise}
      */
     async promiseOpen () {
-        const map = this.kvMap();
-        if (map.isOpen() && map.name() === this.name()) {
+        const store = this.recordStore();
+        if (store.isOpen() && this.hasOpened()) {
             return this;
         }
-        map.setName(this.name());
         try {
-            await map.promiseOpen();
+            if (!store.isOpen()) {
+                store.setName(this.recordStoreName());
+                await store.asyncOpenStore();
+            }
+            this.readHomePoolId();
+            this._hasOpened = true;
             this.blobPool().setName(this.name() + "/blobs");
             await this.blobPool().asyncOpen();
             await this.onPoolOpenSuccess();
@@ -391,11 +418,43 @@
 
     async promiseClose () {
         SvSyncScheduler.shared().unscheduleTargetAndMethod(this, "commitStoreDirtyObjects");
-        const map = this.kvMap();
-        if (map.isOpen()) {
-            map.close(); // this is synchronous in indexeddb
-            //await map.promiseClose();
+        if (this.recordStore().isOpen()) {
+            this.recordStore().close(); // synchronous in indexeddb
         }
+        this._hasOpened = false;
+    }
+
+    hasOpened () {
+        return this._hasOpened === true;
+    }
+
+    /**
+     * @description The database the pool's rows live in: the pool's name plus a
+     * suffix, so today's pre-records database of the same name is never read as
+     * rows (the cutover is a reset, not a migration).
+     * @category Open
+     */
+    recordStoreName () {
+        return this.name() + ".records";
+    }
+
+    /**
+     * @description A home pool learns its id from the store's settings; any
+     * other pool is told its id (its root's puuid) when created or opened.
+     * @category Open
+     */
+    readHomePoolId () {
+        if (!this.poolId() && this.isHomePool()) {
+            const homePoolId = this.recordStore().settingAt("homePoolId");
+            if (homePoolId) {
+                this.setPoolId(homePoolId);
+            }
+        }
+        return this;
+    }
+
+    isHomePool () {
+        return false;
     }
 
     /**
@@ -433,8 +492,8 @@
         const comment = s ? " " + s + " " : "";
         console.log("---" + comment + "---");
         const max = 40;
-        console.log(this.kvMap().count() + " records: ");
-        this.kvMap().forEachKV((k, v) => {
+        console.log(this.count() + " records: ");
+        this.forEachRecordJson((k, v) => {
             if (v.length > max) {
                 v = v.slice(0, max) + "...";
             }
@@ -462,7 +521,7 @@
      * @returns {Boolean}
      */
     isOpen () {
-        return this.kvMap().isOpen();
+        return this.recordStore().isOpen(); // an in-memory record store is open from the start, as the in-memory map was
     }
 
     // --- root ---
@@ -472,42 +531,56 @@
      * @returns {String}
      */
     rootKey () {
-        return "root";
+        return "root"; // the root pointer's key in the cloud pool.json format (asJson / fromCloudJson)
     }
 
-    /**
-     * @description set the root pid
-     * @param {String} pid - the new root pid
-     * @returns {SvObjectPool}
-     */
     setRootPid (pid) {
-        // private - it's assumed we aren't already in storing-dirty-objects tx
-        const map = this.kvMap();
-        if (map.at(this.rootKey()) !== pid) {
-            map.atPut(this.rootKey(), pid);
-            if (this.isDebugging()) {
-                console.log(this.logPrefix() + "---- SET ROOT PID " + pid + " ----");
+        // private - called inside the store batch when the root object is stored
+        if (this.poolId() !== pid) {
+            assert(!this.hasStoredRoot(), "a pool's id is its root's puuid and cannot change once the root row exists");
+            const previousId = this.poolId();
+            this.setPoolId(pid);
+            if (previousId) {
+                this.rekeyRowsFromPool(previousId); // rows stored before the root was known (an anonymous pool)
             }
-
+            if (this.isHomePool()) {
+                this.recordStore().putSettingInBatch("homePoolId", pid);
+            }
+            if (this.isDebugging()) {
+                console.log(this.logPrefix() + "---- SET POOL ID " + pid + " ----");
+            }
         }
-        assert(this.hasStoredRoot());
         return this;
     }
 
-    /**
-     * @description get the root pid
-     * @returns {String}
-     */
     rootPid () {
-        return this.kvMap().at(this.rootKey());
+        return this.poolId();
     }
 
     /**
-     * @description check if the root has been stored
-     * @returns {Boolean}
+     * @description A pool may store records before it has a root (scratch pools,
+     * tests): its rows are keyed under an anonymous id until a root names it.
+     * @category Root
      */
+    ensurePoolId () {
+        if (!this.poolId()) {
+            const root = this.rootObject();
+            this.setRootPid(root ? root.puuid() : "anon-" + Object.newUuid());
+        }
+        return this;
+    }
+
+    rekeyRowsFromPool (previousId) { // private — inside the store batch
+        const store = this.recordStore();
+        store.rowsForPool(previousId).forEach((row) => {
+            store.deleteRowInBatch(previousId, row.objectId);
+            store.putRowInBatch(Object.assign({}, row, { poolId: this.poolId() }));
+        });
+        return this;
+    }
+
     hasStoredRoot () {
-        return this.kvMap().hasKey(this.rootKey());
+        return !!this.poolId() && this.recordStore().hasRow(this.poolId(), this.poolId());
     }
 
     hasValidStoredRoot () {
@@ -553,49 +626,6 @@
         return this.rootObject();
     }
 
-    // ok, if we want to use an already allocated Application root object,
-    // we need to do this:
-    setupForRootObject (appRootObject) {
-        if (this.hasStoredRoot()) {
-            this.readRootObject();
-
-            // now let's do some sanity checks
-            assert(appRootObject.puuid() !== this.rootPid(), "appRootObject.puuid() === this.rootPid()");
-            assert(appRootObject !== this.rootObject(), "appRootObject.puuid() === this.rootPid()");
-
-            // now we need to map the stored root object to our app root object
-            // to do this, we'll get the pid of the current root and
-            // set the pid of the app root to it, then update our pid->object map
-
-            const storedRootPid = this.rootPid();
-            const appRootPid = appRootObject.puuid();
-
-            const map = this.kvMap();
-
-            // Make sure there are no refs to this first
-            const refs = this.objectSetReferencingPid(appRootPid);
-            refs.delete(appRootObject);
-            assert(refs.size === 0, "there are still stored refs to the app root object");
-            // TODO:what about dirty objects?
-
-            // read the old record into the new object
-            const oldRecord = this.recordForPid(storedRootPid);
-            appRootObject.loadFromRecord(oldRecord, this);
-
-            map.removeAt(appRootPid);
-            appRootObject.justSetPuuid(storedRootPid);
-            map.atPut(storedRootPid, appRootObject);
-
-            // now we need to update the active objects
-            this.addActiveObject(appRootObject);
-            this.addDirtyObject(obj);appRootObject;
-
-        } else {
-            this.setRootObject(rootObject);
-        }
-        return this;
-    }
-
     /**
      * @description read the root object
      * @returns {Object}
@@ -626,7 +656,7 @@
      */
     knowsObject (obj) { // private
         const puuid = obj.puuid();
-        const foundIt = this.kvMap().hasKey(puuid) ||
+        const foundIt = this.hasRecordForPid(puuid) ||
             this.activeObjects().has(puuid) ||
             this.dirtyObjects().has(puuid); // dirty objects check redundant with activeObjects?
         return foundIt;
@@ -680,7 +710,25 @@
      * @returns {String}
      */
     asJson () {
-        return this.kvMap().asJson();
+        // the cloud pool.json shape: every record's JSON by puuid, plus the root pointer
+        const json = {};
+        this.forEachRecordJson((pid, jsonString) => { json[pid] = jsonString; });
+        if (this.poolId()) {
+            json[this.rootKey()] = this.poolId();
+        }
+        return json;
+    }
+
+    forEachRecordJson (fn) {
+        if (!this.poolId()) {
+            return this;
+        }
+        this.recordStore().rowsForPool(this.poolId()).forEach((row) => {
+            if (!row.isDeleted) {
+                fn(row.objectId, row.payloadJson);
+            }
+        });
+        return this;
     }
 
     /**
@@ -766,7 +814,8 @@
         this.removeMutationObservations();
         this.setActiveObjects(new SvEnumerableWeakMap());
         this.setDirtyObjects(new Map());
-        this.kvMap().close();
+        this.recordStore().close();
+        this._hasOpened = false;
         return this;
     }
 
@@ -1054,15 +1103,15 @@
 
         if (this.hasDirtyObjects()) {
             try {
-                await this.kvMap().promiseBegin();
+                await this.recordStore().asyncBeginBatch();
                 if (!this.isOpen()) {
-                    this.kvMap().revert();
+                    this.recordStore().revertBatch();
                     return;
                 }
                 const storeCount = this.storeDirtyObjects();
-                await this.kvMap().promiseCommit();
+                await this.recordStore().asyncCommitBatch();
                 this.logDebug("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects");
-                this.logDebug("--- commitStoreDirtyObjects total objects: " + this.kvMap().count());
+                this.logDebug("--- commitStoreDirtyObjects total objects: " + this.count());
 
                 if (this._forcedDirtyObjectsSet) {
                     if (this._forcedDirtyObjectsSet.size !== 0) {
@@ -1072,7 +1121,8 @@
                     }
                 }
             } catch (error) {
-                if (!this.isOpen() || SvIndexedDbTx.isConnectionClosingError(error)) {
+                const isClosing = typeof SvIndexedDbTx !== "undefined" && SvIndexedDbTx.isConnectionClosingError && SvIndexedDbTx.isConnectionClosingError(error);
+                if (!this.isOpen() || isClosing) {
                     console.warn(this.logPrefix(), "skipping store: IndexedDB connection is closing");
                     return;
                 }
@@ -1091,6 +1141,9 @@
         // We continue until there are no dirty objects left.
 
         let totalStoreCount = 0;
+        if (this.rootObject() && this.poolId() !== this.rootObject().puuid()) {
+            this.setRootPid(this.rootObject().puuid()); // every row needs the pool id, whatever order the bucket stores in
+        }
         this.setStoringPids(new Set());
 
         for (;;) { // easier to express clearly than do/while in this case
@@ -1437,53 +1490,17 @@
 
     //
 
-    /**
-     * @description get the header key
-     * @returns {String}
-     */
-    headerKey () {
-        return "header"; // no other key looks like this as they all use PUUID format
-    }
-
-    /**
-     * @description get the all pids set
-     * @returns {Set}
-     */
     allPidsSet () {
-        const keySet = this.kvMap().keysSet();
-        keySet.delete(this.headerKey());
-        return keySet;
+        return new Set(this.allPids());
     }
 
-    /**
-     * @description get the all pids
-     * @returns {Array}
-     */
     allPids () {
-        const keys = this.kvMap().keysArray();
-        keys.remove(this.rootKey());
-        return keys;
+        if (!this.poolId()) {
+            return [];
+        }
+        return this.recordStore().rowsForPool(this.poolId()).filter(row => !row.isDeleted).map(row => row.objectId);
     }
 
-    /*
-    //activeLazyPids () { // returns a set of pids
-        const pids = new Set();
-        this.activeObjects().forEachKV((pid, obj) => {
-            if (obj.lazyPids) {
-                //obj.lazyPids(pids);
-            }
-        });
-        return pids;
-    }
-    */
-
-    // --- references ---
-
-    /**
-     * @description get the ref for the given pid
-     * @param {String} aPid - the pid to get the ref for
-     * @returns {Object}
-     */
     refForPid (aPid) {
         // is this ever called?
         return {
@@ -1609,7 +1626,7 @@
         if (this.dirtyObjects().has(pid)) {
             return true; // queued for writing in this cycle
         }
-        if (this.kvMap() && this.kvMap().hasKey(pid)) {
+        if (this.hasRecordForPid(pid)) {
             return true; // already on disk
         }
 
@@ -1631,62 +1648,28 @@
 
     // read a record
 
-    /**
-     * @description get the record for the given pid
-     * @param {String} puuid - the pid to get the record for
-     * @returns {Object}
-     */
+    hasRecordForPid (puuid) {
+        return !!this.poolId() && this.recordStore().hasRow(this.poolId(), puuid);
+    }
+
+    rowForPid (puuid) { // private
+        return this.poolId() ? this.recordStore().rowForKey(this.poolId(), puuid) : undefined;
+    }
+
     recordForPid (puuid) { // private
-        if (!this.kvMap().hasKey(puuid)) {
+        const row = this.rowForPid(puuid);
+        if (!row || row.isDeleted) {
             return undefined;
         }
-        const jsonString = this.kvMap().at(puuid);
-        assert(Type.isString(jsonString));
-        const aRecord = JSON.parse(jsonString);
+        const aRecord = JSON.parse(row.payloadJson);
         aRecord.id = puuid;
         return aRecord;
     }
 
     async asyncRecordForPid (puuid) {
-        const data = await this.kvMap().asyncAt(puuid);
-        if (typeof data === "string") {
-            const aRecord = JSON.parse(data);
-            aRecord.id = puuid;
-            return aRecord;
-        } else {
-            const record = {};
-            record.id = puuid;
-            record.payload = data;
-            return record;
-        }
+        return this.recordForPid(puuid);
     }
 
-
-    // write an object
-
-    /**
-     * @description get the kv promise for the given object
-     * @param {Object} obj - the object to get the kv promise for
-     * @returns {Promise}
-     */
-    async kvPromiseForObject (obj) {
-        const record = await obj.asyncRecordForStore(this);
-        const jsonString = JSON.stringify(record);
-        let puuid = null;
-        // use asyncPuuid if it exists (used for things like async computing a hash of a Blob)
-        if (obj.asyncPuuid) {
-            puuid = await obj.asyncPuuid();
-        } else {
-            puuid = obj.puuid();
-        }
-        return [puuid, jsonString];
-    }
-
-    /**
-     * @description store the object
-     * @param {Object} obj - the object to store
-     * @returns {Object}
-     */
     storeObject (obj) {
         /*
         if (Type.isDictionary(obj)) {
@@ -1707,13 +1690,7 @@
             this.setRootPid(puuid);
         }
 
-        if (obj.asyncRecordForStore) {
-            // asyncRecordForStore is only implemented if there's no
-            // synchronous option for serialization e.g. serializing a Blob
-            //throw new Error("no support for asyncRecordForStore yet!");
-            const kvPromise = this.kvPromiseForObject(obj);
-            this.kvMap().appendAsyncWriteKvPromise(kvPromise); // these will be awaited when committing the tx
-        } else {
+        {
             //console.log(this.logPrefix() + "storeObject " + obj.svTypeId());
             const jsonString = this.jsonStringForObject(obj);
 
@@ -1734,11 +1711,38 @@
             */
 
 
-            this.kvMap().set(puuid, jsonString);
+            this.putRecordJson(puuid, jsonString);
             this.storeBlobsReferencedByObject(obj);
-            //this.storeRecord(puuid, record);
         }
         return this;
+    }
+
+    putRecordJson (puuid, jsonString) { // private — inside a record store batch
+        this.ensurePoolId();
+        this.recordStore().putRowInBatch(this.rowForRecordJson(puuid, jsonString));
+        return this;
+    }
+
+    /**
+     * @description The row for a record: identity and payload from the object,
+     * placement and ownership from the pool (root row only), version and
+     * modifiedVersion kept from the existing row (server-owned, mirrored).
+     * @category Storing
+     */
+    rowForRecordJson (puuid, jsonString) {
+        const existing = this.rowForPid(puuid);
+        const isRoot = puuid === this.poolId();
+        return SvRecordRow.newRow({
+            poolId: this.poolId(),
+            objectId: puuid,
+            parentId: isRoot ? this.parentNodeId() : null,
+            orderKey: isRoot ? this.orderKey() : null,
+            ownerUid: isRoot ? this.ownerUid() : null,
+            version: isRoot ? ((existing && Number.isInteger(existing.version)) ? existing.version : 0) : null,
+            modifiedVersion: existing ? existing.modifiedVersion : 0,
+            isDeleted: false,
+            payloadJson: jsonString
+        });
     }
 
     jsonStringForObject (obj) {
@@ -1791,89 +1795,32 @@
         return this;
     }
 
-    /**
-     * @async
-     * @description promise collect
-     * @returns {Number}
-     */
     async promiseCollect () {
-        //console.log(this.svType() + " --- promiseCollect ---");
-        if (Type.isUndefined(this.rootPid())) {
-            // Report what is being destroyed. Without the count, the boot log's
-            // "store records: 0" (measured AFTER this runs) can't distinguish
-            // two very different failures: a store the browser evicted, which
-            // arrives here already empty, versus a populated store that lost
-            // its root pid and is being wiped by us. Pair this line with the
-            // previous-boot marker SvApp.openStore logs.
-            let count = "unknown";
-            try {
-                count = this.kvMap().count();
-            } catch {
-                // diagnostic only — never break boot
+        if (!this.hasStoredRoot()) {
+            const count = this.count();
+            if (count > 0) {
+                console.log(this.logPrefix() + "---- NO ROOT RECORD FOR COLLECT - clearing " + count + " records of pool " + this.poolId() + " ----");
+                await this.recordStore().asyncDeletePool(this.poolId());
             }
-            console.log(this.logPrefix() + "---- NO ROOT PID FOR COLLECT - clearing " + count + " records! ----");
-            await this.kvMap().promiseBegin();
-            this.kvMap().clear();
-            await this.kvMap().promiseCommit();
             return 0;
         }
-
-        // this is an on-disk collection
-        // in-memory objects aren't considered
-        // so we make sure they're flushed to the db first
-        await this.kvMap().promiseBegin();
+        await this.recordStore().asyncBeginBatch();
         this.flushIfNeeded(); // store any dirty objects
-
         const isDebugging = this.isDebugging();
-        //this.setIsDebugging(true);
-        this.logDebug(() => "--- begin collect --- with " + this.kvMap().count() + " pids");
+        this.logDebug(() => "--- begin collect --- with " + this.count() + " pids");
         this.setMarkedSet(new Set());
-        this.markedSet().add(this.rootKey()); // so rootKey->rootPid entry isn't swept (a special entry whose key is "rootKey" and value is the root pid)
         this.markPid(this.rootPid());
-
-        /*
-        // if we've already flushed the dirty objects, we don't need to mark the active objects
-        //this.activeObjects().forEachK(pid => this.markPid(pid));  // needed? isn't this an on disk collection?
-        //this.activeLazyPids().forEachK(pid => this.markPid(pid)); // needed? isn't this an on disk collection?
-        */
         const deleteCount = this.sweep();
         this.setMarkedSet(null);
-
         this.logDebug(() => "--- end collect --- collecting " + deleteCount + " pids ---");
-        //console.log(this.logPrefix() + "         --- end collect --- collecting " + deleteCount + " pids ---");
-
-        await this.kvMap().promiseCommit();
-        //await this.asyncCollectBlobs(); // good time to collect blobs while we have all kvRecords in memory
+        await this.recordStore().asyncCommitBatch();
         this.scheduleMethod("asyncCollectBlobs"); // we need to let the object finish initializing before we can ask them for their blob references
-
-        const remainingCount = this.kvMap().count();
+        const remainingCount = this.count();
         this.logDebug(() => " ---- keys count after commit: " + remainingCount + " ---");
-
-        // estimate size of remaining objects
-        // NOTE: totalBytes() temporarily disabled due to transaction state assertion issue
-        // TODO: investigate why isInTx() is still true after promiseCommit()
-        // const remainingSize = this.kvMap().totalBytes();
-        // console.log(this.logPrefix(), "==== this.kvMap().totalBytes() after collect = ", SvByteFormatter.clone().setValue(remainingSize).formattedValue());
-
-        // this.kvMap().forEachKV((key, value) => {
-        //     //console.log(this.logPrefix(), "\"", key, "\": \"", value.length, "\" bytes");
-        //     if (value.length > 5000) {
-        //         console.log(this.logPrefix(), "==== value = ", value.slice(0, 1000), "...");
-        //         //debugger;
-        //     }
-        // });
-        //debugger;
-
         this.setIsDebugging(isDebugging);
-
         return remainingCount;
     }
 
-    /**
-     * @description mark the pid
-     * @param {String} pid - the pid to mark
-     * @returns {Boolean}
-     */
     markPid (pid) { // private
         // TODO: rewrite to not use recursion in order to avoid stack depth limit
         //this.logDebug(() => "markPid(" + pid + ")")
@@ -1929,7 +1876,7 @@
 
     objectSetReferencingPid (pid) {
         const objects = new Set();
-        this.kvMap().keysSet().forEach(objPid => {
+        this.allPids().forEach(objPid => {
             const obj = this.objectForPid(objPid);
             if (obj.refSetForPuuid(pid).has(objPid)) {
                 objects.add(obj);
@@ -1938,23 +1885,12 @@
         return objects;
     }
 
-    // ------------------------
-
-
-    /**
-     * @description Sweep unmarked pids. Called after marking is complete. Part of garbage collection.
-     * @returns {Number} The number of pids swept.
-     */
     sweep () {
-        const unmarkedPidSet = this.allPidsSet().difference(this.markedSet()); // allPids doesn't contain rootKey
-        const kvMap = this.kvMap();
-
+        const unmarkedPidSet = this.allPidsSet().difference(this.markedSet());
         unmarkedPidSet.forEach(pid => {
-            //this.logDebug(() => "--- sweeping --- deletePid(" + pid + ") ");
             this.onCollectPid(pid);
-            kvMap.removeKey(pid); // this will remove the pid from the kvMap
+            this.recordStore().deleteRowInBatch(this.poolId(), pid);
         });
-
         return unmarkedPidSet.count();
     }
 
@@ -1970,57 +1906,47 @@
         }
     }
 
-    /**
-     * @async
-     * @description promise delete all
-     * @returns {void}
-     */
     async promiseDeleteAll () {
         await this.promiseOpen();
         assert(this.isOpen());
-        // assert not loading or storing?
-        const map = this.kvMap();
-        await map.promiseBegin();
-        map.forEachK(pid => {
-            map.removeKey(pid);
-        }); // the remove applies to the changeSet
-        await map.promiseCommit();
+        if (this.poolId()) {
+            await this.recordStore().asyncDeletePool(this.poolId());
+        }
+        await this.forgetPoolId();
     }
 
     /**
-     * @description promise clear
-     * @returns {void}
+     * @description After the pool's rows are gone a new root may be set, which
+     * gives the pool a new id; the home setting is cleared with it.
+     * @category Clearing
      */
-    promiseClear () {
-        return this.kvMap().promiseClear();
+    async forgetPoolId () {
+        if (this.isHomePool() && this.poolId()) {
+            await this.recordStore().asyncSetSetting("homePoolId", null);
+        }
+        this.setPoolId(null);
+        this._rootObject = null;
+        return this;
     }
 
-    // ---------------------------
+    async promiseClear () {
+        await this.recordStore().asyncClear();
+        this.setPoolId(null);
+        this._rootObject = null;
+    }
 
-    /**
-     * @description root subnode with title for proto
-     * @param {String} aTitle - the title to get the subnode for
-     * @param {Object} aProto - the proto to get the subnode for
-     * @returns {Object}
-     */
     rootSubnodeWithTitleForProto (aTitle, aProto) {
         return this.rootObject().subnodeWithTitleIfAbsentInsertProto(aTitle, aProto);
     }
 
-    /**
-     * @description count
-     * @returns {Number}
-     */
     count () {
-        return this.kvMap().count();
+        return this.allPids().length;
     }
 
-    /**
-     * @description total bytes
-     * @returns {Number}
-     */
     totalBytes () {
-        return this.kvMap().totalBytes();
+        let bytes = 0;
+        this.forEachRecordJson((pid, jsonString) => { bytes += jsonString.length; });
+        return bytes;
     }
 
     // ---------------------------
@@ -2088,91 +2014,47 @@
     }
 
 
-    /**
-     * @description get all objects
-     * @returns {Set}
-     */
     allObjects () {
         const objects = new Set();
-        const rootKey = this.rootKey();
-        this.kvMap().keysSet().forEach(pid => {
-            if (pid === rootKey) {
-                return;
-            }
+        this.allPids().forEach(pid => {
             const obj = this.objectForPid(pid);
             objects.add(obj);
         });
         return objects;
     }
 
-    /*
     allRecords () {
         const records = new Set();
-        this.kvMap().keysSet().forEach(pid => {
+        this.allPids().forEach(pid => {
             const record = this.recordForPid(pid);
             records.add(record);
         });
         return records;
     }
-    */
 
     allBlobHashesSet () {
-        // Collect blob hashes from ALL open pools, not just this one.
-        // SubObjectPools (e.g. session pools) share the same SvBlobPool,
-        // so their blob references must be included to prevent incorrect GC.
+        // Collect blob hashes from ALL open pools, not just this one: pools
+        // share the SvBlobPool, so every pool's references count.
         //
-        // Walks RECORDS, not instances: the previous implementation called
-        // objectForPid() on every stored pid, materializing the entire store
-        // just to ask each object for its blob hashes (which defeats slot lazy
-        // loading, and was O(all data) CPU on every blob collect). Blob hashes
-        // are hex sha256 strings, so scanning record JSON for 64-hex tokens is
-        // a conservative superset — a blob can never be wrongly deleted, at
-        // worst an unreferenced one survives until its referencing record is
-        // rewritten. ACTIVE instances are still asked directly, which covers
-        // hashes added since the last save.
+        // Walks RECORDS, not instances (materializing the store to ask each
+        // object would defeat slot lazy loading). Blob hashes are hex sha256
+        // strings, so scanning record JSON for 64-hex tokens is a conservative
+        // superset — a blob can never be wrongly deleted. ACTIVE instances are
+        // still asked directly, which covers hashes added since the last save.
         const hashesSet = new Set();
-        const hexHashRegex = /[0-9a-f]{64}/g;
         SvObjectPool.openPools().forEach(pool => {
-            pool.kvMap().keysSet().forEach(pid => {
-                const recordString = pool.kvMap().at(pid);
-                if (Type.isString(recordString)) {
-                    const matches = recordString.match(hexHashRegex);
-                    if (matches) {
-                        matches.forEach(h => hashesSet.add(h));
-                    }
-                }
-            });
-            pool.activeObjects().forEachKV((pid, obj) => {
-                if (obj && obj.referencedBlobHashesSet) {
-                    hashesSet.addAll(obj.referencedBlobHashesSet());
-                }
-            });
+            hashesSet.addAll(pool.localBlobHashesSet());
         });
-
         return hashesSet;
     }
 
-    /**
-     * @description Blob hashes referenced by THIS pool's records/instances
-     * only. Distinct from allBlobHashesSet (which unions ALL open pools —
-     * correct for blob GC, where a superset protects against wrong
-     * deletion, but wrong for per-document blob SYNC: a session pool asking
-     * "which blobs do I reference" must not answer with every hash in the
-     * app, or every document uploads and chases every other document's blobs).
-     * Same conservative record-scan as allBlobHashesSet, scoped to one pool.
-     * @returns {Set<string>}
-     * @category Blobs
-     */
     localBlobHashesSet () {
         const hashesSet = new Set();
         const hexHashRegex = /[0-9a-f]{64}/g;
-        this.kvMap().keysSet().forEach(pid => {
-            const recordString = this.kvMap().at(pid);
-            if (Type.isString(recordString)) {
-                const matches = recordString.match(hexHashRegex);
-                if (matches) {
-                    matches.forEach(h => hashesSet.add(h));
-                }
+        this.forEachRecordJson((pid, recordString) => {
+            const matches = recordString.match(hexHashRegex);
+            if (matches) {
+                matches.forEach(h => hashesSet.add(h));
             }
         });
         this.activeObjects().forEachKV((pid, obj) => {
@@ -2183,27 +2065,16 @@
         return hashesSet;
     }
 
-    /**
-     * @description Diagnostic: which of this pool's records contain the
-     * given substring (e.g. a blob hash)? Returns short descriptors
-     * ("Type pid") parsed from the record JSON without materializing
-     * anything. Used to name the nodes holding a dangling blob reference.
-     * @param {String} substring
-     * @returns {Array<String>}
-     * @category Blobs
-     */
     recordDescriptorsContaining (substring) {
         const found = [];
-        this.kvMap().keysSet().forEach(pid => {
-            const recordString = this.kvMap().at(pid);
-            if (Type.isString(recordString) && recordString.includes(substring)) {
+        this.forEachRecordJson((pid, recordString) => {
+            if (recordString.includes(substring)) {
                 const typeMatch = recordString.match(/"type"\s*:\s*"([^"]+)"/);
                 found.push((typeMatch ? typeMatch[1] : "?") + " " + pid);
             }
         });
         return found;
     }
-
 
 }.initThisClass());
 

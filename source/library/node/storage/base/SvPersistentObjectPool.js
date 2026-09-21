@@ -52,7 +52,7 @@
     init () {
         super.init();
         this.setName("defaultDataStore");
-        this.setKvMap(SvPersistentAtomicMap.clone());
+        this.setRecordStore(SvLocalRecordStore.clone()); // persistent: IndexedDB in the browser, LevelDB under Node
         this.setIsDebugging(false);
         return this;
     }
@@ -64,6 +64,35 @@
      */
     open () {
         throw new Error(this.svType() + " synchronous open not available - use promiseOpen()");
+    }
+
+    isHomePool () {
+        return true; // its id is settings.homePoolId; its root is the app's model
+    }
+
+    async promiseOpen () {
+        const wasOpen = this.isOpen();
+        await super.promiseOpen();
+        if (!wasOpen && this.isOpen()) {
+            this.deleteLegacyDatabase(); // the pre-records database of the same name: a reset, not a migration
+        }
+        return this;
+    }
+
+    /**
+     * @description Removes the database this pool used before records (keyed by
+     * puuid, a "root" pointer entry). Nothing reads it any more; deleting it
+     * frees the space. Fire-and-forget: a failure only leaves it behind.
+     * @category Open
+     */
+    deleteLegacyDatabase () {
+        try {
+            const legacy = SvIndexedDbFolder.clone().setPath(this.name());
+            legacy.promiseDelete().catch(() => {});
+        } catch {
+            // no IndexedDB in this environment
+        }
+        return this;
     }
 
     /**
@@ -96,7 +125,7 @@
     }
 
     async asyncTotalSize () {
-        return await this.kvMap().asyncTotalSize();
+        return await this.recordStore().kvMap().asyncTotalSize();
     }
 
     /**

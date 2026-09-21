@@ -1347,14 +1347,14 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @returns {String}
      */
     missingRecordDiagnosis (anInstance, pool) {
-        if (!pool || !pool.kvMap || !pool.kvMap()) {
-            return "owner record presence unknown (no kvMap)";
+        if (!pool || !pool.hasRecordForPid) {
+            return "owner record presence unknown (no pool)";
         }
         const ownerPid = anInstance.puuid ? anInstance.puuid() : null;
         if (!ownerPid) {
             return "owner has no puuid";
         }
-        const ownerIsStored = pool.kvMap().hasKey(ownerPid);
+        const ownerIsStored = pool.hasRecordForPid(ownerPid);
         return "owner " + ownerPid + (ownerIsStored
             ? " IS stored in this pool (child record missing: partial write, or removed outside GC)"
             : " is NOT stored in this pool (owner came from foreign JSON — cross-pool pid)");

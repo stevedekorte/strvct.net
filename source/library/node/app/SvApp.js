@@ -466,7 +466,8 @@
         await this.store().promiseOpen();
         this.bootPerfMark("storeRecordsRead");
         try {
-            const recordsMap = this.store().kvMap().map();
+            const recordsMap = new Map();
+            this.store().forEachRecordJson((pid, jsonString) => recordsMap.set(pid, jsonString));
             let bytes = 0;
             const typeCounts = new Map();
             const typeRegex = /"type":\s*"([^"]+)"/;
@@ -513,7 +514,7 @@
             // instantiated vs stored: the direct measure of lazy-slot adoption.
             // (records − instantiated) ≈ how many objects stayed cold at boot.
             const active = this.store().activeObjects().count();
-            const records = this.store().kvMap().count();
+            const records = this.store().count();
             console.log("[SvBootPerf] instantiated at open: " + active + " of " + records + " records (" + (records - active) + " cold)");
 
             // what's still eager — names the next lazy boundary

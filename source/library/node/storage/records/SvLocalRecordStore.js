@@ -177,9 +177,10 @@
     rowsForPool (poolId) {
         const prefix = poolId + SvLocalRecordStore.keySeparator();
         const rows = [];
-        this.kvMap().forEachKV((key, json) => {
+        const map = this.kvMap();
+        map.keysArray().forEach((key) => { // keysArray/at are allowed inside a batch; forEachKV is not
             if (key.startsWith(prefix)) {
-                rows.push(JSON.parse(json));
+                rows.push(JSON.parse(map.at(key)));
             }
         });
         return rows;
@@ -197,9 +198,10 @@
     allRows () {
         const rows = [];
         const settingsPrefix = SvLocalRecordStore.settingsPrefix();
-        this.kvMap().forEachKV((key, json) => {
+        const map = this.kvMap();
+        map.keysArray().forEach((key) => {
             if (!key.startsWith(settingsPrefix)) {
-                rows.push(JSON.parse(json));
+                rows.push(JSON.parse(map.at(key)));
             }
         });
         return rows;
@@ -209,7 +211,7 @@
         const ids = new Set();
         const separator = SvLocalRecordStore.keySeparator();
         const settingsPrefix = SvLocalRecordStore.settingsPrefix();
-        this.kvMap().forEachK((key) => {
+        this.kvMap().keysArray().forEach((key) => {
             if (!key.startsWith(settingsPrefix)) {
                 ids.add(key.slice(0, key.indexOf(separator)));
             }
@@ -254,6 +256,35 @@
 
     async asyncCommitBatch () {
         await this.kvMap().promiseCommit();
+    }
+
+    putSettingInBatch (name, value) {
+        this.kvMap().atPut(SvLocalRecordStore.settingsPrefix() + name, JSON.stringify(value));
+        return this;
+    }
+
+    /**
+     * @description Loads a pool from the cloud pool.json shape (record JSON by
+     * puuid plus a root pointer) straight into the map, outside any batch — the
+     * import path of SvObjectPool.fromCloudJson. Rows get the server-neutral
+     * defaults; the root row is owned locally until the cloud says otherwise.
+     * @category Import
+     */
+    loadFromCloudJson (poolId, json, rootKey) {
+        const dict = {};
+        Object.keys(json).forEach((pid) => {
+            if (pid === rootKey) {
+                return;
+            }
+            const row = SvRecordRow.newRow({ poolId: poolId, objectId: pid, payloadJson: json[pid] });
+            if (pid === poolId) {
+                row.ownerUid = "local";
+                row.version = 0;
+            }
+            dict[SvLocalRecordStore.rowKeyFor(poolId, pid)] = JSON.stringify(row);
+        });
+        this.kvMap().fromJson(dict);
+        return this;
     }
 
     revertBatch () {

@@ -143,6 +143,8 @@
     refsPidsForJsonStore (puuids = new Set()) {
         if (Object.hasOwn(this, "*")) {
             puuids.add(this["*"]);
+        } else if (Object.hasOwn(this, "**")) {
+            // a far ref names another pool's root: not a pid of this pool, never keeps a pool alive
         } else if (Object.hasOwn(this, "*lazyJson")) {
             // Deferred JSON parked in a lazy slot — inline payload, no pid refs.
         } else {
