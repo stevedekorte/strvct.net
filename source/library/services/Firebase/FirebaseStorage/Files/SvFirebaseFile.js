@@ -249,26 +249,26 @@
     }
 
     async didUpdateSlotBlob (oldValue, newValue) {
-        if (newValue && this.dataUrl() === null) {
-            // download set the blob, so copy it into the dataUrl *if* the data url is an image type
-            await this.updateDataUrlFromBlob();
+        if (newValue) {
             this.setSize(newValue.size);
         }
+        // The data URL is not mirrored from the blob here: every downloaded
+        // file (a catalog of hundreds of ~1.5 MB images at sign-in) was being
+        // base64-encoded into a String slot nobody on the download path read —
+        // seconds of main thread, and a 2 MB string over the stored-string cap.
+        // The image preview is built when the file is first shown (prepareForFirstAccess).
     }
 
+    /**
+     * @description Builds the image preview (the dataUrl slot) from the blob,
+     * for image blobs only; on demand, never on download.
+     * @category Helper
+     */
     async updateDataUrlFromBlob () {
         const dataUrlString = await this.blob().asyncAsDataUrl();
         const dataUrlObj = SvDataUrl.clone().setDataUrlString(dataUrlString);
         this.setContentType(dataUrlObj.mimeType());
-        //this.setContentCategory(dataUrlObj.contentCategory());
-
-        if (dataUrlObj.isImage()) {
-            this.setDataUrl(dataUrlString);
-        } else {
-            this.setDataUrl(null);
-        }
-
-        this.setDataUrl(dataUrlString);
+        this.setDataUrl(dataUrlObj.isImage() ? dataUrlString : null);
     }
 
     /**
@@ -745,6 +745,9 @@
 
     prepareForFirstAccess () {
         this.asyncRefresh();
+        if (this.blob() !== null && this.dataUrl() === null) {
+            this.updateDataUrlFromBlob(); // the inspector is about to show the file: build the image preview now
+        }
         return this;
     }
 
