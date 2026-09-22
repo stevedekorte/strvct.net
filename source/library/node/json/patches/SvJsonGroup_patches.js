@@ -283,6 +283,20 @@
             return null;
         }
         // slot-backed group
+        if (key === "_type") {
+            // JSON metadata, not a slot — the preflight mirrors setJsonKeyValue:
+            // a value that agrees with the node's class (or names no class we
+            // know) is a no-op; only a real class change is refused. Refusing
+            // every `_type` key refused whole host replica diffs (a serialized
+            // item tagged with the class it already has), 11 times in one prod
+            // session (2026-09-22).
+            const declared = (op === "add" || op === "replace") ? SvJsonIdNode.classForJsonType(operation.value) : null;
+            if (op === "remove" || !declared || declared === container.node.thisClass()) {
+                return null;
+            }
+            return "cannot change _type from '" + container.node.svType() + "' to '" + operation.value
+                + "' by patching a property; replace the whole element instead";
+        }
         const slot = container.node.getSlot(key);
         if (!slot) {
             return "unknown slot '" + key + "' on " + container.node.svType() + " (available: [" + container.node.thisClass().jsonSchemaSlots().map(sl => sl.name()).join(", ") + "]) — never invent field names";
@@ -993,6 +1007,15 @@
      */
     setJsonNodeSlotValue (slot, nodeClass, value) {
         const currentNode = slot.onInstanceGetValue(this);
+        // A whole-object value whose _type names a DIFFERENT class is a class
+        // change (a seat's AI controller replaced by a plain one): the slot
+        // gets a new node of the declared class. Deserializing into the old
+        // node kept its class and silently dropped the change.
+        const declared = (value && value._type) ? SvJsonIdNode.classForJsonType(value._type) : null;
+        if (currentNode && declared && currentNode.thisClass && currentNode.thisClass() !== declared) {
+            slot.onInstanceSetValue(this, this.createNodeForValue(value));
+            return this;
+        }
         if (currentNode && currentNode.setJson) {
             currentNode.setJson(value);
         } else {

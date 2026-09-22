@@ -235,6 +235,14 @@ async function main () {
     check(r && !r.refusedBeforeApply && r.failedOpIndex === 1 && String(r.stateNote).includes("NOT atomic"), "an error only visible at apply time is reported as before, with the failing index");
     check(snapshot(root) !== before && root.items().subnodes().length === 4, "…and the earlier op stayed applied (this is what Client Transactions removes later)");
 
+    console.log("\n_type is JSON metadata: the preflight follows the apply rule");
+    root = newRoot();
+    const itemType = root.items().subnodes().at(0).svType();
+    r = refusal(root, [{ op: "add", path: "/items/0/_type", value: itemType }, { op: "replace", path: "/items/0/name", value: "z" }]);
+    check(r === null && root.items().subnodes().at(0).name() === "z", "a _type naming the element's own class is a no-op, and the batch applies (a host replica diff tags objects this way)");
+    r = refusal(root, [{ op: "add", path: "/items/0/_type", value: "SvJsonArrayNode" }]);
+    check(r && r.refusedBeforeApply && String(r.error).includes("replace the whole element"), "a _type naming a different class is refused before anything applies");
+
     console.log("\nA valid batch applies exactly as before");
     root = newRoot();
     r = refusal(root, [{ op: "replace", path: "/label", value: "new" }, { op: "add", path: "/items/-", value: { name: "d", count: 4 } }, { op: "remove", path: "/items/0" }]);
