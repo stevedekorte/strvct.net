@@ -147,6 +147,13 @@
         // Create and set the fetchPromise immediately
         // This ensures the sound has a promise to wait on before it's queued
         const fetchPromise = Promise.clone();
+        // A sound queued behind the one playing awaits this promise only when
+        // its turn comes, so a request that fails first (a vendor 429, a
+        // network error) rejects with no awaiter yet — and the window treats
+        // that as an unhandled rejection and shows the "Something Went Wrong"
+        // panel over the whole page for a voice failure the queue already
+        // reports. Mark the rejection handled here; awaiters still see it.
+        fetchPromise.catch(() => {});
         sound.setFetchPromise(fetchPromise);
 
         // Store the promise so we can resolve/reject it later
