@@ -56,6 +56,30 @@
             const slot = this.newSlot("error", null);
             slot.setSlotType("Error");
         }
+
+        {
+            /**
+       * @member {Boolean} educatesQuotes
+       * @description When true, straight quotes in text nodes are converted to
+       * curly quotes (see String.withCurlyQuotes). Off by default — only prose
+       * readers should turn it on, since it rewrites the text bytes.
+       * @category Text
+       */
+            const slot = this.newSlot("educatesQuotes", false);
+            slot.setSlotType("Boolean");
+        }
+
+        {
+            /**
+       * @member {Set} quoteEducationSkipTagNames
+       * @description Lowercase tag names whose text is machine data (JSON, code)
+       * and must stay byte-exact. Text inside these tags, or any descendant of
+       * them, is never quote-educated.
+       * @category Text
+       */
+            const slot = this.newSlot("quoteEducationSkipTagNames", null);
+            slot.setSlotType("Set");
+        }
     }
 
     initPrototype () {
@@ -64,7 +88,34 @@
     init () {
         super.init();
         this.setParser(this.newParser());
+        this.setQuoteEducationSkipTagNames(this.defaultQuoteEducationSkipTagNames());
     //this.setIsDebugging(true);
+    }
+
+    /**
+   * @description The tag names whose text must stay byte-exact when quote
+   * education is on. tool-call / tool-call-result(s) / ai-request carry JSON
+   * that is JSON.parse'd by the tag delegates; request-info, assistant-status,
+   * no-op and system-error are machine chrome; code/pre/script/style are
+   * verbatim by definition.
+   * @returns {Set<string>}
+   * @category Text
+   */
+    defaultQuoteEducationSkipTagNames () {
+        return new Set([
+            "tool-call",
+            "tool-call-results",
+            "tool-call-result",
+            "ai-request",
+            "request-info",
+            "assistant-status",
+            "no-op",
+            "system-error",
+            "code",
+            "pre",
+            "script",
+            "style"
+        ]);
     }
 
     /**
@@ -327,12 +378,62 @@
     //console.log("onText '" + text + "'");
         const n = this.currentNode();
 
+        if (this.shouldEducateQuotesInNode(n)) {
+            text = text.withCurlyQuotes(this.precedingCharForNode(n));
+        }
 
         if (n.isTextNode()) {
             n.appendText(text);
         } else {
             this.onOpenText(text);
         }
+    }
+
+    /**
+   * @description Whether the text arriving under the given node should have its
+   * straight quotes educated: only when educatesQuotes is on and neither the
+   * node nor any ancestor is a skip tag (machine data must stay byte-exact).
+   * @param {SvStreamNode} aNode - The node the text will be appended under.
+   * @returns {boolean}
+   * @category Text
+   */
+    shouldEducateQuotesInNode (aNode) {
+        if (!this.educatesQuotes()) {
+            return false;
+        }
+        const skipSet = this.quoteEducationSkipTagNames();
+        if (!skipSet || skipSet.size === 0) {
+            return true;
+        }
+        const skipAncestor = aNode.detectAncestor(node => {
+            // text nodes and the unnamed root node have no meaningful tag name
+            const name = node.name ? node.name() : null;
+            return name ? skipSet.has(name.toLowerCase()) : false;
+        });
+        return skipAncestor === null;
+    }
+
+    /**
+   * @description The character to the left of the incoming text, used to decide
+   * whether a leading quote opens or closes. Within a text node it is that
+   * node's last character; under an element it is the last character of the
+   * element's last child (e.g. an `</i>` that just closed), or "" at the start
+   * of the element (which reads as an opener).
+   * @param {SvStreamNode} aNode - The node the text will be appended under.
+   * @returns {string}
+   * @category Text
+   */
+    precedingCharForNode (aNode) {
+        let priorText = "";
+        if (aNode.isTextNode()) {
+            priorText = aNode.text();
+        } else {
+            const lastChild = aNode.children().last();
+            if (lastChild) {
+                priorText = lastChild.textContent();
+            }
+        }
+        return priorText.length ? priorText[priorText.length - 1] : "";
     }
 
     /**

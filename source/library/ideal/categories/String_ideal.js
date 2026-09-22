@@ -713,6 +713,49 @@
     }
 
     /**
+     * Converts straight quotes (" and ') to the typographically correct curly
+     * quotes, deciding open vs close from the LEFT context only, so it is safe
+     * to run on a streamed chunk (it never needs the character to the right).
+     *
+     * The character before a quote is either the previous character within this
+     * string or, for the first character, the precedingChar argument ("" means
+     * start-of-text). Whitespace, start-of-text, and any of ( [ { < “ ‘ — – - /
+     * open a quote; anything else closes it.
+     *
+     * Already-curly quotes pass through untouched, so this is idempotent.
+     *
+     * Known limitation: a leading elision ('tis, '90s) becomes ‘tis / ‘90s,
+     * since the opener/closer decision cannot see to the right.
+     *
+     * @param {string} [precedingChar=""] - The character immediately before this string in its context.
+     * @returns {string} The string with straight quotes educated to curly quotes
+     * @category Formatting
+     */
+    withCurlyQuotes (precedingChar = "") {
+        const openers = new Set(["", "(", "[", "{", "<", "“", "‘", "—", "–", "-", "/", "\n"]);
+        const isOpener = function (c) {
+            return openers.has(c) || /\s/.test(c);
+        };
+        let result = "";
+        let prev = precedingChar ? precedingChar[precedingChar.length - 1] : "";
+        for (let i = 0; i < this.length; i++) {
+            const c = this[i];
+            let out = c;
+            if (c === '"') {
+                out = isOpener(prev) ? "“" : "”";
+            } else if (c === "'") {
+                out = isOpener(prev) ? "‘" : "’";
+            }
+            result += out;
+            // track the EMITTED char, so a quote nested directly inside an opening
+            // quote also opens: "'Run!'" → “‘Run!’”. This also matches the
+            // streaming case, where the preceding text is already educated.
+            prev = out;
+        }
+        return result;
+    }
+
+    /**
      * Generates Lorem Ipsum text
      * @param {number} [minWordCount=10] - Minimum number of words
      * @param {number} [maxWordCount=40] - Maximum number of words

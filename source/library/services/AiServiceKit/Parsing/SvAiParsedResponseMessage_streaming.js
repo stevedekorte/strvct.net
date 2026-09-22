@@ -36,7 +36,10 @@
     }
 
     setupHtmlStreamReader () {
-        this.setHtmlStreamReader(SvHtmlStreamReader.clone().setDelegate(this));
+        // educatesQuotes: the AI writes ASCII quotes, but the book faces (IM Fell)
+        // draw " as a closing curly quote, so every opening quote looks backwards.
+        // The reader's skip set keeps tool-call JSON and other machine tags byte-exact.
+        this.setHtmlStreamReader(SvHtmlStreamReader.clone().setDelegate(this).setEducatesQuotes(true));
         return this;
     }
 
