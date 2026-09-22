@@ -210,6 +210,7 @@
                     + "s so you can tell it is alive even when nothing is thrashing."
                     + " Reload without ?thrash=1 to turn it off.");
                 this.shared().setEnabled(true);
+                this.shared().beginFrame(); // reads land before the first tick's beginFrame; the trigger list must exist
                 this.shared().startFrameLoop();
             }
         }
@@ -269,6 +270,7 @@
                 // did it. Two frames up from here is the caller of the read.
                 const frames = String(new Error().stack || "").split("\n").slice(2, 5)
                     .map(f => f.trim()).join(" <- ");
+                if (!this.triggers()) { this.beginFrame(); }
                 this.triggers().push(this.lastWrite() + " -> " + m + "\n         at " + frames);
                 this.onThrash();
             }
@@ -355,7 +357,7 @@
         }
         if (this.enabled() && this.reflowCount()) {
             console.log(">>> " + this.svType() + " forced-layout count this frame: " + this.reflowCount());
-            this.triggers().forEach((t, i) => console.log("      " + (i + 1) + ". " + t));
+            (this.triggers() || []).forEach((t, i) => console.log("      " + (i + 1) + ". " + t));
         }
     }
 
