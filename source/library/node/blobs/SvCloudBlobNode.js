@@ -542,6 +542,22 @@
      * @returns {Promise<Blob|null>} The blob, or null when unavailable.
      * @category Blob Storage
      */
+    warnOnceAboutMalformedHash (hash) {
+        const seen = SvCloudBlobNode.malformedHashesWarned();
+        if (!seen.has(hash)) {
+            seen.add(hash);
+            console.warn(this.logPrefix ? this.logPrefix() : "[SvCloudBlobNode]", "malformed blob hash treated as no image:", JSON.stringify(hash));
+        }
+        return this;
+    }
+
+    static malformedHashesWarned () {
+        if (!this._malformedHashesWarned) {
+            this._malformedHashesWarned = new Set();
+        }
+        return this._malformedHashesWarned;
+    }
+
     async asyncBlobValue (options = {}) {
         const forceRetry = options.force === true;
         const blob = await this.blobValue();
@@ -551,7 +567,13 @@
 
         const hash = this.valueHash();
         if (hash) {
-            assert(hash.length === 64, "hash length is not 64 excepted for hex sha256");
+            if (!/^[0-9a-f]{64}$/.test(hash)) {
+                // Data, not a caller bug: a placeholder hash ("pending") saved by
+                // an authoring script that never finished. Treat it as no image —
+                // an assert here failed three times per catalog sync (2026-09-22).
+                this.warnOnceAboutMalformedHash(hash);
+                return null;
+            }
 
             // A hash already confirmed missing won't be on local disk or in the
             // cloud — short-circuit so a re-render doesn't re-run the lookup chain.
