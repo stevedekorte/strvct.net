@@ -58,6 +58,13 @@
 (class SvStackView extends SvNodeView {
 
     initPrototypeSlots () {
+        {
+            // The root stack's measured width, kept between resizes (see
+            // cachedRootWidth); null = measure on next ask.
+            const slot = this.newSlot("rootWidthCache", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
 
         /**
          * @member {SvNavView} navView
@@ -358,6 +365,7 @@
         }
         */
         // TODO: change so only top stack view registers for resize
+        this.rootStackView().invalidateRootWidth();
         this.recompactBrowserChain();
         return this;
     }
@@ -1028,8 +1036,34 @@
         if (view.parentView() === SvDocumentBody.shared()) {
             return window.innerWidth; // assume it fills the window? what about margins, padding?
         }
-        return view.size().width(); // clientWidth works here, but maybe all cases
-        //return this.rootStackView().calcSize().width();
+        return view.cachedRootWidth();
+    }
+
+    /**
+     * @description The root stack's own measured width, measured once and kept
+     * until a window or container resize invalidates it (see
+     * invalidateRootWidth). Every nav's targetWidth / availableNavWidth and
+     * every compaction pass asks for this width right after writing widths,
+     * so an uncached clientWidth here was a forced layout per ask — hundreds
+     * per second while a narration streamed (2026-09-22). A zero measurement
+     * (not laid out yet) is not cached, so the first real width is picked up.
+     * @returns {Number}
+     * @category Layout
+     */
+    cachedRootWidth () {
+        if (this.rootWidthCache() === null) {
+            const w = this.size().width(); // one clientWidth read
+            if (w > 0) {
+                this.setRootWidthCache(w);
+            }
+            return w;
+        }
+        return this.rootWidthCache();
+    }
+
+    invalidateRootWidth () {
+        this.setRootWidthCache(null);
+        return this;
     }
 
     /**

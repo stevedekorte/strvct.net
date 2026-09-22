@@ -434,10 +434,16 @@
 
         const style = this.cssStyle();
         const simpleSet = true;
-        //const doesSanityCheck = false;
-        //const oldValue = style.getPropertyValue(key);
-
-        //if (String(oldValue) !== String(newValue)) {
+        // A same-value write is a no-op for the browser's layout, but every
+        // caller that measures afterwards still paid for a forced layout the
+        // thrash detector attributed to it — and the nav/stack orientation
+        // passes re-stamp the same widths on every node update (thousands of
+        // "forced layouts" per minute during a streamed narration, 2026-09-22).
+        // Reading the inline style is not a layout read.
+        const oldValue = style.getPropertyValue(key);
+        if (newValue === null ? oldValue === "" : String(oldValue) === String(newValue)) {
+            return this;
+        }
         if (simpleSet) {
             if (newValue === null) {
                 this.removeCssProperty(key);

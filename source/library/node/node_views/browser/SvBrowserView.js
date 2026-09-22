@@ -601,6 +601,9 @@
     recompactForContainer () {
         const stack = this.stackView();
         if (stack && stack.recompactBrowserChain) {
+            if (stack.rootStackView && stack.rootStackView().invalidateRootWidth) {
+                stack.rootStackView().invalidateRootWidth(); // the container just changed size
+            }
             stack.recompactBrowserChain();
         }
         return this;
