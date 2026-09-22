@@ -336,7 +336,14 @@
         // then runs two turns from the same history point (observed: the
         // adventure opening narrated twice in parallel). Park the request on
         // the conversation instead; it fires when the send gate settles.
-        if (this.conversation().hasActiveResponses()) {
+        // The same guard covers a turn requested while a BLOCKING tool call is
+        // still open (a presentChoices addressed to one player, a roll awaiting
+        // its dice): starting a request then runs a turn the tool result will
+        // run again, and the two responses race each other's tool calls (a
+        // second player's chat during another's choice wedged the table,
+        // 2026-09-22). Parked the same way: the tool-results message that
+        // closes the call carries this message in history and drives the turn.
+        if (this.conversation().hasActiveResponses() || this.conversation().assistantToolKit().hasUncompletedBlockingToolCalls()) {
             this.conversation().deferTurnRequestFrom(this);
             return null;
         }

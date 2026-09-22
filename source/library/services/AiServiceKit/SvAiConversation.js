@@ -746,7 +746,7 @@
    */
     deferTurnRequestFrom (aMsg) {
         const prior = this.deferredTurnRequestMessage();
-        console.warn(this.logPrefix(), "requestResponse while a response is streaming — deferring the turn for "
+        console.warn(this.logPrefix(), "requestResponse while a response is streaming or a blocking tool call is open — deferring the turn for "
             + aMsg.svType() + (prior ? " (replacing a prior deferred trigger — one turn covers both)" : ""));
         this.setDeferredTurnRequestMessage(aMsg);
         return this;
