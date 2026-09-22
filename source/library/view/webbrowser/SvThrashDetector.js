@@ -268,7 +268,7 @@
                 // The stack is the point: "someView set height -> otherView get
                 // clientHeight" tells you WHAT interleaved, but not which code
                 // did it. Two frames up from here is the caller of the read.
-                const frames = String(new Error().stack || "").split("\n").slice(2, 5)
+                const frames = String(new Error().stack || "").split("\n").slice(2, 12)
                     .map(f => f.trim()).join(" <- ");
                 if (!this.triggers()) { this.beginFrame(); }
                 this.triggers().push(this.lastWrite() + " -> " + m + "\n         at " + frames);
