@@ -299,7 +299,16 @@ all of it again to decide a button's visibility, then writing that button's
 5. **Treat ResizeObserver, scroll and input handlers as hot paths.** They fire per
    frame or per keystroke. A write inside a ResizeObserver callback that changes
    size re-triggers the observer — check for that feedback loop.
-6. **Diagnostics are not exempt, and rewrites reinstate them.** The ScrollDebug
+6. **Layout passes that run on node updates are hot paths too.** `didUpdateNode`
+   bubbles to the root, so a streamed narration re-runs every column's
+   `syncFromNode` / `syncOrientation` / compaction once per token. A pass that
+   stamps widths and then asks a container for its `clientWidth` forced thousands
+   of layouts per minute (2026-09-22). Cache container measurements and
+   invalidate them on the event that changes them (window resize, the container's
+   ResizeObserver) — see `SvStackView.cachedRootWidth` — rather than measuring per
+   pass. `setCssProperty` skips same-value writes, so re-stamping an unchanged
+   style is free; do not work around that by writing through `element().style`.
+7. **Diagnostics are not exempt, and rewrites reinstate them.** The ScrollDebug
    logs were made opt-in on 2026-07-16 and came back ungated in the 2026-07-29
    rewrite of the same file. When you rewrite a file, re-check the fixes that were
    already applied to it.
