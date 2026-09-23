@@ -160,9 +160,10 @@
        * @description Which vendor speaks the narrator's own lines (a line
        * attributed to a character with a voice of their own follows that
        * character's voice ref instead). "openai" uses ttsModel and voice;
-       * "gemini" uses geminiTtsModel and geminiVoice.
+       * "gemini" uses geminiTtsModel and geminiVoice. Gemini is the default
+       * (2026-09-23): stored sessions that never chose follow it too.
        */
-            const slot = this.newSlot("narratorService", "openai");
+            const slot = this.newSlot("narratorService", "gemini");
             slot.setInspectorPath("");
             slot.setLabel("Narrator service");
             slot.setShouldStoreSlot(true);
