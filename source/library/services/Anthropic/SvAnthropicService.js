@@ -61,6 +61,19 @@
                 "supportsTopP": false
             },
             {
+                "name": "claude-opus-5-5",
+                "title": "Claude Opus 5.5",
+                "subtitle": "",
+                // 1M window; capped like the other assistant models so
+                // compaction pressure and per-turn input cost stay bounded.
+                "inputTokenLimit": 200000,
+                "notes": "Character and Campaign assistant model ($4/$20 per MTok; cache read $0.20, write $5). Successor to Opus 5. Thinking can't be disabled (thinking:disabled or budget_tokens 400 at every effort) — never send a thinking param; effort is the only control and its API default is medium, so it is set explicitly. Forced tool_choice any/tool returns 400 (tools here ride as text tags, so unaffected). temperature/top_p/top_k not supported. Broader safety classifiers (cyber, bio, reasoning_extraction) can return stop_reason 'refusal'.",
+                "outputTokenLimit": 128000,
+                "effort": "medium", // explicit: the API default for this model is medium, one below Opus 5's high
+                "supportsTemperature": false,
+                "supportsTopP": false
+            },
+            {
                 "name": "claude-opus-5",
                 "title": "Claude Opus 5",
                 "subtitle": "",
