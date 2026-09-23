@@ -197,10 +197,15 @@
             throw e;
         }
         const expectedSeq = this.headSeq() + 1;
+        // The document's current metadata rides every delta, so a listing
+        // shows its latest title/subtitle/thumbnail without loading it (the
+        // server used to clear the metadata on each delta).
+        const metadata = this.metadataProvider() ? this.metadataProvider()() : null;
         const result = await this.executeWithRetry(() => this.backend().appendDelta({
             nodeId: this.nodeId(),
             expectedSeq,
-            delta
+            delta,
+            metadata
         }));
         // Bump local headSeq optimistically; node watcher will reconfirm.
         const lease = this.currentLease() || {};

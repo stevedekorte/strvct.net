@@ -247,6 +247,18 @@
     }
 
     /**
+     * @description Whether a lazy folder loads a child fully when its cloud
+     * node carries no document metadata. Override to true when a placeholder
+     * row is wrong without it (e.g. a portrait and summary line); by default
+     * the node's creation title is enough.
+     * @returns {Boolean}
+     * @category Cloud Sync
+     */
+    loadsChildrenMissingMetadata () {
+        return false;
+    }
+
+    /**
      * @description Subclasses MAY override to render the list from the
      * folder MANIFEST and defer each child's full content load until the
      * child is first opened (manifest-first / lazy). When true,
@@ -258,6 +270,19 @@
      */
     usesLazyChildLoading () {
         return false;
+    }
+
+    /**
+     * @description The `fields` of a cloud node's document metadata (what the
+     * document last saved about itself: title, subtitle, thumbnail …), or
+     * null when the node carries none.
+     * @param {SvFsNode} childFsNode
+     * @returns {Object|null}
+     * @category Cloud Sync
+     */
+    static cloudMetadataFieldsOf (childFsNode) {
+        const envelope = (childFsNode && typeof childFsNode.documentMetadata === "function") ? childFsNode.documentMetadata() : null;
+        return (envelope && envelope.schemaVersion === 1 && envelope.fields && typeof envelope.fields === "object") ? envelope.fields : null;
     }
 
     /**
@@ -289,10 +314,17 @@
         // empty placeholder is never written back to cloud.
         child._suppressLocalModifiedTouch = true;
         try {
-            const title = childFsNode && typeof childFsNode.title === "function" ? childFsNode.title() : null;
-            const subtitle = childFsNode && typeof childFsNode.subtitle === "function" ? childFsNode.subtitle() : null;
+            // The document's own last-saved metadata (title, subtitle,
+            // thumbnail …) is current; the node's title/subtitle are only
+            // what was written when the document was created.
+            const fields = this.thisClass().cloudMetadataFieldsOf(childFsNode);
+            const title = (fields && typeof fields.title === "string") ? fields.title
+                : (childFsNode && typeof childFsNode.title === "function" ? childFsNode.title() : null);
+            const subtitle = (fields && typeof fields.subtitle === "string") ? fields.subtitle
+                : (childFsNode && typeof childFsNode.subtitle === "function" ? childFsNode.subtitle() : null);
             if (title && child.setTitle) child.setTitle(title);
             if (subtitle && child.setSubtitle) child.setSubtitle(subtitle);
+            if (fields && child.applyCloudMetadataFields) child.applyCloudMetadataFields(fields);
             const lm = childFsNode && typeof childFsNode.lastModified === "function" ? childFsNode.lastModified() : null;
             // asMillis before the fallback: an uninterpretable object is
             // truthy, so `lm || Date.now()` would forward the object itself
@@ -513,12 +545,21 @@
             // BOTH branches skip children with a pending local delete: the
             // cloud doc is still listed until the flush lands, and re-adding
             // it here would undo a delete performed just before a reload.
+            // A lazy folder renders a child from its cloud metadata alone. A
+            // folder whose rows need that metadata (loadsChildrenMissingMetadata)
+            // loads a child that carries none yet fully, as an eager folder
+            // would; its next save writes the metadata.
+            const fullLoadNodes = [];
             if (this.usesLazyChildLoading()) {
                 for (const child of childNodes) {
                     const stableId = this.cloudFsChildIdFromNodeId(child.id());
                     if (!stableId) continue;
                     listedStableIds.add(stableId);
                     if (this.hasPendingCloudDelete(child.id())) continue;
+                    if (this.loadsChildrenMissingMetadata() && !this.thisClass().cloudMetadataFieldsOf(child)) {
+                        fullLoadNodes.push(child);
+                        continue;
+                    }
                     try {
                         this.applyChildPlaceholderFromCloud(stableId, child);
                     } catch (e) {
@@ -526,7 +567,10 @@
                     }
                 }
             } else {
-                await Promise.all(childNodes.map(async (child) => {
+                fullLoadNodes.push(...childNodes);
+            }
+            {
+                await Promise.all(fullLoadNodes.map(async (child) => {
                     const stableId = this.cloudFsChildIdFromNodeId(child.id());
                     if (!stableId) return;
                     listedStableIds.add(stableId);
