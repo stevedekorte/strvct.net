@@ -186,8 +186,16 @@
     // --- attributes ---
 
     setAttribute (k, v) {
+        // Same-value writes are skipped (as in setCssProperty): views re-sync
+        // on every node update, and each real attribute write invalidates
+        // style, so a later geometry read would force layout.
+        // (getAttribute on the element is not a layout read.)
+        const e = this.element();
+        if (e.getAttribute(k) === String(v)) {
+            return this;
+        }
         this.didDomWrite(k);
-        this.element().setAttribute(k, v);
+        e.setAttribute(k, v);
         return this;
     }
 
