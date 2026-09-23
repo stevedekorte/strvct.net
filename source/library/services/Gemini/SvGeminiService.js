@@ -244,6 +244,59 @@
         return this.thisClass().withSseAlt(url);
     }
 
+    // --- speech (see SvGeminiTtsRequest) ---
+
+    /**
+     * @description The text-to-speech models, best-first for narration. Flash
+     * is the expressive one; Flash-Lite is cheaper and faster, with less range.
+     * @returns {string[]}
+     * @category Speech
+     */
+    static speechModelIds () {
+        return ["gemini-3.8-flash-tts", "gemini-3.8-flash-lite-tts"];
+    }
+
+    static defaultSpeechModelId () {
+        return this.speechModelIds().first();
+    }
+
+    /**
+     * @description The prebuilt voices the speech models accept (2026-09),
+     * named as the API spells them. Every voice works with every model.
+     * @returns {string[]}
+     * @category Speech
+     */
+    static speechVoiceNames () {
+        return [
+            "Achernar", "Achird", "Algenib", "Algieba", "Alnilam", "Aoede", "Autonoe", "Callirrhoe",
+            "Charon", "Despina", "Enceladus", "Erinome", "Fenrir", "Gacrux", "Iapetus", "Kore",
+            "Laomedeia", "Leda", "Orus", "Puck", "Pulcherrima", "Rasalgethi", "Sadachbia", "Sadaltager",
+            "Schedar", "Sulafat", "Umbriel", "Vindemiatrix", "Zephyr", "Zubenelgenubi"
+        ];
+    }
+
+    /**
+     * @description The API's spelling of a voice name, matched case-insensitively,
+     * or null when no prebuilt voice has that name.
+     * @param {string} aName
+     * @returns {string|null}
+     * @category Speech
+     */
+    static speechVoiceNamed (aName) {
+        const lower = String(aName).toLowerCase();
+        return this.speechVoiceNames().find(name => name.toLowerCase() === lower) || null;
+    }
+
+    /**
+     * @description The endpoint speech requests post to (the Interactions API;
+     * the model is named in the body, not the URL).
+     * @returns {string}
+     * @category Speech
+     */
+    static speechUrl () {
+        return "https://generativelanguage.googleapis.com/v1beta/interactions";
+    }
+
     /**
    * @description Performs final initialization steps.
    * @category Initialization

@@ -344,8 +344,7 @@
             }
 
             // Get the audio blob from the response
-            const xhr = xhrRequest.xhr();
-            const audioBlob = xhr.response;
+            const audioBlob = await this.audioBlobFromResponse(xhrRequest.xhr().response);
 
             if (!audioBlob) {
                 throw new Error("No response blob received from TTS API");
@@ -428,6 +427,18 @@
                 fetchPromise.callRejectFunc(error);
             }
         }
+    }
+
+    /**
+   * @description The audio in a successful response. The speech endpoints
+   * this class was written for answer with the audio file itself; a vendor
+   * that wraps the audio in JSON overrides this to unwrap it.
+   * @param {Blob} responseBlob - the response body
+   * @returns {Promise<Blob>}
+   * @category Response Data
+   */
+    async audioBlobFromResponse (responseBlob) {
+        return responseBlob;
     }
 
     /**
