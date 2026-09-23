@@ -283,9 +283,11 @@ all of it again to decide a button's visibility, then writing that button's
    per invocation, for a number it already knew.
 3. **Know what counts as a read.** Not just `element().scrollTop` — the framework
    accessors (`clientHeight()`, `offsetTop()`, `scrollHeight()`,
-   `boundingClientRect()`) all measure, and so does anything routed through
-   `getCssProperty()` (`paddingBottom()`, `display()`, …) because that calls
-   `getComputedStyle`. `getAttribute()` measures too.
+   `boundingClientRect()`) all measure, and so do `innerText()` (layout-aware;
+   `textContent()` is not), `getComputedCssProperty()` / `computedWidth()` /
+   `computedHeight()` (`getComputedStyle`), and a raw `el.offsetHeight`. NOT reads:
+   `getCssProperty()` (`paddingBottom()`, `display()`, …) reads the element's
+   inline `style`, and `getAttribute()` reads the attribute — neither lays out.
 4. **A log line that mentions geometry IS a read.** Building the string measures,
    whether or not the message ends up printed. Gate the whole statement:
 
@@ -308,15 +310,28 @@ all of it again to decide a button's visibility, then writing that button's
    ResizeObserver) — see `SvStackView.cachedRootWidth` — rather than measuring per
    pass. `setCssProperty` skips same-value writes, so re-stamping an unchanged
    style is free; do not work around that by writing through `element().style`.
-7. **Diagnostics are not exempt, and rewrites reinstate them.** The ScrollDebug
+7. **A sync reads the MODEL, never the DOM.** `syncFromNode` runs per node
+   update, i.e. per keystroke and per streamed chunk, right after it writes. Take
+   labels, text and state from the node (`visibleKey()`, not the key view's
+   `innerText()`), colors from CSS (`currentColor`, a variable — not a measured
+   `getComputedStyle` color), and visibility from state the view owns (the
+   display it set, a data attribute — not `offsetHeight`). Four such reads were
+   found in one audit (2026-09-23): an ARIA label, a note-icon color, a
+   progress-tag visibility test, and a MutationObserver's scroll snapshot (a
+   MutationObserver callback is a microtask right after the writes — schedule
+   the measurement for the next frame instead).
+8. **Diagnostics are not exempt, and rewrites reinstate them.** The ScrollDebug
    logs were made opt-in on 2026-07-16 and came back ungated in the 2026-07-29
    rewrite of the same file. When you rewrite a file, re-check the fixes that were
    already applied to it.
 
 ### Verifying
 
-`SvThrashDetector` is wired into the DOM read/write accessors. Load any page with
-**`?thrash=1`** (anywhere in the url — after the hash is fine) and it reports,
+`SvThrashDetector` is wired into the DOM read/write accessors and is ON by default
+for now: a small counter in the window's top-right corner shows forced layouts per
+second and the total since load (grey when quiet, amber/red while it happens);
+`?thrash=0` turns it off. Click the counter, or load with
+**`?thrash=1`** (anywhere in the url — after the hash is fine), and it also reports,
 once per animation frame, every write-then-read pair with the reading code's stack.
 It `console.warn`s that it is ON when it arms, and heartbeats every 5s with either
 "no forced layouts — clean" or a count, so a quiet console is a RESULT rather than
@@ -325,8 +340,10 @@ before claiming a reflow fix works — reasoning about this from source is
 unreliable, which is exactly how the regression above shipped.
 
 Note the detector only sees reads that go through the framework accessors. Direct
-`element().scrollTop` style access bypasses it, so prefer the accessors in new
-code.
+element access (`el.offsetHeight`, `element().scrollTop`, `getBoundingClientRect()`)
+bypasses it, so a quiet counter does not clear code that measures raw elements —
+three of the four 2026-09-23 finds were invisible to it. Prefer the accessors in
+new code, and grep a change for raw geometry reads.
 
 ## Reading what the user sees
 
