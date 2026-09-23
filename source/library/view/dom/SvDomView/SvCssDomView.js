@@ -3104,9 +3104,10 @@
     }
 
     /**
-     * @description Records a geometry READ for thrash detection. A no-op unless
-     * "?thrash=1" is in the url — these fire on nearly every view operation, so
-     * the disabled path must stay one static boolean.
+     * @description Records a geometry READ for thrash detection (on by
+     * default for now; "?thrash=0" turns it off) — these fire on nearly every
+     * view operation, so both paths must stay cheap: one static boolean when
+     * off, a couple of slot writes when on.
      * @param {String} opName
      * @category Reflow
      */

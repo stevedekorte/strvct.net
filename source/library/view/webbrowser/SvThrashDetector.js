@@ -98,7 +98,9 @@
          * @category DOM Operations
          */
         {
-            const slot = this.newSlot("noReflowWriteOpSet", new Set(
+            // an ARRAY: new Set("color", …) was a set of the letters c/o/l/r,
+            // so every paint-only write counted as dirtying layout
+            const slot = this.newSlot("noReflowWriteOpSet", new Set([
                 "color",
                 "backface-visibility",
                 "background",
@@ -128,7 +130,7 @@
                 "outline-color",
                 "scroll-behavior",
                 "user-select"
-            ));
+            ]));
             slot.setSlotType("Set");
         }
 
@@ -146,7 +148,7 @@
          * @category State
          */
         {
-            const slot = this.newSlot("reflowCount", false);
+            const slot = this.newSlot("reflowCount", 0);
             slot.setSlotType("Number");
         }
 
@@ -169,6 +171,67 @@
         }
 
         /**
+         * @member {Object} lastWriteView - The view of the last write; its
+         * description is built only when a read then forces layout
+         * @category State
+         */
+        {
+            const slot = this.newSlot("lastWriteView", null);
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {Boolean} isVerbose - Log each frame's forced layouts with the
+         * reading code's stack, and a heartbeat. Off by default: capturing a
+         * stack per forced layout is itself costly. "?thrash=1" or a click on
+         * the indicator turns it on.
+         * @category Configuration
+         */
+        {
+            const slot = this.newSlot("isVerbose", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+         * @member {Number} totalReflowCount - Forced layouts since the page loaded
+         * @category State
+         */
+        {
+            const slot = this.newSlot("totalReflowCount", 0);
+            slot.setSlotType("Number");
+        }
+
+        /**
+         * @member {Number} indicatorWindowCount - Forced layouts since the
+         * indicator last updated (its per-second rate)
+         * @category State
+         */
+        {
+            const slot = this.newSlot("indicatorWindowCount", 0);
+            slot.setSlotType("Number");
+        }
+
+        /**
+         * @member {Number} indicatorUpdatedAt - When the indicator last updated (ms)
+         * @category State
+         */
+        {
+            const slot = this.newSlot("indicatorUpdatedAt", 0);
+            slot.setSlotType("Number");
+        }
+
+        /**
+         * @member {Element} indicatorElement - The top-right counter
+         * @category Indicator
+         */
+        {
+            const slot = this.newSlot("indicatorElement", null);
+            slot.setSlotType("Element");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
          * @member {Boolean} enabled - Indicates if the SvThrashDetector is enabled
          * @category Configuration
          */
@@ -184,37 +247,65 @@
      * on nearly every view operation, so they must not pay for a singleton
      * lookup or a slot read when nobody is measuring.
      *
-     * Turned on by "?thrash=1" in the url — deliberately not a console call,
-     * since a url is something you can type and a console paste may not be.
+     * ON by default for now (counting only, shown by the top-right
+     * indicator); "?thrash=0" turns it off, "?thrash=1" adds the per-frame
+     * console report with stacks — a url is something you can type, and a
+     * console paste may not be.
      * @returns {Boolean}
      * @category Configuration
      */
     static isInstrumenting () {
         if (this._isInstrumenting === undefined) {
-            let on = false;
-            try {
-                // Check the WHOLE url, not just location.search. This app routes on
-                // the hash (/play#Uo/My%20Sessions/...), so a "?thrash=1" typed at
-                // the end of a url lands in the FRAGMENT and never appears in
-                // location.search — which made the flag look broken.
-                on = (typeof window !== "undefined") && window.location
-                    && String(window.location.href || "").includes("thrash=1");
-            } catch (noWindow) {
-                on = false;
-            }
-            this._isInstrumenting = !!on;
+            const href = this.pageHref();
+            const on = href !== null && !href.includes("thrash=0");
+            this._isInstrumenting = on;
             if (on) {
-                console.warn("[SvThrashDetector] ON (?thrash=1). Reporting DOM write-then-read"
-                    + " interleaving per animation frame, with the reading code's stack."
-                    + " A heartbeat follows every " + (this.shared().heartbeatMs() / 1000)
-                    + "s so you can tell it is alive even when nothing is thrashing."
-                    + " Reload without ?thrash=1 to turn it off.");
-                this.shared().setEnabled(true);
-                this.shared().beginFrame(); // reads land before the first tick's beginFrame; the trigger list must exist
-                this.shared().startFrameLoop();
+                this.shared().start(href.includes("thrash=1"));
             }
         }
         return this._isInstrumenting;
+    }
+
+    /**
+     * @description The WHOLE page url, or null without a window. Not just
+     * location.search: this app routes on the hash (/play#Uo/My%20Sessions/...),
+     * so a "?thrash=1" typed at the end lands in the fragment.
+     * @returns {String|null}
+     * @category Configuration
+     */
+    static pageHref () {
+        try {
+            return (typeof window !== "undefined" && window.location) ? String(window.location.href || "") : null;
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * @description Arms counting, the frame loop and the indicator.
+     * @param {Boolean} verbose - also log each frame's forced layouts with stacks
+     * @category Configuration
+     */
+    start (verbose) {
+        this.setEnabled(true);
+        this.beginFrame(); // reads land before the first tick's beginFrame; the trigger list must exist
+        this.startFrameLoop();
+        this.setVerbose(verbose);
+        return this;
+    }
+
+    /**
+     * @description Turns the per-frame console report on or off.
+     * @param {Boolean} verbose
+     * @category Configuration
+     */
+    setVerbose (verbose) {
+        this.setIsVerbose(verbose);
+        console.warn("[SvThrashDetector] counting forced layouts (top-right indicator; ?thrash=0 turns it off)."
+            + (verbose ? " Logging each one with the reading code's stack, plus a heartbeat every "
+                + (this.heartbeatMs() / 1000) + "s. Click the indicator to stop."
+                : " Click the indicator (or load with ?thrash=1) to log each one with its stack."));
+        return this;
     }
 
     /**
@@ -247,6 +338,7 @@
         this.setReflowCount(0);
         this.setTriggers([]);
         this.setLastWrite(null);
+        this.setLastWriteView(null);
     }
 
     /**
@@ -257,24 +349,34 @@
      * @category DOM Operations
      */
     didRead (opName, optionalView) {
-        if (this.readOpSet().has(opName)) {
-            if (this.needsReflow()) {
-                this.setReflowCount(this.reflowCount() + 1);
-                this.setNeedsReflow(false);
-                let m = opName ;
-                if (optionalView) {
-                    m = optionalView.svDebugId() + " get " + opName;
-                }
-                // The stack is the point: "someView set height -> otherView get
-                // clientHeight" tells you WHAT interleaved, but not which code
-                // did it. Two frames up from here is the caller of the read.
-                const frames = String(new Error().stack || "").split("\n").slice(2, 12)
-                    .map(f => f.trim()).join(" <- ");
-                if (!this.triggers()) { this.beginFrame(); }
-                this.triggers().push(this.lastWrite() + " -> " + m + "\n         at " + frames);
-                this.onThrash();
+        if (this.needsReflow() && this.readOpSet().has(opName)) {
+            this.setReflowCount(this.reflowCount() + 1);
+            this.setNeedsReflow(false);
+            if (this.isVerbose()) {
+                this.recordTrigger(opName, optionalView);
             }
+            this.onThrash();
         }
+        return this;
+    }
+
+    /**
+     * @description Describes one forced layout for the verbose report. The
+     * stack is the point: "someView set height -> otherView get clientHeight"
+     * tells you WHAT interleaved, but not which code did it; the frames above
+     * this one name the caller of the read.
+     * @param {String} opName - the read
+     * @param {Object} optionalView - the view read from
+     * @category Thrash Detection
+     */
+    recordTrigger (opName, optionalView) {
+        const w = this.lastWriteView();
+        const write = w ? w.svDebugId() + " set " + this.lastWrite() : this.lastWrite();
+        const read = optionalView ? optionalView.svDebugId() + " get " + opName : opName;
+        const frames = String(new Error().stack || "").split("\n").slice(3, 13)
+            .map(f => f.trim()).join(" <- ");
+        if (!this.triggers()) { this.beginFrame(); }
+        this.triggers().push(write + " -> " + read + "\n         at " + frames);
         return this;
     }
 
@@ -288,11 +390,8 @@
     didWrite (opName, optionalView) {
         if (!this.noReflowWriteOpSet().has(opName)) {
             this.setNeedsReflow(true);
-            let m = opName;
-            if (optionalView) {
-                m = optionalView.svDebugId() + " set " + opName;
-            }
-            this.setLastWrite(m);
+            this.setLastWrite(opName);
+            this.setLastWriteView(optionalView || null);
         }
         return this;
     }
@@ -352,13 +451,82 @@
     }
 
     endFrame () {
-        if (this.enabled()) {
-            this.reportHeartbeatIfDue();
+        if (!this.enabled()) {
+            return;
         }
-        if (this.enabled() && this.reflowCount()) {
+        this.setTotalReflowCount(this.totalReflowCount() + this.reflowCount());
+        this.setIndicatorWindowCount(this.indicatorWindowCount() + this.reflowCount());
+        this.updateIndicatorIfDue();
+        if (!this.isVerbose()) {
+            return;
+        }
+        this.reportHeartbeatIfDue();
+        if (this.reflowCount()) {
             console.log(">>> " + this.svType() + " forced-layout count this frame: " + this.reflowCount());
             (this.triggers() || []).forEach((t, i) => console.log("      " + (i + 1) + ". " + t));
         }
+    }
+
+    /**
+     * @description Refreshes the indicator about once a second (not per
+     * frame: it must not become a cost of its own). Its DOM is written
+     * directly, never through the instrumented view methods, so it never
+     * counts itself.
+     * @category Indicator
+     */
+    updateIndicatorIfDue () {
+        const now = Date.now();
+        if (now - this.indicatorUpdatedAt() < 1000) {
+            return this;
+        }
+        const seconds = this.indicatorUpdatedAt() ? (now - this.indicatorUpdatedAt()) / 1000 : 1;
+        this.setIndicatorUpdatedAt(now);
+        const rate = Math.round(this.indicatorWindowCount() / seconds);
+        this.setIndicatorWindowCount(0);
+        this.renderIndicator(rate);
+        return this;
+    }
+
+    /**
+     * @description Writes the indicator's text and color: grey when quiet,
+     * amber while forced layouts are happening, red when there are many.
+     * @param {Number} rate - forced layouts per second just now
+     * @category Indicator
+     */
+    renderIndicator (rate) {
+        const el = this.indicatorElementCreateIfNeeded();
+        if (!el) {
+            return this;
+        }
+        const text = "reflow " + rate + "/s · " + this.totalReflowCount() + (this.isVerbose() ? " · logging" : "");
+        if (el.textContent !== text) {
+            el.textContent = text;
+        }
+        const background = rate === 0 ? "rgba(90,90,90,0.55)" : (rate < 20 ? "rgba(200,130,0,0.9)" : "rgba(200,30,30,0.95)");
+        if (el.style.background !== background) {
+            el.style.background = background;
+        }
+        return this;
+    }
+
+    /**
+     * @description The top-right counter, created on first use once the
+     * document has a body. A click toggles the per-frame console report.
+     * @returns {Element|null}
+     * @category Indicator
+     */
+    indicatorElementCreateIfNeeded () {
+        if (!this.indicatorElement() && typeof document !== "undefined" && document.body) {
+            const el = document.createElement("div");
+            el.title = "Forced layouts (DOM reflows) per second · total since load. Click to log each with its stack.";
+            el.style.cssText = "position:fixed; top:calc(env(safe-area-inset-top, 0px) + 2px); right:2px; z-index:2147483647;"
+                + " padding:1px 6px; border-radius:8px; color:white; font:10px/14px ui-monospace, Menlo, monospace;"
+                + " cursor:pointer; user-select:none; opacity:0.85; pointer-events:auto;";
+            el.addEventListener("click", () => this.setVerbose(!this.isVerbose()));
+            document.body.appendChild(el);
+            this.setIndicatorElement(el);
+        }
+        return this.indicatorElement();
     }
 
 }.initThisClass());
