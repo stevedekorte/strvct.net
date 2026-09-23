@@ -530,7 +530,8 @@
     // computed style
 
     getComputedCssProperty (name /*, errorCheck*/) {
-        // getComputedStyle forces a layout - make sure it's needed
+        // getComputedStyle forces a style recalc (and layout for geometry) - make sure it's needed
+        this.didDomRead("getComputedStyle");
         return window.getComputedStyle(this.element()).getPropertyValue(name);
     }
 
@@ -2692,6 +2693,9 @@
     }
 
     innerText () {
+        // innerText is layout-aware (it honours display and line breaks), so
+        // it forces layout; textContent() does not
+        this.didDomRead("innerText");
         const e = this.element();
         return e.innerText;
         //return e.textContent || e.innerText || "";

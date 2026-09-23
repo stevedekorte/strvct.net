@@ -400,8 +400,14 @@
     }
 
     visibleProgressTags () {
+        // Visibility from state this tile owns (its own display, the tags it
+        // hid or marked exiting), not offsetHeight: that forced a layout on
+        // every sync, right after the value was written.
+        if (this.isDisplayHidden()) {
+            return [];
+        }
         return this.progressTags().filter(el => {
-            if (el.offsetHeight <= 0 || el.dataset.exit === "1") {
+            if (el.style.display === "none" || el.dataset.exit === "1" || el.textContent.trim() === "") {
                 return false;
             }
             // Streaming often leaves <narration> (or an <img>) nested

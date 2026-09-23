@@ -621,11 +621,10 @@
             //v.setDoesMatchParentColor(true)
 
         }
-        //const color = this.currentColor()
-        const color = this.getComputedCssProperty("color");
-
-        v.setColor(color);
-        v.setFillColor(color);
+        // currentColor, not a measured color: the icon inherits the tile's
+        // text color through CSS. Reading getComputedStyle here forced a
+        // style recalc on every titled tile's sync.
+        v.setColor("currentColor");
         v.setOpacity(0.95);
         //console.log( this.node().title() + " - " + color)
         //v.updateAppearance()

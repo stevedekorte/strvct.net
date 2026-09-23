@@ -135,6 +135,12 @@
          * @category DOM
          */
         {
+            // a coalesced content-mutation pass is waiting for the next frame
+            const slot = this.newSlot("isMutationPassScheduled", false);
+            slot.setSlotType("Boolean");
+        }
+
+        {
             const slot = this.newSlot("contentResizeObserver", null);
             slot.setSlotType("ResizeObserver");
         }
@@ -655,7 +661,18 @@
      * @category Event Handling
      */
     onContentViewMutations (/*mutations*/) {
-        this.onContentGeometryChanged();
+        // A MutationObserver callback runs as a microtask right after the DOM
+        // writes, so measuring there forced a layout per streamed chunk.
+        // Coalesce to one pass per frame (the ResizeObserver also covers
+        // growth, after layout, where reads are free).
+        if (this.isMutationPassScheduled()) {
+            return;
+        }
+        this.setIsMutationPassScheduled(true);
+        requestAnimationFrame(() => {
+            this.setIsMutationPassScheduled(false);
+            this.onContentGeometryChanged();
+        });
     }
 
     /**

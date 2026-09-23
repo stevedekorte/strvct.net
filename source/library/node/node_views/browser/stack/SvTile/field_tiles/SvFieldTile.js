@@ -686,7 +686,10 @@
      * @category Accessibility
      */
     ariaLabel () {
-        const keyText = this.keyView() ? this.keyView().innerText() : "";
+        // from the model, not the key view's innerText: that forced a layout
+        // on every sync of every field tile (each keystroke, each streamed
+        // chunk), and read the key before syncKeyFromNode had updated it
+        const keyText = this.node() ? this.visibleKey() : "";
         return keyText || null;
     }
 
