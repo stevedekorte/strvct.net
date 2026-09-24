@@ -102,6 +102,48 @@
             slot.setSyncsToView(true);
         }
 
+        /**
+     * @member {SvNode} accessoryNode - optional node shown just above the
+     * input row, floating over the bottom of the conversation (e.g. a
+     * narration transport bar). Its tile is embedded in the input tile and
+     * shown while the node answers isAccessoryShown() true (or while
+     * revealed by hovering the left button — see leftButtonRevealsAccessory).
+     * Never stored.
+     * @category Accessory
+     */
+        {
+            const slot = this.newSlot("accessoryNode", null);
+            slot.setSlotType("SvNode");
+            slot.setShouldStoreSlot(false);
+            slot.setAllowsNullValue(true);
+            slot.setSyncsToView(true);
+        }
+
+        /**
+     * @member {Object} accessoryObservation - observation of the accessory
+     * node, so its show/hide state reaches the input tile. Never stored.
+     * @category Accessory
+     */
+        {
+            const slot = this.newSlot("accessoryObservation", null);
+            slot.setSlotType("Object");
+            slot.setShouldStoreSlot(false);
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+     * @member {Boolean} leftButtonRevealsAccessory - opt-in: on pointer
+     * devices, hovering the left button previews the accessory (it stays
+     * while the pointer is over it). Never stored.
+     * @category Accessory
+     */
+        {
+            const slot = this.newSlot("leftButtonRevealsAccessory", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+        }
+
     /*
     {
       const slot = this.newSlot("sttSession", null);
@@ -173,6 +215,43 @@
 
     collapsibleRegionLabel () {
         return "Message box";
+    }
+
+    // --- accessory (a node shown above the input row) ---
+
+    /**
+   * @description Follow the accessory's updates so its show/hide state
+   * reaches the input tile.
+   * @category Accessory
+   */
+    didUpdateSlotAccessoryNode (oldValue, newValue) {
+        if (this.accessoryObservation()) {
+            this.accessoryObservation().stopWatching();
+            this.setAccessoryObservation(null);
+        }
+        if (newValue) {
+            const obs = this.watchForNoteFrom("onUpdatedNode", newValue);
+            obs.setSendName("onAccessoryUpdated");
+            this.setAccessoryObservation(obs);
+        }
+    }
+
+    onAccessoryUpdated (/*aNote*/) {
+        this.didUpdateNode();
+    }
+
+    /**
+   * @description Whether the accessory is shown (hover previews aside).
+   * An accessory without isAccessoryShown() is always shown.
+   * @returns {Boolean}
+   * @category Accessory
+   */
+    showsAccessory () {
+        const a = this.accessoryNode();
+        if (!a) {
+            return false;
+        }
+        return a.isAccessoryShown ? a.isAccessoryShown() : true;
     }
 
     /*

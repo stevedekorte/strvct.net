@@ -291,6 +291,12 @@
             // sits behind the input but the enclosing surface.
             v.setFlexGrow(0);
             v.setFlexShrink(0);
+            // Unclipped while expanded, so a chat input's accessory can float
+            // above it over the scroll area (SvChatInputTile); the collapse
+            // motion clips (applyFooterRegionExpanded). Stacked above the
+            // footer edge handle (z 2), which the accessory covers while shown.
+            v.setOverflow("visible");
+            v.setZIndex(3);
             this.setFooterView(v);
             this.addSubview(v);
         }
@@ -926,10 +932,12 @@
             this.addTimeout(() => {
                 if (this._appliedFooterRegionExpanded === true) {
                     footer.setMaxHeight(null); // lift the cap for multiline growth
+                    footer.setOverflow("visible"); // let an input accessory float above again
                 }
             }, 360, "footerRegionMotion");
             this.footerHandleView().setMarginBottom("0px");
         } else {
+            footer.setOverflow("hidden"); // the slide clips its content
             footer.setMaxHeight("12em"); // a definite FROM value...
             this.addTimeout(() => {
                 if (this._appliedFooterRegionExpanded === false) {

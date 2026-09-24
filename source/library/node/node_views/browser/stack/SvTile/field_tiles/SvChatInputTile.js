@@ -13,6 +13,79 @@
 
 (class SvChatInputTile extends SvChatMessageTile {
 
+    initPrototypeSlots () {
+        /**
+         * @member {SvDomView} accessoryContainer - holds the node's accessory
+         * view, floating just above the input row (over the bottom of the
+         * conversation).
+         * @category Accessory
+         */
+        {
+            const slot = this.newSlot("accessoryContainer", null);
+            slot.setSlotType("SvDomView");
+        }
+
+        /**
+         * @member {SvNodeView} accessoryView - the view for
+         * node.accessoryNode() (its node tile class — any SvNodeView).
+         * @category Accessory
+         */
+        {
+            const slot = this.newSlot("accessoryView", null);
+            slot.setSlotType("SvNodeView");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {Array} accessoryHoverListeners - mouse listeners on the left
+         * button and the accessory, for the hover preview.
+         * @category Accessory
+         */
+        {
+            const slot = this.newSlot("accessoryHoverListeners", null);
+            slot.setSlotType("Array");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {Boolean} isAccessoryHovered - the pointer is over the left
+         * button or the accessory (hover preview).
+         * @category Accessory
+         */
+        {
+            const slot = this.newSlot("isAccessoryHovered", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+         * @member {Boolean} isAccessoryHoverSuppressed - a left-button click
+         * decided the accessory's state; hover stays out of it until the
+         * pointer leaves.
+         * @category Accessory
+         */
+        {
+            const slot = this.newSlot("isAccessoryHoverSuppressed", false);
+            slot.setSlotType("Boolean");
+        }
+    }
+
+    init () {
+        super.init();
+        this.setupAccessoryContainer();
+        return this;
+    }
+
+    /**
+     * @description Syncs from the node, then the accessory above the input.
+     * @returns {SvChatInputTile} The current instance.
+     * @category Sync
+     */
+    syncFromNode () {
+        super.syncFromNode();
+        this.syncAccessory();
+        return this;
+    }
+
     /**
      * @description Value sync with a focused guard. While the user is
      * typing, the node's value legitimately lags the view (the view->node
@@ -92,6 +165,135 @@
 
 
     // nodeMinTileHeight min-only application inherited from SvChatMessageTile.
+
+    // --- accessory (node.accessoryNode(), floating above the input row) ---
+
+    /**
+     * @description The container floats above the tile, anchored to its top
+     * edge, so the accessory overlays the conversation instead of pushing
+     * it up (the footer lets it overflow while expanded — SvNavView).
+     * @category Accessory
+     */
+    setupAccessoryContainer () {
+        const v = SvDomView.clone().setElementClassName("SvChatInputAccessory");
+        v.setPosition("absolute");
+        v.setBottom("100%");
+        v.setLeft("0px");
+        v.setRight("0px");
+        v.setZIndex(10);
+        v.setDisplay("none");
+        this.addSubview(v);
+        this.setAccessoryContainer(v);
+    }
+
+    syncAccessory () {
+        const node = this.node();
+        this.syncAccessoryView(node && node.accessoryNode ? node.accessoryNode() : null);
+        this.syncAccessoryHoverListening();
+        this.syncAccessoryVisibility();
+        return this;
+    }
+
+    /**
+     * @description Embeds a view for the accessory node (the node's own tile
+     * class), replacing one for a previous accessory.
+     * @param {SvNode|null} accessory
+     * @category Accessory
+     */
+    syncAccessoryView (accessory) {
+        const view = this.accessoryView();
+        if (view && view.node() === accessory) {
+            return this;
+        }
+        if (view) {
+            view.setNode(null);
+            this.accessoryContainer().removeSubview(view);
+            this.setAccessoryView(null);
+        }
+        if (accessory) {
+            const newView = accessory.nodeTileClass().clone();
+            newView.setNode(accessory);
+            this.accessoryContainer().addSubview(newView);
+            this.setAccessoryView(newView);
+        }
+        return this;
+    }
+
+    syncAccessoryVisibility () {
+        const node = this.node();
+        const shows = !!(this.accessoryView() && node && (node.showsAccessory() || this.isAccessoryHovered()));
+        this.accessoryContainer().setDisplay(shows ? "block" : "none");
+        return this;
+    }
+
+    // --- hover preview (node.leftButtonRevealsAccessory) ---
+
+    wantsAccessoryHover () {
+        const node = this.node();
+        return !!(node && node.leftButtonRevealsAccessory && node.leftButtonRevealsAccessory());
+    }
+
+    /**
+     * @description Listens for the pointer over the left button and the
+     * accessory — both, so the pointer can travel from one to the other.
+     * @category Accessory
+     */
+    syncAccessoryHoverListening () {
+        if (!this.wantsAccessoryHover() || this.accessoryHoverListeners()) {
+            return this;
+        }
+        const targets = [this.leftButton(), this.accessoryContainer()];
+        this.setAccessoryHoverListeners(targets.map(v => {
+            return SvHoverListener.clone().setListenTarget(v.element()).setDelegate(this).setIsListening(true);
+        }));
+        return this;
+    }
+
+    /**
+     * @description Only real hover (a mouse or trackpad) previews: touch
+     * browsers emulate mouseover on tap, which must not stick the
+     * accessory open.
+     * @returns {Boolean}
+     * @category Accessory
+     */
+    canHoverPreviewAccessory () {
+        return window.matchMedia("(hover: hover)").matches && !this.isAccessoryHoverSuppressed();
+    }
+
+    onHoverOver (/*event*/) {
+        if (this.canHoverPreviewAccessory()) {
+            this.clearTimeoutNamed("accessoryHoverOut");
+            this.setIsAccessoryHovered(true);
+            this.syncAccessoryVisibility();
+        }
+        return true;
+    }
+
+    /**
+     * @description Leaving either target hides the preview after a beat, so
+     * the pointer can cross the gap between button and accessory.
+     * @category Accessory
+     */
+    onHoverLeave (/*event*/) {
+        this.addTimeout(() => {
+            this.setIsAccessoryHovered(false);
+            this.setIsAccessoryHoverSuppressed(false);
+            this.syncAccessoryVisibility();
+        }, 300, "accessoryHoverOut");
+        return true;
+    }
+
+    /**
+     * @description A click decides the accessory's state outright: drop the
+     * hover preview so closing takes effect under the pointer.
+     * @category Accessory
+     */
+    onClickLeftButton () {
+        this.clearTimeoutNamed("accessoryHoverOut");
+        this.setIsAccessoryHovered(false);
+        this.setIsAccessoryHoverSuppressed(true);
+        super.onClickLeftButton();
+    }
 
     /**
      * @description The input is a CONTROL, not a selectable item: it holds
