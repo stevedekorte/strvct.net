@@ -260,6 +260,19 @@
     }
 
     /**
+     * @description Whether the local children can stand for an unchanged cloud
+     * listing (so the re-list is skipped): there are some, and each is either
+     * content this folder trusts or already a placeholder.
+     * @returns {Boolean}
+     * @category Cloud Sync
+     */
+    localChildrenStandForCloud () {
+        const children = this.subnodes();
+        return children.length > 0 && children.every(child => this.childHasUsableLocalContent(child)
+            || (child.cloudContentLoaded && !child.cloudContentLoaded()));
+    }
+
+    /**
      * @description Whether a lazy folder loads a child fully when its cloud
      * node carries no document metadata. Override to true when a placeholder
      * row is wrong without it (e.g. a portrait and summary line); by default
@@ -531,13 +544,15 @@
             // list-children round trip and per-child loads entirely. The
             // length>0 guard prevents a stale key from hiding real children.
             // High-write-rate folders opt out (their stamp churns; use the
-            // live listener path instead).
+            // live listener path instead). "Still have the children" means
+            // children this folder can stand on (localChildrenStandForCloud):
+            // a restored copy it does not trust needs the per-child pass.
             const cloudClmKey = this._childrenClmKey(folder);
             const isHighWrite = (typeof folder.isHighWriteRate === "function") && folder.isHighWriteRate();
             if (!isHighWrite
                 && cloudClmKey !== null
                 && this.syncedChildrenClmKey() === cloudClmKey
-                && this.subnodes().length > 0) {
+                && this.localChildrenStandForCloud()) {
                 this.isDebugging() && console.log(this.cloudSyncLogPrefix(), "children unchanged (clm cache hit) — skipping re-list");
                 if (this.didSyncFromCloud) this.didSyncFromCloud();
                 return this;
