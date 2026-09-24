@@ -451,12 +451,14 @@
    * @description Stops the current sound and removes all items from the queue.
    */
     stopAndClearQueue () {
+        // Empty the queue BEFORE stopping: stop() ends the sound
+        // synchronously, and onSoundEnded's processQueue would otherwise
+        // start the next queued sound — which then plays on after the clear.
+        this.setQueue([]);
         const audio = this.currentSound();
         if (audio) {
             audio.stop();
-        // this.onSoundEnded(audio); // needed?
         }
-        this.setQueue([]);
         this.setPlayedSounds([]); // transport history dies with the queue
         this.setIsPaused(false);
     }
