@@ -83,7 +83,8 @@
         super.init();
         this.setDisplay("flex");
         this.setPosition("relative");
-        this.setFilter("blur(0.2px)");
+        // (no filter: a blur(0.2px) softening made every checkbox a filtered
+        // compositing layer — dozens on a character sheet, slow in Safari)
         this.flexCenterContent();
         //this.setBorder("1px dashed red")
 
