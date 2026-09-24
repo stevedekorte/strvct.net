@@ -225,8 +225,9 @@
             // Fall back to item's thumbnail URL (skip data URLs - they're too large for manifest)
             try {
                 const url = await item.asyncNodeThumbnailUrl();
-                // Only include actual URLs, not data URLs (which can be hundreds of KB)
-                if (url && !url.startsWith("data:")) {
+                // Only public urls: not data urls (hundreds of KB) nor
+                // page-local "blob:" display urls (meaningless elsewhere)
+                if (url && /^https?:/.test(url)) {
                     metadata.thumbnailUrl = url;
                 }
             } catch (e) {

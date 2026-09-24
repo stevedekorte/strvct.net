@@ -122,6 +122,36 @@
     }
 
     /**
+     * @description A short "blob:" url for DISPLAY (img src, css background):
+     * the browser reads the bytes it already holds, so there is no base64
+     * encoding, no large string in styles, and one decode per url. Created
+     * once per Blob (synchronous, so it cannot race). Local to this page — a
+     * url that must leave it (cloud upload, AI prompt) uses asyncAsDataUrl.
+     * Revoke with revokeObjectUrl when the Blob is dropped.
+     * @returns {string}
+     * @category Conversion
+     */
+    asObjectUrl () {
+        if (!this._cachedObjectUrl) {
+            this._cachedObjectUrl = URL.createObjectURL(this);
+        }
+        return this._cachedObjectUrl;
+    }
+
+    /**
+     * @description Releases this Blob's display url (asObjectUrl), which
+     * otherwise keeps the bytes alive for the life of the page.
+     * @category Conversion
+     */
+    revokeObjectUrl () {
+        if (this._cachedObjectUrl) {
+            URL.revokeObjectURL(this._cachedObjectUrl);
+            this._cachedObjectUrl = null;
+        }
+        return this;
+    }
+
+    /**
      * @description Converts this Blob to a data URL
      * @returns {Promise<string>} The data URL
      * @category Conversion

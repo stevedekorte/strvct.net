@@ -315,7 +315,8 @@
             customMetadata: customMetadata
         };
 
-        await this.thisClass().asyncRetry(() => ref.put(blob, metadata));
+        const data = await SvFirebaseStorageService.asyncUploadableData(blob);
+        await this.thisClass().asyncRetry(() => ref.put(data, metadata));
     }
 
     /**
@@ -336,13 +337,16 @@
                 return null;
             }
 
-            // If already a URL (not data URL), return as-is
-            if (!dataUrl.startsWith("data:")) {
+            // A page-local display url ("blob:") carries the bytes to upload
+            // just like a data url; any other url is already public.
+            const isLocal = dataUrl.startsWith("data:") || dataUrl.startsWith("blob:");
+            if (!isLocal) {
                 return dataUrl;
             }
 
-            // Convert data URL to blob
-            const blob = this.dataUrlToBlob(dataUrl);
+            const blob = dataUrl.startsWith("blob:")
+                ? await (await fetch(dataUrl)).blob()
+                : this.dataUrlToBlob(dataUrl);
             if (!blob) {
                 return null;
             }
@@ -396,14 +400,15 @@
         // Save backup of current manifest before overwriting
         try {
             const backupRef = this.storageRefForPath(this.manifestBackupPath());
-            await backupRef.put(blob, { contentType: "application/json" });
+            await backupRef.put(await SvFirebaseStorageService.asyncUploadableData(blob), { contentType: "application/json" });
         } catch (backupError) {
             // Non-fatal - continue with primary upload
             console.warn("CLOUDSYNC [SvCloudSyncSource] Manifest backup failed:", backupError.message);
         }
 
         const ref = this.storageRefForPath(this.manifestPath());
-        await this.thisClass().asyncRetry(() => ref.put(blob, { contentType: "application/json" }));
+        const data = await SvFirebaseStorageService.asyncUploadableData(blob);
+        await this.thisClass().asyncRetry(() => ref.put(data, { contentType: "application/json" }));
     }
 
     /**
@@ -659,7 +664,8 @@
             }
         };
 
-        await this.thisClass().asyncRetry(() => ref.put(blob, metadata));
+        const data = await SvFirebaseStorageService.asyncUploadableData(blob);
+        await this.thisClass().asyncRetry(() => ref.put(data, metadata));
         console.log("CLOUDSYNC [SvCloudSyncSource] Pool JSON upload complete for session:", sessionId);
     }
 
@@ -752,7 +758,8 @@
             }
         };
 
-        await this.thisClass().asyncRetry(() => ref.put(blob, metadata));
+        const data = await SvFirebaseStorageService.asyncUploadableData(blob);
+        await this.thisClass().asyncRetry(() => ref.put(data, metadata));
         this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] Uploaded delta:", delta.timestamp,
             "writes:", Object.keys(delta.writes || {}).length,
             "deletes:", (delta.deletes || []).length);

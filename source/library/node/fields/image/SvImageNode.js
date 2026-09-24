@@ -54,6 +54,15 @@
 
     initPrototypeSlots () {
 
+        // the display-url fetch in flight, shared by concurrent callers
+        {
+            const slot = this.newSlot("objectUrlPromise", null);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Promise");
+            slot.setIsSubnodeField(false);
+        }
+
         // image object
         {
             const slot = this.newSlot("imageNode", null); // self-referential slot to display the image well field tile
@@ -179,9 +188,43 @@
         return super.onVisibility();
     }
 
+    /**
+     * @description This image's display url (the Blob's "blob:" url — see
+     * Blob.asObjectUrl), or null. Concurrent callers share one in-flight
+     * fetch, so a second request that arrives before the first resolves does
+     * not start another blob read.
+     * @param {Object} [options] - passed to asyncBlobValue
+     * @returns {Promise<String|null>}
+     * @category Display
+     */
+    asyncObjectUrl (options) {
+        if (!this.objectUrlPromise()) {
+            this.setObjectUrlPromise(this.asyncFetchObjectUrl(options)
+                .finally(() => this.setObjectUrlPromise(null)));
+        }
+        return this.objectUrlPromise();
+    }
+
+    /**
+     * @description One fetch of the blob and its display url (see asyncObjectUrl).
+     * @param {Object} [options]
+     * @returns {Promise<String|null>}
+     * @category Display
+     */
+    async asyncFetchObjectUrl (options) {
+        const blob = await this.asyncBlobValue(options);
+        return blob ? blob.asObjectUrl() : null;
+    }
+
+    /**
+     * @description A thumbnail is for display, so it is the display url:
+     * no base64 encoding and a short string in the tile's style. Sync code
+     * that must publish a thumbnail converts a "blob:" url back to bytes.
+     * @returns {Promise<String|null>}
+     * @category Display
+     */
     async asyncNodeThumbnailUrl () {
-        const url = await this.asyncDataUrl();
-        return url;
+        return this.asyncObjectUrl();
     }
 
     nodeExpectsThumbnail () {

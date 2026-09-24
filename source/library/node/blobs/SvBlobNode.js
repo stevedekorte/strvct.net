@@ -180,6 +180,9 @@
     }
 
     didUpdateSlotBlobValue (oldBlobValue, newBlobValue) {
+        if (oldBlobValue && oldBlobValue !== newBlobValue && oldBlobValue.revokeObjectUrl) {
+            oldBlobValue.revokeObjectUrl(); // its display url would otherwise pin the old bytes
+        }
         if (newBlobValue !== null) {
             // Recompute the hash from the NEW bytes, then write — sequenced.
             // The previous behavior fired the write and the recompute in
