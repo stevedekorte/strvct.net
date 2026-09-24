@@ -633,6 +633,18 @@
         return 10;
     }
 
+    /**
+     * @description True: Krea's `image_style_references` influence visual style
+     * only and carry no subject identity (per Krea's API docs). Callers use this
+     * to leave out references that are only useful for identity — e.g. character
+     * portraits, which add a colour cast and duplicated figures instead.
+     * @returns {boolean}
+     * @category Configuration
+     */
+    referencesAreStyleOnly () {
+        return true;
+    }
+
     trimmedPromptSuffix () {
         return this.promptSuffix().trim();
     }
