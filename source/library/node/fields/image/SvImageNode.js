@@ -166,66 +166,11 @@
      * @category Image
      */
     async asyncDataUrl (options) {
-        const hash = this.valueHash();
-        const cached = hash ? SvImageNode.dataUrlCache().get(hash) : undefined;
-        if (cached) {
-            return cached;
-        }
         const blob = await this.asyncBlobValue(options);
-        if (!blob) {
-            return null;
+        if (blob) {
+            return await blob.asyncAsDataUrl(); // the Blob caches its own data url; the node keeps its Blob
         }
-        const url = await blob.asyncAsDataUrl();
-        if (hash && url && hash === this.valueHash()) {
-            SvImageNode.rememberDataUrl(hash, url);
-        }
-        return url;
-    }
-
-    /**
-     * @description Data urls by content hash. A blob read back from storage is
-     * a new Blob each time, so its own data-url cache missed and every call
-     * re-encoded the image — tile thumbnails re-sync on every node update,
-     * which re-encoded (and re-decoded) dozens of images per keystroke in
-     * Safari (2026-09-24). A hash names immutable content, so an entry never
-     * goes stale; the cache is bounded by total size (oldest out first).
-     * @returns {Map<String, String>}
-     * @category Caching
-     */
-    static dataUrlCache () {
-        if (!this._dataUrlCache) { this._dataUrlCache = new Map(); }
-        return this._dataUrlCache;
-    }
-
-    /**
-     * @description Keeps a data url for its content hash, evicting the oldest
-     * entries past dataUrlCacheMaxChars().
-     * @param {String} hash
-     * @param {String} url
-     * @category Caching
-     */
-    static rememberDataUrl (hash, url) {
-        const cache = this.dataUrlCache();
-        cache.delete(hash);
-        cache.set(hash, url);
-        this._dataUrlCacheChars = (this._dataUrlCacheChars || 0) + url.length;
-        for (const [oldHash, oldUrl] of cache) {
-            if (this._dataUrlCacheChars <= this.dataUrlCacheMaxChars() || oldHash === hash) {
-                break;
-            }
-            cache.delete(oldHash);
-            this._dataUrlCacheChars -= oldUrl.length;
-        }
-    }
-
-    /**
-     * @description Upper bound on cached data-url characters (~64 MB of
-     * strings) — room for every thumbnail in view.
-     * @returns {Number}
-     * @category Caching
-     */
-    static dataUrlCacheMaxChars () {
-        return 64 * 1024 * 1024;
+        return null;
     }
 
     onVisibility () {
