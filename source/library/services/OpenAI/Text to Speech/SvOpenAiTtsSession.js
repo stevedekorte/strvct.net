@@ -154,6 +154,66 @@
             slot.setSummaryFormat("{value}\n{key}");
         }
 
+        {
+            /**
+       * @member {string} narratorService
+       * @description Which vendor speaks the narrator's own lines (a line
+       * attributed to a character with a voice of their own follows that
+       * character's voice ref instead). "openai" uses ttsModel and voice;
+       * "gemini" uses geminiTtsModel and geminiVoice. Gemini is the default
+       * (2026-09-23): stored sessions that never chose follow it too.
+       */
+            const slot = this.newSlot("narratorService", "gemini");
+            slot.setInspectorPath("");
+            slot.setLabel("Narrator service");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setValidValues(["openai", "gemini"]);
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("{value}\n{key}");
+        }
+
+        {
+            /**
+       * @member {string} geminiTtsModel
+       * @description The Gemini speech model, used for the narrator when
+       * narratorService is "gemini" and for any character whose voice ref
+       * names a Gemini voice. The valid values are read lazily: Gemini's
+       * classes load after this one.
+       */
+            const slot = this.newSlot("geminiTtsModel", "gemini-3.8-flash-tts");
+            slot.setInspectorPath("");
+            slot.setLabel("Gemini model");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setValidValuesClosure(() => SvGeminiService.speechModelIds());
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("{value}\n{key}");
+        }
+
+        {
+            /**
+       * @member {string} geminiVoice
+       * @description The narrator's Gemini voice (when narratorService is
+       * "gemini"). Schedar is Google's "even" voice — chosen by ear from
+       * the 30 prebuilt voices (2026-09).
+       */
+            const slot = this.newSlot("geminiVoice", "Schedar");
+            slot.setInspectorPath("");
+            slot.setLabel("Gemini voice");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setValidValuesClosure(() => SvGeminiService.speechVoiceNames());
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("{value}\n{key}");
+        }
+
         // instructions
         {
             const slot = this.newSlot("instructions", "Dungeon Master narration. Cinematic and vivid but easy to follow. Slightly slower than normal with short pauses after sentences and a longer pause before reveals. Vary intonation for tension and wonder; confident downward cadence on statements. Enunciate fantasy names. Clearly emphasize numbers, dice results, and status conditions. Use subtle, consistent NPC voices without going cartoonish. Read the text verbatim and completely: when text begins with a name followed by a colon (a list entry like 'Dirk: a tenth-level fighter'), SPEAK the name and continue — never treat it as a speaker label or stage direction to omit.");
@@ -474,8 +534,8 @@
    * @returns {SvWaSound} The generated sound.
    */
     /**
-   * @description One speech request for a VOICE SPEC: null (the session's own
-   * OpenAI voice), an OpenAI voice name, or { service, voiceId } naming a
+   * @description One speech request for a VOICE SPEC: null (the session's
+   * narrator voice), an OpenAI voice name, or { service, voiceId } naming a
    * vendor. All vendors' requests join the same request queue and the same
    * audio queue, so a narration can switch vendors per sentence and still
    * play in order.
@@ -484,14 +544,51 @@
    * @category Requests
    */
     newRequestForVoiceSpec (voiceSpec) {
-        if (voiceSpec && voiceSpec.service === "elevenlabs") {
+        const spec = voiceSpec || this.narratorVoiceSpec();
+        if (spec && spec.service === "elevenlabs") {
             const request = SvElevenLabsTtsRequest.clone();
             request.setDelegate(this);
-            request.setupForVoice(voiceSpec.voiceId, this.prompt(), this.elevenLabsModelId());
+            request.setupForVoice(spec.voiceId, this.prompt(), this.elevenLabsModelId());
             return request;
         }
-        const openAiVoice = (voiceSpec && voiceSpec.service === "openai") ? voiceSpec.voiceId : voiceSpec;
+        if (spec && spec.service === "gemini") {
+            return this.newGeminiRequest(spec.voiceId);
+        }
+        const openAiVoice = (spec && spec.service === "openai") ? spec.voiceId : spec;
         return this.newRequest(Type.isString(openAiVoice) ? openAiVoice : null);
+    }
+
+    /**
+   * @description The narrator's voice as a vendor spec, or null when the
+   * narrator is the session's own OpenAI voice (the newRequest() path).
+   * @returns {Object|null}
+   * @category Requests
+   */
+    narratorVoiceSpec () {
+        if (this.narratorService() === "gemini") {
+            return { service: "gemini", voiceId: this.geminiVoice() };
+        }
+        return null;
+    }
+
+    /**
+   * @description A Gemini speech request for a prebuilt voice. The
+   * instructions ride along as the delivery style (Gemini speaks the text
+   * verbatim and never reads the style aloud); speed has no Gemini
+   * equivalent and is not applied.
+   * @param {string} voiceName - a name from SvGeminiService.speechVoiceNames()
+   * @returns {SvGeminiTtsRequest}
+   * @category Requests
+   */
+    newGeminiRequest (voiceName) {
+        const request = SvGeminiTtsRequest.clone();
+        request.setDelegate(this);
+        return request.setupForVoice({
+            voiceName: voiceName,
+            text: this.ttsSafeInput(),
+            modelId: this.geminiTtsModel(),
+            style: this.instructions()
+        });
     }
 
     generate (voiceSpec = null) {
