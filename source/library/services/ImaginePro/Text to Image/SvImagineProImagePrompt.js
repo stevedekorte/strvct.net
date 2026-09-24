@@ -730,6 +730,17 @@ Midjourney
     }
 
     /**
+   * @description False: images in `extraImagesNode` are sent as Midjourney
+   * image prompts, which carry subject content (identity) as well as style, so
+   * character references are meaningful here.
+   * @returns {boolean}
+   * @category Configuration
+   */
+    referencesAreStyleOnly () {
+        return false;
+    }
+
+    /**
    * @description Initiates the image generation process.
    * @category Action
    */
