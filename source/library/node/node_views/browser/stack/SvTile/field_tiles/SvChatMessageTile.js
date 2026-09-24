@@ -179,7 +179,11 @@
         v.setTextAlign("left");
         v.setMargin("0em");
         v.setOverflowX("hidden");
-        v.setOverflowY("scroll");
+        // hidden, not scroll: the view grows with its text (height auto), so
+        // it never scrolls, and "scroll" drew an empty scrollbar track beside
+        // every message wherever macOS shows classic scroll bars (a mouse
+        // attached, or "Show scroll bars: Always") — white bars in Safari
+        v.setOverflowY("hidden");
 
         // The bubble chrome (background, border, radius, padding) lives in
         // field_tiles/_css.css as token-driven rules (--sv-chat-msg-*), so a
