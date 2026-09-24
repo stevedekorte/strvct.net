@@ -48,6 +48,17 @@
 
     initPrototypeSlots () {
         /**
+         * @member {Set} navPathNodes - The nodes on this browser's selected
+         * path as of the last path change (see syncNavPathMembership)
+         * @category Navigation
+         */
+        {
+            const slot = this.newSlot("navPathNodes", null);
+            slot.setSlotType("Set");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
          * @member {SvBreadCrumbsView} breadCrumbsView - the breadcrumb bar above the columns
          * @category UI
          */
@@ -264,6 +275,7 @@
      * @category Navigation
      */
     childUpdatedNavPath (/*aStackView*/) {
+        this.syncNavPathMembership();
         this.breadCrumbsView().didChangeBrowserPath();
         this.syncBreadCrumbsVisibilityHint();
         this.postNoteNamed("onBrowserViewPathChange");
@@ -609,7 +621,70 @@
         return this;
     }
 
+    // --- navigation-path membership ---
+
+    /**
+     * @description Tells nodes when they join or leave this browser's selected
+     * path — the model's way to know it is being looked at without asking the
+     * UI (a session makes sound only while it is on a path). Nodes opt in by
+     * implementing didEnterNavPath / didExitNavPath. Counts are shared across
+     * browsers, so a node on two paths hears only the first entry and the
+     * last exit.
+     * @category Navigation
+     */
+    syncNavPathMembership () {
+        const now = new Set(this.selectedNodePathArray().filter(node => node));
+        const before = this.navPathNodes() || new Set();
+        before.forEach(node => { if (!now.has(node)) { SvBrowserView.nodeDidLeaveNavPath(node); } });
+        now.forEach(node => { if (!before.has(node)) { SvBrowserView.nodeDidJoinNavPath(node); } });
+        this.setNavPathNodes(now);
+        return this;
+    }
+
+    /**
+     * @description A retiring browser's path nodes leave its path.
+     * @category Navigation
+     */
+    releaseNavPathMembership () {
+        (this.navPathNodes() || new Set()).forEach(node => SvBrowserView.nodeDidLeaveNavPath(node));
+        this.setNavPathNodes(null);
+        return this;
+    }
+
+    /**
+     * @description How many browsers currently show each node on their path.
+     * @returns {Map<SvNode, Number>}
+     * @category Navigation
+     */
+    static navPathCounts () {
+        if (!this._navPathCounts) { this._navPathCounts = new Map(); }
+        return this._navPathCounts;
+    }
+
+    static nodeDidJoinNavPath (node) {
+        const counts = this.navPathCounts();
+        const count = (counts.get(node) || 0) + 1;
+        counts.set(node, count);
+        if (count === 1 && typeof node.didEnterNavPath === "function") {
+            node.didEnterNavPath();
+        }
+    }
+
+    static nodeDidLeaveNavPath (node) {
+        const counts = this.navPathCounts();
+        const count = (counts.get(node) || 0) - 1;
+        if (count > 0) {
+            counts.set(node, count);
+            return;
+        }
+        counts.delete(node);
+        if (typeof node.didExitNavPath === "function") {
+            node.didExitNavPath();
+        }
+    }
+
     prepareToRetire () {
+        this.releaseNavPathMembership();
         this.syncContainerResizeObserver(false);
         return super.prepareToRetire();
     }
