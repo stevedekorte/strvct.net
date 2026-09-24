@@ -172,7 +172,7 @@
         const childDepth = Math.max(0, depthRemaining - 1);
 
         const dict = {};
-        this.lensChildEntriesForLod(lod).forEach(([key, value]) => {
+        this.lensChildEntriesForLod(lod, lens).forEach(([key, value]) => {
             const result = this.lensSerializeChild(value, lens, childLod, childDepth, pathComponents.concat(key), visitedSet);
             if (result !== undefined) {
                 dict[key] = result;
@@ -223,12 +223,16 @@
      * entries — the fields a summary reader actually needs (the AI's
      * verify-by-result read-back, ambient realm summaries). Full and
      * depth-bounded-full always emit everything; a class with no declared set
-     * keeps the historical all-slots summary.
+     * keeps the historical all-slots summary. An entry outside the curated
+     * set still emits when the lens reaches through it (it is an ancestor of
+     * a selection, or a selection itself): otherwise a pin beneath a
+     * curated-out slot resolves "ok" in the manifest but never appears.
      * @param {String} lod - The LOD being emitted ("summary" filters).
+     * @param {SvClientStateLens} lens - The lens being emitted.
      * @returns {Array} [key, value] pairs.
      * @category Lens
      */
-    lensChildEntriesForLod (lod) {
+    lensChildEntriesForLod (lod, lens) {
         const entries = this.lensChildEntries();
         if (lod !== "summary") {
             return entries;
@@ -238,7 +242,19 @@
             return entries;
         }
         const nameSet = new Set(names);
-        return entries.filter(([key]) => nameSet.has(key));
+        return entries.filter(([key, value]) => nameSet.has(key) || this.lensReachesThrough(value, lens));
+    }
+
+    /**
+     * @description Whether the lens must pass through (or select) this child
+     * value to reach one of its selections.
+     * @param {*} value - A child entry's value.
+     * @param {SvClientStateLens} lens
+     * @returns {Boolean}
+     * @category Lens
+     */
+    lensReachesThrough (value, lens) {
+        return Boolean(lens) && (lens.isAncestor(value) || lens.isTarget(value));
     }
 
     /**
