@@ -131,8 +131,8 @@
             return this._cachedDataUrl;
         }
 
-        if (this._asyncDataUrlPromise) {
-            return this._asyncDataUrlPromise;
+        if (this._dataUrlPromise) {
+            return this._dataUrlPromise; // concurrent callers share one read (the check used a different name, so they never did)
         }
 
         this._dataUrlPromise = FileReader.promiseReadAsDataURL(this);

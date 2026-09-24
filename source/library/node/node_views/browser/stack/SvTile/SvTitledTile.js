@@ -23,6 +23,17 @@
 
     initPrototypeSlots () {
         /**
+         * @member {String} appliedThumbnailUrl - The image url the thumbnail
+         * frame currently shows, so a re-sync with the same image is a no-op
+         * @category Thumbnail
+         */
+        {
+            const slot = this.newSlot("appliedThumbnailUrl", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
          * @member {SvDomView} titleView
          * @category UI
          */
@@ -407,6 +418,15 @@
                 this.markThumbnailUnavailable(); // dev-only glyph; silent otherwise
                 return this;
             }
+            if (imageUrl === this.appliedThumbnailUrl() && this.thumbnailHasImage()) {
+                // Already showing this image: this runs on every sync of the
+                // tile (every node update, so every keystroke and streamed
+                // chunk), and re-applying meant re-setting a large data-url
+                // background and re-decoding the image — dozens of tiles per
+                // keystroke in Safari, 734 ms for one keystroke (2026-09-24).
+                this.stopThumbnailShimmer();
+                return this;
+            }
             this.stopThumbnailShimmer();
             this.clearThumbnailUnavailable();
             this.setupThumbnailViewIfAbsent();
@@ -417,6 +437,7 @@
             // behind the image (e.g. the letterbox of a "contain" tall image).
             tv.setBackgroundColor("transparent");
             tv.setBackgroundImageUrlPath(imageUrl);
+            this.setAppliedThumbnailUrl(imageUrl);
 
             // Check aspect ratio: crop wide images to fill, fit tall images whole
             const img = new Image();
