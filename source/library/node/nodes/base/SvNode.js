@@ -596,6 +596,24 @@
     }
 
     /**
+     * @description Loads the newest window when a windowed collection has none
+     * loaded yet but its store holds elements. Anything that projects the
+     * collection (serializeToJson) must call this first: an unloaded window
+     * reads as an empty list, so a host that reloaded published bus snapshots
+     * with no chat history at all — every client that joined from one started
+     * at the same message until it asked for a resync (prod, 2026-09-24).
+     * @returns {SvNode}
+     * @category Record Store
+     */
+    loadLatestWindowIfNoneLoaded () {
+        const noneLoaded = !this._subnodes || this._subnodes.length === 0;
+        if (this.subnodesAreWindowed() && noneLoaded && this.hasUnloadedSubnodes()) {
+            this.loadLatestWindow();
+        }
+        return this;
+    }
+
+    /**
      * @description Loads up to `limit` elements older than the oldest loaded one
      * (or than `beforeKey`) and inserts them at the front, in order.
      * @returns {Number} how many were loaded

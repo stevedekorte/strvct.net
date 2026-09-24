@@ -439,6 +439,7 @@
         }
         visitedSet.add(this);
 
+        this.loadLatestWindowIfNoneLoaded(); // an unloaded window would serialize as [] (history silently missing)
         const results = [];
         this.subnodes().forEach((sn, index) => {
             const result = sn.serializeToJson(filterName, pathComponents.concat(index), visitedSet);
