@@ -1150,8 +1150,7 @@
         this.logProgressive("applyFinalDataUrl snap " + this.shortUrl(dataUrl));
         front.setTransition("none");
         front.setOpacity(1);
-        front.setFilter("blur(0px)");
-        front.setTransform("scale(1)");
+        this.settleFinalLayer(front);
         this.clearBackLayer();
         this.removeShimmer();
         return this;
@@ -1178,7 +1177,7 @@
             front.setFilter("blur(0px)");
             front.setTransform("scale(1)");
         }, front);
-        this.scheduleRevealCompletion(revealedOverLayer);
+        this.scheduleRevealCompletion(revealedOverLayer, front);
         this.removeShimmer(); // the final image is here: stop working indicators
         return this;
     }
@@ -1192,12 +1191,13 @@
      * @returns {SvImageWellView}
      * @category Progressive Loading
      */
-    scheduleRevealCompletion (revealedOverLayer) {
+    scheduleRevealCompletion (revealedOverLayer, front) {
         this.addWeakTimeout(() => {
             const cleared = this.backLayerView() === revealedOverLayer;
             if (cleared) {
                 this.clearBackLayer();
             }
+            this.settleFinalLayer(front);
             this.logProgressive("reveal complete, back layer " + (cleared ? "cleared" : "kept (newer preview)"));
         }, this.finalFadeDurationMs() + 100);
         return this;
@@ -1218,6 +1218,26 @@
         }
         this.removeOutgoingBackLayer();
         this.setPreviewDataUrl(null);
+        return this;
+    }
+
+    /**
+     * @description Once the final image is in place, drops the reveal's
+     * filter, transform and transition. A leftover blur(0px) / scale(1) kept
+     * every finished image a filtered compositing layer for good — slow to
+     * composite in Safari (typing lag: 1.4 s of compositing in a 6.5 s
+     * recording) and rasterized late when scrolling back (blank areas that
+     * filled in), 2026-09-24. Only the current front layer is settled.
+     * @param {SvFlexDomView} front
+     * @returns {SvImageWellView}
+     * @category Progressive Loading
+     */
+    settleFinalLayer (front) {
+        if (front && front === this.frontLayerView()) {
+            front.setTransition(null);
+            front.setFilter(null);
+            front.setTransform(null);
+        }
         return this;
     }
 
