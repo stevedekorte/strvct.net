@@ -77,6 +77,16 @@
             slot.setSlotType("Array");
         }
 
+        /**
+     * @member {number} volume - Channel volume (linear, 1 = source level)
+     * applied to every sound this queue plays, on top of each sound's own
+     * level. Changes reach the playing sound too, not just later ones.
+     */
+        {
+            const slot = this.newSlot("volume", 1);
+            slot.setSlotType("Number");
+        }
+
         this.setNodeSubtitleIsChildrenSummary(true);
         this.setShouldStoreSubnodes(false);
     }
@@ -269,6 +279,7 @@
             //sound.setData(audioBlob);
             sound.addDelegate(this);
             this.setCurrentSound(sound);
+            this.applyVolumeToSound(sound);
             try {
                 // resolves at end-of-playback; on the normal path the sound
                 // posts onSoundEnded (which advances the queue) just before
@@ -292,6 +303,25 @@
             this.processQueue();
         }
         return this;
+    }
+
+    /**
+   * @category Volume
+   * @description Scales a sound by the channel volume. Optional in the
+   * clip protocol: sounds without gainScale (e.g. a YouTube track) play
+   * at their own level.
+   * @param {Object} sound
+   * @returns {SvAudioQueue}
+   */
+    applyVolumeToSound (sound) {
+        if (sound && sound.setGainScale) {
+            sound.setGainScale(this.volume());
+        }
+        return this;
+    }
+
+    didUpdateSlotVolume (/*oldValue, newValue*/) {
+        this.applyVolumeToSound(this.currentSound());
     }
 
     /**

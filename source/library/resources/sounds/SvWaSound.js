@@ -167,14 +167,38 @@
 
         /**
          * @member volume
-         * @description linear gain applied to playback (1 = source level).
-         * When not 1, the audio source is routed through a GainNode.
-         * Set before play() — the gain graph is built per playback.
+         * @description linear gain applied to playback (1 = source level),
+         * through the playback's GainNode (see gainScale, gainNode).
          * @type {Number}
          */
         {
             const slot = this.newSlot("volume", 1);
             slot.setSlotType("Number");
+        }
+
+        /**
+         * @member gainScale
+         * @description multiplier on volume set by the sound's owner — e.g.
+         * an SvAudioQueue's channel volume. Unlike a per-sound level fixed
+         * before play(), it is meant to change while the sound plays, so
+         * both it and volume apply live to the playing gain node.
+         * @type {Number}
+         */
+        {
+            const slot = this.newSlot("gainScale", 1);
+            slot.setSlotType("Number");
+        }
+
+        /**
+         * @member gainNode
+         * @description the GainNode of the current playback (every source
+         * routes through one), kept so level changes reach a playing sound.
+         * @type {GainNode}
+         */
+        {
+            const slot = this.newSlot("gainNode", null);
+            slot.setSlotType("GainNode");
+            slot.setAllowsNullValue(true);
         }
 
         /**
@@ -512,19 +536,46 @@
         const ctx = this.audioCtx();
         const source = ctx.createBufferSource();
         source.buffer = this.decodedBuffer();
-        if (this.volume() !== 1) {
-            const gain = ctx.createGain();
-            gain.gain.value = this.volume();
-            source.connect(gain);
-            gain.connect(ctx.destination);
-        } else {
-            source.connect(ctx.destination);
-        }
+        const gain = ctx.createGain();
+        gain.gain.value = this.effectiveVolume();
+        source.connect(gain);
+        gain.connect(ctx.destination);
+        this.setGainNode(gain);
         this.syncToSource(source);
         source.addEventListener("ended", (event) => {
             this.onEnded(event);
         });
         return source;
+    }
+
+    /**
+     * @description the linear gain playback applies: the sound's own
+     * volume scaled by its owner's gainScale.
+     * @returns {Number}
+     */
+    effectiveVolume () {
+        return this.volume() * this.gainScale();
+    }
+
+    didUpdateSlotVolume (/*oldValue, newValue*/) {
+        this.syncGainNode();
+    }
+
+    didUpdateSlotGainScale (/*oldValue, newValue*/) {
+        this.syncGainNode();
+    }
+
+    /**
+     * @description applies the effective volume to the current playback's
+     * gain node, if there is one — a level change heard mid-sound.
+     * @returns {SvWaSound} the sound
+     */
+    syncGainNode () {
+        const gain = this.gainNode();
+        if (gain) {
+            gain.gain.value = this.effectiveVolume();
+        }
+        return this;
     }
 
     /**
@@ -607,6 +658,7 @@
         //console.log(this.logPrefix(), "Sound.onEnded() " + this.description());
         this.setIsPlaying(false);
         this.setSource(null);
+        this.setGainNode(null);
         const playPromise = this.playPromise();
         if (!playPromise.isResolved()) {
             playPromise.callResolveFunc();
