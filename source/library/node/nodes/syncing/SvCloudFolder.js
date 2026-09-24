@@ -247,6 +247,19 @@
     }
 
     /**
+     * @description Whether a local child's content stands in for the cloud's
+     * in a lazy sync, so it is kept rather than shown as a placeholder.
+     * Default: its (stored) cloudContentLoaded flag. A folder whose cloud copy
+     * wins overrides this to require content loaded in this session.
+     * @param {SvNode} child
+     * @returns {Boolean}
+     * @category Cloud Sync
+     */
+    childHasUsableLocalContent (child) {
+        return !!(child.cloudContentLoaded && child.cloudContentLoaded());
+    }
+
+    /**
      * @description Whether a lazy folder loads a child fully when its cloud
      * node carries no document metadata. Override to true when a placeholder
      * row is wrong without it (e.g. a portrait and summary line); by default
@@ -298,9 +311,9 @@
      */
     applyChildPlaceholderFromCloud (stableId, childFsNode) {
         let child = this.childWithCloudStableId(stableId);
-        // Don't downgrade an already-loaded child back to a placeholder
-        // (e.g. on a refresh after the user opened it).
-        if (child && child.cloudContentLoaded && child.cloudContentLoaded()) {
+        // Don't downgrade a child whose local content counts (e.g. on a
+        // refresh after the user opened it) back to a placeholder.
+        if (child && this.childHasUsableLocalContent(child)) {
             return;
         }
         if (!child) {
