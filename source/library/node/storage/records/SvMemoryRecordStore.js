@@ -103,6 +103,10 @@
         return children;
     }
 
+    async asyncRootRows (poolIds) {
+        return poolIds.map(poolId => this.rootRowForPool(poolId)).filter(row => row !== null);
+    }
+
     async asyncReadChanges (poolId, sinceVersion) {
         const root = this.rootRowForPool(poolId);
         if (!root) {
