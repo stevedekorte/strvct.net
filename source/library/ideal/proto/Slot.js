@@ -750,6 +750,27 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         return v;
     }
 
+    /**
+     * @description Sets whether this stored slot is part of the record the
+     * record cloud holds (default true). False for local bookkeeping — state
+     * about THIS copy (when it was last synced, whether it has unsaved edits)
+     * that another device must not receive and that is no reason to commit.
+     * @category Is In Cloud Record
+     */
+    setIsInCloudRecord (b) {
+        this.setAnnotation("isInCloudRecord", b);
+        return this;
+    }
+
+    /**
+     * @description Whether this stored slot is sent to the record cloud.
+     * @category Is In Cloud Record
+     */
+    isInCloudRecord () {
+        const v = this.getAnnotation("isInCloudRecord");
+        return v === undefined ? true : v;
+    }
+
     setJsonSchemaPattern (s) {
         this.setAnnotation("jsonSchemaPattern", s);
         return this;

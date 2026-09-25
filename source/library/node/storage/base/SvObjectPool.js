@@ -747,8 +747,65 @@
                 writes[pid] = row.payloadJson;
             }
         });
+        const snapshot = this.lastSyncedSnapshot() || {};
+        const moved = new Set(this.movedPlacementPids());
+        Object.keys(writes).forEach((pid) => {
+            // a record whose only changes are local bookkeeping has nothing to send
+            if (!moved.has(pid) && Object.hasOwn(snapshot, pid) && SvObjectPool.cloudPayloadFor(snapshot[pid]) === SvObjectPool.cloudPayloadFor(writes[pid])) {
+                delete writes[pid];
+            }
+        });
         const deletes = changed.deletes.filter(pid => !nonRecord.has(pid));
         return { writes: writes, deletes: deletes, isEmpty: Object.keys(writes).length === 0 && deletes.length === 0 };
+    }
+
+    /**
+     * @description A record's payload as the record cloud holds it: the local
+     * record minus its local-only entries (slots with isInCloudRecord false).
+     * Unchanged when its class has none.
+     * @param {String} jsonString - the local record JSON
+     * @returns {String}
+     * @category Cloud Mirror
+     */
+    static cloudPayloadFor (jsonString) {
+        let record = null;
+        try {
+            record = JSON.parse(jsonString);
+        } catch {
+            return jsonString;
+        }
+        const localOnly = (record && record.type) ? this.localOnlySlotNamesForType(record.type) : null;
+        if (!localOnly || localOnly.size === 0 || !Array.isArray(record.entries)) {
+            return jsonString;
+        }
+        record.entries = record.entries.filter(entry => !localOnly.has(entry[0]));
+        return JSON.stringify(record);
+    }
+
+    /**
+     * @description The names of a class's stored slots that stay local
+     * (isInCloudRecord false), cached per type.
+     * @param {String} type
+     * @returns {Set<String>}
+     * @category Cloud Mirror
+     */
+    static localOnlySlotNamesForType (type) {
+        if (!this._localOnlySlotNames) {
+            this._localOnlySlotNames = new Map();
+        }
+        if (!this._localOnlySlotNames.has(type)) {
+            const aClass = SvGlobals.globals()[type];
+            const names = new Set();
+            if (aClass && aClass.prototype && aClass.prototype.allSlotsMap) {
+                aClass.prototype.allSlotsMap().forEachKV((name, slot) => {
+                    if (slot.isInCloudRecord && !slot.isInCloudRecord()) {
+                        names.add(name);
+                    }
+                });
+            }
+            this._localOnlySlotNames.set(type, names);
+        }
+        return this._localOnlySlotNames.get(type);
     }
 
     /**
@@ -780,7 +837,7 @@
     }
 
     cloudWriteForRecord (pid, jsonString, cloudPoolId = this.poolId()) {
-        const write = { poolId: cloudPoolId, objectId: pid, payloadJson: jsonString };
+        const write = { poolId: cloudPoolId, objectId: pid, payloadJson: SvObjectPool.cloudPayloadFor(jsonString) };
         if (pid === this.poolId()) {
             const root = this.rootObject();
             // the root may name a cloud placement of its own (a folder id that is
@@ -1256,7 +1313,8 @@
 
     /**
      * @description Whether closing this pool closes its record store: only the
-     * pool that owns it (the home pool, or a pool with a store of its own).
+     * pool that owns it (the home pool, or a pool with a store of its own) —
+     * never a pool of a store that outlives its pools (an in-memory cache).
      * Child pools share the home pool's store — closing one (a document
      * re-imported from the cloud) used to close the whole local store, and
      * nothing persisted locally again until a reload (2026-09-24).
@@ -1265,6 +1323,9 @@
      */
     ownsRecordStore () {
         const store = this.recordStore();
+        if (store && store.outlivesItsPools && store.outlivesItsPools()) {
+            return false;
+        }
         const home = (store && store.homePool) ? store.homePool() : null;
         return !home || home === this;
     }

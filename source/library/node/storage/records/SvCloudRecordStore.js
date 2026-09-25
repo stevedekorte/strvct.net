@@ -13,7 +13,7 @@
  * Routes (Servers/Firebase/functions/src/nodes/records.js):
  *   records-open      { poolId } → { pool: { root, records, version, state } | null }
  *   records-changes   { poolId, sinceVersion } → { changes: { rows, tombstones, version, reloadRequired } | null }
- *   records-children  { parentId, after?, limit? } → { rows }
+ *   records-children  { parentId, after?, afterObjectId?, limit? } → { rows } (after the row (after, afterObjectId))
  *   records-roots     { poolIds } → { rows } (the pools' root rows: each document's row, unopened)
  *   records-commit    { poolId, baseVersion, requestId, writes, deletes, create? } → { status, version }
  *   records-stage-begin / -write / -finalize — a commit too large for one
@@ -98,6 +98,7 @@
     async asyncChildren (nodeId, range = {}) {
         const args = { parentId: nodeId };
         if (!Type.isNullOrUndefined(range.after)) { args.after = range.after; }
+        if (!Type.isNullOrUndefined(range.afterObjectId)) { args.afterObjectId = range.afterObjectId; }
         if (Number.isInteger(range.limit)) { args.limit = range.limit; }
         const result = await this.call("records-children", args);
         return (result && result.rows) || [];

@@ -58,6 +58,7 @@
             const slot = this.newSlot("cloudLastModified", null);
             slot.setSlotType("Number");
             slot.setShouldStoreSlot(true);
+            slot.setIsInCloudRecord(false); // this copy's sync bookkeeping, not content
             slot.setAllowsNullValue(true);
             slot.setIsInJsonSchema(false);
         }
@@ -72,6 +73,7 @@
             const slot = this.newSlot("localLastModified", null);
             slot.setSlotType("Number");
             slot.setShouldStoreSlot(true);
+            slot.setIsInCloudRecord(false); // this copy's sync bookkeeping, not content
             slot.setAllowsNullValue(true);
             slot.setIsInJsonSchema(false);
         }

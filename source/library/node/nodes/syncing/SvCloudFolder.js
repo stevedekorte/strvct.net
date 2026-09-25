@@ -299,8 +299,8 @@
     }
 
     /**
-     * @description The row fields (title, subtitle, thumbnailHash) in a pool
-     * root record's payload — its record JSON, { type, entries: [[slot, value]] }.
+     * @description The row fields (title, subtitle, thumbnailHash,
+     * rowDetailsJson) in a pool root record's payload — its record JSON, { type, entries: [[slot, value]] }.
      * Null when the payload has none of them.
      * @param {String} payloadJson
      * @returns {Object|null}
@@ -315,7 +315,7 @@
         }
         const fields = {};
         ((record && record.entries) || []).forEach(([slot, value]) => {
-            if (["title", "subtitle", "thumbnailHash"].includes(slot) && (typeof value === "string" || value === null)) {
+            if (["title", "subtitle", "thumbnailHash", "rowDetailsJson"].includes(slot) && (typeof value === "string" || value === null)) {
                 fields[slot] = value;
             }
         });

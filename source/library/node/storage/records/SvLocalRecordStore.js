@@ -59,6 +59,17 @@
             slot.setAllowsNullValue(true);
             slot.setDescription("the pool whose root is the app's model; child pools share its blob pool");
         }
+        {
+            const slot = this.newSlot("blobPool", null);
+            slot.setSlotType("SvBlobPool");
+            slot.setAllowsNullValue(true);
+            slot.setDescription("the blob pool this store's pools share when it has no home pool (an in-memory cache of cloud pools uses the app's)");
+        }
+        {
+            const slot = this.newSlot("outlivesItsPools", false);
+            slot.setSlotType("Boolean");
+            slot.setDescription("true for a store no pool owns — an in-memory cache of cloud pools, opened and closed one by one: closing a pool never closes it");
+        }
     }
 
     initPrototype () {
@@ -128,8 +139,9 @@
         pool.setRecordStore(this);
         pool.setPoolId(poolId);
         pool.setName(this.name());
-        if (this.homePool()) {
-            pool.setBlobPool(this.homePool().blobPool());
+        const blobPool = this.homePool() ? this.homePool().blobPool() : this.blobPool();
+        if (blobPool) {
+            pool.setBlobPool(blobPool);
         }
         this.registerPool(pool);
         return pool;

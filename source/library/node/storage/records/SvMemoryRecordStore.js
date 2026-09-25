@@ -95,7 +95,8 @@
         });
         children.sort((a, b) => SvRecordRow.compareChildren(a, b));
         if (!Type.isNullOrUndefined(range.after)) {
-            children = children.filter(row => row.orderKey > range.after);
+            const cursor = { orderKey: range.after, objectId: Type.isNullOrUndefined(range.afterObjectId) ? "\uffff" : range.afterObjectId };
+            children = children.filter(row => SvRecordRow.compareChildren(row, cursor) > 0);
         }
         if (Number.isInteger(range.limit)) {
             children = children.slice(0, range.limit);
@@ -157,9 +158,9 @@
     }
 
     commitResult (commit) {
-        const root = this.rootRowForPool(commit.poolId);
+        const root = this.rootRowForPool(commit.poolId) || this.createdRootFor(commit);
         if (!root) {
-            return { status: "refused", reason: "unknown pool '" + commit.poolId + "'" };
+            return { status: "refused", reason: "unknown pool '" + commit.poolId + "' (a pool is created by a baseVersion 0 commit carrying its root record)" };
         }
         const refusal = this.commitRefusal(commit);
         if (refusal) {
@@ -172,6 +173,24 @@
             return { status: "conflict", version: root.version };
         }
         return { status: "committed", version: this.applyCommit(commit, root) };
+    }
+
+    /**
+     * @description A pool's first commit (baseVersion 0, its root record among
+     * the writes) creates it, as the cloud does: the root row at version 0,
+     * owned by the committer (`create.ownerUid`, else "local").
+     * @returns {Object|null} the new root row
+     * @category Commit
+     */
+    createdRootFor (commit) {
+        const rootWrite = (commit.writes || []).find(row => SvRecordRow.isRoot(row));
+        if (commit.baseVersion !== 0 || !rootWrite || this.commitRefusal(commit)) {
+            return null;
+        }
+        const ownerUid = (commit.create && commit.create.ownerUid) || "local";
+        const root = SvRecordRow.newRow({ poolId: commit.poolId, objectId: rootWrite.objectId, ownerUid: ownerUid, version: 0, payloadJson: rootWrite.payloadJson, parentId: rootWrite.parentId || null, orderKey: rootWrite.parentId ? rootWrite.orderKey : null });
+        this.rows().set(SvRecordRow.keyOf(root), root);
+        return root;
     }
 
     /**
