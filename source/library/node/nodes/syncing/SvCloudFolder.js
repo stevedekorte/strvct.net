@@ -537,6 +537,7 @@
                 console.warn(this.cloudSyncLogPrefix(), "asyncSyncFromCloud: no signed-in user; skipping");
                 return this;
             }
+            const start = performance.now();
             const client = this.cloudFsClient();
             const folder = await client.asyncReadNode(this.cloudFsFolderId());
             if (!folder || !(folder instanceof SvFsFolder)) {
@@ -563,12 +564,13 @@
                 && cloudClmKey !== null
                 && this.syncedChildrenClmKey() === cloudClmKey
                 && this.localChildrenStandForCloud()) {
-                this.isDebugging() && console.log(this.cloudSyncLogPrefix(), "children unchanged (clm cache hit) — skipping re-list");
+                console.log("[rows] " + this.svType() + ": children unchanged, kept " + this.subnodeCount() + " local rows (" + Math.round(performance.now() - start) + " ms, at " + Math.round(start) + " ms)");
                 if (this.didSyncFromCloud) this.didSyncFromCloud();
                 return this;
             }
 
             const { children: childNodes, isComplete } = await folder.asyncListAllChildren();
+            const listedAt = performance.now();
             const listedStableIds = new Set();
             // Load children CONCURRENTLY. These are independent per-child
             // reads; doing them sequentially makes startup scale with the
@@ -591,6 +593,7 @@
                     console.warn(this.cloudSyncLogPrefix(), "child row fields unavailable; using the listing:", e && e.message);
                     return new Map();
                 });
+                console.log("[rows] " + this.svType() + ": listed " + childNodes.length + " children in " + Math.round(listedAt - start) + " ms, read " + rowFieldsById.size + " rows in " + Math.round(performance.now() - listedAt) + " ms (started at " + Math.round(start) + " ms)");
                 for (const child of childNodes) {
                     const stableId = this.cloudFsChildIdFromNodeId(child.id());
                     if (!stableId) continue;
