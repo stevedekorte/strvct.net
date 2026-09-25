@@ -156,15 +156,16 @@
      * and are kept as the mirror. Opens the pool and reads its root.
      * @category Import
      */
-    async asyncImportOpenedPool (opened) {
-        const poolId = opened.root.poolId;
+    async asyncImportOpenedPool (opened, localPoolId = null) {
+        // a cloud pool id is scoped ("<scope>:<local>"); locally the pool keeps its own id
+        const poolId = localPoolId || SvRecordRow.localPoolId(opened.root.poolId);
         const live = this.pools().get(poolId);
         if (live) {
             live.close();
             this.forgetPool(poolId);
         }
         await this.asyncDeletePool(poolId);
-        const rows = [opened.root].concat(opened.records).map(row => this.localRowFromCloudRow(row));
+        const rows = [opened.root].concat(opened.records).map(row => this.localRowFromCloudRow(Object.assign({}, row, { poolId: poolId })));
         await this.asyncPut(rows);
         const pool = this.openPoolWithId(poolId);
         pool.setLastSyncedSnapshot(Object.assign({}, pool.asJson()));

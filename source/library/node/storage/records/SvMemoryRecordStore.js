@@ -160,7 +160,7 @@
             if (key.poolId !== commit.poolId) {
                 return "delete for another pool: " + key.poolId + "/" + key.objectId;
             }
-            if (key.objectId === commit.poolId) {
+            if (key.objectId === SvRecordRow.localPoolId(commit.poolId)) {
                 return "the root record is not deleted by a commit; delete the pool";
             }
         }
@@ -220,7 +220,7 @@
     }
 
     rootRowForPool (poolId) {
-        const root = this.rows().get(SvRecordRow.keyFor(poolId, poolId));
+        const root = this.rows().get(SvRecordRow.keyFor(poolId, SvRecordRow.localPoolId(poolId))); // a scoped pool's root is its local id
         return (root && !root.isDeleted) ? root : null;
     }
 

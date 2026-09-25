@@ -708,12 +708,14 @@
         if (changed.isEmpty) {
             return { status: "unchanged", version: rootRow.version || 0 };
         }
+        // the cloud names the pool by its scoped id (SvRecordRow.localPoolId)
+        const cloudPoolId = options.cloudPoolId || this.poolId();
         const commit = {
-            poolId: this.poolId(),
+            poolId: cloudPoolId,
             baseVersion: Number.isInteger(rootRow.version) ? rootRow.version : 0,
             requestId: Object.newUuid(),
-            writes: Object.keys(changed.writes).map(pid => this.cloudWriteForRecord(pid, changed.writes[pid])),
-            deletes: changed.deletes.map(pid => ({ poolId: this.poolId(), objectId: pid }))
+            writes: Object.keys(changed.writes).map(pid => this.cloudWriteForRecord(pid, changed.writes[pid], cloudPoolId)),
+            deletes: changed.deletes.map(pid => ({ poolId: cloudPoolId, objectId: pid }))
         };
         if (options.create) {
             commit.create = options.create;
@@ -741,8 +743,8 @@
         return { writes: writes, deletes: deletes, isEmpty: Object.keys(writes).length === 0 && deletes.length === 0 };
     }
 
-    cloudWriteForRecord (pid, jsonString) {
-        const write = { poolId: this.poolId(), objectId: pid, payloadJson: jsonString };
+    cloudWriteForRecord (pid, jsonString, cloudPoolId = this.poolId()) {
+        const write = { poolId: cloudPoolId, objectId: pid, payloadJson: jsonString };
         if (pid === this.poolId()) {
             const root = this.rootObject();
             // the root may name a cloud placement of its own (a folder id that is

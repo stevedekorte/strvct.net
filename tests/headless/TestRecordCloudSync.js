@@ -148,6 +148,24 @@ async function main () {
     await imported.commitStoreDirtyObjects();
     result = await imported.asyncCommitToCloud(cloud);
     check(result.status === "committed" && result.version === 4, "an edit on the imported pool commits at the cloud's version");
+
+    console.log("\nScoped cloud pool ids (<scope>:<local>): unique in the cloud, local ids unchanged");
+    const scoped = SvRecordRow.scopedPoolId("u1", pool.poolId());
+    check(SvRecordRow.localPoolId(scoped) === pool.poolId() && SvRecordRow.localPoolId(pool.poolId()) === pool.poolId(), "localPoolId strips the scope and leaves an unscoped id alone");
+    check(SvRecordRow.isRoot({ poolId: scoped, objectId: pool.poolId() }), "the root row of a scoped pool is the one whose objectId is the local id");
+    await cloudMemory.asyncPut([SvRecordRow.newRow({ poolId: scoped, objectId: pool.poolId(), ownerUid: "u1", version: 0, payloadJson: "{}" })]);
+    imported.rootObject().setLabel("v5");
+    await imported.commitStoreDirtyObjects();
+    const store3 = SvLocalRecordStore.clone().useMemoryMap();
+    await store3.asyncOpenStore();
+    const whole = imported.wholePoolAsDelta();
+    const scopedCommit = await cloud.asyncCommit({ poolId: scoped, baseVersion: 0, requestId: "scoped-1",
+        writes: Object.keys(whole.writes).map(pid => imported.cloudWriteForRecord(pid, whole.writes[pid], scoped)), deletes: [] });
+    check(scopedCommit.status === "committed", "a pool commits under its scoped cloud id (" + JSON.stringify(scopedCommit) + ")");
+    const openedScoped = await cloud.asyncOpen(scoped);
+    const back = await store3.asyncImportOpenedPool(openedScoped, pool.poolId());
+    check(back.poolId() === pool.poolId() && back.rootObject() && back.rootObject().label() === "v5", "importing it back maps the rows to the local pool id");
+    check(store3.rowForKey(pool.poolId(), pool.poolId()) && !store3.rowForKey(scoped, pool.poolId()), "no row is stored under the scoped id locally");
     await pool.promiseClose();
 }
 
