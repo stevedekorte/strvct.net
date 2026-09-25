@@ -13,8 +13,7 @@
  * Direct CRUD on the `Nodes` collection and `blobs/{hash}` Storage
  * objects use the Firebase compat SDK (`firebase.firestore()`,
  * `firebase.app().storage()`). Server-side function calls — uploadBlob,
- * appendDelta, coalesceDocument, copyNode, deleteSubtree, invites,
- * ensure-home — are routed through `callFunction(name, args)`, which
+ * copyNode, deleteSubtree, invites, ensure-home — are routed through `callFunction(name, args)`, which
  * stays abstract: the application provides a subclass that knows how
  * to reach its specific HTTP endpoint set.
  *
@@ -164,78 +163,6 @@
         return this.storage().ref(path).getDownloadURL();
     }
 
-    // ---------------------------------------------------------------- documents (lease + WAL)
-
-    /**
-     * Acquire or renew the single-writer lease on a document, in a
-     * Firestore transaction. Succeeds only if no active lease exists
-     * for a different uid/deviceId.
-     */
-    async acquireLease ({ nodeId, deviceId, ttlMs }) {
-        const ttl = Number.isInteger(ttlMs) && ttlMs > 0 ? ttlMs : 60000;
-        const ref = this.nodeRef(nodeId);
-        const callerUid = this._currentUid();
-
-        return this.firestore().runTransaction(async (tx) => {
-            const snap = await tx.get(ref);
-            if (!snap.exists) throw this._mkErr("not-found", "node not found: " + nodeId);
-            const data = snap.data();
-            if (!data.subtype || data.subtype.type !== "document") {
-                throw this._mkErr("failed-precondition", "node is not a document");
-            }
-
-            const cur = data.lease || null;
-            const nowMs = Date.now();
-            const curExpiresMs = cur && cur.expiresAt ? this._toMillis(cur.expiresAt) : 0;
-            const heldByOther = cur && cur.uid !== callerUid && curExpiresMs > nowMs;
-            if (heldByOther) {
-                throw this._mkErr("aborted", "lease held by another user/device until " + new Date(curExpiresMs).toISOString());
-            }
-
-            const fresh = {
-                uid: callerUid,
-                deviceId: deviceId || (cur && cur.deviceId) || "default",
-                expiresAt: new Date(nowMs + ttl),
-                headSeq: cur && typeof cur.headSeq === "number" ? cur.headSeq : 0
-            };
-            tx.update(ref, {
-                lease: fresh,
-                lastModified: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            return fresh;
-        });
-    }
-
-    async releaseLease (nodeId) {
-        const ref = this.nodeRef(nodeId);
-        const callerUid = this._currentUid();
-
-        await this.firestore().runTransaction(async (tx) => {
-            const snap = await tx.get(ref);
-            if (!snap.exists) return;
-            const data = snap.data();
-            const cur = data.lease;
-            if (!cur || cur.uid !== callerUid) return;
-            // Preserve headSeq across lease release. Setting lease=null
-            // would discard the WAL sequence counter, and the next
-            // acquireLease would reset it to 0 — causing the next
-            // appendDelta to overwrite the existing seq=1 file in
-            // Storage, silently losing whatever was in the previous
-            // delta. Keep the lease object as a "no editor" sentinel
-            // (uid=null, expiresAt=null) but carry headSeq forward.
-            const releasedLease = {
-                uid: null,
-                deviceId: null,
-                expiresAt: null,
-                headSeq: typeof cur.headSeq === "number" ? cur.headSeq : 0
-            };
-            tx.update(ref, {
-                lease: releasedLease,
-                lastModified: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        });
-    }
-
     // ---------------------------------------------------------------- membership discovery
 
     async listMyMemberships () {
@@ -260,15 +187,6 @@
             throw this._mkErr("unauthenticated", "no current Firebase user");
         }
         return firebase.auth().currentUser.uid;
-    }
-
-    _toMillis (ts) {
-        if (!ts) return 0;
-        if (typeof ts === "number") return ts;
-        if (typeof ts.toMillis === "function") return ts.toMillis();
-        if (typeof ts.getTime === "function") return ts.getTime();
-        if (typeof ts.seconds === "number") return ts.seconds * 1000 + Math.floor((ts.nanoseconds || 0) / 1e6);
-        return 0;
     }
 
     _mkErr (code, message) {

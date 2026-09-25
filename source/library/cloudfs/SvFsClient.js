@@ -315,11 +315,10 @@
      * Ensure a document node exists at `id` and return it as an
      * `SvFsDocument`. If the node is missing, create it with the given
      * parent / scope / subtype metadata; if it already exists, just
-     * read it back without touching its lease/headSeq state.
+     * read it back.
      *
-     * Use this before opening a session to back app-level state on a
-     * stable node id (e.g. UoCharacter.characterId() → one node per
-     * character).
+     * A document's node lists it in its folder and names its records pool
+     * (subtype.recordPoolId); the content itself is committed as records.
      *
      * @param {Object} args
      * @param {string} args.id            - Stable node id (e.g. character id).
@@ -351,7 +350,6 @@
             visibility: args.visibility || "private",
             title: args.title || args.id,
             subtype: args.subtype,
-            lease: null,
             createdAt: ts,
             lastModified: ts,
             childrenLastModified: ts

@@ -58,23 +58,6 @@
 
     /**
      * @static
-     * @description Creates an SvObjectPool from cloud JSON data.
-     * @param {Object} json - The JSON object containing pool data
-     * @returns {SvObjectPool} A new pool initialized from the JSON
-     * @category Cloud Sync
-     */
-    static fromCloudJson (json) {
-        const pool = this.clone();
-        pool.recordStore().kvMap().open();
-        pool.setPoolId(json[pool.rootKey()]);
-        pool.recordStore().loadFromCloudJson(pool.poolId(), json, pool.rootKey(), pool.placementsKey());
-        pool.loadStoredRoot();
-        SvObjectPool.openPools().add(pool); // register so blob GC knows about this pool's references
-        return pool;
-    }
-
-    /**
-     * @static
      * @description
      * @returns {boolean}
      */
@@ -106,12 +89,8 @@
         return this._objectPoolRegistry;
     }
 
-    static compactionThreshold () {
-        return 20; // deltas appended to a cloud document before it is folded back into pool.json
-    }
-
     static fullUploadThreshold () {
-        return 0.5; // the changed fraction of records above which a whole pool.json beats a delta
+        return 0.5; // the changed fraction of records above which a commit writes every record (and derives deletes) rather than diffing
     }
 
     static openPools () {
@@ -1012,7 +991,7 @@
      * @returns {String}
      */
     rootKey () {
-        return "root"; // the root pointer's key in the cloud pool.json format (asJson / fromCloudJson)
+        return "root"; // the root pointer's key in asJson (the snapshot a cloud commit diffs against)
     }
 
     setRootPid (pid) {

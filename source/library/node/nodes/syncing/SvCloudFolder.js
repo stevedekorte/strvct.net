@@ -273,18 +273,6 @@
     }
 
     /**
-     * @description Whether a lazy folder loads a child fully when its cloud
-     * node carries no document metadata. Override to true when a placeholder
-     * row is wrong without it (e.g. a portrait and summary line); by default
-     * the node's creation title is enough.
-     * @returns {Boolean}
-     * @category Cloud Sync
-     */
-    loadsChildrenMissingMetadata () {
-        return false;
-    }
-
-    /**
      * @description Subclasses MAY override to render the list from the
      * folder MANIFEST and defer each child's full content load until the
      * child is first opened (manifest-first / lazy). When true,
@@ -325,25 +313,12 @@
     /**
      * @description Row fields for this folder's children, by stable id, from a
      * source that has them without loading the documents (the record cloud's
-     * pool root records). Default: none — the listing's own metadata is used.
+     * pool root records). Default: none — rows show the listing's node titles.
      * @returns {Promise<Map<String, Object>>}
      * @category Cloud Sync
      */
     async asyncChildRowFields () {
         return new Map();
-    }
-
-    /**
-     * @description The `fields` of a cloud node's document metadata (what the
-     * document last saved about itself: title, subtitle, thumbnail …), or
-     * null when the node carries none.
-     * @param {SvFsNode} childFsNode
-     * @returns {Object|null}
-     * @category Cloud Sync
-     */
-    static cloudMetadataFieldsOf (childFsNode) {
-        const envelope = (childFsNode && typeof childFsNode.documentMetadata === "function") ? childFsNode.documentMetadata() : null;
-        return (envelope && envelope.schemaVersion === 1 && envelope.fields && typeof envelope.fields === "object") ? envelope.fields : null;
     }
 
     /**
@@ -357,7 +332,7 @@
      * @param {SvFsNode} childFsNode
      * @category Cloud Sync
      */
-    applyChildPlaceholderFromCloud (stableId, childFsNode, rowFields = undefined) {
+    applyChildPlaceholderFromCloud (stableId, childFsNode, rowFields = null) {
         let child = this.childWithCloudStableId(stableId);
         // Don't downgrade a child whose local content counts (e.g. on a
         // refresh after the user opened it) back to a placeholder.
@@ -375,17 +350,17 @@
         // empty placeholder is never written back to cloud.
         child._suppressLocalModifiedTouch = true;
         try {
-            // The document's own last-saved metadata (title, subtitle,
-            // thumbnail …) is current; the node's title/subtitle are only
-            // what was written when the document was created.
-            const fields = rowFields !== undefined ? rowFields : this.thisClass().cloudMetadataFieldsOf(childFsNode);
+            // The document's row (title, subtitle, thumbnail … on its root
+            // record) is current; the node's title/subtitle are only what was
+            // written when the document was created.
+            const fields = rowFields;
             const title = (fields && typeof fields.title === "string") ? fields.title
                 : (childFsNode && typeof childFsNode.title === "function" ? childFsNode.title() : null);
             const subtitle = (fields && typeof fields.subtitle === "string") ? fields.subtitle
                 : (childFsNode && typeof childFsNode.subtitle === "function" ? childFsNode.subtitle() : null);
             if (title && child.setTitle) child.setTitle(title);
             if (subtitle && child.setSubtitle) child.setSubtitle(subtitle);
-            if (fields && child.applyCloudMetadataFields) child.applyCloudMetadataFields(fields);
+            if (fields && child.applyRowFields) child.applyRowFields(fields);
             const lm = childFsNode && typeof childFsNode.lastModified === "function" ? childFsNode.lastModified() : null;
             // asMillis before the fallback: an uninterpretable object is
             // truthy, so `lm || Date.now()` would forward the object itself
@@ -600,18 +575,15 @@
             // child count × round-trip — and any orphaned/dead child entry
             // (listed but whose document 404s) adds a full round-trip each.
             // Failures are isolated per child so one bad entry can't block
-            // the rest. Lazy folders render the list from the manifest and
-            // defer each child's full-content download to first open — this
-            // keeps startup to ~the manifest read instead of N full pool.json
-            // downloads. Eager folders load every child's content up front.
+            // the rest. Lazy folders render the list from the listing and the
+            // children's rows (their root records) and defer each child's
+            // content to first open — startup is the listing plus one rows
+            // read, not N document loads. Eager folders load every child's
+            // content up front.
             //
             // BOTH branches skip children with a pending local delete: the
             // cloud doc is still listed until the flush lands, and re-adding
             // it here would undo a delete performed just before a reload.
-            // A lazy folder renders a child from its cloud metadata alone. A
-            // folder whose rows need that metadata (loadsChildrenMissingMetadata)
-            // loads a child that carries none yet fully, as an eager folder
-            // would; its next save writes the metadata.
             const fullLoadNodes = [];
             if (this.usesLazyChildLoading()) {
                 // rows from the documents' root records when a source has them
@@ -624,13 +596,8 @@
                     if (!stableId) continue;
                     listedStableIds.add(stableId);
                     if (this.hasPendingCloudDelete(child.id())) continue;
-                    const rowFields = rowFieldsById.get(stableId) || this.thisClass().cloudMetadataFieldsOf(child);
-                    if (this.loadsChildrenMissingMetadata() && !rowFields) {
-                        fullLoadNodes.push(child);
-                        continue;
-                    }
                     try {
-                        this.applyChildPlaceholderFromCloud(stableId, child, rowFields);
+                        this.applyChildPlaceholderFromCloud(stableId, child, rowFieldsById.get(stableId) || null);
                     } catch (e) {
                         console.warn(this.cloudSyncLogPrefix(), "placeholder failed for", stableId, e && e.message);
                     }

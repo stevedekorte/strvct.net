@@ -157,12 +157,6 @@
     }
 
     /**
-     * @description Replaces a pool's rows with a cloud pool.json (record JSON by
-     * puuid plus a root pointer) and opens it. A live pool of the same id is
-     * forgotten first: the caller owns replacing its objects.
-     * @category Import
-     */
-    /**
      * @description Replaces a pool's rows with rows read from a cloud backing
      * (asyncOpen's `{ root, records }`): server-owned columns arrive with them
      * and are kept as the mirror. Opens the pool and reads its root.
@@ -203,50 +197,6 @@
             isDeleted: !!row.isDeleted,
             payloadJson: row.isDeleted ? null : row.payloadJson
         });
-    }
-
-    placementsFromCloudJson (json, placementsKey) {
-        const raw = json[placementsKey];
-        if (!raw) {
-            return {};
-        }
-        return Type.isString(raw) ? JSON.parse(raw) : raw;
-    }
-
-    async asyncImportPoolJson (json, rootKey = "root", placementsKey = "_placements") {
-        const poolId = json[rootKey];
-        assert(poolId, "pool.json has no root pointer");
-        const live = this.pools().get(poolId);
-        if (live) {
-            live.close();
-            this.forgetPool(poolId);
-        }
-        const existing = this.rootRowForPool(poolId);
-        await this.asyncDeletePool(poolId);
-        const placements = this.placementsFromCloudJson(json, placementsKey);
-        const rows = [];
-        Object.keys(json).forEach((pid) => {
-            if (pid === rootKey || pid === placementsKey) {
-                return;
-            }
-            const row = SvRecordRow.newRow({ poolId: poolId, objectId: pid, payloadJson: json[pid] });
-            if (placements[pid]) {
-                row.parentId = placements[pid][0];
-                row.orderKey = placements[pid][1];
-            }
-            if (pid === poolId) {
-                row.ownerUid = existing ? existing.ownerUid : (this.homePool() ? this.homePool().ownerUid() : "local");
-                row.version = existing ? existing.version : 0;
-                row.parentId = existing ? existing.parentId : null;
-                row.orderKey = existing ? existing.orderKey : null;
-            }
-            rows.push(row);
-        });
-        await this.asyncPut(rows);
-        const pool = this.openPoolWithId(poolId);
-        await pool.asyncPrefetchTextBlobsForRows(rows);
-        pool.readRootObject();
-        return pool;
     }
 
     /**
@@ -498,35 +448,6 @@
 
     putSettingInBatch (name, value) {
         this.kvMap().atPut(SvLocalRecordStore.settingsPrefix() + name, JSON.stringify(value));
-        return this;
-    }
-
-    /**
-     * @description Loads a pool from the cloud pool.json shape (record JSON by
-     * puuid plus a root pointer) straight into the map, outside any batch — the
-     * import path of SvObjectPool.fromCloudJson. Rows get the server-neutral
-     * defaults; the root row is owned locally until the cloud says otherwise.
-     * @category Import
-     */
-    loadFromCloudJson (poolId, json, rootKey, placementsKey = "_placements") {
-        const dict = {};
-        const placements = this.placementsFromCloudJson(json, placementsKey);
-        Object.keys(json).forEach((pid) => {
-            if (pid === rootKey || pid === placementsKey) {
-                return;
-            }
-            const row = SvRecordRow.newRow({ poolId: poolId, objectId: pid, payloadJson: json[pid] });
-            if (placements[pid]) {
-                row.parentId = placements[pid][0];
-                row.orderKey = placements[pid][1];
-            }
-            if (pid === poolId) {
-                row.ownerUid = "local";
-                row.version = 0;
-            }
-            dict[SvLocalRecordStore.rowKeyFor(poolId, pid)] = JSON.stringify(row);
-        });
-        this.kvMap().fromJson(dict);
         return this;
     }
 

@@ -16,7 +16,8 @@
  * - appending after a reopen places the new element after the last stored one;
  *   removing an element deletes its row
  * - GC keeps windowed rows (and what they reference) while their node is reachable
- * - the pool.json shape carries placements, and a round trip keeps the order
+ * - placements travel as row columns, and a round trip through the record
+ *   cloud's open shape keeps the order
  *
  * Usage (from this directory):  node TestWindowedCollections.js
  */
@@ -259,16 +260,19 @@ async function main () {
         check(texts(chat2) === "m3,m2,m-between,m4,m5,m6,m7,m8", "a reopen loads the re-keyed order (" + texts(chat2) + ")"); // m1 was removed earlier; m2 was moved after m3
     }
 
-    console.log("\nThe pool.json shape carries placements");
+    console.log("\nPlacements travel with the rows");
     const json = pool.asJson();
-    check(typeof json._placements === "string" && Object.values(JSON.parse(json._placements)).filter(p => p[0] === chat2.puuid()).length === 8, "asJson holds the chat's eight placements");
-    const memory = SvObjectPool.fromCloudJson(json);
+    check(typeof json._placements === "string" && Object.values(JSON.parse(json._placements)).filter(p => p[0] === chat2.puuid()).length === 8, "the synced snapshot (asJson) holds the chat's eight placements");
+    const liveRows = store.rowsForPool(pool.poolId()).filter(row => !row.isDeleted);
+    const opened = { root: liveRows.find(row => row.objectId === pool.poolId()), records: liveRows.filter(row => row.objectId !== pool.poolId()), version: 1, state: "ready" };
+    const memoryStore = SvLocalRecordStore.clone().useMemoryMap();
+    const memory = await memoryStore.asyncImportOpenedPool(JSON.parse(JSON.stringify(opened)));
     const chat3 = memory.rootObject().chat();
     chat3.prepareToAccess();
-    check(texts(chat3) === "m6,m7,m8", "a pool opened from pool.json loads its newest window in the same order (" + texts(chat3) + ")");
+    check(texts(chat3) === "m6,m7,m8", "a pool opened from its rows loads its newest window in the same order (" + texts(chat3) + ")");
     const store2 = SvLocalRecordStore.clone().useMemoryMap();
     await store2.asyncOpenStore();
-    const imported = await store2.asyncImportPoolJson(json);
+    const imported = await store2.asyncImportOpenedPool(JSON.parse(JSON.stringify(opened)));
     const chat4 = imported.rootObject().chat();
     chat4.loadLatestWindow(); chat4.loadOlderWindow(10);
     check(texts(chat4) === "m3,m2,m-between,m4,m5,m6,m7,m8" && chat4.subnodeCount() === 8, "an imported pool has every element placed, in the re-keyed order (" + texts(chat4) + ")");

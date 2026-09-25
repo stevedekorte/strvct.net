@@ -5,8 +5,6 @@
     "SvFsFolder.js",
     "SvFsBlob.js",
     "SvFsDocument.js",
-    "SvFsDocumentSession.js",
-    "SvFsJsonDocument.js",
     "SvFsClient.js",
     "firebase/_imports.json"
 ]

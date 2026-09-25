@@ -29,7 +29,7 @@
  * # Function-routed operations
  *
  * Some operations are policy-gated and run server-side (uploadBlob,
- * appendDelta, etc.). The default implementations forward to
+ * deleteSubtree, etc.). The default implementations forward to
  * `callFunction(name, args)`; subclasses that prefer to embed routing
  * into specific methods can override them.
  */
@@ -209,63 +209,6 @@
      */
     async blobUrl (/*_hash*/) {
         throw this.notImplementedError("blobUrl");
-    }
-
-    // ---------------------------------------------------------------- documents (lease + WAL)
-
-    /**
-     * Atomically claim or renew the single-writer lease on a document
-     * node. Returns the active lease record.
-     * @param {Object} args
-     * @param {string} args.nodeId
-     * @param {string} args.deviceId
-     * @param {number} [args.ttlMs=60000]
-     * @returns {Promise<{uid:string,deviceId:string,expiresAt:number,headSeq:number}>}
-     */
-    async acquireLease (/*args*/) {
-        throw this.notImplementedError("acquireLease");
-    }
-
-    /**
-     * Release the caller's lease on a document node.
-     * @param {string} _nodeId
-     * @returns {Promise<void>}
-     */
-    async releaseLease (/*_nodeId*/) {
-        throw this.notImplementedError("releaseLease");
-    }
-
-    /**
-     * Append a WAL delta to a document.
-     * @param {Object} args
-     * @param {string} args.nodeId
-     * @param {number} args.expectedSeq    must equal lease.headSeq + 1
-     * @param {*} args.delta
-     * @returns {Promise<{seq:number}>}
-     */
-    async appendDelta (args) {
-        return this.callFunction("write-delta", args);
-    }
-
-    /**
-     * Resolve readable URLs for a document's pool + delta files.
-     * @param {string} nodeId
-     * @returns {Promise<{headSeq:number, poolUrl:string|null, deltas:Array<{seq:number,url:string}>}>}
-     */
-    async readDocument (nodeId) {
-        return this.callFunction("read-url", { nodeId });
-    }
-
-    /**
-     * Replace a document's pool with the lease holder's merged payload
-     * and drop the deltas.
-     * @param {Object} args
-     * @param {string} args.nodeId
-     * @param {*} args.newPool
-     * @returns {Promise<{deletedDeltas:number,headSeq:number}>}
-     */
-    async coalesceDocument (args) {
-        return this.callFunction("coalesce", args);
     }
 
     // ---------------------------------------------------------------- federation

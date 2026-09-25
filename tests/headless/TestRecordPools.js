@@ -18,7 +18,7 @@
  * - GC by pool: a stray row is swept from its pool alone
  * - moving a document between folders re-places its pool
  * - deletion cascades: a detached document's pool (and its records) is gone
- * - a pool round-trips through the cloud pool.json shape
+ * - a pool round-trips through the record cloud's open shape (root + records)
  *
  * Usage (from this directory):  node TestRecordPools.js
  */
@@ -229,15 +229,19 @@ async function main () {
     check((await folder2.asyncNodeAtPath(["a"])) === docA2, "asyncNodeAtPath walks by title into a pooled folder's document");
     check((await folder2.asyncNodeAtPath(["zzz"])) === null && (await folder2.asyncNodeAtPath(["a", "nope"])) === null, "…and answers null for a missing step at any depth");
 
-    console.log("\nA pool round-trips through the cloud pool.json shape");
+    console.log("\nA pool round-trips through the record cloud's open shape");
+    // what records-open answers: the root row and every live record
+    const openedFrom = (aStore, poolId) => {
+        const rows = aStore.rowsForPool(poolId).filter(row => !row.isDeleted).map(row => Object.assign({}, row, { version: row.objectId === poolId ? 1 : null }));
+        return { root: rows.find(row => row.objectId === poolId), records: rows.filter(row => row.objectId !== poolId), version: 1, state: "ready" };
+    };
     const json = poolA2.asJson();
-    check(json.root === docA2.puuid() && Object.keys(json).length === poolA2.count() + 1, "asJson is every record's JSON by puuid plus the root pointer");
+    check(json.root === docA2.puuid() && Object.keys(json).length === poolA2.count() + 1, "asJson (the snapshot a commit diffs against) is every record's JSON by puuid plus the root pointer");
     const store2 = SvLocalRecordStore.clone().useMemoryMap();
     await store2.asyncOpenStore();
-    const imported = await store2.asyncImportPoolJson(json);
-    check(imported.rootObject().label() === "a" && imported.rootObject().subnodes().first().text() === "note of a", "importing pool.json into another store reproduces the document");
-    check(imported.collectDelta() === null, "a freshly imported pool has no synced snapshot yet (full upload)");
-    imported.updateLastSyncedSnapshot();
+    const imported = await store2.asyncImportOpenedPool(openedFrom(store, docA2.puuid()));
+    check(imported.rootObject().label() === "a" && imported.rootObject().subnodes().first().text() === "note of a", "importing the rows into another store reproduces the document");
+    check(imported.collectDelta().isEmpty === true, "a freshly imported pool is synced: nothing to commit");
     imported.rootObject().setLabel("a3");
     await imported.commitStoreDirtyObjects();
     const delta = imported.collectDelta();
@@ -246,7 +250,7 @@ async function main () {
     console.log("\nRe-importing a document over its live pool keeps the shared store open");
     const liveA = store.poolForId(docA2.puuid());
     check(liveA && liveA !== home && !liveA.ownsRecordStore() && home.ownsRecordStore(), "a child pool does not own the shared store; the home pool does");
-    await store.asyncImportPoolJson(liveA.asJson()); // the cloud load path: it closes the live pool first
+    await store.asyncImportOpenedPool(openedFrom(store, liveA.poolId())); // the cloud load path: it closes the live pool first
     check(store.isOpen(), "the store is still open after a document's live pool is closed and re-imported (it used to close the whole store)");
     const docE = newDoc("e");
     folder2.addSubnode(docE);

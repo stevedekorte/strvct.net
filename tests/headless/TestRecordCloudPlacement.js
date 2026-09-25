@@ -5,7 +5,7 @@
 /**
  * Headless test: a windowed collection's elements keep their place through the
  * record cloud (Plans/Record Store §6, §7) — a commit sends each element's
- * parentId/orderKey as row columns (not the pool.json "_placements" string, and
+ * parentId/orderKey as row columns (not the snapshot's "_placements" string, and
  * not the "root" pointer, which are not records), an import from the cloud
  * restores them so windows load in order, and a re-key commits the element.
  *
@@ -134,7 +134,7 @@ async function main () {
     const first = await pool.asyncCommitToCloud(cloud);
     check(first.status === "committed", "committed: " + JSON.stringify(first));
     const opened = await cloud.asyncOpen(pool.poolId());
-    check(!opened.records.some(r => r.objectId === "root" || r.objectId === "_placements"), "no pool.json bookkeeping keys became records");
+    check(!opened.records.some(r => r.objectId === "root" || r.objectId === "_placements"), "no snapshot bookkeeping keys became records");
     const cloudPlaced = opened.records.filter(r => r.parentId === chat.puuid());
     check(cloudPlaced.length === 6 && cloudPlaced.every(r => r.orderKey === store.rowForKey(pool.poolId(), r.objectId).orderKey), "each element's row carries its parentId and orderKey");
     check(opened.records.filter(r => r.parentId && r.parentId !== chat.puuid()).length === 0, "core records carry no placement");
