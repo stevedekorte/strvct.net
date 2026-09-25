@@ -38,7 +38,9 @@
     appendText (s) {
         assert(Type.isString(s));
         this.setText(this.text() + s);
-        this.domNode().textContent = this.text();
+        if (this.domNode()) {
+            this.domNode().textContent = this.text();
+        }
         return this;
     }
 

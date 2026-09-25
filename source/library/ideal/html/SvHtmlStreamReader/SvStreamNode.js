@@ -57,6 +57,16 @@
 
         {
             /**
+             * @member {boolean} buildsDomNode
+             * @description Whether onOpen mirrors this node into a DOM node
+             * (set from the reader's buildsDomTree).
+             */
+            const slot = this.newSlot("buildsDomNode", true);
+            slot.setSlotType("Boolean");
+        }
+
+        {
+            /**
              * @member {boolean} isClosed
              * @description Whether the HTML element is closed.
              */
@@ -96,6 +106,9 @@
      * @category Node Lifecycle
      */
     onOpen () {
+        if (!this.buildsDomNode()) {
+            return this;
+        }
         const domNode = this.asDomNode();
         /*
         // parent responsible for calling appendChild

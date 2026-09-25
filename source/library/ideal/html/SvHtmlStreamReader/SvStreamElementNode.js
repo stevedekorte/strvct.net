@@ -93,7 +93,9 @@
     addChild (aNode) {
         aNode.setParent(this);
         this.children().push(aNode);
-        this.domNode().appendChild(aNode.domNode());
+        if (this.domNode()) {
+            this.domNode().appendChild(aNode.domNode());
+        }
         return this;
     }
 

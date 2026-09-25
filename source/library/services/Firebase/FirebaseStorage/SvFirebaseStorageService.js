@@ -30,6 +30,25 @@
         this.setIsSingleton(true);
     }
 
+    /**
+     * @static
+     * @description The form of `blob` that `ref.put()` accepts on this
+     * platform. The browser SDK takes the Blob as-is; under Node.js the SDK
+     * only accepts ArrayBuffer/Uint8Array and silently treats a Blob as empty
+     * data (it then throws reading `byteLength`), so the bytes are passed
+     * instead. Callers must set `contentType` in the upload metadata, since
+     * raw bytes carry no type.
+     * @param {Blob} blob
+     * @returns {Promise<Blob|Uint8Array>}
+     * @category Uploading
+     */
+    static async asyncUploadableData (blob) {
+        if (SvPlatform.isBrowserPlatform()) {
+            return blob;
+        }
+        return new Uint8Array(await blob.arrayBuffer());
+    }
+
     initPrototypeSlots () {
 
         {

@@ -39,7 +39,12 @@
         // educatesQuotes: the AI writes ASCII quotes, but the book faces (IM Fell)
         // draw " as a closing curly quote, so every opening quote looks backwards.
         // The reader's skip set keeps tool-call JSON and other machine tags byte-exact.
-        this.setHtmlStreamReader(SvHtmlStreamReader.clone().setDelegate(this).setEducatesQuotes(true));
+        // buildsDomTree: this reader's DOM mirror is never read (the message
+        // uses innerHtml()/textContent() of the stream-node tree), and a
+        // headless host has no DOM to build it with. The browser keeps the
+        // mirror for now so its behavior is unchanged (Server-Hosted Sessions M0).
+        const reader = SvHtmlStreamReader.clone().setDelegate(this).setEducatesQuotes(true);
+        this.setHtmlStreamReader(reader.setBuildsDomTree(SvPlatform.isBrowserPlatform()));
         return this;
     }
 

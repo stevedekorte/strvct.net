@@ -100,8 +100,12 @@ class SvPlatform extends Object {
    * @category Node.js Setup
    */
     static setupNodeTLS () {
-        // Allow self-signed certificates for local development
-        process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+        // Allow self-signed certificates (a local dev HTTPS proxy) only when
+        // asked: turning verification off process-wide is unsafe for a Node
+        // process that talks to real services (a headless session host).
+        if (process.env.SV_ALLOW_SELF_SIGNED_TLS === "1") {
+            process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+        }
     }
 
     // DISABLED: We use our own LevelDB implementation via SvIndexedDbFolder

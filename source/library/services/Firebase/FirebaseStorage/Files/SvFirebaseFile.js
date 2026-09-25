@@ -626,7 +626,7 @@
             this.setSize(blob.size);
 
             // Perform upload
-            const uploadTask = ref.put(blob, uploadMetadata);
+            const uploadTask = ref.put(await SvFirebaseStorageService.asyncUploadableData(blob), uploadMetadata);
 
             // Monitor progress
             return new Promise((resolve, reject) => {

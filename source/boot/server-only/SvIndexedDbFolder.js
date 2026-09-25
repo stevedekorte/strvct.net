@@ -8,6 +8,43 @@
 // We use classic-level directly to avoid browser/node detection issues
 const { ClassicLevel } = require("classic-level");
 
+// One LevelDB handle per database directory, shared by every folder that
+// names it. IndexedDB lets many connections open one database; LevelDB allows
+// only one handle per directory per process ("LOCK: already held by process"),
+// so folders with the same path share a handle, reference-counted.
+// dbPath -> { promise: Promise<ClassicLevel>, refCount }
+const sharedLevelDbs = new Map();
+
+async function asyncOpenLevelDb (dbPath) {
+    const fs = require("fs").promises;
+    const path = require("path");
+    await fs.mkdir(path.dirname(dbPath), { recursive: true });
+    // IMPORTANT: 'buffer' encoding to properly handle binary data
+    const levelDb = new ClassicLevel(dbPath, { createIfMissing: true, errorIfExists: false, valueEncoding: "buffer" });
+    await levelDb.open();
+    return levelDb;
+}
+
+function acquireSharedLevelDb (dbPath) {
+    let entry = sharedLevelDbs.get(dbPath);
+    if (!entry) {
+        entry = { refCount: 0, promise: asyncOpenLevelDb(dbPath) };
+        sharedLevelDbs.set(dbPath, entry);
+        entry.promise.catch(() => sharedLevelDbs.delete(dbPath));
+    }
+    entry.refCount++;
+    return entry.promise;
+}
+
+async function releaseSharedLevelDb (dbPath) {
+    const entry = sharedLevelDbs.get(dbPath);
+    if (!entry || --entry.refCount > 0) {
+        return;
+    }
+    sharedLevelDbs.delete(dbPath);
+    await (await entry.promise).close();
+}
+
 /**
  * @class SvIndexedDbFolder
  * @extends SvIndexedDbFolder
@@ -41,9 +78,10 @@ const { ClassicLevel } = require("classic-level");
         this.newSlot("levelDb", null);
 
         /**
-         * @member {string} dataDir - Base directory for database files.
+         * @member {string} dataDir - Base directory for database files
+         * (SV_LEVELDB_DIR overrides, e.g. a per-process scratch directory).
          */
-        this.newSlot("dataDir", "./data/leveldb/");
+        this.newSlot("dataDir", process.env.SV_LEVELDB_DIR || "./data/leveldb/");
     }
 
     initPrototype () {
@@ -64,7 +102,11 @@ const { ClassicLevel } = require("classic-level");
      */
     dbPath () {
         const path = require("path");
-        const safePath = this.path().replace(/[^a-zA-Z0-9-_/]/g, "_");
+        // Store names are rooted ("/", "/blobs"); strip the leading slashes so
+        // path.resolve keeps the database inside dataDir instead of treating
+        // the name as an absolute path (the root store resolved to "/").
+        const relativeName = this.path().replace(/^\/+/, "") || "root";
+        const safePath = relativeName.replace(/[^a-zA-Z0-9-_/]/g, "_");
         // Always use absolute paths to avoid ambiguity
         const absolutePath = path.resolve(this.dataDir(), safePath);
         return absolutePath;
@@ -122,24 +164,8 @@ const { ClassicLevel } = require("classic-level");
             return Promise.resolve();
         }
 
-        // Ensure the data directory exists
-        const fs = require("fs").promises;
-        const path = require("path");
-        const dirPath = path.dirname(dbPath);
-        await fs.mkdir(dirPath, { recursive: true });
-
         try {
-            // Create the ClassicLevel instance - this is what we'll store
-            // Use createIfMissing and errorIfExists options for clean database creation
-            // IMPORTANT: Use 'buffer' encoding to properly handle binary data
-            const levelDb = new ClassicLevel(dbPath, {
-                createIfMissing: true,
-                errorIfExists: false,
-                valueEncoding: "buffer"  // Store all values as buffers for proper binary support
-            });
-
-            // Open is automatic in ClassicLevel v10+, but we'll explicitly open anyway
-            await levelDb.open();
+            const levelDb = await acquireSharedLevelDb(dbPath);
 
             // Store the INSTANCE in slots, not the class
             this.setLevelDb(levelDb);  // This is fine - it's an instance
@@ -159,8 +185,8 @@ const { ClassicLevel } = require("classic-level");
      */
     async close () {
         if (this.isOpen() && this.levelDb()) {
-            await this.levelDb().close();
-            this.setLevelDb(null);
+            this.setLevelDb(null); // drop our reference; the last folder on this path closes the handle
+            await releaseSharedLevelDb(this.dbPath());
             this.setDb(null);
             this.setPromiseForOpen(null);
         }
@@ -284,6 +310,21 @@ const { ClassicLevel } = require("classic-level");
             map.set(key, this.decodeStoredValue(value));
         }
         return map;
+    }
+
+    /**
+     * Approximate stored size: the byte length of every key and value. The
+     * browser folder reports its database's estimate; callers only log it.
+     * @async
+     * @returns {Promise<number>} - Total bytes.
+     */
+    async asyncTotalSize () {
+        await this.promiseOpen();
+        let total = 0;
+        for await (const [key, value] of this.levelDb().iterator()) {
+            total += Buffer.byteLength(String(key)) + (Buffer.isBuffer(value) ? value.length : Buffer.byteLength(String(value)));
+        }
+        return total;
     }
 
     /**

@@ -80,6 +80,20 @@
             const slot = this.newSlot("quoteEducationSkipTagNames", null);
             slot.setSlotType("Set");
         }
+
+        {
+            /**
+       * @member {Boolean} buildsDomTree
+       * @description When true (the default), every stream node mirrors itself
+       * into a DOM node, so rootElement() returns a live element tree (views
+       * merge it into their element). Readers that only need the stream-node
+       * tree (innerHtml(), textContent()) can turn it off; a reader with no DOM
+       * available (headless, under Node.js) must.
+       * @category DOM
+       */
+            const slot = this.newSlot("buildsDomTree", true);
+            slot.setSlotType("Boolean");
+        }
     }
 
     initPrototype () {
@@ -185,7 +199,7 @@
    * @category DOM
    */
     newElement () {
-        return SvStreamElementNode.clone();
+        return SvStreamElementNode.clone().setBuildsDomNode(this.buildsDomTree());
     }
 
     /**
@@ -443,7 +457,7 @@
    */
     onOpenText (text) {
     //console.log("onOpenText '" + text + "'");
-        const newNode = SvStreamTextNode.clone().setText(text).onOpen();
+        const newNode = SvStreamTextNode.clone().setBuildsDomNode(this.buildsDomTree()).setText(text).onOpen();
         this.pushNode(newNode);
     }
 
