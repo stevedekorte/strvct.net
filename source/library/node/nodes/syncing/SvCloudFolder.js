@@ -299,6 +299,41 @@
     }
 
     /**
+     * @description The row fields (title, subtitle, thumbnailHash) in a pool
+     * root record's payload — its record JSON, { type, entries: [[slot, value]] }.
+     * Null when the payload has none of them.
+     * @param {String} payloadJson
+     * @returns {Object|null}
+     * @category Cloud Sync
+     */
+    static rowFieldsFromRecordPayload (payloadJson) {
+        let record = null;
+        try {
+            record = JSON.parse(payloadJson);
+        } catch {
+            return null;
+        }
+        const fields = {};
+        ((record && record.entries) || []).forEach(([slot, value]) => {
+            if (["title", "subtitle", "thumbnailHash"].includes(slot) && (typeof value === "string" || value === null)) {
+                fields[slot] = value;
+            }
+        });
+        return Object.keys(fields).length > 0 ? fields : null;
+    }
+
+    /**
+     * @description Row fields for this folder's children, by stable id, from a
+     * source that has them without loading the documents (the record cloud's
+     * pool root records). Default: none — the listing's own metadata is used.
+     * @returns {Promise<Map<String, Object>>}
+     * @category Cloud Sync
+     */
+    async asyncChildRowFields () {
+        return new Map();
+    }
+
+    /**
      * @description The `fields` of a cloud node's document metadata (what the
      * document last saved about itself: title, subtitle, thumbnail …), or
      * null when the node carries none.
@@ -322,7 +357,7 @@
      * @param {SvFsNode} childFsNode
      * @category Cloud Sync
      */
-    applyChildPlaceholderFromCloud (stableId, childFsNode) {
+    applyChildPlaceholderFromCloud (stableId, childFsNode, rowFields = undefined) {
         let child = this.childWithCloudStableId(stableId);
         // Don't downgrade a child whose local content counts (e.g. on a
         // refresh after the user opened it) back to a placeholder.
@@ -343,7 +378,7 @@
             // The document's own last-saved metadata (title, subtitle,
             // thumbnail …) is current; the node's title/subtitle are only
             // what was written when the document was created.
-            const fields = this.thisClass().cloudMetadataFieldsOf(childFsNode);
+            const fields = rowFields !== undefined ? rowFields : this.thisClass().cloudMetadataFieldsOf(childFsNode);
             const title = (fields && typeof fields.title === "string") ? fields.title
                 : (childFsNode && typeof childFsNode.title === "function" ? childFsNode.title() : null);
             const subtitle = (fields && typeof fields.subtitle === "string") ? fields.subtitle
@@ -579,17 +614,23 @@
             // would; its next save writes the metadata.
             const fullLoadNodes = [];
             if (this.usesLazyChildLoading()) {
+                // rows from the documents' root records when a source has them
+                const rowFieldsById = await this.asyncChildRowFields().catch((e) => {
+                    console.warn(this.cloudSyncLogPrefix(), "child row fields unavailable; using the listing:", e && e.message);
+                    return new Map();
+                });
                 for (const child of childNodes) {
                     const stableId = this.cloudFsChildIdFromNodeId(child.id());
                     if (!stableId) continue;
                     listedStableIds.add(stableId);
                     if (this.hasPendingCloudDelete(child.id())) continue;
-                    if (this.loadsChildrenMissingMetadata() && !this.thisClass().cloudMetadataFieldsOf(child)) {
+                    const rowFields = rowFieldsById.get(stableId) || this.thisClass().cloudMetadataFieldsOf(child);
+                    if (this.loadsChildrenMissingMetadata() && !rowFields) {
                         fullLoadNodes.push(child);
                         continue;
                     }
                     try {
-                        this.applyChildPlaceholderFromCloud(stableId, child);
+                        this.applyChildPlaceholderFromCloud(stableId, child, rowFields);
                     } catch (e) {
                         console.warn(this.cloudSyncLogPrefix(), "placeholder failed for", stableId, e && e.message);
                     }
