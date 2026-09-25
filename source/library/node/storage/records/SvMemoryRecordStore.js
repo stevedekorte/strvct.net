@@ -11,8 +11,14 @@
  * version, idempotent by request id, tombstones for deletes) — so a suite
  * written against it exercises the whole contract without a network.
  *
- * Server-owned state that is not a local column (the tombstone retention floor)
- * lives beside the rows, keyed by pool.
+ * Server-owned state that is not a local column (the tombstone retention floor,
+ * an open staged commit) lives beside the rows, keyed by pool.
+ *
+ * Staged commits (SvStagedRecordCommit) behave as the cloud's do: begin reserves
+ * the next version, each batch keeps its rows' pre-images, every other reader and
+ * writer is answered "busy" until finalize, and an abandoned stage (idle past
+ * stageIdleTtlMs) is rolled back by the next access. Set maxOpsPerCommit to make
+ * asyncCommit stage large commits, as the cloud store does.
  */
 (class SvMemoryRecordStore extends ProtoClass {
 
@@ -32,6 +38,21 @@
             slot.setSlotType("Map");
             slot.setDescription("poolId → tombstone retention floor (server-owned; readers older than it must reload)");
         }
+        {
+            const slot = this.newSlot("stages", null);
+            slot.setSlotType("Map");
+            slot.setDescription("poolId → the open staged commit { requestId, reservedVersion, expiresAt, preimages: Map(row key → row|null) }");
+        }
+        {
+            const slot = this.newSlot("stageIdleTtlMs", 2 * 60 * 1000);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("maxOpsPerCommit", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+            slot.setDescription("when set, asyncCommit stages commits larger than this (null: never)");
+        }
     }
 
     initPrototype () {
@@ -43,6 +64,7 @@
         this.setRows(new Map());
         this.setReceipts(new Map());
         this.setMinDeltaVersions(new Map());
+        this.setStages(new Map());
         return this;
     }
 
@@ -56,6 +78,9 @@
         const root = this.rootRowForPool(poolId);
         if (!root) {
             return null;
+        }
+        if (this.isStaging(poolId)) {
+            return { root: null, records: [], version: root.version, state: "busy" };
         }
         const records = this.liveRowsForPool(poolId).filter(row => !SvRecordRow.isRoot(row));
         return { root: root, records: records, version: root.version, state: "ready" };
@@ -82,6 +107,9 @@
         const root = this.rootRowForPool(poolId);
         if (!root) {
             return null;
+        }
+        if (this.isStaging(poolId)) {
+            return { rows: [], tombstones: [], version: root.version, reloadRequired: false, state: "busy" };
         }
         const changed = this.rowsForPool(poolId).filter(row => row.modifiedVersion > sinceVersion);
         return {
@@ -114,6 +142,9 @@
         if (this.receipts().has(receiptKey)) {
             return this.receipts().get(receiptKey); // a retry gets the first answer
         }
+        if (this.maxOpsPerCommit() !== null && SvStagedRecordCommit.needsStaging(commit, this.maxOpsPerCommit(), Infinity)) {
+            return this.asyncCommitStaged(commit);
+        }
         const result = this.commitResult(commit);
         if (result.status === "committed") {
             this.receipts().set(receiptKey, result);
@@ -129,6 +160,9 @@
         const refusal = this.commitRefusal(commit);
         if (refusal) {
             return { status: "refused", reason: refusal };
+        }
+        if (this.isStaging(commit.poolId)) {
+            return { status: "busy", version: root.version };
         }
         if (root.version !== commit.baseVersion) {
             return { status: "conflict", version: root.version };
@@ -190,6 +224,112 @@
         const rowKey = SvRecordRow.keyFor(key.poolId, key.objectId);
         const existing = this.rows().get(rowKey) || SvRecordRow.newRow({ poolId: key.poolId, objectId: key.objectId });
         this.rows().set(rowKey, Object.assign({}, existing, { isDeleted: true, payloadJson: null, modifiedVersion: version }));
+    }
+
+    // --- staged commits ---
+
+    async asyncCommitStaged (commit) {
+        try {
+            return await SvStagedRecordCommit.clone().setStore(this).setCommit(commit).setMaxOpsPerWrite(this.maxOpsPerCommit()).asyncRun();
+        } catch (error) {
+            if (error.code === "failed-precondition" || error.code === "invalid-argument") {
+                return { status: "refused", reason: error.message };
+            }
+            throw error;
+        }
+    }
+
+    async asyncStageBegin (args) {
+        const receiptKey = args.poolId + " " + args.requestId;
+        if (this.receipts().has(receiptKey)) {
+            return this.receipts().get(receiptKey);
+        }
+        const root = this.rootRowForPool(args.poolId);
+        if (!root) {
+            return { status: "refused", reason: "unknown pool '" + args.poolId + "'" };
+        }
+        if (this.isStaging(args.poolId)) {
+            const stage = this.stages().get(args.poolId);
+            return stage.requestId === args.requestId ? { status: "staging", version: stage.reservedVersion } : { status: "busy", version: root.version };
+        }
+        if (root.version !== args.baseVersion) {
+            return { status: "conflict", version: root.version };
+        }
+        this.stages().set(args.poolId, { requestId: args.requestId, reservedVersion: root.version + 1, expiresAt: Date.now() + this.stageIdleTtlMs(), preimages: new Map() });
+        return { status: "staging", version: root.version + 1 };
+    }
+
+    async asyncStageWrite (args) {
+        const stage = this.openStage(args.poolId, args.requestId);
+        const commit = { poolId: args.poolId, writes: args.writes || [], deletes: args.deletes || [] };
+        const refusal = this.commitRefusal(commit) || (commit.writes.some(row => SvRecordRow.isRoot(row)) ? "the root record is written by finalize" : null);
+        if (refusal) {
+            throw Object.assign(new Error(refusal), { code: "invalid-argument" });
+        }
+        commit.writes.map(row => SvRecordRow.keyOf(row)).concat(commit.deletes.map(key => SvRecordRow.keyFor(key.poolId, key.objectId))).forEach((key) => {
+            if (!stage.preimages.has(key)) {
+                stage.preimages.set(key, this.rows().get(key) || null);
+            }
+        });
+        const root = this.rootRowForPool(args.poolId);
+        const written = commit.writes.map(row => this.stampedWrite(row, stage.reservedVersion, root));
+        written.forEach(row => SvRecordRow.assertValid(row));
+        written.forEach(row => this.rows().set(SvRecordRow.keyOf(row), row));
+        commit.deletes.forEach(key => this.tombstone(key, stage.reservedVersion));
+        stage.expiresAt = Date.now() + this.stageIdleTtlMs();
+        return { status: "staging", version: stage.reservedVersion };
+    }
+
+    async asyncStageFinalize (args) {
+        const receiptKey = args.poolId + " " + args.requestId;
+        if (this.receipts().has(receiptKey)) {
+            return this.receipts().get(receiptKey);
+        }
+        const stage = this.openStage(args.poolId, args.requestId);
+        const root = this.rootRowForPool(args.poolId);
+        if (args.rootWrite) {
+            const stamped = this.stampedWrite(args.rootWrite, stage.reservedVersion, root);
+            SvRecordRow.assertValid(stamped);
+            this.rows().set(SvRecordRow.keyOf(stamped), stamped);
+        }
+        this.rootRowForPool(args.poolId).version = stage.reservedVersion;
+        this.stages().delete(args.poolId);
+        const result = { status: "committed", version: stage.reservedVersion };
+        this.receipts().set(receiptKey, result);
+        return result;
+    }
+
+    openStage (poolId, requestId) {
+        const stage = this.isStaging(poolId) ? this.stages().get(poolId) : null;
+        if (!stage || stage.requestId !== requestId) {
+            throw Object.assign(new Error("no open stage " + requestId + " (finished, rolled back, or never begun)"), { code: "failed-precondition" });
+        }
+        return stage;
+    }
+
+    /**
+     * @description Whether a live staged commit holds the pool; an abandoned one
+     * is rolled back from its pre-images first.
+     * @category Staging
+     */
+    isStaging (poolId) {
+        const stage = this.stages().get(poolId);
+        if (stage && stage.expiresAt <= Date.now()) {
+            this.rollBackStage(poolId, stage);
+            return false;
+        }
+        return !!stage;
+    }
+
+    rollBackStage (poolId, stage) {
+        stage.preimages.forEach((row, key) => {
+            if (row) {
+                this.rows().set(key, row);
+            } else {
+                this.rows().delete(key);
+            }
+        });
+        this.stages().delete(poolId);
     }
 
     // --- server-owned state beside the rows ---

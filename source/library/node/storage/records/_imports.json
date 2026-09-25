@@ -2,6 +2,7 @@
     "SvOrderKey.js",
     "SvRecordRow.js",
     "SvRecordStoreProtocol.js",
+    "SvStagedRecordCommit.js",
     "SvMemoryRecordStore.js",
     "SvLocalRecordStore.js",
     "SvCloudRecordStore.js"
