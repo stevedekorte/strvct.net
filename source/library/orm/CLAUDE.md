@@ -24,6 +24,11 @@ directory, and it destructures `SvBase` from `webserver/`, which exports `Base`.
 The module was evidently moved here from a server directory without its
 requires being updated; it cannot load from this location until they are.
 
+**Open issue (2026-09-13):** identifier interpolation in the query builder.
+Values are already bound via Sequelize `replacements`; table and column
+names are concatenated into SQL. Plan: `docs/SqlIdentifierSafety.md`.
+Do not "fix" this by converting template literals to `+` concatenation.
+
 ## Rules
 
 - **Every database operation runs inside a transaction.** Create one with
@@ -40,6 +45,10 @@ requires being updated; it cannot load from this location until they are.
 - Keep the ORM schema-independent: no hardcoded table or column names, no
   app-specific relationships. Introspection must tolerate a missing table,
   column, or constraint and keep going; log it, do not abort.
+- Never interpolate a caller-supplied identifier into SQL. Look the name
+  up on the loaded schema (`tableWithName` / `columnWithName`) and quote
+  the schema's name with `QueryInterface.quoteIdentifier`. Bind only
+  values. See `docs/SqlIdentifierSafety.md`.
 - Dialect differences (SQLite `PRAGMA` vs PostgreSQL `information_schema`) live
   in one place each; test against both when a change touches introspection or
   foreign-key detection.
