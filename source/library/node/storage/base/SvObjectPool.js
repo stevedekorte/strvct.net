@@ -703,8 +703,7 @@
         await this.asyncFlushDirty();
         const rootRow = this.rowForPid(this.poolId());
         assert(rootRow, "the pool has no root row to commit");
-        const delta = this.collectDelta();
-        const changed = delta === null ? this.wholePoolAsDelta() : delta;
+        const changed = this.cloudChanges();
         if (changed.isEmpty) {
             return { status: "unchanged", version: rootRow.version || 0 };
         }
@@ -729,6 +728,43 @@
     }
 
     /**
+     * @description The records a cloud commit sends: the pool.json delta minus
+     * its two non-record keys (the root pointer and the placements string), plus
+     * every windowed element whose placement changed without its payload (a
+     * re-key) — placement travels as the row's parentId/orderKey columns.
+     * @returns {Object} { writes: { pid: payloadJson }, deletes: [pid], isEmpty }
+     * @category Cloud Mirror
+     */
+    cloudChanges () {
+        const delta = this.collectDelta();
+        const changed = delta === null ? this.wholePoolAsDelta() : delta;
+        const nonRecord = new Set([this.rootKey(), this.placementsKey()]);
+        const writes = {};
+        Object.keys(changed.writes).filter(pid => !nonRecord.has(pid)).forEach((pid) => { writes[pid] = changed.writes[pid]; });
+        this.movedPlacementPids().forEach((pid) => {
+            const row = this.rowForPid(pid);
+            if (row && !row.isDeleted) {
+                writes[pid] = row.payloadJson;
+            }
+        });
+        const deletes = changed.deletes.filter(pid => !nonRecord.has(pid));
+        return { writes: writes, deletes: deletes, isEmpty: Object.keys(writes).length === 0 && deletes.length === 0 };
+    }
+
+    /**
+     * @description Windowed elements whose [parentId, orderKey] differ from the
+     * last synced snapshot's placements.
+     * @returns {Array<String>}
+     * @category Cloud Mirror
+     */
+    movedPlacementPids () {
+        const snapshot = this.lastSyncedSnapshot() || {};
+        const before = snapshot[this.placementsKey()] ? JSON.parse(snapshot[this.placementsKey()]) : {};
+        const now = this.recordStore().placementsForPool(this.poolId());
+        return Object.keys(now).filter(pid => !before[pid] || before[pid][0] !== now[pid][0] || before[pid][1] !== now[pid][1]);
+    }
+
+    /**
      * @description When the delta is not worth it (no snapshot, or most records
      * changed) every current record is written — and, unlike a whole pool.json
      * upload, the records the snapshot had and the pool no longer has are still
@@ -739,7 +775,7 @@
         const writes = {};
         this.forEachRecordJson((pid, jsonString) => { writes[pid] = jsonString; });
         const snapshot = this.lastSyncedSnapshot() || {};
-        const deletes = Object.keys(snapshot).filter(pid => pid !== this.rootKey() && !Object.hasOwn(writes, pid));
+        const deletes = Object.keys(snapshot).filter(pid => pid !== this.rootKey() && pid !== this.placementsKey() && !Object.hasOwn(writes, pid));
         return { writes: writes, deletes: deletes, isEmpty: Object.keys(writes).length === 0 && deletes.length === 0 };
     }
 
@@ -751,6 +787,12 @@
             // the same on every device) instead of the local folder node's puuid
             write.parentId = (root && root.cloudParentId) ? root.cloudParentId() : this.parentNodeId();
             write.orderKey = write.parentId ? (this.orderKey() || SvOrderKey.keyBetween(null, null)) : null;
+        } else {
+            const row = this.rowForPid(pid); // a windowed element carries its place in its collection
+            if (row && row.parentId) {
+                write.parentId = row.parentId;
+                write.orderKey = row.orderKey;
+            }
         }
         return write;
     }
