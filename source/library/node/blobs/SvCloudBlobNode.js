@@ -511,11 +511,36 @@
      * @category Cloud Storage
      */
     scheduleFetchForNewContent () {
+        if (!SvCloudBlobNode.fetchesNewContentEagerly()) {
+            return; // a process with no views (a headless session host) pulls bytes on demand only
+        }
         // No blobValue check HERE: when one hash replaces another, super's hook
         // has already dropped the cached bytes, but on a first-content set the
         // author still holds them. Deciding at run time covers both — see
         // onScheduledFetchForNewContent.
         SvSyncScheduler.shared().scheduleTargetAndMethod(this, "onScheduledFetchForNewContent");
+    }
+
+    /**
+     * @static
+     * @description Whether a hash change schedules a pull of the new bytes
+     * (see scheduleFetchForNewContent). On by default: the pull exists so a
+     * VIEW shows content that arrived over the cloud without waiting to be
+     * asked. A process that never renders pixels (a headless session host)
+     * turns it off — otherwise loading a session and the catalog pulls every
+     * image they reference, and those pulls crowd out the requests it does
+     * need (Server-Hosted Sessions M0). asyncBlobValue() still pulls on demand.
+     * @param {Boolean} aBool
+     * @returns {Function} the class
+     * @category Cloud Storage
+     */
+    static setFetchesNewContentEagerly (aBool) {
+        this._fetchesNewContentEagerly = aBool;
+        return this;
+    }
+
+    static fetchesNewContentEagerly () {
+        return this._fetchesNewContentEagerly !== false;
     }
 
     onScheduledFetchForNewContent () {

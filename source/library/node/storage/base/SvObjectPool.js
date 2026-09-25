@@ -899,7 +899,11 @@
      * @category Storing
      */
     async asyncFlushDirty () {
-        if (this.hasDirtyObjects()) {
+        // A pass can leave objects dirty — mutated while serialized (a lazy slot
+        // materializing), deferred to the next pass — so drain, or a cloud
+        // commit made right after would miss their current state. The defer cap
+        // (deferDirtyObjectDuringStore) bounds a serializer that re-mutates.
+        for (let pass = 0; pass < 5 && this.hasDirtyObjects(); pass++) {
             await this.commitStoreDirtyObjects();
         }
         return this;
