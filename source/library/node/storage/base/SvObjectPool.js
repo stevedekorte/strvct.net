@@ -451,8 +451,8 @@
     async promiseClose () {
         SvSyncScheduler.shared().unscheduleTargetAndMethod(this, "commitStoreDirtyObjects");
         SvSyncScheduler.shared().unscheduleTargetAndMethod(this, "asyncCollectBlobs");
-        if (this.recordStore().isOpen()) {
-            this.recordStore().close(); // synchronous in indexeddb
+        if (this.ownsRecordStore() && this.recordStore().isOpen()) {
+            this.recordStore().close(); // synchronous in indexeddb; child pools share it
         }
         if (this.isHomePool() && this.blobPool().isOpen()) {
             await this.blobPool().close(); // child pools share it; the home pool owns it
@@ -1205,9 +1205,26 @@
         this.removeMutationObservations();
         this.setActiveObjects(new SvEnumerableWeakMap());
         this.setDirtyObjects(new Map());
-        this.recordStore().close();
+        if (this.ownsRecordStore()) {
+            this.recordStore().close();
+        }
         this._hasOpened = false;
         return this;
+    }
+
+    /**
+     * @description Whether closing this pool closes its record store: only the
+     * pool that owns it (the home pool, or a pool with a store of its own).
+     * Child pools share the home pool's store — closing one (a document
+     * re-imported from the cloud) used to close the whole local store, and
+     * nothing persisted locally again until a reload (2026-09-24).
+     * @returns {Boolean}
+     * @category Lifecycle
+     */
+    ownsRecordStore () {
+        const store = this.recordStore();
+        const home = (store && store.homePool) ? store.homePool() : null;
+        return !home || home === this;
     }
 
     /**

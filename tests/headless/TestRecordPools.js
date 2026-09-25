@@ -242,6 +242,16 @@ async function main () {
     await imported.commitStoreDirtyObjects();
     const delta = imported.collectDelta();
     check(delta && Object.keys(delta.writes).length === 1 && delta.deletes.length === 0, "after an edit the delta is the one changed record");
+
+    console.log("\nRe-importing a document over its live pool keeps the shared store open");
+    const liveA = store.poolForId(docA2.puuid());
+    check(liveA && liveA !== home && !liveA.ownsRecordStore() && home.ownsRecordStore(), "a child pool does not own the shared store; the home pool does");
+    await store.asyncImportPoolJson(liveA.asJson()); // the cloud load path: it closes the live pool first
+    check(store.isOpen(), "the store is still open after a document's live pool is closed and re-imported (it used to close the whole store)");
+    const docE = newDoc("e");
+    folder2.addSubnode(docE);
+    await home.commitStoreDirtyObjects();
+    check(store.rootRowForPool(docE.puuid()) && store.rootRowForPool(docE.puuid()).parentId === folder2.puuid(), "…and the home pool still stores edits (a new document lands in the store)");
 }
 
 main().then(() => {
