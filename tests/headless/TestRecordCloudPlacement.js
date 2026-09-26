@@ -158,6 +158,28 @@ async function main () {
     check(after.orderKey < (await cloud.asyncOpen(pool.poolId())).records.filter(r => r.parentId === chat.puuid() && r.objectId !== last.puuid()).map(r => r.orderKey).sort()[0], "…first in the collection");
     check((await pool.asyncCommitToCloud(cloud)).status === "unchanged", "nothing left to send");
 
+    console.log("\nA record stored while a cloud commit is in flight is sent by the next commit");
+    let release = null;
+    const held = SvCloudRecordStore.clone().setBackend({
+        callFunction: async (name, args) => {
+            if (name === "records-commit") {
+                await new Promise((resolve) => { release = resolve; });
+            }
+            return fakeBackendOver(cloudMemory).callFunction(name, args);
+        }
+    }).setBusyRetryDelays([]);
+    chat.subnodes().first().setText("m1 edited"); // something for the held commit to send
+    const inFlight = pool.asyncCommitToCloud(held);
+    for (let i = 0; i < 50 && !release; i++) { await new Promise(r => setTimeout(r, 10)); }
+    const lateMessage = newMessage("stored mid-commit");
+    chat.addSubnode(lateMessage);
+    await pool.commitStoreDirtyObjects(); // a local save while the cloud commit awaits the network
+    release();
+    check((await inFlight).status === "committed", "the held commit lands");
+    const next = await pool.asyncCommitToCloud(cloud);
+    const lateRow = (await cloud.asyncOpen(pool.poolId())).records.find(r => r.objectId === lateMessage.puuid());
+    check(next.status === "committed" && !!lateRow, "the message stored during it reaches the cloud: " + JSON.stringify(next));
+
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);
 }

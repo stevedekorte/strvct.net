@@ -686,6 +686,12 @@
         if (changed.isEmpty) {
             return { status: "unchanged", version: rootRow.version || 0 };
         }
+        // What this commit sends, as a snapshot: taken now, not after the
+        // network wait — records stored locally while the commit is in flight
+        // were not sent, and a snapshot taken on completion counted them as
+        // synced, so they never reached the cloud while records sent later
+        // referenced them (dangling refs in a dev session, 2026-09-26).
+        const sentSnapshot = Object.assign({}, this.asJson());
         // the cloud names the pool by its scoped id (SvRecordRow.localPoolId)
         const cloudPoolId = options.cloudPoolId || this.poolId();
         const commit = {
@@ -701,7 +707,7 @@
         const result = await cloudStore.asyncCommit(commit);
         if (result && result.status === "committed") {
             await this.mirrorCloudVersion(result.version, commit);
-            this.updateLastSyncedSnapshot();
+            this.setLastSyncedSnapshot(sentSnapshot);
         }
         return result;
     }
