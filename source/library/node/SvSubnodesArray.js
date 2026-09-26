@@ -73,6 +73,40 @@
         return true;
     }
 
+    /**
+     * @description The stored list: its subnodes' refs. A subnode that can't
+     * be stored (refValue answers null, and warns which) is left out rather
+     * than written as a null entry — a null in a subnode list loads as a hole
+     * that every walk over the subnodes trips over (a pins list on dev,
+     * 2026-09-26).
+     * @param {Object} aStore
+     * @returns {Object}
+     * @category Storage
+     */
+    recordForStore (aStore) {
+        const record = super.recordForStore(aStore);
+        record.values = record.values.filter(v => v !== null && v !== undefined);
+        return record;
+    }
+
+    /**
+     * @description Loads the stored subnodes, skipping entries that are empty
+     * or whose record is missing — a subnode list never holds a hole.
+     * @param {Object} aRecord
+     * @param {Object} aStore
+     * @returns {SvSubnodesArray}
+     * @category Storage
+     */
+    loadFromRecord (aRecord, aStore) {
+        const values = aRecord.values.map(v => aStore.unrefValue(v));
+        const subnodes = values.filter(v => v !== null && v !== undefined);
+        if (subnodes.length !== values.length) {
+            console.warn("[SvSubnodesArray] skipped " + (values.length - subnodes.length) + " empty or unresolvable of " + values.length + " stored subnode entries");
+        }
+        subnodes.forEach(v => this.push(v));
+        return this;
+    }
+
     didInit () {
         super.didInit();
         assert(this.hasDoneInit());

@@ -180,6 +180,16 @@ async function main () {
     const lateRow = (await cloud.asyncOpen(pool.poolId())).records.find(r => r.objectId === lateMessage.puuid());
     check(next.status === "committed" && !!lateRow, "the message stored during it reaches the cloud: " + JSON.stringify(next));
 
+    console.log("\nA subnode list never stores or loads a hole");
+    const SvSubnodesArray = SvGlobals.get("SvSubnodesArray");
+    const a = newMessage("a"), b = newMessage("b");
+    const list = SvSubnodesArray.clone();
+    list.push(a); list.push(b);
+    const written = list.recordForStore({ refValue: (v) => (v === a ? null : { "*": v.puuid() }) });
+    check(written.values.length === 1 && written.values[0]["*"] === b.puuid(), "a subnode that can't be stored is left out, not written as null");
+    const loaded = SvSubnodesArray.clone().loadFromRecord({ type: "SvSubnodesArray", values: [null, { "*": "gone" }, { "*": b.puuid() }] }, { unrefValue: (v) => (v && v["*"] === b.puuid() ? b : (v ? undefined : null)) });
+    check(loaded.length === 1 && loaded[0] === b, "empty and missing entries are skipped on load");
+
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);
 }
