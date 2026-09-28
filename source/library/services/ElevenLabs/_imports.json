@@ -1,4 +1,5 @@
 [
     "SvElevenLabsService.js",
-    "SvElevenLabsTtsRequest.js"
+    "SvElevenLabsTtsRequest.js",
+    "SvElevenLabsTtsSettings.js"
 ]

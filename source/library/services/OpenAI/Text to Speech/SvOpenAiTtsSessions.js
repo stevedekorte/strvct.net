@@ -19,7 +19,7 @@
      * @member {Array} subnodeClasses - The classes of subnodes that can be added to this node.
      * @category Configuration
      */
-        this.setSubnodeClasses([SvOpenAiTtsSession]);
+        this.setSubnodeClasses([SvTtsSession]);
 
         /**
      * @member {boolean} shouldStore - Indicates whether this node should be stored.

@@ -2,6 +2,7 @@
     "AiServiceKit/_imports.json",
     "Firebase/_imports.json",
     "Anthropic/_imports.json",
+    "TextToSpeech/_imports.json",
     "OpenAI/_imports.json",
     "ElevenLabs/_imports.json",
     "DeepSeek/_imports.json",
