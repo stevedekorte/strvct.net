@@ -15,6 +15,10 @@
  *   records-changes   { poolId, sinceVersion } → { changes: { rows, tombstones, version, reloadRequired } | null }
  *   records-children  { parentId, after?, afterObjectId?, limit? } → { rows } (after the row (after, afterObjectId))
  *   records-roots     { poolIds } → { rows } (the pools' root rows: each document's row, unopened)
+ *   records-scope-roots { scopeId, afterParentId?, afterOrderKey?, afterObjectId?, limit? } → { rows }
+ *                     (every pool root row in a scope, cut down to its row entries,
+ *                     ordered by parentId, orderKey, objectId — a folder's children
+ *                     are the rows placed under it)
  *   records-commit    { poolId, baseVersion, requestId, writes, deletes, create? } → { status, version }
  *   records-stage-begin / -write / -finalize — a commit too large for one
  *                     transaction, driven by SvStagedRecordCommit
@@ -30,6 +34,12 @@
             const slot = this.newSlot("backend", null);
             slot.setSlotType("Object");
             slot.setDescription("answers callFunction(name, args) against the cloud nodes API");
+        }
+        {
+            const slot = this.newSlot("scopeRootRowsInFlight", null);
+            slot.setSlotType("Map");
+            slot.setFinalInitProto(Map);
+            slot.setDescription("scopeId → the in-flight read of its root rows, shared by concurrent asks");
         }
         {
             const slot = this.newSlot("busyRetryDelays", [250, 500, 1000, 2000, 4000, 8000, 8000, 8000]);
@@ -114,6 +124,51 @@
     async asyncRootRows (poolIds) {
         const result = await this.call("records-roots", { poolIds: poolIds });
         return (result && result.rows) || [];
+    }
+
+    /**
+     * @description Every pool root row in a scope — each document's row, cut
+     * down to its row entries — read whole, as { rows, isComplete }. Concurrent
+     * asks for one scope share one read, so folders listing from the same scope
+     * at the same time make one request (Plans/Placed Subnodes §3, Folders).
+     * @param {String} scopeId
+     * @returns {Promise<{rows: Array<Object>, isComplete: Boolean}>}
+     * @category Read
+     */
+    asyncScopeRootRows (scopeId) {
+        const inFlight = this.scopeRootRowsInFlight();
+        if (!inFlight.has(scopeId)) {
+            inFlight.set(scopeId, this.asyncReadScopeRootRows(scopeId).finally(() => inFlight.delete(scopeId)));
+        }
+        return inFlight.get(scopeId);
+    }
+
+    /**
+     * @description One read of a scope's root rows, page by page; incomplete
+     * when it stops at maxScopeRootPages.
+     * @param {String} scopeId
+     * @returns {Promise<{rows: Array<Object>, isComplete: Boolean}>}
+     * @category Read
+     */
+    async asyncReadScopeRootRows (scopeId) {
+        const pageSize = 500; // records.js caps a page at 500
+        const rows = [];
+        let cursor = {};
+        for (let page = 0; page < this.maxScopeRootPages(); page++) {
+            const result = await this.call("records-scope-roots", Object.assign({ scopeId: scopeId, limit: pageSize }, cursor));
+            const pageRows = (result && result.rows) || [];
+            rows.push(...pageRows);
+            if (pageRows.length < pageSize) {
+                return { rows: rows, isComplete: true };
+            }
+            const last = pageRows[pageRows.length - 1];
+            cursor = { afterParentId: last.parentId, afterOrderKey: last.orderKey, afterObjectId: last.objectId };
+        }
+        return { rows: rows, isComplete: false };
+    }
+
+    maxScopeRootPages () {
+        return 40; // 20,000 documents in one scope
     }
 
     async asyncReadChanges (poolId, sinceVersion) {
