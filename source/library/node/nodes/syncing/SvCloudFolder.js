@@ -348,7 +348,7 @@
         const folderId = this.cloudFsFolderId();
         const listedStableIds = new Set();
         listing.rows.filter(row => row.parentId === folderId).forEach((row) => {
-            const stableId = SvRecordRow.localPoolId(row.poolId);
+            const stableId = this.stableIdForRootRow(row);
             listedStableIds.add(stableId);
             if (!this.hasPendingCloudDeleteForStableId(stableId)) {
                 this.applyChildPlaceholderSafely(stableId, null, SvCloudFolder.rowFieldsFromRecordPayload(row.payloadJson));
@@ -356,6 +356,23 @@
         });
         this.pruneIfListingComplete(listedStableIds, listing.isComplete);
         return this;
+    }
+
+    /**
+     * @description The stable id of the child a root row lists. The row's
+     * objectId is its pool root's puuid, so a child with that puuid IS the
+     * document, whatever its stable id — a document from before pool ids were
+     * its stable id has a pool named after its puuid (a character's
+     * characterId differs). A row with no such child names a new document,
+     * whose stable id is its pool's local id.
+     * @param {Object} row
+     * @returns {String}
+     * @category Cloud Sync
+     */
+    stableIdForRootRow (row) {
+        const child = this.subnodes().detect(sn => sn.puuid && sn.puuid() === row.objectId);
+        const childStableId = child ? this.cloudStableIdForChild(child) : null;
+        return childStableId || SvRecordRow.localPoolId(row.poolId);
     }
 
     /**
