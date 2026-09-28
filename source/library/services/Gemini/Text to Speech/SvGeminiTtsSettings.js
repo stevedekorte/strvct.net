@@ -89,20 +89,23 @@
     /**
      * @description A Gemini speech request in voiceId, or the narrator voice.
      * The style rides along (Gemini speaks the text verbatim and never reads
-     * the style aloud); speed has no Gemini equivalent.
-     * @param {string|null} voiceId - a name from SvGeminiService.speechVoiceNames(), or null
+     * the style aloud): the request's own direction when it has one (a
+     * speaker's voice description), otherwise this setting's style, which is
+     * written for the narrator. Speed has no Gemini equivalent.
+     * @param {string|null} voiceId - any id the speech endpoint accepts (a studio name or a library id), or null
      * @param {SvTtsSession} session
+     * @param {string|null} [style] - this request's own direction, or null
      * @returns {SvGeminiTtsRequest}
      * @category Requests
      */
-    newRequestForVoice (voiceId, session) {
+    newRequestForVoice (voiceId, session, style = null) {
         const request = SvGeminiTtsRequest.clone();
         request.setDelegate(session);
         return request.setupForVoice({
             voiceName: voiceId || this.voice(),
             text: session.ttsSafeInput(),
             modelId: this.model(),
-            style: this.style()
+            style: style || this.style()
         });
     }
 
