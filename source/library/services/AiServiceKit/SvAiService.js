@@ -329,6 +329,36 @@
         return this.userAuthToken() !== null && token === this.userAuthToken();
     }
 
+    // --- proxied fetch (for one-off requests outside a conversation) ---
+
+    /**
+   * @description The proxy server's url for a vendor url. The proxy holds the
+   * vendor key; the client authenticates with fetchHeadersForProxy().
+   * @param {string} url - The vendor url.
+   * @returns {string} The proxied url.
+   * @category Proxy
+   */
+    proxiedUrl (url) {
+        return SvProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+    }
+
+    /**
+   * @description Fetch headers for a proxied JSON request: content type, and
+   * the user's bearer token (or the api key) when there is one.
+   * @returns {Promise<Object>} Headers object.
+   * @category Proxy
+   */
+    async fetchHeadersForProxy () {
+        const headers = {
+            "Content-Type": "application/json"
+        };
+        const token = await this.apiKeyOrUserAuthToken();
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+        return headers;
+    }
+
     modelNames () {
         return this.models().subnodes().map(model => model.modelName());
     }

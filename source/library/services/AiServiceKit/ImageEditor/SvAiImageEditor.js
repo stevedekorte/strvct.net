@@ -171,7 +171,7 @@
      * @category API
      */
     proxiedUrl (url) {
-        return SvProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+        return this.service().proxiedUrl(url);
     }
 
     /**
@@ -180,16 +180,7 @@
      * @category API
      */
     async fetchHeaders () {
-        const headers = {
-            "Content-Type": "application/json"
-        };
-
-        const token = await this.service().apiKeyOrUserAuthToken();
-        if (token) {
-            headers.Authorization = `Bearer ${token}`;
-        }
-
-        return headers;
+        return this.service().fetchHeadersForProxy();
     }
 
     /**
