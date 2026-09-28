@@ -42,6 +42,18 @@
             slot.setDuplicateOp("nop");
             slot.setSlotType("SvNode");
         }
+
+        /**
+         * @member {Boolean} nodeInspectorShowsDeveloperSlots - Whether the
+         * cached inspector was built with developer-only slots included.
+         * Consulted only by nodes that declare such slots.
+         * @category Inspection
+         */
+        {
+            const slot = this.newSlot("nodeInspectorShowsDeveloperSlots", false);
+            slot.setDuplicateOp("nop");
+            slot.setSlotType("Boolean");
+        }
     }
 
     /**
@@ -59,11 +71,60 @@
      * @category Inspection
      */
     nodeInspector () {
+        if (this._nodeInspector && this.nodeInspectorIsStale()) {
+            this._nodeInspector = null;
+        }
         if (!this._nodeInspector) {
             this._nodeInspector = SvBaseNode.clone();
+            this.setNodeInspectorShowsDeveloperSlots(this.inspectorShowsDeveloperSlots());
             this.initNodeInspector();
         }
         return this._nodeInspector;
+    }
+
+    // --- developer-only slots ---
+
+    /**
+     * @description Whether the app is in developer mode, so developer-only
+     * slots (slot.isDeveloperOnly()) belong in the inspector.
+     * @returns {Boolean}
+     * @category Inspection
+     */
+    inspectorShowsDeveloperSlots () {
+        return (typeof SvApp !== "undefined") && Boolean(SvApp.shared().developerMode && SvApp.shared().developerMode());
+    }
+
+    /**
+     * @description Whether any inspectable slot of this node is developer-only.
+     * Nodes without one never rebuild their inspector on a mode change.
+     * @returns {Boolean}
+     * @category Inspection
+     */
+    hasDeveloperOnlyInspectorSlots () {
+        return this.thisPrototype().allSlotsMap().valuesArray().some(slot => slot.canInspect() && slot.isDeveloperOnly());
+    }
+
+    /**
+     * @description The cached inspector was built for the other developer
+     * mode, and this node has slots whose visibility depends on it.
+     * @returns {Boolean}
+     * @category Inspection
+     */
+    nodeInspectorIsStale () {
+        // cheap comparison first: the slot scan runs only after a mode change
+        return this.nodeInspectorShowsDeveloperSlots() !== this.inspectorShowsDeveloperSlots() && this.hasDeveloperOnlyInspectorSlots();
+    }
+
+    /**
+     * @description Whether the inspector includes a slot: it's inspectable,
+     * and not developer-only unless the inspector is being built for
+     * developer mode.
+     * @param {Slot} slot
+     * @returns {Boolean}
+     * @category Inspection
+     */
+    inspectorIncludesSlot (slot) {
+        return slot.canInspect() && (!slot.isDeveloperOnly() || this.nodeInspectorShowsDeveloperSlots());
     }
 
     /**
@@ -109,7 +170,7 @@
         slotNames.forEachV(slotName => {
             const slot = slotsMap.get(slotName);
 
-            if (slot.canInspect()) {
+            if (this.inspectorIncludesSlot(slot)) {
                 const field = slot.newInspectorField();
                 let pathNodes = null;
 

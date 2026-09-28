@@ -105,6 +105,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("slotType", null);
         this.simpleNewSlot("slotTypeDict", null); // a dictionary with kind (instance, class, primitive (null or undefined)), and name (class name if instance or class, or the primitive name if primitive)
         this.simpleNewSlot("canInspect", false);
+        this.simpleNewSlot("isDeveloperOnly", false); // with canInspect: the inspector shows this slot only while the app is in developer mode (SvInspectableNode)
         this.simpleNewSlot("canEditInspection", true);
         this.simpleNewSlot("label", null); // visible label on inspector
         this.simpleNewSlot("displayDecimalPlaces", null); // inspector toFixed only; stored Number is unchanged
