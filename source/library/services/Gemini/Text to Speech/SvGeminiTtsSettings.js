@@ -39,10 +39,12 @@
         {
             /**
              * @member {string} voice
-             * @description The narrator's Gemini voice. Schedar is Google's "even"
-             * voice, chosen by ear from the 30 prebuilt voices (2026-09).
+             * @description The narrator's Gemini voice. en-gb-tutor-9 is a
+             * Winchester English library voice, chosen by ear with the style
+             * default (2026-09-28). It replaced Schedar; sessions stored with
+             * Schedar keep it.
              */
-            const slot = this.newSlot("voice", "Schedar");
+            const slot = this.newSlot("voice", "en-gb-tutor-9");
             slot.setInspectorPath("");
             slot.setLabel("Gemini voice");
             slot.setShouldStoreSlot(true);
@@ -58,9 +60,11 @@
             /**
              * @member {string} style
              * @description The delivery direction sent with every Gemini request
-             * (speech_metadata.style; never read aloud).
+             * (speech_metadata.style; never read aloud). Google advises a short
+             * style: the long OpenAI-era prompt full of stage directions made the
+             * narrator theatrical. Chosen by ear (2026-09-28).
              */
-            const slot = this.newSlot("style", "Dungeon Master narration. Cinematic and vivid but easy to follow. Slightly slower than normal with short pauses after sentences and a longer pause before reveals. Vary intonation for tension and wonder; confident downward cadence on statements. Enunciate fantasy names. Clearly emphasize numbers, dice results, and status conditions. Use subtle, consistent NPC voices without going cartoonish. Read the text verbatim and completely: when text begins with a name followed by a colon (a list entry like 'Dirk: a tenth-level fighter'), SPEAK the name and continue — never treat it as a speaker label or stage direction to omit.");
+            const slot = this.newSlot("style", "A relaxed storyteller reading aloud to friends at the table: warm, unhurried, even energy. Gentle emphasis, clear on names and numbers. Understated, never theatrical.");
             slot.setInspectorPath("");
             slot.setLabel("Gemini style");
             slot.setShouldStoreSlot(true);

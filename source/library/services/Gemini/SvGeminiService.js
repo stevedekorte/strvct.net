@@ -261,12 +261,22 @@
     }
 
     /**
-     * @description The prebuilt voices the speech models accept (2026-09),
-     * named as the API spells them. Every voice works with every model.
+     * @description The voices this app offers, as the API names them in
+     * speech_config: the 30 studio voices plus the library voices chosen for
+     * the app. Every voice works with every model and takes the same style.
      * @returns {string[]}
      * @category Speech
      */
     static speechVoiceNames () {
+        return this.speechStudioVoiceNames().concat(this.speechLibraryVoiceIds());
+    }
+
+    /**
+     * @description The 30 studio voices (2026-09), named as the API spells them.
+     * @returns {string[]}
+     * @category Speech
+     */
+    static speechStudioVoiceNames () {
         return [
             "Achernar", "Achird", "Algenib", "Algieba", "Alnilam", "Aoede", "Autonoe", "Callirrhoe",
             "Charon", "Despina", "Enceladus", "Erinome", "Fenrir", "Gacrux", "Iapetus", "Kore",
@@ -276,8 +286,20 @@
     }
 
     /**
-     * @description The API's spelling of a voice name, matched case-insensitively,
-     * or null when no prebuilt voice has that name.
+     * @description The extended-library voices offered here, by id. The
+     * library (GET /v1beta/voices) holds ~2,000 voices across accents and
+     * personas; add an id when one is chosen by ear. en-gb-tutor-9 is a
+     * Winchester English male voice (2026-09-28).
+     * @returns {string[]}
+     * @category Speech
+     */
+    static speechLibraryVoiceIds () {
+        return ["en-gb-tutor-9"];
+    }
+
+    /**
+     * @description The API's spelling of a voice name or library id, matched
+     * case-insensitively, or null when no offered voice has that name.
      * @param {string} aName
      * @returns {string|null}
      * @category Speech
