@@ -26,6 +26,8 @@ class SvBootPerf extends Object {
 
     static _marks = [];
     static _didReport = false;
+    static _expected = new Set(); // marks the app will record after boot, which the report waits for
+    static _reportRequested = false;
 
     static now () {
         return (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
@@ -40,13 +42,50 @@ class SvBootPerf extends Object {
                 // timing must never break boot
             }
         }
+        this._expected.delete(name);
+        if (this._reportRequested && this._expected.size === 0) {
+            this.reportNow();
+        }
     }
 
+    /**
+     * @description Declares a phase the app will mark after the framework's
+     * boot — e.g. the first lists a user sees — so the report waits for it and
+     * the table runs to what the user actually waits for. Must be declared
+     * before the boot reports.
+     * @param {string} name - the mark the app will record
+     */
+    static expect (name) {
+        if (!this._didReport) {
+            this._expected.add(name);
+        }
+    }
+
+    /**
+     * @description Prints the table once every expected mark has arrived, or
+     * after a minute without them (a phase that never completes — a failed
+     * sync — must not swallow the boot timings).
+     */
     static report () {
+        if (this._didReport || this._reportRequested) {
+            return;
+        }
+        if (this._expected.size === 0) {
+            this.reportNow();
+            return;
+        }
+        this._reportRequested = true;
+        setTimeout(() => this.reportNow(), 60000);
+    }
+
+    static reportNow () {
         if (this._didReport || this._marks.length === 0) {
             return;
         }
         this._didReport = true;
+        if (this._expected.size > 0) {
+            console.warn("[SvBootPerf] gave up waiting for: " + [...this._expected].join(", "));
+        }
 
         // In the browser performance.now() is already relative to page start,
         // so the first row's "took" covers HTML parse + synchronous scripts.
