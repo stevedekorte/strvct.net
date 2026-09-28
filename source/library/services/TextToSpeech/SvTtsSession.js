@@ -380,33 +380,49 @@
 
     /**
      * @description One speech request for a VOICE SPEC: null (the narrator),
-     * an OpenAI voice name, or { service, voiceId } naming a vendor.
+     * an OpenAI voice name, or { service, voiceId, style? } naming a vendor.
+     * `style` is a delivery direction for this one request (a speaker's
+     * voice description, say); the vendor applies it in place of its own
+     * default direction, or ignores it if it takes none.
      * @param {null|string|Object} voiceSpec
      * @returns {SvOpenAiTtsRequest} (or a vendor subclass of it)
      * @category Requests
      */
     newRequestForVoiceSpec (voiceSpec) {
         const spec = this.vendorVoiceFor(voiceSpec);
-        return spec.settings.newRequestForVoice(spec.voiceId, this);
+        return spec.settings.newRequestForVoice(spec.voiceId, this, spec.style);
     }
 
     /**
-     * @description A voice spec resolved to { settings, voiceId }: the vendor
-     * that speaks it and the voice (null = that vendor's narrator voice). A
-     * spec naming no known vendor falls back to the narrator.
+     * @description A voice spec resolved to { settings, voiceId, style }: the
+     * vendor that speaks it, the voice (null = that vendor's narrator voice)
+     * and the spec's own direction (null = the vendor's default). A spec
+     * naming no known vendor falls back to the narrator, with no direction.
      * @param {null|string|Object} voiceSpec
      * @returns {Object}
      * @category Requests
      */
     vendorVoiceFor (voiceSpec) {
         if (Type.isString(voiceSpec)) {
-            return { settings: this.openAiSettings(), voiceId: voiceSpec };
+            return { settings: this.openAiSettings(), voiceId: voiceSpec, style: null };
         }
         const settings = voiceSpec ? this.vendorSettingsFor(voiceSpec.service) : null;
         if (settings) {
-            return { settings: settings, voiceId: voiceSpec.voiceId };
+            return { settings: settings, voiceId: voiceSpec.voiceId, style: this.styleOfVoiceSpec(voiceSpec) };
         }
-        return { settings: this.narratorSettings(), voiceId: null };
+        return { settings: this.narratorSettings(), voiceId: null, style: null };
+    }
+
+    /**
+     * @description A spec's own delivery direction, or null when it has none
+     * (missing, blank, or not a string).
+     * @param {Object} voiceSpec
+     * @returns {string|null}
+     * @category Requests
+     */
+    styleOfVoiceSpec (voiceSpec) {
+        const style = voiceSpec.style;
+        return (Type.isString(style) && style.trim().length > 0) ? style : null;
     }
 
     /**

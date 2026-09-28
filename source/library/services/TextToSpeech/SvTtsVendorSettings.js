@@ -53,9 +53,12 @@
     /**
      * @description One speech request for the session's current prompt, in
      * voiceId (or this vendor's narrator voice when voiceId is null). The
-     * session is the request's delegate.
+     * session is the request's delegate. `style` is this request's own
+     * delivery direction: a vendor that takes one uses it in place of its
+     * default; a vendor that takes none ignores it. Null means the default.
      * @param {string|null} voiceId
      * @param {SvTtsSession} session
+     * @param {string|null} [style]
      * @returns {SvOpenAiTtsRequest} (or a vendor subclass of it)
      * @category Requests
      */
