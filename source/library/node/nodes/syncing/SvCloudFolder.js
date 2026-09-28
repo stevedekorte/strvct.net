@@ -19,11 +19,14 @@
  *     the queue survives reloads, retries every to-cloud pass, and doubles
  *     as the deletion tombstone consulted by every re-add path
  *   - asyncSyncToCloud  (save dirty children + flush pending deletes)
- *   - asyncSyncFromCloud (read folder → optional childrenLastModified
- *     cache check → COMPLETE listing → apply children; eager or
- *     lazy/manifest-first → PRUNE local children deleted in cloud —
- *     the listing is authoritative for membership; a dirty local child
- *     is later than the cloud and wins, per most-recent-wins)
+ *   - asyncSyncFromCloud: a folder whose children are pool root rows
+ *     (asyncListedRootRows) lists from its scope's root rows — the rows
+ *     placed under its id; any other folder reads its folder node →
+ *     optional childrenLastModified cache check → COMPLETE listing →
+ *     apply children, eager or lazy/manifest-first. Either way a complete
+ *     listing PRUNES local children deleted in cloud — the listing is
+ *     authoritative for membership; a dirty local child is later than the
+ *     cloud and wins, per most-recent-wins
  *   - per-folder childrenLastModified cache (skip the re-list when the
  *     folder's direct children are unchanged since the last sync)
  *   - lazy manifest-first loading: render the list from the manifest and
