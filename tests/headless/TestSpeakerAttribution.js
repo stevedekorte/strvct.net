@@ -94,22 +94,24 @@ async function main () {
     check(speakerOf(el("sentence", null)) === null, "a node with no attributes dictionary is the narrator, not an error");
 
     console.log("\nOpenAI speech: current voices, per-request override");
-    const SvOpenAiTtsSession = SvGlobals.get("SvOpenAiTtsSession");
-    const voices = SvOpenAiTtsSession.validVoiceNames();
+    const SvOpenAiTtsSettings = SvGlobals.get("SvOpenAiTtsSettings");
+    const SvTtsSession = SvGlobals.get("SvTtsSession");
+    const voices = SvOpenAiTtsSettings.validVoiceNames();
     check(voices.length === 11 && voices.includes("onyx") && voices.includes("sage"), "eleven voices, including the newer ones");
     let session = null;
     try {
-        session = SvOpenAiTtsSession.clone();
+        session = SvTtsSession.clone();
     } catch (e) {
-        console.log("  (SvOpenAiTtsSession.clone() not available headless: " + e.message + ")");
+        console.log("  (SvTtsSession.clone() not available headless: " + e.message + ")");
     }
     if (session) {
         session.setPrompt("Hello there.");
-        const plain = session.newRequest();
-        const overridden = session.newRequest("onyx");
-        check(plain.bodyJson().voice === session.voice(), "no override → the session's stored voice (" + session.voice() + ")");
+        const openAi = session.openAiSettings();
+        const plain = openAi.newRequestForVoice(null, session);
+        const overridden = openAi.newRequestForVoice("onyx", session);
+        check(plain.bodyJson().voice === openAi.voice(), "no override → the stored OpenAI voice (" + openAi.voice() + ")");
         check(overridden.bodyJson().voice === "onyx", "override → that voice on the request only");
-        check(session.voice() === "fable", "…and the stored voice slot is untouched (still " + session.voice() + ")");
+        check(openAi.voice() === "fable", "…and the stored voice is untouched (still " + openAi.voice() + ")");
 
         console.log("\nA voice spec picks the vendor; every vendor's request joins the same queues");
         const viaSpec = session.newRequestForVoiceSpec({ service: "openai", voiceId: "sage" });
@@ -118,7 +120,8 @@ async function main () {
         check(eleven.svType() === "SvElevenLabsTtsRequest", "{ service: elevenlabs } → an ElevenLabs request");
         check(eleven.apiUrl().startsWith("https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb"), "…addressed to that voice: " + eleven.apiUrl());
         check(eleven.bodyJson().text === "Hello there." && eleven.bodyJson().model_id === "eleven_flash_v2_5", "…carrying the text and the session's ElevenLabs model");
-        check(session.newRequestForVoiceSpec(null).bodyJson().voice === "fable", "null spec → the narrator's own voice");
+        session.setNarratorService("openai");
+        check(session.newRequestForVoiceSpec(null).bodyJson().voice === "fable", "null spec under an OpenAI narrator → the narrator's own voice");
         const SvElevenLabsService = SvGlobals.get("SvElevenLabsService");
         check(SvElevenLabsService.speechModelIds().includes("eleven_v3") && SvElevenLabsService.defaultSpeechModelId() === "eleven_flash_v2_5", "the vendor lists its speech models; Flash v2.5 is the live default");
     }
