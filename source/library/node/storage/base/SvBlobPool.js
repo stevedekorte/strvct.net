@@ -604,6 +604,9 @@
      * @category Maintenance
      */
     async asyncClear () {
+        // unopened, the folder has no path of ours: clearing would open and
+        // clear some other database (the boot-time logout wipe did, 2026-09-28)
+        assert(this.isOpen(), "SvBlobPool is not open - call asyncOpen() first");
         this.logDebug("Clearing all blobs from storage");
         await this.idb().promiseClear();
         this.activeBlobs().clear();

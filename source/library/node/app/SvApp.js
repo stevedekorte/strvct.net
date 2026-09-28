@@ -308,7 +308,7 @@
      */
     async asyncClearGameDataStores () {
         await this.store().promiseDeleteAll();
-        await SvBlobPool.shared().asyncClear();
+        await this.store().asyncClearBlobPool();
     }
 
     // --- account reset epoch (app plan: Account Reset Epoch) ---
@@ -377,7 +377,7 @@
             SvBootLoadingView.shared().setSubtitle("clearing local data");
             console.log(this.logPrefix(), "clear-on-boot requested (logout wipe): clearing object pool and blob pool");
             await this.clearStoreThenClose();
-            await SvBlobPool.shared().asyncClear();
+            await this.store().asyncClearBlobPool();
         }
         await this.openStore();
     }

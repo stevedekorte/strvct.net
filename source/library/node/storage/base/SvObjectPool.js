@@ -417,14 +417,44 @@
             }
             this.readHomePoolId();
             this._hasOpened = true;
-            this.blobPool().setName(this.name() + "/blobs");
-            await this.blobPool().asyncOpen();
+            await this.asyncOpenBlobPool();
             await this.asyncPrefetchTextBlobsForRows(this.isHomePool() ? this.recordStore().allRows() : this.recordStore().rowsForPool(this.poolId()));
             await this.onPoolOpenSuccess();
             SvObjectPool.openPools().add(this);
         } catch (error) {
             this.onPoolOpenFailure(error);
         }
+    }
+
+    /**
+     * @description The blob pool's database name: this pool's, with "/blobs".
+     * @returns {String}
+     * @category Blobs
+     */
+    blobPoolName () {
+        return this.name() + "/blobs";
+    }
+
+    /**
+     * @description Opens the blob pool under this pool's blob database name.
+     * @returns {Promise}
+     * @category Blobs
+     */
+    async asyncOpenBlobPool () {
+        this.blobPool().setName(this.blobPoolName());
+        await this.blobPool().asyncOpen();
+    }
+
+    /**
+     * @description Removes every blob in this pool's blob database, opening it
+     * first — before the store opens (a wipe at boot) the blob pool has no
+     * name yet, and clearing it unnamed cleared another database.
+     * @returns {Promise}
+     * @category Blobs
+     */
+    async asyncClearBlobPool () {
+        await this.asyncOpenBlobPool();
+        await this.blobPool().asyncClear();
     }
 
     async promiseClose () {
