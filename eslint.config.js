@@ -30,7 +30,8 @@ module.exports = [
             // Linting rules
             "no-undef": "off",
             "no-debugger": "off",
-            "no-unused-vars": ["error", { "args": "none" }], // unused method arguments are fine (hooks/overrides keep the full signature for documentation)
+            "no-unused-vars": ["error", { "args": "none", "caughtErrors": "none" }], // unused method arguments are fine (hooks/overrides keep the full signature for documentation), and so is an unused catch binding: catch (e) {}
+            "no-empty": ["error", { "allowEmptyCatch": true }], // an empty catch is a deliberate swallow; other empty blocks still error
 
             // Formatting rules
             "indent": ["error", 4, { "SwitchCase": 1 }],
