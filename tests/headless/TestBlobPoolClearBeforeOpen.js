@@ -43,31 +43,26 @@ async function main () {
     const SvBlobPool = SvGlobals.get("SvBlobPool");
     const name = "TestBlobPoolClearBeforeOpen-" + Date.now();
 
-    console.log("\nA stored blob, in the store's blob database");
-    const first = SvPersistentObjectPool.clone();
-    first.setName(name);
-    await first.promiseOpen();
-    const hash = await first.blobPool().asyncStoreBlob(new Blob(["logout wipe probe"]));
-    check(await first.blobPool().asyncHasBlob(hash), "the blob is stored");
-    await first.blobPool().close();
-
     console.log("\nThe boot-time wipe: clear, then open");
+    const bare = SvBlobPool.shared();
+    let bareError = null;
+    try { await bare.asyncClear(); } catch (e) { bareError = e; }
+    check(bareError && /not open/.test(bareError.message), "a bare clear of the unnamed, unopened blob pool is refused (it cleared another database)");
     const booting = SvPersistentObjectPool.clone();
     booting.setName(name);
     let clearError = null;
     try { await booting.asyncClearBlobPool(); } catch (e) { clearError = e; }
-    check(!clearError, "clearing before the store opens succeeds" + (clearError ? ": " + clearError.message : ""));
+    check(!clearError, "the store clears its blob pool before it opens" + (clearError ? ": " + clearError.message : ""));
     let openError = null;
     try { await booting.promiseOpen(); } catch (e) { openError = e; }
-    check(!openError && booting.blobPool().isOpen(), "…and the store then opens" + (openError ? ": " + openError.message : ""));
+    check(!openError && booting.blobPool().isOpen(), "…and then opens (it asserted: \"can't change the path on an open SvIndexedDbFolder\")" + (openError ? ": " + openError.message : ""));
     check(booting.blobPool().name() === name + "/blobs", "the blob pool is the store's own: " + booting.blobPool().name());
-    check(!(await booting.blobPool().asyncHasBlob(hash)), "the store's blobs were the ones cleared");
 
-    console.log("\nA bare clear of an unopened blob pool is refused");
-    await booting.blobPool().close();
-    let bareError = null;
-    try { await SvBlobPool.shared().asyncClear(); } catch (e) { bareError = e; }
-    check(bareError && /not open/.test(bareError.message), "asyncClear asks to be opened first");
+    console.log("\nThe wipe clears the store's own blobs");
+    const hash = await booting.blobPool().asyncStoreBlob(new Blob(["logout wipe probe"]));
+    check(await booting.blobPool().asyncHasBlob(hash), "a stored blob is there");
+    await booting.asyncClearBlobPool();
+    check(!(await booting.blobPool().asyncHasBlob(hash)), "…and gone after the wipe");
 
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);

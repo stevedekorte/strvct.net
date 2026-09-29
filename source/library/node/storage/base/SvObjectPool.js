@@ -2329,7 +2329,11 @@
     /**
      * @description The pool a folder's element is the root of, created in this
      * pool's record store on first reference and placed under the folder node
-     * with an order key between its siblings' keys.
+     * with an order key between its siblings' keys. A pool already in the
+     * store whose root is not loaded (stored on an earlier visit) is only
+     * named: the element is then a stand-in for it — a row listing's
+     * placeholder — and adopting it as the root would write its empty record
+     * over the stored document. The document loads from its rows when opened.
      * @category References
      */
     ensureChildPoolForRoot (v) {
@@ -2343,7 +2347,13 @@
             return pool;
         }
         if (!pool.rootObject()) {
+            if (pool.knowsObject(v)) {
+                return pool; // stored, not loaded: v stands in for it
+            }
             pool.setRootObject(v);
+        }
+        if (pool.rootObject() !== v) {
+            return pool; // another instance is its root; only that one moves it
         }
         const folder = v.parentNode();
         if (folder && pool.parentNodeId() !== folder.puuid()) {

@@ -256,6 +256,25 @@ async function main () {
     folder2.addSubnode(docE);
     await home.commitStoreDirtyObjects();
     check(store.rootRowForPool(docE.puuid()) && store.rootRowForPool(docE.puuid()).parentId === folder2.puuid(), "…and the home pool still stores edits (a new document lands in the store)");
+
+    console.log("\nA placeholder for a pool stored on an earlier visit names it, without becoming its root");
+    const docF = newDoc("f");
+    folder2.addSubnode(docF);
+    await home.commitStoreDirtyObjects();
+    const fId = docF.puuid();
+    const storedF = store.rootRowForPool(fId).payloadJson;
+    folder2.removeSubnode(docF); // not a deletion: the page forgets the document, its rows stay (a later visit)
+    await home.commitStoreDirtyObjects();
+    store.pools().delete(fId);
+    const placeholder = SvGlobals.get("TestPoolDoc").clone(); // a row listing's placeholder: the pool's id, no content
+    placeholder.justSetPuuid(fId);
+    folder2.addSubnode(placeholder);
+    let placeholderError = null;
+    try { await home.commitStoreDirtyObjects(); } catch (e) { placeholderError = e; }
+    check(!placeholderError, "the folder stores (it asserted in setRootObject, 2026-09-28)" + (placeholderError ? ": " + placeholderError.message : ""));
+    check(store.rootRowForPool(fId).payloadJson === storedF, "the stored document is untouched — the placeholder's empty record was not written over it");
+    const folderValues = home.recordForPid(home.recordForPid(folder2.puuid()).entries.find(e => e[0] === "subnodes")[1]["*"]).values;
+    check(folderValues.some(v => v["**"] === fId), "the folder's far ref names the pool");
 }
 
 main().then(() => {
