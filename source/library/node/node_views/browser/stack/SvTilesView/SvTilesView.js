@@ -289,6 +289,18 @@
      * @returns {SvTilesView}
      * @category Sync
      */
+    /**
+     * @description A selected tile that now shows another instance of its
+     * node changes the navigation: the next column must show the new
+     * instance, not the one it replaced.
+     * @param {SvTile} tile
+     */
+    didRebindSubview (tile) {
+        if (tile.isSelected && tile.isSelected()) {
+            this.didChangeNavSelection();
+        }
+    }
+
     syncFromNode () {
         this.syncOrientation(); // implemented in Tiles_orientation.js
         super.syncFromNode();

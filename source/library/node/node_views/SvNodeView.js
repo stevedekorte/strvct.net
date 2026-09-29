@@ -184,6 +184,29 @@
     }
 
     /**
+     * @description Points a subview at another instance of its node. Subviews
+     * are found by the node's type and puuid, so an instance swapped in for
+     * one with the same identity — a loaded document replacing its row
+     * placeholder — reuses the old subview, which must follow the swap or it
+     * (and any column opened from it) keeps acting on the replaced instance.
+     * @param {SvNodeView} subview
+     * @param {SvNode} subnode - the instance now in the parent's subnodes
+     * @returns {SvNodeView}
+     */
+    rebindSubview (subview, subnode) {
+        subview.setNode(subnode);
+        this.didRebindSubview(subview);
+        return this;
+    }
+
+    /**
+     * @description Hook: a subview now shows another instance of its node.
+     * @param {SvNodeView} subview
+     */
+    didRebindSubview (/*subview*/) {
+    }
+
+    /**
      * @description Updates the map of subnodes to subviews.
      * @returns {SvNodeView} The current instance.
      */
@@ -325,6 +348,10 @@
             let subview = undefined;
 
             subview = this.subviewForNode(subnode);
+
+            if (subview && subview.node && subview.node() !== subnode) {
+                this.rebindSubview(subview, subnode);
+            }
 
             if (!subview) {
                 subview = this.newSubviewForSubnode(subnode);
