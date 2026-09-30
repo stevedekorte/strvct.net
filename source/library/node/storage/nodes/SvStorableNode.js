@@ -215,6 +215,17 @@
      * them just finished. No-op when it is in no pool.
      * @category Record Store
      */
+    /**
+     * @description Whether this node or a descendant has an edit not yet
+     * flushed to the store (SvObjectPool.hasPendingEditsWithin).
+     * @returns {Boolean}
+     * @category Record Store
+     */
+    hasPendingEdits () {
+        const pool = SvObjectPool.poolOfObject(this);
+        return !!(pool && pool.hasPendingEditsWithin(this));
+    }
+
     markPendingChangesAsNonEdits () {
         const pool = SvObjectPool.poolOfObject(this);
         if (pool) {

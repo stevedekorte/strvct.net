@@ -108,6 +108,9 @@
         if (local && local > cloud) {
             return true; // Local changes pending
         }
+        if (this.hasPendingEdits()) {
+            return true; // an edit not yet flushed (its stamp comes with the flush)
+        }
         // Only children this collection could actually push. Unloaded
         // placeholders can carry a stale local>cloud stamp (a later
         // didUpdateNode after hydrate) while isChildCloudSyncable
@@ -144,7 +147,7 @@
         if (Slot.isMaterializingAnyLazySlot()) {
             return this;
         }
-        this.setLocalLastModified(Date.now());
+        SvObjectPool.applyAsNonEdit(() => this.setLocalLastModified(Date.now())); // bookkeeping, not an edit
         return this;
     }
 
@@ -157,8 +160,10 @@
     didSyncToCloud (timestamp = Date.now()) {
         this._suppressLocalModifiedTouch = true;
         try {
-            this.setCloudLastModified(timestamp);
-            this.setLocalLastModified(timestamp);
+            SvObjectPool.applyAsNonEdit(() => {
+                this.setCloudLastModified(timestamp);
+                this.setLocalLastModified(timestamp);
+            });
         } finally {
             this._suppressLocalModifiedTouch = false;
         }
@@ -178,8 +183,10 @@
         cloudTimestamp = Date.asMillis(cloudTimestamp);
         this._suppressLocalModifiedTouch = true;
         try {
-            this.setCloudLastModified(cloudTimestamp);
-            this.setLocalLastModified(cloudTimestamp);
+            SvObjectPool.applyAsNonEdit(() => {
+                this.setCloudLastModified(cloudTimestamp);
+                this.setLocalLastModified(cloudTimestamp);
+            });
         } finally {
             this._suppressLocalModifiedTouch = false;
         }

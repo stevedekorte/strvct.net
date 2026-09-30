@@ -2650,6 +2650,25 @@
     }
 
     /**
+     * @description Whether aNode or a descendant has an edit waiting for the
+     * next flush (dirty, not a non-edit). An edit counts from the moment it is
+     * made — a save right after it must see it — though the stamp that records
+     * it (announceContentChanges) comes with the flush.
+     * @param {SvNode} aNode
+     * @returns {Boolean}
+     * @category Content Changes
+     */
+    hasPendingEditsWithin (aNode) {
+        const nonEdits = this.nonEditPids();
+        for (const [puuid, obj] of this.dirtyObjects()) {
+            if (!(nonEdits && nonEdits.has(puuid)) && SvObjectPool.isObjectWithin(obj, aNode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @description Whether obj is aNode or below it, climbing the same links
      * didStoreChangedContent climbs.
      * @category Content Changes

@@ -105,6 +105,7 @@ async function testNoEditIsNotAnEdit () {
 
     doc.didUpdateNode();
     doc.section().didUpdateNode();
+    check(!doc.needsCloudSync(), "a bare didUpdateNode is not a pending edit either");
     await flush(pool);
     check(!doc.needsCloudSync(), "a bare didUpdateNode (here and on a child) is not an edit");
 
@@ -123,8 +124,13 @@ async function testRealEditsAreEdits () {
     {
         const { pool, doc } = await syncedDocument();
         doc.setEntryText("a real edit");
+        check(doc.needsCloudSync(), "an edit counts at once — before the flush stamps it (a save right after must see it)");
         await flush(pool);
         check(doc.needsCloudSync(), "a stored slot on the document changing is an edit");
+        doc.didSyncToCloud(5000);
+        check(!doc.needsCloudSync(), "after a save's didSyncToCloud it is clean at once — the stamps are not an edit");
+        await flush(pool);
+        check(!doc.needsCloudSync(), "…and stays clean after the flush");
     }
     {
         const { pool, doc } = await syncedDocument();

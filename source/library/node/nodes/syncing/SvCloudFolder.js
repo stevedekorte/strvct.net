@@ -790,10 +790,13 @@
 
     /**
      * @description Removes local children that were deleted in the cloud:
-     * previously synced (cloudLastModified set), clean (a dirty child is
-     * LATER than the cloud and wins — its next save legitimately recreates
-     * the doc: most-recent-wins), folder-governed, and absent from a
-     * COMPLETE cloud listing. Cloud-initiated, so the removal must not
+     * previously synced (cloudLastModified set), folder-governed, and absent
+     * from a COMPLETE cloud listing — dirty or not. A deletion is the user's
+     * intent; unsent edits on a stale device are a sync that failed, not a
+     * reason to bring the document back (Steve, 2026-09-30; it used to be
+     * most-recent-wins, and a record commit to a deleted pool is refused
+     * anyway). A child that never reached the cloud is kept: the deletion
+     * cannot have been of it. Cloud-initiated, so the removal must not
      * queue a cloud delete — guaranteed by the isBeingDeleted()
      * discriminator in removeSubnode (these children are shut down and
      * removed, never delete()d).
@@ -808,7 +811,7 @@
             if (listedStableIds.has(stableId)) continue; // present in cloud
             const wasSynced = child.cloudLastModified && child.cloudLastModified();
             if (!wasSynced) continue;                   // never reached cloud — local-new wins
-            if (child.needsCloudSync && child.needsCloudSync()) continue; // dirty — local wins
+            // dirty or not: the deletion was the user's intent (see above)
             if (!this.childMayBeCloudPruned(child)) continue; // another authority governs it
             console.log(this.cloudSyncLogPrefix(), "pruning local child deleted in cloud:", stableId);
             this.removeSubnodeForCloudPrune(child);
@@ -822,12 +825,8 @@
      * the home's children that does not contain this folder). rm -rf
      * semantics: remove every previously-synced local child, INCLUDING
      * dirty ones — a deleted folder is authoritative over its whole
-     * subtree, and the dirty bit on an eager-loaded child (a session's
-     * self-dirtying wiring) is bookkeeping churn, not a user edit an
-     * admin wipe must respect. This is deliberately STRONGER than
-     * pruneChildrenAbsentFromCloud (which is per-record reconciliation
-     * inside a LIVE folder, where dirty-local-wins protects offline
-     * edits). Never-synced children survive: born locally, never the
+     * subtree (the same rule pruneChildrenAbsentFromCloud now applies per
+     * record: a deletion outranks unsent edits). Never-synced children survive: born locally, never the
      * deletion's target — they re-upload into a recreated folder.
      * Children governed by another authority (childMayBeCloudPruned
      * false, e.g. membership-discovered multiplayer sessions) are

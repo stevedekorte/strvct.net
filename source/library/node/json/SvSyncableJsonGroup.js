@@ -130,6 +130,9 @@
         if (!cloud) {
             return true; // Not in cloud = needs sync
         }
+        if (this.hasPendingEdits()) {
+            return true; // an edit not yet flushed (its stamp comes with the flush)
+        }
         if (!local) {
             return false; // In cloud, but not locally modified
         }
@@ -167,7 +170,8 @@
         // load → edit within one ms → the edit neither saved nor protected
         // the record from pruning).
         const cloud = this.cloudLastModified() || 0;
-        this.setLocalLastModified(Math.max(Date.now(), cloud + 1));
+        // the stamp is bookkeeping, not an edit of its own
+        SvObjectPool.applyAsNonEdit(() => this.setLocalLastModified(Math.max(Date.now(), cloud + 1)));
         return this;
     }
 
@@ -189,8 +193,10 @@
     didSyncToCloud (timestamp = Date.now()) {
         this._suppressLocalModifiedTouch = true;
         try {
-            this.setCloudLastModified(timestamp);
-            this.setLocalLastModified(timestamp);
+            SvObjectPool.applyAsNonEdit(() => {
+                this.setCloudLastModified(timestamp);
+                this.setLocalLastModified(timestamp);
+            });
         } finally {
             this._suppressLocalModifiedTouch = false;
         }
@@ -216,8 +222,10 @@
         cloudTimestamp = Date.asMillis(cloudTimestamp);
         this._suppressLocalModifiedTouch = true;
         try {
-            this.setCloudLastModified(cloudTimestamp);
-            this.setLocalLastModified(cloudTimestamp);
+            SvObjectPool.applyAsNonEdit(() => {
+                this.setCloudLastModified(cloudTimestamp);
+                this.setLocalLastModified(cloudTimestamp);
+            });
         } finally {
             this._suppressLocalModifiedTouch = false;
         }
