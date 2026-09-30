@@ -165,17 +165,62 @@
     async asyncImportOpenedPool (opened, localPoolId = null) {
         // a cloud pool id is scoped ("<scope>:<local>"); locally the pool keeps its own id
         const poolId = localPoolId || SvRecordRow.localPoolId(opened.root.poolId);
+        this.closeLivePool(poolId);
+        await this.asyncDeletePool(poolId);
+        const rows = [opened.root].concat(opened.records).map(row => this.localRowFromCloudRow(Object.assign({}, row, { poolId: poolId })));
+        await this.asyncPut(rows);
+        return this.asyncOpenImportedPool(poolId, rows);
+    }
+
+    /**
+     * @description Brings a pool stored here up to a cloud backing's version by
+     * the changes since the version stored here (asyncReadChanges'
+     * `{ rows, tombstones, version }`): changed rows replace theirs, tombstoned
+     * rows go, and the root takes the cloud's version (a commit that doesn't
+     * rewrite the root advances only its version, so the root may not be among
+     * the rows). The caller vouches that the stored rows are the cloud's as of
+     * the stored version — no unsent local edits. Opens the pool and reads its root.
+     * @param {Object} changes - asyncReadChanges' answer (not reloadRequired)
+     * @param {String} poolId - the pool's local id
+     * @returns {Promise<SvObjectPool>}
+     * @category Import
+     */
+    async asyncImportPoolChanges (changes, poolId) {
+        this.closeLivePool(poolId);
+        const rows = changes.rows.map(row => this.localRowFromCloudRow(Object.assign({}, row, { poolId: poolId })));
+        const root = rows.find(row => SvRecordRow.isRoot(row)) || this.rootRowForPool(poolId);
+        root.version = changes.version;
+        await this.asyncPut(rows.includes(root) ? rows : rows.concat([root]));
+        await this.asyncDelete(changes.tombstones.map(key => ({ poolId: poolId, objectId: key.objectId })));
+        return this.asyncOpenImportedPool(poolId, rows);
+    }
+
+    /**
+     * @description Closes and forgets a pool open on rows about to be replaced.
+     * @param {String} poolId
+     * @category Import
+     */
+    closeLivePool (poolId) {
         const live = this.pools().get(poolId);
         if (live) {
             live.close();
             this.forgetPool(poolId);
         }
-        await this.asyncDeletePool(poolId);
-        const rows = [opened.root].concat(opened.records).map(row => this.localRowFromCloudRow(Object.assign({}, row, { poolId: poolId })));
-        await this.asyncPut(rows);
+    }
+
+    /**
+     * @description Opens a pool whose rows were just imported from the cloud:
+     * what it holds is what the cloud holds (its synced snapshot), the text
+     * blobs the new rows spilled are fetched, and its root is read.
+     * @param {String} poolId
+     * @param {Array<Object>} importedRows - the rows written by the import
+     * @returns {Promise<SvObjectPool>}
+     * @category Import
+     */
+    async asyncOpenImportedPool (poolId, importedRows) {
         const pool = this.openPoolWithId(poolId);
         pool.setLastSyncedSnapshot(Object.assign({}, pool.asJson()));
-        await pool.asyncPrefetchTextBlobsForRows(rows);
+        await pool.asyncPrefetchTextBlobsForRows(importedRows);
         pool.readRootObject();
         return pool;
     }
