@@ -250,41 +250,30 @@
     }
 
     /**
-     * Cross-scope copy or move.
-     * @param {Object} args
-     * @param {string} args.srcId
-     * @param {string} [args.dstScopeRootId]  Required unless promote=true.
-     * @param {string} args.dstParentId
-     * @param {"copy"|"move"} args.mode
-     * @param {boolean} [args.promote]  When true, the destination becomes a
-     *   new scope-root (id == scopeRootId, server-generated). An owner
-     *   _members entry for the caller is written atomically. Used by
-     *   multiplayer-session promotion. See server-side copyNode.js.
-     * @returns {Promise<{mode:string, count:number, idMap:Object, promoted:boolean, dstRootId:string|null}>}
+     * Deletes a document by its records pool (Plans/Placed Subnodes §7 6d): an
+     * editor of the pool's scope removes every record of it. A pool a
+     * multiplayer scope names is refused — delete the scope. An absent pool
+     * is already deleted.
+     * @param {string} poolId
+     * @returns {Promise<{ok:true, deletedRecords:number}>}
      */
-    async copyNode (args) {
-        return this.callFunction("copy", args);
+    async deletePool (poolId) {
+        return this.callFunction("records-delete-pool", { poolId });
     }
 
     /**
-     * Promote a scope-leaf document to a fresh scope-root. Thin wrapper
-     * over `copyNode({promote: true})` with the typical multiplayer-
-     * promotion defaults (mode === "move").
+     * Makes a document's pool a multiplayer scope: a fresh scope root naming
+     * the pool, with the caller as its owner. The pool stays in its scope.
+     * Idempotent: a retry returns the scope already made.
      *
      * @param {Object} args
-     * @param {string} args.srcId           — id of the personal-session document.
-     * @param {string} args.dstParentId     — id of the new scope-root's parent node
-     *                                        (typically the host's user home).
-     * @param {"copy"|"move"} [args.mode]   — defaults to "move".
-     * @returns {Promise<{dstRootId:string, idMap:Object, count:number}>}
+     * @param {string} args.poolId       - the document's records pool
+     * @param {string} args.dstParentId  - the new scope root's parent (the host's home)
+     * @param {string} [args.title]      - the scope's title (an invite shows it)
+     * @returns {Promise<{dstRootId:string, promoted:boolean}>}
      */
-    async promoteToScopeRoot ({ srcId, dstParentId, mode }) {
-        return this.copyNode({
-            srcId,
-            dstParentId,
-            mode: mode || "move",
-            promote: true
-        });
+    async promotePool ({ poolId, dstParentId, title }) {
+        return this.callFunction("promote-pool", { poolId, dstParentId, title });
     }
 
     // ---------------------------------------------------------------- membership discovery

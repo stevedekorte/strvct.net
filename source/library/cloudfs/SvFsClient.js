@@ -45,6 +45,13 @@
             const slot = this.newSlot("cloudKnownBlobHashes", null);
             slot.setSlotType("Set");
         }
+        {
+            // Folder id → the promise of its ensure: a folder ensured once is
+            // there for the page's life, so a document's saves after the first
+            // skip the read (and concurrent saves share one).
+            const slot = this.newSlot("ensuredFolders", null);
+            slot.setSlotType("Map");
+        }
     }
 
     initPrototype () {
@@ -54,6 +61,7 @@
         super.init();
         this.setListenerPool(SvFsListenerPool.shared());
         this.setCloudKnownBlobHashes(new Set());
+        this.setEnsuredFolders(new Map());
         return this;
     }
 
@@ -104,11 +112,11 @@
     }
 
     /**
-     * Promote a scope-leaf document to a fresh scope-root. Convenience
-     * wrapper over `backend.promoteToScopeRoot`.
+     * Makes a document's pool a multiplayer scope. Convenience wrapper over
+     * `backend.promotePool`.
      */
-    async asyncPromoteToScopeRoot (args) {
-        return this.backend().promoteToScopeRoot(args);
+    async asyncPromotePool (args) {
+        return this.backend().promotePool(args);
     }
 
     /**
@@ -379,6 +387,21 @@
      * @returns {Promise<SvFsFolder>}
      */
     async asyncEnsureFolder (args) {
+        let ensure = this.ensuredFolders().get(args.id);
+        if (!ensure) {
+            ensure = this.asyncEnsureFolderNow(args);
+            this.ensuredFolders().set(args.id, ensure);
+            ensure.catch(() => this.ensuredFolders().delete(args.id)); // a failed ensure is retried by the next
+        }
+        return ensure;
+    }
+
+    /**
+     * @description Reads the folder node, creating it when absent.
+     * @param {Object} args - as asyncEnsureFolder
+     * @returns {Promise<SvFsFolder>}
+     */
+    async asyncEnsureFolderNow (args) {
         const existing = await this.asyncReadNode(args.id);
         if (existing) {
             if (!(existing instanceof SvFsFolder)) {

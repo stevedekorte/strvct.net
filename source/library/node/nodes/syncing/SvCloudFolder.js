@@ -71,7 +71,7 @@
 
         {
             // The unified deletion pipeline's queue: descriptors
-            // ({nodeId, scopeRootId|null}) of deleted children whose cloud
+            // ({nodeId, scopeRootId|null, poolId|null}) of deleted children whose cloud
             // delete has not yet SUCCEEDED. Stored, so an unflushed delete
             // survives a reload (the old in-memory Set died with the page
             // and the child re-added itself from cloud next boot). Doubles
@@ -89,11 +89,13 @@
     // ---------------------------------------------------------------- Pending-delete queue (copy-on-write)
 
     /**
-     * @description Queues a cloud delete descriptor ({nodeId, scopeRootId})
-     * for flushing on the next to-cloud pass. Copy-on-write so the stored
-     * slot's setter fires (persistence + the folder's own dirty touch, which
-     * self-schedules the flush).
-     * @param {Object} descriptor - { nodeId: String, scopeRootId: String|null }
+     * @description Queues a cloud delete descriptor for flushing on the next
+     * to-cloud pass. Copy-on-write so the stored slot's setter fires
+     * (persistence + the folder's own dirty touch, which self-schedules the
+     * flush). `nodeId` identifies the child (its stable id is parsed from it);
+     * a child that is a records pool with no node of its own sends `poolId`,
+     * and the flush deletes the pool.
+     * @param {Object} descriptor - { nodeId: String, scopeRootId: String|null, poolId: String|null }
      * @returns {SvCloudFolder}
      * @category Deletion Pipeline
      */
@@ -103,6 +105,7 @@
         this.setPendingCloudDeletes(this.pendingCloudDeletes().concat([{
             nodeId: descriptor.nodeId,
             scopeRootId: descriptor.scopeRootId || null,
+            poolId: descriptor.poolId || null,
             // "delete" (default) removes the node/scope; "leave" removes only
             // the caller's membership row (a client leaving a shared scope)
             scopeAction: descriptor.scopeAction || "delete"
@@ -264,12 +267,15 @@
      * @description Whether a local child's content stands in for the cloud's
      * in a lazy sync, so it is kept rather than shown as a placeholder.
      * Default: its (stored) cloudContentLoaded flag. A folder whose cloud copy
-     * wins overrides this to require content loaded in this session.
+     * wins overrides this to require content loaded in this session; one that
+     * knows the listed version (rowFields.cloudVersion) can keep a copy that
+     * is current and re-list one that is behind.
      * @param {SvNode} child
+     * @param {Object} [rowFields] - the listed row's fields, with cloudVersion
      * @returns {Boolean}
      * @category Cloud Sync
      */
-    childHasUsableLocalContent (child) {
+    childHasUsableLocalContent (child /*, rowFields */) {
         return !!(child.cloudContentLoaded && child.cloudContentLoaded());
     }
 
@@ -351,7 +357,9 @@
             const stableId = this.stableIdForRootRow(row);
             listedStableIds.add(stableId);
             if (!this.hasPendingCloudDeleteForStableId(stableId)) {
-                this.applyChildPlaceholderSafely(stableId, null, SvCloudFolder.rowFieldsFromRecordPayload(row.payloadJson));
+                // the row's fields, and the version the cloud holds (a local copy behind it is stale)
+                const fields = Object.assign({ cloudVersion: row.version }, SvCloudFolder.rowFieldsFromRecordPayload(row.payloadJson) || {});
+                this.applyChildPlaceholderSafely(stableId, null, fields);
             }
         });
         this.pruneIfListingComplete(listedStableIds, listing.isComplete);
@@ -403,7 +411,7 @@
         let child = this.childWithCloudStableId(stableId);
         // Don't downgrade a child whose local content counts (e.g. on a
         // refresh after the user opened it) back to a placeholder.
-        if (child && this.childHasUsableLocalContent(child)) {
+        if (child && this.childHasUsableLocalContent(child, rowFields)) {
             return;
         }
         if (!child) {
@@ -544,27 +552,12 @@
                 this.onChildCloudSaveFailed(child, e);
             }
         }
-        // Flush the persisted delete queue, scope-aware: a promoted session's
-        // descriptor carries its scopeRootId and must go through deleteScope
-        // (which also removes the _members subcollection and RTDB bus trees,
-        // and is the only path the backend permits for a scope root); plain
-        // folder children go through deleteNode. Entries persist across
-        // reloads and retry every pass until the cloud confirms — stronger
-        // than the in-page retry burst this replaces.
+        // Flush the persisted delete queue. Entries persist across reloads and
+        // retry every pass until the cloud confirms — stronger than the
+        // in-page retry burst this replaces.
         for (const descriptor of this.pendingCloudDeletes().slice()) {
-            const client = this.cloudFsClient();
             try {
-                if (descriptor.scopeRootId && descriptor.scopeAction === "leave") {
-                    await client.backend().leaveScope(descriptor.scopeRootId);
-                    console.log(this.cloudSyncLogPrefix(), "Left multiplayer scope:", descriptor.scopeRootId);
-                } else if (descriptor.scopeRootId && typeof client.backend().deleteScope === "function") {
-                    // exact log text is a spec contract (delete-session-persists)
-                    await client.backend().deleteScope(descriptor.scopeRootId);
-                    console.log(this.cloudSyncLogPrefix(), "Deleted multiplayer scope:", descriptor.scopeRootId);
-                } else {
-                    await client.backend().deleteNode(descriptor.nodeId);
-                    console.log(this.cloudSyncLogPrefix(), "Deleted cloud child:", descriptor.nodeId);
-                }
+                await this.asyncFlushCloudDelete(descriptor);
                 this.removePendingCloudDelete(descriptor.nodeId);
                 didUpload = true;
             } catch (e) {
@@ -583,6 +576,35 @@
             this.didSyncToCloud();
         }
         return didUpload;
+    }
+
+    /**
+     * @description Carries out one queued delete, scope-aware: a promoted
+     * session's descriptor carries its scopeRootId and goes through
+     * deleteScope (which also removes the _members subcollection and RTDB bus
+     * trees, and is the only path the backend permits for a scope root), or
+     * leaveScope for a member leaving; a document that is only its records
+     * pool is deleted by pool; any other child through deleteNode.
+     * @param {Object} descriptor - a pendingCloudDeletes entry
+     * @returns {Promise}
+     * @category Deletion Pipeline
+     */
+    async asyncFlushCloudDelete (descriptor) {
+        const backend = this.cloudFsClient().backend();
+        if (descriptor.scopeRootId && descriptor.scopeAction === "leave") {
+            await backend.leaveScope(descriptor.scopeRootId);
+            console.log(this.cloudSyncLogPrefix(), "Left multiplayer scope:", descriptor.scopeRootId);
+        } else if (descriptor.scopeRootId) {
+            // exact log text is a spec contract (delete-session-persists)
+            await backend.deleteScope(descriptor.scopeRootId);
+            console.log(this.cloudSyncLogPrefix(), "Deleted multiplayer scope:", descriptor.scopeRootId);
+        } else if (descriptor.poolId) {
+            await backend.deletePool(descriptor.poolId);
+            console.log(this.cloudSyncLogPrefix(), "Deleted cloud child:", descriptor.nodeId, "(pool " + descriptor.poolId + ")");
+        } else {
+            await backend.deleteNode(descriptor.nodeId);
+            console.log(this.cloudSyncLogPrefix(), "Deleted cloud child:", descriptor.nodeId);
+        }
     }
 
     /**
