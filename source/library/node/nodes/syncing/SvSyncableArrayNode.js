@@ -39,6 +39,7 @@
             const slot = this.newSlot("cloudLastModified", null);
             slot.setSlotType("Number");
             slot.setShouldStoreSlot(true);
+            slot.setIsInCloudRecord(false); // this copy's sync bookkeeping, not content — and not an edit (SvObjectPool.isContentChange)
             slot.setAllowsNullValue(true);
         }
 
@@ -51,6 +52,7 @@
             const slot = this.newSlot("localLastModified", null);
             slot.setSlotType("Number");
             slot.setShouldStoreSlot(true);
+            slot.setIsInCloudRecord(false); // this copy's sync bookkeeping; stamping it must not count as the edit that stamps it
             slot.setAllowsNullValue(true);
         }
     }
@@ -75,21 +77,17 @@
     // --- Mutation Tracking ---
 
     /**
-     * @description Called when the node or any descendant changes.
-     * Marks this collection for cloud sync.
-     * @returns {Boolean} Whether the notification was posted
+     * @description The collection or a descendant stored a real change to its
+     * content — the one thing that marks it locally modified (see
+     * SvSyncableJsonGroup.didStoreChangedContent). Skipped while
+     * didSyncToCloud / didSyncFromCloud align the stamps deliberately.
      * @category Sync
      */
-    didUpdateNode () {
-        // Skip the touch when `didSyncToCloud` / `didSyncFromCloud` is
-        // in flight — those align both timestamps deliberately and
-        // shouldn't be immediately re-dirtied by their own slot
-        // setters. See SvSyncableJsonGroup.didSyncToCloud for the
-        // longer rationale.
+    didStoreChangedContent () {
         if (this.hasDoneInit() && !this._suppressLocalModifiedTouch) {
             this.touchLocalModified();
         }
-        return super.didUpdateNode();
+        super.didStoreChangedContent();
     }
 
     // --- Cloud Sync Helpers ---
@@ -185,6 +183,8 @@
         } finally {
             this._suppressLocalModifiedTouch = false;
         }
+        // last: what the cloud sync applied (and these stamps) is not an edit
+        this.markPendingChangesAsNonEdits();
         return this;
     }
 

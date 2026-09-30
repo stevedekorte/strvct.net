@@ -196,6 +196,33 @@
         return this;
     }
 
+    /**
+     * @description Applies state that is not a local edit — the cloud's copy,
+     * a host's snapshot or patches — to this node: it is stored, but no
+     * document counts it as edited (SvObjectPool.applyAsNonEdit). fn must be
+     * synchronous.
+     * @param {Function} fn
+     * @returns {*} fn's result
+     * @category Record Store
+     */
+    applyAsNonEdit (fn) {
+        return SvObjectPool.applyAsNonEdit(fn);
+    }
+
+    /**
+     * @description The changes pending for this node and its descendants
+     * (dirty, not yet stored) are not local edits — a cloud sync that applied
+     * them just finished. No-op when it is in no pool.
+     * @category Record Store
+     */
+    markPendingChangesAsNonEdits () {
+        const pool = SvObjectPool.poolOfObject(this);
+        if (pool) {
+            pool.markPendingChangesAsNonEditsUnder(this);
+        }
+        return this;
+    }
+
     deleteWindowedRowIfDetached () {
         if (this.parentNode()) {
             return this;

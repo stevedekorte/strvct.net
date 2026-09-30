@@ -192,6 +192,16 @@
             slot.setDescription("cloud mirror: the pool.json (record JSON by puuid) as last uploaded or downloaded, for delta collection");
         }
         {
+            const slot = this.newSlot("contentChangedObjects", null);
+            slot.setSlotType("Set");
+            slot.setDescription("objects whose stored content changed during the current flush; told once it ends");
+        }
+        {
+            const slot = this.newSlot("nonEditPids", null);
+            slot.setSlotType("Set");
+            slot.setDescription("dirty objects whose pending change is not a local edit (applied from the cloud or a host); stored, not announced");
+        }
+        {
             const slot = this.newSlot("ownerUid", "local");
             slot.setSlotType("String");
             slot.setDescription("root row: the account that owns the pool; \"local\" until signed in");
@@ -739,7 +749,32 @@
             await this.mirrorCloudVersion(result.version, commit);
             this.setLastSyncedSnapshot(sentSnapshot);
         }
+        if (result && result.status === "conflict") {
+            return Object.assign({ commit: commit }, result); // what was refused, for the caller to tell whether reloading loses it
+        }
         return result;
+    }
+
+    /**
+     * @description Whether this pool's stored rows already hold what a commit
+     * wrote and deleted (payloads as the cloud holds them). After a conflict
+     * and a reload, true means the refused commit lost nothing — e.g. it only
+     * carried a default a newer slot fills on load, which the reloaded copy
+     * filled again.
+     * @param {Object} commit - { writes: [{ objectId, payloadJson }], deletes: [{ objectId }] }
+     * @returns {Boolean}
+     * @category Cloud Mirror
+     */
+    holdsCommitContent (commit) {
+        const holdsWrite = (write) => {
+            const row = this.rowForPid(write.objectId);
+            return !!(row && !row.isDeleted && SvObjectPool.cloudPayloadFor(row.payloadJson) === write.payloadJson);
+        };
+        const holdsDelete = (del) => {
+            const row = this.rowForPid(del.objectId);
+            return !row || row.isDeleted;
+        };
+        return commit.writes.every(holdsWrite) && commit.deletes.every(holdsDelete);
     }
 
     /**
@@ -1494,6 +1529,8 @@
             return this;
         }
 
+        this.noteEditKindOfDirty(puuid);
+
         if (!this.dirtyObjects().has(puuid)) {
             this.logDebug(() => "addDirtyObject(" + anObject.svTypeId() + ")");
             if (this.storingPids() !== null) {
@@ -1746,6 +1783,7 @@
             this.scheduleStore();
         }
 
+        this.announceContentChanges();
         return totalStoreCount;
     }
 
@@ -2306,6 +2344,12 @@
 
     async asyncDeleteRecordRow (pid) {
         await this.recordStore().asyncDelete([{ poolId: this.poolId(), objectId: pid }]);
+        // a windowed element left its collection: no record references it, so
+        // the change is the pool's (its root's) to hear of
+        const root = this.rootObject();
+        if (root && root.didStoreChangedContent) {
+            root.didStoreChangedContent();
+        }
         return this;
     }
 
@@ -2518,8 +2562,179 @@
 
     putRecordJson (puuid, jsonString, obj = null) { // private — inside a record store batch
         this.ensurePoolId();
-        this.recordStore().putRowInBatch(this.rowForRecordJson(puuid, jsonString, obj));
+        const row = this.rowForRecordJson(puuid, jsonString, obj);
+        const isEdit = !this.takeNonEdit(puuid);
+        if (obj && isEdit && this.isContentChange(this.rowForPid(puuid), row)) {
+            this.noteContentChangeOf(obj);
+        }
+        this.recordStore().putRowInBatch(row);
         return this;
+    }
+
+    // --- content changes (what counts as an edit) ---
+
+    /**
+     * @description Applies state that is not a local edit — the cloud's copy,
+     * a host's snapshot or patches: objects first dirtied while fn runs are
+     * stored as usual but their change is not announced
+     * (announceContentChanges), so no document counts it as edited. A time
+     * window, like Slot.isMaterializingAnyLazySlot — sound in single-threaded
+     * JS; a counter because applies can nest. fn must be synchronous.
+     * @param {Function} fn
+     * @returns {*} fn's result
+     * @category Content Changes
+     */
+    static applyAsNonEdit (fn) {
+        this._nonEditDepth = (this._nonEditDepth || 0) + 1;
+        try {
+            return fn();
+        } finally {
+            this._nonEditDepth--;
+        }
+    }
+
+    static isApplyingNonEdit () {
+        return (this._nonEditDepth || 0) > 0;
+    }
+
+    /**
+     * @description Classifies a dirtying: inside applyAsNonEdit it is not an
+     * edit — unless the object was already dirty from an edit — and outside
+     * it, it is (a later edit supersedes an earlier non-edit).
+     * @param {String} puuid
+     * @category Content Changes
+     */
+    noteEditKindOfDirty (puuid) {
+        if (!SvObjectPool.isApplyingNonEdit()) {
+            if (this.nonEditPids()) {
+                this.nonEditPids().delete(puuid);
+            }
+            return;
+        }
+        if (!this.dirtyObjects().has(puuid)) {
+            this.addNonEditPid(puuid);
+        }
+    }
+
+    addNonEditPid (puuid) {
+        if (!this.nonEditPids()) {
+            this.setNonEditPids(new Set());
+        }
+        this.nonEditPids().add(puuid);
+    }
+
+    /**
+     * @description Whether puuid's pending change was a non-edit, forgetting it.
+     * @param {String} puuid
+     * @returns {Boolean}
+     * @category Content Changes
+     */
+    takeNonEdit (puuid) {
+        const pids = this.nonEditPids();
+        return !!(pids && pids.delete(puuid));
+    }
+
+    /**
+     * @description Reclassifies the pending (dirty, not yet stored) changes of
+     * aNode and its descendants as non-edits: a cloud sync that applied them
+     * has just finished (SvSyncableJsonGroup.didSyncFromCloud).
+     * @param {SvNode} aNode
+     * @category Content Changes
+     */
+    markPendingChangesAsNonEditsUnder (aNode) {
+        this.dirtyObjects().forEachKV((puuid, obj) => {
+            if (SvObjectPool.isObjectWithin(obj, aNode)) {
+                this.addNonEditPid(puuid);
+            }
+        });
+    }
+
+    /**
+     * @description Whether obj is aNode or below it, climbing the same links
+     * didStoreChangedContent climbs.
+     * @category Content Changes
+     */
+    static isObjectWithin (obj, aNode) {
+        let current = obj;
+        for (let depth = 0; current && depth < 1000; depth++) {
+            if (current === aNode) {
+                return true;
+            }
+            current = SvObjectPool.upwardLinkOf(current);
+        }
+        return false;
+    }
+
+    static upwardLinkOf (obj) {
+        if (obj.parentNode && obj.parentNode()) {
+            return obj.parentNode();
+        }
+        if (obj.ownerNode && obj.ownerNode()) {
+            return obj.ownerNode();
+        }
+        return obj.owner ? obj.owner() : null;
+    }
+
+    /**
+     * @description Remembers an object whose stored content changed, to be told
+     * when the flush ends (announceContentChanges).
+     * @param {Object} obj
+     * @category Content Changes
+     */
+    noteContentChangeOf (obj) {
+        if (!this.contentChangedObjects()) {
+            this.setContentChangedObjects(new Set());
+        }
+        this.contentChangedObjects().add(obj);
+    }
+
+    /**
+     * @description Whether a new row changes what the old one held: its payload
+     * as the cloud holds it, or — for a windowed element — its place in its
+     * collection. Re-storing the same content — a load, a derived value
+     * recomputed, a didUpdateNode with nothing stored behind it — is not a
+     * change, and neither is local-only bookkeeping (slots with
+     * isInCloudRecord false). The root row's placement is the pool's, not
+     * content (and an imported root names the cloud's folder id where a local
+     * store names the local folder node).
+     * @param {Object|null} oldRow
+     * @param {Object} newRow
+     * @returns {Boolean}
+     * @category Content Changes
+     */
+    isContentChange (oldRow, newRow) {
+        if (!oldRow || oldRow.isDeleted || !oldRow.payloadJson) {
+            return true;
+        }
+        const isRoot = newRow.objectId === this.poolId();
+        if (!isRoot && (oldRow.parentId !== newRow.parentId || oldRow.orderKey !== newRow.orderKey)) {
+            return true;
+        }
+        if (oldRow.payloadJson === newRow.payloadJson) {
+            return false;
+        }
+        return SvObjectPool.cloudPayloadFor(oldRow.payloadJson) !== SvObjectPool.cloudPayloadFor(newRow.payloadJson);
+    }
+
+    /**
+     * @description Tells each object whose stored content changed in the flush
+     * that just ended (didStoreChangedContent), or the pool's root when the
+     * object cannot say where it belongs. After the flush, so a timestamp set
+     * in answer is stored by the next one rather than deferred mid-pass.
+     * @category Content Changes
+     */
+    announceContentChanges () {
+        const changed = this.contentChangedObjects();
+        if (!changed) {
+            return;
+        }
+        this.setContentChangedObjects(null);
+        changed.forEach(obj => {
+            const target = obj.didStoreChangedContent ? obj : this.rootObject();
+            if (target && target.didStoreChangedContent) {
+                target.didStoreChangedContent();
+            }
+        });
     }
 
     /**

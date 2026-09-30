@@ -1481,6 +1481,20 @@
     }
 
     /**
+     * @description Called by this node's pool when a flush stored a real change
+     * to its record (not a re-store of the same content). Passed up the same
+     * chain didUpdateNode climbs, so every ancestor that tracks local edits
+     * (SvSyncableJsonGroup) hears of it.
+     * @category Storage
+     */
+    didStoreChangedContent () {
+        const up = this.parentNode() || this.ownerNode();
+        if (up && up !== this && up.didStoreChangedContent) {
+            up.didStoreChangedContent();
+        }
+    }
+
+    /**
 
      * @description Trigger the didUpdateNode notification.
      * @returns {boolean} Whether the notification was posted.

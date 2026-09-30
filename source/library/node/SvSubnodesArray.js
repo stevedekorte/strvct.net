@@ -50,6 +50,18 @@
     }
 
     /**
+     * @description The pool stored a real change to this array's record (a
+     * child added, removed or moved): its owner's content changed.
+     * @category Storage
+     */
+    didStoreChangedContent () {
+        const owner = this.owner();
+        if (owner && owner.didStoreChangedContent) {
+            owner.didStoreChangedContent();
+        }
+    }
+
+    /**
      * Creates a new SvSubnodesArray from an existing array.
      * @description Ensures that any method hooks are called when populating the new array.
      * @static

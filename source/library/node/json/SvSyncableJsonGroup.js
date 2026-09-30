@@ -221,6 +221,8 @@
         } finally {
             this._suppressLocalModifiedTouch = false;
         }
+        // last: what the cloud sync applied (and these stamps) is not an edit
+        this.markPendingChangesAsNonEdits();
         return this;
     }
 
@@ -321,23 +323,21 @@
     // --- Mutation Tracking ---
 
     /**
-     * @description Called when the node or any descendant changes.
-     * Marks this item for cloud sync if it's been fetched.
-     * Note: During sync FROM cloud, didSyncFromCloud() is called AFTER deserialization,
-     * which sets both timestamps equal, clearing any dirty state.
-     * @returns {Boolean} Whether the notification was posted
+     * @description This node or a descendant stored a real change to its
+     * content (SvObjectPool.announceContentChanges) — the one thing that marks
+     * it locally modified. A didUpdateNode alone does not: loading, recomputing
+     * a derived value and wiring up views all update nodes without editing
+     * anything, and stamping on them made every opened document look edited
+     * (dirty-local-wins then kept stale copies, and catalog documents were
+     * pushed on load). Skipped while the item is not fully fetched, and while
+     * didSyncToCloud / didSyncFromCloud align the stamps deliberately.
      * @category Sync
      */
-    didUpdateNode () {
-        // Only mark as locally modified if we're a fully fetched item
-        // (not unfetched stub or currently fetching). Skip the touch
-        // when a `didSyncToCloud` / `didSyncFromCloud` is in progress
-        // — those align the timestamps deliberately and shouldn't be
-        // immediately re-dirtied by their own slot setters.
+    didStoreChangedContent () {
         if (this.isFetched() && !this._suppressLocalModifiedTouch) {
             this.touchLocalModified();
         }
-        return super.didUpdateNode();
+        super.didStoreChangedContent();
     }
 
     // --- Subtitle Override for Fetch State ---

@@ -129,6 +129,9 @@ async function storeDocAndSection (pool, doc) {
     pool.dirtyObjects().set(doc.puuid(), doc);
     pool.dirtyObjects().set(doc.section().puuid(), doc.section());
     await pool.commitStoreDirtyObjects();
+    // a new document's first store is a real change: the edit stamp it earns
+    // (SvObjectPool.announceContentChanges) is stored by the next pass
+    await pool.commitStoreDirtyObjects();
 }
 
 // --- tests ---------------------------------------------------------------
@@ -171,11 +174,13 @@ async function testMaterializationIsStoreNeutralButUiVisible () {
     check(docDidUpdateNodeCount > 0, "UI-visible: didUpdateNode bubbled to the document during materialization");
     check(Slot.isMaterializingAnyLazySlot() === false, "materialization counter back to zero");
 
-    // A REAL change afterwards still dirties + touches normally.
+    // A REAL change afterwards still dirties + touches normally — the touch
+    // follows the stored content change, not a bare didUpdateNode.
     doc.setCloudLastModified(999);
     check(pool.dirtyObjects().size > 0, "control: a genuine slot change after materialization still marks dirty");
-    doc.didUpdateNode();
-    check(doc.localLastModified() > timestampBaseline, "control: a genuine didUpdateNode still touches localLastModified");
+    doc.setSection(SvGlobals.get("SvJsonGroup").clone());
+    await pool.commitStoreDirtyObjects();
+    check(doc.localLastModified() > timestampBaseline, "control: a genuine stored change still touches localLastModified");
 }
 
 async function testNewObjectCreatedDuringMaterializationStillStores () {
