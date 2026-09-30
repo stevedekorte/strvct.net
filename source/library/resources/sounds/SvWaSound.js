@@ -167,14 +167,26 @@
 
         /**
          * @member volume
-         * @description linear gain applied to playback (1 = source level).
-         * When not 1, the audio source is routed through a GainNode.
-         * Set before play() — the gain graph is built per playback.
+         * @description linear gain applied to playback (1 = source level),
+         * through the playback's GainNode. Set before play(), or change it
+         * while playing with rampVolumeTo().
          * @type {Number}
          */
         {
             const slot = this.newSlot("volume", 1);
             slot.setSlotType("Number");
+        }
+
+        /**
+         * @member gainNode
+         * @description the current playback's GainNode, so the volume can
+         * change while it plays (rampVolumeTo); null when not playing.
+         * @type {GainNode}
+         */
+        {
+            const slot = this.newSlot("gainNode", null);
+            slot.setSlotType("GainNode");
+            slot.setAllowsNullValue(true);
         }
 
         /**
@@ -512,19 +524,37 @@
         const ctx = this.audioCtx();
         const source = ctx.createBufferSource();
         source.buffer = this.decodedBuffer();
-        if (this.volume() !== 1) {
-            const gain = ctx.createGain();
-            gain.gain.value = this.volume();
-            source.connect(gain);
-            gain.connect(ctx.destination);
-        } else {
-            source.connect(ctx.destination);
-        }
+        // always through a gain node, so the volume can change mid-play
+        const gain = ctx.createGain();
+        gain.gain.value = this.volume();
+        source.connect(gain);
+        gain.connect(ctx.destination);
+        this.setGainNode(gain);
         this.syncToSource(source);
         source.addEventListener("ended", (event) => {
             this.onEnded(event);
         });
         return source;
+    }
+
+    /**
+     * @description Changes the volume, easing a playing sound there over about
+     * `seconds` (an exponential approach — no click); a sound not yet playing
+     * starts at it.
+     * @param {Number} value - linear gain (1 = source level)
+     * @param {Number} seconds - roughly how long the change takes
+     * @returns {SvWaSound}
+     * @category Playback
+     */
+    rampVolumeTo (value, seconds) {
+        this.setVolume(value);
+        const gain = this.gainNode();
+        const ctx = this.audioCtx();
+        if (gain && ctx) {
+            gain.gain.cancelScheduledValues(ctx.currentTime);
+            gain.gain.setTargetAtTime(value, ctx.currentTime, Math.max(0.01, seconds / 3));
+        }
+        return this;
     }
 
     /**
@@ -607,6 +637,7 @@
         //console.log(this.logPrefix(), "Sound.onEnded() " + this.description());
         this.setIsPlaying(false);
         this.setSource(null);
+        this.setGainNode(null);
         const playPromise = this.playPromise();
         if (!playPromise.isResolved()) {
             playPromise.callResolveFunc();

@@ -48,6 +48,15 @@
         }
 
         /**
+     * @member {Boolean} postedIsActive - The activity last announced
+     * (onAudioQueueActivityChanged), so only changes are posted.
+     */
+        {
+            const slot = this.newSlot("postedIsActive", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
      * @member {Array} queue - The queue of sounds.
      */
         {
@@ -254,9 +263,14 @@
         // up, so we wait for the fetch instead: a sound queued while the
         // queue is idle would otherwise never play its first, uncached time.
         if (sound.skipIfNotReady && sound.skipIfNotReady() && !sound.isReadyToPlayNow() && this.queueSize() > 0) {
-            console.warn(this.logPrefix(), "skipping sound not ready at its turn:", this.descriptionForSound(sound));
-            this.processQueue();
-            return this;
+            // a short grace first: an effect's fetch (~0.5s) usually lands, and
+            // skipping at once dropped nearly every first play mid-narration
+            await this.awaitReadyWithin(sound, this.notReadyGraceMs());
+            if (!sound.isReadyToPlayNow()) {
+                console.warn(this.logPrefix(), "skipping sound not ready at its turn:", this.descriptionForSound(sound));
+                this.processQueue();
+                return this;
+            }
         }
         if (this.isMuted()) {
             console.log(this.logPrefix(), "DROPPING sound (queue is muted):", this.descriptionForSound(sound));
@@ -292,6 +306,56 @@
             this.processQueue();
         }
         return this;
+    }
+
+    /**
+   * @category Playback Control
+   * @description How long a skip-if-not-ready sound may hold its turn waiting
+   * for its data before it is skipped.
+   * @returns {Number} milliseconds
+   */
+    notReadyGraceMs () {
+        return 1500;
+    }
+
+    /**
+   * @category Playback Control
+   * @description Waits for a sound's data, at most ms.
+   * @param {SvWaSound} sound
+   * @param {Number} ms
+   * @returns {Promise}
+   */
+    async awaitReadyWithin (sound, ms) {
+        const ready = (typeof sound.promiseToDecode === "function") ? sound.promiseToDecode().catch(() => null) : Promise.resolve();
+        await Promise.race([ready, new Promise(resolve => setTimeout(resolve, ms))]);
+    }
+
+    /**
+   * @category Playback Control
+   * @description Whether the queue is speaking or has something to play —
+   * what another channel ducks under (announced by onAudioQueueActivityChanged).
+   * @returns {Boolean}
+   */
+    isActive () {
+        return !!this.currentSound() || this.queueSize() > 0;
+    }
+
+    /**
+   * @category Playback Control
+   * @description Posts onAudioQueueActivityChanged when isActive() changed —
+   * scheduled, so the gap between one sound ending and the next starting
+   * does not flicker.
+   */
+    syncActivity () {
+        const active = this.isActive();
+        if (active !== this.postedIsActive()) {
+            this.setPostedIsActive(active);
+            this.postNoteNamed("onAudioQueueActivityChanged");
+        }
+    }
+
+    didUpdateSlotCurrentSound (/*oldValue, newValue*/) {
+        this.scheduleMethod("syncActivity");
     }
 
     /**
