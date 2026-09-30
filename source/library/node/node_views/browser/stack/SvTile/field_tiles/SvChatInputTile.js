@@ -49,14 +49,11 @@
             this._lastLoggedInputBlockReason = reason;
         }
         // The editor's placeholder (data-placeholder CSS, only visible while
-        // empty): while blocked it shows WHY right where the user tries to
-        // act; while accepting it falls back to the node's idle placeholder
-        // ("What do you do?") rather than clearing — nulling it here is what
-        // made the idle placeholder never appear.
-        if (valueView && valueView.setPlaceholderText && node && typeof node.valueInputBlockingHint === "function") {
-            const blocked = !(node.acceptsValueInput && node.acceptsValueInput());
-            const idleText = (typeof node.valuePlaceholderText === "function") ? node.valuePlaceholderText() : null;
-            valueView.setPlaceholderText(blocked ? node.valueInputBlockingHint() : idleText);
+        // empty): the node answers — WHY while blocked, the idle prompt while
+        // accepting (SvChatInputNode.valuePlaceholderText). Written here too
+        // because the focused guard below returns before the base sync.
+        if (valueView && valueView.setPlaceholderText && node && typeof node.valuePlaceholderText === "function") {
+            valueView.setPlaceholderText(node.valuePlaceholderText());
         }
         const isFocused = valueView && typeof valueView.isFocused === "function" && valueView.isFocused();
         if (isFocused && node && !node._forceValueViewSync) {

@@ -249,14 +249,27 @@
     }
 
     /**
-   * The idle placeholder shown while the input is empty and ACCEPTING text
-   * ("What do you do?"). The conversation owns the wording; null shows no
-   * placeholder. Distinct from valueInputBlockingHint, which replaces it
-   * while input is blocked.
+   * The placeholder shown while the input is empty: while input is blocked,
+   * WHY (valueInputBlockingHint — "Out of credits…", "Waiting for the host…"),
+   * right where the user tries to act; while it accepts, the idle prompt
+   * ("What do you do?"). One answer for every view path that writes the
+   * placeholder — a tile that wrote the hint and then the idle text (its base
+   * sync) showed "What do you do?" on a blocked input (2026-09-29).
+   * The conversation owns both wordings; null shows no placeholder.
    * @returns {String|null}
    * @category Input
    */
     valuePlaceholderText () {
+        const hint = this.acceptsValueInput() ? null : this.valueInputBlockingHint();
+        return hint || this.idlePlaceholderText();
+    }
+
+    /**
+   * The idle placeholder: what the input invites while it accepts text.
+   * @returns {String|null}
+   * @category Input
+   */
+    idlePlaceholderText () {
         const c = this.conversation();
         return (c && typeof c.chatInputPlaceholder === "function") ? c.chatInputPlaceholder() : null;
     }

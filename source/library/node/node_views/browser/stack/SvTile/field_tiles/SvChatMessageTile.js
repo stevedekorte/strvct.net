@@ -654,7 +654,11 @@
     maybeCompactFadedProgress () {
         const scrollView = this.scrollView();
         if (scrollView && scrollView.isInUserScrollSession && scrollView.isInUserScrollSession()) {
-            this.addTimeout(() => this.maybeCompactFadedProgress(), 250, "progressCompact");
+            // one retry at a time: every sync during a scroll asks again, and a
+            // second addTimeout of the same name arms another timer
+            if (!this.hasTimeoutNamed("progressCompact")) {
+                this.addTimeout(() => this.maybeCompactFadedProgress(), 250, "progressCompact");
+            }
             return this;
         }
         if (this.tileIsFullyAboveScrollView()) {
