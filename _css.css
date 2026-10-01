@@ -55,7 +55,7 @@
 
        Values below are the fallbacks they already resolved to in Classic, so
        Classic is unchanged; the point is that they are now overridable. Their
-       inline fallbacks can be dropped as the token-unification stages proceed.
+       inline fallbacks were dropped 2026-09-30: the views read these bare.
        See docs/Plans/Theme Token Unification. */
     --SvBadge-bg: rgb(240, 192, 0);
     --SvBadge-color: #191919;
@@ -82,6 +82,18 @@
     --sv-input-border: 1px solid rgba(255, 255, 255, 0.2);
     --sv-selection-bg: rgba(255, 255, 255, 0.10);
     --sv-selection-active-bg: rgba(255, 255, 255, 0.14);
+
+    /* BOOT-PANEL tokens (SvWindowErrorPanel, strvct/source/boot). That panel
+       can open before this stylesheet loads, so it reads these names WITH an
+       inline fallback (its pre-stylesheet look); once this file is in, each
+       chains to the theme token, so the panel follows the theme. A theme
+       never needs to set these. */
+    --sv-boot-panel-surface: var(--sv-surface);
+    --sv-boot-panel-text: var(--sv-text);
+    --sv-boot-panel-text-muted: var(--sv-text-muted);
+    --sv-boot-panel-hairline: var(--sv-hairline);
+    --sv-boot-panel-selection-bg: var(--sv-selection-bg);
+    --sv-boot-panel-selection-active-bg: var(--sv-selection-active-bg);
 
     --sv-icon-color: white;
     /* The single "attention" hue: edge-handle glints, theatre captions,

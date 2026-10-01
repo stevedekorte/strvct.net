@@ -51,8 +51,8 @@
         this.setFontSize("0.6em");
         this.setLineHeight("1");
         this.setBorderRadius("0.33em");
-        this.setBackgroundColor("var(--SvBadge-bg, rgb(240, 192, 0))");
-        this.setColor("var(--SvBadge-color, #191919)");
+        this.setBackgroundColor("var(--SvBadge-bg)");
+        this.setColor("var(--SvBadge-color)");
         this.setWhiteSpace("nowrap");
         this.setTextAlign("center");
         this.setPointerEvents("none");

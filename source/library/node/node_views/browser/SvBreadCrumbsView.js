@@ -93,7 +93,7 @@
                 font-size: 0.9em;
                 font-family: var(--sv-face-display);
                 letter-spacing: var(--sv-face-display-tracking);
-                color: var(--SvBreadCrumbs-color, rgba(255, 255, 255, 0.5));
+                color: var(--SvBreadCrumbs-color);
                 transition: color 0.15s;
                 cursor: pointer;
                 white-space: nowrap;
@@ -109,11 +109,11 @@
             }
 
             .SvBreadCrumbLabel:hover {
-                color: var(--SvBreadCrumbs-current-color, rgba(255, 255, 255, 0.85));
+                color: var(--SvBreadCrumbs-current-color);
             }
 
             .SvBreadCrumbLabel.current {
-                color: var(--SvBreadCrumbs-current-color, rgba(255, 255, 255, 0.85));
+                color: var(--SvBreadCrumbs-current-color);
                 cursor: default;
             }
 
@@ -124,7 +124,7 @@
 
             .SvBreadCrumbSeparator {
                 font-size: 0.9em;
-                color: var(--SvBreadCrumbs-separator-color, rgba(255, 255, 255, 0.3));
+                color: var(--SvBreadCrumbs-separator-color);
                 padding: 0 0.5em;
                 white-space: nowrap;
                 /* the "›" glyph sits low in its line box; flex centering aligns the
@@ -146,13 +146,13 @@
         this.setMinHeight("55px");
         this.setPaddingLeft("1em");
         this.setPaddingRight("1em");
-        this.setBorderBottom("1px solid var(--SvBreadCrumbs-border-color, #333)");
+        this.setBorderBottom("1px solid var(--SvBreadCrumbs-border-color)");
         // Transparent by default so the bar shows whatever surface its
         // container paints (see SvBrowserView.syncSurfaceFromNode): that is how
         // the app's breadcrumbs and a companion's — the same view class — end
         // up on different surfaces with no subclass of this view. A theme may
         // still give the bar its own surface by defining the token.
-        this.setBackgroundColor("var(--SvBreadCrumbs-bg, transparent)");
+        this.setBackgroundColor("var(--SvBreadCrumbs-bg)");
         // A too-wide path COMPACTS (updateCompaction hides leading crumbs
         // behind a back button) rather than squishing crumbs into unreadable
         // fragments. overflow-x:auto (scrollbar hidden via CSS) remains only

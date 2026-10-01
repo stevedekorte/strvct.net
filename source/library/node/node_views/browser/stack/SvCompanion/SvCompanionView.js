@@ -210,7 +210,7 @@
         this.setFlexGrow(0);
         this.setFlexShrink(0);
         this.setOverflow("hidden"); // content stays within the panel; never floats over neighbors
-        this.setBackgroundColor("var(--SvCompanion-bg, transparent)");
+        this.setBackgroundColor("var(--SvCompanion-bg)");
         // Prototype-parity motion: the panel SLIDES between its docked width
         // and zero (the flexing content column follows per layout, no second
         // transition needed). Size is applied via setMinAndMaxWidth/Height,
@@ -577,7 +577,7 @@
         const length = this.currentReservedLength();
         this.setAppliedDockedLength(mode === "docked" ? length : null);
         this.setBackgroundColor(mode === "docked"
-            ? "var(--SvCompanion-bg, transparent)"
+            ? "var(--SvCompanion-bg)"
             : "transparent");
         if (vertical) {
             this.setMinAndMaxWidth(length);

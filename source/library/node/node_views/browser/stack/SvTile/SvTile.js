@@ -277,7 +277,7 @@
         if (this.isDepressed() && !this.isDisabled() && this.shouldPaintSelectionLook()) {
             // Belt-and-suspenders: stored themes can have a styleless
             // selected state (inherit), which made the press look a no-op.
-            this.contentView().setBackgroundColor("var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))");
+            this.contentView().setBackgroundColor("var(--sv-selection-active-bg)");
             this.startPressShimmer();
         } else {
             this.stopPressShimmer();

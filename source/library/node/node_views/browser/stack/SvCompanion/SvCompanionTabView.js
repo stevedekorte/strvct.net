@@ -72,13 +72,13 @@
         this.setJustifyContent("center");
         this.setWidth("100%");
         this.setHeight("100%");
-        this.setColor("var(--SvCompanionTab-color, rgba(255, 255, 255, 0.5))");
+        this.setColor("var(--SvCompanionTab-color)");
         // A faint fill + hairline edge so the collapsed rail reads as a
         // control strip instead of an unexplained gap beside the content
         // (reported twice against a dark chat column / fullscreen image).
         // The border-color var was documented in the classdesc but never
         // applied; the border side follows the docked edge via syncCaret.
-        this.setBackgroundColor("var(--SvCompanionTab-background-color, rgba(255, 255, 255, 0.035))");
+        this.setBackgroundColor("var(--SvCompanionTab-background-color)");
         this.turnOffUserSelect();
 
         this.syncCaret(); // sets the boundary hairline for the current edge
@@ -117,7 +117,7 @@
         const edge = this.isVerticalTab() ? "border-left" : "border-top";
         const other = this.isVerticalTab() ? "border-top" : "border-left";
         this.setCssProperty(other, null);
-        this.setCssProperty(edge, "1px solid var(--SvCompanionTab-border-color, rgba(255, 255, 255, 0.08))");
+        this.setCssProperty(edge, "1px solid var(--SvCompanionTab-border-color)");
         return this;
     }
 

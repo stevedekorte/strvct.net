@@ -230,13 +230,18 @@ class SvWindowErrorPanel extends Object {
             {
                 const style = errorPanelDiv.style;
                 style.position = "relative"; // Changed from fixed since it's now inside backdrop
-                style.backgroundColor = "var(--sv-surface, #191919)"; // boot-safe theming: dark fallback for pre-theme errors
-                // WHITE, not black. The fallback applies exactly when no theme is
-                // loaded — which is when this panel matters most, since it reports
-                // boot errors — and the line above falls back to a near-black
-                // surface. Black text on rgb(25,25,25) made the error unreadable in
-                // the one case the panel exists for. Line ~298 already used white.
-                style.color = "var(--sv-text, white)";
+                // BOOT TOKENS. This panel reports errors that can happen before
+                // any stylesheet has loaded, so it reads its own --sv-boot-panel-*
+                // set, the one place an inline fallback is the mechanism rather
+                // than debt. strvct/_css.css chains each to its theme token
+                // (--sv-boot-panel-surface: var(--sv-surface), ...), so once the
+                // stylesheets load the panel follows the theme; before that, the
+                // fallbacks below form one self-consistent dark panel. Each token
+                // has exactly ONE fallback (TestThemeTokens enforces it): mixing a
+                // themed --sv-text with a literal surface once made the panel
+                // unreadable in exactly the pre-theme case it exists for.
+                style.backgroundColor = "var(--sv-boot-panel-surface, #191919)";
+                style.color = "var(--sv-boot-panel-text, white)";
                 style.width = "fit-content";
                 style.height = "fit-content";
                 style.fontFamily = "inherit";
@@ -244,7 +249,7 @@ class SvWindowErrorPanel extends Object {
                 style.borderRadius = "0em";
                 style.overflow = "hidden";
                 style.overflowY = "auto";
-                style.border = "1px solid var(--sv-hairline, #444)";
+                style.border = "1px solid var(--sv-boot-panel-hairline, #444)";
                 style.transition = "opacity 0.5s ease-out, transform 0.5s ease-out";
                 // full width on mobile (minus margin), capped at a fixed width on desktop
                 style.maxWidth = "min(90vw, 600px)";
@@ -300,8 +305,8 @@ class SvWindowErrorPanel extends Object {
 
             // Create text container on the right
             html += "<div style='flex:1;'>";
-            html += `<div style='color:var(--sv-text, white); font-weight:bold; font-size:1.2em; padding-bottom:0.5em;'>${errorTitle}</div>`;
-            html += `<div style="color:var(--sv-text-muted, #aaa);">${errorMessage}</div>`;
+            html += `<div style='color:var(--sv-boot-panel-text, white); font-weight:bold; font-size:1.2em; padding-bottom:0.5em;'>${errorTitle}</div>`;
+            html += `<div style="color:var(--sv-boot-panel-text-muted, #aaa);">${errorMessage}</div>`;
             html += "</div>";
 
             messageDiv.innerHTML = html;
@@ -311,7 +316,7 @@ class SvWindowErrorPanel extends Object {
             {
                 const style = detailsContainer.style;
                 style.margin = "0 2em 0 2em";
-                style.borderTop = "1px solid var(--sv-hairline, #444)";
+                style.borderTop = "1px solid var(--sv-boot-panel-hairline, #444)";
                 style.paddingTop = "0.5em";
             }
 
@@ -327,7 +332,7 @@ class SvWindowErrorPanel extends Object {
             const detailsToggle = document.createElement("div");
             {
                 const style = detailsToggle.style;
-                style.color = "var(--sv-text-muted, #aaa)";
+                style.color = "var(--sv-boot-panel-text-muted, #aaa)";
                 style.cursor = "pointer";
                 style.fontSize = "0.9em";
                 style.userSelect = "none";
@@ -338,10 +343,10 @@ class SvWindowErrorPanel extends Object {
             {
                 const style = detailsContent.style;
                 style.display = "none";
-                style.color = "var(--sv-text-muted, #aaa)";
+                style.color = "var(--sv-boot-panel-text-muted, #aaa)";
                 style.fontSize = "0.7em";
                 style.fontFamily = "monospace";
-                style.backgroundColor = "var(--sv-selection-bg, rgba(128, 128, 128, 0.12))";
+                style.backgroundColor = "var(--sv-boot-panel-selection-bg, rgba(128, 128, 128, 0.12))";
                 style.padding = "0.5em";
                 style.borderRadius = "4px";
                 style.marginTop = "0.5em";
@@ -404,7 +409,7 @@ class SvWindowErrorPanel extends Object {
                 copyButton.appendChild(clipboardImg);
 
                 copyButton.addEventListener("mouseenter", () => {
-                    copyButton.style.backgroundColor = "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))";
+                    copyButton.style.backgroundColor = "var(--sv-boot-panel-selection-active-bg, rgba(128, 128, 128, 0.25))";
                 });
 
                 copyButton.addEventListener("mouseleave", () => {
@@ -471,20 +476,20 @@ class SvWindowErrorPanel extends Object {
                 style.textAlign = "center";
                 style.cursor = "pointer";
                 style.transition = "all 0.2s ease";
-                style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-surface, #191919)";
-                style.color = isPrimary ? "var(--sv-text, white)" : "var(--sv-text-muted, #aaa)";
-                style.border = "1px solid var(--sv-hairline, #444)";
+                style.backgroundColor = isPrimary ? "var(--sv-boot-panel-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-boot-panel-surface, #191919)";
+                style.color = isPrimary ? "var(--sv-boot-panel-text, white)" : "var(--sv-boot-panel-text-muted, #aaa)";
+                style.border = "1px solid var(--sv-boot-panel-hairline, #444)";
                 style.borderRadius = "0";
                 style.padding = "0.5em 1.5em";
                 style.flex = "1";
                 button.textContent = label;
 
                 button.addEventListener("mouseenter", () => {
-                    button.style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-selection-bg, rgba(128, 128, 128, 0.12))";
+                    button.style.backgroundColor = isPrimary ? "var(--sv-boot-panel-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-boot-panel-selection-bg, rgba(128, 128, 128, 0.12))";
                 });
 
                 button.addEventListener("mouseleave", () => {
-                    button.style.backgroundColor = isPrimary ? "var(--sv-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-surface, #191919)";
+                    button.style.backgroundColor = isPrimary ? "var(--sv-boot-panel-selection-active-bg, rgba(128, 128, 128, 0.25))" : "var(--sv-boot-panel-surface, #191919)";
                 });
 
                 button.addEventListener("click", clickHandler);
@@ -568,9 +573,9 @@ class SvWindowErrorPanel extends Object {
             style.fontFamily = "inherit";
             style.fontSize = "0.9em";
             style.padding = "0.5em 0.75em";
-            style.color = "var(--sv-text, white)";
-            style.backgroundColor = "var(--sv-selection-bg, rgba(128, 128, 128, 0.12))";
-            style.border = "1px solid var(--sv-hairline, #444)";
+            style.color = "var(--sv-boot-panel-text, white)";
+            style.backgroundColor = "var(--sv-boot-panel-selection-bg, rgba(128, 128, 128, 0.12))";
+            style.border = "1px solid var(--sv-boot-panel-hairline, #444)";
             style.borderRadius = "0.33em";
             style.outline = "none";
         }
@@ -581,9 +586,9 @@ class SvWindowErrorPanel extends Object {
             style.cursor = "pointer";
             style.fontSize = "0.9em";
             style.padding = "0.5em 1em";
-            style.border = "1px solid var(--sv-hairline, #444)";
+            style.border = "1px solid var(--sv-boot-panel-hairline, #444)";
             style.borderRadius = "0.33em";
-            style.color = "var(--sv-text-muted, #aaa)";
+            style.color = "var(--sv-boot-panel-text-muted, #aaa)";
             style.userSelect = "none";
         }
         const submit = () => {
@@ -596,7 +601,7 @@ class SvWindowErrorPanel extends Object {
             container.innerHTML = "";
             const thanks = document.createElement("div");
             thanks.textContent = "Thanks — your note was sent with the report.";
-            thanks.style.color = "var(--sv-text-muted, #aaa)";
+            thanks.style.color = "var(--sv-boot-panel-text-muted, #aaa)";
             thanks.style.fontSize = "0.9em";
             container.appendChild(thanks);
         };
