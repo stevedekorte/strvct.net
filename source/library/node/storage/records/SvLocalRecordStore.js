@@ -120,7 +120,52 @@
             pool.setOwnerUid(row.ownerUid);
         }
         pool.openSync();
+        if (this.inSyncVersionOfPool(poolId) !== null) {
+            // its rows are what the cloud holds at its version: the next commit
+            // sends only what changes from here (and what a collect sweeps).
+            // Without this a pool opened from disk had no snapshot, and its
+            // first commit sent every record. Interim: Plans/Record Store, the
+            // persistent outbox, replaces the in-memory snapshot.
+            pool.updateLastSyncedSnapshot();
+        }
         return pool;
+    }
+
+    /**
+     * @description The cloud version a stored pool's rows hold, when they hold no
+     * unsent edit: its root row has a cloud version, and its sync stamps
+     * (SvSyncableJsonGroup cloudLastModified / localLastModified, on the root
+     * record) show no edit since the last sync. Null when the store has no such
+     * pool, it never reached the cloud, or it may hold unsent edits.
+     * @param {String} poolId
+     * @returns {Number|null}
+     * @category Pools
+     */
+    inSyncVersionOfPool (poolId) {
+        const root = this.rootRowForPool(poolId);
+        if (!root || !Number.isInteger(root.version) || root.version <= 0) {
+            return null;
+        }
+        const entries = SvLocalRecordStore.entriesOfPayload(root.payloadJson);
+        const cloud = entries.get("cloudLastModified");
+        const local = entries.get("localLastModified");
+        const inSync = Number.isFinite(cloud) && !(Number.isFinite(local) && local > cloud);
+        return inSync ? root.version : null;
+    }
+
+    /**
+     * @description A stored record's entries by name ({ type, entries } payload).
+     * @param {String} payloadJson
+     * @returns {Map}
+     * @category Pools
+     */
+    static entriesOfPayload (payloadJson) {
+        try {
+            const record = JSON.parse(payloadJson);
+            return new Map(Array.isArray(record && record.entries) ? record.entries : []);
+        } catch {
+            return new Map();
+        }
     }
 
     newChildPool (poolId, parentNodeId, orderKey) {
