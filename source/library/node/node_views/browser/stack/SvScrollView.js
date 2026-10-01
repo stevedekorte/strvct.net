@@ -19,10 +19,16 @@
  *
  * Intent changes ONLY on:
  * - user-initiated scrolling (wheel / touch / mouse / key input followed by
- *   scroll events): scrolling away from the bottom selects "preserve",
- *   reaching the bottom selects "bottom"
- * - explicit API calls: pinToBottom(), scrollToBottomSmooth(),
- *   anchorOnSubview() (question anchoring), resetForNewContent()
+ *   scroll events): always selects "preserve", even at the bottom — a
+ *   reader who scrolls to the end of a streaming reply is not asking to
+ *   follow it
+ * - explicit API calls: pinToBottom(), scrollToBottomSmooth() (which drops
+ *   back to "preserve" once it arrives), anchorOnSubview() (question
+ *   anchoring), resetForNewContent()
+ *
+ * So after the one scroll that anchors a sent message, content arriving
+ * below never moves the viewport. "bottom" is for landing on a freshly
+ * opened conversation and for explicit requests.
  *
  * Geometry changes (streaming text growth, images acquiring their intrinsic
  * size, tiles added or removed, viewport resizes) NEVER change intent — they
@@ -554,7 +560,7 @@
         }
         const now = performance.now();
         this.purgeStalePendingScrolls(now);
-        if (!this.consumePendingProgrammaticScroll(geometry) && !this.isSmoothScrollingToBottomStill()) {
+        if (!this.consumePendingProgrammaticScroll(geometry) && !this.isSmoothScrollingToBottomStill(geometry)) {
             if (now <= this.userScrollSessionUntil()) {
                 this.setUserScrollSessionUntil(now + this.scrollSessionExtendMs());
                 this.updateIntentFromUserScroll(geometry);
@@ -572,12 +578,16 @@
      * @returns {Boolean} True while intermediate smooth-scroll events should be ignored.
      * @category State
      */
-    isSmoothScrollingToBottomStill () {
+    isSmoothScrollingToBottomStill (geometry) {
         if (!this.isSmoothScrollingToBottom()) {
             return false;
         }
-        if (this.isAtBottom()) {
+        if (this.isAtBottomForGeometry(geometry)) {
+            // arrived: the link is one deliberate scroll, not a request to
+            // follow whatever streams in next
             this.setIsSmoothScrollingToBottom(false);
+            this.setScrollIntent("preserve");
+            this.deriveViewportRef(geometry);
         }
         return true;
     }
@@ -616,22 +626,18 @@
     }
 
     /**
-     * @description Updates intent from a user-classified scroll event:
-     * reaching the bottom pins, scrolling away preserves the new reading
-     * position.
+     * @description Updates intent from a user-classified scroll event: the
+     * new reading position is preserved, wherever it is.
      * @returns {SvScrollView} The SvScrollView instance.
      * @category State
      */
     updateIntentFromUserScroll (geometry) {
-        const g = geometry || this.scrollGeometry();
-        if (this.isAtBottomForGeometry(g)) {
-            if (this.scrollIntent() !== "bottom" || this.isAnchored()) {
-                this.pinToBottom();
-            }
-        } else {
-            this.setScrollIntent("preserve");
-            this.deriveViewportRef(g);
-        }
+        // Reaching the bottom does NOT re-engage "bottom": that turned a
+        // scroll down to the end of a streaming reply into following the
+        // stream, so new content moved the viewport. The user's position is
+        // always held; only explicit API calls select "bottom".
+        this.setScrollIntent("preserve");
+        this.deriveViewportRef(geometry || this.scrollGeometry());
         return this;
     }
 
@@ -827,18 +833,56 @@
         // the reference tile IS a measurement — but scrollTop comes from the
         // caller's snapshot so this never re-reads it after a write.
         const scrollTop = geometry ? geometry.scrollTop : this.element().scrollTop;
-        const tiles = contentView.subviews();
-        for (let i = 0; i < tiles.length; i++) {
-            const te = tiles[i].element();
-            if (te.isConnected && (te.offsetTop + te.offsetHeight > scrollTop + 1)) {
-                if (tiles[i].node && tiles[i].node()) {
-                    this.setViewportRefNode(tiles[i].node());
-                    this.setViewportRefOffset(te.offsetTop - scrollTop);
-                }
-                break;
-            }
+        const tile = this.firstTileBelow(scrollTop + 1) || this.lastRenderedTile();
+        if (tile && tile.node && tile.node()) {
+            // In the anchor padding, below every tile, the LAST tile is the
+            // reference (a negative offset). Keeping the previous reference
+            // instead pulled the reader back up to it on the next change.
+            this.setViewportRefNode(tile.node());
+            this.setViewportRefOffset(tile.element().offsetTop - scrollTop);
         }
         return this;
+    }
+
+    /**
+     * @description The first connected tile whose bottom edge is below y.
+     * @param {Number} y - A content offset (px).
+     * @returns {SvDomView|undefined} The tile, if any.
+     * @category State
+     */
+    firstTileBelow (y) {
+        return this.contentView().subviews().find((tile) => {
+            const te = tile.element();
+            return te.isConnected && (te.offsetTop + te.offsetHeight > y);
+        });
+    }
+
+    /**
+     * @description The last connected tile that takes up space — a hidden
+     * (display: none) tile reports offsetTop 0, so it cannot be a reference.
+     * @returns {SvDomView|undefined} The tile, if any.
+     * @category State
+     */
+    lastRenderedTile () {
+        return this.contentView().subviews().slice().reverse().find((tile) => {
+            const te = tile.element();
+            return te.isConnected && te.offsetHeight > 0;
+        });
+    }
+
+    /**
+     * @description The connected tile showing aNode, if any.
+     * @param {SvNode} aNode
+     * @returns {SvDomView|null} The tile or null.
+     * @category State
+     */
+    tileForNode (aNode) {
+        const contentView = this.contentView();
+        if (!aNode || !contentView || !contentView.subviewForNode) {
+            return null;
+        }
+        const tile = contentView.subviewForNode(aNode);
+        return (tile && tile.element().isConnected) ? tile : null;
     }
 
     /**
@@ -847,16 +891,7 @@
      * @category State
      */
     viewportRefTile () {
-        const refNode = this.viewportRefNode();
-        const contentView = this.contentView();
-        if (!refNode || !contentView || !contentView.subviewForNode) {
-            return null;
-        }
-        const tile = contentView.subviewForNode(refNode);
-        if (tile && tile.element().isConnected) {
-            return tile;
-        }
-        return null;
+        return this.tileForNode(this.viewportRefNode());
     }
 
     /**
@@ -1135,8 +1170,7 @@
     /**
      * @description Disengages anchor mode without moving the viewport:
      * shrinks the anchor padding to the minimum that avoids a scrollTop
-     * clamp, then resumes normal semantics — pinning if the user is at the
-     * natural bottom, preserving their position otherwise. Called when the
+     * clamp, then keeps preserving the user's position. Called when the
      * anchored exchange's response completes.
      * @returns {SvScrollView} The SvScrollView instance.
      * @category Scrolling
@@ -1150,9 +1184,8 @@
         }
         this.setIsAnchored(false);
         this.reduceAnchorPaddingSafely();
-        if (this.isAtBottom()) {
-            this.pinToBottom();
-        }
+        // Stays "preserve" even at the bottom: pinning here made late content
+        // (an image finishing, a roll's follow-up narration) move the viewport.
         this.updateScrollToBottomButton();
         return this;
     }

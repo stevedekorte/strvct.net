@@ -409,8 +409,8 @@
         this.scheduleDisplayLifetimeSweep();
         this.chatInputNode().setValueIsEditable(true);
         // The anchored exchange is over once a user-visible response finishes
-        // streaming — release the scroll anchor so normal stick-to-bottom /
-        // reading-position behavior resumes (a no-op when not anchored).
+        // streaming — release the scroll anchor (drops the spare padding; the
+        // reading position is still held) — a no-op when not anchored.
         if (aMsg.isResponse && aMsg.isResponse() && aMsg.isVisibleToUser && aMsg.isVisibleToUser()) {
             this.requestAnchorRelease();
         }
