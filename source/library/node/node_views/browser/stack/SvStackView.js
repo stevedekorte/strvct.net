@@ -901,6 +901,9 @@
      * changed (drives the recompactBrowserChain fixed point).
      */
     updateCompaction () {
+        if (!this.isInDocument()) {
+            return false; // off the page: compacted when it is attached again
+        }
         const navChanged = this.compactNavAsNeeded();
         const companionChanged = this.detailView().updateCompanionLayout();
         return navChanged || companionChanged;
@@ -1052,6 +1055,14 @@
      */
     cachedRootWidth () {
         if (this.rootWidthCache() === null) {
+            if (!this.isInDocument()) {
+                // a cached stack off the page (an earlier selection) still syncs
+                // with its node; it has no width to measure, and measuring it
+                // after each width write was a "forced layout" per node update
+                // (2026-10-02: hundreds per second while a campaign assistant
+                // ran). 0 means "not laid out": callers fall back to the window.
+                return 0;
+            }
             const w = this.size().width(); // one clientWidth read
             if (w > 0) {
                 this.setRootWidthCache(w);
@@ -1064,6 +1075,18 @@
     invalidateRootWidth () {
         this.setRootWidthCache(null);
         return this;
+    }
+
+    /**
+     * @description Whether this stack's element is attached to the document.
+     * Cached stacks (earlier selections) are kept off the page and still sync
+     * with their nodes; they have no layout to compute. isConnected is not a
+     * layout read.
+     * @returns {Boolean}
+     * @category Layout
+     */
+    isInDocument () {
+        return this.element().isConnected;
     }
 
     /**
