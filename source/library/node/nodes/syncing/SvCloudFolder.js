@@ -25,8 +25,12 @@
  *     optional childrenLastModified cache check → COMPLETE listing →
  *     apply children, eager or lazy/manifest-first. Either way a complete
  *     listing PRUNES local children deleted in cloud — the listing is
- *     authoritative for membership; a dirty local child is later than the
- *     cloud and wins, per most-recent-wins
+ *     authoritative for membership, and a deletion outranks a local child's
+ *     unsent edits (2026-09-30)
+ *   - a folder that is itself a pool (Plans/Placed Subnodes §3: a folder is a
+ *     one-row pool) keeps its row current: after each complete scope listing
+ *     it writes its row when the listing lacks it or holds an older one
+ *     (cloudFolderRow / mayWriteFolderRow)
  *   - per-folder childrenLastModified cache (skip the re-list when the
  *     folder's direct children are unchanged since the last sync)
  *   - lazy manifest-first loading: render the list from the manifest and
@@ -363,7 +367,77 @@
             }
         });
         this.pruneIfListingComplete(listedStableIds, listing.isComplete);
+        this.ensureFolderRowFrom(listing);
         return this;
+    }
+
+    // --- the folder's own row (Plans/Placed Subnodes §3: a folder is a one-row pool) ---
+
+    /**
+     * @description This folder as a row of its scope: a pool with only a root
+     * row, holding the folder's own data and placed under its parent. Null
+     * (the default) for a folder that is not a pool.
+     * @returns {Object|null} { poolId, objectId, parentId, orderKey, payloadJson, scopeId }
+     * @category Folder Row
+     */
+    cloudFolderRow () {
+        return null;
+    }
+
+    /**
+     * @description Whether the signed-in user may write this folder's row (an
+     * owner or editor of its scope). False by default.
+     * @returns {Boolean}
+     * @category Folder Row
+     */
+    mayWriteFolderRow () {
+        return false;
+    }
+
+    /**
+     * @description The record cloud the folder's row is written to; null when
+     * the folder is not on the record cloud.
+     * @returns {SvCloudRecordStore|null}
+     * @category Folder Row
+     */
+    folderRowRecordStore () {
+        return null;
+    }
+
+    /**
+     * @description After a complete scope listing: writes this folder's row
+     * when the listing lacks it or holds a different one. Fire and forget —
+     * a failure is logged and the next listing tries again.
+     * @param {Object} listing - { rows, isComplete }
+     * @category Folder Row
+     */
+    ensureFolderRowFrom (listing) {
+        const wanted = this.cloudFolderRow();
+        if (!wanted || !listing.isComplete || !this.mayWriteFolderRow() || !this.folderRowRecordStore()) {
+            return;
+        }
+        const listed = listing.rows.find(row => row.poolId === wanted.poolId) || null;
+        if (SvCloudFolder.folderRowIsCurrent(listed, wanted)) {
+            return;
+        }
+        this.folderRowRecordStore().asyncPutRootRow(wanted, { scopeId: wanted.scopeId, baseVersion: listed ? listed.version : 0 }).then((answer) => {
+            console.log(this.cloudSyncLogPrefix(), "folder row " + wanted.poolId + ": " + (answer && answer.status));
+        }).catch((e) => {
+            console.warn(this.cloudSyncLogPrefix(), "folder row " + wanted.poolId + " not written:", e && e.message);
+        });
+    }
+
+    /**
+     * @description Whether a listed root row already is the wanted one: same
+     * placement and payload (the listing's payload is the row cut to its row
+     * entries, which is all a folder row holds).
+     * @param {Object|null} listed
+     * @param {Object} wanted
+     * @returns {Boolean}
+     * @category Folder Row
+     */
+    static folderRowIsCurrent (listed, wanted) {
+        return !!listed && listed.parentId === wanted.parentId && listed.orderKey === wanted.orderKey && listed.payloadJson === wanted.payloadJson;
     }
 
     /**

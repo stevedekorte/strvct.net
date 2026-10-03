@@ -224,6 +224,41 @@
         }
     }
 
+    /**
+     * @description Writes a pool that is only its root row — a folder (Plans/
+     * Placed Subnodes §3, folders are one-row pools): creates it (base version
+     * 0, in the given scope) or replaces its root row at the version the
+     * caller saw. On a conflict it rereads the root's version and tries once
+     * more — the row is the caller's whole intent, so the newer version is
+     * simply replaced.
+     * @param {Object} row - { poolId, objectId, parentId, orderKey, payloadJson }
+     * @param {Object} options - { scopeId, baseVersion }
+     * @returns {Promise<Object>} the commit's answer
+     * @category Write
+     */
+    async asyncPutRootRow (row, options) {
+        const first = await this.asyncCommit(this.rootRowCommit(row, options.scopeId, options.baseVersion || 0));
+        if (!first || first.status !== "conflict") {
+            return first;
+        }
+        const current = (await this.asyncRootRows([row.poolId]))[0];
+        return this.asyncCommit(this.rootRowCommit(row, options.scopeId, current && Number.isInteger(current.version) ? current.version : 0));
+    }
+
+    rootRowCommit (row, scopeId, baseVersion) {
+        const commit = {
+            poolId: row.poolId,
+            baseVersion: baseVersion,
+            requestId: Object.newUuid(),
+            writes: [{ poolId: row.poolId, objectId: row.objectId, parentId: row.parentId, orderKey: row.orderKey, payloadJson: row.payloadJson }],
+            deletes: []
+        };
+        if (baseVersion === 0) {
+            commit.create = { scopeId: scopeId };
+        }
+        return commit;
+    }
+
     // --- staging (SvStagedRecordCommit) ---
 
     async asyncStageBegin (args) {
