@@ -53,7 +53,6 @@ function defineTestFolderClass () {
         cloudFsScopeRootId () { return "uid"; }
         cloudFsFolderId () { return "chars-uid"; }
         cloudFsChildIdFromNodeId (id) { return id; }
-        async asyncApplyChildFromCloud () {}
     }).initThisClass();
 }
 

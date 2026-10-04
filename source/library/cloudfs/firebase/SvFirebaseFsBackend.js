@@ -10,10 +10,10 @@
  * @classdesc
  * Firebase-backed concrete implementation of SvFsBackend.
  *
- * Direct CRUD on the `Nodes` collection and `blobs/{hash}` Storage
- * objects use the Firebase compat SDK (`firebase.firestore()`,
+ * Reads of the `Nodes` collection (scope roots) and `blobs/{hash}`
+ * Storage objects use the Firebase compat SDK (`firebase.firestore()`,
  * `firebase.app().storage()`). Server-side function calls — uploadBlob,
- * copyNode, deleteSubtree, invites, ensure-home — are routed through `callFunction(name, args)`, which
+ * deleteScope, invites, ensure-home — are routed through `callFunction(name, args)`, which
  * stays abstract: the application provides a subclass that knows how
  * to reach its specific HTTP endpoint set.
  *
@@ -91,64 +91,6 @@
             (snap) => onSnap(snap.exists ? snap.data() : null),
             (err) => { if (onErr) onErr(err); else console.error("[SvFirebaseFsBackend] watchNode error:", err); }
         );
-    }
-
-    /**
-     * Listen to direct children of `parentId`.
-     *
-     * Firestore's rule evaluator denies LIST queries unless it can prove
-     * the read rule grants access for every potential match. For our
-     * Nodes rule (which gates on `resource.data.scopeRootId`) the query
-     * MUST include a matching `where("scopeRootId", "==", ...)` clause
-     * so the engine can substitute and verify. Pass it via
-     * `opts.scopeRootId` — the framework supplies it from the parent
-     * folder's scope.
-     */
-    watchChildren (parentId, opts, onSnap, onErr) {
-        let q = this.nodesCol().where("parentId", "==", parentId);
-        if (opts && opts.scopeRootId) q = q.where("scopeRootId", "==", opts.scopeRootId);
-        q = q.orderBy("sortKey");
-        if (opts && opts.startAfterSortKey) q = q.startAfter(opts.startAfterSortKey);
-        if (opts && opts.limit) q = q.limit(opts.limit);
-        return q.onSnapshot(
-            (snap) => {
-                const list = [];
-                snap.forEach((d) => list.push(d.data()));
-                onSnap(list);
-            },
-            (err) => { if (onErr) onErr(err); else console.error("[SvFirebaseFsBackend] watchChildren error:", err); }
-        );
-    }
-
-    /**
-     * One-shot get() of direct children. Used for `asyncListChildren`
-     * where we don't want a subscription and want server-consistent
-     * results immediately (avoiding the cache-then-server snapshot
-     * sequence that onSnapshot delivers — which can race against a
-     * just-server-written doc and return a stale empty list first).
-     */
-    async listChildren (parentId, opts) {
-        let q = this.nodesCol().where("parentId", "==", parentId);
-        if (opts && opts.scopeRootId) q = q.where("scopeRootId", "==", opts.scopeRootId);
-        q = q.orderBy("sortKey");
-        if (opts && opts.startAfterSortKey) q = q.startAfter(opts.startAfterSortKey);
-        if (opts && opts.limit) q = q.limit(opts.limit);
-        const snap = await q.get({ source: "server" });
-        const list = [];
-        snap.forEach((d) => list.push(d.data()));
-        return list;
-    }
-
-    async writeNode (id, data) {
-        await this.nodeRef(id).set(data);
-    }
-
-    async updateNode (id, patch) {
-        await this.nodeRef(id).update(patch);
-    }
-
-    async deleteNode (id) {
-        await this.nodeRef(id).delete();
     }
 
     // ---------------------------------------------------------------- blobs

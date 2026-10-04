@@ -98,7 +98,6 @@
         const t = data && data.subtype && data.subtype.type;
         let cls = SvFsNode;
         if (t === "folder") cls = SvFsFolder;
-        else if (t === "document") cls = SvFsDocument;
         else if (t === "blob") cls = SvFsBlob;
         const node = cls.clone();
         node.setClient(client);

@@ -45,13 +45,6 @@
             const slot = this.newSlot("cloudKnownBlobHashes", null);
             slot.setSlotType("Set");
         }
-        {
-            // Folder id → the promise of its ensure: a folder ensured once is
-            // there for the page's life, so a document's saves after the first
-            // skip the read (and concurrent saves share one).
-            const slot = this.newSlot("ensuredFolders", null);
-            slot.setSlotType("Map");
-        }
     }
 
     initPrototype () {
@@ -61,7 +54,6 @@
         super.init();
         this.setListenerPool(SvFsListenerPool.shared());
         this.setCloudKnownBlobHashes(new Set());
-        this.setEnsuredFolders(new Map());
         return this;
     }
 
@@ -317,122 +309,6 @@
     async asyncBlobUrl (hash) {
         const fullHash = (typeof hash === "string" && hash.startsWith("sha256:")) ? hash : "sha256:" + hash;
         return this.backend().blobUrl(fullHash);
-    }
-
-    /**
-     * Ensure a document node exists at `id` and return it as an
-     * `SvFsDocument`. If the node is missing, create it with the given
-     * parent / scope / subtype metadata; if it already exists, just
-     * read it back.
-     *
-     * A document's node lists it in its folder and names its records pool
-     * (subtype.recordPoolId); the content itself is committed as records.
-     *
-     * @param {Object} args
-     * @param {string} args.id            - Stable node id (e.g. character id).
-     * @param {string} args.parentId      - Parent folder node id.
-     * @param {string} args.scopeRootId   - Owning scope-root id (typically the user's home).
-     * @param {string} [args.title]       - Display title (defaults to id).
-     * @param {string} [args.sortKey]     - Sibling order key (defaults to id).
-     * @param {Object} args.subtype       - { type:"document", documentClass, schemaVersion?, ... }
-     * @param {string} [args.visibility="private"]
-     * @returns {Promise<SvFsDocument>}
-     */
-    async asyncEnsureDocument (args) {
-        const existing = await this.asyncReadNode(args.id);
-        if (existing) {
-            if (!(existing instanceof SvFsDocument)) {
-                const e = new Error("node " + args.id + " exists but is not a document (" + existing.svType() + ")");
-                e.code = "failed-precondition";
-                throw e;
-            }
-            return existing;
-        }
-
-        const ts = this.backend().serverTimestampSentinel();
-        const data = {
-            id: args.id,
-            parentId: args.parentId,
-            sortKey: args.sortKey || args.id,
-            scopeRootId: args.scopeRootId,
-            visibility: args.visibility || "private",
-            title: args.title || args.id,
-            subtype: args.subtype,
-            createdAt: ts,
-            lastModified: ts,
-            childrenLastModified: ts
-        };
-        await this.backend().writeNode(args.id, data);
-        const created = await this.asyncReadNode(args.id);
-        if (!(created instanceof SvFsDocument)) {
-            const e = new Error("created node " + args.id + " did not read back as document");
-            e.code = "internal";
-            throw e;
-        }
-        return created;
-    }
-
-    /**
-     * Ensure a folder node exists at `id` and return it as an
-     * `SvFsFolder`. Symmetric with `asyncEnsureDocument`.
-     *
-     * @param {Object} args
-     * @param {string} args.id
-     * @param {string} args.parentId
-     * @param {string} args.scopeRootId
-     * @param {string} [args.title]
-     * @param {string} [args.sortKey]
-     * @param {Object} [args.subtype]   - defaults to { type: "folder" }
-     * @param {string} [args.visibility="private"]
-     * @returns {Promise<SvFsFolder>}
-     */
-    async asyncEnsureFolder (args) {
-        let ensure = this.ensuredFolders().get(args.id);
-        if (!ensure) {
-            ensure = this.asyncEnsureFolderNow(args);
-            this.ensuredFolders().set(args.id, ensure);
-            ensure.catch(() => this.ensuredFolders().delete(args.id)); // a failed ensure is retried by the next
-        }
-        return ensure;
-    }
-
-    /**
-     * @description Reads the folder node, creating it when absent.
-     * @param {Object} args - as asyncEnsureFolder
-     * @returns {Promise<SvFsFolder>}
-     */
-    async asyncEnsureFolderNow (args) {
-        const existing = await this.asyncReadNode(args.id);
-        if (existing) {
-            if (!(existing instanceof SvFsFolder)) {
-                const e = new Error("node " + args.id + " exists but is not a folder (" + existing.svType() + ")");
-                e.code = "failed-precondition";
-                throw e;
-            }
-            return existing;
-        }
-
-        const ts = this.backend().serverTimestampSentinel();
-        const data = {
-            id: args.id,
-            parentId: args.parentId,
-            sortKey: args.sortKey || args.id,
-            scopeRootId: args.scopeRootId,
-            visibility: args.visibility || "private",
-            title: args.title || args.id,
-            subtype: args.subtype || { type: "folder" },
-            createdAt: ts,
-            lastModified: ts,
-            childrenLastModified: ts
-        };
-        await this.backend().writeNode(args.id, data);
-        const created = await this.asyncReadNode(args.id);
-        if (!(created instanceof SvFsFolder)) {
-            const e = new Error("created node " + args.id + " did not read back as folder");
-            e.code = "internal";
-            throw e;
-        }
-        return created;
     }
 
 }.initThisClass());

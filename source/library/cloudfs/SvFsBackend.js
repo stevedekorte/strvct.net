@@ -13,9 +13,14 @@
  * Storage SDK, an in-memory store for tests, a self-hosted
  * SQL+filesystem etc).
  *
- * The model (`SvFsNode`, `SvFsFolder`, `SvFsDocument`, `SvFsBlob`,
- * `SvFsClient`) is fully decoupled from the backend; swapping the
- * backend swaps the data plane without touching the model layer.
+ * The model (`SvFsNode`, `SvFsFolder`, `SvFsBlob`, `SvFsClient`) is
+ * fully decoupled from the backend; swapping the backend swaps the data
+ * plane without touching the model layer.
+ *
+ * What it holds: scopes (a scope root node and its members — the
+ * permissions store), blobs, and the multiplayer channels. Documents and
+ * folders are records (SvCloudRecordStore; Plans/Placed Subnodes), not
+ * nodes.
  *
  * # Method conventions
  *
@@ -29,7 +34,7 @@
  * # Function-routed operations
  *
  * Some operations are policy-gated and run server-side (uploadBlob,
- * deleteSubtree, etc.). The default implementations forward to
+ * deleteScope, etc.). The default implementations forward to
  * `callFunction(name, args)`; subclasses that prefer to embed routing
  * into specific methods can override them.
  */
@@ -74,70 +79,6 @@
      */
     watchNode (/*_id, _onSnap, _onErr*/) {
         throw this.notImplementedError("watchNode");
-    }
-
-    /**
-     * Watch the direct children of a folder ordered by sortKey.
-     * Options: { limit, startAfterSortKey }.
-     * @param {string} _parentId
-     * @param {Object} _opts
-     * @param {function(Array<Object>):void} _onSnap
-     * @param {function(Error):void} [_onErr]
-     * @returns {function():void} unsubscribe
-     */
-    watchChildren (/*_parentId, _opts, _onSnap, _onErr*/) {
-        throw this.notImplementedError("watchChildren");
-    }
-
-    /**
-     * One-shot list of direct children. Server-consistent (no local
-     * cache fall-through). Default falls back to a watchChildren
-     * subscription that auto-stops; concrete backends override with
-     * a single `get()` for proper consistency semantics.
-     * @param {string} parentId
-     * @param {Object} opts - { limit, startAfterSortKey, scopeRootId }
-     * @returns {Promise<Array<Object>>}
-     */
-    async listChildren (parentId, opts) {
-        return new Promise((resolve, reject) => {
-            const stop = this.watchChildren(parentId, opts, (list) => {
-                try { stop(); } catch (_) { /* */ }
-                resolve(list);
-            }, reject);
-        });
-    }
-
-    /**
-     * Create or update a node (full payload semantics). Concrete
-     * backends decide whether create-only or upsert; framework
-     * callers expect upsert.
-     * @param {string} _id
-     * @param {Object} _data
-     * @returns {Promise<void>}
-     */
-    async writeNode (/*_id, _data*/) {
-        throw this.notImplementedError("writeNode");
-    }
-
-    /**
-     * Apply a partial update to an existing node. Caller is responsible
-     * for not violating immutability constraints (e.g., scopeRootId).
-     * @param {string} _id
-     * @param {Object} _patch
-     * @returns {Promise<void>}
-     */
-    async updateNode (/*_id, _patch*/) {
-        throw this.notImplementedError("updateNode");
-    }
-
-    /**
-     * Delete a single node. Subtree-delete is its own operation
-     * (`deleteSubtree` via callFunction).
-     * @param {string} _id
-     * @returns {Promise<void>}
-     */
-    async deleteNode (/*_id*/) {
-        throw this.notImplementedError("deleteNode");
     }
 
     // ---------------------------------------------------------------- blobs
@@ -214,18 +155,8 @@
     // ---------------------------------------------------------------- federation
 
     /**
-     * Recursively delete a subtree.
-     * @param {string} nodeId
-     * @returns {Promise<{deletedNodes:number}>}
-     */
-    async deleteSubtree (nodeId) {
-        return this.callFunction("delete-subtree", { nodeId });
-    }
-
-    /**
      * Owner-gated deletion of an entire scope-root (e.g. a promoted
-     * multiplayer session). deleteSubtree refuses scope-roots; this is
-     * the dedicated path. Removes the scope-root node + descendants, its
+     * multiplayer session). Removes the scope-root node + descendants, its
      * _members/_invites subcollections (so collection-group membership
      * discovery stops re-adopting it), the real-time channel data, and
      * the scope's storage payload.

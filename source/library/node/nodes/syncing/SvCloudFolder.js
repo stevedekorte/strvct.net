@@ -8,9 +8,10 @@
  * @class SvCloudFolder
  * @extends SvSyncableArrayNode
  * @classdesc
- * Backend-agnostic base for a collection node that mirrors a cloud-fs
- * FOLDER (an SvFsFolder) and whose subnodes mirror that folder's child
- * documents. Provides the reusable cloud-folder machinery:
+ * Backend-agnostic base for a collection node whose subnodes are the cloud
+ * documents placed under it: a folder of the record cloud (Plans/Placed
+ * Subnodes §3 — a document is a pool, a folder a one-row pool, and placement
+ * is the tree). Provides the reusable cloud-folder machinery:
  *
  *   - cloudFsClient() wiring (via the `defaultFsBackend()` hook)
  *   - "loading…" subtitle while the first sync is in flight
@@ -19,35 +20,29 @@
  *     the queue survives reloads, retries every to-cloud pass, and doubles
  *     as the deletion tombstone consulted by every re-add path
  *   - asyncSyncToCloud  (save dirty children + flush pending deletes)
- *   - asyncSyncFromCloud: a folder whose children are pool root rows
- *     (asyncListedRootRows) lists from its scope's root rows — the rows
- *     placed under its id; any other folder reads its folder node →
- *     optional childrenLastModified cache check → COMPLETE listing →
- *     apply children, eager or lazy/manifest-first. Either way a complete
- *     listing PRUNES local children deleted in cloud — the listing is
- *     authoritative for membership, and a deletion outranks a local child's
- *     unsent edits (2026-09-30)
+ *   - asyncSyncFromCloud: lists the folder from its scope's root rows — a
+ *     placeholder per row placed under its id (title, subtitle, thumbnail
+ *     from the row; content loads on first open). A complete listing PRUNES
+ *     local children deleted in cloud — the listing is authoritative for
+ *     membership, and a deletion outranks a local child's unsent edits
+ *     (2026-09-30)
  *   - a folder that is itself a pool (Plans/Placed Subnodes §3: a folder is a
  *     one-row pool) keeps its row current: after each complete scope listing
  *     it writes its row when the listing lacks it or holds an older one
  *     (cloudFolderRow / mayWriteFolderRow)
- *   - per-folder childrenLastModified cache (skip the re-list when the
- *     folder's direct children are unchanged since the last sync)
- *   - lazy manifest-first loading: render the list from the manifest and
- *     defer each child's full-content download to first open
  *
  * Subclasses MUST provide (backend binding):
  *   - cloudFsScopeRootId()  — the caller's scope-root id (e.g. the signed-in
  *                             user id); backend/auth-specific
  *   - defaultFsBackend()    — the SvFsBackend to use when the shared
- *                             SvFsClient has none set
+ *                             SvFsClient has none set (deletes, scopes)
+ *   - folderRecordStore()   — the record cloud it lists from (an
+ *                             SvCloudRecordStore)
  *
  * Subclasses MUST provide (collection shape):
  *   - cloudFsFolderId()                          — e.g. "sessions-{uid}"
  *   - cloudFsChildIdFromNodeId(nodeId)           — stable-id extractor
- *   - asyncApplyChildFromCloud(stableId, child)  — eager per-child load
- *     OR (for lazy folders) usesLazyChildLoading()===true +
- *        newChildForCloudStableId(stableId)
+ *   - newChildForCloudStableId(stableId)         — a placeholder child
  *
  * Subclasses MAY override:
  *   - cloudSyncableSubnodes() / isChildCloudSyncable(child) — save filter
@@ -60,19 +55,6 @@
 (class SvCloudFolder extends SvSyncableArrayNode {
 
     initPrototypeSlots () {
-        {
-            // Local-only cache validator: the folder's childrenLastModified
-            // value captured at the last SUCCESSFUL sync. Persisted with the
-            // folder (restored from the local pool on reload) so a returning
-            // user can skip the list-children round trip + per-child loads
-            // when the folder's direct children haven't changed. Never sent
-            // to cloud.
-            const slot = this.newSlot("syncedChildrenClmKey", null);
-            slot.setSlotType("String");
-            slot.setShouldStoreSlot(true);
-            slot.setIsInCloudJson(false);
-        }
-
         {
             // The unified deletion pipeline's queue: descriptors
             // ({nodeId, scopeRootId|null, poolId|null}) of deleted children whose cloud
@@ -230,18 +212,6 @@
     }
 
     /**
-     * @description Subclasses using EAGER loading MUST update-or-create a
-     * local subnode for the given cloud child and load its content.
-     * @param {String} stableId
-     * @param {SvFsNode} childFsNode
-     * @returns {Promise<void>}
-     * @category Cloud Sync
-     */
-    async asyncApplyChildFromCloud (/*stableId, childFsNode*/) {
-        throw new Error(this.svType() + " must override asyncApplyChildFromCloud()");
-    }
-
-    /**
      * @description Which subnodes are eligible to save. Excludes unloaded
      * manifest placeholders (saving their empty content would clobber the
      * real cloud document) and anything that isn't dirty. Subclasses
@@ -284,33 +254,6 @@
     }
 
     /**
-     * @description Whether the local children can stand for an unchanged cloud
-     * listing (so the re-list is skipped): there are some, and each is either
-     * content this folder trusts or already a placeholder.
-     * @returns {Boolean}
-     * @category Cloud Sync
-     */
-    localChildrenStandForCloud () {
-        const children = this.subnodes();
-        return children.length > 0 && children.every(child => this.childHasUsableLocalContent(child)
-            || (child.cloudContentLoaded && !child.cloudContentLoaded()));
-    }
-
-    /**
-     * @description Subclasses MAY override to render the list from the
-     * folder MANIFEST and defer each child's full content load until the
-     * child is first opened (manifest-first / lazy). When true,
-     * asyncSyncFromCloud calls applyChildPlaceholderFromCloud (cheap,
-     * synchronous, no content download) per child instead of the eager
-     * asyncApplyChildFromCloud. Default false (eager full load).
-     * @returns {Boolean}
-     * @category Cloud Sync
-     */
-    usesLazyChildLoading () {
-        return false;
-    }
-
-    /**
      * @description The row fields (title, subtitle, thumbnailHash,
      * rowDetailsJson) in a pool root record's payload — its record JSON, { type, entries: [[slot, value]] }.
      * Null when the payload has none of them.
@@ -335,22 +278,24 @@
     }
 
     /**
-     * @description A lazy folder whose children are the pool root rows placed
-     * under it answers its scope's root rows — { rows, isComplete }, every
-     * root row of the scope — and takes those whose parentId is its folder id
-     * (Plans/Placed Subnodes §3, Folders). Null (the default): the folder
-     * lists its children from its folder node's listing.
+     * @description The folder's scope's root rows — { rows, isComplete },
+     * every root row of the scope, read in one request that concurrent folders
+     * of the same scope share — of which the folder takes those placed under
+     * its id (Plans/Placed Subnodes §3, Folders). Null when there is no record
+     * cloud or no scope.
      * @returns {Promise<{rows: Array<Object>, isComplete: Boolean}|null>}
      * @category Cloud Sync
      */
     async asyncListedRootRows () {
-        return null;
+        const store = this.folderRecordStore();
+        const scopeId = this.cloudFsScopeRootId();
+        return store && scopeId ? store.asyncScopeRootRows(scopeId) : null;
     }
 
     /**
      * @description Lists this folder from its scope's root rows: a placeholder
      * per row placed under this folder (its title, subtitle and thumbnail from
-     * the row), then the same prune as a node listing.
+     * the row), then the prune a complete listing allows.
      * @param {Object} listing - { rows, isComplete }
      * @category Cloud Sync
      */
@@ -363,7 +308,7 @@
             if (!this.hasPendingCloudDeleteForStableId(stableId)) {
                 // the row's fields, and the version the cloud holds (a local copy behind it is stale)
                 const fields = Object.assign({ cloudVersion: row.version }, SvCloudFolder.rowFieldsFromRecordPayload(row.payloadJson) || {});
-                this.applyChildPlaceholderSafely(stableId, null, fields);
+                this.applyChildPlaceholderSafely(stableId, fields);
             }
         });
         this.pruneIfListingComplete(listedStableIds, listing.isComplete);
@@ -395,12 +340,12 @@
     }
 
     /**
-     * @description The record cloud the folder's row is written to; null when
-     * the folder is not on the record cloud.
+     * @description The record cloud the folder lists its children from and
+     * writes its row to; null when the folder is not on one.
      * @returns {SvCloudRecordStore|null}
      * @category Folder Row
      */
-    folderRowRecordStore () {
+    folderRecordStore () {
         return null;
     }
 
@@ -413,14 +358,14 @@
      */
     ensureFolderRowFrom (listing) {
         const wanted = this.cloudFolderRow();
-        if (!wanted || !listing.isComplete || !this.mayWriteFolderRow() || !this.folderRowRecordStore()) {
+        if (!wanted || !listing.isComplete || !this.mayWriteFolderRow() || !this.folderRecordStore()) {
             return;
         }
         const listed = listing.rows.find(row => row.poolId === wanted.poolId) || null;
         if (SvCloudFolder.folderRowIsCurrent(listed, wanted)) {
             return;
         }
-        this.folderRowRecordStore().asyncPutRootRow(wanted, { scopeId: wanted.scopeId, baseVersion: listed ? listed.version : 0 }).then((answer) => {
+        this.folderRecordStore().asyncPutRootRow(wanted, { scopeId: wanted.scopeId, baseVersion: listed ? listed.version : 0 }).then((answer) => {
             console.log(this.cloudSyncLogPrefix(), "folder row " + wanted.poolId + ": " + (answer && answer.status));
         }).catch((e) => {
             console.warn(this.cloudSyncLogPrefix(), "folder row " + wanted.poolId + " not written:", e && e.message);
@@ -462,9 +407,9 @@
      * from the rest of the listing.
      * @category Cloud Sync
      */
-    applyChildPlaceholderSafely (stableId, childFsNode, rowFields) {
+    applyChildPlaceholderSafely (stableId, rowFields) {
         try {
-            this.applyChildPlaceholderFromCloud(stableId, childFsNode, rowFields);
+            this.applyChildPlaceholderFromCloud(stableId, rowFields);
         } catch (e) {
             console.warn(this.cloudSyncLogPrefix(), "placeholder failed for", stableId, e && e.message);
         }
@@ -472,16 +417,16 @@
 
     /**
      * @description Create/refresh a lightweight placeholder subnode from a
-     * manifest child node — title/subtitle only, no content download. The
-     * child loads its full content lazily on first open (the document's
+     * listed root row — its row fields only, no content download. The child
+     * loads its full content lazily on first open (the document's
      * prepareForFirstAccess / asyncEnsureLoaded). Generic for all cloud
      * folders; subclasses only supply find-or-create via
      * `childWithCloudStableId` / `newChildForCloudStableId`.
      * @param {String} stableId
-     * @param {SvFsNode} childFsNode
+     * @param {Object|null} rowFields - the row's fields, with cloudVersion
      * @category Cloud Sync
      */
-    applyChildPlaceholderFromCloud (stableId, childFsNode, rowFields = null) {
+    applyChildPlaceholderFromCloud (stableId, rowFields = null) {
         let child = this.childWithCloudStableId(stableId);
         // Don't downgrade a child whose local content counts (e.g. on a
         // refresh after the user opened it) back to a placeholder.
@@ -499,23 +444,12 @@
         // empty placeholder is never written back to cloud.
         child._suppressLocalModifiedTouch = true;
         try {
-            // The document's row (title, subtitle, thumbnail … on its root
-            // record) is current; the node's title/subtitle are only what was
-            // written when the document was created.
+            // the document's row (title, subtitle, thumbnail … on its root record)
             const fields = rowFields;
-            const title = (fields && typeof fields.title === "string") ? fields.title
-                : (childFsNode && typeof childFsNode.title === "function" ? childFsNode.title() : null);
-            const subtitle = (fields && typeof fields.subtitle === "string") ? fields.subtitle
-                : (childFsNode && typeof childFsNode.subtitle === "function" ? childFsNode.subtitle() : null);
-            if (title && child.setTitle) child.setTitle(title);
-            if (subtitle && child.setSubtitle) child.setSubtitle(subtitle);
+            if (fields && typeof fields.title === "string" && fields.title && child.setTitle) child.setTitle(fields.title);
+            if (fields && typeof fields.subtitle === "string" && fields.subtitle && child.setSubtitle) child.setSubtitle(fields.subtitle);
             if (fields && child.applyRowFields) child.applyRowFields(fields);
-            const lm = childFsNode && typeof childFsNode.lastModified === "function" ? childFsNode.lastModified() : null;
-            // asMillis before the fallback: an uninterpretable object is
-            // truthy, so `lm || Date.now()` would forward the object itself
-            // and null out both stamps downstream (which reads as
-            // never-synced and re-uploads the item on every startup).
-            if (child.didSyncFromCloud) child.didSyncFromCloud(Date.asMillis(lm) || Date.now());
+            if (child.didSyncFromCloud) child.didSyncFromCloud(Date.now());
         } finally {
             child._suppressLocalModifiedTouch = false;
         }
@@ -657,8 +591,8 @@
      * session's descriptor carries its scopeRootId and goes through
      * deleteScope (which also removes the _members subcollection and RTDB bus
      * trees, and is the only path the backend permits for a scope root), or
-     * leaveScope for a member leaving; a document that is only its records
-     * pool is deleted by pool; any other child through deleteNode.
+     * leaveScope for a member leaving; a document is deleted by its records
+     * pool. A descriptor with neither has nothing in the cloud to delete.
      * @param {Object} descriptor - a pendingCloudDeletes entry
      * @returns {Promise}
      * @category Deletion Pipeline
@@ -676,8 +610,7 @@
             await backend.deletePool(descriptor.poolId);
             console.log(this.cloudSyncLogPrefix(), "Deleted cloud child:", descriptor.nodeId, "(pool " + descriptor.poolId + ")");
         } else {
-            await backend.deleteNode(descriptor.nodeId);
-            console.log(this.cloudSyncLogPrefix(), "Deleted cloud child:", descriptor.nodeId);
+            console.warn(this.cloudSyncLogPrefix(), "dropping a queued delete with no pool or scope:", descriptor.nodeId);
         }
     }
 
@@ -705,8 +638,6 @@
             if (listing) {
                 this.applyRootRowListing(listing);
                 console.log("[rows] " + this.svType() + ": " + listing.rows.filter(row => row.parentId === this.cloudFsFolderId()).length + " of the scope's " + listing.rows.length + " root rows in " + Math.round(performance.now() - start) + " ms (started at " + Math.round(start) + " ms)");
-            } else {
-                await this.asyncSyncFromNodeListing(start);
             }
             if (this.didSyncFromCloud) this.didSyncFromCloud();
             return this;
@@ -716,103 +647,6 @@
                 this.didUpdateNode();
             }
         }
-    }
-
-    /**
-     * @description Lists this folder from its folder node's listing (the cloud
-     * file system's children): a lazy folder places a placeholder per child
-     * from the child node's title, an eager one loads each child's content.
-     * Skipped when the folder's children-modified stamp is unchanged and the
-     * local children still stand for the cloud's.
-     * @param {Number} start - performance.now() at the start of the sync
-     * @category Cloud Sync
-     */
-    async asyncSyncFromNodeListing (start) {
-        const client = this.cloudFsClient();
-        const folder = await client.asyncReadNode(this.cloudFsFolderId());
-        if (!folder || !(folder instanceof SvFsFolder)) {
-            return; // no folder yet — nothing to load
-        }
-
-        // Cheap cache validation. The backend bubbles childrenLastModified
-        // one level to a folder whenever any direct child is added,
-        // removed, or its content/metadata changes (onNodeWrite trigger).
-        // So if that stamp matches what we recorded at our last successful
-        // sync AND we still have the children locally (restored from the
-        // local pool), the child set + contents are unchanged — skip the
-        // list-children round trip and per-child loads entirely. The
-        // length>0 guard prevents a stale key from hiding real children.
-        // High-write-rate folders opt out (their stamp churns; use the
-        // live listener path instead). "Still have the children" means
-        // children this folder can stand on (localChildrenStandForCloud):
-        // a restored copy it does not trust needs the per-child pass.
-        const cloudClmKey = this._childrenClmKey(folder);
-        const isHighWrite = (typeof folder.isHighWriteRate === "function") && folder.isHighWriteRate();
-        if (!isHighWrite
-            && cloudClmKey !== null
-            && this.syncedChildrenClmKey() === cloudClmKey
-            && this.localChildrenStandForCloud()) {
-            console.log("[rows] " + this.svType() + ": children unchanged, kept " + this.subnodeCount() + " local rows (" + Math.round(performance.now() - start) + " ms, at " + Math.round(start) + " ms)");
-            return;
-        }
-
-        const { children: childNodes, isComplete } = await folder.asyncListAllChildren();
-        const listedStableIds = new Set();
-        // Load children CONCURRENTLY. These are independent per-child
-        // reads; doing them sequentially makes startup scale with the
-        // child count × round-trip — and any orphaned/dead child entry
-        // (listed but whose document 404s) adds a full round-trip each.
-        // Failures are isolated per child so one bad entry can't block
-        // the rest. Lazy folders render the list from the listing and
-        // defer each child's content to first open. Eager folders load
-        // every child's content up front.
-        //
-        // BOTH branches skip children with a pending local delete: the
-        // cloud doc is still listed until the flush lands, and re-adding
-        // it here would undo a delete performed just before a reload.
-        const fullLoadNodes = [];
-        if (this.usesLazyChildLoading()) {
-            for (const child of childNodes) {
-                const stableId = this.cloudFsChildIdFromNodeId(child.id());
-                if (!stableId) continue;
-                listedStableIds.add(stableId);
-                if (this.hasPendingCloudDelete(child.id())) continue;
-                this.applyChildPlaceholderSafely(stableId, child, null);
-            }
-            console.log("[rows] " + this.svType() + ": listed " + childNodes.length + " children in " + Math.round(performance.now() - start) + " ms (started at " + Math.round(start) + " ms)");
-        } else {
-            fullLoadNodes.push(...childNodes);
-        }
-        await Promise.all(fullLoadNodes.map(async (child) => {
-            const stableId = this.cloudFsChildIdFromNodeId(child.id());
-            if (!stableId) return;
-            listedStableIds.add(stableId);
-            if (this.hasPendingCloudDelete(child.id())) return;
-            // local-wins-while-dirty: never let a from-cloud apply
-            // overwrite a local child that has unsaved local changes. The
-            // live local instance is the fresher source of truth and will
-            // push to cloud via the to-cloud path — this is the symmetric
-            // counterpart of isChildCloudSyncable() (which gates to-cloud).
-            // Overwriting a dirty/in-use child also tends to orphan live
-            // references to it (bound UI tiles, in-flight async work) when
-            // the subclass swaps instances on apply.
-            const localChild = this.childWithCloudStableId(stableId);
-            if (localChild && localChild.needsCloudSync && localChild.needsCloudSync()) {
-                return;
-            }
-            try {
-                await this.asyncApplyChildFromCloud(stableId, child);
-            } catch (e) {
-                console.warn(this.cloudSyncLogPrefix(), "load failed for", stableId, e && e.message);
-            }
-        }));
-        this.pruneIfListingComplete(listedStableIds, isComplete);
-        // Record the validated stamp so the next sync can cache-hit.
-        // Safe even though it consumes the change evidence: deletes
-        // bubble childrenLastModified too (onNodeWrite handles the
-        // before-exists/after-null case), so a future cache hit proves
-        // membership is unchanged.
-        this.setSyncedChildrenClmKey(cloudClmKey);
     }
 
     /**
@@ -943,33 +777,7 @@
         return this;
     }
 
-    /**
-     * @description Normalize a folder's childrenLastModified into a stable
-     * scalar key for equality comparison. The value arrives from the
-     * backend as a Firestore-style Timestamp shape ({_seconds,_nanoseconds}
-     * or {seconds,nanoseconds}), or possibly a string/number. Returns null
-     * when absent (no cache key available).
-     * @param {SvFsFolder} folder
-     * @returns {String|null}
-     * @category Cloud Sync
-     */
-    _childrenClmKey (folder) {
-        const clm = (folder && typeof folder.childrenLastModified === "function") ? folder.childrenLastModified() : null;
-        if (clm == null) return null;
-        if (typeof clm === "string" || typeof clm === "number") return String(clm);
-        if (typeof clm === "object") {
-            const s = (clm._seconds != null) ? clm._seconds : clm.seconds;
-            const n = (clm._nanoseconds != null) ? clm._nanoseconds : clm.nanoseconds;
-            if (s != null) return String(s) + "." + String(n || 0);
-            try { return JSON.stringify(clm); } catch { return null; }
-        }
-        return null;
-    }
-
     async asyncLazySyncFromCloud () {
-        // The childrenLastModified cache check inside asyncSyncFromCloud
-        // makes this cheap when nothing changed (one folder read, then skip
-        // the list + per-child loads).
         return this.asyncSyncFromCloud();
     }
 
