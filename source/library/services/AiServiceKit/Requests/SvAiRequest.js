@@ -769,6 +769,7 @@
         // Create a new SvXhrRequest for this request
         const xhrRequest = SvXhrRequest.clone();
         xhrRequest.setTimeoutPeriodInMs(this.timeoutPeriodInMs());
+        xhrRequest.setRetriesUnansweredFailureOnce(true); // a blip before the first byte: nothing was read, send it once more
         this.setCurrentXhrRequest(xhrRequest);
         this.xhrRequestHistory().push(xhrRequest);
 

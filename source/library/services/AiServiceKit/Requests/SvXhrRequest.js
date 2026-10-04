@@ -176,6 +176,18 @@
             slot.setSummaryFormat("{key}:\n{value}");
         }
 
+        // One narrow retry that IS safe for a streaming consumer: a failure that
+        // left no response at all (status 0, not one byte received, not an
+        // abort) — a network blip before the server answered. Nothing was read,
+        // so nothing can be re-delivered. Opt-in (SvAiRequest turns it on);
+        // independent of maxRetries. A stream that fails after any byte arrived
+        // is never retried here.
+        {
+            const slot = this.newSlot("retriesUnansweredFailureOnce", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+        }
+
         // True only while the asyncSend() loop is waiting out the backoff delay
         // between attempts. There is no live XHR to cancel in that window, so
         // abort() consults this to stop the loop instead of doing nothing.
@@ -804,6 +816,10 @@
     shouldRetryAfterAttempt () {
         if (!this.didAttemptFail()) {
             return false;
+        }
+
+        if (this.isRetryableUnansweredFailure()) {
+            return true;
         }
 
         if (this.maxRetries() < 1) {
@@ -1455,6 +1471,29 @@
    * @description Returns true if the error is recoverable
    * @returns {boolean}
    */
+    /**
+   * @category XHR
+   * @description Whether this failure left no response at all — status 0, no
+   * byte received, not an abort — and may be sent once more
+   * (retriesUnansweredFailureOnce).
+   * @returns {Boolean}
+   */
+    isRetryableUnansweredFailure () {
+        if (!this.retriesUnansweredFailureOnce() || this.retryCount() > 0 || this.didAbort()) {
+            return false;
+        }
+        const xhr = this.xhr();
+        if (!xhr || xhr.status !== 0) {
+            return false;
+        }
+        try {
+            const text = xhr.responseText;
+            return !text || text.length === 0;
+        } catch {
+            return false; // not a text response: don't guess
+        }
+    }
+
     shouldAutoRetryForCurrentError () {
     // Check if this was a timeout - timeouts are often transient and worth retrying
         if (this.didTimeout()) {

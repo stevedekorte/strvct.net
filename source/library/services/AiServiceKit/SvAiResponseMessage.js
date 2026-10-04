@@ -554,12 +554,12 @@
    */
     requestErrorNoticeText (aRequest) {
         if (this.errorIsTimeout(aRequest)) {
-            return "The storyteller took too long to respond. Try again — a shorter action often helps.";
+            return "The reply took too long. Try again — a shorter request often helps.";
         }
         if (this.errorIsTransport(aRequest)) {
-            return "The storyteller lost the connection before finishing. Try again.";
+            return "The connection was lost before the reply finished. Try again.";
         }
-        return "The storyteller could not finish that reply. Try again.";
+        return "The reply could not be finished. Try again.";
     }
 
     errorIsTimeout (aRequest) {

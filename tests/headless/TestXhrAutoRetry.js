@@ -120,6 +120,10 @@ class FakeXMLHttpRequest {
         } else if (outcome.kind === "networkError") {
             this.fire("error");
             this.fire("loadend");
+        } else if (outcome.kind === "networkErrorAfterBytes") {
+            this.responseText = "data: {\"partial\":"; // part of a stream arrived, then the connection dropped
+            this.fire("error");
+            this.fire("loadend");
         } else if (outcome.kind === "timeout") {
             this.fire("timeout");
             this.fire("loadend");
@@ -320,6 +324,36 @@ async function testRetriesNetworkError () {
     check(request.hasError() === false, "the retry succeeded");
 }
 
+async function testUnansweredFailureRetriedOnce () {
+    console.log("\nretriesUnansweredFailureOnce: a failure before any byte arrived is sent once more");
+    const off = newRequest();
+    check(off.retriesUnansweredFailureOnce() === false, "off by default");
+    check(await runScript(off, [{ kind: "networkError" }, { kind: "status", status: 200 }]) === 1, "off: a network error is final (as before)");
+
+    const once = newRequest();
+    once.setRetriesUnansweredFailureOnce(true);
+    check(await runScript(once, [{ kind: "networkError" }, { kind: "status", status: 200, body: "ok" }]) === 2, "on: no byte received, so it is sent again");
+    check(once.hasError() === false, "and the second attempt succeeds");
+
+    const twice = newRequest();
+    twice.setRetriesUnansweredFailureOnce(true);
+    check(await runScript(twice, [{ kind: "networkError" }, { kind: "networkError" }, { kind: "status", status: 200 }]) === 2, "only once: a second unanswered failure is final");
+    check(twice.hasError() === true, "and reported");
+
+    const partial = newRequest();
+    partial.setRetriesUnansweredFailureOnce(true);
+    check(await runScript(partial, [{ kind: "networkErrorAfterBytes" }, { kind: "status", status: 200 }]) === 1, "a failure after bytes arrived is never retried (a stream consumer read them)");
+
+    const aborted = newRequest();
+    aborted.setRetriesUnansweredFailureOnce(true);
+    try {
+        await runScript(aborted, [{ kind: "abort" }, { kind: "status", status: 200 }]);
+    } catch {
+        // asyncSend rejects on an abort, as before
+    }
+    check(attemptCount === 1, "an abort is never retried");
+}
+
 async function testAbortIsNeverRetried () {
     console.log("\nopted in: an abort is never retried");
     const request = newRequest(3);
@@ -396,6 +430,7 @@ async function main () {
     await testNoRetryForFinalStatusCodes();
     await testRetriesTimeout();
     await testRetriesNetworkError();
+    await testUnansweredFailureRetriedOnce();
     await testAbortIsNeverRetried();
     await testAbortDuringBackoffStopsTheLoop();
     await testShouldRetryPredicate();
