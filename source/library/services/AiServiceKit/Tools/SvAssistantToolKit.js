@@ -463,15 +463,40 @@ The following formats will be used for tool calls and responses:
         return m;
     }
 
+    /**
+     * @description The reply's results, as one message: each call's result
+     * (re-computed now, after every call of the reply ran — see
+     * SvToolCall.refreshResultForSending), then the conversation's results note
+     * when it has one (toolResultsNote — e.g. that the reply was already shown
+     * in full, so the model continues rather than repeats it).
+     * @param {Array<SvToolCall>} completedCalls
+     * @returns {String}
+     * @category Sending
+     */
     composeResponseForToolCalls (completedCalls) {
         const parts = [];
         completedCalls.forEach((toolCall) => {
+            toolCall.refreshResultForSending();
             if (toolCall.toolResult().doesRequireResponse()) { // will skip silent responses
                 parts.push(toolCall.toolResult().composeResponseString());
             }
         });
-        const content = "<tool-call-results>\n\n" + parts.join("\n\n") + "\n\n</tool-call-results>";
-        return content;
+        const note = this.toolResultsNote();
+        if (note) {
+            parts.push(note);
+        }
+        return "<tool-call-results>\n\n" + parts.join("\n\n") + "\n\n</tool-call-results>";
+    }
+
+    /**
+     * @description The conversation's note for every results message, if it
+     * defines one (an optional toolResultsNote hook); null otherwise.
+     * @returns {String|null}
+     * @category Sending
+     */
+    toolResultsNote () {
+        const conv = this.conversation();
+        return (conv && typeof conv.toolResultsNote === "function") ? conv.toolResultsNote() : null;
     }
 
     removeAllToolCalls () {

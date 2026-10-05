@@ -217,6 +217,18 @@ Example Tool call format:
         }
 
         {
+            // A function the tool implementation sets when its result depends on
+            // state later calls of the same reply may still change (e.g. "this
+            // room has no layout yet" before the reply's own layout call runs):
+            // re-run when the reply's results are sent (refreshResultForSending).
+            const slot = this.newSlot("resultRefresher", null);
+            slot.setSlotType("Function");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+            slot.setIsInJsonSchema(false);
+        }
+
+        {
             const slot = this.newSlot("reminder", null);
             slot.setDescription("An advisory action reminder to include with the result — e.g. a housekeeping step the tool implementation knows is due at this moment (see SvToolResult.reminder).");
             slot.setSlotType("String");
@@ -770,6 +782,28 @@ Example Tool call format:
             r.setReminder(this.reminder());
         }
         return r;
+    }
+
+    /**
+     * @description Re-computes a successful result through its resultRefresher,
+     * once every call of the reply has run, so the result describes the state
+     * the AI will act on — not the state partway through its own reply. A
+     * refresher that throws leaves the result as it was.
+     * @returns {SvToolCall} This instance.
+     * @category Results
+     */
+    refreshResultForSending () {
+        const refresher = this.resultRefresher();
+        const result = this.toolResult();
+        if (!refresher || !result || result.status() !== "success") {
+            return this;
+        }
+        try {
+            result.setResult(refresher());
+        } catch (e) {
+            console.warn(this.logPrefix(), "result refresh failed for " + this.identifierDescription() + ":", e && e.message);
+        }
+        return this;
     }
 
     /**
