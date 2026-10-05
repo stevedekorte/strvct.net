@@ -71,6 +71,75 @@
     }
 
     /**
+     * @description A slot's default value was just created for this node: its
+     * record lacked the slot (a slot added after the record was stored), or a
+     * lazy slot's first access. When this node already has its id (it was
+     * loaded), the default's ids are derived from it, so every load of the
+     * same record makes the same ids — a random id would change on every load
+     * until the document is saved again, which a catalog document read by
+     * players never is. A node without an id yet (a new one) leaves the
+     * default's random id as it is.
+     * @param {Slot} slot
+     * @param {Object} value - the default value
+     * @category Initialization
+     */
+    didCreateDefaultValueForSlot (slot, value) {
+        if (this.jsonId() !== null && value && value.deriveJsonIdsFrom) {
+            value.deriveJsonIdsFrom(this.jsonId() + "/" + slot.name());
+        }
+    }
+
+    /**
+     * @description Gives this default value, and the defaults its own slots
+     * were given, ids derived from `seed` (its owner's id and slot name).
+     * Lazy slots not yet materialized get theirs on first access.
+     * @param {String} seed
+     * @returns {SvJsonIdNode} The current instance.
+     * @category Initialization
+     */
+    deriveJsonIdsFrom (seed) {
+        this.setJsonId(SvJsonIdNode.jsonIdForSeed(seed));
+        this.thisPrototype().allSlotsMap().forEach(slot => {
+            if (slot.isLazy() || !slot.finalInitProto()) {
+                return;
+            }
+            const child = slot.onInstanceRawGetValue(this);
+            if (child && child !== this && child.deriveJsonIdsFrom) {
+                child.deriveJsonIdsFrom(this.jsonId() + "/" + slot.name());
+            }
+        });
+        return this;
+    }
+
+    /**
+     * @description A jsonId determined by `seed`: ten characters in the
+     * alphabet Object.newUuid uses, from two 32-bit FNV-style hashes of it.
+     * @param {String} seed
+     * @returns {String}
+     * @category Initialization
+     */
+    static jsonIdForSeed (seed) {
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let a = 0x811c9dc5;
+        let b = 0x9e3779b9;
+        for (let i = 0; i < seed.length; i++) {
+            const c = seed.charCodeAt(i);
+            a = Math.imul(a ^ c, 0x01000193) >>> 0;
+            b = Math.imul(b ^ c, 0x5bd1e995) >>> 0;
+            b = (b ^ (b >>> 15)) >>> 0;
+        }
+        let id = "";
+        for (const h of [a, b]) {
+            let n = h;
+            for (let i = 0; i < 5; i++) {
+                id += characters[n % 62];
+                n = Math.floor(n / 62);
+            }
+        }
+        return id;
+    }
+
+    /**
      * @description Assigns new unique JSON IDs to this node and all its JSON descendants.
      * @returns {SvJsonIdNode} The current instance.
      * @category Initialization

@@ -1183,7 +1183,23 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         if (newValue.setOwnerNode) {
             newValue.setOwnerNode(anInstance);
         }
+        this.noteInstanceCreatedDefault(anInstance, newValue);
         return newValue;
+    }
+
+    /**
+     * @category Initialization
+     * @description Tells an instance that this slot's default value was just
+     * created for it (its record lacked the slot, or a lazy slot's first
+     * access), through its optional didCreateDefaultValueForSlot hook — e.g.
+     * so an id the default carries can follow from the instance's own.
+     * @param {Object} anInstance
+     * @param {Object} newValue
+     */
+    noteInstanceCreatedDefault (anInstance, newValue) {
+        if (anInstance.didCreateDefaultValueForSlot) {
+            anInstance.didCreateDefaultValueForSlot(this, newValue);
+        }
     }
 
     /**
@@ -1873,6 +1889,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 if (newValue.setOwnerNode) { // it might not be a SvNode
                     newValue.setOwnerNode(anInstance); // should this be inside the setter? Maybe if slot.doesOwnValue(true)?
                 }
+                this.noteInstanceCreatedDefault(anInstance, newValue);
 
                 /*
                 if (this.shouldFinalInitAsSubnode()) {
