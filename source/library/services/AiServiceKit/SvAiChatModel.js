@@ -127,6 +127,23 @@
             slot.setIsSubnodeField(false);
         }
 
+        /**
+     * @member {String} promptCacheTtl - how long a provider with explicit
+     * prompt caching should keep this model's cached prefix (e.g. "5m" or
+     * "1h"), or null for the provider's default. Set from the model json's
+     * "promptCacheTtl" key; consumed by services that place cache markers
+     * themselves (Anthropic cache_control.ttl). A longer lifetime costs more
+     * per write and saves a re-write whenever a conversation pauses longer
+     * than the default.
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("promptCacheTtl", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setIsSubnodeField(false);
+        }
+
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
     }
@@ -216,6 +233,10 @@
 
         if (!Type.isUndefined(json.effort)) {
             this.setOutputEffort(json.effort);
+        }
+
+        if (!Type.isUndefined(json.promptCacheTtl)) {
+            this.setPromptCacheTtl(json.promptCacheTtl);
         }
         //console.log(">>>>>>>>>>>>>>>> " + this.title() + " outputTokenLimit:" + this.outputTokenLimit());
 

@@ -70,6 +70,7 @@
                 "notes": "Character and Campaign assistant model ($4/$20 per MTok; cache read $0.20, write $5). Successor to Opus 5. Thinking can't be disabled (thinking:disabled or budget_tokens 400 at every effort) — never send a thinking param; effort is the only control and its API default is medium, so it is set explicitly. Forced tool_choice any/tool returns 400 (tools here ride as text tags, so unaffected). temperature/top_p/top_k not supported. Broader safety classifiers (cyber, bio, reasoning_extraction) can return stop_reason 'refusal'.",
                 "outputTokenLimit": 128000,
                 "effort": "medium", // explicit: the API default for this model is medium, one below Opus 5's high
+                "promptCacheTtl": "1h", // the GM's long prompt: a table often pauses longer than the default five minutes
                 "supportsTemperature": false,
                 "supportsTopP": false
             },
@@ -248,7 +249,7 @@
         }
         */
 
-        this.applyPromptCaching(bodyJson);
+        this.applyPromptCaching(bodyJson, aRequest.chatModel ? aRequest.chatModel() : null);
 
         return this;
     }
@@ -269,12 +270,16 @@
    *
    * 3 markers of Anthropic's 4-per-request budget. Providers with automatic
    * prefix caching (Gemini, OpenAI) need none of this — which is why it
-   * lives here and not in the shared AiServiceKit layer.
+   * lives here and not in the shared AiServiceKit layer. The markers carry
+   * the model's promptCacheTtl when it has one ("1h": a write costs 2x input
+   * instead of 1.25x, and a pause longer than five minutes no longer pays
+   * the whole prefix again).
    * @param {Object} bodyJson
+   * @param {SvAiChatModel|null} chatModel
    * @category Request Handling
    */
-    applyPromptCaching (bodyJson) {
-        const marker = { type: "ephemeral" };
+    applyPromptCaching (bodyJson, chatModel = null) {
+        const marker = this.promptCacheMarker(chatModel);
 
         if (Type.isString(bodyJson.system) && bodyJson.system.length > 0) {
             bodyJson.system = [{ type: "text", text: bodyJson.system, "cache_control": marker }];
@@ -309,6 +314,18 @@
             markMessage(stored[stored.length - 6]);
         }
         return this;
+    }
+
+    /**
+   * @description A cache_control marker for this model: its promptCacheTtl
+   * when set, else Anthropic's default (five minutes).
+   * @param {SvAiChatModel|null} chatModel
+   * @returns {Object}
+   * @category Request Handling
+   */
+    promptCacheMarker (chatModel) {
+        const ttl = (chatModel && chatModel.promptCacheTtl) ? chatModel.promptCacheTtl() : null;
+        return ttl ? { type: "ephemeral", ttl: ttl } : { type: "ephemeral" };
     }
 
     /**

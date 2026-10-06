@@ -102,6 +102,17 @@ function testCacheControl () {
     check(typeof body5.messages[0].content === "string", "empty-content message left as string (API rejects empty blocks)");
 
     check(countMarkers(body2) <= 4, "within Anthropic's 4-marker budget");
+
+    // a model's promptCacheTtl rides every marker (model json "promptCacheTtl")
+    const opus = SvGlobals.get("SvServices").shared().chatModelWithName("claude-opus-5-5");
+    check(!!opus && opus.promptCacheTtl() === "1h", "claude-opus-5-5 keeps its prompt cached for an hour");
+    const body6 = { system: "sys", messages: [{ role: "user", content: "hi" }] };
+    service.applyPromptCaching(body6, opus);
+    check(body6.system[0].cache_control.ttl === "1h" && body6.messages[0].content[0].cache_control.ttl === "1h", "its markers carry ttl 1h");
+    const plain = { promptCacheTtl: () => null };
+    const body7 = { system: "sys", messages: [{ role: "user", content: "hi" }] };
+    service.applyPromptCaching(body7, plain);
+    check(body7.system[0].cache_control.ttl === undefined, "a model without one keeps Anthropic's default lifetime");
 }
 
 (async () => {
