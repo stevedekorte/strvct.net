@@ -409,6 +409,17 @@
     }
 
     /**
+     * @description A new placeholder is shown at once. Without this the
+     * attribute was rewritten only when canHitEnter or isEditable changed, so
+     * a blocked input whose REASON changed (narrating → out of credits) kept
+     * the old one. An attribute write, no layout read.
+     * @returns {void}
+     */
+    didUpdateSlotPlaceholderText () {
+        this.syncPlaceholderText();
+    }
+
+    /**
      * @description Did update slot is editable.
      * @returns {void}
      */
@@ -1164,7 +1175,10 @@
             if (this.canHitEnter()) {
                 this.tellParentViews("didInput", this);
             } else {
+                // Refused: say so audibly, and let the views above ask their
+                // node why — a beep alone leaves the user guessing.
                 SvSimpleSynth.clone().playButtonCancelled();
+                this.tellParentViews("onDidRefuseInput", this);
                 return;
             }
         }

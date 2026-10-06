@@ -460,6 +460,17 @@
     }
 
     /**
+   * @description The user tried to send while the input is blocked
+   * (acceptsChatInput() is false). The input only greys out and beeps, which
+   * says nothing about WHY — a subclass whose block the user can act on
+   * (credits, a pending choice) overrides this to say so. Base: nothing.
+   * @param {String} v - The text the user tried to send (kept in the input).
+   * @category Input Handling
+   */
+    onRefusedChatInput (/*v*/) {
+    }
+
+    /**
    * @description Handles chat input value.
    * @param {*} v - The input value.
    * @category Input Handling

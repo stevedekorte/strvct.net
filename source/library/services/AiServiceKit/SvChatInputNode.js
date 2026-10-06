@@ -316,6 +316,19 @@
     }
 
     /**
+   * Enter was pressed while the input refuses it (acceptsValueInput() is
+   * false). The conversation may explain why; the text is kept.
+   * @param {String} v - The text the user tried to send
+   * @category Event Handling
+   */
+    onRefusedValueInput (v) {
+        const c = this.conversation();
+        if (c && typeof c.onRefusedChatInput === "function") {
+            c.onRefusedChatInput(v);
+        }
+    }
+
+    /**
    * Send the chat input value
    * @category Communication
    */

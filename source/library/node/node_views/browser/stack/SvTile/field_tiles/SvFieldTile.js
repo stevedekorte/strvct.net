@@ -968,6 +968,25 @@
     }
 
     /**
+     * @description The value view refused an input (Enter while the node does
+     * not accept one). Hands the typed value to the node so it can explain the
+     * refusal; the text stays in the view.
+     * @param {SvDomView} changedView - The refusing view.
+     * @returns {Boolean} true when handled, so parents are not asked again
+     * @category Event Handling
+     */
+    onDidRefuseInput (changedView) {
+        if (changedView !== this.valueView()) {
+            return false;
+        }
+        const node = this.node();
+        if (node && typeof node.onRefusedValueInput === "function") {
+            node.onRefusedValueInput(changedView.value());
+        }
+        return true;
+    }
+
+    /**
      * @description Syncs styles to subviews.
      * @returns {SvFieldTile} The current instance.
      */
