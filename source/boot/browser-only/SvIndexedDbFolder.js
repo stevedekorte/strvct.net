@@ -119,14 +119,20 @@
     }
 
     /**
-     * Returns a promise for persistence.
-     * @returns {Promise} - A promise for persistence.
+     * Returns a promise for persistence: asks the browser (once) to keep this
+     * origin's storage. Nothing should wait on it — Firefox answers only when
+     * the user answers its permission prompt, so an open that awaited it sat
+     * on the boot "Loading" screen until then (forever, headless; 2026-10-05).
+     * Opening a database asks in the background (promiseOpen).
+     * @returns {Promise} - Resolves once the browser has answered.
      */
     static promisePersistence () {
 
         if (this._promiseForPersistence === null) {
             this._promiseForPersistence = Promise.clone();
-            this.newPromisePersistence().then(() => {
+            this.newPromisePersistence().catch((error) => {
+                console.warn(this.logPrefix(), "storage persistence request failed:", error && error.message);
+            }).then(() => {
                 this._promiseForPersistence.callResolveFunc();
             });
             assert(this._promiseForPersistence !== null, "promiseForPersistence is null");
@@ -181,7 +187,7 @@
      */
     async promiseOpen () {
         if (!this.promiseForOpen()) {
-            await SvIndexedDbFolder.promisePersistence();
+            SvIndexedDbFolder.promisePersistence(); // asked in the background: Firefox waits for the user's answer
             this.setPromiseForOpen(this.newPromiseOpen());
         }
         return this.promiseForOpen();
