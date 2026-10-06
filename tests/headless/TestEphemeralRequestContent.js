@@ -22,7 +22,7 @@
  *   message (the prefix the next request re-sends) and stored-6-back — never
  *   the trailer, whose bytes differ every request (a write that can never be
  *   read back).
- * - SvAiRequest.stripEphemeralFlags removes every isEphemeral key before the
+ * - SvAiRequest.stripLocalMessageFields removes every isEphemeral (and stablePrefixLength) key before the
  *   bytes go out (providers reject unknown fields on message objects).
  *
  * Usage (from the strvct root):
@@ -185,21 +185,23 @@ function testMarkerPlacement () {
         "lookback anchor computed over stored messages (stored-6-back), not messages.length-6");
 }
 
-function testStripEphemeralFlags () {
-    console.log("\nSvAiRequest.stripEphemeralFlags: nothing custom goes out on the wire");
+function testStripLocalMessageFields () {
+    console.log("\nSvAiRequest.stripLocalMessageFields: nothing custom goes out on the wire");
     const SvAiRequest = SvGlobals.get("SvAiRequest");
     const req = SvAiRequest.clone();
     req.setBodyJson({
         messages: [
+            { role: "system", content: "RULESWORLD", stablePrefixLength: 5 },
             { role: "user", content: "stored" },
             { role: "assistant", content: "(context notes follow)", isEphemeral: true },
             { role: "user", content: "<standing-view>live</standing-view>", isEphemeral: true }
         ]
     });
-    req.stripEphemeralFlags();
+    req.stripLocalMessageFields();
     const hasFlag = JSON.stringify(req.bodyJson()).includes("isEphemeral");
     check(!hasFlag, "outbound body JSON contains no isEphemeral key anywhere");
-    check(req.bodyJson().messages.length === 3, "messages themselves are untouched (flag removal only)");
+    check(!JSON.stringify(req.bodyJson()).includes("stablePrefixLength"), "…nor stablePrefixLength");
+    check(req.bodyJson().messages.length === 4, "messages themselves are untouched (flag removal only)");
 }
 
 (async () => {
@@ -207,7 +209,7 @@ function testStripEphemeralFlags () {
     testAppendShapes();
     testAnthropicMergeIsolation();
     testMarkerPlacement();
-    testStripEphemeralFlags();
+    testStripLocalMessageFields();
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);
 })().catch((e) => {

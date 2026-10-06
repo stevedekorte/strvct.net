@@ -113,6 +113,23 @@ function testCacheControl () {
     const body7 = { system: "sys", messages: [{ role: "user", content: "hi" }] };
     service.applyPromptCaching(body7, plain);
     check(body7.system[0].cache_control.ttl === undefined, "a model without one keeps Anthropic's default lifetime");
+
+    // a system prompt that marks its stable prefix is sent as two cached
+    // blocks, so conversations differing only after it share the first
+    console.log("\nStable prefix (SvAiMessage.markStablePrefix)");
+    const SvAiMessage = SvGlobals.get("SvAiMessage");
+    const marked = SvAiMessage.markStablePrefix({ role: "system", content: "RULES" + SvAiMessage.stablePrefixBoundary() + "WORLD" });
+    check(marked.content === "RULESWORLD" && marked.stablePrefixLength === 5, "the boundary is removed and its position recorded");
+    const unmarked = SvAiMessage.markStablePrefix({ role: "user", content: "no boundary" });
+    check(unmarked.stablePrefixLength === undefined && unmarked.content === "no boundary", "content without the boundary is left alone");
+    const split = { system: "RULESWORLD", messages: manyMessages.map(m => ({ role: m.role, content: m.content })) };
+    service.applyPromptCaching(split, null, 5);
+    check(split.system.length === 2 && split.system[0].text === "RULES" && split.system[1].text === "WORLD", "the system prompt goes as two blocks, split there");
+    check(!!split.system[0].cache_control && !!split.system[1].cache_control, "each block carries a marker (the stable one is shared)");
+    check(countMarkers(split) === 4, "a long conversation with a split system prompt uses exactly Anthropic's 4-marker budget");
+    const edge = { system: "RULES", messages: [] };
+    service.applyPromptCaching(edge, null, 5);
+    check(edge.system.length === 1, "a boundary at the very end leaves one block (no empty block)");
 }
 
 (async () => {

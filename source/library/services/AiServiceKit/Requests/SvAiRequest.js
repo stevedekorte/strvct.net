@@ -687,7 +687,8 @@
     }
 
     /**
-   * Removes the isEphemeral marker from every message dict before send.
+   * Removes our own fields from every message dict before send: the
+   * isEphemeral marker, and stablePrefixLength (SvAiMessage.markStablePrefix).
    * The flag is ours (Plans/Cache-Safe Standing View): adapters read it to
    * skip merging trailers into stored history and to keep cache markers off
    * them — but providers reject unknown fields on message objects (Anthropic
@@ -696,13 +697,16 @@
    * (OpenAI) are covered too.
    * @returns {SvAiRequest}
    */
-    stripEphemeralFlags () {
+    stripLocalMessageFields () {
         const body = this.bodyJson();
         const messages = body ? body.messages : null;
         if (Type.isArray(messages)) {
             messages.forEach((m) => {
                 if (m && m.isEphemeral !== undefined) {
                     delete m.isEphemeral;
+                }
+                if (m && m.stablePrefixLength !== undefined) {
+                    delete m.stablePrefixLength; // SvAiMessage.markStablePrefix
                 }
             });
         }
@@ -741,7 +745,7 @@
         // body must clear it (see setBodyJson).
         if (!this.hasPreparedBody()) {
             this.service().prepareToSendRequest(this); // give anthropic a chance to ensure alternating user/assistant messages
-            this.stripEphemeralFlags(); // AFTER prep (merge + cache markers read the flag), before the bytes go out
+            this.stripLocalMessageFields(); // AFTER prep (merge + cache markers read the flag), before the bytes go out
             this.setHasPreparedBody(true);
         }
 

@@ -189,10 +189,12 @@
 
         // remove initial system message and place it in the request json
 
+        let systemStablePrefixLength = null;
         if (messages.length > 0) {
             const firstMessage = messages.first();
             if (firstMessage.role === this.systemRoleName()) {
                 bodyJson.system = firstMessage.content;
+                systemStablePrefixLength = Type.isNumber(firstMessage.stablePrefixLength) ? firstMessage.stablePrefixLength : null;
                 firstMessage.content = "Please begin the conversation now.";
                 //messages.shift();
             }
@@ -249,7 +251,7 @@
         }
         */
 
-        this.applyPromptCaching(bodyJson, aRequest.chatModel ? aRequest.chatModel() : null);
+        this.applyPromptCaching(bodyJson, aRequest.chatModel ? aRequest.chatModel() : null, systemStablePrefixLength);
 
         return this;
     }
@@ -260,7 +262,11 @@
    * generic {system, messages} shape, no app/game knowledge:
    *
    *   1. End of the system prompt (large and fixed for the whole session,
-   *      so it caches once and reads at ~0.1x thereafter).
+   *      so it caches once and reads at ~0.1x thereafter). A system prompt
+   *      that marks where its stable part ends (stablePrefixLength, see
+   *      SvAiMessage.markStablePrefix) is sent as two blocks, each marked:
+   *      conversations that differ only after the boundary (another world's
+   *      conventions) read the stable block from one shared cache entry.
    *   2. Last content block of the FINAL message — advanced every request,
    *      so each turn writes only the new tail beyond the longest matched
    *      prefix and reads everything before it from cache.
@@ -268,7 +274,8 @@
    *      only searches 20 content blocks backwards for a prior cache entry,
    *      and long tool-heavy turns can exceed that.
    *
-   * 3 markers of Anthropic's 4-per-request budget. Providers with automatic
+   * 3 markers of Anthropic's 4-per-request budget (4 with a split system
+   * prompt). Providers with automatic
    * prefix caching (Gemini, OpenAI) need none of this — which is why it
    * lives here and not in the shared AiServiceKit layer. The markers carry
    * the model's promptCacheTtl when it has one ("1h": a write costs 2x input
@@ -278,11 +285,11 @@
    * @param {SvAiChatModel|null} chatModel
    * @category Request Handling
    */
-    applyPromptCaching (bodyJson, chatModel = null) {
+    applyPromptCaching (bodyJson, chatModel = null, systemStablePrefixLength = null) {
         const marker = this.promptCacheMarker(chatModel);
 
         if (Type.isString(bodyJson.system) && bodyJson.system.length > 0) {
-            bodyJson.system = [{ type: "text", text: bodyJson.system, "cache_control": marker }];
+            bodyJson.system = this.cachedSystemBlocks(bodyJson.system, systemStablePrefixLength, marker);
         }
 
         const messages = bodyJson.messages;
@@ -314,6 +321,26 @@
             markMessage(stored[stored.length - 6]);
         }
         return this;
+    }
+
+    /**
+   * @description The system prompt as cache-marked text blocks: one, or two
+   * when it marks a stable prefix with text on both sides of it.
+   * @param {string} system
+   * @param {number|null} stablePrefixLength
+   * @param {Object} marker - a cache_control value
+   * @returns {Array<Object>}
+   * @category Request Handling
+   */
+    cachedSystemBlocks (system, stablePrefixLength, marker) {
+        const n = stablePrefixLength;
+        if (!Type.isNumber(n) || n <= 0 || n >= system.length) {
+            return [{ type: "text", text: system, "cache_control": marker }];
+        }
+        return [
+            { type: "text", text: system.slice(0, n), "cache_control": marker },
+            { type: "text", text: system.slice(n), "cache_control": marker }
+        ];
     }
 
     /**

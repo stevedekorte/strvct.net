@@ -263,10 +263,46 @@
    * @category JSON
    */
     messagesJson () {
-        return {
+        const dict = {
             role: this.service().serviceRoleNameForRole(this.role()),
             content: this.contentVisisbleToAi()
         };
+        return this.thisClass().markStablePrefix(dict);
+    }
+
+    /**
+     * @description The token a prompt places where its stable part ends —
+     * text before it is the same for every conversation of its kind, text
+     * after it varies (by world, by settings). It never reaches a provider:
+     * markStablePrefix() removes it and records where it stood.
+     * @returns {string}
+     * @category JSON
+     */
+    static stablePrefixBoundary () {
+        return "<stable-prefix-end/>";
+    }
+
+    /**
+     * @description Removes the stable-prefix boundary from a message dict's
+     * content and records its position as `stablePrefixLength` — ours, like
+     * `isEphemeral`, and stripped on the common send path
+     * (SvAiRequest.stripLocalMessageFields). A provider with explicit cache
+     * breakpoints (Anthropic) caches the stable part on its own, so
+     * conversations that differ only after it share that cache; every other
+     * provider just sends the joined text.
+     * @param {Object} dict - {role, content}
+     * @returns {Object} the same dict
+     * @category JSON
+     */
+    static markStablePrefix (dict) {
+        const boundary = this.stablePrefixBoundary();
+        const content = dict.content;
+        const at = (typeof content === "string") ? content.indexOf(boundary) : -1;
+        if (at !== -1) {
+            dict.content = content.slice(0, at) + content.slice(at + boundary.length);
+            dict.stablePrefixLength = at;
+        }
+        return dict;
     }
 
     /**
