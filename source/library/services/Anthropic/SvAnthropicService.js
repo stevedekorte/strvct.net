@@ -356,14 +356,18 @@
     }
 
     /**
-   * @description Anthropic's Messages API requires strict user/assistant
-   * alternation (the merge loop above exists for exactly this reason), so an
-   * ephemeral user trailer after a stored user message needs a spacer.
+   * @description False: the Messages API combines consecutive same-role turns
+   * into one, so an ephemeral user trailer can follow a stored user message
+   * directly. It used to return true, and appendEphemeralUserContent put an
+   * assistant "<no-op></no-op>" spacer between the player's message and the
+   * standing-view trailer — which the model reads as its OWN reply: an Opus
+   * GM began every answer by apologizing that its "last reply came through
+   * empty and left your question hanging" (prod, 2026-10-06).
    * @returns {Boolean}
    * @category Request Handling
    */
     requiresAlternatingRoles () {
-        return true;
+        return false;
     }
 
     /*

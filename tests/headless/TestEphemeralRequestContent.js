@@ -67,27 +67,40 @@ function testAppendShapes () {
     const xai = SvGlobals.get("SvXaiService").shared();
     const openai = SvGlobals.get("SvOpenAiService").shared();
 
-    check(anthropic.requiresAlternatingRoles() === true, "Anthropic requires alternating roles");
-    check(SvGlobals.get("SvGeminiService").shared().requiresAlternatingRoles() === true, "Gemini requires alternating roles");
+    // Anthropic combines consecutive same-role turns, so it needs no spacer —
+    // and must not get one: an assistant "<no-op>" between the player's
+    // message and the trailer reads as the model's OWN empty reply (an Opus
+    // GM apologized for it at the top of every answer, prod 2026-10-06).
+    check(anthropic.requiresAlternatingRoles() === false, "Anthropic combines consecutive turns (no spacer)");
+    const gemini = SvGlobals.get("SvGeminiService").shared();
+    check(gemini.requiresAlternatingRoles() === true, "Gemini requires alternating roles");
     // DeepSeek's merge loop is commented out in its adapter — it inherits the
     // base no-op prep and tolerates consecutive same-role messages.
     check(SvGlobals.get("SvDeepSeekService").shared().requiresAlternatingRoles() === false, "DeepSeek (merge commented out) inherits the non-alternating default");
     check(xai.requiresAlternatingRoles() === false, "xAI inherits the non-alternating default");
     check(openai.requiresAlternatingRoles() === false, "OpenAI (base no-op prep) inherits the non-alternating default");
 
+    // Anthropic, last stored role is user → the trailer follows it directly.
+    const m0 = [
+        { role: "user", content: "stored player text" }
+    ];
+    anthropic.appendEphemeralUserContent(m0, "<standing-view>live A</standing-view>");
+    check(m0.length === 2 && m0[1].role === anthropic.userRoleName() && m0[1].isEphemeral === true,
+        "Anthropic-shaped: user, user-trailer — no assistant spacer for the model to read as its reply");
+
     // Alternating provider, last stored role is user → spacer + user trailer.
     const m1 = [
         { role: "user", content: "stored player text" }
     ];
-    anthropic.appendEphemeralUserContent(m1, "<standing-view>live A</standing-view>");
-    check(m1.length === 3, "Anthropic-shaped: user, spacer, user-trailer");
-    check(m1[1].role === anthropic.assistantRoleName() && m1[1].isEphemeral === true && m1[1].content.length > 0,
+    gemini.appendEphemeralUserContent(m1, "<standing-view>live A</standing-view>");
+    check(m1.length === 3, "Gemini-shaped: user, spacer, user-trailer");
+    check(m1[1].role === gemini.assistantRoleName() && m1[1].isEphemeral === true && m1[1].content.length > 0,
         "spacer is a non-empty ephemeral assistant note");
-    check(m1[2].role === anthropic.userRoleName() && m1[2].isEphemeral === true, "trailer is an ephemeral user");
+    check(m1[2].role === gemini.userRoleName() && m1[2].isEphemeral === true, "trailer is an ephemeral user");
     check(m1[0].content === "stored player text", "stored user bytes untouched");
 
     // Second append concatenates — exactly one trailing user dict.
-    anthropic.appendEphemeralUserContent(m1, "<system-reminder>file episodes</system-reminder>");
+    gemini.appendEphemeralUserContent(m1, "<system-reminder>file episodes</system-reminder>");
     check(m1.length === 3, "reminder + trailer share ONE trailing ephemeral user (no user,user tail)");
     check(m1[2].content.includes("live A") && m1[2].content.includes("file episodes"), "trailing user carries both");
 
