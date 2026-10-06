@@ -919,7 +919,7 @@ Drilling into Local Storage. The object pool persists slot mutations through the
   <line class="flow" x1="245" y1="266" x2="245" y2="291" marker-end="url(#a6)"/>
   <rect class="fill" x="135" y="291" width="220" height="52"/>
   <text x="150" y="311" class="b">recordForStore() per object</text>
-  <text x="150" y="329" class="dim">write keyed by puuid</text>
+  <text x="150" y="329" class="dim">row keyed by pool + puuid</text>
   <rect class="fill" x="135" y="368" width="220" height="52"/>
   <text x="150" y="388" class="b">GC: walk reachable</text>
   <text x="150" y="406" class="dim">collect referenced hashes</text>
@@ -2921,9 +2921,9 @@ Long-term direction: replacing the current cloud storage backend with a native g
 
 ## Context
 
-STRVCT's domain model is a cyclic graph of objects connected by typed references. Locally, this graph is stored in IndexedDB as a flat key-value map of serialized records, with object references represented as persistent unique IDs (puuids). Cloud sync currently uses Firebase Storage, with two strategies: per-item JSON files for collections, and whole-pool snapshots with write-ahead log deltas for interconnected object graphs (see [Cloud Object Pools](../../Persistence/Cloud%20Object%20Pools/)).
+STRVCT's domain model is a cyclic graph of objects connected by typed references. Locally, this graph is stored in IndexedDB as a flat key-value map of serialized records, with object references represented as persistent unique IDs (puuids). In the cloud the same records are stored one per Firestore document, grouped into pools (one per document, each with a version), with folders formed by placing each pool's root row under its folder; edits are sent as versioned commits of the changed records (see [Cloud Object Pools](../../Persistence/Cloud%20Object%20Pools/)). This record store already gives per-record sync, change feeds by version, and placement queries — much of what is listed below.
 
-This works, but there's a fundamental mismatch: the domain model is a graph, while the storage and sync layers treat it as either a bag of independent documents (collection sync) or a monolithic blob (pool sync). Neither representation natively understands the structure of the data it's storing.
+What remains is a mismatch at the level of references: the domain model is a graph, while the record store sees each reference only as an id inside a serialized payload. It can list a node's placed children, but it cannot answer structural queries across references or serve a subgraph by traversal.
 
 ## Why a Graph Database
 
@@ -2958,12 +2958,12 @@ The current cloud sync stack has several layers that a graph database would subs
 |---|---|
 | JSON serialization of object records | Direct node/edge storage |
 | puuid-based references between objects | Native graph edges |
-| Pool snapshots + delta files | Per-node/per-edge mutations |
-| Manifest-based lazy loading | Subgraph traversal |
-| Write-ahead log for incremental sync | Change feed on individual nodes/edges |
-| Lock-based concurrency for pools | Node-level or edge-level conflict resolution |
+| Per-record versioned commits | Per-node/per-edge mutations |
+| Placement queries and windowed loading | Subgraph traversal |
+| Changes since a pool version | Change feed on individual nodes/edges |
+| Optimistic per-pool version checks | Node-level or edge-level conflict resolution |
 
-The local IndexedDB layer would likely remain as a client-side cache, but the canonical store would be the graph database rather than Firebase Storage.
+The local IndexedDB layer would likely remain as a client-side cache, but the canonical store would be the graph database rather than the records collection.
 
 ## Challenges
 
@@ -2981,15 +2981,15 @@ STRVCT applications work offline with local data, syncing when connectivity retu
 
 ### Migration
 
-Existing applications store data in Firebase Storage. A migration path is needed — likely a period where both backends coexist, with the graph database gradually taking over as the primary store.
+Existing applications store data in the records collection. A migration path is needed — likely a period where both backends coexist, with the graph database gradually taking over as the primary store.
 
 ### Hosting and operations
 
-Firebase Storage is a managed service with minimal operational overhead. A graph database requires either a managed graph DB service (e.g., Neo4j Aura, Amazon Neptune) or self-hosted infrastructure with its own scaling, backup, and monitoring concerns.
+Firestore is a managed service with minimal operational overhead. A graph database requires either a managed graph DB service (e.g., Neo4j Aura, Amazon Neptune) or self-hosted infrastructure with its own scaling, backup, and monitoring concerns.
 
 ## Object Sub-Pools
 
-One concept from the current architecture that should carry forward is the **object sub-pool** — a self-contained subgraph where outside nodes may point to the root, but all internal objects hold no hard references to objects outside the subgraph. These sub-pools can be nested and are the natural unit of ownership, sync, and access control.
+One concept from the current architecture that should carry forward is the **object pool** (formerly called a sub-pool) — a self-contained subgraph where outside nodes may point to the root, but all internal objects hold no hard references to objects outside the subgraph. These sub-pools can be nested and are the natural unit of ownership, sync, and access control.
 
 In practice, sub-pools correspond to the coarse-grained "documents" of an application. In a contacts app, for example, each contact card — with its addresses, phone numbers, notes, and group memberships — forms a sub-pool. The contacts list holds references to each card's root, but the internal objects within a card don't reference objects in other cards. Each sub-pool can be:
 
@@ -3002,12 +3002,12 @@ A graph database backend should preserve this sub-pool structure as a first-clas
 
 ## Relationship to Current Architecture
 
-This is envisioned as a backend replacement, not a framework rewrite. The domain model, slot system, persistence API, and view layer would remain unchanged. The swap would happen below the `SvCloudSyncSource` abstraction:
+This is envisioned as a backend replacement, not a framework rewrite. The domain model, slot system, persistence API, and view layer would remain unchanged. The swap would happen below the record store protocol (`SvRecordStoreProtocol`):
 
-- `SvPersistentObjectPool` continues to manage local IndexedDB storage
-- `SvCloudSyncSource` (or a new sibling) would speak to a graph database API instead of Firebase Storage
+- `SvLocalRecordStore` continues to manage local IndexedDB storage
+- A new `SvRecordStoreProtocol` backing would speak to a graph database API instead of the records collection
 - The serialization format would change from JSON documents to node/edge mutations
-- The sync protocol would change from snapshot+delta to a graph-aware change feed
+- The sync protocol would change from per-pool versioned commits to a graph-aware change feed
 - Object sub-pools remain the unit of sync — the graph database stores the full graph, but sync, permissions, and lifecycle operate at the sub-pool level
 
 The domain model already *is* a graph — the change is making the storage layer acknowledge that.
@@ -3289,7 +3289,6 @@ The target is the model/view separation and **Platform Abstraction** rules in th
 ## Framework model classes still touching the platform
 
 - **`SvErrorReport`** (`SvTitledNode`) reads `navigator.userAgent`, `window.location.*`, and `document.referrer` to build a report. Error reports genuinely need this environment context, but a model shouldn't read browser globals directly — the platform layer should supply them.
-- **`SvSubObjectPool`** reads/writes `sessionStorage` for a client id. A persistent client/device id is environment state that should be injected, not read from a browser global inside a storage model.
 - **`SvFirestoreNode`** uses a `window.__…__` global flag to guard emulator configuration.
 - **`SvAiParsedResponseMessage`** (parsing) calls `document.createElement` for HTML handling — DOM in a message model.
 - Media services (`SvYouTubeAudioPlayer`, `SvYouTubePlayerFrame`, `SvLeonardoRefImage`) touch the DOM / clipboard directly; several are view-adjacent and some siblings are unused.
@@ -4044,9 +4043,9 @@ Field tiles present node properties as key/value pairs in the UI inspector:
 
 ### Record Format
 
-The storage system is a key/value store backed by IndexedDB. Keys are persistent unique IDs (puuids) and values are JSON records containing a type field and a payload. On load, the type is used to locate the class, which is then asked to deserialize itself from the payload.
+The storage system is a record store backed by IndexedDB. Each row is keyed by its pool's id and the object's persistent unique ID (puuid), and its payload is a JSON record containing a type field and the stored slot values. A pool is one document, and its id is its root object's puuid; the cloud holds the same rows. On load, the type is used to locate the class, which is then asked to deserialize itself from the payload.
 
-Object references within records are stored as puuid strings. This uniform reference format enables the storage system to trace the object graph for automatic garbage collection — only objects reachable from the root node survive collection.
+Object references within a pool are stored as `{ "*": puuid }`, and references to another document as `{ "**": poolId }`. This uniform reference format enables the storage system to trace each pool's graph for automatic garbage collection — only objects reachable from the pool's root, by reference or by placement, survive collection.
 
 ### Persistence Lifecycle
 
@@ -4055,7 +4054,8 @@ Nodes opt into persistence via `setShouldStore(true)`, and individual slots via 
 1. **Monitors mutations** — When a stored slot changes, the owning node is marked dirty via `didMutate()`.
 2. **Batches transactions** — All dirty objects are collected at the end of the current event loop and committed atomically.
 3. **Handles deserialization** — On load, `instanceFromRecordInStore()` creates a blank instance, `init()` runs, `loadFromRecord()` populates stored values, then `finalInit()` re-establishes object relationships. Slots with `setFinalInitProto()` only create default instances if no value was loaded from storage.
-4. **Garbage collects** — Walks the stored object graph from the root; unreachable records are removed.
+4. **Garbage collects** — Walks each pool's stored graph from its root; unreachable rows are removed.
+5. **Commits to the cloud** — For a cloud document, the rows changed since the pool's last acknowledged version are sent as one versioned commit (see [Cloud Object Pools](../Persistence/Cloud%20Object%20Pools/)).
 
 ### Blob Storage
 
@@ -5069,7 +5069,9 @@ The persistence system works identically in both environments because the storag
 ```
 Application code
     ↓
-SvObjectPool / SvPersistentObjectPool     — object cache, dirty tracking, GC
+SvObjectPool / SvPersistentObjectPool     — one pool per document: object cache, dirty tracking, GC
+    ↓
+SvLocalRecordStore                      — every pool's rows, keyed by pool id + puuid
     ↓
 SvPersistentAtomicMap                   — synchronous in-memory cache, batched writes
     ↓
@@ -5086,7 +5088,7 @@ This design means the layers above `SvIndexedDbFolder` never make async storage 
 
 ### Blob Storage Is Separate and Async
 
-Binary data — images, audio, and other media — is stored separately in `SvBlobPool`, a content-addressable blob store that uses its own `SvIndexedDbFolder` instance (database name `defaultBlobStore`, separate from the object pool's `defaultDataStore`). Unlike the object pool, blob storage is fully asynchronous: blobs are read and written individually on demand, not loaded into memory all at once. This keeps memory usage proportional to what the application is actively using rather than the total size of all stored media.
+Binary data — images, audio, and other media — is stored separately in `SvBlobPool`, a content-addressable blob store that uses its own `SvIndexedDbFolder` instance (database name `defaultBlobStore`, separate from the record store's `defaultDataStore.records`). Unlike the object pool, blob storage is fully asynchronous: blobs are read and written individually on demand, not loaded into memory all at once. This keeps memory usage proportional to what the application is actively using rather than the total size of all stored media.
 
 `SvBlobPool` also works in headless mode — it uses the same `SvIndexedDbFolder` abstraction, so it gets the LevelDB backend automatically in Node.js. See [Local and Cloud Blob Storage](../../Persistence/Local%20and%20Cloud%20Blob%20Storage/) for details on the blob system.
 
@@ -5259,11 +5261,11 @@ Source: /docs/Lifecycle/Persistence%20Lifecycle/
 
 # Persistence Lifecycle
 
-How objects are stored, loaded, and kept in sync with IndexedDB.
+How objects are stored, loaded, and kept in sync with the local record store and the cloud.
 
 ## Overview
 
-Persistence in STRVCT is automatic. Objects marked as storable are tracked for changes, serialized at the end of each event loop, and written to IndexedDB. On reload, they're deserialized and re-initialized through the same three-phase lifecycle as new objects. The goal is transparency — a class shouldn't need different code paths for "new" and "loaded."
+Persistence in STRVCT is automatic. Objects marked as storable are tracked for changes, serialized at the end of each event loop, and written as rows of their pool in the local record store (IndexedDB). A pool that is a cloud document later commits the rows that changed to the cloud. On reload, they're deserialized and re-initialized through the same three-phase lifecycle as new objects. The goal is transparency — a class shouldn't need different code paths for "new" and "loaded."
 
 ## Storing Objects
 
@@ -5280,7 +5282,7 @@ When a storable slot changes, the framework automatically marks the object as di
 ```
 recordForStore(store)
   ├── Serialize slots marked with setShouldStoreSlot(true)
-  ├── Convert object references to puuids
+  ├── Convert object references to { "*": puuid } (or { "**": poolId } across pools)
   └── Return JSON-compatible record
 ```
 
@@ -5859,7 +5861,7 @@ This definition contains no UI code, no form layouts, no navigation logic, and n
 - A **summary tile** showing the character's name as a title and "Level 1" as a subtitle
 - **Property tiles** for `name` (editable string field) and `level` (editable number field), with appropriate input types
 - A **navigable field** for `inventory` that opens a new master-detail view of the inventory's contents when selected
-- **Automatic persistence** to IndexedDB, with dirty tracking and transactional commits
+- **Automatic persistence** to a local record store, with dirty tracking and transactional commits — and, for a class that is a cloud document, versioned commits of the same records to the cloud
 - **Bidirectional synchronization**: editing a field updates the model; programmatic model changes update the view
 - **Automatic translation** of field labels and values when internationalization is active
 
@@ -5871,7 +5873,7 @@ The screenshot below shows Strvct in undreamedof.ai, an AI-powered virtual table
 
 ## 6. Architecture
 
-Strvct is a client-side JavaScript framework. Applications run as single-page apps in the browser, making heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for an IndexedDB object database of application state.
+Strvct is a client-side JavaScript framework. Applications run as single-page apps in the browser, making heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for a local record store of application state (IndexedDB) that holds the same rows the cloud does.
 
 Strvct does not compile or pre-render user interfaces. There is no build step that produces a view tree, no template system, and no static component hierarchy. Views are instantiated lazily at runtime, only when the user navigates to a node in the object graph. Each navigation step inspects the target node's class and slot annotations, discovers or creates an appropriate view, and binds it to the node for live bidirectional synchronization. Once created, a view persists as long as its node stays visible, kept in sync through the notification system. The result is closer to a live object browser than a conventional render pipeline: the UI that exists at any moment is determined by the user's current navigation path through the object graph, and it responds immediately to model changes.
 
@@ -5898,11 +5900,15 @@ No single annotation knows about the others. The UI layer reads type and editabi
 
 ### 6.3 Storage
 
-Persistence is annotation-driven. The persistence layer watches slot mutations, batches dirty objects at the end of each event loop into atomic transactions, and commits them to IndexedDB. On load, stored records are deserialized back into live object instances with relationships re-established.
+Persistence is annotation-driven. The persistence layer watches slot mutations, batches dirty objects at the end of each event loop into atomic transactions, and commits them to a local record store. On load, stored records are deserialized back into live object instances with relationships re-established.
 
-A separate content-addressable blob store handles large binary data using SHA-256 hashes as keys, giving automatic deduplication. Objects store hash references, not blob data.
+Storage is organized as *object pools*. A pool is one independently loadable document — a game session, a character, a campaign — whose objects are reachable from a root, and whose id is that root's persistent id. Every object is one row keyed by its pool and its own id; references inside a pool are near references by id, and the only way to point at another document is a far reference to its pool, which is followed asynchronously. A folder holds no list of its documents: each document's root row names the folder it is placed under, with a sort key, so a folder's contents are a query and placement is the tree. Collections that grow without bound, such as a chat's messages, use the same placement and are loaded in windows rather than whole.
 
-Automatic garbage collection walks the stored object graph from the root and removes unreachable objects.
+The cloud holds the same rows, one record per row, with a version per pool. Saving a document sends the records changed since the last acknowledged version as one commit, which the server applies atomically or refuses as a conflict; opening one on a device that already holds it asks only for the changes since its version. The local store and the cloud are therefore one shape with two backings, and the same suite of tests pins both.
+
+A separate content-addressable blob store handles large binary data using SHA-256 hashes as keys, giving automatic deduplication. Records hold hash references, never blob data, and long text spills to the same store, so every record stays small.
+
+Garbage collection is per pool: rows unreachable from the pool's root, by reference or by placement, are removed. Documents themselves are deleted explicitly, and deleting a folder deletes what is placed beneath it.
 
 ### 6.4 Synchronization
 
@@ -5928,7 +5934,7 @@ Model classes hold no references to views or browser globals, so the same domain
 
 ### 7.3 Transparent Persistence and Cloud Sync
 
-The framework owns the complete object graph and understands its structure through annotations, so persistence splits transparently into two strategies: a synchronous object pool for the model graph, keeping the UI immediately responsive, and an asynchronous content-addressable blob store for large binary resources, so they never block rendering. The same structural knowledge enables transparent cloud synchronization: the framework knows what changed, which blobs are referenced, and how to reconcile state. The developer annotates what should persist; the framework decides how and when.
+The framework owns the complete object graph and understands its structure through annotations, so persistence splits transparently into two strategies: synchronous object pools for the model graph, keeping the UI immediately responsive, and an asynchronous content-addressable blob store for large binary resources, so they never block rendering. The same structural knowledge enables transparent cloud synchronization. Because every object is already a row with a known pool, the framework knows exactly which records changed, which blobs they reference, and which document they belong to; a cloud save is a commit of those rows against the document's version, and a conflict is detected rather than silently merged. Annotations reach this layer too: a slot can be stored yet kept on the device, out of what a commit sends. The developer annotates what should persist; the framework decides how and when.
 
 ### 7.4 Content-Addressable Resource Loading
 
@@ -5946,7 +5952,7 @@ Every node carries enough slot metadata to drive its own UI, so the same metadat
 
 Every tile is generated from the same view classes, so drag-and-drop works uniformly across the application in two modes that share one gesture:
 
-- A **copy** drag serializes the source node to JSON (with its sub-object pool inlined) and delivers it via the declared MIME types. It extends naturally across browser windows, to and from the desktop, and to and from other applications that exchange those types.
+- A **copy** drag serializes the source node to JSON and delivers it via the declared MIME types. It extends naturally across browser windows, to and from the desktop, and to and from other applications that exchange those types.
 - A **reference** drag transfers a persistent node UUID, for moving or linking within the application without copying contents.
 
 Both modes are type-safe: the receiving side validates against the same slot metadata that drives form validation and AI patches. In a conventional framework, drag interop requires per-class handlers, per-screen serialization formats, and ad-hoc validation on receipt, and the cost scales with the number of draggable objects. Here it is free at the primitive level. (Cross-window reference drags, where a second client resolves the UUID against shared state, are a natural extension but not yet implemented.)
@@ -6073,7 +6079,7 @@ This suits exploratory or fast-evolving applications: tools for analysis, resear
 
 *Single-application evidence.* The case study is one application by one primary developer. Whether the approach scales to multi-team development, third-party plugins, or large existing codebases is open.
 
-*Server-side compute and concurrency.* Strvct runs entirely client-side, with IndexedDB persistence and optional cloud sync. This gives excellent offline operation and snappy local interactions, but constrains use cases needing very large datasets, heavy server-side computation, or strict multi-user concurrency control.
+*Server-side compute and concurrency.* Strvct runs entirely client-side, with a local record store and optional versioned cloud commits. This gives excellent offline operation and snappy local interactions, but constrains use cases needing very large datasets or heavy server-side computation. Concurrency control is optimistic and per document: two writers to the same document are detected at commit and the later one reloads; edits are not merged.
 
 *External validation.* Accessibility, internationalization, and mobile experience are architecturally supported but have not undergone external audits, large-scale user studies, or production deployment beyond the primary application.
 
@@ -7006,7 +7012,7 @@ Source: /docs/Persistence/
 
 Local storage, cloud sync, and blob management for object graphs.
 
-Three tiers: the in-memory model, local storage in IndexedDB (an object pool plus a content-addressable blob pool), and cloud storage with addressing nodes that point to object and blob records. Mutations propagate synchronously to local and asynchronously to cloud; reads resolve from whichever tier is closest.
+Three tiers: the in-memory model, local storage (a record store holding every object pool's rows, plus a content-addressable blob pool), and the cloud, which holds the same rows one record per row, with a version per pool. Each document is its own pool; a folder's contents are the documents whose root rows are placed under it. Mutations are stored locally at the end of each event loop and committed to the cloud asynchronously, as the records changed since the pool's last acknowledged version.
 
   
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
@@ -7033,27 +7039,27 @@ Three tiers: the in-memory model, local storage in IndexedDB (an object pool plu
   
   Local Storage
   
-  Object Pool
-  records (by puuid)
+  Record Store
+  rows by pool + puuid
   
   Blob Pool
   content-addressable
   - 
   - 
-  sync
+  commit
   fetch
   
   Cloud Storage
   
-  Cloud Nodes
-  → object or blob
+  Scopes
+  owners, members
   
-  Cloud Object Pool
-  object records
+  Records
+  rows, version per pool
   
   Cloud Blob Storage
   blob records
-  Mutations propagate synchronously to local and asynchronously to cloud; GC collects orphan blobs at both tiers.
+  Mutations are stored locally at once and committed to the cloud asynchronously; GC collects orphan blobs at both tiers.
 
 - Local Object Pools
 - Cloud Object Pools
@@ -7067,201 +7073,174 @@ Source: /docs/Persistence/Cloud%20Object%20Pools/
 
 # Cloud Object Pools
 
-Cloud sync for object pools and collections using Firebase Storage.
+Cloud persistence for object pools: one record per row, a version per pool, and a commit protocol.
 
 ## Overview
 
-Strvct's local persistence stores serialized object graphs in IndexedDB via `SvPersistentObjectPool`. Cloud sync extends this with two complementary strategies because different data has fundamentally different sync characteristics. A collection of independent items (e.g. characters or campaigns) benefits from per-item files — you can lazy-load, show thumbnails before downloading, and a change to one item doesn't require re-uploading everything. But an interconnected object graph (e.g. a game session with dozens of cross-referencing objects) can't be split into individual files because objects reference each other by ID — they must move as a unit. The two strategies reflect this distinction:
+Every cloud document — a game session, a character, a catalog campaign — is an object pool: a graph of records reachable from one root record. Locally the pool's rows live in the shared record store (see [Local Object Pools](../Local%20Object%20Pools/)); in the cloud the **same rows** live in a records collection, one cloud document per record. There is no second format: the local row is a subset of the cloud row, a single mapper turns objects into rows on both sides, and syncing is "read rows from one side, write them into the other".
 
-<svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 300" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
     .dim { fill: #666; }
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
   </style>
-  <rect class="box" x="40" y="20" width="350" height="159"/>
-  <text x="55" y="42" class="b">Collection Sync</text>
-  <rect class="fill" x="55" y="60" width="320" height="52"/>
-  <text x="70" y="80" class="b">manifest.json</text>
-  <text x="70" y="98" class="dim">subnodeIds + item metadata</text>
-  <rect class="fill" x="55" y="130" width="100" height="34"/>
-  <text x="70" y="150" class="dim">item-1.json</text>
-  <rect class="fill" x="165" y="130" width="100" height="34"/>
-  <text x="180" y="150" class="dim">item-2.json</text>
-  <rect class="fill" x="275" y="130" width="100" height="34"/>
-  <text x="290" y="150" class="dim">item-3.json</text>
-  <rect class="box" x="430" y="20" width="350" height="159"/>
-  <text x="445" y="42" class="b">Pool Sync</text>
-  <rect class="fill" x="445" y="60" width="320" height="52"/>
-  <text x="460" y="80" class="b">snapshot.json</text>
-  <text x="460" y="98" class="dim">complete object graph</text>
-  <rect class="fill" x="445" y="130" width="100" height="34"/>
-  <text x="460" y="150" class="dim">wal-001.json</text>
-  <rect class="fill" x="555" y="130" width="100" height="34"/>
-  <text x="570" y="150" class="dim">wal-002.json</text>
-  <rect class="fill" x="665" y="130" width="100" height="34"/>
-  <text x="680" y="150" class="dim">wal-003.json</text>
+  <defs>
+    <marker id="cop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="20" y="20" width="230" height="250"/>
+  <text x="35" y="42" class="b">Browser</text>
+  <rect class="fill" x="35" y="60" width="200" height="52"/>
+  <text x="50" y="80" class="b">SvObjectPool</text>
+  <text x="50" y="98" class="dim">one document's live objects</text>
+  <line class="flow" x1="135" y1="112" x2="135" y2="140" marker-end="url(#cop)"/>
+  <rect class="fill" x="35" y="140" width="200" height="52"/>
+  <text x="50" y="160" class="b">SvLocalRecordStore</text>
+  <text x="50" y="178" class="dim">every pool's rows (IndexedDB)</text>
+  <text x="35" y="222" class="dim">the root row mirrors the</text>
+  <text x="35" y="240" class="dim">last acknowledged version</text>
+  <rect class="box" x="295" y="20" width="230" height="250"/>
+  <text x="310" y="42" class="b">SvCloudRecordStore</text>
+  <rect class="fill" x="310" y="60" width="200" height="52"/>
+  <text x="325" y="80" class="b">reads</text>
+  <text x="325" y="98" class="dim">open · changes · children · roots</text>
+  <rect class="fill" x="310" y="140" width="200" height="52"/>
+  <text x="325" y="160" class="b">commit</text>
+  <text x="325" y="178" class="dim">baseVersion → version | conflict</text>
+  <text x="310" y="222" class="dim">over the backend's</text>
+  <text x="310" y="240" class="dim">callFunction(name, args)</text>
+  <rect class="box" x="570" y="20" width="230" height="250"/>
+  <text x="585" y="42" class="b">Cloud</text>
+  <rect class="fill" x="585" y="60" width="200" height="88"/>
+  <text x="600" y="80" class="b">records</text>
+  <text x="600" y="98" class="dim">one document per record</text>
+  <text x="600" y="116" class="dim">root row: version, state,</text>
+  <text x="600" y="134" class="dim">parentId, orderKey, owner</text>
+  <rect class="fill" x="585" y="168" width="200" height="52"/>
+  <text x="600" y="188" class="b">blobs/&lt;sha256&gt;</text>
+  <text x="600" y="206" class="dim">content-addressed, lazy</text>
+  <text x="585" y="248" class="dim">scopes: owners and members</text>
+  <line class="flow" x1="235" y1="160" x2="310" y2="160" marker-end="url(#cop)"/>
+  <line class="flow" x1="310" y1="180" x2="235" y2="180" marker-end="url(#cop)"/>
+  <text x="272" y="152" text-anchor="middle" class="dim">rows</text>
+  <line class="flow" x1="510" y1="86" x2="585" y2="86" marker-end="url(#cop)"/>
+  <line class="flow" x1="585" y1="104" x2="510" y2="104" marker-end="url(#cop)"/>
+  <line class="flow" x1="510" y1="166" x2="585" y2="126" marker-end="url(#cop)"/>
 </svg>
 
-- **Collection sync** — Individual items are synced as separate JSON files with a manifest. Items can be lazily loaded from stubs.
-- **Pool sync** — Entire object graphs are synced as a single pool. A write-ahead log of small delta files makes updates fast and efficient — only changed records are uploaded, with periodic compaction back to a full snapshot.
+The model in five sentences:
 
-Both strategies require the synced object graph to be **self-contained** — the rest of the system holds only a reference to the graph's root, and objects within the graph hold no persistent references to objects outside it. This isolation is what makes it possible to serialize, upload, and reconstruct the graph independently.
+1. **A pool's id is its root object's puuid**, so the root row is the one whose `objectId` equals its `poolId`.
+2. That row — and only that row — also carries the pool's **server-owned state** (`version`, `state`) and its **place in the tree** (`parentId`, `orderKey`, owner).
+3. **A folder is a pool too**, usually one whose only row is its root; folders never list their children — a folder's children are the root rows whose `parentId` names it.
+4. A **far reference**, `{ "**": poolId }`, is the only way to point across a pool boundary, and following it is asynchronous.
+5. Edits reach the cloud through one **commit protocol**: the records changed since the last acknowledged version, compared and applied atomically against that version.
 
-Both strategies use Firebase Storage as the backend and are coordinated by `SvCloudSyncSource`.## Collection Sync
+In the cloud a pool is named by its scoped id, `"<scopeId>:<localPoolId>"` (`SvRecordRow.scopedPoolId`), so two accounts holding a copy of the same template never collide; the root record's object id is the local part.
 
-### How It Works
+## Rows
 
-Each syncable collection maintains a folder in cloud storage at `/users/{userId}/{collectionName}/`. The folder contains one JSON file per item plus a manifest file that tracks ordering and metadata.
+A row is one object's serialized record plus the columns the store needs to find, order and version it. `SvRecordRow` defines the shape and its checks.
 
-**Manifest structure:**
+| Column | Root row (`objectId = poolId`) | Any other row | Written by |
+|--------|-------------------------------|---------------|-----------|
+| `poolId`, `objectId` | the pool and the root object | the pool and the object | client |
+| `parentId`, `orderKey` | the folder (or collection node) this pool is placed under, and its fractional sort key | set on placed elements of a windowed collection; otherwise null | client |
+| `payloadJson` | the root object's record | the object's record | client — the only content a commit carries |
+| `version` | the pool's content sequence, advanced by every commit | — | server, mirrored down |
+| `modifiedVersion`, `isDeleted` | as any row | the version that last wrote the row; a tombstone | server, mirrored down |
+| `scopeId`, `state`, owner | the pool's sharing boundary and lifecycle | `scopeId` only | server |
 
-```json
-{
-  "subnodeIds": ["id1", "id2"],
-  "items": {
-    "id1": {
-      "type": "MyItemClass",
-      "title": "Item Title",
-      "subtitle": "Item subtitle",
-      "thumbnailUrl": "https://...",
-      "lastModified": 1707123456789
-    }
-  }
-}
-```
+Only what the server writes is a column; everything about a document that the application cares about — title, subtitle, thumbnail hash, provenance — is ordinary slots on the root object, in its payload. A folder listing therefore needs nothing but root rows: each one carries enough to draw the document's tile without opening it.
 
-The manifest enables lazy loading — the client can display item titles and thumbnails without downloading the full item data. Full item JSON is fetched on demand when the user navigates to an item.
+**Local-only slots.** A stored slot can stay on the device: `slot.setIsInCloudRecord(false)` keeps it in the local row's payload and strips it from what a commit sends (`SvObjectPool.cloudPayloadFor`). Sync timestamps and other device bookkeeping use it, so a load or a view refresh never causes a commit.
 
-Collections can be nested. `SvCloudSyncSource` supports a `subPath` slot, allowing hierarchical storage structures like `/users/{userId}/{collectionName}/{itemId}/{subCollectionName}/`.
+**Blobs.** Records never inline binary data. An image or a spilled long string is a content hash in the payload; the bytes are a content-addressed blob in cloud storage, fetched when shown. The reference backend extracts each record's hashes on commit (`blobRefs`), so blob garbage collection is a set difference over rows, never a scan of payloads. See [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/).
 
-### Sync Flow
+## The Store Protocol
 
-**Push to cloud:**
+`SvRecordStoreProtocol` is the one interface every backing implements; a single fixture-driven suite (`TestRecordStoreMemory`, `TestRecordStore`) pins them to the same behavior:
 
-1. Item serialized via `asCloudJson()` which calls `serializeToJson("Cloud", [])`
-2. JSON uploaded to `/users/{userId}/{collectionName}/{itemId}.json`
-3. Manifest updated with item metadata and re-uploaded
+| Method | Answers |
+|--------|---------|
+| `asyncOpen(poolId)` | `{ root, records, version, state }` — the whole pool, or null |
+| `asyncReadChanges(poolId, sinceVersion)` | `{ rows, tombstones, version, reloadRequired }` — what changed after a version |
+| `asyncChildren(nodeId, range)` | the rows placed under a node, ordered by `(orderKey, objectId)` |
+| `asyncResolveFar(poolId)` | the pool a far reference names |
+| `asyncPut(rows)` / `asyncDelete(keys)` | mirror writes (local backings only) |
+| `asyncCommit({ poolId, baseVersion, requestId, writes, deletes })` | `{ status: "committed", version }`, `"conflict"` or `"refused"` (cloud and memory backings) |
 
-**Pull from cloud:**
+| Backing | Role |
+|---------|------|
+| `SvLocalRecordStore` | The device's mirror: every pool's rows in one database. Puts and deletes; no commit protocol. |
+| `SvMemoryRecordStore` | The reference implementation of both sides, including the commit and staged-commit protocol; used by headless tests and as an in-memory cache of cloud pools. |
+| `SvCloudRecordStore` | The cloud: reads and commits over a backend that answers `callFunction(name, args)`. Refuses `asyncPut` / `asyncDelete` — the cloud is written only through commits. |
 
-1. Manifest fetched to discover available items
-2. Stubs created locally for each item (title, subtitle, thumbnail from manifest)
-3. Full item data fetched lazily when accessed
-4. Local item populated via `deserializeFromJson()`
+## Reading a Pool
 
-### Conflict Resolution
+Opening a document from the cloud reads its rows and imports them into the local store, which opens the pool there:
 
-Collection sync uses a timestamp-based strategy:
+1. **A device holding an in-sync copy asks only for changes.** `SvLocalRecordStore.inSyncVersionOfPool(poolId)` answers the cloud version the local copy reflects, when the copy has no edit made since it last synced. The opener then calls `asyncReadChanges(cloudPoolId, version)` and applies the answer with `asyncImportPoolChanges` — usually nothing changed, so a returning device opens a long session with one small read.
+2. **Otherwise the whole pool is read** with `asyncOpen` and imported with `asyncImportOpenedPool`, replacing the local copy: the cloud wins.
+3. **`reloadRequired`** — the cloud no longer remembers deletions that far back — falls back to the whole-pool read.
 
-- Each item tracks `cloudLastModified` and `localLastModified`
-- If cloud is newer and local has no unsaved changes — update from cloud
-- If cloud is newer but local has unsaved changes — keep local (re-upload on next sync)
-- If local is newer — upload on next sync
+A reader takes the root's `version` first and accepts only rows stamped at or below it, so a large commit still being written is never seen half-done. Rows imported from the cloud are a load, not an edit: nothing is marked dirty and nothing is sent back.
 
-This is a "local wins" strategy — local changes always take priority.
+## Writing a Pool
 
-## Pool Sync
+Edits are stored locally first, at the end of each event loop, exactly as for any pool. Sending them to the cloud is a separate, debounced step: `SvObjectPool.asyncCommitToCloud(cloudStore, options)`.
 
-### How It Works
+1. Flush pending local writes, then compute the **changes since the last synced snapshot** (`cloudChanges()`): records whose cloud payload differs, records that are gone, and placed rows whose placement moved.
+2. Send them as one commit with the root row's mirrored `version` as `baseVersion` and a fresh `requestId`. The first commit of a new pool passes `create: { scopeId }`.
+3. **Committed** — the server's new `version` and each written row's `modifiedVersion` are mirrored onto the local rows through the non-dirtying path, and the snapshot advances to what was sent.
+4. **Conflict** — another writer's commit landed first. Nothing local changes; the caller reloads (the cloud wins) and can use `holdsCommitContent(commit)` to tell whether the refused commit lost anything.
+5. **Refused** — the request broke a rule (a server-owned column, a row of another pool, deleting the root); the caller reports it.
 
-For complex object graphs where many interrelated objects need to be synced together, the document's own `SvObjectPool` serializes itself as a single JSON document (`asJson()`). The pool maps persistent unique IDs (puuids) to serialized object records, plus `root` (the pool id) and `_placements` (the parent and order key of every placed row, so windowed collections survive the round trip):
+On the server a commit is one transaction: check the request-id receipt (a retry returns the saved answer), read the root row, require `version == baseVersion`, advance it, stamp each written row and tombstone with the new version, write the receipt. Retries keep the original base version — they never adopt the newest and overwrite someone else. **There are no document locks.** Readers never conflict; writers conflict only at commit and are told.
 
-```json
-{
-  "{puuid1}": "{serialized_object_json}",
-  "{puuid2}": "{serialized_object_json}"
-}
-```
+### Large Commits
 
-This is stored at `/users/{userId}/{collectionName}/{poolId}/pool.json`.
+A commit over the backing's transaction limit (`maxOpsPerCommit()` 450 operations, or 4 MB of payload) is **staged** by `SvStagedRecordCommit`: begin (a compare-and-set that reserves the next version), write in batches, finalize (the root row, the version and the receipt in one transaction). While a stage is open the pool answers **busy** — opens, change reads and commits — and `SvCloudRecordStore` waits and retries (`busyRetryDelays`) rather than reading around it. A stage abandoned mid-way is rolled back by the next access that touches the pool, from the pre-images the batches saved.
 
-### Write Ahead Log
+## Folders
 
-To avoid uploading the entire pool on every save, the pool tracks changes since the last synced snapshot (`collectDelta()`) and produces incremental deltas:
+A folder whose children are documents declares `setSubnodesArePools(true)`, which every `SvCloudFolder` does. Its membership is not a list it stores: a document is in a folder because the document's root row is placed there.
 
-```json
-{
-  "timestamp": 1707123456789,
-  "writes": {
-    "{puuid1}": "{updated_object_json}",
-    "{puuid3}": "{new_object_json}"
-  },
-  "deletes": ["{puuid2}"]
-}
-```
+- **Listing** — `asyncListedRootRows()` asks the record cloud for every root row in the folder's scope (`SvCloudRecordStore.asyncScopeRootRows(scopeId)`, one request per scope, shared by every folder that asks at the same time) and `applyRootRowListing` takes the rows placed under the folder's id. Each becomes a placeholder child built from the row's fields (`rowFieldsFromRecordPayload`): title, subtitle, thumbnail and the cloud version, without loading the document.
+- **Pruning** — a complete listing is authoritative: a local child the cloud no longer lists is removed, and a deletion outranks a child's unsent edits. An incomplete listing never prunes.
+- **The folder's own row** — a folder that is itself a pool answers `cloudFolderRow()` and, when the user may write it (`mayWriteFolderRow()`), writes its row after a complete listing that lacks it or holds an older one (`asyncPutRootRow`).
+- **Saving** — `asyncSyncToCloud()` saves each dirty child document and flushes the folder's deletion queue.
+- **Deleting** — removing a child queues a stored delete descriptor (`pendingCloudDeletes`) that survives reloads and retries on every pass until the cloud confirms. It doubles as a tombstone: no listing re-adds a child whose delete is pending. Deleting a pool in the cloud also deletes every pool placed beneath it.
 
-Deltas are stored as separate timestamped files alongside the main pool. On load, the client fetches `pool.json` and applies all deltas in order to reconstruct the current state.
+An application binds a folder to its backend by overriding three hooks: `cloudFsScopeRootId()` (the scope it lists), `defaultFsBackend()` (scope operations and deletes) and `folderRecordStore()` (the `SvCloudRecordStore` it lists from).
 
-**Upload strategy:**
+## Far References
 
-- If changes affect less than 50% of records — upload a delta file
-- If changes exceed 50% — upload the full pool (more efficient than a large delta)
-- When delta count exceeds 20 — compact by uploading a full pool and deleting all deltas
+A reference to an object in another pool is stored as `{ "**": poolId }`, never as `{ "*": puuid }`. It names the pool, not a record, so the target can be republished, copied or moved without the reference changing. A far reference keeps nothing alive and grants nothing: resolving it opens the target under the target's own permissions, and a dangling far reference is a normal state to show, not an error. Crossing a pool boundary is a far reference (shared, read-only) or a copy (a new pool with fresh puuids), never a re-key.
 
-### Concurrency Control
+## Scopes and Permissions
 
-Pool sync uses lock-based concurrency to prevent simultaneous edits:
-
-- `asyncAcquireOrRefreshLock()` acquires an exclusive lock before writing
-- Locks are refreshed periodically (every 60 seconds) during active sessions
-- `asyncReleaseLock()` releases the lock when the session ends
-- Lock acquisition and release are handled via cloud function endpoints
+Every row carries the `scopeId` of its sharing boundary — an account's home, the public catalog, a multiplayer session — and every request is checked against that scope once: the caller is its owner, a member, or the scope is public. Permissions live in a small server-owned scope store (owners, members, invites), not in records, so no commit can change who may read or write a pool. The framework sees none of this beyond the scope id a folder supplies.
 
 ## Key Classes
 
-### SvCloudSyncSource
+| Class | Purpose |
+|-------|---------|
+| `SvObjectPool` | One document's live objects; `asyncCommitToCloud`, `cloudChanges`, `holdsCommitContent` |
+| `SvLocalRecordStore` | The device's rows; `inSyncVersionOfPool`, `asyncImportOpenedPool`, `asyncImportPoolChanges` |
+| `SvCloudRecordStore` | The record cloud: reads, commits, staged commits, busy retries, shared scope listings |
+| `SvMemoryRecordStore` | The reference implementation of the protocol, for tests and in-memory caches of cloud pools |
+| `SvStagedRecordCommit` | Drives a commit too large for one transaction |
+| `SvRecordRow` / `SvRecordStoreProtocol` | The row shape and the store interface |
+| `SvCloudFolder` | A folder of documents: lists from scope root rows, saves children, queues deletes |
+| `SvOrderKey` | Fractional order keys for placement |
 
-The primary cloud-aware sync class. Configured with a user ID, folder name, and Firebase Storage reference. Handles:
-
-- Item upload and download
-- Manifest management
-- Thumbnail uploads to content-addressed storage
-- Retry logic with exponential backoff
-- Orphaned file cleanup
-
-### SvObjectPool (a document's pool)
-
-Every cloud document is its own `SvObjectPool` over the shared local record store (see [Local Object Pools](../Local%20Object%20Pools/)); the former in-memory `SvSubObjectPool` is retired. The pool provides:
-
-- `asyncSaveToCloud()` — saves with delta or full upload optimization
-- `collectDelta()` — produces incremental changes vs. the last synced snapshot
-- `asyncCompactToCloud()` — consolidates deltas into a single pool file
-- `asJson()` — serializes the complete pool (records, `root`, `_placements`) for upload
-- `SvLocalRecordStore.asyncImportPoolJson(json)` — imports a downloaded pool into the local store and opens it; `SvObjectPool.fromCloudJson(json)` opens one in memory instead
-
-### Records as documents (the record cloud)
-
-The second backing keeps each record as its own cloud document instead of one `pool.json`: `SvCloudRecordStore` speaks the store protocol over the backend's `callFunction` — `asyncOpen(poolId)`, `asyncReadChanges(poolId, sinceVersion)`, `asyncChildren(nodeId, range)` and the commit protocol `asyncCommit({ poolId, baseVersion, requestId, writes, deletes })`, whose outcomes are `committed`, `conflict` (someone else's commit landed first; reload and retry) or `refused`. `SvObjectPool.asyncCommitToCloud(cloudStore)` sends the pool's delta at the mirrored version and mirrors the server's version back onto the local root row; `SvLocalRecordStore.asyncImportOpenedPool(opened)` brings a pool down. The application chooses per document class which backing it uses.
-
-### SvSyncCollectionSource
-
-Abstract base class for collection syncing. Defines the interface for:
-
-- `asyncSyncFromSource()` — pull from cloud
-- `asyncLazySyncFromSource()` — create stubs for lazy loading
-- `asyncSyncToSource()` — push to cloud
-
-## Relationship to Local Persistence
-
-| Component | Backing Store | Cloud Sync | Purpose |
-|-----------|--------------|------------|---------|
-| `SvPersistentObjectPool` | The record store (IndexedDB) | No | The home pool: local app state, never synced directly |
-| A document's `SvObjectPool` | The same record store | Yes | One cloud document; delta or whole-pool upload, or the record cloud's commit protocol |
-| `SvCloudSyncSource` | Firebase Storage | Yes | Collection-level cloud sync with manifests |
-
-The local record store is the ground truth for the running application. Cloud sync operates alongside it — collections push individual items, while each document's pool uploads its own snapshot or delta.
-
-## Auto-Sync Triggers
-
-Cloud sync is triggered automatically on:
-
-- Tab visibility change (switching back to the app)
-- Browser `beforeunload` event
-- Network online/offline transitions
-- Manual save actions
+The older file-based collection sync (`SvCloudSyncSource`, `SvSyncCollectionSource`: one JSON file per item plus a manifest in cloud storage) is still in the framework, but no document class uses it; the record cloud replaced it, and the `pool.json` snapshot-plus-write-ahead-log format, its leases and its compaction were removed.
 
 
 ---
@@ -7287,17 +7266,19 @@ The system addresses a fundamental challenge in web applications: **efficiently 
 
 4. **Cloud Sync**: `SvCloudBlobNode` extends local storage to support pushing/pulling blobs to Google Cloud Storage.
 
-### Why Not Store Everything in Firebase Firestore?
+### Why Blobs Stay Out of Records
 
-Firebase Firestore has constraints that make it unsuitable for storing the complete object graph directly:
+Structured data does live in Firestore — one cloud document per object record (see [Cloud Object Pools](../Cloud%20Object%20Pools/)) — and that only works because binary data never enters a record:
 
-1. **Document Size Limit**: Firestore enforces a **1MB maximum document size**. Objects that serialize themselves along with their contained children can easily exceed this limit (e.g., a campaign with locations, NPCs, treasures, and session history).
+1. **Document size limit**: Firestore caps a document at **1 MB**. A record that inlined an image or a long narration would hit it; a record holding a hash is a few hundred bytes. Long text spills to the blob store for the same reason (`slot.setIsBlobString(true)`, above 32 KB).
 
-2. **No Graph Traversal**: If we fully decomposed storage to one document per object, retrieving an object graph would require **many sequential round trips**. Firestore has no support for traversing a directed graph of references in a single request - each document fetch is independent.
+2. **Opening a document is one query**: a pool's rows are read together by pool id, so opening a session or a campaign is one indexed read rather than a traversal of references. Keeping blobs out keeps that read small; images are fetched afterwards, only when shown.
 
-3. **Batching Limits**: Storing each object as its own document hits Firestore's batching limits (500 operations per batch). This makes bulk operations slow and would require additional synchronization mechanisms to ensure consistency across related documents.
+3. **Commit limits**: a commit is one transaction (at most a few hundred operations), and larger ones are staged in batches. Blob bytes would make every commit that touched an image enormous; a hash makes it one small write.
 
-**The solution**: Store structured object data as larger, more self-contained documents locally (IndexedDB), and sync to cloud storage at a higher granularity. Binary blobs are separated out because they're the primary driver of document size, and content-addressable storage means they can be efficiently synced and deduplicated independently.
+4. **Deduplication across documents**: the same image used by a catalog campaign and every session copied from it is stored once, under its hash.
+
+**The solution**: records hold hashes; bytes live in content-addressed blob storage, locally in a separate IndexedDB database and in the cloud under `blobs/<sha256>`. The reference backend records each committed record's hashes (`blobRefs`), so cloud blob garbage collection is a set difference over rows.
 
 ---
 
@@ -7307,7 +7288,7 @@ The solution uses a **dual-database architecture** with hash-based references be
 
 | Component | Purpose | Storage |
 |-----------|---------|---------|
-| **SvObjectPool** | Stores structured objects (characters, sessions, etc.) | IndexedDB (sync API) |
+| **SvObjectPool** | Stores structured objects (characters, sessions, etc.) as rows | The record store, IndexedDB (sync API) |
 | **SvBlobPool** | Stores binary blobs (images, audio, video) | Separate IndexedDB (async API) |
 
 <svg viewBox="0 0 820 320" width="820" xmlns="http://www.w3.org/2000/svg">
@@ -7695,7 +7676,7 @@ Every stored object has a **puuid** — a 10-character random string (A-Za-z0-9)
 
 Puuids serve two purposes:
 
-1. **Storage key** — the puuid is the key under which the object's serialized record is stored in IndexedDB.
+1. **Storage key** — together with its pool's id, the puuid keys the row that holds the object's serialized record (`poolId` + `objectId`; the pool's root row is the one where the two are equal).
 2. **Object references** — when one stored object references another, the reference is serialized as `{ "*": "puuid" }` rather than inlining the referenced object. This allows the storage system to trace the object graph for garbage collection.
 
 ## Serialization Format
@@ -7737,7 +7718,7 @@ Because the commit is deferred, multiple slot changes within the same event loop
 
 ### Commit Details
 
-`commitStoreDirtyObjects()` begins an IndexedDB transaction via `SvPersistentAtomicMap`, then iterates the dirty set. For each dirty object, it calls `recordForStore()` to serialize it and writes the JSON string to the map keyed by puuid. After all objects are stored, the transaction is committed atomically. If any object becomes dirty again during the commit (because serialization triggers side effects), the cycle repeats until the dirty set is empty.
+`commitStoreDirtyObjects()` begins an IndexedDB transaction via `SvPersistentAtomicMap`, then iterates the dirty set. For each dirty object, it calls `recordForStore()` to serialize it and writes it as the payload of the object's row, keyed by pool id and puuid. After all objects are stored, the transaction is committed atomically. If any object becomes dirty again during the commit (because serialization triggers side effects), the cycle repeats until the dirty set is empty.
 
 ## SvPersistentAtomicMap
 
@@ -7807,7 +7788,7 @@ The conversion map only affects record deserialization. It does **not** rewrite 
 
 Every cloud document — a session, a character, a catalog campaign — is its own pool, and the pools share one record store. A folder whose children are documents declares it with `setSubnodesArePools(true)` (every `SvCloudFolder` does): the folder's record then holds a **far reference** `{ "**": poolId }` to each child instead of a near reference `{ "*": puuid }`, and the child's root row is placed under the folder with a fractional order key (`SvOrderKey`). Editing a document dirties only its pool; deleting a document's root cascades to its pool; `SvObjectPool.poolOfObject(obj)` answers which pool an object belongs to. The application's home pool is the `SvPersistentObjectPool` (`settings.homePoolId`); child pools open on demand from the same store.
 
-A pool round-trips through the cloud `pool.json` shape (`asJson()` / `asyncImportPoolJson()`), which carries the pool's placements as `_placements`. `SvObjectPool.fromCloudJson(json)` opens a pool in memory over `SvMemoryRecordStore`, which is what the former `SvSubObjectPool` did.
+The cloud holds the same rows (see [Cloud Object Pools](../Cloud%20Object%20Pools/)): a pool comes down as rows (`SvLocalRecordStore.asyncImportOpenedPool`, or `asyncImportPoolChanges` for the changes since the version the device holds) and goes up as a commit of the rows changed since the last synced snapshot (`SvObjectPool.asyncCommitToCloud`). A pool reopened from disk whose copy is in sync with the cloud — it has a cloud version and no edit stamped after its last sync — starts with that synced snapshot, so its first commit sends only its changes. A store that no pool owns (`outlivesItsPools`) serves as an in-memory cache of cloud pools opened one at a time.
 
 ## Windowed Collections
 
@@ -10126,6 +10107,8 @@ Integrates with Firebase for cloud persistence and file storage. Unlike AI servi
 - **`SvFirestoreDatabaseService`** — Document and collection access via Firestore. Provides query building, real-time listeners, and CRUD operations through Strvct node wrappers (`SvFirestoreNode`, `SvFirestoreQuery`).
 - **`SvFirebaseStorageService`** — File upload and download via Firebase Storage, with permission management.
 
+Document persistence does not go through these wrappers. Object pools reach the cloud through `SvCloudRecordStore`, which calls the backend's record functions (open, changes, children, commit); see [Cloud Object Pools](../../Persistence/Cloud%20Object%20Pools/).
+
 
 ---
 
@@ -10794,7 +10777,7 @@ High-level architecture and key concepts of the Strvct framework.
 
 ## Introduction
 
-Strvct applications run as client-side single-page apps in the browser. The framework makes heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for maintaining a persistent object database of application state in IndexedDB. Subgraphs of this object database can be transparently and lazily synced to the cloud, allowing offline-first operation with seamless cloud persistence.
+Strvct applications run as client-side single-page apps in the browser. The framework makes heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for maintaining a persistent record store of application state in IndexedDB. The store is divided into object pools, one per document; a document's rows are committed to the cloud, which holds the same rows with a version per pool, allowing offline-first operation with seamless cloud persistence.
 
 Strvct is not a template system, a compile-time UI generator, or a component framework in the React/Flutter sense. There is no build step that produces views, no static component tree, and no pre-rendered layout. Views are created lazily at runtime as the user navigates the object graph — each navigation step inspects the target node's annotations, discovers an appropriate view class, and instantiates it. Once created, a view stays live and in sync with its model node through bidirectional notifications. The UI at any moment is a dynamic projection of the user's current navigation path, not a pre-built artifact.
 
@@ -10896,7 +10879,7 @@ Native JavaScript collections (Array, ArrayBuffer, Map, Object, Set, and TypedAr
 
 ### Local Storage
 
-Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects' JSON records.
+Persistent domain objects are stored client side in IndexedDB as rows of one record store. A row is keyed by its pool's id and the object's unique ID, and holds the object's JSON record; a pool's root row also carries its placement (the folder it sits in and a sort key) and the cloud version it last synced. The cloud holds the same rows, one record per row, and a document is saved by committing the rows changed since its version. See [Cloud Object Pools](../Persistence/Cloud%20Object%20Pools/).
 
 ## Resource Delivery
 

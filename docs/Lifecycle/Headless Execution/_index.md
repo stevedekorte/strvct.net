@@ -75,7 +75,9 @@ The persistence system works identically in both environments because the storag
 ```
 Application code
     ↓
-SvObjectPool / SvPersistentObjectPool     — object cache, dirty tracking, GC
+SvObjectPool / SvPersistentObjectPool     — one pool per document: object cache, dirty tracking, GC
+    ↓
+SvLocalRecordStore                      — every pool's rows, keyed by pool id + puuid
     ↓
 SvPersistentAtomicMap                   — synchronous in-memory cache, batched writes
     ↓
@@ -92,7 +94,7 @@ This design means the layers above `SvIndexedDbFolder` never make async storage 
 
 ### Blob Storage Is Separate and Async
 
-Binary data — images, audio, and other media — is stored separately in `SvBlobPool`, a content-addressable blob store that uses its own `SvIndexedDbFolder` instance (database name `defaultBlobStore`, separate from the object pool's `defaultDataStore`). Unlike the object pool, blob storage is fully asynchronous: blobs are read and written individually on demand, not loaded into memory all at once. This keeps memory usage proportional to what the application is actively using rather than the total size of all stored media.
+Binary data — images, audio, and other media — is stored separately in `SvBlobPool`, a content-addressable blob store that uses its own `SvIndexedDbFolder` instance (database name `defaultBlobStore`, separate from the record store's `defaultDataStore.records`). Unlike the object pool, blob storage is fully asynchronous: blobs are read and written individually on demand, not loaded into memory all at once. This keeps memory usage proportional to what the application is actively using rather than the total size of all stored media.
 
 `SvBlobPool` also works in headless mode — it uses the same `SvIndexedDbFolder` abstraction, so it gets the LevelDB backend automatically in Node.js. See [Local and Cloud Blob Storage](../../Persistence/Local%20and%20Cloud%20Blob%20Storage/) for details on the blob system.
 

@@ -436,7 +436,7 @@ This definition contains no UI code, no form layouts, no navigation logic, and n
 - A **summary tile** showing the character's name as a title and "Level 1" as a subtitle
 - **Property tiles** for `name` (editable string field) and `level` (editable number field), with appropriate input types
 - A **navigable field** for `inventory` that opens a new master-detail view of the inventory's contents when selected
-- **Automatic persistence** to IndexedDB, with dirty tracking and transactional commits
+- **Automatic persistence** to a local record store, with dirty tracking and transactional commits — and, for a class that is a cloud document, versioned commits of the same records to the cloud
 - **Bidirectional synchronization**: editing a field updates the model; programmatic model changes update the view
 - **Automatic translation** of field labels and values when internationalization is active
 
@@ -448,7 +448,7 @@ The screenshot below shows Strvct in undreamedof.ai, an AI-powered virtual table
 
 ## 6. Architecture
 
-Strvct is a client-side JavaScript framework. Applications run as single-page apps in the browser, making heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for an IndexedDB object database of application state.
+Strvct is a client-side JavaScript framework. Applications run as single-page apps in the browser, making heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for a local record store of application state (IndexedDB) that holds the same rows the cloud does.
 
 Strvct does not compile or pre-render user interfaces. There is no build step that produces a view tree, no template system, and no static component hierarchy. Views are instantiated lazily at runtime, only when the user navigates to a node in the object graph. Each navigation step inspects the target node's class and slot annotations, discovers or creates an appropriate view, and binds it to the node for live bidirectional synchronization. Once created, a view persists as long as its node stays visible, kept in sync through the notification system. The result is closer to a live object browser than a conventional render pipeline: the UI that exists at any moment is determined by the user's current navigation path through the object graph, and it responds immediately to model changes.
 
@@ -475,11 +475,15 @@ No single annotation knows about the others. The UI layer reads type and editabi
 
 ### 6.3 Storage
 
-Persistence is annotation-driven. The persistence layer watches slot mutations, batches dirty objects at the end of each event loop into atomic transactions, and commits them to IndexedDB. On load, stored records are deserialized back into live object instances with relationships re-established.
+Persistence is annotation-driven. The persistence layer watches slot mutations, batches dirty objects at the end of each event loop into atomic transactions, and commits them to a local record store. On load, stored records are deserialized back into live object instances with relationships re-established.
 
-A separate content-addressable blob store handles large binary data using SHA-256 hashes as keys, giving automatic deduplication. Objects store hash references, not blob data.
+Storage is organized as *object pools*. A pool is one independently loadable document — a game session, a character, a campaign — whose objects are reachable from a root, and whose id is that root's persistent id. Every object is one row keyed by its pool and its own id; references inside a pool are near references by id, and the only way to point at another document is a far reference to its pool, which is followed asynchronously. A folder holds no list of its documents: each document's root row names the folder it is placed under, with a sort key, so a folder's contents are a query and placement is the tree. Collections that grow without bound, such as a chat's messages, use the same placement and are loaded in windows rather than whole.
 
-Automatic garbage collection walks the stored object graph from the root and removes unreachable objects.
+The cloud holds the same rows, one record per row, with a version per pool. Saving a document sends the records changed since the last acknowledged version as one commit, which the server applies atomically or refuses as a conflict; opening one on a device that already holds it asks only for the changes since its version. The local store and the cloud are therefore one shape with two backings, and the same suite of tests pins both.
+
+A separate content-addressable blob store handles large binary data using SHA-256 hashes as keys, giving automatic deduplication. Records hold hash references, never blob data, and long text spills to the same store, so every record stays small.
+
+Garbage collection is per pool: rows unreachable from the pool's root, by reference or by placement, are removed. Documents themselves are deleted explicitly, and deleting a folder deletes what is placed beneath it.
 
 ### 6.4 Synchronization
 
@@ -505,7 +509,7 @@ Model classes hold no references to views or browser globals, so the same domain
 
 ### 7.3 Transparent Persistence and Cloud Sync
 
-The framework owns the complete object graph and understands its structure through annotations, so persistence splits transparently into two strategies: a synchronous object pool for the model graph, keeping the UI immediately responsive, and an asynchronous content-addressable blob store for large binary resources, so they never block rendering. The same structural knowledge enables transparent cloud synchronization: the framework knows what changed, which blobs are referenced, and how to reconcile state. The developer annotates what should persist; the framework decides how and when.
+The framework owns the complete object graph and understands its structure through annotations, so persistence splits transparently into two strategies: synchronous object pools for the model graph, keeping the UI immediately responsive, and an asynchronous content-addressable blob store for large binary resources, so they never block rendering. The same structural knowledge enables transparent cloud synchronization. Because every object is already a row with a known pool, the framework knows exactly which records changed, which blobs they reference, and which document they belong to; a cloud save is a commit of those rows against the document's version, and a conflict is detected rather than silently merged. Annotations reach this layer too: a slot can be stored yet kept on the device, out of what a commit sends. The developer annotates what should persist; the framework decides how and when.
 
 ### 7.4 Content-Addressable Resource Loading
 
@@ -523,7 +527,7 @@ Every node carries enough slot metadata to drive its own UI, so the same metadat
 
 Every tile is generated from the same view classes, so drag-and-drop works uniformly across the application in two modes that share one gesture:
 
-- A **copy** drag serializes the source node to JSON (with its sub-object pool inlined) and delivers it via the declared MIME types. It extends naturally across browser windows, to and from the desktop, and to and from other applications that exchange those types.
+- A **copy** drag serializes the source node to JSON and delivers it via the declared MIME types. It extends naturally across browser windows, to and from the desktop, and to and from other applications that exchange those types.
 - A **reference** drag transfers a persistent node UUID, for moving or linking within the application without copying contents.
 
 Both modes are type-safe: the receiving side validates against the same slot metadata that drives form validation and AI patches. In a conventional framework, drag interop requires per-class handlers, per-screen serialization formats, and ad-hoc validation on receipt, and the cost scales with the number of draggable objects. Here it is free at the primitive level. (Cross-window reference drags, where a second client resolves the UUID against shared state, are a natural extension but not yet implemented.)
@@ -650,7 +654,7 @@ This suits exploratory or fast-evolving applications: tools for analysis, resear
 
 *Single-application evidence.* The case study is one application by one primary developer. Whether the approach scales to multi-team development, third-party plugins, or large existing codebases is open.
 
-*Server-side compute and concurrency.* Strvct runs entirely client-side, with IndexedDB persistence and optional cloud sync. This gives excellent offline operation and snappy local interactions, but constrains use cases needing very large datasets, heavy server-side computation, or strict multi-user concurrency control.
+*Server-side compute and concurrency.* Strvct runs entirely client-side, with a local record store and optional versioned cloud commits. This gives excellent offline operation and snappy local interactions, but constrains use cases needing very large datasets or heavy server-side computation. Concurrency control is optimistic and per document: two writers to the same document are detected at commit and the later one reloads; edits are not merged.
 
 *External validation.* Accessibility, internationalization, and mobile experience are architecturally supported but have not undergone external audits, large-scale user studies, or production deployment beyond the primary application.
 

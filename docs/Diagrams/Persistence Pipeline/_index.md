@@ -34,7 +34,7 @@ Drilling into Local Storage. The object pool persists slot mutations through the
   <line class="flow" x1="245" y1="266" x2="245" y2="291" marker-end="url(#a6)"/>
   <rect class="fill" x="135" y="291" width="220" height="52"/>
   <text x="150" y="311" class="b">recordForStore() per object</text>
-  <text x="150" y="329" class="dim">write keyed by puuid</text>
+  <text x="150" y="329" class="dim">row keyed by pool + puuid</text>
   <rect class="fill" x="135" y="368" width="220" height="52"/>
   <text x="150" y="388" class="b">GC: walk reachable</text>
   <text x="150" y="406" class="dim">collect referenced hashes</text>

@@ -4,9 +4,9 @@ Long-term direction: replacing the current cloud storage backend with a native g
 
 ## Context
 
-STRVCT's domain model is a cyclic graph of objects connected by typed references. Locally, this graph is stored in IndexedDB as a flat key-value map of serialized records, with object references represented as persistent unique IDs (puuids). Cloud sync currently uses Firebase Storage, with two strategies: per-item JSON files for collections, and whole-pool snapshots with write-ahead log deltas for interconnected object graphs (see [Cloud Object Pools](../../Persistence/Cloud%20Object%20Pools/)).
+STRVCT's domain model is a cyclic graph of objects connected by typed references. Locally, this graph is stored in IndexedDB as a flat key-value map of serialized records, with object references represented as persistent unique IDs (puuids). In the cloud the same records are stored one per Firestore document, grouped into pools (one per document, each with a version), with folders formed by placing each pool's root row under its folder; edits are sent as versioned commits of the changed records (see [Cloud Object Pools](../../Persistence/Cloud%20Object%20Pools/)). This record store already gives per-record sync, change feeds by version, and placement queries — much of what is listed below.
 
-This works, but there's a fundamental mismatch: the domain model is a graph, while the storage and sync layers treat it as either a bag of independent documents (collection sync) or a monolithic blob (pool sync). Neither representation natively understands the structure of the data it's storing.
+What remains is a mismatch at the level of references: the domain model is a graph, while the record store sees each reference only as an id inside a serialized payload. It can list a node's placed children, but it cannot answer structural queries across references or serve a subgraph by traversal.
 
 ## Why a Graph Database
 
@@ -41,12 +41,12 @@ The current cloud sync stack has several layers that a graph database would subs
 |---|---|
 | JSON serialization of object records | Direct node/edge storage |
 | puuid-based references between objects | Native graph edges |
-| Pool snapshots + delta files | Per-node/per-edge mutations |
-| Manifest-based lazy loading | Subgraph traversal |
-| Write-ahead log for incremental sync | Change feed on individual nodes/edges |
-| Lock-based concurrency for pools | Node-level or edge-level conflict resolution |
+| Per-record versioned commits | Per-node/per-edge mutations |
+| Placement queries and windowed loading | Subgraph traversal |
+| Changes since a pool version | Change feed on individual nodes/edges |
+| Optimistic per-pool version checks | Node-level or edge-level conflict resolution |
 
-The local IndexedDB layer would likely remain as a client-side cache, but the canonical store would be the graph database rather than Firebase Storage.
+The local IndexedDB layer would likely remain as a client-side cache, but the canonical store would be the graph database rather than the records collection.
 
 ## Challenges
 
@@ -64,15 +64,15 @@ STRVCT applications work offline with local data, syncing when connectivity retu
 
 ### Migration
 
-Existing applications store data in Firebase Storage. A migration path is needed — likely a period where both backends coexist, with the graph database gradually taking over as the primary store.
+Existing applications store data in the records collection. A migration path is needed — likely a period where both backends coexist, with the graph database gradually taking over as the primary store.
 
 ### Hosting and operations
 
-Firebase Storage is a managed service with minimal operational overhead. A graph database requires either a managed graph DB service (e.g., Neo4j Aura, Amazon Neptune) or self-hosted infrastructure with its own scaling, backup, and monitoring concerns.
+Firestore is a managed service with minimal operational overhead. A graph database requires either a managed graph DB service (e.g., Neo4j Aura, Amazon Neptune) or self-hosted infrastructure with its own scaling, backup, and monitoring concerns.
 
 ## Object Sub-Pools
 
-One concept from the current architecture that should carry forward is the **object sub-pool** — a self-contained subgraph where outside nodes may point to the root, but all internal objects hold no hard references to objects outside the subgraph. These sub-pools can be nested and are the natural unit of ownership, sync, and access control.
+One concept from the current architecture that should carry forward is the **object pool** (formerly called a sub-pool) — a self-contained subgraph where outside nodes may point to the root, but all internal objects hold no hard references to objects outside the subgraph. These sub-pools can be nested and are the natural unit of ownership, sync, and access control.
 
 In practice, sub-pools correspond to the coarse-grained "documents" of an application. In a contacts app, for example, each contact card — with its addresses, phone numbers, notes, and group memberships — forms a sub-pool. The contacts list holds references to each card's root, but the internal objects within a card don't reference objects in other cards. Each sub-pool can be:
 
@@ -85,12 +85,12 @@ A graph database backend should preserve this sub-pool structure as a first-clas
 
 ## Relationship to Current Architecture
 
-This is envisioned as a backend replacement, not a framework rewrite. The domain model, slot system, persistence API, and view layer would remain unchanged. The swap would happen below the `SvCloudSyncSource` abstraction:
+This is envisioned as a backend replacement, not a framework rewrite. The domain model, slot system, persistence API, and view layer would remain unchanged. The swap would happen below the record store protocol (`SvRecordStoreProtocol`):
 
-- `SvPersistentObjectPool` continues to manage local IndexedDB storage
-- `SvCloudSyncSource` (or a new sibling) would speak to a graph database API instead of Firebase Storage
+- `SvLocalRecordStore` continues to manage local IndexedDB storage
+- A new `SvRecordStoreProtocol` backing would speak to a graph database API instead of the records collection
 - The serialization format would change from JSON documents to node/edge mutations
-- The sync protocol would change from snapshot+delta to a graph-aware change feed
+- The sync protocol would change from per-pool versioned commits to a graph-aware change feed
 - Object sub-pools remain the unit of sync — the graph database stores the full graph, but sync, permissions, and lifecycle operate at the sub-pool level
 
 The domain model already *is* a graph — the change is making the storage layer acknowledge that.

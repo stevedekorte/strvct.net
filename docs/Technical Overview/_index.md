@@ -4,7 +4,7 @@ High-level architecture and key concepts of the Strvct framework.
 
 ## Introduction
 
-Strvct applications run as client-side single-page apps in the browser. The framework makes heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for maintaining a persistent object database of application state in IndexedDB. Subgraphs of this object database can be transparently and lazily synced to the cloud, allowing offline-first operation with seamless cloud persistence.
+Strvct applications run as client-side single-page apps in the browser. The framework makes heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for maintaining a persistent record store of application state in IndexedDB. The store is divided into object pools, one per document; a document's rows are committed to the cloud, which holds the same rows with a version per pool, allowing offline-first operation with seamless cloud persistence.
 
 Strvct is not a template system, a compile-time UI generator, or a component framework in the React/Flutter sense. There is no build step that produces views, no static component tree, and no pre-rendered layout. Views are created lazily at runtime as the user navigates the object graph — each navigation step inspects the target node's annotations, discovers an appropriate view class, and instantiates it. Once created, a view stays live and in sync with its model node through bidirectional notifications. The UI at any moment is a dynamic projection of the user's current navigation path, not a pre-built artifact.
 
@@ -106,7 +106,7 @@ Native JavaScript collections (Array, ArrayBuffer, Map, Object, Set, and TypedAr
 
 ### Local Storage
 
-Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects' JSON records.
+Persistent domain objects are stored client side in IndexedDB as rows of one record store. A row is keyed by its pool's id and the object's unique ID, and holds the object's JSON record; a pool's root row also carries its placement (the folder it sits in and a sort key) and the cloud version it last synced. The cloud holds the same rows, one record per row, and a document is saved by committing the rows changed since its version. See [Cloud Object Pools](../Persistence/Cloud%20Object%20Pools/).
 
 ## Resource Delivery
 

@@ -262,9 +262,9 @@ Field tiles present node properties as key/value pairs in the UI inspector:
 
 ### Record Format
 
-The storage system is a key/value store backed by IndexedDB. Keys are persistent unique IDs (puuids) and values are JSON records containing a type field and a payload. On load, the type is used to locate the class, which is then asked to deserialize itself from the payload.
+The storage system is a record store backed by IndexedDB. Each row is keyed by its pool's id and the object's persistent unique ID (puuid), and its payload is a JSON record containing a type field and the stored slot values. A pool is one document, and its id is its root object's puuid; the cloud holds the same rows. On load, the type is used to locate the class, which is then asked to deserialize itself from the payload.
 
-Object references within records are stored as puuid strings. This uniform reference format enables the storage system to trace the object graph for automatic garbage collection — only objects reachable from the root node survive collection.
+Object references within a pool are stored as `{ "*": puuid }`, and references to another document as `{ "**": poolId }`. This uniform reference format enables the storage system to trace each pool's graph for automatic garbage collection — only objects reachable from the pool's root, by reference or by placement, survive collection.
 
 ### Persistence Lifecycle
 
@@ -273,7 +273,8 @@ Nodes opt into persistence via `setShouldStore(true)`, and individual slots via 
 1. **Monitors mutations** — When a stored slot changes, the owning node is marked dirty via `didMutate()`.
 2. **Batches transactions** — All dirty objects are collected at the end of the current event loop and committed atomically.
 3. **Handles deserialization** — On load, `instanceFromRecordInStore()` creates a blank instance, `init()` runs, `loadFromRecord()` populates stored values, then `finalInit()` re-establishes object relationships. Slots with `setFinalInitProto()` only create default instances if no value was loaded from storage.
-4. **Garbage collects** — Walks the stored object graph from the root; unreachable records are removed.
+4. **Garbage collects** — Walks each pool's stored graph from its root; unreachable rows are removed.
+5. **Commits to the cloud** — For a cloud document, the rows changed since the pool's last acknowledged version are sent as one versioned commit (see [Cloud Object Pools](../Persistence/Cloud%20Object%20Pools/)).
 
 ### Blob Storage
 

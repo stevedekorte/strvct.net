@@ -16,17 +16,19 @@ The system addresses a fundamental challenge in web applications: **efficiently 
 
 4. **Cloud Sync**: `SvCloudBlobNode` extends local storage to support pushing/pulling blobs to Google Cloud Storage.
 
-### Why Not Store Everything in Firebase Firestore?
+### Why Blobs Stay Out of Records
 
-Firebase Firestore has constraints that make it unsuitable for storing the complete object graph directly:
+Structured data does live in Firestore — one cloud document per object record (see [Cloud Object Pools](../Cloud%20Object%20Pools/)) — and that only works because binary data never enters a record:
 
-1. **Document Size Limit**: Firestore enforces a **1MB maximum document size**. Objects that serialize themselves along with their contained children can easily exceed this limit (e.g., a campaign with locations, NPCs, treasures, and session history).
+1. **Document size limit**: Firestore caps a document at **1 MB**. A record that inlined an image or a long narration would hit it; a record holding a hash is a few hundred bytes. Long text spills to the blob store for the same reason (`slot.setIsBlobString(true)`, above 32 KB).
 
-2. **No Graph Traversal**: If we fully decomposed storage to one document per object, retrieving an object graph would require **many sequential round trips**. Firestore has no support for traversing a directed graph of references in a single request - each document fetch is independent.
+2. **Opening a document is one query**: a pool's rows are read together by pool id, so opening a session or a campaign is one indexed read rather than a traversal of references. Keeping blobs out keeps that read small; images are fetched afterwards, only when shown.
 
-3. **Batching Limits**: Storing each object as its own document hits Firestore's batching limits (500 operations per batch). This makes bulk operations slow and would require additional synchronization mechanisms to ensure consistency across related documents.
+3. **Commit limits**: a commit is one transaction (at most a few hundred operations), and larger ones are staged in batches. Blob bytes would make every commit that touched an image enormous; a hash makes it one small write.
 
-**The solution**: Store structured object data as larger, more self-contained documents locally (IndexedDB), and sync to cloud storage at a higher granularity. Binary blobs are separated out because they're the primary driver of document size, and content-addressable storage means they can be efficiently synced and deduplicated independently.
+4. **Deduplication across documents**: the same image used by a catalog campaign and every session copied from it is stored once, under its hash.
+
+**The solution**: records hold hashes; bytes live in content-addressed blob storage, locally in a separate IndexedDB database and in the cloud under `blobs/<sha256>`. The reference backend records each committed record's hashes (`blobRefs`), so cloud blob garbage collection is a set difference over rows.
 
 ---
 
@@ -36,7 +38,7 @@ The solution uses a **dual-database architecture** with hash-based references be
 
 | Component | Purpose | Storage |
 |-----------|---------|---------|
-| **SvObjectPool** | Stores structured objects (characters, sessions, etc.) | IndexedDB (sync API) |
+| **SvObjectPool** | Stores structured objects (characters, sessions, etc.) as rows | The record store, IndexedDB (sync API) |
 | **SvBlobPool** | Stores binary blobs (images, audio, video) | Separate IndexedDB (async API) |
 
 <svg viewBox="0 0 820 320" width="820" xmlns="http://www.w3.org/2000/svg">

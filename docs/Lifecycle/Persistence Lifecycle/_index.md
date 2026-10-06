@@ -1,10 +1,10 @@
 # Persistence Lifecycle
 
-How objects are stored, loaded, and kept in sync with IndexedDB.
+How objects are stored, loaded, and kept in sync with the local record store and the cloud.
 
 ## Overview
 
-Persistence in STRVCT is automatic. Objects marked as storable are tracked for changes, serialized at the end of each event loop, and written to IndexedDB. On reload, they're deserialized and re-initialized through the same three-phase lifecycle as new objects. The goal is transparency — a class shouldn't need different code paths for "new" and "loaded."
+Persistence in STRVCT is automatic. Objects marked as storable are tracked for changes, serialized at the end of each event loop, and written as rows of their pool in the local record store (IndexedDB). A pool that is a cloud document later commits the rows that changed to the cloud. On reload, they're deserialized and re-initialized through the same three-phase lifecycle as new objects. The goal is transparency — a class shouldn't need different code paths for "new" and "loaded."
 
 ## Storing Objects
 
@@ -21,7 +21,7 @@ When a storable slot changes, the framework automatically marks the object as di
 ```
 recordForStore(store)
   ├── Serialize slots marked with setShouldStoreSlot(true)
-  ├── Convert object references to puuids
+  ├── Convert object references to { "*": puuid } (or { "**": poolId } across pools)
   └── Return JSON-compatible record
 ```
 

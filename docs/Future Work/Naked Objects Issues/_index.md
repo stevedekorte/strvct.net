@@ -7,7 +7,6 @@ The target is the model/view separation and **Platform Abstraction** rules in th
 ## Framework model classes still touching the platform
 
 - **`SvErrorReport`** (`SvTitledNode`) reads `navigator.userAgent`, `window.location.*`, and `document.referrer` to build a report. Error reports genuinely need this environment context, but a model shouldn't read browser globals directly — the platform layer should supply them.
-- **`SvSubObjectPool`** reads/writes `sessionStorage` for a client id. A persistent client/device id is environment state that should be injected, not read from a browser global inside a storage model.
 - **`SvFirestoreNode`** uses a `window.__…__` global flag to guard emulator configuration.
 - **`SvAiParsedResponseMessage`** (parsing) calls `document.createElement` for HTML handling — DOM in a message model.
 - Media services (`SvYouTubeAudioPlayer`, `SvYouTubePlayerFrame`, `SvLeonardoRefImage`) touch the DOM / clipboard directly; several are view-adjacent and some siblings are unused.

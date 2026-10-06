@@ -122,7 +122,7 @@ Every stored object has a **puuid** — a 10-character random string (A-Za-z0-9)
 
 Puuids serve two purposes:
 
-1. **Storage key** — the puuid is the key under which the object's serialized record is stored in IndexedDB.
+1. **Storage key** — together with its pool's id, the puuid keys the row that holds the object's serialized record (`poolId` + `objectId`; the pool's root row is the one where the two are equal).
 2. **Object references** — when one stored object references another, the reference is serialized as `{ "*": "puuid" }` rather than inlining the referenced object. This allows the storage system to trace the object graph for garbage collection.
 
 ## Serialization Format
@@ -164,7 +164,7 @@ Because the commit is deferred, multiple slot changes within the same event loop
 
 ### Commit Details
 
-`commitStoreDirtyObjects()` begins an IndexedDB transaction via `SvPersistentAtomicMap`, then iterates the dirty set. For each dirty object, it calls `recordForStore()` to serialize it and writes the JSON string to the map keyed by puuid. After all objects are stored, the transaction is committed atomically. If any object becomes dirty again during the commit (because serialization triggers side effects), the cycle repeats until the dirty set is empty.
+`commitStoreDirtyObjects()` begins an IndexedDB transaction via `SvPersistentAtomicMap`, then iterates the dirty set. For each dirty object, it calls `recordForStore()` to serialize it and writes it as the payload of the object's row, keyed by pool id and puuid. After all objects are stored, the transaction is committed atomically. If any object becomes dirty again during the commit (because serialization triggers side effects), the cycle repeats until the dirty set is empty.
 
 ## SvPersistentAtomicMap
 
@@ -234,7 +234,7 @@ The conversion map only affects record deserialization. It does **not** rewrite 
 
 Every cloud document — a session, a character, a catalog campaign — is its own pool, and the pools share one record store. A folder whose children are documents declares it with `setSubnodesArePools(true)` (every `SvCloudFolder` does): the folder's record then holds a **far reference** `{ "**": poolId }` to each child instead of a near reference `{ "*": puuid }`, and the child's root row is placed under the folder with a fractional order key (`SvOrderKey`). Editing a document dirties only its pool; deleting a document's root cascades to its pool; `SvObjectPool.poolOfObject(obj)` answers which pool an object belongs to. The application's home pool is the `SvPersistentObjectPool` (`settings.homePoolId`); child pools open on demand from the same store.
 
-A pool round-trips through the cloud `pool.json` shape (`asJson()` / `asyncImportPoolJson()`), which carries the pool's placements as `_placements`. `SvObjectPool.fromCloudJson(json)` opens a pool in memory over `SvMemoryRecordStore`, which is what the former `SvSubObjectPool` did.
+The cloud holds the same rows (see [Cloud Object Pools](../Cloud%20Object%20Pools/)): a pool comes down as rows (`SvLocalRecordStore.asyncImportOpenedPool`, or `asyncImportPoolChanges` for the changes since the version the device holds) and goes up as a commit of the rows changed since the last synced snapshot (`SvObjectPool.asyncCommitToCloud`). A pool reopened from disk whose copy is in sync with the cloud — it has a cloud version and no edit stamped after its last sync — starts with that synced snapshot, so its first commit sends only its changes. A store that no pool owns (`outlivesItsPools`) serves as an in-memory cache of cloud pools opened one at a time.
 
 ## Windowed Collections
 

@@ -48,7 +48,7 @@
 - [Boot Sequence](/docs/Lifecycle/Boot%20Sequence/): How the application loads from first script tag to a running app.
 - [Headless Execution](/docs/Lifecycle/Headless%20Execution/): Running STRVCT applications in Node.js without a browser.
 - [Node Lifecycle](/docs/Lifecycle/Node%20Lifecycle/): Creation, three-phase initialization, parent-child relationships, and update notifications.
-- [Persistence Lifecycle](/docs/Lifecycle/Persistence%20Lifecycle/): How objects are stored, loaded, and kept in sync with IndexedDB.
+- [Persistence Lifecycle](/docs/Lifecycle/Persistence%20Lifecycle/): How objects are stored, loaded, and kept in sync with the local record store and the cloud.
 - [View Synchronization](/docs/Lifecycle/View%20Synchronization/): How views discover nodes, synchronize state, and batch updates efficiently.
 - [Naked Objects](/docs/Naked%20Objects/): From Domain Models to Complete Applications
 - [Nodes](/docs/Nodes/): The object model at the heart of STRVCT.
@@ -58,7 +58,7 @@
 - [Slot Change Hooks](/docs/Notifications/Slot%20Change%20Hooks/): Automatic per-slot callbacks that connect property changes to notifications and persistence.
 - [Sync Scheduler](/docs/Notifications/Sync%20Scheduler/): Deferred, deduplicated method calls with priority ordering and loop detection.
 - [Persistence](/docs/Persistence/): Local storage, cloud sync, and blob management for object graphs.
-- [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/): Cloud sync for object pools and collections using Firebase Storage.
+- [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/): Cloud persistence for object pools: one record per row, a version per pool, and a commit protocol.
 - [Local and Cloud Blob Storage](/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/): Content-addressable storage for binary data like images, audio, and video.
 - [Local Object Pools](/docs/Persistence/Local%20Object%20Pools/): IndexedDB-backed persistence for object graphs using dirty tracking and automatic serialization.
 - [Programming Idioms](/docs/Programming%20Idioms/): Recurring patterns and conventions for writing STRVCT code.
