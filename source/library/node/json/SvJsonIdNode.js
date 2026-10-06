@@ -146,12 +146,57 @@
      */
     regenerateJsonIds () {
         this.setJsonId(Object.newUuid());
-        this.nextJsonDescendants().forEach(sn => {
-            if (sn && sn.regenerateJsonIds) {
-                sn.regenerateJsonIds();
+        if (this.shouldStoreSubnodes()) {
+            this.subnodes().forEach(sn => this.regenerateJsonIdsOf(sn));
+            return this;
+        }
+        // Every slot a copy carries (asJson writes), not only the AI-schema
+        // ones — a cast voice is out of the schema but in the copy — and
+        // read RAW: a lazy section still holding its loaded JSON is re-ided
+        // in that JSON, where it stays lazy and inline. Through nextJsonDescendants
+        // (raw schema slots only), lazy sections kept their ids: a spawned
+        // creature shared 67 nested jsonIds with its bestiary prototype and
+        // every sibling (2026-10-06). An absent section is left absent; made
+        // later, it derives its id from this node's (didCreateDefaultValueForSlot).
+        this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true).forEach(slot => {
+            const raw = slot.onInstanceRawGetValue(this);
+            if (raw instanceof SvLazyJsonRef) {
+                raw.setJson(SvJsonIdNode.jsonWithFreshIds(raw.json()));
+                this.didMutate();
+            } else {
+                this.regenerateJsonIdsOf(raw);
             }
         });
         return this;
+    }
+
+    regenerateJsonIdsOf (value) {
+        if (value && typeof value.regenerateJsonIds === "function") {
+            value.regenerateJsonIds();
+        }
+        return this;
+    }
+
+    /**
+     * @description A deep copy of plain JSON with a fresh uuid for every
+     * jsonId in it — how a lazy section's stored JSON is re-ided without
+     * being materialized.
+     * @param {*} json
+     * @returns {*}
+     * @category JSON
+     */
+    static jsonWithFreshIds (json) {
+        if (Array.isArray(json)) {
+            return json.map(v => this.jsonWithFreshIds(v));
+        }
+        if (json && typeof json === "object") {
+            const out = {};
+            Object.keys(json).forEach(k => {
+                out[k] = (k === "jsonId" && typeof json[k] === "string") ? Object.newUuid() : this.jsonWithFreshIds(json[k]);
+            });
+            return out;
+        }
+        return json;
     }
 
     /**
