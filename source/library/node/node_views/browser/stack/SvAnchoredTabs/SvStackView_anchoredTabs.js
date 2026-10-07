@@ -33,8 +33,8 @@
             slot.setAllowsNullValue(true);
         }
         {
-            const slot = this.newSlot("anchoredTabsSignature", null); // what the tab row was last anchored to
-            slot.setSlotType("String");
+            const slot = this.newSlot("anchoredTileWidths", null); // { titles, widths }: tab widths last measured, by titles
+            slot.setSlotType("Object");
             slot.setAllowsNullValue(true);
         }
         {
@@ -151,9 +151,99 @@
         const openNodes = layout.openIdsInOrder().map(id => byId.get(id)).filter(node => !!node);
         const widthsById = layout.paneWidths();
         const widths = new Map(openNodes.map(node => [node, widthsById.get(this.anchoredTabIdFor(node))]));
-        this.detailView().syncAnchoredPanes(openNodes, widths);
+        const pinned = new Set(openNodes.filter(node => layout.isPinned(this.anchoredTabIdFor(node))));
+        this.detailView().syncAnchoredPanes(openNodes, widths, pinned);
         this.syncAnchoredTileSelection(openNodes);
+        this.syncAnchoredTabStates(openNodes);
+        this.noteOpenTabsSeen(openNodes);
         this.anchorTabTiles(openNodes, widths);
+        return this;
+    }
+
+    /**
+     * @description Marks each tab tile with its state for the theme
+     * (SvAnchoredTabOpen / Pinned / Evicted / Unseen classes) and draws the
+     * unseen dot on a closed tab with unseen content. The tab row scrolls
+     * sideways when the tabs don't fit (a phone), rather than collapsing them.
+     * @param {Array<SvNode>} openNodes
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    syncAnchoredTabStates (openNodes) {
+        const layout = this.anchoredLayout();
+        this.navView().scrollView().setOverflowX("auto");
+        this.navView().tilesView().tiles().forEach(tile => {
+            const node = tile.node ? tile.node() : null;
+            if (!node) {
+                return;
+            }
+            const id = this.anchoredTabIdFor(node);
+            const unseen = !openNodes.includes(node) && (node.nodeUnseenCount ? node.nodeUnseenCount() : 0) > 0;
+            const classes = tile.element().classList;
+            classes.toggle("SvAnchoredTabOpen", openNodes.includes(node));
+            classes.toggle("SvAnchoredTabPinned", layout.isPinned(id));
+            classes.toggle("SvAnchoredTabEvicted", layout.isEvicted(id));
+            classes.toggle("SvAnchoredTabUnseen", unseen);
+            tile.setCssProperty("background-image", unseen ? this.unseenDotImage() : null);
+        });
+        return this;
+    }
+
+    /**
+     * @description The unseen dot: a small disc in the tab's top-right
+     * corner in the theme's attention color — decoration, so drawn as a
+     * background image rather than generated text.
+     * @returns {String}
+     * @category Anchored Tabs
+     */
+    unseenDotImage () {
+        return "radial-gradient(circle at calc(100% - 10px) 14px, var(--sv-attention, #b0413e) 3.5px, transparent 4.5px)";
+    }
+
+    noteOpenTabsSeen (openNodes) {
+        openNodes.forEach(node => {
+            if (node.nodeUnseenCount && node.nodeUnseenCount() > 0 && node.noteContentSeen) {
+                node.noteContentSeen();
+            }
+        });
+        return this;
+    }
+
+    // --- pane controls ---
+
+    /**
+     * @description The pane's pin control: pins or unpins it, opening or
+     * closing nothing.
+     * @param {SvNode} node
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    anchoredTogglePin (node) {
+        const id = this.anchoredTabIdFor(node);
+        this.anchoredLayout().setTabPinned(id, !this.anchoredLayout().isPinned(id));
+        return this.applyAnchoredLayout();
+    }
+
+    anchoredWidthLeftOf (rightNode) {
+        const leftId = this.anchoredLayout().leftNeighborOf(this.anchoredTabIdFor(rightNode));
+        return leftId ? (this.anchoredLayout().paneWidths().get(leftId) || 0) : 0;
+    }
+
+    /**
+     * @description A divider was dragged: the pane left of `rightNode` wants
+     * `leftWidth`. The layout clamps and remembers it; this re-renders.
+     * @param {SvNode} rightNode
+     * @param {Number} leftWidth
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    anchoredDragDivider (rightNode, leftWidth) {
+        const rightId = this.anchoredTabIdFor(rightNode);
+        const leftId = this.anchoredLayout().leftNeighborOf(rightId);
+        if (leftId) {
+            this.anchoredLayout().dragDivider(leftId, rightId, leftWidth);
+            this.applyAnchoredLayout();
+        }
         return this;
     }
 
@@ -164,9 +254,8 @@
      * row of tiles; a segment is an open tab plus the closed tabs after it,
      * and the segment's last tile gets the right margin that makes the
      * segment exactly as wide as its pane (plus the divider). Tile widths are
-     * measured once, all of them, then the margins are written — and only
-     * when the open set, the pane widths or the tab titles changed, never on
-     * an ordinary sync.
+     * measured only when the tab titles change (measuredTileWidths), all at
+     * once, before any write; the margins are then written on every layout.
      * @param {Array<SvNode>} openNodes
      * @param {Map<SvNode, Number>} widths
      * @returns {SvStackView_anchoredTabs}
@@ -174,24 +263,64 @@
      */
     anchorTabTiles (openNodes, widths) {
         const tiles = this.navView().tilesView().tiles();
-        const signature = this.anchoringSignature(tiles, openNodes, widths);
-        if (signature === this.anchoredTabsSignature()) {
-            return this;
-        }
-        const tileWidths = tiles.map(tile => tile.element().offsetWidth); // the one read, before any write
+        const tileWidths = this.measuredTileWidths(tiles);
         if (tiles.length === 0 || tileWidths.every(w => w === 0)) {
             this.addWeakTimeout(() => this.anchorTabTiles(openNodes, widths), 50); // not laid out yet
             return this;
         }
+        // The gap rides a custom property, turned into the margin by one
+        // stylesheet rule for tiles in an anchored row: tile style passes
+        // (setMargin) reset the margin longhands and erased a plain
+        // margin-right. Written every time — the tiles view can rebuild its
+        // tiles — with same-value writes skipped and widths from the cache.
+        this.ensureAnchoredTabCss();
+        this.navView().tilesView().element().classList.add("SvAnchoredTabRow");
         const margins = this.segmentMargins(tiles, tileWidths, openNodes, widths);
-        tiles.forEach((tile, i) => tile.setMarginRight((margins.get(i) || 0) + "px"));
-        this.setAnchoredTabsSignature(signature);
+        tiles.forEach((tile, i) => tile.setCssProperty("--sv-anchor-gap", (margins.get(i) || 0) + "px"));
         return this;
     }
 
-    anchoringSignature (tiles, openNodes, widths) {
-        const titles = tiles.map(tile => (tile.node() ? tile.node().title() + (tile.node().isVisible() ? "" : "-") : "")).join("|");
-        return titles + "#" + openNodes.map(node => this.anchoredTabIdFor(node) + ":" + widths.get(node)).join(",");
+    /**
+     * @description The one stylesheet rule anchoring needs, added once.
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    ensureAnchoredTabCss () {
+        if (!SvStackView._anchoredTabCssAdded) {
+            SvStackView._anchoredTabCssAdded = true;
+            SvWebDocument.shared().addStyleSheetString(`
+                .SvAnchoredTabRow > * {
+                    margin-right: var(--sv-anchor-gap, 0px) !important;
+                }
+            `);
+        }
+        return this;
+    }
+
+    /**
+     * @description The tab tiles' widths, measured only when the tab titles
+     * changed: a divider drag or a resize changes the pane widths every frame
+     * and must not measure (a forced layout per frame). Measured all at once,
+     * before anything is written.
+     * @param {Array<SvTile>} tiles
+     * @returns {Array<Number>}
+     * @category Anchored Tabs
+     */
+    measuredTileWidths (tiles) {
+        const titles = this.tabTitlesSignature(tiles);
+        const cached = this.anchoredTileWidths();
+        if (cached && cached.titles === titles && cached.widths.length === tiles.length) {
+            return cached.widths;
+        }
+        const widths = tiles.map(tile => tile.element().offsetWidth);
+        if (widths.some(w => w > 0)) {
+            this.setAnchoredTileWidths({ titles: titles, widths: widths });
+        }
+        return widths;
+    }
+
+    tabTitlesSignature (tiles) {
+        return tiles.map(tile => (tile.node() ? tile.node().title() + (tile.node().isVisible() ? "" : "-") : "")).join("|");
     }
 
     /**
@@ -214,7 +343,9 @@
         tiles.forEach((tile, i) => {
             const opensSegment = segment + 1 < openNodes.length && tile.node() === openNodes[segment + 1];
             if (opensSegment && segment >= 0) {
-                margins.set(lastTileOfSegment, this.segmentRemainder(openNodes[segment], widths, used, divider));
+                // a pane's box is its width plus, after the first, its 1px left-border divider
+                const box = (widths.get(openNodes[segment]) || 0) + (segment > 0 ? divider : 0);
+                margins.set(lastTileOfSegment, Math.max(0, box - used));
                 used = 0;
             }
             if (opensSegment) {
@@ -226,9 +357,6 @@
         return margins; // the last segment needs no margin
     }
 
-    segmentRemainder (node, widths, used, divider) {
-        return Math.max(0, (widths.get(node) || 0) + divider - used);
-    }
 
     syncAnchoredTileSelection (openNodes) {
         const tilesView = this.navView().tilesView();
@@ -347,7 +475,15 @@
             this.anchoredLayout().tapTab(id);
         }
         this.applyAnchoredLayout();
+        this.scrollTabIntoView(tile);
         return this.anchoredPathMayHaveChanged();
+    }
+
+    scrollTabIntoView (tile) {
+        if (tile.element().scrollIntoView) {
+            tile.element().scrollIntoView({ block: "nearest", inline: "nearest" }); // a phone's row scrolls sideways
+        }
+        return this;
     }
 
 }.initThisCategory());

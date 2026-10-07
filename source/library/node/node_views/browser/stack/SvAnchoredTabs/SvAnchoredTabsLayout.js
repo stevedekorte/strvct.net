@@ -67,6 +67,15 @@
             slot.setSlotType("Number");
         }
         {
+            const slot = this.newSlot("dividerSplits", null); // Map leftId -> { rightId, leftWidth }: dragged dividers
+            slot.setSlotType("Map");
+        }
+        {
+            const slot = this.newSlot("dividerSplitsOpenKey", null); // the open set the splits were dragged for
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+        {
             const slot = this.newSlot("currentTabId", null); // the pane with focus
             slot.setSlotType("String");
             slot.setAllowsNullValue(true);
@@ -80,6 +89,7 @@
         this.setPlayerPinOverrides(new Map());
         this.setModelPinnedIds(new Set());
         this.setEvictionSeqs(new Map());
+        this.setDividerSplits(new Map());
         return this;
     }
 
@@ -196,6 +206,60 @@
         return wasPinned ? this.closeByHand(id) : this;
     }
 
+    /**
+     * @description Pins or unpins an open tab without opening or closing
+     * anything — the pane's pin control (the pin gesture on an open pinned
+     * tab also closes it; a button labeled "pin" should not).
+     * @param {String} id
+     * @param {Boolean} pinned
+     * @returns {SvAnchoredTabsLayout}
+     * @category Gestures
+     */
+    setTabPinned (id, pinned) {
+        if (this.isAvailable(id)) {
+            this.playerPinOverrides().set(id, pinned);
+            this.evictionSeqs().delete(id);
+        }
+        return this;
+    }
+
+    /**
+     * @description The divider between two adjacent open panes was dragged:
+     * the left pane wants this width. It tracks the pointer, neither side
+     * goes below its minimum (paneWidths clamps), and it is remembered for
+     * that pair until the set of open panes changes.
+     * @param {String} leftId
+     * @param {String} rightId
+     * @param {Number} leftWidth
+     * @returns {SvAnchoredTabsLayout}
+     * @category Gestures
+     */
+    dragDivider (leftId, rightId, leftWidth) {
+        this.forgetSplitsIfPaneSetChanged();
+        this.dividerSplits().set(leftId, { rightId: rightId, leftWidth: leftWidth });
+        this.setDividerSplitsOpenKey(this.openIdsInOrder().join(","));
+        return this;
+    }
+
+    forgetSplitsIfPaneSetChanged () {
+        if (this.dividerSplitsOpenKey() !== this.openIdsInOrder().join(",")) {
+            this.dividerSplits().clear();
+        }
+        return this;
+    }
+
+    /**
+     * @description The open pane immediately left of this one, or null.
+     * @param {String} id
+     * @returns {String|null}
+     * @category Answers
+     */
+    leftNeighborOf (id) {
+        const open = this.openIdsInOrder();
+        const i = open.indexOf(id);
+        return i > 0 ? open[i - 1] : null;
+    }
+
     openByHand (id) {
         this.evictionSeqs().delete(id);
         this.openIds().add(id);
@@ -262,7 +326,7 @@
         if (ids.length === 1) {
             return new Map([[ids[0], Math.max(0, room)]]); // a lone pane takes the container, even below its minimum (a phone)
         }
-        const exact = this.proportionalWidths(ids, room);
+        const exact = this.withDividerSplits(this.proportionalWidths(ids, room));
         const widths = new Map(ids.map(id => [id, Math.floor(exact.get(id))]));
         const used = ids.reduce((sum, id) => sum + widths.get(id), 0);
         if (ids.length > 0 && used < room) {
@@ -290,6 +354,30 @@
             }
             short.forEach(([id]) => atMinimum.set(id, this.tabWithId(id).minWidth));
         }
+    }
+
+    /**
+     * @description Applies dragged dividers to the proportional widths: each
+     * dragged pair keeps its combined width, split where it was dragged,
+     * neither side below its minimum. Forgotten once the open set changes.
+     * @param {Map<String, Number>} widths
+     * @returns {Map<String, Number>}
+     * @category Answers
+     */
+    withDividerSplits (widths) {
+        this.forgetSplitsIfPaneSetChanged();
+        this.dividerSplits().forEach((split, leftId) => {
+            if (!widths.has(leftId) || !widths.has(split.rightId)) {
+                return;
+            }
+            const pair = widths.get(leftId) + widths.get(split.rightId);
+            const minLeft = this.tabWithId(leftId).minWidth;
+            const maxLeft = pair - this.tabWithId(split.rightId).minWidth;
+            const left = Math.max(minLeft, Math.min(maxLeft, split.leftWidth));
+            widths.set(leftId, left);
+            widths.set(split.rightId, pair - left);
+        });
+        return widths;
     }
 
     sharesOf (ids, room) {

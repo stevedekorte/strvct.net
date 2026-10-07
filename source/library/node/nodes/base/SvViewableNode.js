@@ -395,6 +395,28 @@
     }
 
     /**
+     * @description As an anchored tab: how many things in it the player has
+     * not seen (a count, or 1 for "something changed"); 0 means nothing new.
+     * The tab shows a dot while it is closed. The count is the model's to
+     * keep; seeing is the view's to decide (noteContentSeen).
+     * @returns {Number}
+     * @category Layout
+     */
+    nodeUnseenCount () {
+        return 0;
+    }
+
+    /**
+     * @description Action the view calls when this tab's pane is open on
+     * screen: the player has now seen its content. Default: nothing to clear.
+     * @returns {SvViewableNode}
+     * @category Layout
+     */
+    noteContentSeen () {
+        return this;
+    }
+
+    /**
      * @description Returns the node orientation.
      * @returns {string} The node orientation.
      * @category Layout

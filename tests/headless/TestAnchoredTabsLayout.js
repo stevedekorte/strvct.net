@@ -213,6 +213,32 @@ function testPreferences () {
     check(opener.isOpen("handbook") && !opener.isPinned("handbook"), "an \"open\" preference opens the tab unpinned when there is room");
 }
 
+function testDividersAndPinControl () {
+    console.log("\ndragging a divider, and the pane's pin control");
+    const layout = newLayout(1500);
+    layout.tapTab("me");
+    const before = layout.paneWidths();
+    layout.dragDivider("narration", "me", before.get("narration") - 200);
+    const after = layout.paneWidths();
+    check(after.get("narration") === before.get("narration") - 200 && after.get("me") === before.get("me") + 200, "the dragged split tracks the pointer and keeps the pair's total (" + before.get("narration") + "→" + after.get("narration") + ")");
+    layout.dragDivider("narration", "me", 50);
+    check(layout.paneWidths().get("narration") === layout.tabWithId("narration").minWidth, "neither side goes below its minimum (dragged to 50 → " + layout.paneWidths().get("narration") + ")");
+    layout.dragDivider("narration", "me", 2000);
+    check(layout.paneWidths().get("me") === layout.tabWithId("me").minWidth, "…on either side");
+    layout.updateContainerWidth(1600);
+    const total = [...layout.paneWidths().values()].reduce((a, b) => a + b, 0) + layout.dividerWidth();
+    check(total === 1600, "a resize keeps the split and still fills the container (" + total + ")");
+    layout.tapTab("scene");
+    check(layout.paneWidths().get("narration") !== layout.tabWithId("narration").minWidth || layout.openIdsInOrder().length !== 2, "a split is forgotten when the set of open panes changes");
+    const pins = newLayout(1500);
+    pins.tapTab("me");
+    pins.setTabPinned("me", true);
+    check(pins.isPinned("me") && pins.isOpen("me"), "the pin control pins an open pane without closing anything");
+    pins.setTabPinned("me", false);
+    check(!pins.isPinned("me") && pins.isOpen("me"), "…and unpins it without closing it (unlike the pin gesture)");
+    check(pins.leftNeighborOf("me") === "narration" && pins.leftNeighborOf("narration") === null, "leftNeighborOf answers the open pane to the left");
+}
+
 function testInvariants () {
     console.log("\ninvariants across a random walk of gestures and widths");
     const layout = newLayout(1400);
@@ -247,6 +273,7 @@ function testInvariants () {
     testOpeningOrder();
     testAvailability();
     testPreferences();
+    testDividersAndPinControl();
     testInvariants();
     console.log("\n=============================");
     console.log("Passed: " + passed + "  Failed: " + failed);

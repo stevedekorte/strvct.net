@@ -1,5 +1,7 @@
 [
     "SvAnchoredTabsLayout.js",
+    "SvAnchoredPinButton.js",
+    "SvAnchoredDividerHandle.js",
     "SvStackView_anchoredTabs.js",
     "SvDetailView_anchoredTabs.js"
 ]

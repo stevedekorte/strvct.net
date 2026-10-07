@@ -32,6 +32,11 @@
             slot.setAllowsNullValue(true);
         }
         {
+            const slot = this.newSlot("anchoredPaneControls", null); // Map pane -> { pin, divider }
+            slot.setSlotType("Map");
+            slot.setAllowsNullValue(true);
+        }
+        {
             const slot = this.newSlot("pendingAnchoredWidth", null); // observed, not yet applied
             slot.setSlotType("Number");
             slot.setAllowsNullValue(true);
@@ -49,16 +54,18 @@
      * navigation inside survives a re-layout).
      * @param {Array<SvNode>} openNodes - the open tabs' nodes, in tab order
      * @param {Map<SvNode, Number>} widths - each pane's width in px
+     * @param {Set<SvNode>} pinnedNodes - the open tabs that are pinned
      * @returns {SvDetailView_anchoredTabs}
      * @category Anchored Tabs
      */
-    syncAnchoredPanes (openNodes, widths) {
+    syncAnchoredPanes (openNodes, widths, pinnedNodes) {
         const row = this.ensureAnchoredPanesView();
         const panes = this.anchoredPaneViews();
         [...panes.keys()].filter(node => !openNodes.includes(node)).forEach(node => this.removeAnchoredPaneForNode(node));
         openNodes.forEach((node, i) => {
             const pane = panes.get(node) || this.addAnchoredPaneForNode(node);
             this.styleAnchoredPane(pane, widths.get(node), i === 0);
+            this.syncAnchoredPaneControls(pane, i === 0, pinnedNodes.has(node));
         });
         this.orderAnchoredPanes(row, openNodes.map(node => panes.get(node)));
         return this;
@@ -78,6 +85,7 @@
         row.setOverflow("hidden");
         this.setAnchoredPanesView(row);
         this.setAnchoredPaneViews(new Map());
+        this.setAnchoredPaneControls(new Map());
         this.childStackView().setDisplay("none"); // the single-selection container is not used here
         this.addSubview(row);
         this.setHasStackContent(true);
@@ -96,9 +104,33 @@
         pane.setOverflow("hidden");
         pane.setFlexGrow(0);
         pane.setFlexShrink(0);
+        pane.setPosition("relative"); // its pin and divider handle sit at its edges
         this.anchoredPaneViews().set(node, pane);
         this.anchoredPanesView().addSubview(pane);
+        this.addAnchoredPaneControls(pane, node);
         return pane;
+    }
+
+    addAnchoredPaneControls (pane, node) {
+        const pin = SvAnchoredPinButton.clone();
+        pin.setHost(this.stackView());
+        pin.setPaneNode(node);
+        const divider = SvAnchoredDividerHandle.clone();
+        divider.setHost(this.stackView());
+        divider.setRightNode(node);
+        pane.addSubview(pin);
+        pane.addSubview(divider);
+        this.anchoredPaneControls().set(pane, { pin: pin, divider: divider });
+        return this;
+    }
+
+    syncAnchoredPaneControls (pane, isFirst, isPinned) {
+        const controls = this.anchoredPaneControls().get(pane);
+        if (controls) {
+            controls.pin.setIsPinned(isPinned);
+            controls.divider.setDisplay(isFirst ? "none" : "block"); // no divider left of the first pane
+        }
+        return this;
     }
 
     anchoredPaneForNode (node) {
@@ -116,6 +148,7 @@
         const pane = this.anchoredPaneViews().get(node);
         this.anchoredPaneViews().delete(node);
         if (pane) {
+            this.anchoredPaneControls().delete(pane);
             pane.removeFromParentView();
         }
         return this;
@@ -163,6 +196,7 @@
         this.anchoredPanesView().removeFromParentView();
         this.setAnchoredPanesView(null);
         this.setAnchoredPaneViews(null);
+        this.setAnchoredPaneControls(null);
         this.childStackView().setDisplay("flex");
         return this;
     }
