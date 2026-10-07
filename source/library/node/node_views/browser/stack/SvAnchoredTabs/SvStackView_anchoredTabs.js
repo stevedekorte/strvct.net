@@ -38,6 +38,11 @@
             slot.setAllowsNullValue(true);
         }
         {
+            const slot = this.newSlot("anchoredTabLefts", null); // Array: each tab's left in the row, as last laid out (computed, not measured)
+            slot.setSlotType("Array");
+            slot.setAllowsNullValue(true);
+        }
+        {
             const slot = this.newSlot("anchoredContainerWidth", null); // from the detail view's ResizeObserver
             slot.setSlotType("Number");
             slot.setAllowsNullValue(true);
@@ -307,14 +312,53 @@
             tile.setCssProperty("--sv-anchor-max", (cap !== undefined ? cap : tileWidths[i]) + "px");
             tile.element().classList.toggle("SvAnchoredTabSqueezed", cap !== undefined);
         });
+        return this.slideTabTiles(tiles, this.tabLefts(tileWidths, fit));
+    }
+
+    /**
+     * @description Each tab's left edge in the row, computed from the widths
+     * and gaps just written (no measurement).
+     * @param {Array<Number>} tileWidths
+     * @param {Object} fit - from segmentFit
+     * @returns {Array<Number>}
+     * @category Anchored Tabs
+     */
+    tabLefts (tileWidths, fit) {
+        let left = 0;
+        return tileWidths.map((w, i) => {
+            const at = left;
+            const cap = fit.caps.get(i);
+            left += (cap !== undefined ? cap : w) + (fit.margins.get(i) || 0);
+            return at;
+        });
+    }
+
+    /**
+     * @description Motion for the tab row, without reflow: the row is laid
+     * out once at its new places, and each tab that moved slides there from
+     * its old place by transform, with the panes' duration and easing (so a
+     * tab stays over its sliding pane). Additive, like the panes' slides.
+     * @param {Array<SvTile>} tiles
+     * @param {Array<Number>} lefts
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    slideTabTiles (tiles, lefts) {
+        const old = this.anchoredTabLefts();
+        if (old && old.length === lefts.length && old.some((left, i) => left !== lefts[i])) {
+            const duration = this.detailView().takeTabMotionDuration();
+            if (duration > 0) {
+                tiles.forEach((tile, i) => this.detailView().slideAnchoredView(tile, old[i] - lefts[i], 0, duration, "none"));
+            }
+        }
+        this.setAnchoredTabLefts(lefts);
         return this;
     }
 
     /**
-     * @description The stylesheet rules anchoring needs, added once. Margins
-     * and caps transition with the panes' widths (same duration, same
-     * easing), so a tab stays over its pane while they move; the tile's own
-     * inline "transition: all 0s" is overridden for these two only.
+     * @description The stylesheet rules anchoring needs, added once. Nothing
+     * here transitions: a margin or width transition re-lays out the row
+     * every frame; motion is by transform (slideTabTiles).
      * @returns {SvStackView_anchoredTabs}
      * @category Anchored Tabs
      */
@@ -326,7 +370,6 @@
                     margin-right: var(--sv-anchor-gap, 0px) !important;
                     max-width: var(--sv-anchor-max, none) !important;
                     flex-shrink: 0 !important;
-                    transition: margin-right var(--sv-anchor-duration, 0ms) ease, max-width var(--sv-anchor-duration, 0ms) ease !important;
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabSqueezed {
                     -webkit-mask-image: linear-gradient(to right, black calc(100% - 18px), transparent);
@@ -394,11 +437,11 @@
     }
 
     /**
-     * @description How each segment fits over its pane: a segment narrower
-     * than its pane's box (width, plus the 1px divider after the first) pads
-     * its last tile's right margin; a wider one caps its closed tabs, sharing
-     * the overflow by width (never below 24px). The last segment runs on
-     * freely.
+     * @description How each segment fits over its pane: a segment wider than
+     * its pane's box (width, plus the 1px divider after the first) caps its
+     * closed tabs, sharing the overflow by width (never below 24px); then
+     * the last tile's right margin pads the segment to exactly the box. The
+     * last segment runs on freely.
      * @param {Array<SvTile>} tiles
      * @param {Array<Number>} tileWidths
      * @param {Array<SvNode>} openNodes
@@ -412,11 +455,12 @@
         this.tabSegments(tiles, openNodes).slice(0, -1).forEach((indexes, k) => {
             const box = (widths.get(openNodes[k]) || 0) + (k > 0 ? divider : 0);
             const used = indexes.reduce((sum, i) => sum + tileWidths[i], 0);
-            if (box >= used) {
-                fit.margins.set(indexes.last(), box - used);
-            } else {
+            if (box < used) {
                 this.capClosedTabs(indexes.filter(i => tiles[i].node() !== openNodes[k] && tileWidths[i] > 0), tileWidths, used - box, fit.caps);
             }
+            // the caps round down, so a squeezed segment can fall a pixel or two short
+            const fitted = indexes.reduce((sum, i) => sum + (fit.caps.has(i) ? fit.caps.get(i) : tileWidths[i]), 0);
+            fit.margins.set(indexes.last(), Math.max(0, box - fitted));
         });
         return fit;
     }
