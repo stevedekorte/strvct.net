@@ -108,6 +108,17 @@
          * @category Layout
          */
         {
+            /**
+             * @member {Boolean} hidesBreadCrumbs - the embedding view supplies
+             * this browser's title (an anchored-tabs pane: its tab is its
+             * title, and the outer browser's breadcrumbs follow the current
+             * pane), so the breadcrumb bar stays hidden
+             * @category UI
+             */
+            const slot = this.newSlot("hidesBreadCrumbs", false);
+            slot.setSlotType("Boolean");
+        }
+        {
             const slot = this.newSlot("containerResizeObserver", null);
             slot.setSlotType("ResizeObserver");
             slot.setAllowsNullValue(true);
@@ -297,6 +308,11 @@
      * @category UI
      */
     syncBreadCrumbsVisibilityHint () {
+        if (this.hidesBreadCrumbs()) {
+            this.watchBreadCrumbsHintOwner(null);
+            this.breadCrumbsView().setIsDisplayHidden(true);
+            return this;
+        }
         if (!this.handlesGlobalNavRequests()) {
             this.watchBreadCrumbsHintOwner(null);
             this.applyBreadCrumbsVisible(true);

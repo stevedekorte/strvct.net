@@ -33,6 +33,11 @@
             slot.setAllowsNullValue(true);
         }
         {
+            const slot = this.newSlot("anchoredTabsSignature", null); // what the tab row was last anchored to
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+        {
             const slot = this.newSlot("anchoredContainerWidth", null); // from the detail view's ResizeObserver
             slot.setSlotType("Number");
             slot.setAllowsNullValue(true);
@@ -148,7 +153,81 @@
         const widths = new Map(openNodes.map(node => [node, widthsById.get(this.anchoredTabIdFor(node))]));
         this.detailView().syncAnchoredPanes(openNodes, widths);
         this.syncAnchoredTileSelection(openNodes);
+        this.anchorTabTiles(openNodes, widths);
         return this;
+    }
+
+    // --- anchoring: each open tab at the top-left of its pane ---
+
+    /**
+     * @description Places each open tab over its pane. The tab row is a flex
+     * row of tiles; a segment is an open tab plus the closed tabs after it,
+     * and the segment's last tile gets the right margin that makes the
+     * segment exactly as wide as its pane (plus the divider). Tile widths are
+     * measured once, all of them, then the margins are written — and only
+     * when the open set, the pane widths or the tab titles changed, never on
+     * an ordinary sync.
+     * @param {Array<SvNode>} openNodes
+     * @param {Map<SvNode, Number>} widths
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    anchorTabTiles (openNodes, widths) {
+        const tiles = this.navView().tilesView().tiles();
+        const signature = this.anchoringSignature(tiles, openNodes, widths);
+        if (signature === this.anchoredTabsSignature()) {
+            return this;
+        }
+        const tileWidths = tiles.map(tile => tile.element().offsetWidth); // the one read, before any write
+        if (tiles.length === 0 || tileWidths.every(w => w === 0)) {
+            this.addWeakTimeout(() => this.anchorTabTiles(openNodes, widths), 50); // not laid out yet
+            return this;
+        }
+        const margins = this.segmentMargins(tiles, tileWidths, openNodes, widths);
+        tiles.forEach((tile, i) => tile.setMarginRight((margins.get(i) || 0) + "px"));
+        this.setAnchoredTabsSignature(signature);
+        return this;
+    }
+
+    anchoringSignature (tiles, openNodes, widths) {
+        const titles = tiles.map(tile => (tile.node() ? tile.node().title() + (tile.node().isVisible() ? "" : "-") : "")).join("|");
+        return titles + "#" + openNodes.map(node => this.anchoredTabIdFor(node) + ":" + widths.get(node)).join(",");
+    }
+
+    /**
+     * @description The right margin for the last tile of each segment, by
+     * tile index. Closed tabs before the first open tab sit at its left (the
+     * first pane's segment starts with them).
+     * @param {Array<SvTile>} tiles
+     * @param {Array<Number>} tileWidths
+     * @param {Array<SvNode>} openNodes
+     * @param {Map<SvNode, Number>} widths
+     * @returns {Map<Number, Number>}
+     * @category Anchored Tabs
+     */
+    segmentMargins (tiles, tileWidths, openNodes, widths) {
+        const margins = new Map();
+        const divider = this.anchoredLayout().dividerWidth();
+        let used = 0;
+        let lastTileOfSegment = -1;
+        let segment = -1;
+        tiles.forEach((tile, i) => {
+            const opensSegment = segment + 1 < openNodes.length && tile.node() === openNodes[segment + 1];
+            if (opensSegment && segment >= 0) {
+                margins.set(lastTileOfSegment, this.segmentRemainder(openNodes[segment], widths, used, divider));
+                used = 0;
+            }
+            if (opensSegment) {
+                segment++;
+            }
+            used += tileWidths[i];
+            lastTileOfSegment = i;
+        });
+        return margins; // the last segment needs no margin
+    }
+
+    segmentRemainder (node, widths, used, divider) {
+        return Math.max(0, (widths.get(node) || 0) + divider - used);
     }
 
     syncAnchoredTileSelection (openNodes) {

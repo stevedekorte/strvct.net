@@ -88,6 +88,7 @@
     addAnchoredPaneForNode (node) {
         const pane = SvBrowserView.clone();
         pane.setHandlesGlobalNavRequests(false); // embedded: never answers global nav requests (milestone 2b routes them)
+        pane.setHidesBreadCrumbs(true); // its tab is its title
         pane.setNode(node);
         pane.setHeight("100%");
         pane.setOverflow("hidden");
