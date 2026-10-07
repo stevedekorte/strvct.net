@@ -237,6 +237,96 @@
         return this;
     }
 
+    // --- the current path (Plans/Anchor Tabs § The current path) ---
+
+    /**
+     * @description The node path inside the current pane — the pane holding
+     * focus most recently (else the first open pane) — beginning with its
+     * tab's node. The outer chain's selectedNodePathArray ends at this stack
+     * and continues with this, so the breadcrumbs and the URL follow the
+     * current pane.
+     * @returns {Array<SvNode>}
+     * @category Anchored Tabs
+     */
+    anchoredCurrentPanePath () {
+        const node = this.anchoredCurrentTabNode();
+        const pane = node ? this.detailView().anchoredPaneForNode(node) : null;
+        return pane ? pane.selectedNodePathArray() : (node ? [node] : []);
+    }
+
+    anchoredCurrentTabNode () {
+        const layout = this.anchoredLayout();
+        const open = layout.openIdsInOrder();
+        const id = open.includes(layout.currentTabId()) ? layout.currentTabId() : open.first();
+        return this.anchoredTabNodes().find(node => this.anchoredTabIdFor(node) === id) || null;
+    }
+
+    /**
+     * @description Selects a path through this stack: the first node after
+     * this stack's own is a tab — opened as a click would open it (if it is
+     * not open) and made current — and the rest is selected inside its pane.
+     * URL restores, breadcrumb clicks and navigation requests all come here.
+     * @param {Array<SvNode>} nodePathArray - begins with the node to select
+     * in this stack's own tiles (the tab), as SvStackView.selectNodePathArray
+     * receives it
+     * @returns {Boolean} whether the whole path resolved
+     * @category Anchored Tabs
+     */
+    anchoredSelectNodePathArray (nodePathArray) {
+        if (this.anchoredLayout().tabSpecs().length === 0) {
+            this.syncAnchoredPanes(); // a path can arrive (a URL on load) before the first sync
+        }
+        const tabNode = nodePathArray.first();
+        const rest = nodePathArray.slice(1);
+        if (!tabNode) {
+            return true; // nothing below this stack to select: the panes stay as they are
+        }
+        if (!this.anchoredTabNodes().includes(tabNode)) {
+            return false;
+        }
+        const id = this.anchoredTabIdFor(tabNode);
+        if (!this.anchoredLayout().isOpen(id)) {
+            this.anchoredLayout().tapTab(id);
+        }
+        this.anchoredLayout().setCurrentTabId(id);
+        this.applyAnchoredLayout();
+        const pane = this.detailView().anchoredPaneForNode(tabNode);
+        if (!pane) {
+            return false;
+        }
+        if (rest.length > 0) {
+            // the pane may have been created by this call, its columns not yet
+            // materialized: the pane's own bounded retry finishes the selection
+            // (a URL change has no retry of its own; a nav request's would
+            // re-open the tab each time)
+            pane.selectPathWithRetry(rest);
+        }
+        return true;
+    }
+
+    /**
+     * @description A pane was navigated in or took focus: it is the current
+     * pane, and the outer path (breadcrumbs, URL) follows it.
+     * @param {SvBrowserView} pane
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    onAnchoredPaneActivated (pane) {
+        const node = this.detailView().anchoredNodeForPane(pane);
+        if (node) {
+            this.anchoredLayout().setCurrentTabId(this.anchoredTabIdFor(node));
+        }
+        return this.anchoredPathMayHaveChanged();
+    }
+
+    anchoredPathMayHaveChanged () {
+        const root = this.rootStackView();
+        if (root && root.topDidChangeNavSelection) {
+            root.topDidChangeNavSelection();
+        }
+        return this;
+    }
+
     /**
      * @description A tab tile was tapped (pin: shift/option-click, and the
      * pin control in milestone 2c). The layout decides; this renders it.
@@ -256,7 +346,8 @@
         } else {
             this.anchoredLayout().tapTab(id);
         }
-        return this.applyAnchoredLayout();
+        this.applyAnchoredLayout();
+        return this.anchoredPathMayHaveChanged();
     }
 
 }.initThisCategory());

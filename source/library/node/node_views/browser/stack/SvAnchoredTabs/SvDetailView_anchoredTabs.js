@@ -89,6 +89,8 @@
         const pane = SvBrowserView.clone();
         pane.setHandlesGlobalNavRequests(false); // embedded: never answers global nav requests (milestone 2b routes them)
         pane.setHidesBreadCrumbs(true); // its tab is its title
+        pane.setAnchoredTabsHost(this.stackView()); // navigating or focusing in it makes it current
+        pane.setIsRegisteredForFocus(true);
         pane.setNode(node);
         pane.setHeight("100%");
         pane.setOverflow("hidden");
@@ -97,6 +99,17 @@
         this.anchoredPaneViews().set(node, pane);
         this.anchoredPanesView().addSubview(pane);
         return pane;
+    }
+
+    anchoredPaneForNode (node) {
+        const panes = this.anchoredPaneViews();
+        return panes ? (panes.get(node) || null) : null;
+    }
+
+    anchoredNodeForPane (pane) {
+        const panes = this.anchoredPaneViews();
+        const entry = panes ? [...panes.entries()].find(([, p]) => p === pane) : null;
+        return entry ? entry[0] : null;
     }
 
     removeAnchoredPaneForNode (node) {

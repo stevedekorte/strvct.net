@@ -453,6 +453,9 @@
      * @returns {Boolean} True if the selection was successful, false otherwise.
      */
     selectNodePathArray (nodePathArray) {
+        if (this.isAnchoredTabs()) {
+            return this.anchoredSelectNodePathArray(nodePathArray); // opens the tab, the rest goes into its pane
+        }
         if (nodePathArray.length === 0) {
             //console.log("- only one node in pathArray and it is ours, so unselecting all subtiles and we're done!")
             // no selections left so unselect next
@@ -548,12 +551,16 @@
             parts.removeLast();
         }
 
-        return parts.map(sv => {
+        const nodes = parts.map(sv => {
             if (!sv.node()) {
                 throw new Error("this stack view has a null node");
             }
             return sv.node();
         });
+        // an anchored-tabs stack ends this chain; the path continues into its
+        // current pane (Plans/Anchor Tabs § The current path)
+        const last = parts.last();
+        return (last && last.isAnchoredTabs()) ? nodes.concat(last.anchoredCurrentPanePath()) : nodes;
     }
 
     selectedNodePathString () {

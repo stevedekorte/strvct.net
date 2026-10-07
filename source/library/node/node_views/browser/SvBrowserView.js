@@ -119,6 +119,30 @@
             slot.setSlotType("Boolean");
         }
         {
+            /**
+             * @member {Boolean} hasBeenNavigated - a path was selected in this
+             * browser. The base state (moveToBase, scheduled at init) applies
+             * only to a browser nobody has navigated yet: a pane created and
+             * navigated in the same cycle had its selection wiped by the
+             * scheduled reset (a URL into a new anchored-tabs pane, 2026-10-06).
+             * @category Navigation
+             */
+            const slot = this.newSlot("hasBeenNavigated", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            /**
+             * @member {SvStackView|null} anchoredTabsHost - the anchored-tabs
+             * stack this browser is a pane of; told when the pane is navigated
+             * in or focused, so it becomes the current pane and the outer path
+             * (breadcrumbs, URL) follows it
+             * @category Navigation
+             */
+            const slot = this.newSlot("anchoredTabsHost", null);
+            slot.setSlotType("SvStackView");
+            slot.setAllowsNullValue(true);
+        }
+        {
             const slot = this.newSlot("containerResizeObserver", null);
             slot.setSlotType("ResizeObserver");
             slot.setAllowsNullValue(true);
@@ -290,7 +314,25 @@
         this.breadCrumbsView().didChangeBrowserPath();
         this.syncBreadCrumbsVisibilityHint();
         this.postNoteNamed("onBrowserViewPathChange");
+        if (this.anchoredTabsHost()) {
+            this.anchoredTabsHost().onAnchoredPaneActivated(this); // a pane navigated in: it is the current one
+        }
         return true;
+    }
+
+    /**
+     * @description Something inside this browser took focus (a tile, a text
+     * field). As an anchored-tabs pane, that makes it the current pane.
+     * Registered only for panes (SvDetailView_anchoredTabs).
+     * @param {Event} event
+     * @returns {Boolean}
+     * @category Navigation
+     */
+    onFocusIn (event) {
+        if (this.anchoredTabsHost()) {
+            this.anchoredTabsHost().onAnchoredPaneActivated(this);
+        }
+        return super.onFocusIn(event);
     }
 
     // --- breadcrumb visibility hint (nodeWantsBreadCrumbs) ---
@@ -437,6 +479,9 @@
      * @category Navigation
      */
     selectNodePathArray (nodePathArray) {
+        if (nodePathArray.length > 0) {
+            this.setHasBeenNavigated(true);
+        }
         // returns true if the path resolved, false if a tile in it wasn't found
         return this.stackView().selectNodePathArray(nodePathArray);
     }
@@ -522,7 +567,9 @@
             path.push(target);
             node = target;
         }
-        if (path.length > 0) {
+        if (this.hasBeenNavigated()) {
+            // navigated before the scheduled base state arrived: keep that
+        } else if (path.length > 0) {
             this._pendingSelectPath = path;
             this._pendingSelectAttempt = 0;
             this.trySelectPendingPath();
