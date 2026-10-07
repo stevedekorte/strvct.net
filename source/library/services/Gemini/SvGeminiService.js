@@ -462,12 +462,11 @@
             { "category": "HARM_CATEGORY_CIVIC_INTEGRITY", "threshold": "BLOCK_ONLY_HIGH" }
         ];
 
-        geminiBody.generation_config = {
-            "temperature": bodyJson.temperature,
-            "topP": bodyJson.top_p,
-            "topK": 40
-            //"maxOutputTokens": 100000,
-        };
+        // No generation_config: sampling (temperature, topP, topK) has been
+        // fixed at Google's defaults since Gemini 3.6 Flash, and upcoming
+        // models reject requests that set it (Google notice, 2026-10-07). No
+        // thinking setting either: the model's default thinking level, and
+        // thinking_budget is rejected outright.
 
         let messages = bodyJson.messages;
 
