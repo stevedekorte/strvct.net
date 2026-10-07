@@ -108,6 +108,7 @@
         this.anchoredPaneViews().set(node, pane);
         this.anchoredPanesView().addSubview(pane);
         this.addAnchoredPaneControls(pane, node);
+        pane.syncNavPathMembership(); // an open pane is being looked at, current or not
         return pane;
     }
 
@@ -150,6 +151,7 @@
         if (pane) {
             this.anchoredPaneControls().delete(pane);
             pane.removeFromParentView();
+            pane.prepareToRetire(); // its nodes leave the nav path; listeners and observers go
         }
         return this;
     }
@@ -193,6 +195,7 @@
             return this;
         }
         this.unobserveAnchoredContainer();
+        [...this.anchoredPaneViews().keys()].forEach(node => this.removeAnchoredPaneForNode(node));
         this.anchoredPanesView().removeFromParentView();
         this.setAnchoredPanesView(null);
         this.setAnchoredPaneViews(null);
