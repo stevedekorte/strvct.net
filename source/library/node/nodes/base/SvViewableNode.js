@@ -369,6 +369,32 @@
     }
 
     /**
+     * @description Whether this node presents its subnodes as anchored tabs
+     * (Plans/Anchor Tabs): one row of tabs where every open tab heads its own
+     * pane, side by side, and the available width decides how many are open
+     * — ordinary tabs on a phone, several panes on a wide screen. Read by the
+     * generic stack view (SvStackView_anchoredTabs); a role, not a layout.
+     * Opt-in per node, in the nodeShowsScrollbar idiom.
+     * @returns {Boolean}
+     * @category Layout
+     */
+    nodeSubnodesAreAnchoredTabs () {
+        return false;
+    }
+
+    /**
+     * @description As an anchored tab: whether this node would like its pane
+     * kept open — "pinned", "open" (open when there is room, unpinned) or null
+     * (no opinion). A suggestion: the player's own pin or unpin of the tab
+     * wins (SvAnchoredTabsLayout).
+     * @returns {String|null}
+     * @category Layout
+     */
+    nodeTabPinPreference () {
+        return null;
+    }
+
+    /**
      * @description Returns the node orientation.
      * @returns {string} The node orientation.
      * @category Layout

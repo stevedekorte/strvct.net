@@ -318,7 +318,8 @@
      * @returns {SvStackView} The stack view.
      */
     syncFromNode () {
-        this.setDirection(this.node().nodeOrientation());
+        // anchored tabs: the tab row runs across the top, the panes beneath
+        this.setDirection(this.isAnchoredTabs() ? "down" : this.node().nodeOrientation());
 
         this.syncOrientation();
         this.syncSurfaceFromNode();
@@ -758,6 +759,12 @@
      * @returns {SvStackView} The stack view.
      */
     syncFromNavSelection () {
+        if (this.isAnchoredTabs()) {
+            this.syncAnchoredPanes(); // several selected tiles, one pane each (SvStackView_anchoredTabs)
+            this.safeUpdateCompactionChain(); // the panes' claim may have changed (anchoredClaimWidth)
+            return;
+        }
+        this.detailView().removeAnchoredPanes(); // a reused stack that showed anchored tabs before
         // update otherViewContent view to match selected tile
 
         const tile = this.navView().tilesView().selectedTile(); // this may get called before tilesView has synced to current subnodes,
@@ -1010,6 +1017,9 @@
         let w = verticalNavViews.sum(nv => nv.targetWidth());
         // companions reserve space in the row exactly as another column would
         w += this.stackViewSubchain().sum(sv => sv.detailView().companionReservedWidth());
+        // an anchored-tabs stack's panes claim at least one pane's minimum, so
+        // columns to its left give way on a narrow screen (SvStackView_anchoredTabs)
+        w += this.stackViewSubchain().sum(sv => sv.anchoredClaimWidth ? sv.anchoredClaimWidth() : 0);
         return w;
 
         /*

@@ -71,6 +71,11 @@
      * @param {SvTile} anItem - The tapped item.
      */
     didTapItem (anItem) {
+        const anchored = this.anchoredTabsStackView();
+        if (anchored) {
+            anchored.anchoredTapTile(anItem, false); // the layout decides which tabs are open
+            return;
+        }
         anItem.activate();
         if (!anItem.hasFocusedDecendantView()) {
             anItem.focus();
@@ -86,6 +91,11 @@
      * @returns {SvTilesView_selection} The current instance.
      */
     didShiftTapItem (anItem) {
+        const anchored = this.anchoredTabsStackView();
+        if (anchored) {
+            anchored.anchoredTapTile(anItem, true); // in a tab row shift-click pins (no range selection)
+            return this;
+        }
         let lastItem = this.lastSelectedTile();
 
         if (!lastItem) {
@@ -107,6 +117,17 @@
         }
 
         return this;
+    }
+
+    /**
+     * @description The stack this tiles view is the tab row of, when that
+     * stack presents anchored tabs (Plans/Anchor Tabs); else null.
+     * @returns {SvStackView|null}
+     * @category Anchored Tabs
+     */
+    anchoredTabsStackView () {
+        const stack = this.stackView();
+        return (stack && stack.isAnchoredTabs && stack.isAnchoredTabs() && stack.navView().tilesView() === this) ? stack : null;
     }
 
     /**

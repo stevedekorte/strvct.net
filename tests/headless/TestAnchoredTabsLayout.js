@@ -101,6 +101,8 @@ function testWidths () {
     tight.pinTab("me");
     tight.pinTab("party");
     const tw = tight.paneWidths();
+    const phone = newLayout(390);
+    check(phone.paneWidths().get("narration") === 390, "a lone pane takes the whole container even below its minimum (390 on a phone, minimum 400): " + phone.paneWidths().get("narration"));
     check(tight.openIdsInOrder().length === 2 || [...tw.entries()].every(([id, w]) => w >= tight.tabWithId(id).minWidth), "a tight container still never gives a pane less than its minimum: " + JSON.stringify([...tw]));
 }
 

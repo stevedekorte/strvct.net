@@ -250,13 +250,18 @@
     /**
      * @description Each open pane's width: the container (less dividers)
      * shared in proportion to comfortable widths, never below a pane's
-     * minimum. Whole pixels; the last pane takes the rounding remainder.
+     * minimum. Whole pixels; the last pane takes the rounding remainder. A
+     * lone pane takes the whole container, even when that is below its
+     * minimum (a phone narrower than the tab's comfortable width).
      * @returns {Map<String, Number>}
      * @category Answers
      */
     paneWidths () {
         const ids = this.openIdsInOrder();
         const room = this.containerWidth() - this.dividerWidth() * Math.max(0, ids.length - 1);
+        if (ids.length === 1) {
+            return new Map([[ids[0], Math.max(0, room)]]); // a lone pane takes the container, even below its minimum (a phone)
+        }
         const exact = this.proportionalWidths(ids, room);
         const widths = new Map(ids.map(id => [id, Math.floor(exact.get(id))]));
         const used = ids.reduce((sum, id) => sum + widths.get(id), 0);
