@@ -669,15 +669,19 @@
 
     /**
      * @description Re-runs this browser's own compaction chain (browser-scoped
-     * by construction) now that its container has a new width.
+     * by construction) now that its container has a new width. The root
+     * stack is handed the width the observer delivered rather than told to
+     * re-measure: an animated pane resizes every frame, and a re-measure per
+     * frame was a forced layout per frame per moving pane (2026-10-07).
      * @returns {SvBrowserView}
      * @category Layout
      */
     recompactForContainer () {
         const stack = this.stackView();
         if (stack && stack.recompactBrowserChain) {
-            if (stack.rootStackView && stack.rootStackView().invalidateRootWidth) {
-                stack.rootStackView().invalidateRootWidth(); // the container just changed size
+            const root = stack.rootStackView ? stack.rootStackView() : null;
+            if (root && root.setRootWidthCache) {
+                root.setRootWidthCache(this.lastContainerWidth()); // the container's new width, as observed
             }
             stack.recompactBrowserChain();
         }

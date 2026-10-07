@@ -13,8 +13,9 @@
  * gestures, it keeps which tabs are open, pinned and evicted, and answers the
  * pane widths. The view renders that state; it makes no layout decisions.
  *
- * A tab spec: { id, minWidth, comfortableWidth?, isAvailable?, pinPreference? }
- * where pinPreference is "pinned", "open" or null (the node's suggestion,
+ * A tab spec: { id, minWidth, comfortableWidth?, isAvailable?, pinPreference?, tabWidth? }
+ * where tabWidth is the tab's own width in the tab row (measured by the view)
+ * and pinPreference is "pinned", "open" or null (the node's suggestion,
  * nodeTabPinPreference()). The player's own pin or unpin of a tab overrides
  * its preference and is remembered (playerPinOverrides).
  *
@@ -30,6 +31,11 @@
  * - A tab that stops being available closes; if it was pinned it is
  *   remembered as evicted, so it returns when it is available again.
  * - At least one pane is open whenever any tab is available.
+ * - A pane is at least as wide as the tabs that sit over it (its segment:
+ *   its own tab and the closed tabs after it), so the next open tab lands on
+ *   its pane — when the container has room for that. When it doesn't, the
+ *   panes keep their content minimums and the view squeezes the closed tabs.
+ *   Tab widths never close a pane.
  */
 (class SvAnchoredTabsLayout extends ProtoClass {
 
@@ -118,7 +124,8 @@
             minWidth: spec.minWidth || 0,
             comfortableWidth: spec.comfortableWidth || spec.minWidth || 1,
             isAvailable: spec.isAvailable !== false,
-            pinPreference: spec.pinPreference || null
+            pinPreference: spec.pinPreference || null,
+            tabWidth: spec.tabWidth || 0
         };
     }
 
@@ -326,7 +333,8 @@
         if (ids.length === 1) {
             return new Map([[ids[0], Math.max(0, room)]]); // a lone pane takes the container, even below its minimum (a phone)
         }
-        const exact = this.withDividerSplits(this.proportionalWidths(ids, room));
+        const minimums = this.paneMinimums(ids, room);
+        const exact = this.withDividerSplits(this.proportionalWidths(ids, room, minimums), minimums);
         const widths = new Map(ids.map(id => [id, Math.floor(exact.get(id))]));
         const used = ids.reduce((sum, id) => sum + widths.get(id), 0);
         if (ids.length > 0 && used < room) {
@@ -341,19 +349,61 @@
      * pinned at the minimum and the rest re-shared, until none falls below.
      * @param {Array<String>} ids
      * @param {Number} room - the container less dividers
+     * @param {Map<String, Number>} minimums - from paneMinimums
      * @returns {Map<String, Number>}
      * @category Answers
      */
-    proportionalWidths (ids, room) {
+    proportionalWidths (ids, room, minimums) {
         const atMinimum = new Map();
         for (;;) {
             const shares = this.sharesOf(ids.filter(id => !atMinimum.has(id)), room - this.sumOf(atMinimum));
-            const short = [...shares.entries()].filter(([id, w]) => w < this.tabWithId(id).minWidth);
+            const short = [...shares.entries()].filter(([id, w]) => w < minimums.get(id));
             if (short.length === 0) {
                 return new Map(ids.map(id => [id, atMinimum.has(id) ? atMinimum.get(id) : shares.get(id)]));
             }
-            short.forEach(([id]) => atMinimum.set(id, this.tabWithId(id).minWidth));
+            short.forEach(([id]) => atMinimum.set(id, minimums.get(id)));
         }
+    }
+
+    /**
+     * @description Each open pane's minimum width: its content minimum, raised
+     * (except the last pane's) to the width of the tabs over it when every raised minimum fits the
+     * room; otherwise the content minimums alone (the view then squeezes the
+     * closed tabs). Tab widths never decide which panes are open.
+     * @param {Array<String>} ids - the open panes, in order
+     * @param {Number} room - the container less dividers
+     * @returns {Map<String, Number>}
+     * @category Answers
+     */
+    paneMinimums (ids, room) {
+        const content = new Map(ids.map(id => [id, this.tabWithId(id).minWidth]));
+        const segments = this.segmentTabWidths(ids);
+        // the last pane's tabs have no open tab after them to push off its pane
+        const raised = new Map(ids.map(id => [id, id === ids.last() ? content.get(id) : Math.max(content.get(id), segments.get(id))]));
+        return this.sumOf(raised) <= room ? raised : content;
+    }
+
+    /**
+     * @description For each open pane, the width of its segment of the tab
+     * row: its own tab and the available closed tabs after it, up to the next
+     * open tab. The first segment also holds the closed tabs before the first
+     * open one.
+     * @param {Array<String>} ids - the open panes, in order
+     * @returns {Map<String, Number>}
+     * @category Answers
+     */
+    segmentTabWidths (ids) {
+        const widths = new Map(ids.map(id => [id, 0]));
+        let owner = ids.first();
+        this.tabSpecs().filter(t => t.isAvailable).forEach(t => {
+            if (widths.has(t.id)) {
+                owner = t.id;
+            }
+            if (owner) {
+                widths.set(owner, widths.get(owner) + t.tabWidth);
+            }
+        });
+        return widths;
     }
 
     /**
@@ -361,18 +411,19 @@
      * dragged pair keeps its combined width, split where it was dragged,
      * neither side below its minimum. Forgotten once the open set changes.
      * @param {Map<String, Number>} widths
+     * @param {Map<String, Number>} minimums - from paneMinimums
      * @returns {Map<String, Number>}
      * @category Answers
      */
-    withDividerSplits (widths) {
+    withDividerSplits (widths, minimums) {
         this.forgetSplitsIfPaneSetChanged();
         this.dividerSplits().forEach((split, leftId) => {
             if (!widths.has(leftId) || !widths.has(split.rightId)) {
                 return;
             }
             const pair = widths.get(leftId) + widths.get(split.rightId);
-            const minLeft = this.tabWithId(leftId).minWidth;
-            const maxLeft = pair - this.tabWithId(split.rightId).minWidth;
+            const minLeft = minimums.get(leftId);
+            const maxLeft = pair - minimums.get(split.rightId);
             const left = Math.max(minLeft, Math.min(maxLeft, split.leftWidth));
             widths.set(leftId, left);
             widths.set(split.rightId, pair - left);

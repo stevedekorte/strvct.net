@@ -239,6 +239,33 @@ function testDividersAndPinControl () {
     check(pins.leftNeighborOf("me") === "narration" && pins.leftNeighborOf("narration") === null, "leftNeighborOf answers the open pane to the left");
 }
 
+function testTabSegments () {
+    console.log("\nTab segments");
+    // narrow panes, wide tabs: Party's segment (Party, Scene, Handbook) is 450px
+    const tabs = (w) => sessionTabs({
+        narration: { tabWidth: 150 }, me: { tabWidth: 100 }, party: { tabWidth: 130 },
+        scene: { tabWidth: 140 }, handbook: { tabWidth: 180 }, session: { tabWidth: 140 }
+    }).map(t => Object.assign(t, { minWidth: w, comfortableWidth: w }));
+    const segs = newLayout(1600, tabs(300));
+    segs.tapTab("party");
+    segs.pinTab("session");
+    check(open(segs) === "narration,party,session", "start: " + open(segs));
+    check(segs.segmentTabWidths(segs.openIdsInOrder()).get("party") === 450, "a segment is its open tab and the closed tabs after it (" + segs.segmentTabWidths(segs.openIdsInOrder()).get("party") + ")");
+    check(segs.segmentTabWidths(segs.openIdsInOrder()).get("narration") === 250, "…the first one from the row's start");
+    check(segs.paneWidths().get("party") >= 450, "with room, a pane is at least as wide as its tabs (" + segs.paneWidths().get("party") + ")");
+    segs.dragDivider("party", "session", 200);
+    check(segs.paneWidths().get("party") === 450, "a divider can't drag a pane narrower than its tabs while there is room");
+    const tight = newLayout(1600, tabs(300));
+    tight.tapTab("party");
+    tight.pinTab("session");
+    tight.updateContainerWidth(950);
+    check(open(tight) === "narration,party,session", "tab widths never close a pane: " + open(tight));
+    check(tight.paneWidths().get("party") < 450 && tight.paneWidths().get("party") >= 300, "without room, panes fall back to their content minimums (" + tight.paneWidths().get("party") + ")");
+    const last = newLayout(1600, tabs(300));
+    last.tapTab("party");
+    check(last.paneMinimums(last.openIdsInOrder(), 1599).get("party") === 300, "the last pane is not raised for the tabs after it");
+}
+
 function testInvariants () {
     console.log("\ninvariants across a random walk of gestures and widths");
     const layout = newLayout(1400);
@@ -274,6 +301,7 @@ function testInvariants () {
     testAvailability();
     testPreferences();
     testDividersAndPinControl();
+    testTabSegments();
     testInvariants();
     console.log("\n=============================");
     console.log("Passed: " + passed + "  Failed: " + failed);

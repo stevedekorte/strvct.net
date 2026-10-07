@@ -33,7 +33,7 @@
             slot.setAllowsNullValue(true);
         }
         {
-            const slot = this.newSlot("anchoredTileWidths", null); // { titles, widths }: tab widths last measured, by titles
+            const slot = this.newSlot("anchoredTileWidths", null); // { titles, widths, byNode }: tab widths last measured, by titles
             slot.setSlotType("Object");
             slot.setAllowsNullValue(true);
         }
@@ -84,22 +84,38 @@
             minWidth: yielding || comfortable,
             comfortableWidth: comfortable,
             isAvailable: node.isVisible ? node.isVisible() !== false : true,
-            pinPreference: node.nodeTabPinPreference ? node.nodeTabPinPreference() : null
+            pinPreference: node.nodeTabPinPreference ? node.nodeTabPinPreference() : null,
+            tabWidth: this.anchoredTabWidthFor(node)
         };
+    }
+
+    /**
+     * @description The tab's own width in the row, from the last measurement
+     * (0 before the first), so the layout can keep a pane as wide as the tabs
+     * over it.
+     * @param {SvNode} node
+     * @returns {Number}
+     * @category Anchored Tabs
+     */
+    anchoredTabWidthFor (node) {
+        const cached = this.anchoredTileWidths();
+        return (cached && cached.byNode.get(node)) || 0;
     }
 
     /**
      * @description Re-reads the tabs from the subnodes and re-lays the panes
      * out. Runs on every sync of this stack, so it reads no geometry: the
-     * width is the cached one.
+     * width is the cached one. A change the model made (a tab appearing,
+     * a pin preference) animates like a gesture.
+     * @param {Boolean} [isAnimated=true]
      * @returns {SvStackView_anchoredTabs}
      * @category Anchored Tabs
      */
-    syncAnchoredPanes () {
+    syncAnchoredPanes (isAnimated = true) {
         const layout = this.anchoredLayout();
         layout.updateTabs(this.anchoredTabNodes().map(node => this.anchoredTabSpecFor(node)));
         layout.updateContainerWidth(this.anchoredWidth());
-        return this.applyAnchoredLayout();
+        return this.applyAnchoredLayout(isAnimated);
     }
 
     /**
@@ -136,23 +152,25 @@
         }
         this.setAnchoredContainerWidth(width);
         this.anchoredLayout().updateContainerWidth(width);
-        return this.applyAnchoredLayout();
+        return this.applyAnchoredLayout(false); // a resize follows the window, unanimated
     }
 
     /**
      * @description Renders the layout's answer: the panes, and the tab row's
      * selection (the open tabs are the selected tiles).
+     * @param {Boolean} isAnimated - a gesture's (or the model's) change
+     * animates; a resize or a divider drag does not
      * @returns {SvStackView_anchoredTabs}
      * @category Anchored Tabs
      */
-    applyAnchoredLayout () {
+    applyAnchoredLayout (isAnimated) {
         const layout = this.anchoredLayout();
         const byId = new Map(this.anchoredTabNodes().map(node => [this.anchoredTabIdFor(node), node]));
         const openNodes = layout.openIdsInOrder().map(id => byId.get(id)).filter(node => !!node);
         const widthsById = layout.paneWidths();
         const widths = new Map(openNodes.map(node => [node, widthsById.get(this.anchoredTabIdFor(node))]));
         const pinned = new Set(openNodes.filter(node => layout.isPinned(this.anchoredTabIdFor(node))));
-        this.detailView().syncAnchoredPanes(openNodes, widths, pinned);
+        this.detailView().syncAnchoredPanes(openNodes, widths, pinned, isAnimated);
         this.syncAnchoredTileSelection(openNodes);
         this.syncAnchoredTabStates(openNodes);
         this.noteOpenTabsSeen(openNodes);
@@ -221,7 +239,7 @@
     anchoredTogglePin (node) {
         const id = this.anchoredTabIdFor(node);
         this.anchoredLayout().setTabPinned(id, !this.anchoredLayout().isPinned(id));
-        return this.applyAnchoredLayout();
+        return this.applyAnchoredLayout(true);
     }
 
     anchoredWidthLeftOf (rightNode) {
@@ -242,7 +260,7 @@
         const leftId = this.anchoredLayout().leftNeighborOf(rightId);
         if (leftId) {
             this.anchoredLayout().dragDivider(leftId, rightId, leftWidth);
-            this.applyAnchoredLayout();
+            this.applyAnchoredLayout(false); // follows the pointer, unanimated
         }
         return this;
     }
@@ -253,9 +271,12 @@
      * @description Places each open tab over its pane. The tab row is a flex
      * row of tiles; a segment is an open tab plus the closed tabs after it,
      * and the segment's last tile gets the right margin that makes the
-     * segment exactly as wide as its pane (plus the divider). Tile widths are
-     * measured only when the tab titles change (measuredTileWidths), all at
-     * once, before any write; the margins are then written on every layout.
+     * segment exactly as wide as its pane (plus the divider). The layout
+     * keeps a pane at least as wide as its segment when there is room; when
+     * there isn't, the segment's closed tabs are squeezed (clipped with a
+     * fade) instead. Tile widths are measured only when the tab titles change
+     * (measuredTileWidths), all at once, before any write; a fresh
+     * measurement re-runs the layout once with the new tab widths.
      * @param {Array<SvNode>} openNodes
      * @param {Map<SvNode, Number>} widths
      * @returns {SvStackView_anchoredTabs}
@@ -263,25 +284,37 @@
      */
     anchorTabTiles (openNodes, widths) {
         const tiles = this.navView().tilesView().tiles();
+        const wasMeasured = this.hasCurrentTileWidths(tiles);
         const tileWidths = this.measuredTileWidths(tiles);
         if (tiles.length === 0 || tileWidths.every(w => w === 0)) {
             this.addWeakTimeout(() => this.anchorTabTiles(openNodes, widths), 50); // not laid out yet
             return this;
         }
-        // The gap rides a custom property, turned into the margin by one
-        // stylesheet rule for tiles in an anchored row: tile style passes
-        // (setMargin) reset the margin longhands and erased a plain
-        // margin-right. Written every time — the tiles view can rebuild its
-        // tiles — with same-value writes skipped and widths from the cache.
+        if (!wasMeasured) {
+            return this.syncAnchoredPanes(false); // the layout now knows the tab widths; it calls back here
+        }
+        // The gap and the cap ride custom properties, turned into the margin
+        // and max-width by stylesheet rules for tiles in an anchored row:
+        // tile style passes (setMargin) reset the margin longhands and erased
+        // a plain margin-right. Written every time — the tiles view can
+        // rebuild its tiles — with same-value writes skipped.
         this.ensureAnchoredTabCss();
         this.navView().tilesView().element().classList.add("SvAnchoredTabRow");
-        const margins = this.segmentMargins(tiles, tileWidths, openNodes, widths);
-        tiles.forEach((tile, i) => tile.setCssProperty("--sv-anchor-gap", (margins.get(i) || 0) + "px"));
+        const fit = this.segmentFit(tiles, tileWidths, openNodes, widths);
+        tiles.forEach((tile, i) => {
+            const cap = fit.caps.get(i);
+            tile.setCssProperty("--sv-anchor-gap", (fit.margins.get(i) || 0) + "px");
+            tile.setCssProperty("--sv-anchor-max", (cap !== undefined ? cap : tileWidths[i]) + "px");
+            tile.element().classList.toggle("SvAnchoredTabSqueezed", cap !== undefined);
+        });
         return this;
     }
 
     /**
-     * @description The one stylesheet rule anchoring needs, added once.
+     * @description The stylesheet rules anchoring needs, added once. Margins
+     * and caps transition with the panes' widths (same duration, same
+     * easing), so a tab stays over its pane while they move; the tile's own
+     * inline "transition: all 0s" is overridden for these two only.
      * @returns {SvStackView_anchoredTabs}
      * @category Anchored Tabs
      */
@@ -291,30 +324,43 @@
             SvWebDocument.shared().addStyleSheetString(`
                 .SvAnchoredTabRow > * {
                     margin-right: var(--sv-anchor-gap, 0px) !important;
+                    max-width: var(--sv-anchor-max, none) !important;
+                    flex-shrink: 0 !important;
+                    transition: margin-right var(--sv-anchor-duration, 0ms) ease, max-width var(--sv-anchor-duration, 0ms) ease !important;
+                }
+                .SvAnchoredTabRow > .SvAnchoredTabSqueezed {
+                    -webkit-mask-image: linear-gradient(to right, black calc(100% - 18px), transparent);
+                    mask-image: linear-gradient(to right, black calc(100% - 18px), transparent);
                 }
             `);
         }
         return this;
     }
 
+    hasCurrentTileWidths (tiles) {
+        const cached = this.anchoredTileWidths();
+        return !!(cached && cached.titles === this.tabTitlesSignature(tiles) && cached.widths.length === tiles.length);
+    }
+
     /**
-     * @description The tab tiles' widths, measured only when the tab titles
-     * changed: a divider drag or a resize changes the pane widths every frame
-     * and must not measure (a forced layout per frame). Measured all at once,
-     * before anything is written.
+     * @description The tab tiles' natural widths, measured only when the tab
+     * titles changed: a divider drag or a resize changes the pane widths every
+     * frame and must not measure (a forced layout per frame). Before
+     * measuring, the caps come off (one forced layout per title change), so
+     * a squeezed tab measures its full width.
      * @param {Array<SvTile>} tiles
      * @returns {Array<Number>}
      * @category Anchored Tabs
      */
     measuredTileWidths (tiles) {
-        const titles = this.tabTitlesSignature(tiles);
-        const cached = this.anchoredTileWidths();
-        if (cached && cached.titles === titles && cached.widths.length === tiles.length) {
-            return cached.widths;
+        if (this.hasCurrentTileWidths(tiles)) {
+            return this.anchoredTileWidths().widths;
         }
+        tiles.forEach(tile => tile.setCssProperty("--sv-anchor-max", "none"));
         const widths = tiles.map(tile => tile.element().offsetWidth);
         if (widths.some(w => w > 0)) {
-            this.setAnchoredTileWidths({ titles: titles, widths: widths });
+            const byNode = new Map(tiles.map((tile, i) => [tile.node(), widths[i]]));
+            this.setAnchoredTileWidths({ titles: this.tabTitlesSignature(tiles), widths: widths, byNode: byNode });
         }
         return widths;
     }
@@ -324,39 +370,62 @@
     }
 
     /**
-     * @description The right margin for the last tile of each segment, by
-     * tile index. Closed tabs before the first open tab sit at its left (the
-     * first pane's segment starts with them).
+     * @description The tile indexes of each open tab's segment, in order:
+     * the open tab and the closed tabs after it; the first segment also takes
+     * the closed tabs before the first open one.
+     * @param {Array<SvTile>} tiles
+     * @param {Array<SvNode>} openNodes
+     * @returns {Array<Array<Number>>}
+     * @category Anchored Tabs
+     */
+    tabSegments (tiles, openNodes) {
+        const segments = openNodes.map(() => []);
+        let segment = 0;
+        tiles.forEach((tile, i) => {
+            const opens = openNodes.indexOf(tile.node());
+            if (opens > 0) {
+                segment = opens;
+            }
+            if (segments[segment]) {
+                segments[segment].push(i);
+            }
+        });
+        return segments;
+    }
+
+    /**
+     * @description How each segment fits over its pane: a segment narrower
+     * than its pane's box (width, plus the 1px divider after the first) pads
+     * its last tile's right margin; a wider one caps its closed tabs, sharing
+     * the overflow by width (never below 24px). The last segment runs on
+     * freely.
      * @param {Array<SvTile>} tiles
      * @param {Array<Number>} tileWidths
      * @param {Array<SvNode>} openNodes
      * @param {Map<SvNode, Number>} widths
-     * @returns {Map<Number, Number>}
+     * @returns {{margins: Map<Number, Number>, caps: Map<Number, Number>}}
      * @category Anchored Tabs
      */
-    segmentMargins (tiles, tileWidths, openNodes, widths) {
-        const margins = new Map();
+    segmentFit (tiles, tileWidths, openNodes, widths) {
+        const fit = { margins: new Map(), caps: new Map() };
         const divider = this.anchoredLayout().dividerWidth();
-        let used = 0;
-        let lastTileOfSegment = -1;
-        let segment = -1;
-        tiles.forEach((tile, i) => {
-            const opensSegment = segment + 1 < openNodes.length && tile.node() === openNodes[segment + 1];
-            if (opensSegment && segment >= 0) {
-                // a pane's box is its width plus, after the first, its 1px left-border divider
-                const box = (widths.get(openNodes[segment]) || 0) + (segment > 0 ? divider : 0);
-                margins.set(lastTileOfSegment, Math.max(0, box - used));
-                used = 0;
+        this.tabSegments(tiles, openNodes).slice(0, -1).forEach((indexes, k) => {
+            const box = (widths.get(openNodes[k]) || 0) + (k > 0 ? divider : 0);
+            const used = indexes.reduce((sum, i) => sum + tileWidths[i], 0);
+            if (box >= used) {
+                fit.margins.set(indexes.last(), box - used);
+            } else {
+                this.capClosedTabs(indexes.filter(i => tiles[i].node() !== openNodes[k] && tileWidths[i] > 0), tileWidths, used - box, fit.caps);
             }
-            if (opensSegment) {
-                segment++;
-            }
-            used += tileWidths[i];
-            lastTileOfSegment = i;
         });
-        return margins; // the last segment needs no margin
+        return fit;
     }
 
+    capClosedTabs (indexes, tileWidths, overflow, caps) {
+        const total = indexes.reduce((sum, i) => sum + tileWidths[i], 0);
+        indexes.forEach(i => caps.set(i, Math.max(24, Math.floor(tileWidths[i] - overflow * tileWidths[i] / total))));
+        return caps;
+    }
 
     syncAnchoredTileSelection (openNodes) {
         const tilesView = this.navView().tilesView();
@@ -417,7 +486,7 @@
             this.anchoredLayout().tapTab(id);
         }
         this.anchoredLayout().setCurrentTabId(id);
-        this.applyAnchoredLayout();
+        this.applyAnchoredLayout(true);
         const pane = this.detailView().anchoredPaneForNode(tabNode);
         if (!pane) {
             return false;
@@ -474,7 +543,7 @@
         } else {
             this.anchoredLayout().tapTab(id);
         }
-        this.applyAnchoredLayout();
+        this.applyAnchoredLayout(true);
         this.scrollTabIntoView(tile);
         return this.anchoredPathMayHaveChanged();
     }
