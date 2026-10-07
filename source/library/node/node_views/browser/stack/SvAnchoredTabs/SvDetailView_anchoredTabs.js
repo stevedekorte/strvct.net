@@ -391,7 +391,7 @@
         pane.setHeight("100%");
         pane.setOverflow("hidden");
         pane.setZIndex(String(this.stackView().anchoredTabNodes().indexOf(node) + 1)); // later tabs above earlier ones
-        pane.setCssProperty("background-color", "var(--sv-bg, Canvas)"); // opaque: it covers the pane it overlaps
+        pane.setCssProperty("background-color", "var(--sv-surface, Canvas)"); // opaque, the page ground: it covers the pane it overlaps
         pane.stackView().rootStackView().setRootWidthCache(frame.width || null);
         this.anchoredPaneViews().set(node, pane);
         this.anchoredPanesView().addSubview(pane);

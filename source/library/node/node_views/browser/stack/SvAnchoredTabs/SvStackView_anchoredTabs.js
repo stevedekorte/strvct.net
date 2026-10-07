@@ -356,9 +356,11 @@
     }
 
     /**
-     * @description The stylesheet rules anchoring needs, added once. Nothing
-     * here transitions: a margin or width transition re-lays out the row
-     * every frame; motion is by transform (slideTabTiles).
+     * @description The stylesheet rules anchored tabs need, added once: the
+     * gap and cap, and the tab states' look in theme colors (an open tab's
+     * rounded top, a pinned tab's diamond and underline, a squeezed tab's
+     * fade). Nothing here transitions: a margin or width transition re-lays
+     * out the row every frame; motion is by transform (slideTabTiles).
      * @returns {SvStackView_anchoredTabs}
      * @category Anchored Tabs
      */
@@ -370,6 +372,23 @@
                     margin-right: var(--sv-anchor-gap, 0px) !important;
                     max-width: var(--sv-anchor-max, none) !important;
                     flex-shrink: 0 !important;
+                }
+                .SvAnchoredTabRow > .SvAnchoredTabOpen {
+                    border-radius: 6px 6px 0 0;
+                }
+                .SvAnchoredTabRow > .SvAnchoredTabPinned > .TileContentView {
+                    box-shadow: inset 0 -2px 0 currentColor;
+                }
+                .SvAnchoredTabRow > .SvAnchoredTabPinned > .TileContentView::before {
+                    content: ""; /* decoration: the pinned mark, a small diamond in the text color */
+                    position: absolute;
+                    left: 9px;
+                    top: 50%;
+                    width: 6px;
+                    height: 6px;
+                    margin-top: -3px;
+                    background-color: currentColor;
+                    transform: rotate(45deg);
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabSqueezed {
                     -webkit-mask-image: linear-gradient(to right, black calc(100% - 18px), transparent);
@@ -440,7 +459,8 @@
      * @description How each segment fits over its pane: a segment wider than
      * its pane's box (width, plus the 1px divider after the first) caps its
      * closed tabs, sharing the overflow by width (never below 24px); then
-     * the last tile's right margin pads the segment to exactly the box. The
+     * the open tab's right margin pads the segment to exactly the box, so
+     * the closed tabs sit at its right end, against the next open tab. The
      * last segment runs on freely.
      * @param {Array<SvTile>} tiles
      * @param {Array<Number>} tileWidths
@@ -458,9 +478,12 @@
             if (box < used) {
                 this.capClosedTabs(indexes.filter(i => tiles[i].node() !== openNodes[k] && tileWidths[i] > 0), tileWidths, used - box, fit.caps);
             }
-            // the caps round down, so a squeezed segment can fall a pixel or two short
+            // the gap goes after the open tab, so the closed tabs sit against
+            // the next open tab; the caps round down, so a squeezed segment
+            // can fall a pixel or two short — the gap takes that up too
             const fitted = indexes.reduce((sum, i) => sum + (fit.caps.has(i) ? fit.caps.get(i) : tileWidths[i]), 0);
-            fit.margins.set(indexes.last(), Math.max(0, box - fitted));
+            const openIndex = indexes.find(i => tiles[i].node() === openNodes[k]);
+            fit.margins.set(openIndex !== undefined ? openIndex : indexes.last(), Math.max(0, box - fitted));
         });
         return fit;
     }
