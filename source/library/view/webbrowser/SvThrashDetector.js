@@ -288,8 +288,7 @@
      */
     start (verbose) {
         this.setEnabled(true);
-        this.beginFrame(); // reads land before the first tick's beginFrame; the trigger list must exist
-        this.startFrameLoop();
+        this.beginFrame(); // reads land before the first frame ends; the trigger list must exist
         this.setVerbose(verbose);
         return this;
     }
@@ -301,6 +300,9 @@
      */
     setVerbose (verbose) {
         this.setIsVerbose(verbose);
+        if (verbose) {
+            this.startFrameLoop(); // the per-frame report and heartbeat need every frame
+        }
         console.warn("[SvThrashDetector] counting forced layouts (top-right indicator; ?thrash=0 turns it off)."
             + (verbose ? " Logging each one with the reading code's stack, plus a heartbeat every "
                 + (this.heartbeatMs() / 1000) + "s. Click the indicator to stop."
@@ -309,10 +311,17 @@
     }
 
     /**
-     * @description Reports once per animation frame, which is the unit that
-     * matters: a write followed by a read INSIDE one frame is the interleaving
-     * that forces synchronous layout. Nothing called beginFrame/endFrame before,
-     * so the detector could never report.
+     * @description Verbose mode: closes a frame on every animation frame,
+     * which the per-frame report and the heartbeat need. Stops when verbose
+     * mode is turned off.
+     *
+     * Counting mode (the default) does NOT run this loop: a pending
+     * requestAnimationFrame makes the browser produce a main-thread frame
+     * every vsync, and in each one animations that could run on the
+     * compositor also have their style recomputed on the main thread — the
+     * counter was itself a per-frame cost on every page (2026-10-07). There,
+     * a frame is closed only after a frame in which something was written
+     * (scheduleFrameEnd).
      * @category Frame Management
      */
     startFrameLoop () {
@@ -323,9 +332,34 @@
         const tick = () => {
             this.endFrame();
             this.beginFrame();
-            window.requestAnimationFrame(tick);
+            if (this.isVerbose()) {
+                window.requestAnimationFrame(tick);
+            } else {
+                this._frameLoopStarted = false;
+            }
         };
         window.requestAnimationFrame(tick);
+        return this;
+    }
+
+    /**
+     * @description Counting mode: closes the current frame at the next
+     * animation frame — requested once per frame, and only when something
+     * wrote to the DOM, so a quiet page requests no frames at all. A read
+     * can only force layout after a write, so frames without writes need no
+     * closing.
+     * @category Frame Management
+     */
+    scheduleFrameEnd () {
+        if (this._frameEndPending || this._frameLoopStarted || typeof window === "undefined") {
+            return this;
+        }
+        this._frameEndPending = true;
+        window.requestAnimationFrame(() => {
+            this._frameEndPending = false;
+            this.endFrame();
+            this.beginFrame();
+        });
         return this;
     }
 
@@ -392,6 +426,9 @@
             this.setNeedsReflow(true);
             this.setLastWrite(opName);
             this.setLastWriteView(optionalView || null);
+            if (this.enabled()) {
+                this.scheduleFrameEnd();
+            }
         }
         return this;
     }
@@ -457,6 +494,7 @@
         this.setTotalReflowCount(this.totalReflowCount() + this.reflowCount());
         this.setIndicatorWindowCount(this.indicatorWindowCount() + this.reflowCount());
         this.updateIndicatorIfDue();
+        this.scheduleIndicatorSettle();
         if (!this.isVerbose()) {
             return;
         }
@@ -484,6 +522,24 @@
         const rate = Math.round(this.indicatorWindowCount() / seconds);
         this.setIndicatorWindowCount(0);
         this.renderIndicator(rate);
+        return this;
+    }
+
+    /**
+     * @description Frames are closed only on demand, so after a burst no
+     * frame may come to bring the rate back to 0/s: a timer (not a frame
+     * request) refreshes the indicator once more, a little over a second on.
+     * @category Indicator
+     */
+    scheduleIndicatorSettle () {
+        if (this._indicatorSettlePending || typeof setTimeout === "undefined") {
+            return this;
+        }
+        this._indicatorSettlePending = true;
+        setTimeout(() => {
+            this._indicatorSettlePending = false;
+            this.updateIndicatorIfDue();
+        }, 1100);
         return this;
     }
 
