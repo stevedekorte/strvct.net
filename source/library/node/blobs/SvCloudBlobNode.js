@@ -550,11 +550,52 @@
             // before it computes the hash, so the bytes are already in hand).
             return;
         }
-        // fire and forget: a miss is already logged by the pull path, and a
-        // failure here must not break whatever applied the update
-        this.asyncBlobValue().catch(error => {
+        this.fetchNewContentAttempt(this.valueHash(), 0); // fire and forget: must not break whatever applied the update
+    }
+
+    /**
+     * @static
+     * @description How many times a pull of newly arrived content is retried
+     * after a miss, and the first wait (doubling each time): 2, 4, 8, 16, 32
+     * seconds — about a minute in all.
+     * @returns {Object} { retries, firstDelayMs }
+     * @category Cloud Storage
+     */
+    static newContentRetryPolicy () {
+        return { retries: 5, firstDelayMs: 2000 };
+    }
+
+    /**
+     * @description One pull of content that just arrived over the wire,
+     * retried with backoff on a miss. The hash can arrive before its bytes are
+     * in the cloud: the author broadcasts the new hash, then uploads (a
+     * guest's portrait, 2026-10-06: hash at 21:48:11, bytes at 21:48:16). A
+     * pull in that gap misses, the miss is cached, and nothing asked again —
+     * the guest never saw the portrait. Retries force past the negative
+     * caches (this hash IS expected to exist), and stop once the bytes are
+     * here or the node has moved on to another hash.
+     * @param {String} hash - the hash this fetch is for
+     * @param {Number} attempt - 0 for the first pull
+     * @returns {Promise<Blob|null>}
+     * @category Cloud Storage
+     */
+    async fetchNewContentAttempt (hash, attempt) {
+        let blob = null;
+        try {
+            blob = attempt === 0 ? await this.asyncBlobValue() : await this.asyncForcePullFromCloudByHash();
+        } catch (error) {
             console.warn(this.logPrefix() + " fetch after content change failed: " + (error.message || error));
-        });
+        }
+        const policy = SvCloudBlobNode.newContentRetryPolicy();
+        if (!blob && !this.blobValue() && this.valueHash() === hash && attempt < policy.retries) {
+            const delay = policy.firstDelayMs * Math.pow(2, attempt);
+            setTimeout(() => {
+                if (!this.blobValue() && this.valueHash() === hash) {
+                    this.fetchNewContentAttempt(hash, attempt + 1);
+                }
+            }, delay);
+        }
+        return blob;
     }
 
     /**
