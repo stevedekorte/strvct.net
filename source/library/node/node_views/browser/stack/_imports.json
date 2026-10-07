@@ -10,5 +10,6 @@
     "SvTilesView/_imports.json",
     "SvTile/_imports.json",
     "SvTileContainer.js",
-    "SvCompanion/_imports.json"
+    "SvCompanion/_imports.json",
+    "SvAnchoredTabs/_imports.json"
 ]
