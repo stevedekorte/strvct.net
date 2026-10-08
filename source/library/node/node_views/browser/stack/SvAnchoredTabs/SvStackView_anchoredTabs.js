@@ -48,6 +48,11 @@
             slot.setAllowsNullValue(true);
         }
         {
+            const slot = this.newSlot("anchoredTabWidthMemo", null); // Map tab width key (title, state) -> width measured; forgotten when a natural width changes
+            slot.setSlotType("Map");
+            slot.setAllowsNullValue(true);
+        }
+        {
             const slot = this.newSlot("anchoredTabLefts", null); // Array: each tab's left in the row, as last laid out (computed, not measured)
             slot.setSlotType("Array");
             slot.setAllowsNullValue(true);
@@ -616,11 +621,12 @@
     }
 
     /**
-     * @description The tab tiles' natural widths, measured only when the tab
-     * titles changed: a divider drag or a resize changes the pane widths every
-     * frame and must not measure (a forced layout per frame). Before
-     * measuring, the caps come off (one forced layout per title change), so
-     * a squeezed tab measures its full width.
+     * @description The tab tiles' natural widths, worked out only when the
+     * tab titles or states changed: a divider drag or a resize changes the
+     * pane widths every frame and must not measure (a forced layout per
+     * frame). A tab's width in a state it has been in before comes from the
+     * memo, so opening, closing and pinning tabs measure nothing once each
+     * tab has been seen in that state; only a new title or state measures.
      * @param {Array<SvTile>} tiles
      * @returns {Array<Number>}
      * @category Anchored Tabs
@@ -629,10 +635,9 @@
         if (this.hasCurrentTileWidths(tiles)) {
             return this.anchoredTileWidths().widths;
         }
-        tiles.forEach(tile => tile.setCssProperty("--anchor-max", "none"));
-        // fractional widths: offsetWidth rounds, and the rounding added up
-        // along the row (a tab a pixel off its pane with the theme's 22px font)
-        const widths = tiles.map(tile => tile.element().getBoundingClientRect().width);
+        const keys = tiles.map(tile => this.tabWidthKey(tile));
+        const memo = this.tabWidthMemo();
+        const widths = keys.every(key => memo.has(key)) ? keys.map(key => memo.get(key)) : this.measureTileWidths(tiles, keys);
         if (!this.anchoredTileWidthByElement()) {
             this.setAnchoredTileWidthByElement(new WeakMap());
         }
@@ -642,6 +647,34 @@
             this.setAnchoredTileWidths({ titles: this.tabTitlesSignature(tiles), widths: widths, byNode: byNode });
         }
         return widths;
+    }
+
+    /**
+     * @description Measures the tab tiles (one forced layout) and remembers
+     * each width under its key. The caps come off first, so a squeezed tab
+     * measures its full width. Nothing is remembered before the row is laid
+     * out (all zero).
+     * @param {Array<SvTile>} tiles
+     * @param {Array<String>} keys - tabWidthKey of each tile
+     * @returns {Array<Number>}
+     * @category Anchored Tabs
+     */
+    measureTileWidths (tiles, keys) {
+        tiles.forEach(tile => tile.setCssProperty("--anchor-max", "none"));
+        // fractional widths: offsetWidth rounds, and the rounding added up
+        // along the row (a tab a pixel off its pane with the theme's 22px font)
+        const widths = tiles.map(tile => tile.element().getBoundingClientRect().width);
+        if (widths.some(w => w > 0)) {
+            keys.forEach((key, i) => this.tabWidthMemo().set(key, widths[i]));
+        }
+        return widths;
+    }
+
+    tabWidthMemo () {
+        if (!this.anchoredTabWidthMemo()) {
+            this.setAnchoredTabWidthMemo(new Map());
+        }
+        return this.anchoredTabWidthMemo();
     }
 
     /**
@@ -684,16 +717,33 @@
         });
         if (changed) {
             this.setAnchoredTileWidths(null);
+            this.setAnchoredTabWidthMemo(null); // a font or theme changed the natural widths
             this.addWeakTimeout(() => this.syncAnchoredPanes(false), 0);
         }
         return this;
     }
 
     tabTitlesSignature (tiles) {
-        // opening or pinning changes a tab's width (wider padding; the pin
-        // mark takes room before the label), so the state is in the key
-        const state = (tile) => (tile.element().classList.contains("SvAnchoredTabOpen") ? "o" : "") + (tile.element().classList.contains("SvAnchoredTabPinned") ? "*" : "");
-        return tiles.map(tile => (tile.node() ? tile.node().title() + (tile.node().isVisible() ? "" : "-") + state(tile) : "")).join("|");
+        return tiles.map(tile => this.tabWidthKey(tile)).join("|");
+    }
+
+    /**
+     * @description What a tab's natural width depends on: its title, whether
+     * it shows, and its state — opening or pinning changes the width (wider
+     * padding; the pin mark takes room before the label). Classes are read,
+     * not geometry.
+     * @param {SvTile} tile
+     * @returns {String}
+     * @category Anchored Tabs
+     */
+    tabWidthKey (tile) {
+        const node = tile.node();
+        if (!node) {
+            return "";
+        }
+        const classes = tile.element().classList;
+        const state = (classes.contains("SvAnchoredTabOpen") ? "o" : "") + (classes.contains("SvAnchoredTabPinned") ? "*" : "");
+        return node.title() + (node.isVisible() ? "" : "-") + state;
     }
 
     /**
@@ -884,11 +934,35 @@
         return this.anchoredPathMayHaveChanged();
     }
 
+    /**
+     * @description Scrolls a tapped tab into view — only when the row is
+     * wider than its container (a phone's row scrolls sideways). On a wide
+     * row there is nothing to scroll, and scrollIntoView would still force a
+     * layout right after the tap's writes. The row's width is computed from
+     * the lefts and widths already in hand.
+     * @param {SvTile} tile
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
     scrollTabIntoView (tile) {
+        if (this.tabRowFits()) {
+            return this;
+        }
         if (tile.element().scrollIntoView) {
             tile.element().scrollIntoView({ block: "nearest", inline: "nearest" }); // a phone's row scrolls sideways
         }
         return this;
+    }
+
+    tabRowFits () {
+        const lefts = this.anchoredTabLefts();
+        const measured = this.anchoredTileWidths();
+        const container = this.anchoredWidth();
+        if (!lefts || !measured || lefts.length === 0 || !container) {
+            return false;
+        }
+        const rowWidth = lefts.last() + measured.widths.last();
+        return rowWidth <= container;
     }
 
 }.initThisCategory());
