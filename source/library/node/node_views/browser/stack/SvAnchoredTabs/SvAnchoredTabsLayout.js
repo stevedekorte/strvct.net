@@ -125,13 +125,15 @@
      * @description On the first tabs: the player's remembered pins (loaded
      * into playerPinOverrides before) open in tab order while they fit; the
      * rest are recorded as evicted, so they return when room appears — as
-     * a pin closed for room would.
+     * a pin closed for room would. A remembered pin whose tab is not
+     * available yet (its content still loading) waits as evicted too, so it
+     * opens when the tab becomes available — not forgotten.
      * @returns {SvAnchoredTabsLayout}
      * @category Inputs
      */
     restorePlayerPins () {
-        this.tabSpecs().filter(t => t.isAvailable && this.playerPinOverrides().get(t.id) === true && !this.isOpen(t.id)).forEach(t => {
-            if (this.fitsWith(t.id)) {
+        this.tabSpecs().filter(t => this.playerPinOverrides().get(t.id) === true && !this.isOpen(t.id)).forEach(t => {
+            if (t.isAvailable && this.fitsWith(t.id)) {
                 this.openIds().add(t.id);
             } else {
                 this.recordEviction(t.id);

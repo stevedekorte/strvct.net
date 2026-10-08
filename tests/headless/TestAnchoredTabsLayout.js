@@ -250,6 +250,16 @@ function testRememberedPins () {
     check(!layout.isOpen("handbook") && layout.isEvicted("handbook"), "a remembered pin with no room waits as evicted (" + open(layout) + ")");
     layout.updateContainerWidth(1600);
     check(layout.isOpen("handbook"), "…and opens when room appears: " + open(layout));
+
+    // a session loading: Me is not available on the first tabs (its character
+    // still loading), then becomes available with room beside Narration
+    const loading = SvGlobals.get("SvAnchoredTabsLayout").clone();
+    loading.setPlayerPinOverrides(new Map([["me", true]]));
+    loading.updateContainerWidth(1600);
+    loading.updateTabs(sessionTabs({ me: { isAvailable: false } }));
+    check(!loading.isOpen("me") && loading.isEvicted("me"), "a remembered pin on a tab not yet available waits as evicted: " + open(loading));
+    loading.updateTabs(sessionTabs());
+    check(loading.isOpen("me") && loading.isOpen("narration"), "…and opens beside the others when the tab arrives: " + open(loading));
 }
 
 function testTabSegments () {
