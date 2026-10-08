@@ -62,9 +62,51 @@
 
     anchoredLayout () {
         if (!this.anchoredTabsLayout()) {
-            this.setAnchoredTabsLayout(SvAnchoredTabsLayout.clone());
+            const layout = SvAnchoredTabsLayout.clone();
+            layout.setPlayerPinOverrides(this.storedAnchoredPins());
+            this.setAnchoredTabsLayout(layout);
         }
         return this.anchoredTabsLayout();
+    }
+
+    // --- the player's pins, remembered on this device ---
+
+    /**
+     * @description Where this device keeps the player's pins for this kind of
+     * anchored node: one entry per node class, so "keep Party pinned" holds
+     * in every session. Per device by design (Plans/Anchor Tabs): which panes
+     * are open never reaches the cloud or the AI.
+     * @returns {String}
+     * @category Anchored Tabs
+     */
+    anchoredPinsStorageKey () {
+        return "SvAnchoredTabs.pins." + this.node().svType();
+    }
+
+    /**
+     * @description The player's saved pins, as the layout's override map.
+     * Empty when nothing is saved or storage is unavailable (a private
+     * window, blocked site data).
+     * @returns {Map<String, Boolean>}
+     * @category Anchored Tabs
+     */
+    storedAnchoredPins () {
+        try {
+            const saved = JSON.parse(window.localStorage.getItem(this.anchoredPinsStorageKey()) || "{}");
+            return new Map(Object.entries(saved).filter(([, pinned]) => typeof pinned === "boolean"));
+        } catch {
+            return new Map();
+        }
+    }
+
+    storeAnchoredPins () {
+        try {
+            const pins = Object.fromEntries(this.anchoredLayout().playerPinOverrides());
+            window.localStorage.setItem(this.anchoredPinsStorageKey(), JSON.stringify(pins));
+        } catch {
+            // storage unavailable: the pins last for this page only
+        }
+        return this;
     }
 
     anchoredTabNodes () {
@@ -72,7 +114,7 @@
     }
 
     anchoredTabIdFor (node) {
-        return node.svTypeId();
+        return node.nodeAnchoredTabKey ? node.nodeAnchoredTabKey() : node.svTypeId();
     }
 
     /**
@@ -263,6 +305,7 @@
     anchoredTogglePin (node) {
         const id = this.anchoredTabIdFor(node);
         this.anchoredLayout().setTabPinned(id, !this.anchoredLayout().isPinned(id));
+        this.storeAnchoredPins();
         return this.applyAnchoredLayout(true);
     }
 
@@ -279,6 +322,7 @@
             return this.anchoredTogglePin(node);
         }
         this.anchoredLayout().pinTab(id);
+        this.storeAnchoredPins();
         this.applyAnchoredLayout(true);
         return this.anchoredPathMayHaveChanged();
     }
@@ -674,6 +718,7 @@
         const id = this.anchoredTabIdFor(node);
         if (isPin) {
             this.anchoredLayout().pinTab(id);
+            this.storeAnchoredPins();
         } else {
             this.anchoredLayout().tapTab(id);
         }

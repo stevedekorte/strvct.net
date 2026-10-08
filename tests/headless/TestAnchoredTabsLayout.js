@@ -239,6 +239,19 @@ function testDividersAndPinControl () {
     check(pins.leftNeighborOf("me") === "narration" && pins.leftNeighborOf("narration") === null, "leftNeighborOf answers the open pane to the left");
 }
 
+function testRememberedPins () {
+    console.log("\nthe player's remembered pins");
+    const layout = SvGlobals.get("SvAnchoredTabsLayout").clone();
+    layout.setPlayerPinOverrides(new Map([["party", true], ["narration", false], ["handbook", true]]));
+    layout.updateContainerWidth(500); // room for one of the two remembered pins
+    layout.updateTabs(sessionTabs());
+    check(layout.isOpen("party") && layout.isPinned("party"), "a remembered pin opens on the first tabs: " + open(layout));
+    check(!layout.isPinned("narration"), "a remembered unpin beats the node's pin preference");
+    check(!layout.isOpen("handbook") && layout.isEvicted("handbook"), "a remembered pin with no room waits as evicted (" + open(layout) + ")");
+    layout.updateContainerWidth(1600);
+    check(layout.isOpen("handbook"), "…and opens when room appears: " + open(layout));
+}
+
 function testTabSegments () {
     console.log("\nTab segments");
     // narrow panes, wide tabs: Party's segment (Party, Scene, Handbook) is 450px
@@ -301,6 +314,7 @@ function testInvariants () {
     testAvailability();
     testPreferences();
     testDividersAndPinControl();
+    testRememberedPins();
     testTabSegments();
     testInvariants();
     console.log("\n=============================");

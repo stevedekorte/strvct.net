@@ -395,6 +395,17 @@
     }
 
     /**
+     * @description As an anchored tab: the key that names this tab across
+     * reloads and devices' saved pins — stable and unique among its siblings.
+     * Default: the title (a tab's label is what the player pinned).
+     * @returns {String}
+     * @category Layout
+     */
+    nodeAnchoredTabKey () {
+        return String(this.title());
+    }
+
+    /**
      * @description As an anchored tab: how many things in it the player has
      * not seen (a count, or 1 for "something changed"); 0 means nothing new.
      * The tab shows a dot while it is closed. The count is the model's to

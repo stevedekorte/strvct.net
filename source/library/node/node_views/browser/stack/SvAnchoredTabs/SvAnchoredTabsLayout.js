@@ -115,7 +115,29 @@
         const before = new Map(this.tabSpecs().map(t => [t.id, t]));
         this.setTabSpecs(specs.map(s => this.normalizedSpec(s)));
         this.tabSpecs().forEach(t => this.applyPreferenceChange(before.get(t.id) || null, t));
+        if (before.size === 0) {
+            this.restorePlayerPins();
+        }
         return this.reconcile();
+    }
+
+    /**
+     * @description On the first tabs: the player's remembered pins (loaded
+     * into playerPinOverrides before) open in tab order while they fit; the
+     * rest are recorded as evicted, so they return when room appears — as
+     * a pin closed for room would.
+     * @returns {SvAnchoredTabsLayout}
+     * @category Inputs
+     */
+    restorePlayerPins () {
+        this.tabSpecs().filter(t => t.isAvailable && this.playerPinOverrides().get(t.id) === true && !this.isOpen(t.id)).forEach(t => {
+            if (this.fitsWith(t.id)) {
+                this.openIds().add(t.id);
+            } else {
+                this.recordEviction(t.id);
+            }
+        });
+        return this;
     }
 
     normalizedSpec (spec) {
