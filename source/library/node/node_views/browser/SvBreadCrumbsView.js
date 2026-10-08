@@ -435,8 +435,17 @@
         if (pathNodes.length < 2) {
             return this;
         }
+        const target = pathNodes.slice(0, pathNodes.length - 1);
+        // An anchored-tabs node and its tab are one level: the node always
+        // shows a tab, so "the node with no tab" is not a place to go back
+        // to, and selecting it changed nothing (the arrow seemed dead).
+        // Back from a tab's top leaves the anchored node.
+        const last = target[target.length - 1];
+        if (target.length > 1 && last.nodeSubnodesAreAnchoredTabs && last.nodeSubnodesAreAnchoredTabs()) {
+            target.pop();
+        }
         // selectNodePathArray expects the path after the stack's own root node
-        return this.requestSelectPath(pathNodes.slice(1, pathNodes.length - 1));
+        return this.requestSelectPath(target.slice(1));
     }
 
     titleForNode (node) {
