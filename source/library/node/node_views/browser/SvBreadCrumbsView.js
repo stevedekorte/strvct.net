@@ -93,6 +93,7 @@
                 font-size: 0.9em;
                 font-family: var(--sv-face-display);
                 letter-spacing: var(--sv-face-display-tracking);
+                font-variant-caps: var(--sv-face-display-variant);
                 color: var(--SvBreadCrumbs-color);
                 transition: color 0.15s;
                 cursor: pointer;

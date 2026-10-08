@@ -66,6 +66,17 @@
         return this;
     }
 
+    /**
+     * @description Loads every font in the family not loaded yet (a deferred
+     * family, on first use).
+     * @returns {Promise<SvFontFamily>}
+     * @category Loading
+     */
+    async asyncLoadFonts () {
+        await Promise.all(this.subnodes().map(font => font.asyncLoadIfNeeded()));
+        return this;
+    }
+
     /*
     await asyncAddFontWithResource (aResource) {
         const font = SvFont.clone().setResource(aResource)

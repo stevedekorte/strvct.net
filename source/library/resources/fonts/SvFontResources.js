@@ -110,6 +110,24 @@
      * @returns {SvFontFamily} The font family
      * @category Resource Retrieval
      */
+    /**
+     * @description Loads the families a theme's face tokens name
+     * (--sv-face-*: "\"EBGaramond\", serif") that are deferred — kept out of
+     * boot by a deferred/ path, and otherwise never loaded. Families already
+     * loaded, and names that are not resources (serif), are skipped.
+     * @param {Object} tokenDict - token name -> value
+     * @returns {Promise}
+     * @category Resource Loading
+     */
+    asyncLoadFamiliesNamedIn (tokenDict) {
+        const names = new Set();
+        Object.entries(tokenDict || {}).filter(([key]) => key.startsWith("--sv-face-")).forEach(([, value]) => {
+            String(value).split(",").map(part => part.trim().replace(/^["']|["']$/g, "")).forEach(name => names.add(name));
+        });
+        const families = this.families().filter(family => names.has(family.name()));
+        return Promise.all(families.map(family => family.asyncLoadFonts()));
+    }
+
     fontFamilyNamed (aName) {
         const family = this.families().detect(family => family.name() === aName);
         if (family) {

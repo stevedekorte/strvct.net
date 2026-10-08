@@ -516,7 +516,10 @@
                     flex-shrink: 0 !important;
                 }
                 .SvAnchoredTabNav {
-                    border-bottom-color: transparent !important; /* the row draws the hairline, so an open tab can cover it */
+                    /* the row draws the hairline, so an open tab can cover it; no
+                       border at all — a transparent one still took a pixel of the
+                       nav's height and clipped the tabs' bottom (half the underline) */
+                    border-bottom: none !important;
                 }
                 .SvAnchoredTabRow {
                     box-shadow: inset 0 -1px 0 var(--sv-anchor-tab-rule);
@@ -558,7 +561,10 @@
                     color: var(--sv-anchor-tab-closed-color) !important;
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabOpen.SvAnchoredTabPinned > .TileContentView {
-                    box-shadow: inset 0 -2px 0 var(--sv-anchor-tab-pin-color) !important; /* over a tile class's own shadow (the chat's tab) */
+                    /* the prototype's: 2px of the pin color over 1px of the tab's own
+                       color (where the tab covers the row's hairline); !important over a
+                       tile class's own shadow (the chat's tab) */
+                    box-shadow: inset 0 -1px 0 var(--sv-anchor-tab-open-bg), inset 0 -3px 0 var(--sv-anchor-tab-pin-color) !important;
                 }
                 .SvAnchoredTabNote {
                     display: none !important;

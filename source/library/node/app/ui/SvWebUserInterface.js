@@ -237,6 +237,11 @@
     publishThemeTokens (tokenDict, colorScheme) {
         const css = this.thisClass().cssTextForThemeTokens(tokenDict, colorScheme);
         SvWebDocument.shared().setStyleSheetStringForId("sv-theme-tokens", css);
+        // a theme may name a deferred family (not loaded at boot): load it
+        // now; text re-renders in it when it arrives
+        SvFontResources.shared().asyncLoadFamiliesNamedIn(tokenDict).catch(error => {
+            console.warn(this.logPrefix() + " theme font load failed: " + (error.message || error));
+        });
         return this;
     }
 

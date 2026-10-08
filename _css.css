@@ -135,6 +135,7 @@
     --sv-face-body: HoeflerTitling;
     --sv-face-display: HoeflerTitling;
     --sv-face-display-tracking: normal;   /* letter-spacing that suits the display face */
+    --sv-face-display-variant: normal;    /* font-variant-caps for display: small-caps for a face with no small-caps cut */
     --sv-face-stage: HoeflerTitling;
     --sv-face-clerk: sans-serif;
 
