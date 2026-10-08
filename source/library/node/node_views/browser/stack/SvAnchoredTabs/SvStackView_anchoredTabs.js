@@ -174,8 +174,7 @@
         const openNodes = layout.openIdsInOrder().map(id => byId.get(id)).filter(node => !!node);
         const widthsById = layout.paneWidths();
         const widths = new Map(openNodes.map(node => [node, widthsById.get(this.anchoredTabIdFor(node))]));
-        const pinned = new Set(openNodes.filter(node => layout.isPinned(this.anchoredTabIdFor(node))));
-        this.detailView().syncAnchoredPanes(openNodes, widths, pinned, isAnimated);
+        this.detailView().syncAnchoredPanes(openNodes, widths, isAnimated);
         this.syncAnchoredTileSelection(openNodes);
         this.syncAnchoredTabStates(openNodes);
         this.noteOpenTabsSeen(openNodes);
@@ -208,8 +207,28 @@
             classes.toggle("SvAnchoredTabEvicted", layout.isEvicted(id));
             classes.toggle("SvAnchoredTabUnseen", unseen);
             tile.setCssProperty("background-image", unseen ? this.unseenDotImage() : null);
+            this.tabPinControlFor(tile, node).setIsPinned(layout.isPinned(id));
         });
         return this;
+    }
+
+    /**
+     * @description The tab's pin control, added the first time the tab is
+     * synced (the tiles view can rebuild its tiles, so it is looked up on
+     * the tile rather than kept).
+     * @param {SvTile} tile
+     * @param {SvNode} node
+     * @returns {SvAnchoredPinButton}
+     * @category Anchored Tabs
+     */
+    tabPinControlFor (tile, node) {
+        const existing = tile.subviews().find(view => view.isKindOf(SvAnchoredPinButton));
+        if (existing) {
+            return existing.setTabNode(node);
+        }
+        const pin = SvAnchoredPinButton.clone().setHost(this).setTabNode(node);
+        tile.addSubview(pin);
+        return pin;
     }
 
     /**
@@ -245,6 +264,23 @@
         const id = this.anchoredTabIdFor(node);
         this.anchoredLayout().setTabPinned(id, !this.anchoredLayout().isPinned(id));
         return this.applyAnchoredLayout(true);
+    }
+
+    /**
+     * @description The tab's pin control was tapped: an open tab is pinned or
+     * unpinned in place; a closed one opens, pinned (the pin gesture).
+     * @param {SvNode} node
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    anchoredPinControlTapped (node) {
+        const id = this.anchoredTabIdFor(node);
+        if (this.anchoredLayout().isOpen(id)) {
+            return this.anchoredTogglePin(node);
+        }
+        this.anchoredLayout().pinTab(id);
+        this.applyAnchoredLayout(true);
+        return this.anchoredPathMayHaveChanged();
     }
 
     anchoredWidthLeftOf (rightNode) {
@@ -305,6 +341,7 @@
         // rebuild its tiles — with same-value writes skipped.
         this.ensureAnchoredTabCss();
         this.navView().tilesView().element().classList.add("SvAnchoredTabRow");
+        this.navView().element().classList.add("SvAnchoredTabNav");
         const fit = this.segmentFit(tiles, tileWidths, openNodes, widths);
         tiles.forEach((tile, i) => {
             const cap = fit.caps.get(i);
@@ -373,22 +410,52 @@
                     max-width: var(--sv-anchor-max, none) !important;
                     flex-shrink: 0 !important;
                 }
+                .SvAnchoredTabNav {
+                    border-bottom-color: transparent !important; /* the row draws the hairline, so an open tab can cover it */
+                }
+                .SvAnchoredTabRow {
+                    box-shadow: inset 0 -1px 0 var(--sv-anchor-tab-rule, var(--sv-hairline, rgba(128, 128, 128, 0.35)));
+                }
                 .SvAnchoredTabRow > .SvAnchoredTabOpen {
-                    border-radius: 6px 6px 0 0;
+                    border-radius: 4px 4px 0 0;
                 }
-                .SvAnchoredTabRow > .SvAnchoredTabPinned > .TileContentView {
-                    box-shadow: inset 0 -2px 0 currentColor;
+                .SvAnchoredTabRow > * > .TileContentView {
+                    /* the same for every state: a tab's width must not change when it opens */
+                    padding-left: var(--sv-anchor-tab-padding, 26px) !important;
+                    padding-right: var(--sv-anchor-tab-padding, 26px) !important;
                 }
-                .SvAnchoredTabRow > .SvAnchoredTabPinned > .TileContentView::before {
-                    content: ""; /* decoration: the pinned mark, a small diamond in the text color */
+                .SvAnchoredTabRow > .SvAnchoredTabOpen > .TileContentView {
+                    background-color: var(--sv-anchor-tab-open-bg, var(--sv-surface-chrome, rgba(128, 128, 128, 0.14))) !important;
+                }
+                .SvAnchoredTabRow > :not(.SvAnchoredTabOpen) > .TileContentView {
+                    color: var(--sv-anchor-tab-closed-color, var(--sv-text-dim, inherit)) !important;
+                }
+                .SvAnchoredTabRow > .SvAnchoredTabOpen.SvAnchoredTabPinned > .TileContentView {
+                    box-shadow: inset 0 -2px 0 var(--sv-anchor-tab-pin-color, var(--sv-text-muted, currentColor));
+                }
+                .SvAnchoredPinButton {
+                    opacity: 0;
+                    transition: opacity 120ms ease;
+                }
+                .SvAnchoredPinButton::before {
+                    content: ""; /* decoration: the pin mark, a small diamond in the text color */
                     position: absolute;
-                    left: 9px;
-                    top: 50%;
+                    left: 7px;
+                    top: 7px;
                     width: 6px;
                     height: 6px;
-                    margin-top: -3px;
-                    background-color: currentColor;
+                    box-sizing: border-box;
+                    border: 1px solid currentColor;
                     transform: rotate(45deg);
+                }
+                .SvAnchoredTabRow > :hover > .SvAnchoredPinButton {
+                    opacity: 0.45;
+                }
+                .SvAnchoredPinButton.isPinned {
+                    opacity: 1;
+                }
+                .SvAnchoredPinButton.isPinned::before {
+                    background-color: currentColor;
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabSqueezed {
                     -webkit-mask-image: linear-gradient(to right, black calc(100% - 18px), transparent);

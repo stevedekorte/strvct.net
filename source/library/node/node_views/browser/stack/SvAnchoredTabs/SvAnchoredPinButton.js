@@ -7,12 +7,18 @@
 /**
  * @class SvAnchoredPinButton
  * @extends SvDomView
- * @classdesc The pin control in an anchored-tabs pane's top-right corner
- * (Plans/Anchor Tabs § Gestures: the visible pin control, because the
- * shift-click and long-press shortcuts alone are undiscoverable). Toggles
- * the pane's pin without opening or closing anything. Drawn in currentColor,
- * so it follows the theme; a pinned pane's pin is solid, an unpinned one's
- * faint.
+ * @classdesc The pin control on an anchored tab (Plans/Anchor Tabs §
+ * Gestures: a visible control, because the shift-click and long-press
+ * shortcuts alone are undiscoverable). A small diamond in the tab's leading
+ * padding: solid while the tab is pinned, a faint outline when the pointer is
+ * over an unpinned tab, otherwise invisible — as in the prototype, where a
+ * pinned tab is marked ◆ and nothing else crowds the row. Tapping it on an
+ * open tab pins or unpins it without opening or closing anything; on a
+ * closed tab, it opens the tab pinned.
+ *
+ * Positioned absolutely inside the tab, so it never changes the tab's width
+ * (the anchoring measures tab widths only when titles change). Its look is
+ * the anchored tab stylesheet's (SvStackView_anchoredTabs), in currentColor.
  */
 (class SvAnchoredPinButton extends SvDomView {
 
@@ -22,7 +28,7 @@
             slot.setSlotType("SvStackView");
         }
         {
-            const slot = this.newSlot("paneNode", null); // the tab this pane shows
+            const slot = this.newSlot("tabNode", null); // the tab this control pins
             slot.setSlotType("SvNode");
         }
         {
@@ -31,24 +37,17 @@
         }
     }
 
-    static pinSvg () {
-        return "<svg viewBox='0 0 24 24' width='16' height='16' aria-hidden='true'><path fill='currentColor' d='M16 3l5 5-2 1-3.5 3.5.5 4-1.5 1.5-4-4L5 19.5 4.5 19 9 14.5l-4-4L6.5 9l4 .5L14 5z'/></svg>";
-    }
-
     init () {
         super.init();
         this.setElementClassName("SvAnchoredPinButton");
         this.setPosition("absolute");
-        this.setTop("10px");
-        this.setRight("12px");
-        this.setWidth("24px");
-        this.setHeight("24px");
-        this.setDisplay("flex");
-        this.setAlignItems("center");
-        this.setJustifyContent("center");
+        this.setLeft("4px");
+        this.setTop("50%");
+        this.setMarginTop("-10px");
+        this.setWidth("20px");
+        this.setHeight("20px");
         this.setCursor("pointer");
-        this.setZIndex(10);
-        this.element().innerHTML = SvAnchoredPinButton.pinSvg(); // a fixed icon, no user text
+        this.setZIndex(3); // above the tile's content view
         this.element().setAttribute("role", "button");
         this.addDefaultTapGesture();
         this.syncPinnedLook();
@@ -61,8 +60,8 @@
 
     syncPinnedLook () {
         const pinned = this.isPinned();
-        this.setOpacity(pinned ? 0.9 : 0.3);
-        const label = pinned ? "Unpin this pane" : "Pin this pane";
+        this.element().classList.toggle("isPinned", pinned);
+        const label = pinned ? "Unpin this tab" : "Pin this tab";
         this.element().setAttribute("title", label);
         this.element().setAttribute("aria-label", label);
         this.element().setAttribute("aria-pressed", pinned ? "true" : "false");
@@ -70,8 +69,8 @@
     }
 
     onTapComplete (/*aGesture*/) {
-        if (this.host() && this.paneNode()) {
-            this.host().anchoredTogglePin(this.paneNode());
+        if (this.host() && this.tabNode()) {
+            this.host().anchoredPinControlTapped(this.tabNode());
         }
         return this;
     }

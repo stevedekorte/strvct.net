@@ -51,7 +51,7 @@
             slot.setAllowsNullValue(true);
         }
         {
-            const slot = this.newSlot("anchoredPaneControls", null); // Map pane -> { pin, divider }
+            const slot = this.newSlot("anchoredPaneControls", null); // Map pane -> { divider }
             slot.setSlotType("Map");
             slot.setAllowsNullValue(true);
         }
@@ -97,12 +97,11 @@
      * starts no motion.
      * @param {Array<SvNode>} openNodes - the open tabs' nodes, in tab order
      * @param {Map<SvNode, Number>} widths - each pane's width in px
-     * @param {Set<SvNode>} pinnedNodes - the open tabs that are pinned
      * @param {Boolean} isAnimated - a gesture's change (animates), not a resize or drag
      * @returns {SvDetailView_anchoredTabs}
      * @category Anchored Tabs
      */
-    syncAnchoredPanes (openNodes, widths, pinnedNodes, isAnimated) {
+    syncAnchoredPanes (openNodes, widths, isAnimated) {
         this.ensureAnchoredPanesView();
         const frames = this.anchoredFramesFor(openNodes, widths);
         const changes = this.anchoredFramesChange(frames);
@@ -115,7 +114,7 @@
             this.setAnchoredPaneFrames(frames);
             this.scheduleAnchoredSettle(duration);
         }
-        openNodes.forEach((node, i) => this.syncAnchoredPaneControls(this.anchoredPaneViews().get(node), i === 0, pinnedNodes.has(node)));
+        openNodes.forEach((node, i) => this.syncAnchoredPaneControls(this.anchoredPaneViews().get(node), i === 0));
         return this;
     }
 
@@ -401,22 +400,17 @@
     }
 
     addAnchoredPaneControls (pane, node) {
-        const pin = SvAnchoredPinButton.clone();
-        pin.setHost(this.stackView());
-        pin.setPaneNode(node);
         const divider = SvAnchoredDividerHandle.clone();
         divider.setHost(this.stackView());
         divider.setRightNode(node);
-        pane.addSubview(pin);
         pane.addSubview(divider);
-        this.anchoredPaneControls().set(pane, { pin: pin, divider: divider });
+        this.anchoredPaneControls().set(pane, { divider: divider });
         return this;
     }
 
-    syncAnchoredPaneControls (pane, isFirst, isPinned) {
+    syncAnchoredPaneControls (pane, isFirst) {
         const controls = this.anchoredPaneControls().get(pane);
         if (controls) {
-            controls.pin.setIsPinned(isPinned);
             controls.divider.setDisplay(isFirst ? "none" : "block"); // no divider left of the first pane
         }
         return this;
