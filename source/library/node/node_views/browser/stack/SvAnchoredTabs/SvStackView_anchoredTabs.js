@@ -110,7 +110,8 @@
     }
 
     anchoredTabNodes () {
-        return this.node().subnodes().slice();
+        const node = this.node();
+        return node.nodeAnchoredTabNodes ? node.nodeAnchoredTabNodes() : node.subnodes().slice();
     }
 
     anchoredTabIdFor (node) {
@@ -178,9 +179,12 @@
 
     /**
      * @description The width this stack's panes claim in its browser's
-     * compaction: the smallest minimum among the open panes (one pane must
-     * fit), or 0 when this is not an anchored stack. Without it, the columns
-     * to the left never collapsed and a phone left the panes 120px.
+     * compaction: room for the pinned tabs plus any one more, so a tab can
+     * open beside the pinned ones without pushing them out — and at least
+     * one open pane's minimum. The columns to the left give way to it: at a
+     * laptop's width the session fills the window (as in the prototype); on
+     * a wide screen they stay; on a phone they all fold. 0 when this is not
+     * an anchored stack.
      * @returns {Number}
      * @category Anchored Tabs
      */
@@ -189,8 +193,23 @@
             return 0;
         }
         const layout = this.anchoredTabsLayout();
-        const minimums = layout.openIdsInOrder().map(id => layout.tabWithId(id).minWidth);
-        return minimums.length > 0 ? Math.min(...minimums) : 0;
+        const openMinimums = layout.openIdsInOrder().map(id => layout.tabWithId(id).minWidth);
+        const onePane = openMinimums.length > 0 ? Math.min(...openMinimums) : 0;
+        return Math.max(onePane, layout.requiredWidth(this.pinnedPlusAnyOneTabIds()));
+    }
+
+    /**
+     * @description The available pinned tabs, plus the unpinned one with the
+     * largest minimum (whichever the player opens next must fit).
+     * @returns {Array<String>}
+     * @category Anchored Tabs
+     */
+    pinnedPlusAnyOneTabIds () {
+        const layout = this.anchoredTabsLayout();
+        const available = layout.tabSpecs().filter(t => t.isAvailable);
+        const pinned = available.filter(t => layout.isPinned(t.id));
+        const others = available.filter(t => !layout.isPinned(t.id)).sort((a, b) => b.minWidth - a.minWidth);
+        return pinned.concat(others.slice(0, 1)).map(t => t.id);
     }
 
     onAnchoredContainerWidth (width) {
@@ -236,9 +255,10 @@
     syncAnchoredTabStates (openNodes) {
         const layout = this.anchoredLayout();
         this.navView().scrollView().setOverflowX("auto");
+        const tabNodes = this.anchoredTabNodes();
         this.navView().tilesView().tiles().forEach(tile => {
             const node = tile.node ? tile.node() : null;
-            if (!node) {
+            if (!node || !tabNodes.includes(node)) {
                 return;
             }
             const id = this.anchoredTabIdFor(node);
@@ -250,9 +270,30 @@
             classes.toggle("SvAnchoredTabUnseen", unseen);
             tile.setCssProperty("background-image", unseen ? this.unseenDotImage() : null);
             this.tabPinControlFor(tile, node).setIsPinned(layout.isPinned(id));
+            this.hideTabNote(tile);
         });
         return this;
     }
+
+    /**
+     * @description A tab shows its label only: the node's note (a count, an
+     * arrow) belongs to list rows, and a tab's unseen dot does its job here.
+     * A note arriving after the tab was measured also clipped its label (a
+     * tab's width is capped at its measured width).
+     * @param {SvTile} tile
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    hideTabNote (tile) {
+        // the whole trailing area (note and note icon): hiding only the note
+        // left the area's own width, which squeezed the label to "Nar"
+        const area = tile.bottomContentArea ? tile.bottomContentArea() : null;
+        if (area) {
+            area.element().classList.add("SvAnchoredTabNote");
+        }
+        return this;
+    }
+
 
     /**
      * @description The tab's pin control, added the first time the tab is
@@ -281,7 +322,7 @@
      * @category Anchored Tabs
      */
     unseenDotImage () {
-        return "radial-gradient(circle at calc(100% - 10px) 14px, var(--sv-attention, #b0413e) 3.5px, transparent 4.5px)";
+        return "radial-gradient(circle at calc(100% - 10px) 14px, var(--sv-attention) 3.5px, transparent 4.5px)";
     }
 
     noteOpenTabsSeen (openNodes) {
@@ -306,6 +347,7 @@
         const id = this.anchoredTabIdFor(node);
         this.anchoredLayout().setTabPinned(id, !this.anchoredLayout().isPinned(id));
         this.storeAnchoredPins();
+        this.safeUpdateCompactionChain(); // the claim follows the pins (anchoredClaimWidth)
         return this.applyAnchoredLayout(true);
     }
 
@@ -323,6 +365,7 @@
         }
         this.anchoredLayout().pinTab(id);
         this.storeAnchoredPins();
+        this.safeUpdateCompactionChain(); // the claim follows the pins (anchoredClaimWidth)
         this.applyAnchoredLayout(true);
         return this.anchoredPathMayHaveChanged();
     }
@@ -389,8 +432,8 @@
         const fit = this.segmentFit(tiles, tileWidths, openNodes, widths);
         tiles.forEach((tile, i) => {
             const cap = fit.caps.get(i);
-            tile.setCssProperty("--sv-anchor-gap", (fit.margins.get(i) || 0) + "px");
-            tile.setCssProperty("--sv-anchor-max", (cap !== undefined ? cap : tileWidths[i]) + "px");
+            tile.setCssProperty("--anchor-gap", (fit.margins.get(i) || 0) + "px");
+            tile.setCssProperty("--anchor-max", (cap !== undefined ? cap : tileWidths[i]) + "px");
             tile.element().classList.toggle("SvAnchoredTabSqueezed", cap !== undefined);
         });
         return this.slideTabTiles(tiles, this.tabLefts(tileWidths, fit));
@@ -450,32 +493,35 @@
             SvStackView._anchoredTabCssAdded = true;
             SvWebDocument.shared().addStyleSheetString(`
                 .SvAnchoredTabRow > * {
-                    margin-right: var(--sv-anchor-gap, 0px) !important;
-                    max-width: var(--sv-anchor-max, none) !important;
+                    margin-right: var(--anchor-gap, 0px) !important;
+                    max-width: var(--anchor-max, none) !important;
                     flex-shrink: 0 !important;
                 }
                 .SvAnchoredTabNav {
                     border-bottom-color: transparent !important; /* the row draws the hairline, so an open tab can cover it */
                 }
                 .SvAnchoredTabRow {
-                    box-shadow: inset 0 -1px 0 var(--sv-anchor-tab-rule, var(--sv-hairline, rgba(128, 128, 128, 0.35)));
+                    box-shadow: inset 0 -1px 0 var(--sv-anchor-tab-rule);
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabOpen {
                     border-radius: 4px 4px 0 0;
                 }
                 .SvAnchoredTabRow > * > .TileContentView {
                     /* the same for every state: a tab's width must not change when it opens */
-                    padding-left: var(--sv-anchor-tab-padding, 26px) !important;
-                    padding-right: var(--sv-anchor-tab-padding, 26px) !important;
+                    padding-left: var(--sv-anchor-tab-padding) !important;
+                    padding-right: var(--sv-anchor-tab-padding) !important;
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabOpen > .TileContentView {
-                    background-color: var(--sv-anchor-tab-open-bg, var(--sv-surface-chrome, rgba(128, 128, 128, 0.14))) !important;
+                    background-color: var(--sv-anchor-tab-open-bg) !important;
                 }
                 .SvAnchoredTabRow > :not(.SvAnchoredTabOpen) > .TileContentView {
-                    color: var(--sv-anchor-tab-closed-color, var(--sv-text-dim, inherit)) !important;
+                    color: var(--sv-anchor-tab-closed-color) !important;
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabOpen.SvAnchoredTabPinned > .TileContentView {
-                    box-shadow: inset 0 -2px 0 var(--sv-anchor-tab-pin-color, var(--sv-text-muted, currentColor));
+                    box-shadow: inset 0 -2px 0 var(--sv-anchor-tab-pin-color);
+                }
+                .SvAnchoredTabNote {
+                    display: none !important;
                 }
                 .SvAnchoredPinButton {
                     opacity: 0;
@@ -529,7 +575,7 @@
         if (this.hasCurrentTileWidths(tiles)) {
             return this.anchoredTileWidths().widths;
         }
-        tiles.forEach(tile => tile.setCssProperty("--sv-anchor-max", "none"));
+        tiles.forEach(tile => tile.setCssProperty("--anchor-max", "none"));
         const widths = tiles.map(tile => tile.element().offsetWidth);
         if (widths.some(w => w > 0)) {
             const byNode = new Map(tiles.map((tile, i) => [tile.node(), widths[i]]));
@@ -626,7 +672,9 @@
     anchoredCurrentPanePath () {
         const node = this.anchoredCurrentTabNode();
         const pane = node ? this.detailView().anchoredPaneForNode(node) : null;
-        return pane ? pane.selectedNodePathArray() : (node ? [node] : []);
+        // the pane's own path starts at what it shows, which for a link tab
+        // is the linked node: the tab names it in the outer path ("…/Me/…")
+        return pane ? [node].concat(pane.selectedNodePathArray().slice(1)) : (node ? [node] : []);
     }
 
     anchoredCurrentTabNode () {
@@ -719,6 +767,7 @@
         if (isPin) {
             this.anchoredLayout().pinTab(id);
             this.storeAnchoredPins();
+            this.safeUpdateCompactionChain(); // the claim follows the pins (anchoredClaimWidth)
         } else {
             this.anchoredLayout().tapTab(id);
         }

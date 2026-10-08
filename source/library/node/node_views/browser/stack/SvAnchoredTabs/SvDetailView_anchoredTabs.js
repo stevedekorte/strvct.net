@@ -114,7 +114,11 @@
             this.setAnchoredPaneFrames(frames);
             this.scheduleAnchoredSettle(duration);
         }
-        openNodes.forEach((node, i) => this.syncAnchoredPaneControls(this.anchoredPaneViews().get(node), i === 0));
+        openNodes.forEach((node, i) => {
+            const pane = this.anchoredPaneViews().get(node);
+            this.syncAnchoredPaneTarget(pane, node); // a link tab re-pointed, frames unchanged
+            this.syncAnchoredPaneControls(pane, i === 0);
+        });
         return this;
     }
 
@@ -384,19 +388,48 @@
         pane.setHidesBreadCrumbs(true); // its tab is its title
         pane.setAnchoredTabsHost(this.stackView()); // navigating or focusing in it makes it current
         pane.setIsRegisteredForFocus(true);
-        pane.setNode(node);
+        pane.setNode(this.anchoredPaneTargetFor(node));
         pane.setPosition("absolute");
         pane.setTop("0px");
         pane.setHeight("100%");
         pane.setOverflow("hidden");
         pane.setZIndex(String(this.stackView().anchoredTabNodes().indexOf(node) + 1)); // later tabs above earlier ones
-        pane.setCssProperty("background-color", "var(--sv-surface, Canvas)"); // opaque, the page ground: it covers the pane it overlaps
+        pane.setCssProperty("background-color", "var(--sv-surface)"); // opaque, the page ground: it covers the pane it overlaps
         pane.stackView().rootStackView().setRootWidthCache(frame.width || null);
         this.anchoredPaneViews().set(node, pane);
         this.anchoredPanesView().addSubview(pane);
         this.addAnchoredPaneControls(pane, node);
         pane.syncNavPathMembership(); // an open pane is being looked at, current or not
         return pane;
+    }
+
+    /**
+     * @description What a tab's pane shows: what its tile links to, as a
+     * selection would (a link tab — "Me" — shows the character it points
+     * at), else the tab's node itself.
+     * @param {SvNode} node - the tab
+     * @returns {SvNode}
+     * @category Anchored Tabs
+     */
+    anchoredPaneTargetFor (node) {
+        const target = node.nodeTileLink ? node.nodeTileLink() : null;
+        return target || node;
+    }
+
+    /**
+     * @description A link tab can be re-pointed (the player takes another
+     * character): its pane follows.
+     * @param {SvBrowserView} pane
+     * @param {SvNode} node - the tab
+     * @returns {SvDetailView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    syncAnchoredPaneTarget (pane, node) {
+        const target = this.anchoredPaneTargetFor(node);
+        if (pane.node() !== target) {
+            pane.setNode(target);
+        }
+        return this;
     }
 
     addAnchoredPaneControls (pane, node) {
@@ -443,7 +476,7 @@
     styleAnchoredPane (pane, frame, boxWidth) {
         pane.setLeft(frame.left + "px");
         pane.setMinAndMaxWidth(boxWidth + "px");
-        pane.setBorderLeft(frame.isFirst ? null : "1px solid var(--sv-hairline, rgba(128, 128, 128, 0.35))");
+        pane.setBorderLeft(frame.isFirst ? null : "1px solid var(--sv-hairline)");
         return this;
     }
 

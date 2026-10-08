@@ -371,11 +371,32 @@
     }
 
     existingSubnodeFieldForSlot (slot) {
-        const match = this.subnodeFields().find(subnode => {
+        const holder = this.existingInspectorPathNode(slot.inspectorPath()) || this;
+        const match = holder.subnodeFields().find(subnode => {
             return subnode.valueMethod() === slot.name();
         });
         return match;
         // return this.subnodeFields().detect(field => field.fieldSlotName() === slot.name());
+    }
+
+    /**
+     * @description The node a slot's inspectorPath names, if it exists (the
+     * one addSubnodeFieldForSlot put the slot's field in), else null. Without
+     * this, a field filed under a path could not be found again: its
+     * visibility and value syncs silently did nothing.
+     * @param {string} aPath - "A/B" titles below this node; empty for this node.
+     * @returns {SvNode|null}
+     * @category Fields
+     */
+    existingInspectorPathNode (aPath) {
+        if (!aPath) {
+            return this;
+        }
+        let node = this;
+        for (const title of aPath.split("/")) {
+            node = node ? node.subnodes().find(sn => sn.title() === title) || null : null;
+        }
+        return node;
     }
 
 }.initThisClass());

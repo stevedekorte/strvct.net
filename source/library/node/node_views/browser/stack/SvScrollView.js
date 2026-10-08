@@ -257,19 +257,22 @@
      * @category Lifecycle
      */
     prepareToRetire () {
-        super.prepareToRetire();
+        // Release ours BEFORE super: super's retire detaches the element, and
+        // removing listeners from it afterwards threw (first seen when closed
+        // anchored-tab panes began to retire, 2026-10-07).
         const observer = this.contentResizeObserver();
         if (observer) {
             observer.disconnect();
             this.setContentResizeObserver(null);
         }
         const listener = this.userInputListener();
-        if (listener) {
+        if (listener && this.element()) {
             this.userInputEventNames().forEach((name) => {
                 this.element().removeEventListener(name, listener, { capture: true });
             });
-            this.setUserInputListener(null);
         }
+        this.setUserInputListener(null);
+        super.prepareToRetire();
         return this;
     }
 

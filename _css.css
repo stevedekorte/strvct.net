@@ -157,6 +157,14 @@
     --sv-chat-placeholder-color: inherit;
     --sv-chat-placeholder-style: italic;
     --sv-chat-placeholder-opacity: 0.45;
+
+    /* ANCHORED TABS (SvAnchoredTabs): the tab row's look, each chained to a
+       theme token so a theme restyles the row by overriding either. */
+    --sv-anchor-tab-open-bg: var(--sv-surface-chrome);       /* an open tab, joined to its pane */
+    --sv-anchor-tab-closed-color: var(--sv-text-dim);       /* a closed tab's label */
+    --sv-anchor-tab-pin-color: var(--sv-text-muted);        /* a pinned tab's underline */
+    --sv-anchor-tab-rule: var(--sv-hairline);               /* the line under the row */
+    --sv-anchor-tab-padding: 26px;                          /* each side of a tab's label, the same in every state */
 }
 
 .SvEdgeHandlePillView .SvEdgeHandleTick {

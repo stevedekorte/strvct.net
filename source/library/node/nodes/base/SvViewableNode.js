@@ -406,6 +406,19 @@
     }
 
     /**
+     * @description As an anchored-tabs node: which subnodes are its tabs, in
+     * subnode order. Default: all of them. A node whose subnodes include
+     * machinery that is never a tab (hidden bookkeeping) names its tabs, so
+     * that machinery is not even an unavailable tab — and cannot collide
+     * with a tab's key.
+     * @returns {Array<SvNode>}
+     * @category Layout
+     */
+    nodeAnchoredTabNodes () {
+        return this.subnodes().slice();
+    }
+
+    /**
      * @description As an anchored tab: how many things in it the player has
      * not seen (a count, or 1 for "something changed"); 0 means nothing new.
      * The tab shows a dot while it is closed. The count is the model's to
