@@ -419,6 +419,18 @@
     }
 
     /**
+     * @description As an anchored-tabs node: whether it wants the whole
+     * window while it is shown — the columns to its left fold away and the
+     * breadcrumbs collapse to a back arrow and its title (a game session, as
+     * in the prototype). Default: only the room its tabs need.
+     * @returns {Boolean}
+     * @category Layout
+     */
+    nodeWantsFullWidth () {
+        return false;
+    }
+
+    /**
      * @description As an anchored tab: how many things in it the player has
      * not seen (a count, or 1 for "something changed"); 0 means nothing new.
      * The tab shows a dot while it is closed. The count is the model's to

@@ -202,6 +202,9 @@
         if (!this.isAnchoredTabs() || !this.anchoredTabsLayout()) {
             return 0;
         }
+        if (this.node().nodeWantsFullWidth && this.node().nodeWantsFullWidth()) {
+            return this.topViewWidth() || 0; // the whole window: every column to the left folds
+        }
         const layout = this.anchoredTabsLayout();
         const openMinimums = layout.openIdsInOrder().map(id => layout.tabWithId(id).minWidth);
         const onePane = openMinimums.length > 0 ? Math.min(...openMinimums) : 0;
@@ -518,40 +521,57 @@
                 .SvAnchoredTabRow {
                     box-shadow: inset 0 -1px 0 var(--sv-anchor-tab-rule);
                 }
-                .SvAnchoredTabRow > .SvAnchoredTabOpen {
-                    border-radius: 4px 4px 0 0;
-                }
                 .SvAnchoredTabRow > * {
                     padding-top: var(--sv-anchor-tab-top-space) !important; /* room above the tab; the open tab's panel fills only below it */
                 }
                 .SvAnchoredTabRow > * > .TileContentView {
-                    /* the same for every state: a tab's width must not change when it opens */
+                    /* a closed tab's; an open one is wider (the row re-measures on the change) */
                     padding-left: var(--sv-anchor-tab-padding) !important;
                     padding-right: var(--sv-anchor-tab-padding) !important;
                     font-size: var(--sv-anchor-tab-font-size);
+                    /* exactly the tab below its top space: the tile height hint's
+                       min-height made it taller, so the tile clipped its bottom
+                       (the pinned underline) and centered the label too low */
+                    min-height: 0 !important;
+                    height: 100% !important;
                 }
                 .SvAnchoredTabTitle {
                     padding-right: 0 !important; /* a list row's gap before its note; a tab has no note, so the label centers */
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabOpen > .TileContentView {
                     background-color: var(--sv-anchor-tab-open-bg) !important;
+                    border-radius: 4px 4px 0 0; /* on the panel itself: the tile's top is the empty top space */
+                }
+                .SvAnchoredTabRow > .SvAnchoredTabOpen > .TileContentView {
+                    padding-left: var(--sv-anchor-tab-open-padding) !important;
+                    padding-right: var(--sv-anchor-tab-open-padding) !important;
+                }
+                .SvAnchoredTabRow > .SvAnchoredTabPinned > .TileContentView {
+                    /* the pin mark sits in the flow before the label, as in the prototype:
+                       its 6px and a 10px gap; the row re-anchors when a pin changes a width */
+                    padding-left: calc(var(--sv-anchor-tab-padding) + 16px) !important;
+                }
+                .SvAnchoredTabRow > .SvAnchoredTabOpen.SvAnchoredTabPinned > .TileContentView {
+                    padding-left: calc(var(--sv-anchor-tab-open-padding) + 16px) !important;
                 }
                 .SvAnchoredTabRow > :not(.SvAnchoredTabOpen) > .TileContentView {
                     color: var(--sv-anchor-tab-closed-color) !important;
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabOpen.SvAnchoredTabPinned > .TileContentView {
-                    box-shadow: inset 0 -2px 0 var(--sv-anchor-tab-pin-color);
+                    box-shadow: inset 0 -2px 0 var(--sv-anchor-tab-pin-color) !important; /* over a tile class's own shadow (the chat's tab) */
                 }
                 .SvAnchoredTabNote {
                     display: none !important;
                 }
                 .SvAnchoredPinButton {
                     top: calc(50% + var(--sv-anchor-tab-top-space) / 2) !important; /* centered on the tab, below its top space */
+                    left: 4px !important; /* an unpinned tab's faint mark: in its leading padding */
+                    color: var(--sv-anchor-tab-pin-color);
                     opacity: 0;
                     transition: opacity 120ms ease;
                 }
                 .SvAnchoredPinButton::before {
-                    content: ""; /* decoration: the pin mark, a small diamond in the text color */
+                    content: ""; /* decoration: the pin mark, a small diamond in the pin color */
                     position: absolute;
                     left: 7px;
                     top: 7px;
@@ -565,10 +585,15 @@
                     opacity: 0.45;
                 }
                 .SvAnchoredPinButton.isPinned {
+                    left: calc(var(--sv-anchor-tab-padding) - 7px) !important; /* the diamond where the label used to start */
                     opacity: 1;
+                }
+                .SvAnchoredTabOpen > .SvAnchoredPinButton.isPinned {
+                    left: calc(var(--sv-anchor-tab-open-padding) - 7px) !important;
                 }
                 .SvAnchoredPinButton.isPinned::before {
                     background-color: currentColor;
+                    border: none;
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabSqueezed {
                     -webkit-mask-image: linear-gradient(to right, black calc(100% - 18px), transparent);
@@ -659,7 +684,10 @@
     }
 
     tabTitlesSignature (tiles) {
-        return tiles.map(tile => (tile.node() ? tile.node().title() + (tile.node().isVisible() ? "" : "-") : "")).join("|");
+        // opening or pinning changes a tab's width (wider padding; the pin
+        // mark takes room before the label), so the state is in the key
+        const state = (tile) => (tile.element().classList.contains("SvAnchoredTabOpen") ? "o" : "") + (tile.element().classList.contains("SvAnchoredTabPinned") ? "*" : "");
+        return tiles.map(tile => (tile.node() ? tile.node().title() + (tile.node().isVisible() ? "" : "-") + state(tile) : "")).join("|");
     }
 
     /**

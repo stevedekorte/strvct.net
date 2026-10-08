@@ -164,7 +164,8 @@
     --sv-anchor-tab-closed-color: var(--sv-text-dim);       /* a closed tab's label */
     --sv-anchor-tab-pin-color: var(--sv-text-muted);        /* a pinned tab's underline */
     --sv-anchor-tab-rule: var(--sv-hairline);               /* the line under the row */
-    --sv-anchor-tab-padding: 26px;                          /* each side of a tab's label, the same in every state */
+    --sv-anchor-tab-padding: 22px;                          /* each side of a closed tab's label */
+    --sv-anchor-tab-open-padding: 30px;                     /* each side of an open tab's label (the prototype's) */
     --sv-anchor-tab-top-space: 14px;                        /* empty room above the tabs, so the row does not crowd the header */
     --sv-anchor-tab-font-size: inherit;                     /* the label's size (a theme can set the prototype's 22px) */
 }
