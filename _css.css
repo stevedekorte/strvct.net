@@ -165,6 +165,8 @@
     --sv-anchor-tab-pin-color: var(--sv-text-muted);        /* a pinned tab's underline */
     --sv-anchor-tab-rule: var(--sv-hairline);               /* the line under the row */
     --sv-anchor-tab-padding: 26px;                          /* each side of a tab's label, the same in every state */
+    --sv-anchor-tab-top-space: 14px;                        /* empty room above the tabs, so the row does not crowd the header */
+    --sv-anchor-tab-font-size: inherit;                     /* the label's size (a theme can set the prototype's 22px) */
 }
 
 .SvEdgeHandlePillView .SvEdgeHandleTick {

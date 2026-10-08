@@ -38,6 +38,16 @@
             slot.setAllowsNullValue(true);
         }
         {
+            const slot = this.newSlot("anchoredTileObserver", null); // ResizeObserver on the tab tiles: their natural widths
+            slot.setSlotType("ResizeObserver");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("anchoredTileWidthByElement", null); // WeakMap tile element -> width last measured
+            slot.setSlotType("WeakMap");
+            slot.setAllowsNullValue(true);
+        }
+        {
             const slot = this.newSlot("anchoredTabLefts", null); // Array: each tab's left in the row, as last laid out (computed, not measured)
             slot.setSlotType("Array");
             slot.setAllowsNullValue(true);
@@ -270,13 +280,13 @@
             classes.toggle("SvAnchoredTabUnseen", unseen);
             tile.setCssProperty("background-image", unseen ? this.unseenDotImage() : null);
             this.tabPinControlFor(tile, node).setIsPinned(layout.isPinned(id));
-            this.hideTabNote(tile);
+            this.tagTabParts(tile);
         });
         return this;
     }
 
     /**
-     * @description A tab shows its label only: the node's note (a count, an
+     * @description Tags a tab tile's parts for the tab styles. A tab shows its label only: the node's note (a count, an
      * arrow) belongs to list rows, and a tab's unseen dot does its job here.
      * A note arriving after the tab was measured also clipped its label (a
      * tab's width is capped at its measured width).
@@ -284,12 +294,16 @@
      * @returns {SvStackView_anchoredTabs}
      * @category Anchored Tabs
      */
-    hideTabNote (tile) {
+    tagTabParts (tile) {
         // the whole trailing area (note and note icon): hiding only the note
         // left the area's own width, which squeezed the label to "Nar"
         const area = tile.bottomContentArea ? tile.bottomContentArea() : null;
         if (area) {
             area.element().classList.add("SvAnchoredTabNote");
+        }
+        const title = tile.titleView ? tile.titleView() : null;
+        if (title) {
+            title.element().classList.add("SvAnchoredTabTitle");
         }
         return this;
     }
@@ -322,7 +336,7 @@
      * @category Anchored Tabs
      */
     unseenDotImage () {
-        return "radial-gradient(circle at calc(100% - 10px) 14px, var(--sv-attention) 3.5px, transparent 4.5px)";
+        return "radial-gradient(circle at calc(100% - 10px) calc(var(--sv-anchor-tab-top-space) + 12px), var(--sv-attention) 3.5px, transparent 4.5px)";
     }
 
     noteOpenTabsSeen (openNodes) {
@@ -430,10 +444,11 @@
         this.navView().tilesView().element().classList.add("SvAnchoredTabRow");
         this.navView().element().classList.add("SvAnchoredTabNav");
         const fit = this.segmentFit(tiles, tileWidths, openNodes, widths);
+        this.observeTabTiles(tiles);
         tiles.forEach((tile, i) => {
             const cap = fit.caps.get(i);
             tile.setCssProperty("--anchor-gap", (fit.margins.get(i) || 0) + "px");
-            tile.setCssProperty("--anchor-max", (cap !== undefined ? cap : tileWidths[i]) + "px");
+            tile.setCssProperty("--anchor-max", cap !== undefined ? cap + "px" : "none"); // only a squeezed tab is capped
             tile.element().classList.toggle("SvAnchoredTabSqueezed", cap !== undefined);
         });
         return this.slideTabTiles(tiles, this.tabLefts(tileWidths, fit));
@@ -506,10 +521,17 @@
                 .SvAnchoredTabRow > .SvAnchoredTabOpen {
                     border-radius: 4px 4px 0 0;
                 }
+                .SvAnchoredTabRow > * {
+                    padding-top: var(--sv-anchor-tab-top-space) !important; /* room above the tab; the open tab's panel fills only below it */
+                }
                 .SvAnchoredTabRow > * > .TileContentView {
                     /* the same for every state: a tab's width must not change when it opens */
                     padding-left: var(--sv-anchor-tab-padding) !important;
                     padding-right: var(--sv-anchor-tab-padding) !important;
+                    font-size: var(--sv-anchor-tab-font-size);
+                }
+                .SvAnchoredTabTitle {
+                    padding-right: 0 !important; /* a list row's gap before its note; a tab has no note, so the label centers */
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabOpen > .TileContentView {
                     background-color: var(--sv-anchor-tab-open-bg) !important;
@@ -524,6 +546,7 @@
                     display: none !important;
                 }
                 .SvAnchoredPinButton {
+                    top: calc(50% + var(--sv-anchor-tab-top-space) / 2) !important; /* centered on the tab, below its top space */
                     opacity: 0;
                     transition: opacity 120ms ease;
                 }
@@ -576,12 +599,63 @@
             return this.anchoredTileWidths().widths;
         }
         tiles.forEach(tile => tile.setCssProperty("--anchor-max", "none"));
-        const widths = tiles.map(tile => tile.element().offsetWidth);
+        // fractional widths: offsetWidth rounds, and the rounding added up
+        // along the row (a tab a pixel off its pane with the theme's 22px font)
+        const widths = tiles.map(tile => tile.element().getBoundingClientRect().width);
+        if (!this.anchoredTileWidthByElement()) {
+            this.setAnchoredTileWidthByElement(new WeakMap());
+        }
+        tiles.forEach((tile, i) => this.anchoredTileWidthByElement().set(tile.element(), widths[i]));
         if (widths.some(w => w > 0)) {
             const byNode = new Map(tiles.map((tile, i) => [tile.node(), widths[i]]));
             this.setAnchoredTileWidths({ titles: this.tabTitlesSignature(tiles), widths: widths, byNode: byNode });
         }
         return widths;
+    }
+
+    /**
+     * @description Watches the tab tiles' sizes: a tab's natural width can
+     * change with no title change — the theme's font arriving after the
+     * first measurement, a theme switch — and the anchoring must follow, or
+     * labels drift off their panes. The observer hands over the sizes; no
+     * measurement here.
+     * @param {Array<SvTile>} tiles
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    observeTabTiles (tiles) {
+        if (typeof ResizeObserver === "undefined") {
+            return this;
+        }
+        if (!this.anchoredTileObserver()) {
+            this.setAnchoredTileObserver(new ResizeObserver((entries) => this.onTabTilesResized(entries)));
+        }
+        tiles.forEach(tile => this.anchoredTileObserver().observe(tile.element())); // observing again is a no-op
+        return this;
+    }
+
+    /**
+     * @description A tab tile changed size. A squeezed tab is capped on
+     * purpose, and a width that matches the last measurement is our own
+     * layout settling; anything else is a new natural width: forget the
+     * measured widths and re-anchor, after the callback (re-laying out
+     * inside it is the "ResizeObserver loop" error).
+     * @param {ResizeObserverEntry[]} entries
+     * @returns {SvStackView_anchoredTabs}
+     * @category Anchored Tabs
+     */
+    onTabTilesResized (entries) {
+        const known = this.anchoredTileWidthByElement();
+        const changed = entries.some(entry => {
+            const size = entry.borderBoxSize && entry.borderBoxSize[0] ? entry.borderBoxSize[0].inlineSize : entry.contentRect.width;
+            const squeezed = entry.target.classList.contains("SvAnchoredTabSqueezed");
+            return !squeezed && known && known.has(entry.target) && Math.abs(size - known.get(entry.target)) > 0.5;
+        });
+        if (changed) {
+            this.setAnchoredTileWidths(null);
+            this.addWeakTimeout(() => this.syncAnchoredPanes(false), 0);
+        }
+        return this;
     }
 
     tabTitlesSignature (tiles) {
