@@ -483,6 +483,7 @@
         const m = this.newMessage();
         m.setContent(v);
         m.setIsComplete(true);
+        this.requestAnchorOnMessage(m);
     //this.chatInputNode().setValueIsEditable(false)
     }
 
@@ -571,6 +572,9 @@
    * @description Posts a requestAnchorScroll notification asking the view to scroll
    * the given message to the top of the viewport. This disengages auto-scroll
    * so the user can read at their own pace while new content grows below.
+   * Posted only for a message the LOCAL user just sent from the chat input —
+   * not when a turn starts — so another player's message, a roll or choice
+   * answer, a deferred turn and error recovery never move this device's view.
    * @param {Object} aMessage - The message node to anchor at the top of the viewport, or null for top.
    * @category Scrolling
    */
