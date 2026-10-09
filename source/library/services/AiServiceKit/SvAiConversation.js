@@ -454,7 +454,7 @@
         const userMsg = this.newUserMessage();
         this.prepareUserInputMessage(userMsg, v);
         userMsg.setIsComplete(true); // this should trigger a requestResponse
-        //userMsg.requestResponse();
+        this.requestAnchorOnMessage(userMsg);
         SvSimpleSynth.clone().playSendBeep();
     }
 
