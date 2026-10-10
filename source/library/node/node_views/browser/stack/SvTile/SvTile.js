@@ -710,17 +710,14 @@
     }
 
     stackView () {
+        // the tiles view knows its column (and that it has none when it is
+        // nested in a section of an inline document)
         const tilesView = this.tilesView();
-        if (tilesView) {
-            const scrollView = tilesView.parentView();
-            const navView = scrollView.parentView();
-            const stackView = navView.parentView();
-            if (stackView && stackView.thisClass().isKindOf(SvStackView)) {
-                return stackView;
-            }
+        const stackView = (tilesView && tilesView.stackView) ? tilesView.stackView() : null;
+        if (stackView && stackView.thisClass().isKindOf(SvStackView)) {
+            return stackView;
         }
         return null;
-        //return this.firstParentViewWithAncestorClass(SvStackView)
     }
 
     /**

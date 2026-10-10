@@ -85,6 +85,9 @@
      * @category Orientation
      */
     isVertical () {
+        if (this.isInlineNested()) {
+            return true; // a section's rows run top to bottom
+        }
         const sv = this.stackView();
         if (!sv) {
             return null;

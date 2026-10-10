@@ -20,6 +20,9 @@
      * @category Navigation
      */
     canNavigate () {
+        if (this.isInlineLayout()) {
+            return false; // an inline document scrolls; it has no tile cursor (version 1)
+        }
         return this.allowsCursorNavigation();
         //return this.allowsCursorNavigation() && this.isActiveElement()
     }
@@ -150,9 +153,24 @@
      * @category Keyboard
      */
     onMeta_a_KeyDown (event) {
+        if (this.isEditingTextEvent(event)) {
+            return; // select-all inside the text being edited, not every tile
+        }
         this.selectAllTiles();
         event.stopPropagation();
         event.preventDefault();
+    }
+
+    /**
+     * @description Whether a key event comes from text being edited (a
+     * content-editable value, an input), which owns its own keys.
+     * @param {Event} event
+     * @returns {Boolean}
+     * @category Keyboard
+     */
+    isEditingTextEvent (event) {
+        const target = event && event.target;
+        return !!(target && (target.isContentEditable || target.tagName === "INPUT" || target.tagName === "TEXTAREA"));
     }
 
 

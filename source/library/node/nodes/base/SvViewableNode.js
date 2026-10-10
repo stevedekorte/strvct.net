@@ -383,6 +383,51 @@
     }
 
     /**
+     * @description How this node's subnodes are laid out (Plans/Inline
+     * Navigation): "column" — one level per column, choosing a tile opens
+     * the next (the default); "inline" — the next levels shown in place as
+     * a responsive document of sections. A role, read by the generic tiles
+     * view (SvTilesView_inline). Anchored tabs keep their own hint for now.
+     * @returns {String}
+     * @category Layout
+     */
+    nodeChildrenLayout () {
+        return "column";
+    }
+
+    /**
+     * @description Under an inline node: whether this node, when it has
+     * subnodes, is shown in place as a section (true, the default) or stays
+     * a tile (false — a heavy subtree, like a long list).
+     * @returns {Boolean}
+     * @category Layout
+     */
+    nodeIsInlined () {
+        return true;
+    }
+
+    /**
+     * @description For an inline node: how many levels below it are shown
+     * in place. 1: its subnodes are sections of rows; 2: those sections may
+     * hold sections of their own (a section's groups).
+     * @returns {Number}
+     * @category Layout
+     */
+    nodeInlineDepth () {
+        return 1;
+    }
+
+    /**
+     * @description As a section of an inline document: whether it spans
+     * every column (a status strip, a header) instead of flowing in one.
+     * @returns {Boolean}
+     * @category Layout
+     */
+    nodeSpansInlineColumns () {
+        return false;
+    }
+
+    /**
      * @description As an anchored tab: whether this node would like its pane
      * kept open — "pinned", "open" (open when there is room, unpinned) or null
      * (no opinion). A suggestion: the player's own pin or unpin of the tab

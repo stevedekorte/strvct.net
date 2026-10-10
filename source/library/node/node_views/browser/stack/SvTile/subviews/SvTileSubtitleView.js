@@ -33,6 +33,7 @@
      */
     init () {
         super.init();
+        this.insertElementClassName("SvTileSubtitleView"); // a stylesheet hook (an inline document wraps it)
         this.setDisplay("block");
         this.setMarginTop("3px");
         this.setMarginLeft("0px");

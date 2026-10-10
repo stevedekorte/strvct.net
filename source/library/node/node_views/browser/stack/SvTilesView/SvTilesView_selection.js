@@ -71,6 +71,9 @@
      * @param {SvTile} anItem - The tapped item.
      */
     didTapItem (anItem) {
+        if (this.isInlineLayout()) {
+            return this.didTapInlineItem(anItem); // a document: read in place, no navigation
+        }
         const anchored = this.anchoredTabsStackView();
         if (anchored) {
             anchored.anchoredTapTile(anItem, false); // the layout decides which tabs are open
@@ -91,6 +94,9 @@
      * @returns {SvTilesView_selection} The current instance.
      */
     didShiftTapItem (anItem) {
+        if (this.isInlineLayout()) {
+            return this.didTapInlineItem(anItem);
+        }
         const anchored = this.anchoredTabsStackView();
         if (anchored) {
             anchored.anchoredTapTile(anItem, true); // in a tab row shift-click pins (no range selection)

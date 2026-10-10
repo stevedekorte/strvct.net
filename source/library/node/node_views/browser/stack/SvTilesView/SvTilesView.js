@@ -114,6 +114,9 @@
      * @category Navigation
      */
     navView () {
+        if (this.isInlineNested()) {
+            return null; // inside a section of an inline document: no column of its own
+        }
         const sv = this.scrollView();
         if (!sv) {
             return null;
@@ -303,6 +306,7 @@
 
     syncFromNode () {
         this.syncOrientation(); // implemented in Tiles_orientation.js
+        this.syncInlineLayout(); // SvTilesView_inline: a document's sections
         super.syncFromNode();
 
         // Accessibility: sync label and opt-in live region from node
@@ -338,6 +342,10 @@
      * @category Initialization
      */
     subviewProtoForSubnode (aSubnode) {
+        const section = this.inlineSectionProtoFor(aSubnode); // SvTilesView_inline: shown in place
+        if (section) {
+            return section;
+        }
         let proto = aSubnode.nodeTileClass(); // we need this to get tile versions of view
 
         if (!proto) {

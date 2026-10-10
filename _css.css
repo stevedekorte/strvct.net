@@ -169,6 +169,18 @@
     --sv-anchor-tab-open-padding: 30px;                     /* each side of an open tab's label (the prototype's) */
     --sv-anchor-tab-top-space: 14px;                        /* empty room above the tabs, so the row does not crowd the header */
     --sv-anchor-tab-font-size: inherit;                     /* the label's size (a theme can set the prototype's 22px) */
+
+    /* INLINE DOCUMENTS (SvTilesView_inline, SvInlineSectionTile): a node's
+       next levels shown in place as sections in columns. */
+    --sv-inline-document-padding: 24px 24px 40px;           /* around the document */
+    --sv-inline-column-gap: 48px;                           /* between columns */
+    --sv-inline-section-gap: 32px;                          /* below each section */
+    --sv-inline-heading-color: var(--sv-text);              /* a section's heading */
+    --sv-inline-heading-rule: var(--sv-text);               /* the line under a section's heading */
+    --sv-inline-heading-font-size: 13px;
+    --sv-inline-heading-tracking: 0.26em;
+    --sv-inline-group-heading-color: var(--sv-text-muted);  /* a group's heading, inside a section */
+    --sv-inline-row-rule: var(--sv-hairline);               /* between rows of a section */
 }
 
 .SvEdgeHandlePillView .SvEdgeHandleTick {

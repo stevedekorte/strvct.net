@@ -469,8 +469,12 @@
     }
 
     shouldCurrentlyFillAvailble () {
-        if (this.node()) {
-            return (this.node().nodeFillsRemainingWidth() && this.isLastNavView());
+        const node = this.node();
+        if (node) {
+            // an inline document (Plans/Inline Navigation) takes the room it
+            // is given: its sections flow into as many columns as fit
+            const isDocument = node.nodeChildrenLayout && node.nodeChildrenLayout() === "inline";
+            return ((node.nodeFillsRemainingWidth() || isDocument) && this.isLastNavView());
         }
         return false;
     }
