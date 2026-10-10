@@ -101,6 +101,20 @@
     }
 
     /**
+     * @description A retired view leaves the activation broadcast. The
+     * listener set is weak, so a retired view stayed in it until collected;
+     * one that had been active then deactivated itself when another view
+     * activated, and redrew with no element ("Cannot read properties of null
+     * (reading 'textContent')").
+     * @returns {SvStyledDomView}
+     * @category Lifecycle
+     */
+    prepareToRetire () {
+        SvBroadcaster.shared().removeListenerForName(this, "onActivateView");
+        return super.prepareToRetire();
+    }
+
+    /**
      * @description Synchronizes the state from another view.
      * @param {SvStyledDomView} aView - The view to sync from.
      * @returns {SvStyledDomView}

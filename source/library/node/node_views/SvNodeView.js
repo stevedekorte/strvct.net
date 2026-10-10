@@ -8,8 +8,8 @@
  * @classdesc
  * SvNodeView represents a view for a node in the application.
  * It handles the synchronization between the node model and its visual representation.
- 
- 
+
+
  */
 
 (class SvNodeView extends SvStyledDomView {
@@ -157,6 +157,19 @@
         super.willRemove();
         this.stopWatchingNode();
         return this;
+    }
+
+    /**
+     * @description A retired view stops following its node. willRemove only
+     * runs for the view taken out of its parent; the views inside it are
+     * retired (retireSubviewTree) without it, and one still watching its node
+     * would schedule a sync on a view with no element ("Cannot read
+     * properties of null (reading 'style')" in a later applyStyles).
+     * @returns {SvNodeView} The current instance.
+     */
+    prepareToRetire () {
+        this.stopWatchingNode();
+        return super.prepareToRetire();
     }
 
     /**
