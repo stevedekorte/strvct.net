@@ -41,6 +41,7 @@
             .SvInlineDocument {
                 display: block !important;
                 column-width: var(--inline-column-width);
+                column-count: var(--inline-max-columns); /* with a width, a count is the most columns */
                 column-gap: var(--sv-inline-column-gap);
                 padding: var(--sv-inline-document-padding);
                 box-sizing: border-box;
@@ -71,6 +72,9 @@
                 height: auto !important;
                 background-color: transparent !important;
                 padding: 0 !important;
+            }
+            .SvInlineSectionHeading:empty {
+                display: none; /* an untitled group: its rows follow the section's own heading */
             }
             .SvInlineSectionHeading {
                 font-size: var(--sv-inline-heading-font-size);
@@ -146,6 +150,31 @@
                 white-space: normal !important;
                 text-overflow: clip !important;
                 overflow: visible !important;
+            }
+            /* a row with a description opens and closes (SvTilesView_inline
+               didTapInlineItem): closed, only its title shows, after a
+               diamond — an outline closed, filled open */
+            .SvInlineNested > :not(.SvInlineSection):has(.SvTileSubtitleView:not(:empty)) {
+                cursor: pointer;
+            }
+            .SvInlineNested > :not(.SvInlineSection):has(.SvTileSubtitleView:not(:empty)):not(.SvInlineOpen) .SvTileSubtitleView {
+                display: none !important;
+            }
+            .SvInlineNested > :not(.SvInlineSection):has(.SvTileSubtitleView:not(:empty)) .SvTileTitleView::before {
+                content: ""; /* decoration: the disclosure mark */
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                margin: 0 12px 0 1px;
+                vertical-align: 0.2em;
+                border: 1px solid var(--sv-inline-disclosure-color);
+                transform: rotate(45deg);
+            }
+            .SvInlineNested > .SvInlineOpen:not(.SvInlineSection) .SvTileTitleView::before {
+                background-color: var(--sv-inline-disclosure-color);
+            }
+            .SvInlineNested > :not(.SvInlineSection):has(.SvTileSubtitleView:not(:empty)) .SvTileSubtitleView {
+                padding-left: 20px !important; /* under the title, past the diamond (over the view's inline padding) */
             }
         `);
     }

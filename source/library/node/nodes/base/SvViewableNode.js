@@ -428,6 +428,17 @@
     }
 
     /**
+     * @description For an inline node: the most columns its sections flow
+     * into. Past that, the columns widen to fill the width rather than
+     * adding a column the sections cannot fill.
+     * @returns {Number}
+     * @category Layout
+     */
+    nodeInlineMaxColumns () {
+        return 3;
+    }
+
+    /**
      * @description As an anchored tab: whether this node would like its pane
      * kept open — "pinned", "open" (open when there is room, unpinned) or null
      * (no opinion). A suggestion: the player's own pin or unpin of the tab

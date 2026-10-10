@@ -181,6 +181,7 @@
     --sv-inline-heading-tracking: 0.26em;
     --sv-inline-group-heading-color: var(--sv-text-muted);  /* a group's heading, inside a section */
     --sv-inline-row-rule: var(--sv-hairline);               /* between rows of a section */
+    --sv-inline-disclosure-color: var(--sv-text-muted);     /* the diamond before a row that opens */
 }
 
 .SvEdgeHandlePillView .SvEdgeHandleTick {

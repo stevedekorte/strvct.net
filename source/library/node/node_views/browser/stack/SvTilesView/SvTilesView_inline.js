@@ -97,6 +97,7 @@
         this.element().classList.toggle("SvInlineNested", this.isInlineNested());
         if (isDocument) {
             this.setCssProperty("--inline-column-width", Math.max(200, this.node().nodeMinTileWidth() || 0) + "px");
+            this.setCssProperty("--inline-max-columns", String(Math.max(1, this.node().nodeInlineMaxColumns())));
             this.setAllowsCursorNavigation(false);
         }
         return this;
@@ -105,15 +106,37 @@
     /**
      * @description A tap inside an inline document. Rows are read and edited
      * where they are: the tapped row takes focus, as in a column (so its
-     * value then edits on a double tap), but nothing is selected and nothing
-     * navigates.
+     * value then edits on a double tap), and a row with a description opens
+     * or closes; nothing is selected and nothing navigates.
      * @param {SvTile} anItem
      * @returns {SvTilesView_inline}
      * @category Inline
      */
     didTapInlineItem (anItem) {
-        if (anItem && !anItem.hasFocusedDecendantView()) {
+        if (!anItem) {
+            return this;
+        }
+        if (!anItem.hasFocusedDecendantView()) {
             anItem.focus();
+        }
+        return this.toggleInlineRow(anItem);
+    }
+
+    /**
+     * @description Opens or closes a row that has a description. Which rows
+     * are open is view state, like which tab is open: kept on the row's
+     * element, never on its node. Whether a row has a description is read
+     * from its node, not the page.
+     * @param {SvTile} tile
+     * @returns {SvTilesView_inline}
+     * @category Inline
+     */
+    toggleInlineRow (tile) {
+        const node = tile.node ? tile.node() : null;
+        const subtitle = (node && node.subtitle) ? node.subtitle() : null;
+        if (subtitle) {
+            tile.element().classList.toggle("SvInlineOpen");
+            tile.setAttribute("aria-expanded", tile.element().classList.contains("SvInlineOpen") ? "true" : "false");
         }
         return this;
     }

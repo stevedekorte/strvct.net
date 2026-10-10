@@ -10,8 +10,8 @@
  * Reasons not to just use setElementClassName() on a SvTextView instead:
  * - to automatically get the full class hierarchy in the div name
  * - a place to (potentially) override interaction behaviors
- 
- 
+
+
  */
 
 (class SvTileTitleView extends SvTextView {
@@ -38,6 +38,7 @@
      */
     init () {
         super.init();
+        this.insertElementClassName("SvTileTitleView"); // a stylesheet hook (an inline document's disclosure mark)
         this.setDisplay("block");
         this.setPosition("relative");
         this.setMarginTop("0em");
