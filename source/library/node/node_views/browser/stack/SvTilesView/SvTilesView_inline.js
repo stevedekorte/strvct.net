@@ -96,6 +96,7 @@
         SvInlineSectionTile.ensureInlineCss();
         this.element().classList.toggle("SvInlineDocument", isDocument);
         this.element().classList.toggle("SvInlineNested", this.isInlineNested());
+        this.element().classList.toggle("SvInlineRows", isDocument && this.node().nodeInlineFlow() === "rows");
         if (isDocument) {
             this.setCssProperty("--inline-column-width", Math.max(200, this.node().nodeMinTileWidth() || 0) + "px");
             this.setCssProperty("--inline-max-columns", String(Math.max(1, this.node().nodeInlineMaxColumns())));

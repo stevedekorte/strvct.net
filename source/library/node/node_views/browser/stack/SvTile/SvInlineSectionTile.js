@@ -63,6 +63,20 @@
             .SvInlineDocument > * {
                 break-inside: avoid;
             }
+            /* rows (nodeInlineFlow "rows"): a grid of as many columns of at
+               least the column width as fit, at most the node's maximum;
+               sections run left to right and keep their places */
+            .SvInlineDocument.SvInlineRows {
+                display: grid !important;
+                column-count: auto;
+                column-width: auto;
+                grid-template-columns: repeat(auto-fill, minmax(min(100%, max(var(--inline-column-width), calc((100% - (var(--inline-max-columns) - 1) * var(--sv-inline-column-gap)) / var(--inline-max-columns)))), 1fr));
+                column-gap: var(--sv-inline-column-gap);
+                align-items: start;
+            }
+            .SvInlineDocument.SvInlineRows > .SvInlineSpans {
+                grid-column: 1 / -1;
+            }
             .SvInlineSection {
                 display: block !important;
                 width: 100% !important;

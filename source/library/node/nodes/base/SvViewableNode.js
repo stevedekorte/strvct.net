@@ -439,6 +439,18 @@
     }
 
     /**
+     * @description For an inline node: how its sections flow. "columns" (the
+     * default) — down each column in turn, densely packed, newspaper order;
+     * "rows" — left to right, then the next row, each section keeping its
+     * place as others grow (a row is as tall as its tallest section).
+     * @returns {String}
+     * @category Layout
+     */
+    nodeInlineFlow () {
+        return "columns";
+    }
+
+    /**
      * @description Whether this node is a collection with nothing in it. An
      * inline document leaves such rows out ("Cantrips: None" is noise in a
      * sheet); a column still lists them, so they can be opened and filled.
