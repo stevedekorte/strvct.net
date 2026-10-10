@@ -218,7 +218,7 @@
     pointForTouch (touch) {
         assert(event.__proto__.constructor === TouchEvent);
         const p = SvEventPoint.clone();
-        p.setId(touch.identifier);
+        p.setId(String(touch.identifier)); // the browser's identifier is a Number; the point's id is a String
         p.setTarget(touch.target);
         p.set(touch.pageX, touch.pageY);  // document position
         p.setTimeToNow();

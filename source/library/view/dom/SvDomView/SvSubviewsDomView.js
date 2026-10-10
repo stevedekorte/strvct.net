@@ -6,8 +6,8 @@
 /** * @class SvSubviewsDomView
  * @extends SvCssDomView
  * @classdesc Manages subviews and parent views.
- 
- 
+
+
  */
 
 (class SvSubviewsDomView extends SvCssDomView {
@@ -673,13 +673,13 @@
 
     /**
      * @description Finds the first parent view with a given ancestor class.
-     * @param {string} aClass - The class to check.
-     * @returns {SvDomView} The first parent view with the ancestor class, or null if not found.
+     * @param {Function} aClass - The class to look for.
+     * @returns {SvDomView} The first parent view that is an instance of the class (or a subclass), or undefined if none.
      */
     firstParentViewWithAncestorClass (aClass) {
         const p = this.parentView();
         if (p) {
-            if (p.isSubclassOf(aClass)) {
+            if (p.isKindOf(aClass)) { // an instance check (isSubclassOf is the class-side one)
                 return p;
             }
             return p.firstParentViewWithAncestorClass(aClass);

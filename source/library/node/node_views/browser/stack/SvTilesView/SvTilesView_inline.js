@@ -133,8 +133,10 @@
 
     /**
      * @description A tile past the inlined levels — one with a subtree of its
-     * own that is not shown in place — opens in the normal navigation, from
-     * the browser this document sits in. Rows without a subtree stay put.
+     * own that is not shown in place — opens in the normal navigation: its
+     * browser selects the path to it (the path to the document, the sections
+     * the tile sits in, then the tile), as columns of tiles would. Rows
+     * without a subtree stay put.
      * @param {SvTile} tile
      * @returns {SvTilesView_inline}
      * @category Inline
@@ -142,11 +144,39 @@
     navigatePastInline (tile) {
         const node = tile.node ? tile.node() : null;
         const target = node ? SvInlineSectionTile.inlineTargetOf(node) : null;
+        if (!target || target.subnodeCount() === 0 || tile.isKindOf(SvInlineSectionTile)) {
+            return this;
+        }
+        const route = this.inlineRouteTo(tile);
         const browser = this.firstParentViewWithAncestorClass(SvBrowserView);
-        if (target && target.subnodeCount() > 0 && !tile.isKindOf(SvInlineSectionTile) && browser) {
-            browser.navigateToNode(target);
+        const current = browser ? browser.stackView().selectedNodePathArray() : [];
+        const at = current.indexOf(route.document.node());
+        if (at !== -1) {
+            // the browser's path to the document, then the route inside it;
+            // selectPathWithRetry fills the deeper columns as they appear
+            browser.selectPathWithRetry(current.slice(0, at + 1).concat(route.path));
         }
         return this;
+    }
+
+    /**
+     * @description The path from the top of the document to a tile in it:
+     * the sections it sits in, outermost first, then the tile. A navigation
+     * path holds what each tile opens — a pointer field's object, not the
+     * field (SvTilesView.tileWithNode matches on nodeTileLink).
+     * @param {SvTile} tile
+     * @returns {{document: SvTilesView, path: Array<SvNode>}}
+     * @category Inline
+     */
+    inlineRouteTo (tile) {
+        const path = [SvInlineSectionTile.inlineTargetOf(tile.node())];
+        let view = this;
+        while (view.isInlineNested()) {
+            const section = view.firstParentViewWithAncestorClass(SvInlineSectionTile);
+            path.unshift(SvInlineSectionTile.inlineTargetOf(section.node()));
+            view = section.tilesView();
+        }
+        return { document: view, path: path };
     }
 
     /**
