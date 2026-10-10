@@ -80,7 +80,8 @@
         if (this.inlineDepth() <= 0 || !aSubnode.nodeIsInlined || !aSubnode.nodeIsInlined()) {
             return null;
         }
-        return aSubnode.subnodeCount() > 0 ? SvInlineSectionTile : null;
+        const target = SvInlineSectionTile.inlineTargetOf(aSubnode);
+        return (target.nodeIsInlined() && target.subnodeCount() > 0) ? SvInlineSectionTile : null;
     }
 
     /**
@@ -119,7 +120,32 @@
         if (!anItem.hasFocusedDecendantView()) {
             anItem.focus();
         }
-        return this.toggleInlineRow(anItem);
+        if (this.isOpenableInlineRow(anItem)) {
+            return this.toggleInlineRow(anItem);
+        }
+        return this.navigatePastInline(anItem);
+    }
+
+    isOpenableInlineRow (tile) {
+        return tile.element().classList.contains("SvTileLongSubtitle") && !tile.isKindOf(SvInlineSectionTile); // a class, not a measurement
+    }
+
+    /**
+     * @description A tile past the inlined levels — one with a subtree of its
+     * own that is not shown in place — opens in the normal navigation, from
+     * the browser this document sits in. Rows without a subtree stay put.
+     * @param {SvTile} tile
+     * @returns {SvTilesView_inline}
+     * @category Inline
+     */
+    navigatePastInline (tile) {
+        const node = tile.node ? tile.node() : null;
+        const target = node ? SvInlineSectionTile.inlineTargetOf(node) : null;
+        const browser = this.firstParentViewWithAncestorClass(SvBrowserView);
+        if (target && target.subnodeCount() > 0 && !tile.isKindOf(SvInlineSectionTile) && browser) {
+            browser.navigateToNode(target);
+        }
+        return this;
     }
 
     /**
@@ -132,12 +158,8 @@
      * @category Inline
      */
     toggleInlineRow (tile) {
-        const node = tile.node ? tile.node() : null;
-        const subtitle = (node && node.subtitle) ? node.subtitle() : null;
-        if (subtitle) {
-            tile.element().classList.toggle("SvInlineOpen");
-            tile.setAttribute("aria-expanded", tile.element().classList.contains("SvInlineOpen") ? "true" : "false");
-        }
+        tile.element().classList.toggle("SvInlineOpen");
+        tile.setAttribute("aria-expanded", tile.element().classList.contains("SvInlineOpen") ? "true" : "false");
         return this;
     }
 

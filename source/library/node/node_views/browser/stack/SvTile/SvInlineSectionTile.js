@@ -32,6 +32,19 @@
         this.newClassSlot("hasAddedInlineCss", false);
     }
 
+    /**
+     * @description What a subnode shows in place: the node it links to (a
+     * pointer field's object, as a column would open it) or the subnode
+     * itself.
+     * @param {SvNode} aSubnode
+     * @returns {SvNode}
+     * @category Inline
+     */
+    static inlineTargetOf (aSubnode) {
+        const link = aSubnode.nodeTileLink ? aSubnode.nodeTileLink() : null;
+        return link || aSubnode;
+    }
+
     static ensureInlineCss () {
         if (SvInlineSectionTile.hasAddedInlineCss()) {
             return;
@@ -155,6 +168,24 @@
             .SvInlineNested .ValueViewContainer > :focus {
                 border-color: var(--sv-inline-row-rule) !important;
             }
+            /* an empty list is left out of a document (SvTile marks it) */
+            .SvInlineNested > .SvTileEmptyCollection,
+            .SvInlineDocument > .SvTileEmptyCollection {
+                display: none !important;
+            }
+            /* a short summary reads as a value: at the right of the title, on its line */
+            .SvInlineNested > :not(.SvTileLongSubtitle):not(.SvInlineSection) :has(> .SvTileTitleView) {
+                flex-direction: row !important;
+                align-items: baseline !important;
+                justify-content: space-between !important;
+                gap: 12px;
+            }
+            .SvInlineNested > :not(.SvTileLongSubtitle):not(.SvInlineSection) .SvTileSubtitleView {
+                width: auto !important;
+                flex: 0 1 auto;
+                text-align: right !important;
+                margin: 0 !important;
+            }
             /* a row's description reads in full: it wraps rather than trailing off */
             .SvInlineNested .SvTileSubtitleView {
                 white-space: normal !important;
@@ -163,14 +194,15 @@
             }
             /* a row with a description opens and closes (SvTilesView_inline
                didTapInlineItem): closed, only its title shows, after a
-               diamond — an outline closed, filled open */
-            .SvInlineNested > :not(.SvInlineSection):has(.SvTileSubtitleView:not(:empty)) {
+               diamond — an outline closed, filled open. A short summary
+               shows as it is (SvTitledTile marks the long ones). */
+            .SvInlineNested > .SvTileLongSubtitle:not(.SvInlineSection) {
                 cursor: pointer;
             }
-            .SvInlineNested > :not(.SvInlineSection):has(.SvTileSubtitleView:not(:empty)):not(.SvInlineOpen) .SvTileSubtitleView {
+            .SvInlineNested > .SvTileLongSubtitle:not(.SvInlineSection):not(.SvInlineOpen) .SvTileSubtitleView {
                 display: none !important;
             }
-            .SvInlineNested > :not(.SvInlineSection):has(.SvTileSubtitleView:not(:empty)) .SvTileTitleView::before {
+            .SvInlineNested > .SvTileLongSubtitle:not(.SvInlineSection) .SvTileTitleView::before {
                 content: ""; /* decoration: the disclosure mark */
                 display: inline-block;
                 width: 6px;
@@ -183,7 +215,7 @@
             .SvInlineNested > .SvInlineOpen:not(.SvInlineSection) .SvTileTitleView::before {
                 background-color: var(--sv-inline-disclosure-color);
             }
-            .SvInlineNested > :not(.SvInlineSection):has(.SvTileSubtitleView:not(:empty)) .SvTileSubtitleView {
+            .SvInlineNested > .SvTileLongSubtitle:not(.SvInlineSection) .SvTileSubtitleView {
                 padding-left: 20px !important; /* under the title, past the diamond (over the view's inline padding) */
             }
         `);
@@ -253,11 +285,19 @@
         return this;
     }
 
+    /**
+     * @description The nested tiles view shows the node this section stands
+     * for: the object a pointer field links to, or the node itself. The
+     * heading keeps the field's title ("Ability Scores").
+     * @returns {SvInlineSectionTile}
+     * @category Inline
+     */
     syncSectionTilesView () {
         const tiles = this.sectionTilesView();
+        const target = SvInlineSectionTile.inlineTargetOf(this.node());
         tiles.setNestedInlineDepth(this.nestedDepth());
-        if (tiles.node() !== this.node()) {
-            tiles.setNode(this.node());
+        if (tiles.node() !== target) {
+            tiles.setNode(target);
         }
         return this;
     }

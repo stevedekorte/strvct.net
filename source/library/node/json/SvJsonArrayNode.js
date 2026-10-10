@@ -336,8 +336,8 @@
                 if (aNode) {
                     newSubnodes.push(aNode);
                 } // else: unresolvable _type, already warned. A null in this
-                  // array reaches the scheduler and throws in
-                  // onDidReorderSubnodes with no trace back to the real cause.
+                // array reaches the scheduler and throws in
+                // onDidReorderSubnodes with no trace back to the real cause.
                 //console.log(this.logPrefix(), "SvJsonArrayNode.setJson() creating new node " + aNode.svType() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
             }
         });
@@ -491,6 +491,16 @@
 
     jsonPathCompmentString () {
         return this.svType() + ":" + this.title() + ":" + this.jsonId();
+    }
+
+    /**
+     * @description An empty list (Plans/Inline Navigation: a document leaves
+     * it out).
+     * @returns {Boolean}
+     * @category Layout
+     */
+    nodeIsEmptyCollection () {
+        return this.subnodeCount() === 0;
     }
 
 }.initThisClass());

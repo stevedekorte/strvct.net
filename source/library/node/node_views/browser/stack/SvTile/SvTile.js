@@ -645,9 +645,26 @@
             this.setIsDisplayHidden(!node.isVisible());
             this.syncAriaFromNode();
             this.syncSurfaceFromNode();
+            this.syncEmptyCollectionMark();
         }
         this.updateSubviews();
         this.syncOrientation();
+        return this;
+    }
+
+    /**
+     * @description Marks a tile whose node — or the node it links to — is an
+     * empty collection; an inline document hides such rows. A class from the
+     * model, so nothing is measured.
+     * @returns {SvTile}
+     * @category Inline
+     */
+    syncEmptyCollectionMark () {
+        const node = this.node();
+        const link = node.nodeTileLink ? node.nodeTileLink() : null;
+        const target = link || node;
+        const isEmpty = !!(target.nodeIsEmptyCollection && target.nodeIsEmptyCollection());
+        this.element().classList.toggle("SvTileEmptyCollection", isEmpty);
         return this;
     }
 

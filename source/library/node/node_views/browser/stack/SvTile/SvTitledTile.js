@@ -714,7 +714,12 @@
         super.syncFromNode();
         const node = this.node();
         this.titleView().setString(node.translatedValueOfSlotNamed("title"));
-        this.subtitleView().setString(node.translatedValueOfSlotNamed("subtitle"));
+        const subtitle = node.translatedValueOfSlotNamed("subtitle");
+        this.subtitleView().setString(subtitle);
+        // a stylesheet hook, from the model's text (no measuring): an inline
+        // document folds a long description behind its title, and shows a
+        // short summary ("+6", "20 · mod +5") as it is
+        this.element().classList.toggle("SvTileLongSubtitle", typeof subtitle === "string" && (subtitle.trim().length > 40 || subtitle.trim().includes("\n")));
         //this.noteView().setString(this.node().note())
         this.updateSubviews();
 

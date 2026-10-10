@@ -47,8 +47,8 @@
  *
  * SvField.setValueOnTarget() needs to handle both cases.
  *
- 
- 
+
+
  */
 
 (class SvOptionsNode extends SvField {
@@ -774,6 +774,16 @@
 
         console.log(this.logPrefix(), "  pickedItems: ", this.pickedItems(), "\n");
         console.log(this.logPrefix(), "--------------------------------");
+    }
+
+    /**
+     * @description A picker reads as its choice in a document (Plans/Inline
+     * Navigation), never as the list of everything it could be.
+     * @returns {Boolean}
+     * @category Layout
+     */
+    nodeIsInlined () {
+        return false;
     }
 
 }.initThisClass());

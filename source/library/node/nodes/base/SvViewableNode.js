@@ -439,6 +439,17 @@
     }
 
     /**
+     * @description Whether this node is a collection with nothing in it. An
+     * inline document leaves such rows out ("Cantrips: None" is noise in a
+     * sheet); a column still lists them, so they can be opened and filled.
+     * @returns {Boolean}
+     * @category Layout
+     */
+    nodeIsEmptyCollection () {
+        return false;
+    }
+
+    /**
      * @description As an anchored tab: whether this node would like its pane
      * kept open — "pinned", "open" (open when there is room, unpinned) or null
      * (no opinion). A suggestion: the player's own pin or unpin of the tab
