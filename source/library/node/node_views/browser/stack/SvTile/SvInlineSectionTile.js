@@ -141,6 +141,16 @@
                 text-align: right !important;
                 border-color: transparent !important;
             }
+            /* an image value (a portrait) fills its row instead of sitting at the right */
+            .SvInlineNested .ValueViewContainer:has(img) {
+                flex: 1 1 auto;
+                max-width: 100%;
+                align-items: stretch !important;
+            }
+            .SvInlineNested .ValueViewContainer:has(img) > * {
+                width: 100% !important;
+                justify-content: center;
+            }
             .SvInlineNested .ValueViewContainer:hover > [contenteditable="true"],
             .SvInlineNested .ValueViewContainer > :focus {
                 border-color: var(--sv-inline-row-rule) !important;
