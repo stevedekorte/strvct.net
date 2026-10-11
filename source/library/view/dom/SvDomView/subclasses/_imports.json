@@ -12,8 +12,8 @@
     "SvgIconView.js",
     "browser-only/_imports.json",
     "SvTextView.js",
+    "SvRangeView.js",
     "SvBadgeView.js",
     "SvPasswordView.js",
     "coachmarks/_imports.json"
 ]
-

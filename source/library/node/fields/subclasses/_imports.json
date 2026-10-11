@@ -7,6 +7,7 @@
     "SvImageWellField.js",
     "SvImageField.js",
     "SvNumberField.js",
+    "SvSliderField.js",
     "SvPointerField.js",
     "SvJsonField.js",
     "SvArrayField.js",

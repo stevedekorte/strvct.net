@@ -32,7 +32,7 @@
         track.setWidth("100%");
         track.setHeight("6px");
         track.setBorderRadius("3px");
-        track.setBackgroundColor("rgba(255, 255, 255, 0.12)");
+        track.setBackgroundColor("color-mix(in srgb, currentColor 12%, transparent)"); // faint in any theme, light or dark
         track.setMarginTop("0.4em");
         track.setOverflow("hidden");
 

@@ -1,6 +1,7 @@
 [
     "_css.css",
     "SvFieldTile.js",
+    "SvSliderFieldTile.js",
     "SvActionFieldTile.js",
     "SvBooleanFieldTile.js",
     "SvStringFieldTile.js",
