@@ -139,6 +139,7 @@
                 this.htmlStreamReader().endHtmlStream();
             }
             this.shutdownSentenceReader();
+            this.flushNarrationGroup(); // the last sentences: nothing more is coming
         } catch (e) {
             console.error(this.logPrefix ? this.logPrefix() : "[SvAiParsedResponseMessage]",
                 "onStreamEnd finalization threw — completing the message anyway so input doesn't wedge:",
@@ -265,7 +266,7 @@
                         this.playTtsPauseMs(50); // pause for location name
                     }
 
-                    this.voiceNarrateText(speak, this.speakerIdForStreamNode(streamNode)); // null = narrator
+                    this.narrateSentence(speak, this.speakerIdForStreamNode(streamNode)); // null = narrator; grouped with its neighbours
 
                     if (nodeTag !== "sentence") {
                         this.playTtsPauseMs(15);

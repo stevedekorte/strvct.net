@@ -6,9 +6,39 @@
     @extends SvAiParsedResponseMessage
     @description A class for voice narration of AI response messages.
 
+    Sentences are spoken in groups: consecutive sentences by one speaker go
+    out as one speech request (narrateSentence). A generative voice varies
+    from request to request, so fewer, longer requests keep it steadier. The
+    first request is a single sentence so speech starts quickly; each later
+    one may hold one more, up to four. A group plays as one sound, and its
+    sentences are highlighted in turn across it (onSpeakingText per
+    sentence, as before).
+
 */
 
 (class SvAiParsedResponseMessage_voiceNarration extends SvAiParsedResponseMessage {
+
+    initPrototypeSlots_voiceNarration () {
+        {
+            const slot = this.newSlot("narrationGroup", null); // { speakerId, sentences }: waiting to go out as one request
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("narrationGroupCount", 0); // requests sent for this message
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("soundSentences", null); // Map sound -> its sentences, for highlighting
+            slot.setSlotType("Map");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("highlightedSentence", null); // the sentence being spoken now
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+    }
 
     // TODO: make a generic protocol for voice narration, without session and settings dependencies
 
@@ -74,6 +104,7 @@
 
     playTtsPauseMs (ms) {
         assert(Type.isNumber(ms));
+        this.flushNarrationGroup(); // the sentences before the pause go first
         this.voiceNarrateText("<break time=\"" + ms + "ms\"/>");
     }
 
@@ -85,6 +116,8 @@
 
     stopSpeaking () {
         this.setIsDoneSpeaking(true);
+        this.clearTimeoutNamed("narrationGroupFlush");
+        this.setNarrationGroup(null); // not yet requested: never will be
         const controller = this.narrationController();
         if (controller) {
             controller.stopSpeaking();
@@ -146,37 +179,169 @@
         return quote ? speakerOf(quote) : null;
     }
 
+    // --- sentence groups ---
+
+    /**
+     * @description Speaks a sentence, in a group with the sentences around
+     * it by the same speaker: a change of speaker sends the group; so does a
+     * full one, or a pause in the stream.
+     * @param {String} text
+     * @param {String|null} speakerId - null: the narrator
+     * @returns {SvAiParsedResponseMessage}
+     * @category Voice Narration
+     */
+    narrateSentence (text, speakerId = null) {
+        const group = this.narrationGroup();
+        if (group && group.speakerId !== speakerId) {
+            this.flushNarrationGroup();
+        }
+        this.addToNarrationGroup(text, speakerId);
+        if (this.narrationGroupIsFull()) {
+            return this.flushNarrationGroup();
+        }
+        this.addTimeout(() => this.flushNarrationGroup(), this.narrationGroupWaitMs(), "narrationGroupFlush");
+        return this;
+    }
+
+    addToNarrationGroup (text, speakerId) {
+        if (!this.narrationGroup()) {
+            this.setNarrationGroup({ speakerId: speakerId, sentences: [] });
+        }
+        this.narrationGroup().sentences.push(text);
+        return this;
+    }
+
+    /**
+     * @description Whether the waiting group should go now: the first
+     * request is one sentence (speech starts quickly), each later one may
+     * hold one more, up to four, within a length cap.
+     * @returns {Boolean}
+     * @category Voice Narration
+     */
+    narrationGroupIsFull () {
+        const sentences = this.narrationGroup().sentences;
+        const maxSentences = Math.min(this.narrationGroupCount() + 1, 4);
+        return sentences.length >= maxSentences || sentences.join(" ").length >= 500;
+    }
+
+    /**
+     * @description How long a part-filled group waits for the next sentence
+     * before it goes anyway.
+     * @returns {Number} milliseconds
+     * @category Voice Narration
+     */
+    narrationGroupWaitMs () {
+        return 800;
+    }
+
+    /**
+     * @description Sends the waiting group, if any, as one speech request.
+     * @returns {SvAiParsedResponseMessage}
+     * @category Voice Narration
+     */
+    flushNarrationGroup () {
+        this.clearTimeoutNamed("narrationGroupFlush");
+        const group = this.narrationGroup();
+        this.setNarrationGroup(null);
+        if (group && this.shouldVoiceNarrate()) { // narration may have been turned off while it waited
+            this.setNarrationGroupCount(this.narrationGroupCount() + 1);
+            this.voiceNarrateSentences(group.sentences, group.speakerId);
+        }
+        return this;
+    }
+
+    /**
+     * @description Queues sentences as one speech request, remembering them
+     * so they can be highlighted in turn as the sound plays.
+     * @param {Array<String>} sentences
+     * @param {String|null} speakerId
+     * @category Voice Narration
+     */
+    voiceNarrateSentences (sentences, speakerId) {
+        const sound = this.voiceNarrateText(sentences.join(" "), speakerId);
+        if (sound) {
+            this.soundSentencesMap().set(sound, sentences);
+        }
+    }
+
+    soundSentencesMap () {
+        if (!this.soundSentences()) {
+            this.setSoundSentences(new Map());
+        }
+        return this.soundSentences();
+    }
+
     /**
      * @description Queues text for speech. speakerId (may be null = narrator)
      * rides along so the session can choose the voice; the sound and the
      * caption channel are unchanged.
      * @param {String} text
      * @param {String|null} speakerId
+     * @returns {SvWaSound|null} the queued sound
      * @category Voice Narration
      */
     voiceNarrateText (text, speakerId = null) {
         const controller = this.narrationController();
-        if (!controller) { return; }
+        if (!controller) { return null; }
         const sound = controller.queueNarrationSegment(text, speakerId ? { speakerId: speakerId } : undefined);
-        if (!sound) { return; }
+        if (!sound) { return null; }
         // we want to follow when the sound starts/stops playing so we can
         // highlight/unhighlight the text in the chat view
         sound.addDelegate(this);
         sound.setTranscript(text); // so delegate callbacks know which text the audio is for
+        return sound;
     }
 
+    // --- highlighting a sound's sentences in turn ---
+
     onSoundStarted (sound) {
-        //console.log(this.svType() + ".onSoundStarted [" + sound.transcript().clipWithEllipsis(15) + "]");
-        this.onSpeakingText(sound.transcript());
+        const sentences = this.soundSentencesMap().get(sound) || [sound.transcript()];
+        this.highlightSentence(sentences[0]);
+        this.scheduleSentenceHighlights(sentences, 1000 * sound.duration() / (sound.playbackRate() || 1));
+    }
+
+    /**
+     * @description Moves the highlight through a sound's later sentences,
+     * each at its share of the sound by length — speech runs close to
+     * evenly per character.
+     * @param {Array<String>} sentences
+     * @param {Number} durationMs - the sound's playing time
+     * @category Voice Narration
+     */
+    scheduleSentenceHighlights (sentences, durationMs) {
+        const total = sentences.reduce((sum, t) => sum + t.length, 0) || 1;
+        let before = 0;
+        sentences.forEach((text, i) => {
+            if (i > 0) {
+                this.addTimeout(() => this.highlightSentence(text), durationMs * before / total, "sentenceHighlight" + i);
+            }
+            before += text.length;
+        });
+    }
+
+    highlightSentence (text) {
+        this.unhighlightSentence();
+        this.setHighlightedSentence(text);
+        this.onSpeakingText(text);
+    }
+
+    unhighlightSentence () {
+        const text = this.highlightedSentence();
+        if (text !== null) {
+            this.setHighlightedSentence(null);
+            this.onSpokeText(text);
+        }
+    }
+
+    onSoundEnded (sound) {
+        const sentences = this.soundSentencesMap().get(sound) || [];
+        sentences.forEach((text, i) => this.clearTimeoutNamed("sentenceHighlight" + i)); // a sound cut short
+        this.soundSentencesMap().delete(sound);
+        this.unhighlightSentence();
     }
 
     onSpeakingText (text) {
         this.postNoteNamed("onSpeakingText").setInfo(text); //.setIsDebugging(true);
-    }
-
-    onSoundEnded (sound) {
-        //console.log(this.svType() + ".onSoundEnded [" + sound.transcript().clipWithEllipsis(15) + "]");
-        this.onSpokeText(sound.transcript());
     }
 
     onSpokeText (text) {

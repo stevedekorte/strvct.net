@@ -125,7 +125,8 @@
         const tids = this.timeoutNameToIdMap();
         if (tids.has(name)) {
             const tid = tids.get(name);
-            this.clearTimeout(tid);
+            tids.delete(name); // the entry is keyed by name; this.clearTimeout(tid) would only remove a tid-keyed one
+            clearTimeout(tid);
         }
         return this;
     }
