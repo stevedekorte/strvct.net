@@ -60,6 +60,23 @@
             const slot = this.newSlot("setupPromise", null);
             slot.setSlotType("Promise");
         }
+        {
+            const slot = this.newSlot("masterLevel", 1); // the overall level, 0–1
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("channelLevels", null); // Map channel name -> level, 0–1
+            slot.setSlotType("Map");
+        }
+        {
+            const slot = this.newSlot("masterGainNode", null); // every channel passes through it to the speakers
+            slot.setSlotType("GainNode");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("channelGainNodes", null); // Map channel name -> GainNode
+            slot.setSlotType("Map");
+        }
     }
 
     /**
@@ -76,6 +93,84 @@
     init () {
         super.init();
         this.setSetupPromise(Promise.clone());
+        this.setChannelLevels(new Map());
+        this.setChannelGainNodes(new Map());
+    }
+
+    // --- levels: an overall level and one per named channel ---
+
+    /**
+     * @description Where a sound on a channel connects: the channel's gain
+     * (made on first use), which passes through the overall gain to the
+     * speakers. No channel: straight to the overall gain.
+     * @param {String|null} channelName
+     * @returns {AudioNode}
+     * @category Levels
+     */
+    outputNodeForChannel (channelName) {
+        if (!channelName) {
+            return this.masterNode();
+        }
+        if (!this.channelGainNodes().has(channelName)) {
+            const gain = this.audioContext().createGain();
+            gain.gain.value = this.levelForChannel(channelName);
+            gain.connect(this.masterNode());
+            this.channelGainNodes().set(channelName, gain);
+        }
+        return this.channelGainNodes().get(channelName);
+    }
+
+    masterNode () {
+        if (!this.masterGainNode()) {
+            const gain = this.audioContext().createGain();
+            gain.gain.value = this.masterLevel();
+            gain.connect(this.audioContext().destination);
+            this.setMasterGainNode(gain);
+        }
+        return this.masterGainNode();
+    }
+
+    levelForChannel (channelName) {
+        const level = this.channelLevels().get(channelName);
+        return (typeof level === "number") ? level : 1;
+    }
+
+    /**
+     * @description The level a channel actually plays at (its own times the
+     * overall), for audio that cannot pass through these nodes (a player
+     * with its own volume).
+     * @param {String} channelName
+     * @returns {Number}
+     * @category Levels
+     */
+    effectiveLevelForChannel (channelName) {
+        return this.masterLevel() * this.levelForChannel(channelName);
+    }
+
+    didUpdateSlotMasterLevel (/*oldValue, newValue*/) {
+        this.applyLevel(this.masterGainNode(), this.masterLevel());
+        this.postNoteNamed("onAudioLevelsChanged");
+    }
+
+    /**
+     * @description Sets a channel's level (0–1); playing sounds follow at once.
+     * @param {String} channelName
+     * @param {Number} level
+     * @returns {SvWaContext}
+     * @category Levels
+     */
+    setLevelForChannel (channelName, level) {
+        this.channelLevels().set(channelName, level);
+        this.applyLevel(this.channelGainNodes().get(channelName), level);
+        this.postNoteNamed("onAudioLevelsChanged");
+        return this;
+    }
+
+    applyLevel (gainNode, level) {
+        if (gainNode) {
+            gainNode.gain.setTargetAtTime(level, gainNode.context.currentTime, 0.02); // a short glide, no click
+        }
+        return this;
     }
 
     /**

@@ -71,6 +71,11 @@
      * from its start on resume.
      */
         {
+            const slot = this.newSlot("channelName", null); // the channel for queued sounds that name none (SvWaContext)
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+        {
             const slot = this.newSlot("isPaused", false);
             slot.setSlotType("Boolean");
         }
@@ -202,6 +207,12 @@
         assert(sound.stop);
         assert(sound.addDelegate);
         assert(sound.removeDelegate);
+
+        // a sound that names no channel plays on the queue's (an effect queued
+        // beside narration keeps its own)
+        if (sound.setChannelName && !sound.channelName() && this.channelName()) {
+            sound.setChannelName(this.channelName());
+        }
 
         //console.log(this.svType() + " PUSH " + sound.description());
         this.queue().push(sound);

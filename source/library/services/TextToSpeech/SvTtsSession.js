@@ -260,7 +260,7 @@
         super.init();
         this.setTtsRequestQueue([]);
         this.setInFlightRequests(new Set());
-        this.setAudioQueue(SvAudioQueue.clone());
+        this.setAudioQueue(SvAudioQueue.clone().setChannelName("speech")); // its own level (SvWaContext)
         return this;
     }
 

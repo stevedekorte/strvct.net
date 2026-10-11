@@ -178,6 +178,19 @@
         }
 
         /**
+         * @member channelName
+         * @description the SvWaContext channel this sound plays through
+         * ("speech", "ambient", "effects", ...), whose level the listener
+         * sets; null plays straight through the overall level.
+         * @type {String}
+         */
+        {
+            const slot = this.newSlot("channelName", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
          * @member gainNode
          * @description the current playback's GainNode, so the volume can
          * change while it plays (rampVolumeTo); null when not playing.
@@ -528,7 +541,7 @@
         const gain = ctx.createGain();
         gain.gain.value = this.volume();
         source.connect(gain);
-        gain.connect(ctx.destination);
+        gain.connect(SvWaContext.shared().outputNodeForChannel(this.channelName())); // its channel, then the overall level
         this.setGainNode(gain);
         this.syncToSource(source);
         source.addEventListener("ended", (event) => {
