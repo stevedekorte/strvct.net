@@ -51,12 +51,20 @@
     }
 
     /**
-     * @description Returns speakable elements.
+     * @description Returns speakable elements — none once the value view's
+     * element is gone. Speech notes (onSpeakingText, onSpokeText) are queued
+     * and delivered later, so one can reach a tile whose pane has just closed
+     * and retired its views; seen intermittently on a phone switching tabs
+     * while narration spoke (2026-10-10).
      * @returns {Array} An array of speakable elements.
      * @category Speech
      */
     speakableElements () {
-        return this.valueView().element().elementsOfTags(this.node().tagsToSpeak());
+        const e = this.valueView() ? this.valueView().element() : null;
+        if (!e || !this.node()) {
+            return [];
+        }
+        return e.elementsOfTags(this.node().tagsToSpeak());
     }
 
     /**
