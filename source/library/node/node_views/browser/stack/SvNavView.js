@@ -468,8 +468,18 @@
         return null;
     }
 
+    /**
+     * @description The node whose subnodes this column shows (SvViewableNode.nodePresentedNode).
+     * @param {SvNode} aNode
+     * @returns {SvNode}
+     * @category Node Management
+     */
+    presentedNodeFor (aNode) {
+        return (aNode && aNode.nodePresentedNode) ? (aNode.nodePresentedNode() || aNode) : aNode;
+    }
+
     shouldCurrentlyFillAvailble () {
-        const node = this.node();
+        const node = this.presentedNodeFor(this.node());
         if (node) {
             // an inline document (Plans/Inline Navigation) takes the room it
             // is given: its sections flow into as many columns as fit
@@ -610,7 +620,7 @@
      */
     setNode (aNode) {
         super.setNode(aNode);
-        this.tilesView().setNode(aNode);
+        this.tilesView().setNode(this.presentedNodeFor(aNode)); // the node may present another in its place
 
         if (aNode.headerNode) {
             this.headerView().setNode(aNode.headerNode());

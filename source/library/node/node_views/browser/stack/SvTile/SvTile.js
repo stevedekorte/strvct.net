@@ -653,16 +653,19 @@
     }
 
     /**
-     * @description Marks a tile whose node — or the node it links to — is an
-     * empty collection; an inline document hides such rows. A class from the
-     * model, so nothing is measured.
+     * @description Marks a tile whose node — or, for a pointer field, the
+     * value it points at — is an empty collection; an inline document hides
+     * such rows ("Cantrips: None"). An explicit link (an SvLinkNode, a row
+     * that opens something) is never marked: an empty assistant conversation
+     * is still somewhere to go. A class from the model, so nothing is
+     * measured.
      * @returns {SvTile}
      * @category Inline
      */
     syncEmptyCollectionMark () {
         const node = this.node();
-        const link = node.nodeTileLink ? node.nodeTileLink() : null;
-        const target = link || node;
+        const isPointerField = typeof SvPointerField !== "undefined" && node.isKindOf(SvPointerField);
+        const target = (isPointerField && node.nodeTileLink()) || node;
         const isEmpty = !!(target.nodeIsEmptyCollection && target.nodeIsEmptyCollection());
         this.element().classList.toggle("SvTileEmptyCollection", isEmpty);
         return this;

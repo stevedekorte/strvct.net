@@ -144,13 +144,15 @@
     navigatePastInline (tile) {
         const node = tile.node ? tile.node() : null;
         const target = node ? SvInlineSectionTile.inlineTargetOf(node) : null;
-        if (!target || target.subnodeCount() === 0 || tile.isKindOf(SvInlineSectionTile)) {
+        const opensSomething = target && (target !== node || target.subnodeCount() > 0); // a link opens its target, even an empty one
+        if (!opensSomething || tile.isKindOf(SvInlineSectionTile)) {
             return this;
         }
         const route = this.inlineRouteTo(tile);
         const browser = this.firstParentViewWithAncestorClass(SvBrowserView);
         const current = browser ? browser.stackView().selectedNodePathArray() : [];
-        const at = current.indexOf(route.document.node());
+        const stack = route.document.stackView();
+        const at = current.indexOf(stack ? stack.node() : route.document.node()); // the column's node, which may present the document
         if (at !== -1) {
             // the browser's path to the document, then the route inside it;
             // selectPathWithRetry fills the deeper columns as they appear

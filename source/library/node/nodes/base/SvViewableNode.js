@@ -451,6 +451,18 @@
     }
 
     /**
+     * @description The node whose subnodes this node's column shows: this
+     * node itself, by default. A node may present another in its place — a
+     * character presents its sheet, a readable document built from it — while
+     * it stays the node on the navigation path.
+     * @returns {SvNode}
+     * @category Layout
+     */
+    nodePresentedNode () {
+        return this;
+    }
+
+    /**
      * @description Whether this node is a collection with nothing in it. An
      * inline document leaves such rows out ("Cantrips: None" is noise in a
      * sheet); a column still lists them, so they can be opened and filled.
