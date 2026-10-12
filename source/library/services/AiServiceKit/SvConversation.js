@@ -432,6 +432,35 @@
    * @returns {*} A new message instance.
    * @category Data Manipulation
    */
+    /**
+   * @description Adds a message, stamping when it joined the conversation
+   * (its timestamp) if it has none — how long a conversation sat idle is
+   * read from these (lastActivityTime, and the gaps between messages).
+   * Loaded messages keep what they stored; ones from before stamping have
+   * none.
+   * @param {SvConversationMessage} aMessage
+   * @param {Number} anIndex
+   * @returns {SvConversationMessage}
+   * @category Data Manipulation
+   */
+    addSubnodeAt (aMessage, anIndex) {
+        if (aMessage.timestamp && aMessage.timestamp() === null) {
+            aMessage.setTimestamp(Date.now());
+        }
+        return super.addSubnodeAt(aMessage, anIndex);
+    }
+
+    /**
+   * @description When the conversation was last active: its latest message
+   * timestamp, or null when no message has one.
+   * @returns {Number|null} ms since the epoch
+   * @category Data Manipulation
+   */
+    lastActivityTime () {
+        const stamps = this.messages().map(m => (m.timestamp ? m.timestamp() : null)).filter(t => Type.isNumber(t));
+        return stamps.length > 0 ? Math.max(...stamps) : null;
+    }
+
     newMessageOfClass (msgClass) {
         const m = msgClass.clone();
         m.setConversation(this);

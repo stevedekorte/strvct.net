@@ -1067,8 +1067,10 @@
     composeJsonHistory (messages, options = {}) {
         const history = this.history();
         const newestBlock = (history && history.newestBlock) ? history.newestBlock() : null;
+        const gapNotes = this.gapNotesForMessages(messages);
+        const jsonFor = (m) => this.messagesJsonWithGapNote(m, gapNotes.get(m));
         if (!newestBlock) {
-            return messages.map(m => m.messagesJson()); // nothing filed yet
+            return messages.map(jsonFor); // nothing filed yet
         }
         const inlineBlockId = options.collapseNewestBlock ? null : newestBlock.jsonId();
         const emittedBlockIds = new Set();
@@ -1085,9 +1087,71 @@
                 }
                 return; // superseded episode — collapsed into its marker
             }
-            out.push(m.messagesJson());
+            out.push(jsonFor(m));
         });
         return out;
+    }
+
+    // --- gaps in time ---
+
+    /**
+   * @description How long the conversation must sit idle before the next
+   * user message carries a note of the gap.
+   * @returns {Number} ms
+   * @category History
+   */
+    gapNoteThresholdMs () {
+        return 6 * 60 * 60 * 1000;
+    }
+
+    /**
+   * @description The user messages that follow a long idle gap, each with
+   * its note ("[Resumed after 12 days]"), so the AI knows time has passed —
+   * the player may have forgotten where things stood, and the state may have
+   * changed outside the conversation. Derived from stored timestamps, so a
+   * request composes the same way every time (prompt caching holds).
+   * @param {Array} messages - The visible message nodes, in order.
+   * @returns {Map} message -> note
+   * @category History
+   */
+    gapNotesForMessages (messages) {
+        const notes = new Map();
+        let lastTime = null;
+        messages.forEach(m => {
+            const time = m.timestamp ? m.timestamp() : null;
+            if (!Type.isNumber(time)) {
+                return;
+            }
+            if (lastTime !== null && m.role() === "user" && time - lastTime >= this.gapNoteThresholdMs()) {
+                notes.set(m, "[Resumed after " + this.descriptionOfGapMs(time - lastTime) + "]");
+            }
+            lastTime = time;
+        });
+        return notes;
+    }
+
+    descriptionOfGapMs (ms) {
+        const hours = Math.round(ms / (60 * 60 * 1000));
+        if (hours < 48) {
+            return hours + " hours";
+        }
+        return Math.round(hours / 24) + " days";
+    }
+
+    /**
+   * @description A message's request dict, its text led by a gap note when
+   * it has one (text content only; other content goes as it is).
+   * @param {SvConversationMessage} m
+   * @param {String|undefined} note
+   * @returns {Object}
+   * @category History
+   */
+    messagesJsonWithGapNote (m, note) {
+        const json = m.messagesJson();
+        if (note && json && Type.isString(json.content)) {
+            return Object.assign({}, json, { content: note + "\n" + json.content });
+        }
+        return json;
     }
 
     /**
