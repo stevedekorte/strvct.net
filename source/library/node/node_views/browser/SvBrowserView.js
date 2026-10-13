@@ -821,6 +821,12 @@
             this.scheduleMethodForNextCycle("trySelectPendingPath");
         } else {
             this._pendingSelectPath = null;
+            // Selecting a path selects tiles without tapping them, so nothing
+            // has announced the new path: the breadcrumbs and the app's URL
+            // would keep the old one (a tile opened from inside an inline
+            // document never appeared in either). Announce it as a tap does;
+            // an unchanged path posts nothing.
+            this.stackView().didChangeNavSelection();
         }
         return this;
     }
