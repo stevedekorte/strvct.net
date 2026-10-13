@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="700px" height="290px" viewBox="-1 -1 702 292" role="img" aria-labelledby="title desc">
+  <title id="title">Anchored Tabs (Wide)</title>
+  <desc id="desc">A row of tabs A to E over three side-by-side panes. Open tabs A, C and E each sit at the top left of their own pane; closed tabs B and D sit at the right end of the segment before the next open tab. Tab A is pinned. Draggable dividers separate the panes, and each pane has a pin control.</desc>
+  <defs/>
+  <g fill="none" stroke="#000000" stroke-width="1" vector-effect="non-scaling-stroke">
+    <rect x="0" y="0" width="700" height="290"/>
+    <rect x="0" y="0" width="700" height="30"/>
+    <line x1="0" y1="60" x2="700" y2="60"/>
+    <rect x="0" y="60" width="240" height="230"/>
+    <path d="M8 60 L8 34 L78 34 L78 60"/>
+    <line x1="18" y1="56" x2="68" y2="56" stroke-width="2"/>
+    <rect x="182" y="38" width="50" height="20" stroke-dasharray="3 3"/>
+    <rect x="220" y="68" width="12" height="12"/>
+    <rect x="240" y="60" width="230" height="230"/>
+    <path d="M248 60 L248 34 L318 34 L318 60"/>
+    <rect x="412" y="38" width="50" height="20" stroke-dasharray="3 3"/>
+    <rect x="450" y="68" width="12" height="12"/>
+    <rect x="470" y="60" width="230" height="230"/>
+    <path d="M478 60 L478 34 L548 34 L548 60"/>
+    <rect x="680" y="68" width="12" height="12"/>
+    <rect x="0" y="60" width="110" height="230" stroke-dasharray="3 3"/>
+    <rect x="10" y="90" width="90" height="30"/>
+    <rect x="10" y="130" width="90" height="30"/>
+    <rect x="10" y="170" width="90" height="30"/>
+    <rect x="120" y="90" width="110" height="190"/>
+    <rect x="250" y="90" width="210" height="190"/>
+    <rect x="480" y="90" width="200" height="30"/>
+    <rect x="480" y="130" width="200" height="30"/>
+    <rect x="480" y="170" width="200" height="30"/>
+    <rect x="480" y="210" width="200" height="30"/>
+    <rect x="236" y="150" width="8" height="50"/>
+    <rect x="466" y="150" width="8" height="50"/>
+  </g>
+
+  <g fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+    <text x="350.0" y="19">Breadcrumbs</text>
+    <text x="43.0" y="51">A ◆</text>
+    <text x="207.0" y="52">B</text>
+    <text x="226" y="78" font-size="8px">◆</text>
+    <text x="283.0" y="51">C</text>
+    <text x="437.0" y="52">D</text>
+    <text x="456" y="78" font-size="8px">◆</text>
+    <text x="513.0" y="51">E</text>
+    <text x="686" y="78" font-size="8px">◆</text>
+    <text x="55.0" y="109.0">a1</text>
+    <text x="175" y="190">Detail View</text>
+    <text x="355" y="190">Detail View</text>
+    <text x="580.0" y="109.0">e1</text>
+  </g>
+</svg>

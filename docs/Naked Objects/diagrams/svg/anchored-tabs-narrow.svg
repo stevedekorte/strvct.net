@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="260px" height="290px" viewBox="-1 -1 262 292" role="img" aria-labelledby="title desc">
+  <title id="title">Anchored Tabs (Narrow)</title>
+  <desc id="desc">The same tab row on a phone: only one pane fits, so the row behaves like ordinary tabs. Tab C is open over the single pane; the other tabs are closed and the row scrolls horizontally.</desc>
+  <defs/>
+  <g fill="none" stroke="#000000" stroke-width="1" vector-effect="non-scaling-stroke">
+    <rect x="0" y="0" width="260" height="290"/>
+    <rect x="0" y="0" width="260" height="30"/>
+    <line x1="0" y1="60" x2="260" y2="60"/>
+    <rect x="6" y="38" width="40" height="20" stroke-dasharray="3 3"/>
+    <rect x="52" y="38" width="34" height="20" stroke-dasharray="3 3"/>
+    <path d="M92 60 L92 34 L148 34 L148 60"/>
+    <rect x="154" y="38" width="34" height="20" stroke-dasharray="3 3"/>
+    <rect x="194" y="38" width="34" height="20" stroke-dasharray="3 3"/>
+    <rect x="0" y="60" width="260" height="230"/>
+    <rect x="240" y="68" width="12" height="12"/>
+    <rect x="10" y="90" width="240" height="190"/>
+  </g>
+
+  <g fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+    <text x="130.0" y="19">Breadcrumbs</text>
+    <text x="26.0" y="52">A ◆</text>
+    <text x="69.0" y="52">B</text>
+    <text x="120.0" y="51">C</text>
+    <text x="171.0" y="52">D</text>
+    <text x="211.0" y="52">E</text>
+    <text x="250" y="51">›</text>
+    <text x="246" y="78" font-size="8px">◆</text>
+    <text x="130.0" y="190">Detail View</text>
+  </g>
+</svg>

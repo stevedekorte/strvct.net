@@ -177,7 +177,7 @@ This is a deliberate trade-off. Refusing arbitrary layouts buys consistency, res
 
 ## 4. Approach: Graph Navigation and Semantic Projection
 
-Strvct's UI approach has two layers. The first is implemented today: tiles, tile stacks, and recursive master-detail views derive navigation, inspection, ordered collections, and feed-like rich-item sequences from the model graph. The second is a disciplined direction for expansion: let the same detail browser render inline, resolve its children dynamically for the current context, and align equivalent children across siblings. Value-to-space mapping remains a separate proposed layer. Keeping their status distinct matters; the production case study validates the first layer, not these extensions.
+Strvct's UI approach has two layers. The first is implemented today: tiles, tile stacks, and recursive master-detail views derive navigation, inspection, ordered collections, and feed-like rich-item sequences from the model graph. The second is a disciplined direction for expansion: let the same detail browser render inline, resolve its children dynamically for the current context, and align equivalent children across siblings. Value-to-space mapping remains a separate proposed layer. Keeping their status distinct matters; the production case study validates the first layer, not these extensions. Two bounded forms of inline placement, anchored tabs and document inlining (§4.6), have since been built and are in production use; cross-sibling alignment and the forms that depend on it remain proposals.
 
 | Concept | Unifies |
 | --- | --- |
@@ -325,7 +325,80 @@ Value-to-space views remain different. A timeline, for example, positions an ite
 
 The framework—not the model—must remain responsible for viewport decisions, gesture mechanics, and concrete rendering. The model may declare semantic mappings and presentation hints; the view layer decides how they become pixels on a particular platform. This preserves the naked-objects boundary and keeps the same application runnable under web, terminal, or headless user interfaces.
 
-### 4.6 Runtime Objects Built from Nodes (Proposed)
+Two bounded forms of this placement policy are now built and used in production; §4.6 describes them.
+
+### 4.6 Anchor Tabs and Document Inlining
+
+The `inline` placement of §4.5 is a general proposal. Two narrower forms of it now exist in Strvct, each adopted where the column grammar proved awkward in the case study. Both lay out the same subtree with the same tiles. They differ in how many levels appear in place, and in who chooses them:
+
+| Layout | Levels shown in place | Who chooses what is shown | Choosing a tile |
+| --- | --- | --- | --- |
+| Column (default) | none; one level per column | the user, by navigating | opens the next column |
+| Anchored tabs | one: the selected children, side by side | the user, interactively, within the width available | opens within that child's pane |
+| Document inline | several, as nested sections | the model, by hint | focuses or edits in place; navigation resumes below the inlined depth |
+
+<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
+    Three Layouts of One Subtree
+  </div>
+  <object type="image/svg+xml" data="diagrams/svg/layouts-compared.svg" style="display: block; margin: 0 auto; max-width: 600px; width: 90%;">[SVG diagram]</object>
+</div>
+
+**Anchor tabs: interactive, partial inlining.** A node that answers `nodeSubnodesAreAnchoredTabs()` presents its children as one row of tabs. Every *open* tab sits at the top-left of its own pane, and the panes lie side by side in tab order. The user chooses which children are open and may pin them; the available width decides how many fit. On a phone, the row degrades to ordinary tabs with one pane. On a wide screen, the same row fans out into several panes. This is partial inlining: of the children that would otherwise be reached one at a time in the next column, the user-selected subset is rendered in place at once. Each pane is a full detail view, so traversal inside it continues by the ordinary column grammar, scoped to that pane. The model contributes only semantic hints:
+- `nodeAnchoredTabNodes()` says which children are tabs, so internal bookkeeping nodes never become tabs.
+- `nodeAnchoredTabKey()` gives a stable identity under which a user's pins persist across reloads and devices.
+- `nodeTabPinPreference()` suggests a default, which the user's own choice overrides.
+- A child that is not currently applicable hides itself through its ordinary visibility. In the case study, the game session's Me tab appears only once a character is chosen, and the Party tab only when the party has more than one member.
+
+The view layer owns pane widths, which panes fit, dividers, and pinning. No tab is privileged, so the primary context (the session's narration) is a peer of the others, not a special column.
+
+<div style="max-width: 600px; margin: 0 auto;">
+  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
+    Anchored Tabs: Wide
+  </div>
+  <object type="image/svg+xml" data="diagrams/svg/anchored-tabs-wide.svg" style="display: block; width: 100%; height: auto;">[SVG diagram]</object>
+</div>
+<br>
+
+<div style="max-width: 240px; margin: 0 auto;">
+  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
+    Anchored Tabs: Narrow
+  </div>
+  <object type="image/svg+xml" data="diagrams/svg/anchored-tabs-narrow.svg" style="display: block; width: 100%; height: auto;">[SVG diagram]</object>
+</div>
+<br>
+
+Anchor tabs subsumed the companion view of §4.8 in the case study. A companion pairs one primary context with *one* secondary node. Anchored tabs let any number of sibling contexts sit side by side under the node that owns them, with one width-arbitration rule instead of two. The companion mechanism remains in the framework for cases that need exactly one docked secondary context.
+
+**Document inlining: model-chosen, multi-level inlining.** A node that answers `nodeChildrenLayout()` with `"inline"` is read as a document, not navigated. Its children become sections, each headed by its title, with its own children shown in place beneath. Successive levels nest to `nodeInlineDepth()`. The framework flows these sections responsively:
+- **Columns.** Sections flow in CSS columns sized from the existing `nodeMinTileWidth` hint, newspaper-style, or in rows with `nodeInlineFlow()` set to `"rows"`. `nodeInlineMaxColumns()` caps the column count, so wide screens widen the columns instead of adding empty ones.
+- **Spans.** A section may span every column with `nodeSpansInlineColumns()`, as a header or status strip would.
+- **Opting out.** A heavy subtree, such as a long spell list, declines inlining with `nodeIsInlined()` and remains an ordinary navigable tile.
+- **Empty collections.** Inline documents leave out empty collections (`nodeIsEmptyCollection()`). A column still lists them, because there they are places to add things; in a document they are noise.
+
+<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
+    Inline Document
+  </div>
+  <object type="image/svg+xml" data="diagrams/svg/inline-document.svg" style="display: block; margin: 0 auto; max-width: 600px; width: 90%;">[SVG diagram]</object>
+</div>
+
+Taps inside a document focus and edit fields in place but never navigate. Past the inlined levels, traversal resumes exactly as before: in the next column, or in the current pane inside anchored tabs. The three layouts therefore compose. A document can sit in an anchored pane, and a tile in the document can open into the column grammar.
+
+**A node presented as another node.** Document inlining needed one further mechanism. A domain object's natural structure is not always its most readable one. A character's subnodes follow its schema: ability scores, skills, inventory, spellcasting. A character *sheet* groups the same facts by how a player reads them. Rather than write a custom view, a node may answer `nodePresentedNode()` with another node whose children the column shows in its place. The character stays the node on the navigation path; its column shows a derived sheet node, rebuilt when the character changes and laid out inline. In the case study this replaced a bespoke character-sheet design with roughly the same visual result, built entirely from tiles, sections, and hints. The derived sheet shows the character in every context where it appears: the player's character list, the session's Me and Party tabs, and beside its assistant.
+
+<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
+    Presented Node
+  </div>
+  <object type="image/svg+xml" data="diagrams/svg/presented-node.svg" style="display: block; margin: 0 auto; max-width: 600px; width: 90%;">[SVG diagram]</object>
+</div>
+
+One limitation surfaced. In version 1, sheet rows are derived lines rather than the character's own nodes. A node has exactly one parent, so a spell cannot be both a child of the character and a row in a sheet section. Editing such a projection in place requires a way to show a node without taking ownership of it. That is the next framework question this work raises. It is the same requirement that context-resolved child descriptors (§4.5) would impose on tables.
+
+These two forms test the §4.5 hypothesis only partially. Neither aligns equivalent children across siblings, so neither yet produces a table or kanban board. Both confirm the cheaper part of the claim: in-place placement can be added as a per-node layout role over the existing tiles, synchronization, editing, and theming, without a second child-rendering path and without the model referencing a view.
+
+### 4.7 Runtime Objects Built from Nodes (Proposed)
 
 Inline matrices expose a more general possibility. A row need not be an instance of a statically declared JavaScript class. It can be a runtime object whose explicit child nodes provide both state and behavior:
 
@@ -349,7 +422,7 @@ This makes spreadsheet formulas methods on actual row objects. Column position i
 
 The result is broader than spreadsheets: structure and behavior can both be assembled dynamically from persistent, inspectable nodes while participating in the normal Strvct messaging and navigation protocols. Presentation is one consumer of this runtime object graph, not its definition.
 
-### 4.7 Companion Views: Preserving Secondary Context
+### 4.8 Companion Views: Preserving Secondary Context
 
 Relationship traversal usually advances one selected path through the object graph. Some tasks also need a second context to remain available while that path changes: a conversation beside a session, an inspector beside an editor, reference material beside a document, or guidance beside a workflow.
 
@@ -365,9 +438,9 @@ This is a semantic relationship, not a layout instruction. The model names the s
 
 By default the companion node receives its own embedded `SvBrowserView`, with isolated navigation and breadcrumbs, so following a relationship inside the companion does not disturb the application's primary path. A node may instead resolve to a specialized view through the ordinary node-view protocol. Companion View therefore demonstrates a bounded form of **hybrid view composition already present in Strvct**: generated navigation and responsive arbitration can contain either another generated object browser or an irreducibly custom representation without creating a parallel application shell.
 
-Companions are not a third peer to graph traversal and collection projection. They are a composition rule: preserve one secondary node context beside the current traversal while the framework continues to own placement, responsiveness, and navigation isolation.
+Companions are not a third peer to graph traversal and collection projection. They are a composition rule: preserve one secondary node context beside the current traversal while the framework continues to own placement, responsiveness, and navigation isolation. In the case study the companion has since been superseded by anchored tabs (§4.6), which generalize it from one secondary context to any number of sibling contexts; the mechanism remains in the framework.
 
-### 4.8 Examples
+### 4.9 Examples
 
 We decompose four widely-used applications into their constituent views:
 
@@ -644,7 +717,7 @@ This suits exploratory or fast-evolving applications: tools for analysis, resear
 
 *Scope.* The approach suits informational and navigational interfaces: browsing, editing, and managing structured data. Inherently graphical interfaces — data visualizations, design canvases, game renderers, timeline editors — need domain-specific rendering and fall outside the auto-generation pipeline. Strvct supports custom view classes for these, but each is a return to the costs the approach was meant to eliminate.
 
-*Composition maturity.* Strvct's recursive master-detail grammar is implemented and production-tested. Inline detail placement, context-resolved child descriptors, cross-sibling alignment, value-to-space mapping, and runtime node-built objects described in §3 and §4 are proposals. Until they exist as framework-level behavior, the coverage gains argued here remain hypotheses rather than results.
+*Composition maturity.* Strvct's recursive master-detail grammar is implemented and production-tested, as are two bounded forms of inline placement, anchored tabs and document inlining (§4.6). General inline detail placement, context-resolved child descriptors, cross-sibling alignment, value-to-space mapping, and runtime node-built objects described in §3 and §4 are proposals. Until they exist as framework-level behavior, the coverage gains argued here remain hypotheses rather than results.
 
 *Locale.* The spatial conventions we rely on reflect Western reading order. Right-to-left layouts are within the framework's flexbox-based rendering but not validated end-to-end.
 
@@ -660,7 +733,7 @@ This suits exploratory or fast-evolving applications: tools for analysis, resear
 
 ### Future Directions
 
-*Implement inline detail composition first.* Reuse the existing detail browser inside a parent tile, with bounded inline depth and per-level orientation. Then add context-resolved child visibility and ordering plus cross-sibling alignment. Test whether trees, grouped lists, kanban boards, tables, and basic spreadsheets emerge from these constraints before adding named widget classes.
+*Extend inline composition beyond documents.* Document inlining (§4.6) already reuses tiles in place with bounded depth and responsive flow; the next steps are per-level orientation and projections that show a node without taking ownership of it. Then add context-resolved child visibility and ordering plus cross-sibling alignment. Test whether trees, grouped lists, kanban boards, tables, and basic spreadsheets emerge from these constraints before adding named widget classes.
 
 *Prototype runtime node-built objects.* Define stable message keys and an `activate(args)` protocol for value and method nodes, then adapt them through a message proxy. A spreadsheet is a useful stress case because it exercises dynamic structure, named formulas, computation, inline editing, and drill-down inspection. The execution model must address authority, isolation, caching, dependency tracking, errors, and asynchronous methods before it can safely host user-authored code.
 
