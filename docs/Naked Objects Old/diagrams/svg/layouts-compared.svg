@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="700px" height="230px" viewBox="-1 -1 702 232" role="img" aria-labelledby="title desc">
+  <title id="title">Three Layouts of One Subtree</title>
+  <desc id="desc">The same node, with subnodes A, B and C where B has subnodes b1 and b2, laid out three ways: as columns (B opens the next column), as anchored tabs (A and B open side by side under their tabs), and as an inline document (A, B and C as sections in place).</desc>
+  <defs/>
+  <g fill="none" stroke="#000000" stroke-width="1" vector-effect="non-scaling-stroke">
+    <rect x="0" y="24" width="222" height="206"/>
+    <rect x="239" y="24" width="222" height="206"/>
+    <rect x="478" y="24" width="222" height="206"/>
+    <rect x="0" y="24" width="100" height="206" stroke-dasharray="3 3"/>
+    <rect x="10" y="34" width="80" height="26"/>
+    <rect x="10" y="68" width="80" height="26"/>
+    <rect x="10" y="102" width="80" height="26"/>
+    <rect x="100" y="24" width="122" height="206" stroke-dasharray="3 3"/>
+    <rect x="110" y="34" width="102" height="26"/>
+    <rect x="110" y="68" width="102" height="26"/>
+    <line x1="239" y1="54" x2="461" y2="54"/>
+    <path d="M245 54 L245 28 L285 28 L285 54"/>
+    <path d="M356 54 L356 28 L396 28 L396 54"/>
+    <rect x="409" y="32" width="40" height="20" stroke-dasharray="3 3"/>
+    <line x1="350" y1="54" x2="350" y2="230"/>
+    <rect x="247" y="64" width="95" height="156"/>
+    <rect x="358" y="64" width="95" height="26"/>
+    <rect x="358" y="98" width="95" height="26"/>
+    <line x1="488" y1="49" x2="583" y2="49"/>
+    <rect x="488" y="56" width="95" height="18"/>
+    <rect x="488" y="80" width="95" height="18"/>
+    <line x1="488" y1="127" x2="583" y2="127"/>
+    <rect x="488" y="134" width="95" height="18"/>
+    <line x1="595" y1="49" x2="690" y2="49"/>
+    <rect x="595" y="56" width="95" height="18"/>
+    <rect x="595" y="80" width="95" height="18"/>
+  </g>
+
+  <g fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+    <text x="111.0" y="14">Column</text>
+    <text x="350.0" y="14">Anchored Tabs</text>
+    <text x="589.0" y="14">Inline Document</text>
+    <text x="50.0" y="51.0">A</text>
+    <text x="50.0" y="85.0">B ›</text>
+    <text x="50.0" y="119.0">C</text>
+    <text x="161.0" y="51.0">b1</text>
+    <text x="161.0" y="85.0">b2</text>
+    <text x="265.0" y="45">A</text>
+    <text x="376.0" y="45">B</text>
+    <text x="429.0" y="46">C</text>
+    <text x="294.5" y="150">A</text>
+    <text x="405.5" y="81.0">b1</text>
+    <text x="405.5" y="115.0">b2</text>
+    <text x="488" y="44" text-anchor="start" font-weight="bold">A</text>
+    <text x="488" y="122" text-anchor="start" font-weight="bold">C</text>
+    <text x="595" y="44" text-anchor="start" font-weight="bold">B</text>
+    <text x="603" y="69" text-anchor="start">b1</text>
+    <text x="603" y="93" text-anchor="start">b2</text>
+  </g>
+</svg>
