@@ -9,7 +9,8 @@
  * @extends SvTile
  * @classdesc A section of an inline document (Plans/Inline Navigation): a
  * subnode shown in place rather than as a tile that opens the next column.
- * A heading from the node's title, then a nested tiles view of its subnodes
+ * A heading from the node's title (with the node's nodeInlineHeadingNote at
+ * its right, if any), then a nested tiles view of its subnodes
  * — each an ordinary tile, or a section of its own while the document's
  * inline depth allows.
  *
@@ -100,27 +101,51 @@
                 background-color: transparent !important;
                 padding: 0 !important;
             }
-            .SvInlineSectionHeading:empty {
-                display: none; /* an untitled group: its rows follow the section's own heading */
+            .SvInlineSectionHead:has(> .SvInlineSectionHeading:empty) {
+                display: none !important; /* an untitled group: its rows follow the section's own heading */
+            }
+            .SvInlineSectionHead {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: baseline !important;
+                justify-content: space-between;
+                gap: 12px;
+                padding: 0 0 8px 0;
+                border-bottom: 1px solid var(--sv-inline-heading-rule);
             }
             .SvInlineSectionHeading {
+                flex: 1 1 auto;
+                min-width: 0;
                 font-size: var(--sv-inline-heading-font-size);
                 letter-spacing: var(--sv-inline-heading-tracking);
                 text-transform: uppercase;
                 font-weight: 500;
                 color: var(--sv-inline-heading-color);
-                padding: 0 0 8px 0;
-                border-bottom: 1px solid var(--sv-inline-heading-rule);
                 white-space: normal;
+            }
+            .SvInlineSectionNote:empty {
+                display: none;
+            }
+            .SvInlineSectionNote {
+                flex: 0 1 auto;
+                text-align: right;
+                white-space: nowrap;
+                font-size: var(--sv-inline-heading-font-size);
+                color: var(--sv-inline-heading-color);
+            }
+            .SvInlineNested .SvInlineSectionNote {
+                color: var(--sv-inline-group-heading-color);
             }
             .SvInlineNested .SvInlineSection {
                 margin-bottom: 4px;
             }
-            .SvInlineNested .SvInlineSectionHeading {
+            .SvInlineNested .SvInlineSectionHead {
                 border-bottom: none;
+                padding: 14px 0 2px 0;
+            }
+            .SvInlineNested .SvInlineSectionHeading {
                 color: var(--sv-inline-group-heading-color);
                 font-size: calc(var(--sv-inline-heading-font-size) - 1px);
-                padding: 14px 0 2px 0;
             }
             .SvInlineNested {
                 display: flex !important;
@@ -242,6 +267,11 @@
             slot.setAllowsNullValue(true);
         }
         {
+            const slot = this.newSlot("headingNoteView", null); // the node's nodeInlineHeadingNote, at the heading's right
+            slot.setSlotType("SvTextView");
+            slot.setAllowsNullValue(true);
+        }
+        {
             const slot = this.newSlot("sectionTilesView", null); // the section's subnodes, in place
             slot.setSlotType("SvTilesView");
             slot.setAllowsNullValue(true);
@@ -260,11 +290,18 @@
     }
 
     setupHeadingView () {
+        const head = SvDomView.clone();
+        head.element().classList.add("SvInlineSectionHead");
         const heading = SvTextView.clone();
         heading.element().classList.add("SvInlineSectionHeading");
         heading.setAriaRole("heading");
+        const note = SvTextView.clone();
+        note.element().classList.add("SvInlineSectionNote");
+        head.addSubview(heading);
+        head.addSubview(note);
         this.setHeadingView(heading);
-        this.addContentSubview(heading);
+        this.setHeadingNoteView(note);
+        this.addContentSubview(head);
         return this;
     }
 
@@ -294,6 +331,7 @@
             return this;
         }
         this.headingView().setString(node.translatedValueOfSlotNamed ? node.translatedValueOfSlotNamed("title") : node.title());
+        this.headingNoteView().setString((node.nodeInlineHeadingNote && node.nodeInlineHeadingNote()) || "");
         this.element().classList.toggle("SvInlineSpans", !!(node.nodeSpansInlineColumns && node.nodeSpansInlineColumns()));
         this.syncSectionTilesView();
         return this;

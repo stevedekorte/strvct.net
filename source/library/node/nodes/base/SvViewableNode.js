@@ -428,6 +428,17 @@
     }
 
     /**
+     * @description As a section of an inline document: a short note shown
+     * at the right of its heading ("3 of 4 left"), as a row shows its note
+     * at the right of its title. None by default.
+     * @returns {String|null}
+     * @category Layout
+     */
+    nodeInlineHeadingNote () {
+        return null;
+    }
+
+    /**
      * @description For an inline node: the most columns its sections flow
      * into. Past that, the columns widen to fill the width rather than
      * adding a column the sections cannot fill.
