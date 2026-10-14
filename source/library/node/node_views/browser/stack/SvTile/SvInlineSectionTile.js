@@ -257,6 +257,12 @@
             .SvInlineNested > .SvTileLongSubtitle:not(.SvInlineSection) .SvTileSubtitleView {
                 padding-left: 20px !important; /* under the title, past the diamond (over the view's inline padding) */
             }
+            /* an open row's note stays on its title's line, not centered
+               beside the description under it */
+            .SvInlineNested > .SvInlineOpen:not(.SvInlineSection) :has(> .SvTileNoteView) {
+                align-self: flex-start !important;
+                align-items: flex-start !important;
+            }
         `);
     }
 

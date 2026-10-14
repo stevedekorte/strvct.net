@@ -30,6 +30,7 @@
         this.setWhiteSpace("nowrap");
         this.setTextAlign("right");
         this.setTextOverflow("ellipsis");
+        this.insertElementClassName("SvTileNoteView"); // a stylesheet hook (an inline document keeps an open row's note on its title line)
         return this;
     }
 
