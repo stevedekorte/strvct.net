@@ -50,7 +50,7 @@
 - [Node Lifecycle](/docs/Lifecycle/Node%20Lifecycle/): Creation, three-phase initialization, parent-child relationships, and update notifications.
 - [Persistence Lifecycle](/docs/Lifecycle/Persistence%20Lifecycle/): How objects are stored, loaded, and kept in sync with the local record store and the cloud.
 - [View Synchronization](/docs/Lifecycle/View%20Synchronization/): How views discover nodes, synchronize state, and batch updates efficiently.
-- [Naked Objects: Gemini Rewrite](/docs/Naked%20Objects/): From Domain Models to Complete Applications
+- [Naked Objects](/docs/Naked%20Objects/): From Domain Models to Complete Applications
 - [Naked Objects](/docs/Naked%20Objects%20Old/): From Domain Models to Complete Applications
 - [Nodes](/docs/Nodes/): The object model at the heart of STRVCT.
 - [Notifications](/docs/Notifications/): Event-driven communication between framework layers using observations, scheduling, and weak references.

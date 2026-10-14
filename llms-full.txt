@@ -5423,7 +5423,7 @@ this.otherProperty().scheduleSyncToView();
 <!-- Page: docs/Naked Objects -->
 Source: /docs/Naked%20Objects/
 
-# Naked Objects: Gemini Rewrite
+# Naked Objects
 
 From Domain Models to Complete Applications
 

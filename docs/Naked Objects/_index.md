@@ -1,4 +1,4 @@
-# Naked Objects: Gemini Rewrite
+# Naked Objects
 
 From Domain Models to Complete Applications
 
