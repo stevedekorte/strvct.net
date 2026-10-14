@@ -256,6 +256,34 @@
                 text-align: right !important;
                 margin: 0 !important;
             }
+            /* a row's title and note read in full, side by side: each wraps
+               (the note under itself, at the right) rather than one keeping
+               its whole width and clipping the other. A title keeps its
+               longest word whole; the note gives way. */
+            .SvInlineNested > :not(.SvInlineSection) :has(> .SvTileTitleView) {
+                flex: 1 1 auto !important;
+                min-width: min-content !important;
+            }
+            .SvInlineNested > :not(.SvInlineSection) .SvTileTitleView {
+                width: auto !important;
+                min-width: min-content !important;
+                white-space: normal !important;
+                overflow: visible !important;
+                text-overflow: clip !important;
+            }
+            .SvInlineNested > :not(.SvTileLongSubtitle):not(.SvInlineSection) .SvTileTitleView {
+                flex: 1 1 auto; /* a short summary at its right takes what the title leaves */
+            }
+            .SvInlineNested > :not(.SvInlineSection) :has(> .SvTileNoteView) {
+                flex: 0 1 auto !important;
+                min-width: 0 !important;
+                max-width: 55%;
+                padding-left: 12px;
+            }
+            .SvInlineNested > :not(.SvInlineSection) .SvTileNoteView {
+                white-space: normal !important;
+                text-align: right !important;
+            }
             /* a row's description reads in full: it wraps rather than trailing off */
             .SvInlineNested .SvTileSubtitleView {
                 white-space: normal !important;
@@ -281,6 +309,10 @@
                 vertical-align: 0.2em;
                 border: 1px solid var(--sv-inline-disclosure-color);
                 transform: rotate(45deg);
+                margin-left: -20px; /* hangs left of the title, so a wrapped title's lines start together */
+            }
+            .SvInlineNested > .SvTileLongSubtitle:not(.SvInlineSection) .SvTileTitleView {
+                padding-left: 21px !important;
             }
             .SvInlineNested > .SvInlineOpen:not(.SvInlineSection) .SvTileTitleView::before {
                 background-color: var(--sv-inline-disclosure-color);
