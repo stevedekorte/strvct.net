@@ -540,21 +540,16 @@
     }
 
     /**
-     * @description Moves the view to the base state. Normally that's no
-     * selection (just the root column). A root node may opt into showing its
-     * first child by default — `nodeViewShouldAutoSelectFirstSubnode()` — e.g. a
-     * tab-strip node (horizontal) that wants its first tab's content shown
-     * beneath it rather than a bare strip. The selection goes through the bounded
-     * pending-path retry, so it lands even if the root column isn't materialized
-     * on the first cycle.
-     * @returns {SvBrowserView} The current SvBrowserView instance.
+     * @description The path of the base state, after the root: empty, or —
+     * when the root opts in with nodeViewShouldAutoSelectFirstSubnode() —
+     * its first child, and so on down while each one opts in. The hint
+     * CASCADES so nested opt-ins (e.g. root → Party → the local player's
+     * panel) land on real content rather than an intermediate list. Bounded
+     * against cycles.
+     * @returns {Array<SvNode>}
      * @category Navigation
      */
-    moveToBase () {
-        // The hint CASCADES: each auto-selecting node on the way down adds
-        // its first child, so nested opt-ins (e.g. the narration companion's
-        // root → Party → the local player's panel) land on real content
-        // rather than an intermediate list. Bounded against cycles.
+    basePathArray () {
         const path = [];
         let node = this.node();
         while (node && node.nodeViewShouldAutoSelectFirstSubnode
@@ -567,6 +562,44 @@
             path.push(target);
             node = target;
         }
+        return path;
+    }
+
+    /**
+     * @description Whether the selection is the base state (basePathArray).
+     * @returns {Boolean}
+     * @category Navigation
+     */
+    isAtBase () {
+        const now = this.selectedNodePathArray().slice(1).filter(node => node);
+        const base = this.basePathArray();
+        return now.length === base.length && now.every((node, i) => node === base[i]);
+    }
+
+    /**
+     * @description Navigates back to the base state, whatever was selected:
+     * the columns past it close (e.g. a tab tapped again goes to its root).
+     * @returns {SvBrowserView}
+     * @category Navigation
+     */
+    returnToBase () {
+        this.selectNodePathArray(this.basePathArray());
+        return this;
+    }
+
+    /**
+     * @description Moves the view to the base state. Normally that's no
+     * selection (just the root column). A root node may opt into showing its
+     * first child by default — `nodeViewShouldAutoSelectFirstSubnode()` — e.g. a
+     * tab-strip node (horizontal) that wants its first tab's content shown
+     * beneath it rather than a bare strip. The selection goes through the bounded
+     * pending-path retry, so it lands even if the root column isn't materialized
+     * on the first cycle.
+     * @returns {SvBrowserView} The current SvBrowserView instance.
+     * @category Navigation
+     */
+    moveToBase () {
+        const path = this.basePathArray();
         if (this.hasBeenNavigated()) {
             // navigated before the scheduled base state arrived: keep that
         } else if (path.length > 0) {

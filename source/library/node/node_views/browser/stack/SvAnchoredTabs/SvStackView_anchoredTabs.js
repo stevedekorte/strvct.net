@@ -910,7 +910,9 @@
 
     /**
      * @description A tab tile was tapped (pin: shift/option-click, and the
-     * pin control in milestone 2c). The layout decides; this renders it.
+     * pin control in milestone 2c). A pinned tab navigated below its root
+     * goes back to its root; otherwise the layout decides (opens, or closes
+     * an open unpinned tab) and this renders it.
      * @param {SvTile} tile
      * @param {Boolean} isPin
      * @returns {SvStackView_anchoredTabs}
@@ -926,12 +928,32 @@
             this.anchoredLayout().pinTab(id);
             this.storeAnchoredPins();
             this.safeUpdateCompactionChain(); // the claim follows the pins (anchoredClaimWidth)
-        } else {
+        } else if (!this.anchoredReturnTabToBase(node)) {
             this.anchoredLayout().tapTab(id);
         }
         this.applyAnchoredLayout(true);
         this.scrollTabIntoView(tile);
         return this.anchoredPathMayHaveChanged();
+    }
+
+    /**
+     * @description A pinned (so open) tab whose pane is navigated below its
+     * root goes back to its root and becomes the current pane. An unpinned
+     * tab's tap closes it instead (SvAnchoredTabsLayout.tapTab).
+     * @param {SvNode} node - the tab's node
+     * @returns {Boolean} whether it did (false: unpinned, or already at its root)
+     * @category Anchored Tabs
+     */
+    anchoredReturnTabToBase (node) {
+        const id = this.anchoredTabIdFor(node);
+        const isPinnedOpen = this.anchoredLayout().isOpen(id) && this.anchoredLayout().isPinned(id);
+        const pane = isPinnedOpen ? this.detailView().anchoredPaneForNode(node) : null;
+        if (!pane || pane.isAtBase()) {
+            return false;
+        }
+        pane.returnToBase();
+        this.anchoredLayout().setCurrentTabId(id);
+        return true;
     }
 
     /**
