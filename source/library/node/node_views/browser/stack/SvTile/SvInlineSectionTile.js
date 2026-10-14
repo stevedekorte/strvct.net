@@ -18,8 +18,11 @@
  * nested: it does not scroll, select or navigate, and it keeps its rows in
  * sync with the node as any column does (adds, removes, reorders).
  *
- * A section takes no gestures in version 1: no slide-to-delete, no
- * long-press drag (reordering between sections is a later milestone).
+ * A section takes no gestures but a tap on its heading: no slide-to-delete,
+ * no long-press drag (reordering between sections is a later milestone).
+ * When its node asks (nodeInlineCollapse), the heading folds the section
+ * away to just the heading and its note; which sections are folded is view
+ * state, kept on the section's element like an open row.
  */
 (class SvInlineSectionTile extends SvTile {
 
@@ -63,6 +66,34 @@
             }
             .SvInlineDocument > * {
                 break-inside: avoid;
+            }
+            /* a section that folds (nodeInlineCollapse): its heading is the
+               control, with a chevron after the note — down open, right
+               folded; folded, only the heading shows */
+            .SvInlineCollapsible > .TileContentView > .SvInlineSectionHead {
+                cursor: pointer;
+            }
+            .SvInlineCollapsible > .TileContentView > .SvInlineSectionHead:focus-visible {
+                outline: 2px solid var(--sv-inline-disclosure-color);
+                outline-offset: 3px;
+            }
+            .SvInlineCollapsible > .TileContentView > .SvInlineSectionHead::after {
+                content: ""; /* decoration: the fold mark */
+                flex: none;
+                align-self: center;
+                width: 7px;
+                height: 7px;
+                margin-right: 4px;
+                border-right: 1px solid currentColor;
+                border-bottom: 1px solid currentColor;
+                color: var(--sv-inline-heading-color);
+                transform: translateY(-2px) rotate(45deg);
+            }
+            .SvInlineCollapsed > .TileContentView > .SvInlineSectionHead::after {
+                transform: rotate(-45deg);
+            }
+            .SvInlineCollapsed > .TileContentView > .SvInlineNested {
+                display: none !important;
             }
             /* rows (nodeInlineFlow "rows"): a grid of as many columns of at
                least the column width as fit, at most the node's maximum;
@@ -268,6 +299,16 @@
 
     initPrototypeSlots () {
         {
+            const slot = this.newSlot("headView", null); // the heading and its note; the fold control when the section folds
+            slot.setSlotType("SvDomView");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("collapseNode", null); // the node whose starting fold was applied, so it is applied once per node
+            slot.setSlotType("SvNode");
+            slot.setAllowsNullValue(true);
+        }
+        {
             const slot = this.newSlot("headingView", null);
             slot.setSlotType("SvTextView");
             slot.setAllowsNullValue(true);
@@ -288,6 +329,7 @@
         super.init();
         SvInlineSectionTile.ensureInlineCss();
         this.removeAllGestureRecognizers(); // version 1: a section is read, not slid, dragged or selected
+        this.addDefaultTapGesture(); // a tap on its heading folds it (rows inside take their own taps first)
         this.element().classList.add("SvInlineSection");
         this.setAriaRole("group");
         this.setupHeadingView();
@@ -305,6 +347,7 @@
         note.element().classList.add("SvInlineSectionNote");
         head.addSubview(heading);
         head.addSubview(note);
+        this.setHeadView(head);
         this.setHeadingView(heading);
         this.setHeadingNoteView(note);
         this.addContentSubview(head);
@@ -339,6 +382,7 @@
         this.headingView().setString(node.translatedValueOfSlotNamed ? node.translatedValueOfSlotNamed("title") : node.title());
         this.headingNoteView().setString((node.nodeInlineHeadingNote && node.nodeInlineHeadingNote()) || "");
         this.element().classList.toggle("SvInlineSpans", !!(node.nodeSpansInlineColumns && node.nodeSpansInlineColumns()));
+        this.syncCollapse();
         this.syncSectionTilesView();
         return this;
     }
@@ -358,6 +402,117 @@
             tiles.setNode(target);
         }
         return this;
+    }
+
+    // --- folding ---
+
+    /**
+     * @description What the node asks of the section's fold: null (it does
+     * not fold), "open" or "closed" (how it starts).
+     * @returns {String|null}
+     * @category Inline
+     */
+    collapseRequest () {
+        const node = this.node();
+        return (node && node.nodeInlineCollapse) ? node.nodeInlineCollapse() : null;
+    }
+
+    isCollapsible () {
+        return this.collapseRequest() !== null;
+    }
+
+    isCollapsed () {
+        return this.element().classList.contains("SvInlineCollapsed"); // a class, not a measurement
+    }
+
+    /**
+     * @description Makes the heading the fold control when the node asks for
+     * one, and starts the section open or folded as the node asks — once per
+     * node, so a re-sync keeps what the player folded.
+     * @returns {SvInlineSectionTile}
+     * @category Inline
+     */
+    syncCollapse () {
+        const isCollapsible = this.isCollapsible();
+        this.element().classList.toggle("SvInlineCollapsible", isCollapsible);
+        this.syncHeadControl(isCollapsible);
+        if (this.collapseNode() !== this.node()) {
+            this.setCollapseNode(this.node());
+            this.setIsCollapsed(this.collapseRequest() === "closed");
+        } else if (!isCollapsible) {
+            this.setIsCollapsed(false);
+        }
+        return this;
+    }
+
+    /**
+     * @description A heading that folds is a button, reached with Tab; one
+     * that does not is only a heading.
+     * @param {Boolean} isCollapsible
+     * @returns {SvInlineSectionTile}
+     * @category Inline
+     */
+    syncHeadControl (isCollapsible) {
+        const head = this.headView();
+        if (isCollapsible) {
+            head.setAriaRole("button");
+            head.setAttribute("tabindex", "0");
+        } else {
+            head.setAriaRole(null);
+            head.removeAttribute("tabindex");
+            head.removeAttribute("aria-expanded");
+        }
+        return this;
+    }
+
+    setIsCollapsed (aBool) {
+        this.element().classList.toggle("SvInlineCollapsed", aBool);
+        if (this.isCollapsible()) {
+            this.headView().setAttribute("aria-expanded", aBool ? "false" : "true");
+        }
+        return this;
+    }
+
+    toggleCollapsed () {
+        return this.setIsCollapsed(!this.isCollapsed());
+    }
+
+    /**
+     * @description Whether a pointer or key event happened on the heading
+     * of a section that folds (not on a row inside it).
+     * @param {Event} event
+     * @returns {Boolean}
+     * @category Inline
+     */
+    isFoldEvent (event) {
+        return !!(event && this.isCollapsible() && this.headView().element().contains(event.target));
+    }
+
+    onTapComplete (aGesture) {
+        if (this.isFoldEvent(aGesture.downEvent())) {
+            this.toggleCollapsed();
+        }
+        return this;
+    }
+
+    onEnterKeyUp (event) {
+        if (this.isFoldEvent(event)) {
+            this.toggleCollapsed();
+            return false; // stop propagation
+        }
+        return true;
+    }
+
+    onSpaceKeyUp (event) {
+        return this.onEnterKeyUp(event);
+    }
+
+    onSpaceKeyDown (event) {
+        if (this.isFoldEvent(event)) {
+            event.preventDefault(); // Space on a button presses it rather than scrolling the page
+            return false;
+        }
+        return true;
     }
 
 }.initThisClass());

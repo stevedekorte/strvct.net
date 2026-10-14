@@ -104,6 +104,24 @@
             gr.setViewTarget(null);
             this.gestureRecognizers().remove(gr);
         }
+        this.forgetDefaultGesture(gr);
+        return this;
+    }
+
+    /**
+     * @description Clears whichever default-gesture slot holds a gesture
+     * being removed, so a later addDefault...Gesture adds a live one instead
+     * of answering the removed one.
+     * @param {SvGestureRecognizer} gr
+     * @returns {SvGesturableDomView} The current instance
+     * @category Gesture Management
+     */
+    forgetDefaultGesture (gr) {
+        ["DefaultTapGesture", "DefaultDoubleTapGesture", "DefaultPanGesture"].forEach(name => {
+            if (this[name.uncapitalized()]() === gr) {
+                this["set" + name](null);
+            }
+        });
         return this;
     }
 

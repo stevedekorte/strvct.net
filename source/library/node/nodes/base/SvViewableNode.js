@@ -439,6 +439,19 @@
     }
 
     /**
+     * @description As a section of an inline document: whether its heading
+     * folds it away to just the heading (and the heading's note), and how it
+     * starts. null: it does not fold (the default); "open": it folds and
+     * starts open; "closed": it folds and starts folded. Which sections are
+     * folded after that is view state, kept by the section's view.
+     * @returns {String|null}
+     * @category Layout
+     */
+    nodeInlineCollapse () {
+        return null;
+    }
+
+    /**
      * @description For an inline node: the most columns its sections flow
      * into. Past that, the columns widen to fill the width rather than
      * adding a column the sections cannot fill.
