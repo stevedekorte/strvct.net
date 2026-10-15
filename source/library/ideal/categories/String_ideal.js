@@ -724,6 +724,9 @@
      *
      * Already-curly quotes pass through untouched, so this is idempotent.
      *
+     * A quote right after a digit is a foot or inch mark (5'10"), not a quote,
+     * so it stays straight.
+     *
      * Known limitation: a leading elision ('tis, '90s) becomes ‘tis / ‘90s,
      * since the opener/closer decision cannot see to the right.
      *
@@ -741,7 +744,9 @@
         for (let i = 0; i < this.length; i++) {
             const c = this[i];
             let out = c;
-            if (c === '"') {
+            if (/[0-9]/.test(prev)) {
+                // a foot or inch mark: leave it straight
+            } else if (c === '"') {
                 out = isOpener(prev) ? "“" : "”";
             } else if (c === "'") {
                 out = isOpener(prev) ? "‘" : "’";

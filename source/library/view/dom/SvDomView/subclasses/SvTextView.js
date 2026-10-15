@@ -231,6 +231,29 @@
             slot.setSlotType("String");
         }
 
+        /**
+         * @member {Boolean} educatesQuotes
+         * @description Whether the text this view displays has its straight
+         * quotes turned into curly ones (String.withCurlyQuotes). Display only:
+         * an editable view never educates, and reading the text back returns
+         * what was set. Some book faces (IM Fell) draw a straight quote as a
+         * closing one, so an opening quote looks backwards.
+         */
+        {
+            const slot = this.newSlot("educatesQuotes", true);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+         * @member {String} uneducatedText
+         * @description The text as set, while the DOM shows it with educated
+         * quotes; null when the DOM shows the text as set.
+         */
+        {
+            const slot = this.newSlot("uneducatedText", null);
+            slot.setSlotType("String");
+        }
+
     }
 
     init () {
@@ -424,6 +447,7 @@
      * @returns {void}
      */
     didUpdateSlotIsEditable () {
+        this.restoreUneducatedTextIfEditable();
         this.syncEditingControl();
     }
 
@@ -689,6 +713,7 @@
      * @returns {SvTextView} The text field.
      */
     setInnerHtml (s) {
+        this.setUneducatedText(null);
         return super.setInnerHtml(s);
     }
 
@@ -698,6 +723,7 @@
      * @returns {SvTextView} The text field.
      */
     setInnerText (s) {
+        this.setUneducatedText(null);
         return super.setInnerText(s);
     }
 
@@ -809,6 +835,7 @@
                 reader.onStreamHtml(newValue);
                 reader.endHtmlStream();
                 this.element().mergeFrom(reader.rootElement());
+                this.educateRenderedHtml(newValue);
                 //console.log(this.logPrefix(), "merged: [" + this.element().innerHTML + "]");
                 //console.log(this.logPrefix(), "---- end HTML merge ----");
             } else {
@@ -839,11 +866,144 @@
         //console.log(this.logPrefix(), "setNewValue(" + v.substring(0, 10) + "...)");
         if (this.allowsHtml()) {
             this.setInnerHtml(v);
+            this.educateRenderedHtml(v);
         } else {
-            super.setString(v);
+            this.setPlainString(v);
         }
         this.setLastMergeValue(v);
         return this;
+    }
+
+    // --- quote education (display only) ---
+
+    /**
+     * @description Whether the text being set should be shown with curly
+     * quotes: never while the view can be edited, since an edit is read back
+     * from the DOM.
+     * @returns {Boolean}
+     * @category Quote Education
+     */
+    shouldEducateQuotes () {
+        return this.educatesQuotes() && !this.isEditable() && !this.contentEditable();
+    }
+
+    /**
+     * @description Writes plain text, educated when it should be, and
+     * remembers the text as set so string() returns it.
+     * @param {String} v - The text as set.
+     * @returns {SvTextView}
+     * @category Quote Education
+     */
+    setPlainString (v) {
+        const educates = this.shouldEducateQuotes();
+        super.setString(educates ? v.withCurlyQuotes() : v);
+        this.setUneducatedText(educates ? v : null);
+        return this;
+    }
+
+    /**
+     * @description Educates the quotes in the text nodes just rendered from
+     * HTML, never in the markup itself (attribute values keep their quotes).
+     * @param {String} html - The HTML as set.
+     * @returns {SvTextView}
+     * @category Quote Education
+     */
+    educateRenderedHtml (html) {
+        const educates = this.shouldEducateQuotes();
+        if (educates) {
+            this.educateQuotesInTextNodes();
+        }
+        this.setUneducatedText(educates ? html : null);
+        return this;
+    }
+
+    /**
+     * @description Educates each text node under this view's element, in
+     * document order. A string write per changed node; no layout reads.
+     * @returns {SvTextView}
+     * @category Quote Education
+     */
+    educateQuotesInTextNodes () {
+        const skipTagNames = SvHtmlStreamReader.defaultQuoteEducationSkipTagNames();
+        const walker = document.createTreeWalker(this.element(), NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+            this.educateQuotesInTextNode(node, skipTagNames);
+        }
+        return this;
+    }
+
+    /**
+     * @description Educates one text node, opening or closing each quote from
+     * the text just before it in the same element (as SvHtmlStreamReader does),
+     * unless it sits inside machine text (code, tool-call JSON).
+     * @param {Text} textNode
+     * @param {Set<string>} skipTagNames
+     * @returns {SvTextView}
+     * @category Quote Education
+     */
+    educateQuotesInTextNode (textNode, skipTagNames) {
+        const text = textNode.nodeValue;
+        if (!/["']/.test(text) || this.isInsideTagNamed(textNode, skipTagNames)) {
+            return this;
+        }
+        const prior = textNode.previousSibling ? textNode.previousSibling.textContent : "";
+        textNode.nodeValue = text.withCurlyQuotes(prior.slice(-1));
+        return this;
+    }
+
+    /**
+     * @description Whether a node sits inside one of the named tags, below
+     * this view's element.
+     * @param {Node} aNode
+     * @param {Set<string>} tagNames - Lowercase tag names.
+     * @returns {Boolean}
+     * @category Quote Education
+     */
+    isInsideTagNamed (aNode, tagNames) {
+        for (let e = aNode.parentElement; e && e !== this.element(); e = e.parentElement) {
+            if (tagNames.has(e.tagName.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @description When the view becomes editable while showing educated
+     * text, shows the text as set again, so an edit starts from (and saves)
+     * the real text.
+     * @returns {SvTextView}
+     * @category Quote Education
+     */
+    restoreUneducatedTextIfEditable () {
+        const raw = this.uneducatedText();
+        if (raw !== null && this.isEditable()) {
+            this.setNewValue(raw);
+        }
+        return this;
+    }
+
+    /**
+     * @description The text as set. For plain text this is the uneducated
+     * text, so a read-back (an edit, a tile's syncToNode, a key) never saves
+     * the curly display.
+     * @returns {String}
+     * @category Quote Education
+     */
+    string () {
+        const raw = this.uneducatedText();
+        return (raw !== null && !this.allowsHtml()) ? raw : super.string();
+    }
+
+    /**
+     * @description As string(): the text as set, for plain text shown with
+     * educated quotes.
+     * @returns {String}
+     * @category Quote Education
+     */
+    innerText () {
+        const raw = this.uneducatedText();
+        return (raw !== null && !this.allowsHtml()) ? raw : super.innerText();
     }
 
     /**
