@@ -144,6 +144,22 @@
             slot.setIsSubnodeField(false);
         }
 
+        /**
+     * @member {String} thinkingDisplay - how a thinking model should show its
+     * thinking while it streams (Anthropic thinking.display, e.g.
+     * "summarized"), or null to send no thinking config. A model that streams
+     * its thinking is never silent for long, so its replies can be timed out
+     * on a much shorter silence (streamStallTimeoutMs). Set from the model
+     * json's "thinkingDisplay" key.
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("thinkingDisplay", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setIsSubnodeField(false);
+        }
+
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
     }
@@ -238,6 +254,10 @@
         if (!Type.isUndefined(json.promptCacheTtl)) {
             this.setPromptCacheTtl(json.promptCacheTtl);
         }
+
+        if (!Type.isUndefined(json.thinkingDisplay)) {
+            this.setThinkingDisplay(json.thinkingDisplay);
+        }
         //console.log(">>>>>>>>>>>>>>>> " + this.title() + " outputTokenLimit:" + this.outputTokenLimit());
 
         const t = json.supportsTemperature;
@@ -281,6 +301,19 @@
     summary () {
         const cw = SvNumberFormatter.clone().setValue(this.inputTokenLimit()).setSignificantDigits(2).formattedValue();
         return this.modelName() + " (" + cw + ")\n";
+    }
+
+    /**
+     * @description How long a streamed reply may go without new bytes before
+     * it is given up. A model that streams its thinking sends something every
+     * few seconds (at most 4.2 s apart across Fable 5.1, Opus 5.5 and Sonnet 5
+     * on a hard problem, 2026-10-15), so a minute is ample; one that thinks
+     * silently can be quiet for minutes mid-reply.
+     * @returns {Number} milliseconds
+     * @category Streaming
+     */
+    streamStallTimeoutMs () {
+        return (this.thinkingDisplay() ? 60 : 4 * 60) * 1000;
     }
 
     newChatRequest () {

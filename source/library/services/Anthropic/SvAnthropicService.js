@@ -37,9 +37,10 @@
                 // also what the conversation's compaction pressure keys off —
                 // 200k keeps sessions out of the premium tier entirely.
                 "inputTokenLimit": 200000,
-                "notes": "Most capable Anthropic model ($10/$50 per MTok; cache read $1, write $12.50). Thinking is always on — NEVER send a thinking param (400 on any explicit config except adaptive). temperature/top_p/top_k not supported. Safety classifiers can return stop_reason 'refusal'. Requires 30-day data retention at the org level. Supports all five effort levels via output_config.effort.",
+                "notes": "Most capable Anthropic model ($10/$50 per MTok; cache read $1, write $12.50). Thinking is always on — the only thinking param it accepts is {type: adaptive} (with display; 400 on any other config). temperature/top_p/top_k not supported. Safety classifiers can return stop_reason 'refusal'. Requires 30-day data retention at the org level. Supports all five effort levels via output_config.effort.",
                 "outputTokenLimit": 128000,
                 "effort": "medium", // game choice: latency/cost balance (default would be high)
+                "thinkingDisplay": "summarized", // streams its thinking: never silent for long, so a short stall limit
                 "supportsTemperature": false,
                 "supportsTopP": false
             },
@@ -57,6 +58,7 @@
                 "notes": "Game default model ($2/$10 per MTok; cache read $0.20, write $2.50). Adaptive-thinking model family: temperature/top_p/top_k are not supported (400 if set). Effort accepts low/medium/high/xhigh/max and defaults to high.",
                 "outputTokenLimit": 128000,
                 "effort": "medium", // game choice: latency/cost balance (default would be high)
+                "thinkingDisplay": "summarized", // streams its thinking: never silent for long, so a short stall limit
                 "supportsTemperature": false,
                 "supportsTopP": false
             },
@@ -67,10 +69,11 @@
                 // 1M window; capped like the other assistant models so
                 // compaction pressure and per-turn input cost stay bounded.
                 "inputTokenLimit": 200000,
-                "notes": "Character and Campaign assistant model ($4/$20 per MTok; cache read $0.20, write $5). Successor to Opus 5. Thinking can't be disabled (thinking:disabled or budget_tokens 400 at every effort) — never send a thinking param; effort is the only control and its API default is medium, so it is set explicitly. Forced tool_choice any/tool returns 400 (tools here ride as text tags, so unaffected). temperature/top_p/top_k not supported. Broader safety classifiers (cyber, bio, reasoning_extraction) can return stop_reason 'refusal'.",
+                "notes": "Character and Campaign assistant model ($4/$20 per MTok; cache read $0.20, write $5). Successor to Opus 5. Thinking can't be disabled (thinking:disabled or budget_tokens 400 at every effort) — only {type: adaptive, display} is sent; effort is the only depth control and its API default is medium, so it is set explicitly. Forced tool_choice any/tool returns 400 (tools here ride as text tags, so unaffected). temperature/top_p/top_k not supported. Broader safety classifiers (cyber, bio, reasoning_extraction) can return stop_reason 'refusal'.",
                 "outputTokenLimit": 128000,
                 "effort": "medium", // explicit: the API default for this model is medium, one below Opus 5's high
                 "promptCacheTtl": "1h", // the GM's long prompt: a table often pauses longer than the default five minutes
+                "thinkingDisplay": "summarized", // streams its thinking: never silent for long, so a short stall limit
                 "supportsTemperature": false,
                 "supportsTopP": false
             },
@@ -82,6 +85,7 @@
                 "notes": "Used for simulated players / AI-run party members, kept distinct from the GM model to reduce self-collusion ($5/$25 per MTok; cache read $0.50, write $6.25). Adaptive thinking is on by default; disabling it requires effort high or below. Effort accepts low/medium/high/xhigh/max and defaults to high. temperature/top_p/top_k are not supported. Priority Tier is not supported.",
                 "outputTokenLimit": 128000,
                 "effort": "medium", // a simulated player does not need the default high
+                "thinkingDisplay": "summarized", // streams its thinking: never silent for long, so a short stall limit
                 "supportsTemperature": false,
                 "supportsTopP": false
             },

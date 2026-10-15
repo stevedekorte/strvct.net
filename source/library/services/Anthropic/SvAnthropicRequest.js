@@ -123,15 +123,30 @@
         body.stream = true;
         body.max_tokens = this.chatModel().outputTokenLimit(); // current max output tokens allowed by Groq
         // Effort (adaptive-thinking models): the model entry chooses the
-        // level; omitted = the API default (high). NOTE: never add a
-        // `thinking` param here — Fable-family models reject any explicit
-        // thinking config, and omitting it means adaptive on every current
-        // model.
+        // level; omitted = the API default (high).
         const effort = this.chatModel().outputEffort ? this.chatModel().outputEffort() : null;
         if (effort) {
             body.output_config = { effort: effort };
         }
+        this.setupThinkingDisplay(body);
         return this;
+    }
+
+    /**
+     * @description Asks an adaptive-thinking model to stream summaries of its
+     * thinking, when its entry says so, so a reply is never silent for long
+     * (thinking is otherwise omitted from the stream). Only the adaptive form
+     * is sent: Fable-family models refuse any other thinking config; this one
+     * was accepted by Fable 5.1, Sonnet 5, Opus 5.5 and Opus 5 (2026-10-15).
+     * The summaries are ignored like any thinking delta.
+     * @param {Object} body
+     * @category Request Preparation
+     */
+    setupThinkingDisplay (body) {
+        const display = this.chatModel().thinkingDisplay ? this.chatModel().thinkingDisplay() : null;
+        if (display) {
+            body.thinking = { type: "adaptive", display: display };
+        }
     }
 
     /**

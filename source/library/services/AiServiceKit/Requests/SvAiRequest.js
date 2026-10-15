@@ -282,12 +282,12 @@
         // A streamed reply fails after this long with no new bytes, not after
         // timeoutPeriodInMs in total: a long reply still arriving is healthy,
         // and the total cap cut such replies off at 4 minutes (2026-10-14).
-        // Not shorter: adaptive-thinking models stream nothing while they
-        // think (thinking text is omitted by default), and a healthy Opus
-        // turn was measured silent for over 90 s mid-reply on dev.
+        // Null = the model's (SvAiChatModel.streamStallTimeoutMs): short for a
+        // model that streams its thinking, long for one that thinks silently.
         {
-            const slot = this.newSlot("stallTimeoutPeriodInMs", 4 * 60 * 1000);
+            const slot = this.newSlot("stallTimeoutPeriodInMs", null);
             slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
             slot.setShouldStoreSlot(false);
         }
 
@@ -583,6 +583,16 @@
    * Returns the active API URL
    * @returns {Promise<string>|string}
    */
+    /**
+     * @description The silence a streamed reply is allowed: this request's own
+     * limit when set, else its model's.
+     * @returns {Number} milliseconds
+     * @category Streaming
+     */
+    activeStallTimeoutPeriodInMs () {
+        return this.stallTimeoutPeriodInMs() || this.chatModel().streamStallTimeoutMs();
+    }
+
     async activeApiUrl () {
         let url;
         // Check if subclass has async getApiUrl method
@@ -785,7 +795,7 @@
         // Create a new SvXhrRequest for this request
         const xhrRequest = SvXhrRequest.clone();
         xhrRequest.setTimeoutPeriodInMs(this.timeoutPeriodInMs()); // until the first byte
-        xhrRequest.setStallTimeoutPeriodInMs(this.stallTimeoutPeriodInMs()); // once the reply is arriving
+        xhrRequest.setStallTimeoutPeriodInMs(this.activeStallTimeoutPeriodInMs()); // once the reply is arriving
         xhrRequest.setRetriesUnansweredFailureOnce(true); // a blip before the first byte: nothing was read, send it once more
         this.setCurrentXhrRequest(xhrRequest);
         this.xhrRequestHistory().push(xhrRequest);
