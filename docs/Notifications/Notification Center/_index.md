@@ -6,14 +6,6 @@ Asynchronous event dispatching, weak observer observations, and decoupled change
 
 `SvNotificationCenter` is Strvct's primary loose-coupling mechanism. It allows model nodes, views, and framework services to communicate without holding direct references to each other.
 
-```
-+-------------------------------------------------------------------------+
-|                    Notification Center Architecture                     |
-+-------------------------------------------------------------------------+
-|  1. Post Notification  -->  2. Weak Observer Lookup  -->  3. Dispatch   |
-+-------------------------------------------------------------------------+
-```
-
 <svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }

@@ -6,15 +6,6 @@ The property system: declaration, slot annotations, runtime type checks, and met
 
 Slots are Strvct's property system. In traditional JavaScript objects, instance fields are simple key-value pairs without metadata. In Strvct, declaring a property as a **slot** transforms it into a rich metadata carrier that each framework layer reads independently.
 
-```
-+-------------------------------------------------------------------------+
-|                            Slot System Flow                             |
-+-------------------------------------------------------------------------+
-|  newSlot("name", "")  -->  Auto Getter/Setter  -->  Type Verification   |
-|  Annotate Metadata    -->  Multi-Reader Bridge -->  Zero-Glue Layers    |
-+-------------------------------------------------------------------------+
-```
-
 <svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }

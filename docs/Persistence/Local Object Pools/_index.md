@@ -6,15 +6,6 @@ IndexedDB-backed persistence for domain object graphs using dirty tracking, loca
 
 Strvct's persistence engine is **local-first**: application state is stored directly in the browser's IndexedDB. Rather than requiring developers to write explicit SQL/ORM queries or API save calls, the framework monitors slot mutations automatically and commits dirty objects at the end of each browser event loop.
 
-```
-+-------------------------------------------------------------------------+
-|                       Local Object Pool Architecture                    |
-+-------------------------------------------------------------------------+
-|  1. Slot Setter  -->  2. Dirty Tracking  -->  3. End-of-Loop Commit   |
-|  4. Object Pool  -->  5. Record Store    -->  6. IndexedDB Transaction |
-+-------------------------------------------------------------------------+
-```
-
 <svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }

@@ -6,15 +6,6 @@ Setup, integration, directory conventions, build pipeline, and running your firs
 
 Strvct is designed to be integrated directly into your application codebase as a **Git submodule**. It runs as a client-side single-page application in the browser and requires no compile-step template transforms, virtual DOM bundlers, or complex build toolchains.
 
-```
-+-------------------------------------------------------------------------+
-|                          Getting Started Flow                           |
-+-------------------------------------------------------------------------+
-|  1. Add Submodule  -->  2. Declare Imports  -->  3. Run Build (CAM)    |
-|  4. Start Server   -->  5. Create Nodes     -->  6. Debug in DevTools   |
-+-------------------------------------------------------------------------+
-```
-
 ---
 
 ## Prerequisites

@@ -6,15 +6,6 @@ Versioned cloud persistence, delta synchronizations, and deterministic conflict 
 
 While local object pools store data in IndexedDB for instant, zero-latency local-first execution, **Cloud Object Pools** (`SvCloudRecordStore`) synchronize object pool records across devices and cloud stores.
 
-```
-+-------------------------------------------------------------------------+
-|                       Cloud Sync Architecture                           |
-+-------------------------------------------------------------------------+
-|  Local IndexedDB Pool  -->  Compute Delta Rows  -->  Versioned Commit   |
-|  Cloud Record Store    -->  Conflict Check      -->  Atomic Push/Pull   |
-+-------------------------------------------------------------------------+
-```
-
 <svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
