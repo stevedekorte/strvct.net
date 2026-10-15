@@ -279,6 +279,18 @@
             slot.setSyncsToView(true);
         }
 
+        // A streamed reply fails after this long with no new bytes, not after
+        // timeoutPeriodInMs in total: a long reply still arriving is healthy,
+        // and the total cap cut such replies off at 4 minutes (2026-10-14).
+        // Not shorter: adaptive-thinking models stream nothing while they
+        // think (thinking text is omitted by default), and a healthy Opus
+        // turn was measured silent for over 90 s mid-reply on dev.
+        {
+            const slot = this.newSlot("stallTimeoutPeriodInMs", 4 * 60 * 1000);
+            slot.setSlotType("Number");
+            slot.setShouldStoreSlot(false);
+        }
+
         /**
      * @member {Number} retryDelaySeconds - The delay before retrying the request.
      */
@@ -772,7 +784,8 @@
 
         // Create a new SvXhrRequest for this request
         const xhrRequest = SvXhrRequest.clone();
-        xhrRequest.setTimeoutPeriodInMs(this.timeoutPeriodInMs());
+        xhrRequest.setTimeoutPeriodInMs(this.timeoutPeriodInMs()); // until the first byte
+        xhrRequest.setStallTimeoutPeriodInMs(this.stallTimeoutPeriodInMs()); // once the reply is arriving
         xhrRequest.setRetriesUnansweredFailureOnce(true); // a blip before the first byte: nothing was read, send it once more
         this.setCurrentXhrRequest(xhrRequest);
         this.xhrRequestHistory().push(xhrRequest);
@@ -1207,8 +1220,9 @@
             this.parkForReconnect(e);
             return;
         }
-        // A client timeout already burned the full wait. Same-model retry
-        // would cost another 4 minutes; failover (if configured) is next.
+        // A client timeout already burned the full wait (no first byte, or a
+        // reply silent mid-stream, for 4 minutes). Same-model retry would
+        // likely wait as long again; failover (if configured) is next.
         if (this.errorIsTimeout()) {
             e.svRetriesExhausted = true;
             return;

@@ -707,6 +707,7 @@
     onMessageComplete (aMsg) {
         super.onMessageComplete(aMsg);
         this.assistantToolKit().onMessageComplete(aMsg);
+        this.clearRecoveryIfResolved();
         return this;
     }
 

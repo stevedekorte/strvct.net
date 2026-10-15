@@ -82,6 +82,20 @@
     }
 
     /**
+     * @description Errored messages the user has not yet moved past. A
+     * failed reply followed by a newer user message is settled: the
+     * conversation went on, and the failure stays in the transcript only as
+     * the record of what happened.
+     * @returns {Array}
+     * @category Error Recovery
+     */
+    unsettledErrorMessages () {
+        const messages = this.messages();
+        const lastUserIndex = messages.indexOf(this.lastUserMessage());
+        return messages.filter((m, i) => i > lastUserIndex && m.hasError());
+    }
+
+    /**
      * @description Incomplete input-gating messages that will never finish
      * on their own: no live request, not legitimately awaiting a player's
      * answer (roll/choice). These are the wreckage a dead turn leaves
@@ -111,12 +125,12 @@
 
     /**
      * @description True when something warrants the recovery affordance: an
-     * errored message, or a stuck incomplete one.
+     * unsettled errored message, or a stuck incomplete one.
      * @returns {Boolean}
      * @category Error Recovery
      */
     needsRecovery () {
-        return this.hasMessagesWithErrors() || this.stuckIncompleteMessages().length > 0;
+        return this.unsettledErrorMessages().length > 0 || this.stuckIncompleteMessages().length > 0;
     }
 
     // --- load hygiene ---
@@ -315,6 +329,24 @@
     }
 
     /**
+     * @description Clear-only re-evaluation, run when a message completes: a
+     * completion is evidence of progress (the user sent a new message, or a
+     * reply finished), never of a new stuck state, so this only takes the
+     * recovery action down — raising it stays with load hygiene and the
+     * error paths.
+     * @returns {SvAiConversation}
+     * @category Error Recovery
+     */
+    clearRecoveryIfResolved () {
+        const recovery = this.recoveryActionNode();
+        if (recovery && this.headerNode() === recovery && !this.needsRecovery()) {
+            this.setHeaderNode(this.defaultHeaderNode());
+            this.didUpdateNode();
+        }
+        return this;
+    }
+
+    /**
      * @description Delegate hook (SvConversationMessage.didUpdateSlotError):
      * an errored message is terminal, so re-evaluate the affordance now —
      * the other evaluation points (load hygiene, completion) never fire for
@@ -341,7 +373,7 @@
      */
     softRecoverFromErrors () {
         this.autoHealStuckState();
-        this.messagesWithErrors().slice().forEach(m => this.recoverErroredMessage(m));
+        this.unsettledErrorMessages().forEach(m => this.recoverErroredMessage(m));
         this.syncRecoveryAffordance();
         return this;
     }

@@ -141,6 +141,52 @@
             slot.setSummaryFormat("{key}:\n{value}");
         }
 
+        /**
+     * @member {Number} stallTimeoutPeriodInMs - For a streamed response: once
+     * bytes are arriving, fail only after this long with NO new bytes, rather
+     * than after a total period (a long reply still streaming is healthy).
+     * Before the first byte, timeoutPeriodInMs still applies. Null (default)
+     * keeps the plain total timeout.
+     */
+        {
+            const slot = this.newSlot("stallTimeoutPeriodInMs", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+        }
+
+        /**
+     * @member {Number} lastProgressTime - Date.now() of the attempt's start or
+     * its latest received bytes; read by the stall watch.
+     */
+        {
+            const slot = this.newSlot("lastProgressTime", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+        }
+
+        /**
+     * @member {Boolean} didReceiveBytes - This attempt received response bytes.
+     * Tracked, not read back from the XHR: a timeout or abort empties
+     * responseText, which made a reply cut off mid-stream look unanswered.
+     */
+        {
+            const slot = this.newSlot("didReceiveBytes", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+        }
+
+        /**
+     * @member {Boolean} isAbortingStalledAttempt - True only inside onStall's
+     * abort, so onXhrAbort can tell it from a caller's abort.
+     */
+        {
+            const slot = this.newSlot("isAbortingStalledAttempt", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(false);
+        }
+
         // Automatic retry is OPT-IN: 0 means "never retry automatically", and
         // setMaxRetries(n) turns it on for a request the caller knows is safe to
         // repeat. Blanket retry is not safe here:
@@ -670,6 +716,7 @@
         this.setXhrPromise(Promise.clone());
 
         this.setError(null); // clear error (in case we are retrying)
+        this.setDidReceiveBytes(false);
         assert(!this.xhr());
 
         this.assertValid();
@@ -681,7 +728,7 @@
 
         const xhr = new XMLHttpRequest();
         this.setXhr(xhr);
-        xhr.timeout = this.timeoutPeriodInMs();
+        xhr.timeout = this.xhrTimeoutPeriodInMs();
         xhr.open(this.method(), this.url());
 
 
@@ -792,6 +839,7 @@
         } else {
             xhr.send(options.body);
         }
+        this.startStallWatch();
 
         await this.xhrPromise(); // wait for the request to complete
     }
@@ -914,8 +962,78 @@
     const latestString = txt.substr(txt.length - event.loaded, event.loaded);
     console.log(this.logPrefix(), ".onXhrProgress() read [" + latestString + "]");
     */
+        this.setLastProgressTime(Date.now());
+        this.setDidReceiveBytes(true);
         this.setStatus("progress: " + this.contentByteCount() + " bytes");
         this.sendDelegateMessage("onRequestProgress", [this]);
+    }
+
+    // --- stall watch (streamed responses) ---
+
+    isStallWatched () {
+        return Type.isNumber(this.stallTimeoutPeriodInMs());
+    }
+
+    /**
+   * @description The native XHR timeout counts total time, which would cut off
+   * a long reply still streaming; a stall-watched request leaves it off.
+   * @returns {Number}
+   */
+    xhrTimeoutPeriodInMs () {
+        return this.isStallWatched() ? 0 : this.timeoutPeriodInMs();
+    }
+
+    /**
+   * @description The silence allowed right now: the full timeout while waiting
+   * for the first byte, the stall period once the reply is arriving.
+   * @returns {Number}
+   */
+    currentSilenceLimitInMs () {
+        return this.didReceiveBytes() ? this.stallTimeoutPeriodInMs() : this.timeoutPeriodInMs();
+    }
+
+    startStallWatch () {
+        if (this.isStallWatched()) {
+            this.setLastProgressTime(Date.now());
+            this.armStallWatch(this.timeoutPeriodInMs());
+        }
+    }
+
+    armStallWatch (ms) {
+        this.addTimeout(() => this.checkForStall(), ms, "stallWatch");
+    }
+
+    /**
+   * @description Progress only stamps the time (no timer churn per chunk);
+   * the watch wakes, and re-arms for the remainder until the silence runs out.
+   */
+    checkForStall () {
+        if (!this.isActive()) {
+            return;
+        }
+        const remaining = this.lastProgressTime() + this.currentSilenceLimitInMs() - Date.now();
+        if (remaining > 0) {
+            this.armStallWatch(remaining);
+            return;
+        }
+        this.onStall();
+    }
+
+    /**
+   * @description Fails the stalled attempt the way a native timeout does: the
+   * XHR ends (loadend settles the attempt; onXhrAbort ignores this abort), then
+   * the timeout error is reported — so a delegate that aborts in response finds
+   * nothing active, as after a native timeout.
+   */
+    onStall () {
+        this.setIsAbortingStalledAttempt(true);
+        this.xhr().abort();
+        this.setIsAbortingStalledAttempt(false);
+        try {
+            this.onXhrTimeout(new Error(this.timeoutErrorMessage()));
+        } catch (error) {
+            this.onError(error);
+        }
     }
 
     // --- status and error handling ---
@@ -1268,6 +1386,9 @@
    * @param {Event} event
    */
     onXhrAbort (/*event*/) {
+        if (this.isAbortingStalledAttempt()) {
+            return; // the stall watch's own abort (onStall); loadend settles it
+        }
         this.setDidAbort(true);
         this.setStatus("aborted");
         this.sendDelegateMessage("onRequestAbort");
@@ -1284,12 +1405,21 @@
    * @param {Error} error - The timeout error
    */
     timeoutErrorMessage () {
-        const seconds = Math.round(this.timeoutPeriodInMs() / 1000);
         const url = this.displayUrl();
-        if (url) {
-            return "Request timed out after " + seconds + " seconds (" + url + ")";
+        const suffix = url ? " (" + url + ")" : "";
+        if (this.isStallWatched() && this.didReceiveBytes()) {
+            const stallSeconds = Math.round(this.stallTimeoutPeriodInMs() / 1000);
+            return "Request timed out: the reply stopped arriving for " + stallSeconds + " seconds" + suffix;
         }
-        return "Request timed out after " + seconds + " seconds";
+        const seconds = Math.round(this.timeoutPeriodInMs() / 1000);
+        return "Request timed out after " + seconds + " seconds" + suffix;
+    }
+
+    timeoutCause () {
+        if (this.isStallWatched() && this.didReceiveBytes()) {
+            return `Request timeout (no data for ${this.stallTimeoutPeriodInMs() / 1000} seconds mid-reply)`;
+        }
+        return `Request timeout (exceeded ${this.timeoutPeriodInMs() / 1000} seconds)`;
     }
 
     displayUrl () {
@@ -1479,7 +1609,7 @@
    * @returns {Boolean}
    */
     isRetryableUnansweredFailure () {
-        if (!this.retriesUnansweredFailureOnce() || this.retryCount() > 0 || this.didAbort()) {
+        if (!this.retriesUnansweredFailureOnce() || this.retryCount() > 0 || this.didAbort() || this.didReceiveBytes()) {
             return false;
         }
         const xhr = this.xhr();
@@ -1660,7 +1790,7 @@
 
         // Check for timeout first (most specific)
         if (this.didTimeout()) {
-            causes.push(`Request timeout (exceeded ${this.timeoutPeriodInMs() / 1000} seconds)`);
+            causes.push(this.timeoutCause());
         }
 
         // Network and connection issues

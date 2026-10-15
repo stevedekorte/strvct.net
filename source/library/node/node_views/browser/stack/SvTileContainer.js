@@ -98,6 +98,7 @@
         if (oldTile) {
             oldTile.setNode(null);
             this.removeSubview(oldTile);
+            this.setTile(null); // or syncFromNode keeps syncing the detached, nodeless tile
         }
         return this;
     }
