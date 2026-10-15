@@ -124,13 +124,38 @@
     }
 
     /**
-     * @description True when something warrants the recovery affordance: an
-     * unsettled errored message, or a stuck incomplete one.
+     * @description Whether a failed reply raises the recovery action. Base:
+     * no. A failed reply is terminal and does not block input — the user
+     * just sends again, and the failure stays in the transcript as the
+     * record — so the base action, which can only delete it, has nothing to
+     * offer. A subclass whose recovery does more (re-drives the turn,
+     * retries a generation) answers true.
+     * @returns {Boolean}
+     * @category Error Recovery
+     */
+    raisesRecoveryForErrors () {
+        return false;
+    }
+
+    /**
+     * @description True when something warrants the recovery affordance: a
+     * stuck incomplete message, or an unsettled errored one where errors
+     * raise it (raisesRecoveryForErrors).
      * @returns {Boolean}
      * @category Error Recovery
      */
     needsRecovery () {
-        return this.unsettledErrorMessages().length > 0 || this.stuckIncompleteMessages().length > 0;
+        return this.recoverableErrorMessages().length > 0 || this.stuckIncompleteMessages().length > 0;
+    }
+
+    /**
+     * @description The failed replies the recovery action acts on: the
+     * unsettled ones, where errors raise it; none otherwise.
+     * @returns {Array}
+     * @category Error Recovery
+     */
+    recoverableErrorMessages () {
+        return this.raisesRecoveryForErrors() ? this.unsettledErrorMessages() : [];
     }
 
     // --- load hygiene ---
@@ -364,8 +389,8 @@
 
     /**
      * @description The recovery action. Base semantics are PASSIVE, matching
-     * the auto-heal: settle stuck state, then dispose of errored messages
-     * via recoverErroredMessage (base: remove them). No re-request — a
+     * the auto-heal: settle stuck state, then dispose of the recoverable
+     * errored messages via recoverErroredMessage (base: remove them). No re-request — a
      * replayed turn can repeat side-effecting tool calls (state patches,
      * paid image generations). Subclasses with a replay-safe flow override.
      * @returns {SvAiConversation}
@@ -373,7 +398,7 @@
      */
     softRecoverFromErrors () {
         this.autoHealStuckState();
-        this.unsettledErrorMessages().forEach(m => this.recoverErroredMessage(m));
+        this.recoverableErrorMessages().forEach(m => this.recoverErroredMessage(m));
         this.syncRecoveryAffordance();
         return this;
     }

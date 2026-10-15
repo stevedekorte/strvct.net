@@ -1244,7 +1244,7 @@
         if (this.retryCount() > this.maxAutoRetries()) {
             e.message = "The AI service appears to be having sustained issues"
                 + " (stopped after " + this.maxAutoRetries() + " automatic retries)."
-                + " Press 'Recover from Errors' above to try again.";
+                + " Send a message to try again.";
             e.svRetriesExhausted = true;
             return;
         }

@@ -536,7 +536,7 @@
             console.error(this.logPrefix(), "model failover to " + toName + " also failed:", message);
             this.setError(failoverError);
             this.setContent("⚠️ Both the main and backup AI models are failing. " +
-                "Press 'Recover from Errors' above to try again.");
+                "Send a message to try again.");
             this.sendDelegateMessage("onMessageUpdate");
         });
         return true;
