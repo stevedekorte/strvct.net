@@ -3869,6 +3869,14 @@ Setup, integration, directory conventions, build pipeline, and running your firs
 
 Strvct is designed to be integrated directly into your application codebase as a **Git submodule**. It runs as a client-side single-page application in the browser and requires no compile-step template transforms, virtual DOM bundlers, or complex build toolchains.
 
+### Quick Workflow Overview:
+1. **Add Submodule:** Link Strvct as a git submodule in your repository.
+2. **Declare Imports:** List application source files in `_imports.json`.
+3. **Run Build:** Generate CAM catalog artifacts (`_index.json` and `_cam.json.zip`).
+4. **Start Server:** Launch `CliWebServer.js` locally.
+5. **Create Nodes:** Author annotated domain models inheriting from `SvStorableNode`.
+6. **Debug:** Inspect live state and set breakpoints in Chrome DevTools or Cursor/VSCode.
+
 ---
 
 ## Prerequisites
