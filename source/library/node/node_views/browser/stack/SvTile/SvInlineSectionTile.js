@@ -22,7 +22,9 @@
  * no long-press drag (reordering between sections is a later milestone).
  * When its node asks (nodeInlineCollapse), the heading folds the section
  * away to just the heading and its note; which sections are folded is view
- * state, kept on the section's element like an open row.
+ * state, kept on the section's element like an open row. A fold the player
+ * makes is told to the node (didChangeInlineCollapse, if it answers it), so
+ * a node that remembers it can start the section that way next time.
  */
 (class SvInlineSectionTile extends SvTile {
 
@@ -512,8 +514,19 @@
         return this;
     }
 
+    /**
+     * @description The player folds or opens the section: the view changes,
+     * and the node hears which way ("open" / "closed").
+     * @returns {SvInlineSectionTile}
+     * @category Inline
+     */
     toggleCollapsed () {
-        return this.setIsCollapsed(!this.isCollapsed());
+        this.setIsCollapsed(!this.isCollapsed());
+        const node = this.node();
+        if (node && node.didChangeInlineCollapse) {
+            node.didChangeInlineCollapse(this.isCollapsed() ? "closed" : "open");
+        }
+        return this;
     }
 
     /**
