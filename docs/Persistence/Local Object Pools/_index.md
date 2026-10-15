@@ -1,12 +1,21 @@
 # Local Object Pools
 
-IndexedDB-backed persistence for object graphs using dirty tracking and automatic serialization.
+IndexedDB-backed persistence for domain object graphs using dirty tracking, local object pools, and atomic commits.
 
 ## Overview
 
-Strvct's persistence system stores object graphs in the browser's IndexedDB. Rather than requiring explicit save/load calls, it monitors slot changes and automatically commits dirty objects at the end of the event loop. The system is built from three layers:
+Strvct's persistence engine is **local-first**: application state is stored directly in the browser's IndexedDB. Rather than requiring developers to write explicit SQL/ORM queries or API save calls, the framework monitors slot mutations automatically and commits dirty objects at the end of each browser event loop.
 
-<svg viewBox="0 0 820 540" width="820" xmlns="http://www.w3.org/2000/svg">
+```
++-------------------------------------------------------------------------+
+|                       Local Object Pool Architecture                    |
++-------------------------------------------------------------------------+
+|  1. Slot Setter  -->  2. Dirty Tracking  -->  3. End-of-Loop Commit   |
+|  4. Object Pool  -->  5. Record Store    -->  6. IndexedDB Transaction |
++-------------------------------------------------------------------------+
+```
+
+<svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -14,264 +23,108 @@ Strvct's persistence system stores object graphs in the browser's IndexedDB. Rat
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
     .flow { stroke: #111; stroke-width: 1; fill: none; }
-    .edge { stroke: #888; stroke-width: 1; fill: none; }
   </style>
   <defs>
     <marker id="alp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="190" y="20" width="440" height="120"/>
-  <text x="205" y="42" class="b">Node Graph</text>
-  <line class="edge" x1="240" y1="65" x2="310" y2="90"/>
-  <line class="edge" x1="240" y1="65" x2="380" y2="65"/>
-  <line class="edge" x1="310" y1="90" x2="410" y2="95"/>
-  <line class="edge" x1="380" y1="65" x2="410" y2="95"/>
-  <line class="edge" x1="410" y1="95" x2="490" y2="80"/>
-  <line class="edge" x1="490" y1="80" x2="560" y2="65"/>
-  <circle cx="240" cy="65" r="8" class="fill"/>
-  <circle cx="310" cy="90" r="8" class="fill"/>
-  <circle cx="380" cy="65" r="8" class="fill"/>
-  <circle cx="410" cy="95" r="11" class="fill" stroke-width="2"/>
-  <circle cx="490" cy="80" r="8" class="fill"/>
-  <circle cx="560" cy="65" r="8" class="fill"/>
-  <line class="flow" x1="410" y1="106" x2="410" y2="150" marker-end="url(#alp)"/>
-  <text x="425" y="135" class="dim">current node</text>
-  <rect class="fill" x="190" y="150" width="440" height="52"/>
-  <text x="205" y="170" class="b">SvStorableNode</text>
-  <text x="205" y="188" class="dim">your node class; slot setters hook into the persistence system</text>
-  <line class="flow" x1="410" y1="202" x2="410" y2="255" marker-end="url(#alp)"/>
-  <text x="420" y="245" class="dim">didUpdateSlot marks object dirty</text>
-  <rect class="fill" x="190" y="255" width="440" height="52"/>
-  <text x="205" y="275" class="b">SvObjectPool</text>
-  <text x="205" y="293" class="dim">in-memory cache; tracks dirty objects, serializes to JSON</text>
-  <line class="flow" x1="410" y1="307" x2="410" y2="360" marker-end="url(#alp)"/>
-  <text x="420" y="350" class="dim">commit at end of event loop</text>
-  <rect class="fill" x="190" y="360" width="440" height="52"/>
-  <text x="205" y="380" class="b">SvPersistentAtomicMap</text>
-  <text x="205" y="398" class="dim">IndexedDB wrapper; in-memory cache, batched writes</text>
-  <line class="flow" x1="410" y1="412" x2="410" y2="465" marker-end="url(#alp)"/>
-  <text x="420" y="455" class="dim">atomic transaction</text>
-  <rect class="box" x="190" y="465" width="440" height="42"/>
-  <text x="205" y="489" class="b">IndexedDB</text>
+
+  <!-- 4 Uniform Boxes (w: 170, h: 50) -->
+  <rect class="box" x="20" y="20" width="170" height="50"/>
+  <text x="35" y="40" class="b">SvStorableNode</text>
+  <text x="35" y="58" class="dim">Slot setter marks dirty</text>
+
+  <line class="flow" x1="190" y1="45" x2="220" y2="45" marker-end="url(#alp)"/>
+
+  <rect class="fill" x="220" y="20" width="170" height="50"/>
+  <text x="235" y="40" class="b">SvObjectPool</text>
+  <text x="235" y="58" class="dim">In-memory dirty cache</text>
+
+  <line class="flow" x1="390" y1="45" x2="420" y2="45" marker-end="url(#alp)"/>
+
+  <rect class="fill" x="420" y="20" width="170" height="50"/>
+  <text x="435" y="40" class="b">SvLocalRecordStore</text>
+  <text x="435" y="58" class="dim">JSON row serializer</text>
+
+  <line class="flow" x1="590" y1="45" x2="620" y2="45" marker-end="url(#alp)"/>
+
+  <rect class="box" x="620" y="20" width="180" height="50"/>
+  <text x="635" y="40" class="b">IndexedDB</text>
+  <text x="635" y="58" class="dim">Atomic key-value store</text>
+
+  <!-- Footnote -->
+  <text x="410" y="110" text-anchor="middle" class="dim">Mutations post dirty-node notifications; SvObjectPool batches write operations into an atomic IndexedDB transaction at the end of the event loop.</text>
 </svg>
 
-- **`SvObjectPool`** — Manages an in-memory cache of objects indexed by persistent unique IDs (puuids). Tracks dirty objects and handles serialization, deserialization, and garbage collection. A pool holds one document: its root object's puuid is the pool's id.
-- **`SvLocalRecordStore`** — The record store: one database holding the rows of every pool (a row is `{ poolId, objectId, parentId, orderKey, payloadJson, … }`, keyed by pool id and object id), with a batch API the pools write through and the queries windowed collections read through. Shares its row shape and protocol with the in-memory backing (`SvMemoryRecordStore`) and the cloud backing (`SvCloudRecordStore`), so one fixture-driven suite (`TestRecordStore`) pins all three.
-- **`SvPersistentAtomicMap`** — The IndexedDB wrapper under the record store: loads the entire database into memory on open, provides synchronous read/write to the cache, and batches writes into atomic IndexedDB transactions on commit.
-- **`SvStorableNode`** — A node base class that hooks slot changes into the dirty tracking system.
+---
 
-## Opting Into Persistence
+## The Object Pool Concept (`SvObjectPool`)
 
-### Marking a Node as Storable
+In Strvct, persistence is organized into **Object Pools**. Each document or aggregate root object owns a pool identified by a `poolId`:
 
-A node class opts into persistence by calling `setShouldStore(true)` in its `initPrototype()` method:
+- **Pool Isolation:** All domain objects within a document belong to the same `SvObjectPool`.
+- **In-Pool References (`{ "*": puuid }`):** Object relationships within the same pool store local persistent UUID pointers.
+- **Cross-Pool References (`{ "**": poolId }`):** References to objects in other document pools store external pool pointers, loaded asynchronously on demand.
+
+### Record Row Schema:
+Every object in a pool serializes into a clean JSON record row:
+
+```json
+{
+    "poolId": "p-10023",
+    "puuid": "u-88491",
+    "type": "Character",
+    "slots": {
+        "name": "Thorin Oakenshield",
+        "level": 12,
+        "inventory": { "*": "u-99210" }
+    }
+}
+```
+
+---
+
+## Dirty Tracking & Event Loop Commits
+
+Persistence operates with zero manual `save()` calls:
+
+1. **Setter Trigger:** Calling a slot setter marked `setShouldStoreSlot(true)` updates slot state and invokes `didMutate()`.
+2. **Dirty Set Registration:** `didMutate()` notifies the node's `SvObjectPool`, adding the object's `puuid` to the in-memory dirty set.
+3. **Coalesced Transaction:** At the end of the browser event loop, `SvObjectPool` iterates over dirty objects, serializes them to JSON records, and writes them to IndexedDB in a single **atomic transaction**.
 
 ```javascript
-(class MyNode extends SvStorableNode {
+(class Character extends SvStorableNode {
 
     initPrototypeSlots () {
         {
             const slot = this.newSlot("name", "");
             slot.setSlotType("String");
-            slot.setShouldStoreSlot(true);
-        }
-        {
-            const slot = this.newSlot("score", 0);
-            slot.setSlotType("Number");
-            slot.setShouldStoreSlot(true);
-        }
-        {
-            const slot = this.newSlot("cachedResult", null);
-            // Not stored — transient, recomputed at runtime
+            slot.setShouldStoreSlot(true); // Automatically registers with object pool dirty tracking
         }
     }
 
     initPrototype () {
         this.setShouldStore(true);
-        this.setShouldStoreSubnodes(true);
     }
 
 }.initThisClass());
 ```
 
-### What Gets Stored
+---
 
-Two flags control what is persisted:
+## Garbage Collection & Object Pool Lifecycle
 
-- **`setShouldStore(true)`** on the node — enables persistence for the node itself. Without this, the node and all its slots are ignored by the storage system.
-- **`setShouldStoreSlot(true)`** on individual slots — marks that slot's value for inclusion in the serialized record. Slots without this flag are transient and will be lost on reload.
+`SvObjectPool` automatically manages local storage cleanup:
 
-A third flag controls whether child nodes are stored:
+1. **Mark & Sweep Tracing:** The object pool traces reachable node references starting from the pool root object.
+2. **Unreachable Deletion:** Stored records that are no longer reachable from the root object are automatically purged from IndexedDB during pool maintenance passes.
+3. **Zero Dangling Pointers:** Deleting a parent node cleans up its child subnode subtree without leaving orphan records in local storage.
 
-- **`setShouldStoreSubnodes(true)`** — persists the node's `subnodes` array. Used for collection nodes where children are the primary data. When false, subnodes are transient and must be recreated on load (typically via `setFinalInitProto()` on slots with `setIsSubnodeField(true)`).
+---
 
-### Inheritance
+## Related Guides
 
-Storage capability begins at `SvStorableNode` in the class hierarchy:
-
-```
-ProtoClass → SvNode → SvTitledNode → SvInspectableNode → SvViewableNode → SvStyledNode → SvStorableNode
-```
-
-Classes above `SvStorableNode` cannot be stored. Application model classes typically extend `SvStorableNode` or one of its subclasses like `SvSummaryNode`.
-
-## Persistent Unique IDs
-
-Every stored object has a **puuid** — a 10-character random string (A-Za-z0-9) that serves as its key in the object pool. Puuids are generated on first access via `crypto.getRandomValues()` and stored as a non-enumerable `_puuid` property on the object.
-
-Puuids serve two purposes:
-
-1. **Storage key** — together with its pool's id, the puuid keys the row that holds the object's serialized record (`poolId` + `objectId`; the pool's root row is the one where the two are equal).
-2. **Object references** — when one stored object references another, the reference is serialized as `{ "*": "puuid" }` rather than inlining the referenced object. This allows the storage system to trace the object graph for garbage collection.
-
-## Serialization Format
-
-Each stored object is serialized as a JSON record with a type field and an entries array:
-
-```json
-{
-  "type": "MyNode",
-  "entries": [
-    ["name", "Alice"],
-    ["score", 42],
-    ["inventory", { "*": "aB3xK9mQ2p" }]
-  ]
-}
-```
-
-Primitive values (strings, numbers, booleans, null) are stored inline. Object references are stored as `{ "*": "puuid" }` pointers. The `type` field identifies the class so the correct constructor can be used on deserialization.
-
-### Serialization Methods
-
-- **`recordForStore(aStore)`** — iterates all slots with `shouldStoreSlot() == true`, calls `aStore.refValue()` on each value to handle object references, and returns the record.
-- **`loadFromRecord(aRecord, aStore)`** — iterates the record's entries, calls `aStore.unrefValue()` to resolve references back to live objects, and sets each slot value.
-
-## Dirty Tracking and Automatic Commits
-
-The persistence system uses automatic dirty tracking so application code never needs to call save explicitly.
-
-### The Mutation Flow
-
-1. A slot value changes (via its setter method).
-2. `SvStorableNode.didUpdateSlot()` checks whether the node and slot are both marked for storage.
-3. If so, it calls `didMutate()`, which notifies the `SvObjectPool` via a mutation observer.
-4. The pool calls `addDirtyObject(obj)` to add the object to its dirty set.
-5. `addDirtyObject()` calls `scheduleStore()`, which uses `SvSyncScheduler` to defer the commit.
-6. At the end of the event loop, `commitStoreDirtyObjects()` runs, serializing all dirty objects and writing them to IndexedDB in a single atomic transaction.
-
-Because the commit is deferred, multiple slot changes within the same event loop — even across different objects — are batched into a single IndexedDB transaction. This keeps persistence efficient even when many properties change in rapid succession.
-
-### Commit Details
-
-`commitStoreDirtyObjects()` begins an IndexedDB transaction via `SvPersistentAtomicMap`, then iterates the dirty set. For each dirty object, it calls `recordForStore()` to serialize it and writes it as the payload of the object's row, keyed by pool id and puuid. After all objects are stored, the transaction is committed atomically. If any object becomes dirty again during the commit (because serialization triggers side effects), the cycle repeats until the dirty set is empty.
-
-## SvPersistentAtomicMap
-
-`SvPersistentAtomicMap` wraps `SvIndexedDbFolder` with a synchronous in-memory cache. On open, it loads the entire database into a JavaScript Map. All reads are served from memory. Writes go to an in-memory write cache and are flushed to the underlying store in batched transactions on commit. `SvIndexedDbFolder` is the environment abstraction point — it uses native IndexedDB in the browser and LevelDB (via `classic-level`) in Node.js, with the same async API in both cases. See [Headless Execution](../../Lifecycle/Headless%20Execution/) for details on the storage abstraction.
-
-This design means:
-
-- **Reads are synchronous and fast** — no async IndexedDB calls during normal operation.
-- **Writes are batched** — many changes are committed in a single IndexedDB transaction.
-- **The full dataset is in memory** — suitable for object graphs that fit in browser memory (typically tens of megabytes).
-
-### Transaction Model
-
-1. `promiseBegin()` — snapshots the current state into a write cache.
-2. Synchronous operations (`atPut`, `removeKey`) modify the write cache.
-3. `promiseCommit()` — applies all changes to IndexedDB in a single transaction.
-
-## Opening the Pool
-
-The application opens the pool once at startup:
-
-```javascript
-const pool = SvPersistentObjectPool.sharedPool();
-await pool.promiseOpen();
-const root = await pool.rootOrIfAbsentFromClosure(() => {
-    return MyRootNode.clone();
-});
-```
-
-`promiseOpen()` opens the IndexedDB database, loads all records into memory, and runs garbage collection. `rootOrIfAbsentFromClosure()` loads the existing root object from storage, or creates a new one using the provided closure if no root exists yet.
-
-### Loading Cascade
-
-Loading the root object triggers a cascade: as each object is deserialized, its slot values that contain `{ "*": "puuid" }` references cause those referenced objects to be loaded in turn. After all objects in the reachable graph have been loaded, `finalInit()` is called on each to re-establish object relationships, followed by `afterInit()`.
-
-## Class Name Migrations
-
-Renaming a stored class would normally break deserialization: existing IndexedDB records still reference the old class name in their `type` field, and `classForName()` would fail to find the renamed class. To avoid a forced data migration, the pool supports a **conversion map** that routes old class names to their new names at load time.
-
-### Registering Conversions
-
-Before opening the pool, register the old→new mappings:
-
-```javascript
-const store = this.defaultStore();
-store.addClassNameConversion("OldName", "NewName");
-// or for many at once:
-store.addClassNameConversionTuples([
-    ["OldName", "NewName"],
-    ["AnotherOldName", "AnotherNewName"]
-]);
-await store.promiseOpen();
-```
-
-`classForName()` checks the map first — if an entry exists, it looks up the new name instead. Stored records are left unchanged on disk; next time each object is saved, it's written with the new class name, so the database gradually migrates itself.
-
-### When to Use It
-
-- **Any rename of a stored class** — classes that `extend SvStorableNode` (directly or indirectly) have their names embedded in records, so a rename without a conversion mapping will strand that data.
-- **Permanent retention** — keep every mapping forever unless you're certain no user has stale data. Removing an entry later breaks any client whose IndexedDB predates the rename.
-
-### Scope
-
-The conversion map only affects record deserialization. It does **not** rewrite code, JSDoc, or string literals elsewhere in the codebase — those must be updated directly (see the codemod pattern in `ClassRenames.json`).
-
-## Pools, Documents and Far References
-
-Every cloud document — a session, a character, a catalog campaign — is its own pool, and the pools share one record store. A folder whose children are documents declares it with `setSubnodesArePools(true)` (every `SvCloudFolder` does): the folder's record then holds a **far reference** `{ "**": poolId }` to each child instead of a near reference `{ "*": puuid }`, and the child's root row is placed under the folder with a fractional order key (`SvOrderKey`). Editing a document dirties only its pool; deleting a document's root cascades to its pool; `SvObjectPool.poolOfObject(obj)` answers which pool an object belongs to. The application's home pool is the `SvPersistentObjectPool` (`settings.homePoolId`); child pools open on demand from the same store.
-
-The cloud holds the same rows (see [Cloud Object Pools](../Cloud%20Object%20Pools/)): a pool comes down as rows (`SvLocalRecordStore.asyncImportOpenedPool`, or `asyncImportPoolChanges` for the changes since the version the device holds) and goes up as a commit of the rows changed since the last synced snapshot (`SvObjectPool.asyncCommitToCloud`). A pool reopened from disk whose copy is in sync with the cloud — it has a cloud version and no edit stamped after its last sync — starts with that synced snapshot, so its first commit sends only its changes. A store that no pool owns (`outlivesItsPools`) serves as an in-memory cache of cloud pools opened one at a time.
-
-## Windowed Collections
-
-A collection that grows without bound — a chat's messages — should not be a list of references inside one record. `setSubnodesAreWindowed(true)` on the collection node makes membership live on the elements' rows instead: each element's row carries the node's puuid as `parentId` and an order key, and the node's record has no `subnodes` entry. Elements enroll in the pool when they are attached and their rows are deleted when they are detached.
-
-Reads are windows: `subnodeCount()` answers from the store; the first access (`prepareForFirstAccess`) loads the newest `windowSize()` elements (`loadLatestWindow()`); `loadOlderWindow(n)` prepends the next older window; `hasUnloadedSubnodes()` says whether more exist. A window load is a load, not an edit: it runs between `beginWindowLoad()` / `endWindowLoad()`, dirties nothing, and does not re-enroll what the store already has. The node's `didLoadWindow(elements)` hook is where a subclass does what it used to do when its whole list materialized — `SvConversation` wires each loaded message's conversation back-pointer there. **Every hook that keyed on "subnodes materialized" needs a `didLoadWindow` twin once a collection is windowed.**
-
-New elements append at the loaded array's length (`appendIndex()`), never at `subnodeCount()`: the store's count lags the array until the store pass runs. A record written before the collection was windowed (an inline `subnodes` reference) still loads whole; the node is marked for a one-time re-save and the next store pass writes it as placed rows.
-
-## Record Size Discipline
-
-Records stay small so that a pool opens in the time a user will wait. A stored `String` slot is capped at `Slot.storedStringCapLength()` (16,384 characters; an over-cap set warns once per slot and stores inline, or throws in audit mode — `Slot.setStoredStringCapThrows(true)`); the cap reaches tool schemas as `maxLength`. Long text — message bodies, prompts, transcripts — declares `slot.setIsBlobString(true)` and spills above 32,768 characters to a content-addressed text blob referenced as `{ "#": sha256 }` (hashed synchronously by `String.hexSha256Sync`, prefetched into the store at pool open, fetched from the cloud blob store on a fresh device). A collection past `subnodeCountWarningThreshold()` (1,000) warns once: that is the signal to window it.
-
-## Transactions
-
-`pool.transaction(fn)` runs `fn` with first-touch snapshots at the existing hooks (`setSlotValue`, `willMutate`, the hooked collection methods, `setParentNode`) and rolls the in-memory state back whole if `fn` throws — allocated objects are dropped, scheduled actions, queued notifications and timeouts tagged inside the transaction are removed. `applyJsonPatches` runs inside one when `SvTransactionContext.setPatchesUseTransactions(true)` (off by default until the patch path is playtested). Only `SvNode` kinds are snapshotted; a transaction may not queue a cloud delete (`assertNoneOpen`).
-
-## Garbage Collection
-
-The pool uses mark-and-sweep garbage collection to remove unreachable objects, per pool:
-
-1. **Mark** — starting from the root object's puuid, recursively walk all `{ "*": "puuid" }` references in stored records, marking each visited puuid.
-2. **Sweep** — delete any stored records whose puuids were not marked.
-
-Garbage collection runs automatically when the pool opens. It ensures that objects which are no longer reachable from the root — for example, nodes removed from a collection — are cleaned up from IndexedDB.
-
-Rows whose `parentId` is a marked node (windowed elements) are reachable, and so is what they reference. Blob garbage collection runs separately via `SvBlobPool` (see [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/)); only the home pool schedules it, and it counts references from **every** pool's rows in the store, open or not — a document that is not open at boot still owns its images.
-
-## Key Classes Summary
-
-| Class | Purpose |
-|-------|---------|
-| `SvObjectPool` | Base pool: object cache, dirty tracking, serialization, GC |
-| `SvPersistentObjectPool` | The home pool: the `SvObjectPool` whose root is the app's model |
-| `SvLocalRecordStore` | The record store: every pool's rows in one database, batch writes, windowed queries |
-| `SvMemoryRecordStore` / `SvCloudRecordStore` | The same protocol in memory (tests, `fromCloudJson`) and over the cloud commit protocol |
-| `SvPersistentAtomicMap` | IndexedDB wrapper with synchronous in-memory cache |
-| `SvStorableNode` | Node base class that hooks slot changes to dirty tracking |
-| `SvOrderKey` | Fractional order keys for placements |
-| `SvTransaction` / `SvTransactionContext` | Rollback of in-memory state by first-touch snapshots |
+- [Cloud Object Pools](../Cloud%20Object%20Pools/): Versioned cloud synchronization and conflict detection.
+- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): SHA-256 content-addressable binary asset storage.
+- [Technical Overview](../../Technical%20Overview/): High-level system architecture and local-first philosophy.

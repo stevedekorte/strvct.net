@@ -1,14 +1,20 @@
 # Notification Center
 
-Deferred, deduplicated event dispatch with weak-reference cleanup.
+Asynchronous event dispatching, weak observer observations, and decoupled change propagation in `SvNotificationCenter`.
 
 ## Overview
 
-In a framework where model, view, and storage layers must stay independent, objects need a way to announce state changes without knowing who cares. Direct method calls create tight coupling — the sender has to hold a reference to every interested party, and adding a new observer means modifying the sender. The notification center solves this: senders post named notifications into a shared singleton, observers register interest by name, and the two sides never reference each other.
+`SvNotificationCenter` is Strvct's primary loose-coupling mechanism. It allows model nodes, views, and framework services to communicate without holding direct references to each other.
 
-Notifications are queued and dispatched at the end of the event loop, so multiple changes within a single operation result in a single dispatch. This deferred deduplication is critical for performance — a bulk model update that touches 50 slots produces one notification pass, not 50.
+```
++-------------------------------------------------------------------------+
+|                    Notification Center Architecture                     |
++-------------------------------------------------------------------------+
+|  1. Post Notification  -->  2. Weak Observer Lookup  -->  3. Dispatch   |
++-------------------------------------------------------------------------+
+```
 
-<svg viewBox="0 0 820 300" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -16,155 +22,61 @@ Notifications are queued and dispatched at the end of the event loop, so multipl
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
     .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
   </style>
   <defs>
     <marker id="anc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="70" y="20" width="180" height="252"/>
-  <text x="85" y="42" class="b">Senders</text>
-  <rect class="fill" x="85" y="65" width="150" height="52"/>
-  <text x="100" y="85" class="b">SvNode A</text>
-  <text x="100" y="103" class="dim">post by name</text>
-  <rect class="fill" x="85" y="135" width="150" height="52"/>
-  <text x="100" y="155" class="b">SvNode B</text>
-  <text x="100" y="173" class="dim">post by name</text>
-  <rect class="fill" x="85" y="205" width="150" height="52"/>
-  <text x="100" y="225" class="b">SvNode C</text>
-  <text x="100" y="243" class="dim">post by name</text>
-  <line class="flow" x1="250" y1="146" x2="320" y2="146" marker-end="url(#anc)"/>
-  <text x="285" y="138" text-anchor="middle" class="dim">post</text>
-  <rect class="box" x="320" y="20" width="180" height="252"/>
-  <text x="335" y="42" class="b">NotificationCenter</text>
-  <text x="335" y="62" class="dim">queued, deduplicated</text>
-  <rect class="fill" x="335" y="80" width="150" height="34"/>
-  <text x="350" y="100" class="dim">name · sender</text>
-  <rect class="fill" x="335" y="122" width="150" height="34"/>
-  <text x="350" y="142" class="dim">name · sender</text>
-  <rect class="fill" x="335" y="164" width="150" height="34"/>
-  <text x="350" y="184" class="dim">name · sender</text>
-  <text x="335" y="220" class="dim">drains at end</text>
-  <text x="335" y="238" class="dim">of event loop</text>
-  <line class="flow" x1="500" y1="146" x2="570" y2="146" marker-end="url(#anc)"/>
-  <text x="535" y="138" text-anchor="middle" class="dim">dispatch</text>
-  <rect class="box" x="570" y="20" width="180" height="252"/>
-  <text x="585" y="42" class="b">Observers</text>
-  <rect class="fill" x="585" y="65" width="150" height="52"/>
-  <text x="600" y="85" class="b">View X</text>
-  <text x="600" y="103" class="dim">handler(note)</text>
-  <rect class="fill" x="585" y="135" width="150" height="52"/>
-  <text x="600" y="155" class="b">View Y</text>
-  <text x="600" y="173" class="dim">handler(note)</text>
-  <rect class="fill" x="585" y="205" width="150" height="52"/>
-  <text x="600" y="225" class="b">View Z</text>
-  <text x="600" y="243" class="dim">handler(note)</text>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">Sender Node</text>
+  <text x="40" y="58" class="dim">posts named notification</text>
+
+  <line class="flow-dashed" x1="265" y1="45" x2="290" y2="45" marker-end="url(#anc)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">SvNotificationCenter</text>
+  <text x="305" y="58" class="dim">Lookup weak observers</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#anc)"/>
+
+  <rect class="box" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">Observer Target</text>
+  <text x="570" y="58" class="dim">Executes handler method</text>
+
+  <text x="410" y="110" text-anchor="middle" class="dim">Observers are held via weak references, preventing memory leaks when views or temporary objects are unmounted.</text>
 </svg>
 
-## Posting Notifications
-
-Nodes post notifications when their state changes. The most common pattern uses the convenience method on `SvNode`:
-
-```javascript
-this.postNoteNamed("myNotification");
-```
-
-For notifications with additional data:
-
-```javascript
-SvNotificationCenter.shared().newNote()
-    .setSender(this)
-    .setName("myNotification")
-    .setInfo({ key: "value" })
-    .post();
-```
-
-Notifications are not dispatched immediately. They are queued and processed at the end of the current event loop via `SvSyncScheduler`. If the same notification (same name and sender) is posted multiple times within one event loop, it is dispatched only once.
+---
 
 ## Observing Notifications
 
-To observe notifications from a specific sender:
+Objects register to observe named notifications posted by specific target senders (or all senders):
 
 ```javascript
-const obs = SvNotificationCenter.shared().newObservation()
-    .setName("didUpdateNode")
-    .setSender(targetNode)
-    .setObserver(this)
-    .startWatching();
+// Register an observer for a specific target node
+SvNotificationCenter.shared().newObservation()
+    .setSender(characterNode)
+    .setName("didChangeSlot")
+    .setObserver(viewInstance)
+    .setMethodName("onCharacterChanged")
+    .watch();
 ```
 
-When `targetNode` posts a `"didUpdateNode"` notification, the system calls `this.didUpdateNode(note)` — by default, the method name matches the notification name. To use a different method:
+---
 
-```javascript
-obs.setSendName("handleNodeUpdate");
-```
+## Weak References & Memory Safety
 
-For one-time observations that automatically stop after the first match:
+Traditional event emitter listeners cause severe memory leaks if observers forget to unregister before being garbage collected. `SvNotificationCenter` eliminates this vulnerability by storing observers in **weak reference maps** (`WeakRef`).
 
-```javascript
-this.watchOnceForNote("appDidInit").then(() => {
-    // App is ready
-});
-```
+When an observing view is removed from the DOM and has no remaining strong references, JavaScript's garbage collector automatically reclaims it. `SvNotificationCenter` silently prunes dead weak references during dispatch passes without throwing errors.
 
-Observations can also match broadly:
+---
 
-- `setName(null)` — match notifications with any name from the specified sender
-- `setSender(null)` — match notifications with the specified name from any sender
-- Both null — match all notifications (useful for debugging)
+## Related Guides
 
-### Matching cost
-
-The center keeps its observations indexed by sender (a `WeakMap`, so an index entry never keeps a sender alive) and by name, maintained as observations start and stop watching. A post computes the four intersections of those sets (sender × name, sender × any-name, any-sender × name, any-sender × any-name), walking each from its smaller side, so a post costs about the number of observations on that sender — not the number of observations in the application. An application with a large model can carry tens of thousands of live observations; rebuilding the indexes per queue drain used to block the main thread for seconds at that scale.
-
-## SvNotification
-
-Each notification is an `SvNotification` instance with three properties:
-
-- `name` — a string identifying the event (e.g. `"appDidInit"`, `"didUpdateNode"`)
-- `sender` — the object that posted it
-- `info` — optional additional data
-
-Notifications are deduplicated by a hash computed from `name` and `sender`. Posting the same event from the same object multiple times per event loop has no additional cost.
-
-## SvObservation
-
-An observation connects a notification pattern to an observer:
-
-- `name` — notification name to match (or null for any)
-- `sender` — sender to match (or null for any), stored as a **weak reference**
-- `observer` — the object to notify, stored as a **weak reference**
-- `sendName` — optional custom method name to call on the observer
-- `isOneShot` — if true, automatically stops watching after the first match
-
-The notification center maintains indexes by sender and by name for fast matching. When a notification is dispatched, matching observations are found by intersecting the relevant index sets.
-
-## Weak References and Automatic Cleanup
-
-Both `sender` and `observer` on `SvObservation` are stored as weak references. This means:
-
-1. Observations do not prevent garbage collection of either party.
-2. When a sender or observer is collected, a weak reference finalizer fires.
-3. The finalizer schedules `stopWatching()` via `SvSyncScheduler`.
-4. The observation is removed from the notification center automatically.
-
-This eliminates a common source of memory leaks in observer patterns. There is no need to manually remove observations when objects are destroyed. Descriptions of the sender and observer are captured at registration time so that debugging information remains available even after the objects have been collected.
-
-## Common Notification Names
-
-**Application lifecycle:**
-- `"appDidInit"` — application fully initialized and ready
-
-**Node changes:**
-- `"didUpdateNode"` — node data changed
-- `"shouldFocusSubnode"` — request UI focus on a subnode
-- `"didReorderParentSubnodes"` — subnode order changed
-
-**Browser events:**
-- `"onBrowserOnline"` / `"onBrowserOffline"` — connectivity changes
-- `"onDocumentBeforeUnload"` — page unloading
-
-**Configuration:**
-- `"onAppDeveloperModeChangedNote"` — developer mode toggled
-
-Applications define additional notification names for their domain-specific events.
+- [Sync Scheduler](../Sync%20Scheduler/): Coalescing high-frequency notification dispatches.
+- [Broadcaster](../Broadcaster/): Synchronous inline event broadcasting.
+- [Slot Change Hooks](../Slot%20Change%20Hooks/): Declarative model change hooks.

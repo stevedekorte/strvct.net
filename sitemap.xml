@@ -40,6 +40,7 @@
   <url><loc>https://strvct.net/docs/Future%20Work/Tile%20Container%20Views/</loc></url>
   <url><loc>https://strvct.net/docs/Future%20Work/Tile%20Views/</loc></url>
   <url><loc>https://strvct.net/docs/Getting%20Started/</loc></url>
+  <url><loc>https://strvct.net/docs/Getting%20Started/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Implementation%20Overview/</loc></url>
   <url><loc>https://strvct.net/docs/Implementation%20Overview/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Inspectors%20and%20Debugging/</loc></url>
@@ -55,15 +56,23 @@
   <url><loc>https://strvct.net/docs/Naked%20Objects/</loc></url>
   <url><loc>https://strvct.net/docs/Naked%20Objects%20Old/</loc></url>
   <url><loc>https://strvct.net/docs/Nodes/</loc></url>
+  <url><loc>https://strvct.net/docs/Nodes/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Notifications/</loc></url>
   <url><loc>https://strvct.net/docs/Notifications/Broadcaster/</loc></url>
+  <url><loc>https://strvct.net/docs/Notifications/Broadcaster/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Notifications/Notification%20Center/</loc></url>
+  <url><loc>https://strvct.net/docs/Notifications/Notification%20Center/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Notifications/Slot%20Change%20Hooks/</loc></url>
+  <url><loc>https://strvct.net/docs/Notifications/Slot%20Change%20Hooks/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Notifications/Sync%20Scheduler/</loc></url>
+  <url><loc>https://strvct.net/docs/Notifications/Sync%20Scheduler/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Persistence/</loc></url>
   <url><loc>https://strvct.net/docs/Persistence/Cloud%20Object%20Pools/</loc></url>
+  <url><loc>https://strvct.net/docs/Persistence/Cloud%20Object%20Pools/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Persistence/Local%20Object%20Pools/</loc></url>
+  <url><loc>https://strvct.net/docs/Persistence/Local%20Object%20Pools/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/</loc></url>
+  <url><loc>https://strvct.net/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Programming%20Idioms/</loc></url>
   <url><loc>https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/</loc></url>
   <url><loc>https://strvct.net/docs/Programming%20Idioms/Categories/</loc></url>
@@ -81,6 +90,7 @@
   <url><loc>https://strvct.net/docs/Services/Media/</loc></url>
   <url><loc>https://strvct.net/docs/Services/Proxies/</loc></url>
   <url><loc>https://strvct.net/docs/Slots/</loc></url>
+  <url><loc>https://strvct.net/docs/Slots/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Technical%20Overview/</loc></url>
   <url><loc>https://strvct.net/docs/Technical%20Overview/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Views/</loc></url>

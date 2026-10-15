@@ -1,16 +1,14 @@
 # Sync Scheduler
 
-Deferred, deduplicated method calls with priority ordering and loop detection.
+Coalescing, deduplication, and event-loop-deferred method execution in `SvSyncScheduler`.
 
 ## Overview
 
-View synchronization and storage writes don't need the notification center's broadcast generality — there's no unknown set of observers, just a specific method on a specific object that needs to run. But without coalescing, the same sync could be requested dozens of times per event loop as multiple slots change. Calling it each time wastes work; calling it zero times loses data.
+When multiple property slots mutate rapidly within a single user gesture (or batch data load), triggering a full UI re-render pass for every individual setter call would cause severe performance degradation and layout thrashing.
 
-`SvSyncScheduler` solves this by ensuring a given target/method pair runs exactly once per event loop, no matter how many code paths request it. It also provides priority ordering so that view-to-model syncs (user edits) complete before model-to-view syncs (reactive updates), preventing stale data from overwriting user input.
+`SvSyncScheduler` solves this by **coalescing and deduplicating** target and method calls within the browser event loop:
 
-The notification center uses `SvSyncScheduler` internally for its own dispatch, so notification delivery and view synchronization are handled in the same deferred processing pass.
-
-<svg viewBox="0 0 820 340" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -24,83 +22,42 @@ The notification center uses `SvSyncScheduler` internally for its own dispatch, 
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="40" y="20" width="350" height="264"/>
-  <text x="55" y="42" class="b">Incoming requests</text>
-  <text x="55" y="62" class="dim">multiple calls, any order</text>
-  <rect class="fill" x="55" y="80" width="320" height="39"/>
-  <text x="70" y="105" class="dim">A.syncToView  (priority 2)</text>
-  <rect class="fill" x="55" y="130" width="320" height="39"/>
-  <text x="70" y="155" class="dim">B.syncFromView  (priority 0)</text>
-  <rect class="fill" x="55" y="180" width="320" height="39"/>
-  <text x="70" y="205" class="dim">A.syncToView  (priority 2)  · duplicate, ignored</text>
-  <rect class="fill" x="55" y="230" width="320" height="39"/>
-  <text x="70" y="255" class="dim">M.commit  (priority 1)</text>
-  <line class="flow" x1="390" y1="170" x2="430" y2="170" marker-end="url(#ass)"/>
-  <text x="410" y="160" text-anchor="middle" class="dim">drain</text>
-  <rect class="box" x="430" y="20" width="350" height="259"/>
-  <text x="445" y="42" class="b">Drain (end of event loop)</text>
-  <text x="445" y="62" class="dim">deduplicated, in priority order</text>
-  <rect class="fill" x="445" y="80" width="320" height="39"/>
-  <text x="460" y="105" class="dim">1. B.syncFromView()  · priority 0</text>
-  <rect class="fill" x="445" y="130" width="320" height="39"/>
-  <text x="460" y="155" class="dim">2. M.commit()  · priority 1</text>
-  <rect class="fill" x="445" y="180" width="320" height="39"/>
-  <text x="460" y="205" class="dim">3. A.syncToView()  · priority 2</text>
-  <text x="445" y="243" class="dim">each (target, method) pair</text>
-  <text x="445" y="261" class="dim">runs exactly once per loop</text>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">N Rapid Slot Mutations</text>
+  <text x="40" y="58" class="dim">Schedules syncFromNode()</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#ass)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">SvSyncScheduler</text>
+  <text x="305" y="58" class="dim">Deduplicates target/method</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#ass)"/>
+
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">End of Event Loop</text>
+  <text x="570" y="58" class="dim">Executes 1 single UI pass</text>
+
+  <text x="410" y="110" text-anchor="middle" class="dim">100 slot property mutations in 1 frame trigger exactly 1 UI render pass at the end of the loop.</text>
 </svg>
 
-## Scheduling Actions
+---
+
+## Usage Pattern
+
+Views and persistent objects register deferred sync requests with `SvSyncScheduler`:
 
 ```javascript
-SvSyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView");
+// Schedule a deferred method execution
+SvSyncScheduler.shared().scheduleTargetAndMethod(view, "syncFromNode");
 ```
 
-This schedules `this.syncToView()` to run at the end of the current event loop. If the same target/method pair is scheduled again before it executes, the duplicate is ignored — the method runs exactly once.
+Regardless of how many times `scheduleTargetAndMethod(view, "syncFromNode")` is invoked during the current event loop, `view.syncFromNode()` executes **exactly once** when the scheduler flushes.
 
-## Priority
+---
 
-Actions can be prioritized with an optional order parameter:
+## Related Guides
 
-```javascript
-SvSyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView", 100);
-```
-
-Higher values execute later. This is how the framework ensures view-to-model syncs (priority 0) complete before model-to-view syncs (priority 2) — user edits are applied before reactive updates.
-
-## Immediate Processing
-
-For cases where deferred execution isn't appropriate:
-
-```javascript
-SvSyncScheduler.shared().fullSyncNow();
-```
-
-This synchronously processes all pending actions until the queue is empty.
-
-## Loop Detection
-
-The scheduler detects infinite loops. If an action attempts to schedule itself while it is currently executing, an error is thrown:
-
-```
-SvSyncScheduler LOOP DETECTED:
-  scheduleTargetAndMethod: (MyView.syncToNode)
-  while processing: (MyView.syncToNode)
-```
-
-Bidirectional model-view synchronization avoids loops naturally because slot setters only trigger `didUpdateSlot` when the value actually changes. Setting a slot to its current value is a no-op.
-
-`fullSyncNow()` also includes a safety limit — it halts after 10 iterations if the queue hasn't drained, indicating a cycle that the single-action detector didn't catch.
-
-## Pausing and Resuming
-
-Schedulers can be paused during bulk operations:
-
-```javascript
-SvSyncScheduler.shared().pause();
-// ... bulk model changes ...
-SvSyncScheduler.shared().resume();
-// All pending syncs execute now
-```
-
-The app startup sequence uses this to prevent premature sync cycles during model and UI initialization.
+- [Notification Center](../Notification%20Center/): Asynchronous weak observation dispatch.
+- [Broadcaster](../Broadcaster/): Synchronous event broadcasting.

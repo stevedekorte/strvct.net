@@ -39,7 +39,8 @@
 - [Promise-Wrapped Slots](/docs/Future%20Work/Promise-Wrapped%20Slots/): Automatic async getter generation with promise caching and dependency-driven invalidation.
 - [Tile Container Views](/docs/Future%20Work/Tile%20Container%20Views/): Layout strategies for presenting a node's subnodes.
 - [Tile Views](/docs/Future%20Work/Tile%20Views/): Tile subclasses for presenting individual subnodes in specialized ways.
-- [Getting Started](/docs/Getting%20Started/): Setup, integration, and first steps with the Strvct framework.
+- [Getting Started](/docs/Getting%20Started/): Setup, integration, directory conventions, build pipeline, and running your first Strvct application.
+- [Getting Started](/docs/Getting%20Started/_unused/): Setup, integration, and first steps with the Strvct framework.
 - [Implementation Overview](/docs/Implementation%20Overview/): Deep technical specifications for class lifecycle, slots, views, persistence, notifications, and build infrastructure.
 - [Implementation Overview](/docs/Implementation%20Overview/_unused/): Implementation details for classes, slots, views, and persistence.
 - [Inspectors and Debugging](/docs/Inspectors%20and%20Debugging/): Built-in tools for inspecting nodes and revealing hidden parts of the model graph at runtime.
@@ -54,16 +55,24 @@
 - [View Synchronization](/docs/Lifecycle/View%20Synchronization/): How views discover nodes, synchronize state, and batch updates efficiently.
 - [Naked Objects](/docs/Naked%20Objects/): From Domain Models to Complete Applications
 - [Naked Objects](/docs/Naked%20Objects%20Old/): From Domain Models to Complete Applications
-- [Nodes](/docs/Nodes/): The object model at the heart of STRVCT.
+- [Nodes](/docs/Nodes/): The core domain object abstraction, object graph hierarchy, and subnode management in Strvct.
+- [Nodes](/docs/Nodes/_unused/): The object model at the heart of STRVCT.
 - [Notifications](/docs/Notifications/): Event-driven communication between framework layers using observations, scheduling, and weak references.
-- [Broadcaster](/docs/Notifications/Broadcaster/): Lightweight synchronous dispatch for high-frequency internal events.
-- [Notification Center](/docs/Notifications/Notification%20Center/): Deferred, deduplicated event dispatch with weak-reference cleanup.
-- [Slot Change Hooks](/docs/Notifications/Slot%20Change%20Hooks/): Automatic per-slot callbacks that connect property changes to notifications and persistence.
-- [Sync Scheduler](/docs/Notifications/Sync%20Scheduler/): Deferred, deduplicated method calls with priority ordering and loop detection.
+- [Broadcaster](/docs/Notifications/Broadcaster/): Immediate, synchronous event broadcasting across object trees in SvBroadcaster.
+- [Broadcaster](/docs/Notifications/Broadcaster/_unused/): Lightweight synchronous dispatch for high-frequency internal events.
+- [Notification Center](/docs/Notifications/Notification%20Center/): Asynchronous event dispatching, weak observer observations, and decoupled change propagation in SvNotificationCenter.
+- [Notification Center](/docs/Notifications/Notification%20Center/_unused/): Deferred, deduplicated event dispatch with weak-reference cleanup.
+- [Slot Change Hooks](/docs/Notifications/Slot%20Change%20Hooks/): Declarative lifecycle hooks invoked automatically during slot mutation.
+- [Slot Change Hooks](/docs/Notifications/Slot%20Change%20Hooks/_unused/): Automatic per-slot callbacks that connect property changes to notifications and persistence.
+- [Sync Scheduler](/docs/Notifications/Sync%20Scheduler/): Coalescing, deduplication, and event-loop-deferred method execution in SvSyncScheduler.
+- [Sync Scheduler](/docs/Notifications/Sync%20Scheduler/_unused/): Deferred, deduplicated method calls with priority ordering and loop detection.
 - [Persistence](/docs/Persistence/): Local storage, cloud sync, and blob management for object graphs.
-- [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/): Cloud persistence for object pools: one record per row, a version per pool, and a commit protocol.
-- [Local and Cloud Blob Storage](/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/): Content-addressable storage for binary data like images, audio, and video.
-- [Local Object Pools](/docs/Persistence/Local%20Object%20Pools/): IndexedDB-backed persistence for object graphs using dirty tracking and automatic serialization.
+- [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/): Versioned cloud persistence, delta synchronizations, and deterministic conflict resolution for Strvct object pools.
+- [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/_unused/): Cloud persistence for object pools: one record per row, a version per pool, and a commit protocol.
+- [Local and Cloud Blob Storage](/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/): SHA-256 content-addressable binary asset storage for images, audio, video, and files.
+- [Local and Cloud Blob Storage](/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/_unused/): Content-addressable storage for binary data like images, audio, and video.
+- [Local Object Pools](/docs/Persistence/Local%20Object%20Pools/): IndexedDB-backed persistence for domain object graphs using dirty tracking, local object pools, and atomic commits.
+- [Local Object Pools](/docs/Persistence/Local%20Object%20Pools/_unused/): IndexedDB-backed persistence for object graphs using dirty tracking and automatic serialization.
 - [Programming Idioms](/docs/Programming%20Idioms/): Recurring patterns and conventions for writing STRVCT code.
 - [Async Patterns](/docs/Programming%20Idioms/Async%20Patterns/): Extended promises, serial and parallel iteration, and concurrency control.
 - [Categories](/docs/Programming%20Idioms/Categories/): Extending existing classes by adding methods from separate files.
@@ -80,7 +89,8 @@
 - [Home Assistant](/docs/Services/Home%20Assistant/): IoT device control via Home Assistant's WebSocket API.
 - [Media](/docs/Services/Media/): YouTube audio playback and browser speech recognition.
 - [Proxies](/docs/Services/Proxies/): Client-side proxy configuration for routing API calls through intermediary servers.
-- [Slots](/docs/Slots/): The property system: declaration, annotations, and the most common slot settings.
+- [Slots](/docs/Slots/): The property system: declaration, slot annotations, runtime type checks, and metadata consumers.
+- [Slots](/docs/Slots/_unused/): The property system: declaration, annotations, and the most common slot settings.
 - [Technical Overview](/docs/Technical%20Overview/): High-level architecture, core design philosophy, and system-wide concepts of the Strvct framework.
 - [Technical Overview](/docs/Technical%20Overview/_unused/): High-level architecture and key concepts of the Strvct framework.
 - [Views](/docs/Views/): The view layer: auto-generated UI, custom views, and programmatic styling.

@@ -1,0 +1,298 @@
+# Local and Cloud Blob Storage
+
+Content-addressable storage for binary data like images, audio, and video.
+
+## Motivation
+
+The system addresses a fundamental challenge in web applications: **efficiently managing large binary data (images, audio, video) separately from structured object data**.
+
+**Key problems solved:**
+
+1. **Synchronous vs Async APIs**: The main `SvObjectPool` persistence system uses synchronous operations for fast object loading. Binary blobs are large and require async I/O. Separating them prevents blocking.
+
+2. **Deduplication**: Images or media might be referenced by multiple objects. Content-addressable storage (keyed by SHA-256 hash) means identical blobs are stored once.
+
+3. **Lazy Loading**: Objects can be loaded quickly with just a hash reference. The actual blob data is fetched on-demand when needed.
+
+4. **Cloud Sync**: `SvCloudBlobNode` extends local storage to support pushing/pulling blobs to Google Cloud Storage.
+
+### Why Blobs Stay Out of Records
+
+Structured data does live in Firestore — one cloud document per object record (see [Cloud Object Pools](../Cloud%20Object%20Pools/)) — and that only works because binary data never enters a record:
+
+1. **Document size limit**: Firestore caps a document at **1 MB**. A record that inlined an image or a long narration would hit it; a record holding a hash is a few hundred bytes. Long text spills to the blob store for the same reason (`slot.setIsBlobString(true)`, above 32 KB).
+
+2. **Opening a document is one query**: a pool's rows are read together by pool id, so opening a session or a campaign is one indexed read rather than a traversal of references. Keeping blobs out keeps that read small; images are fetched afterwards, only when shown.
+
+3. **Commit limits**: a commit is one transaction (at most a few hundred operations), and larger ones are staged in batches. Blob bytes would make every commit that touched an image enormous; a hash makes it one small write.
+
+4. **Deduplication across documents**: the same image used by a catalog campaign and every session copied from it is stored once, under its hash.
+
+**The solution**: records hold hashes; bytes live in content-addressed blob storage, locally in a separate IndexedDB database and in the cloud under `blobs/<sha256>`. The reference backend records each committed record's hashes (`blobRefs`), so cloud blob garbage collection is a set difference over rows.
+
+---
+
+## Solution Summary
+
+The solution uses a **dual-database architecture** with hash-based references between them:
+
+| Component | Purpose | Storage |
+|-----------|---------|---------|
+| **SvObjectPool** | Stores structured objects (characters, sessions, etc.) as rows | The record store, IndexedDB (sync API) |
+| **SvBlobPool** | Stores binary blobs (images, audio, video) | Separate IndexedDB (async API) |
+
+<svg viewBox="0 0 820 320" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="abp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="40" y="20" width="350" height="229"/>
+  <text x="55" y="42" class="b">SvObjectPool</text>
+  <text x="55" y="62" class="dim">sync · structured records</text>
+  <rect class="fill" x="55" y="80" width="320" height="154"/>
+  <text x="70" y="115" class="b">UoCharacter</text>
+  <text x="70" y="150" class="dim">name: "Sarah"</text>
+  <text x="70" y="185" class="dim">level: 5</text>
+  <text x="70" y="220" class="dim">portraitHash: "a3f9c4…"</text>
+  <line class="flow" x1="390" y1="170" x2="430" y2="170" marker-end="url(#abp)"/>
+  <text x="410" y="160" text-anchor="middle" class="dim">lookup</text>
+  <text x="410" y="186" text-anchor="middle" class="dim">by hash</text>
+  <rect class="box" x="430" y="20" width="350" height="229"/>
+  <text x="445" y="42" class="b">SvBlobPool</text>
+  <text x="445" y="62" class="dim">async · content-addressable</text>
+  <rect class="fill" x="445" y="80" width="320" height="154"/>
+  <text x="460" y="115" class="b">a3f9c4…</text>
+  <text x="460" y="150" class="dim">⟨ binary bytes ⟩</text>
+  <text x="460" y="185" class="dim">size: 384 KB</text>
+  <text x="460" y="220" class="dim">type: image/png</text>
+  <text x="410" y="305" text-anchor="middle" class="dim">Objects hold SHA-256 hashes; blobs live separately, keyed by those hashes; deduplicated and lazy-loaded.</text>
+</svg>
+
+**The key insight**: Objects don't store blobs directly. Instead, they store a SHA-256 hash that acts as a pointer to the blob in `SvBlobPool`. This provides:
+
+- **Fast object loading** - Objects load synchronously with just a small hash string
+- **Lazy blob fetching** - Actual binary data loads asynchronously when needed
+- **Automatic deduplication** - Same content = same hash = stored once
+- **Simple GC** - Collect all referenced hashes from objects, delete everything else from blob storage
+
+**Three-layer class hierarchy**:
+
+1. **SvBlobPool** - Low-level blob storage engine (store/retrieve by hash)
+2. **SvBlobNode** - Node wrapper that manages a blob reference with lazy loading
+3. **SvCloudBlobNode** - Adds cloud push/pull for cross-device sync
+
+Media-specific classes like **SvImageNode** and **SvVideoNode** extend `SvCloudBlobNode` to add format-specific behavior (MIME type handling, thumbnails, etc.) while inheriting all the storage and sync capabilities.
+
+---
+
+## SvBlobPool - The Blob Storage Engine
+
+**Location**: `strvct/source/library/node/storage/base/SvBlobPool.js`
+
+**Core concept**: A singleton that provides content-addressable blob storage using IndexedDB.
+
+### Key Implementation Details
+
+1. **Storage Format**:
+   - `{sha256-hash}` → ArrayBuffer (the actual blob data)
+   - `{sha256-hash}/meta` → JSON metadata (contentType, size, timeCreated, customMetadata)
+
+2. **Deduplication**: When storing a blob, it computes the SHA-256 hash. If that hash already exists, the store is skipped.
+
+3. **Weak Reference Cache**: Uses `SvEnumerableWeakMap` for `activeBlobs` - blobs in memory are cached by hash, but can be garbage collected when not in use.
+
+4. **Concurrency Control**: Tracks active read/write operations via `activeReadsMap` and `activeWritesMap` to prevent duplicate concurrent operations on the same hash.
+
+5. **Garbage Collection**: The `asyncCollectUnreferencedKeySet()` method removes blobs not in a provided set of referenced hashes.
+
+### API
+
+```javascript
+// Store - returns the SHA-256 hash
+const hash = await SvBlobPool.shared().asyncStoreBlob(blob, {customMeta: "value"});
+
+// Retrieve
+const blob = await SvBlobPool.shared().asyncGetBlob(hash);
+
+// Check existence
+const exists = await SvBlobPool.shared().asyncHasBlob(hash);
+
+// Metadata only (without loading blob data)
+const meta = await SvBlobPool.shared().asyncGetMetadata(hash);
+```
+
+---
+
+## SvBlobNode - The Node Wrapper
+
+**Location**: `strvct/source/library/node/blobs/SvBlobNode.js`
+
+**Core concept**: A storable node that holds a reference to a blob via its hash, with lazy loading.
+
+### Key Slots
+
+- `valueHash` (stored): The SHA-256 hash - persisted with the object
+- `blobValue` (transient): The actual Blob object - not persisted, loaded on demand
+
+### Key Behaviors
+
+1. **Lazy Loading**: `asyncBlobValue()` checks if the blob is loaded; if not, fetches it from `SvBlobPool` using the stored hash.
+
+2. **Auto-hashing**: When `blobValue` is set, `didUpdateSlotBlobValue()` automatically computes the hash and writes to local storage.
+
+3. **GC Integration**: `referencedBlobHashesSet()` returns the hash for garbage collection coordination with `SvObjectPool`.
+
+---
+
+## SvCloudBlobNode - Cloud Sync Extension
+
+**Location**: `strvct/source/library/node/blobs/SvCloudBlobNode.js`
+
+**Core concept**: Extends `SvBlobNode` with cloud storage push/pull capabilities.
+
+### Additional Slots
+
+- `hasInCloud`: Boolean flag indicating cloud presence
+- `downloadUrl`: Public/private URL for cloud retrieval
+- `doesAutoSyncToCloud`: When true, automatically pushes to cloud after local storage
+
+### Key Methods
+
+1. **Push to Cloud** (`asyncPushToCloud`):
+   - Takes local blob, uploads to cloud storage via `SvApp.shared().asyncPublicUrlForBlob()`
+   - Sets `downloadUrl` and `hasInCloud` flag
+
+2. **Pull from Cloud** (`asyncPullFromCloudByHash`):
+   - Uses stored hash to fetch blob from cloud: `SvApp.shared().asyncBlobForHash(hash)`
+   - Caches the retrieved blob locally
+
+3. **Smart Resolution** (`asyncBlobValue`):
+   - First checks in-memory blob
+   - Then tries local storage
+   - Finally falls back to cloud
+
+---
+
+## Data Flow Examples
+
+### Storing an Image
+
+```
+User uploads image
+        ↓
+SvImageNode.asyncSetBlobValue(blob)
+        ↓
+SvBlobNode computes SHA-256 hash
+        ↓
+SvBlobPool.asyncStoreBlob() stores ArrayBuffer + metadata
+        ↓
+SvBlobNode stores only the hash in SvObjectPool
+```
+
+### Loading an Image
+
+```
+Object loads from SvObjectPool (has valueHash: "abc123...")
+        ↓
+asyncBlobValue() called
+        ↓
+Check in-memory cache → miss
+        ↓
+SvBlobPool.asyncGetBlob("abc123...") → returns Blob
+        ↓
+Blob cached in activeBlobs for future access
+```
+
+---
+
+## Garbage Collection Coordination
+
+Since blobs and objects are stored in separate databases, garbage collection requires coordination between `SvObjectPool` and `SvBlobPool` to prevent orphaned blobs from accumulating.
+
+### How It Works
+
+1. **Objects report their blob references**: Any object that holds blob references implements `referencedBlobHashesSet()`, which returns a `Set` of SHA-256 hashes it depends on.
+
+2. **SvObjectPool aggregates all references**: When GC runs, `SvObjectPool.allBlobHashesSet()` iterates through all stored objects, calling `referencedBlobHashesSet()` on each, and combines them into a master set of referenced hashes.
+
+3. **BlobPool removes orphans**: `SvObjectPool.asyncCollectBlobs()` passes this master set to `SvBlobPool.asyncCollectUnreferencedKeySet()`, which:
+   - Gets all keys currently in blob storage
+   - Computes the difference (keys in storage but not in the reference set)
+   - Deletes those orphaned blobs and their metadata
+
+### Code Flow
+
+```
+SvObjectPool.asyncCollectBlobs()
+    ↓
+SvObjectPool.allBlobHashesSet()
+    for each object in allObjects():
+        if object.referencedBlobHashesSet:
+            hashesSet.addAll(object.referencedBlobHashesSet())
+    ↓
+SvBlobPool.asyncCollectUnreferencedKeySet(hashesSet)
+    allKeys = await idb.promiseAllKeys()
+    orphans = allKeys.difference(hashesSet)
+    await idb.promiseRemoveKeySet(orphans)
+```
+
+### Implementation Details
+
+**In SvObjectPool** (`SvObjectPool.js`):
+```javascript
+allBlobHashesSet () {
+    const hashesSet = new Set();
+    this.allObjects().forEach(obj => {
+        if (obj.referencedBlobHashesSet) {
+            const objBlobHashes = obj.referencedBlobHashesSet();
+            hashesSet.addAll(objBlobHashes);
+        }
+    });
+    return hashesSet;
+}
+
+async asyncCollectBlobs () {
+    const keySet = this.allBlobHashesSet();
+    const removedCount = await this.blobPool().asyncCollectUnreferencedKeySet(keySet);
+    return removedCount;
+}
+```
+
+**In SvBlobNode** (`SvBlobNode.js`):
+```javascript
+referencedBlobHashesSet () {
+    const hashesSet = new Set();
+    const hash = this.valueHash();
+    if (hash) {
+        hashesSet.add(hash);
+    }
+    return hashesSet;
+}
+```
+
+### Key Points
+
+- **Mark-and-sweep style**: The approach mirrors classic GC - mark what's referenced, sweep the rest
+- **Async-safe**: Blob GC is fully async and doesn't block the synchronous SvObjectPool operations
+- **Metadata cleanup**: When a blob is removed, its `/meta` key is also deleted
+- **Deduplication preserved**: If multiple objects reference the same hash, the blob stays until all references are gone
+
+---
+
+## Design Strengths
+
+1. **Separation of concerns**: Objects remain lightweight; blobs handled separately
+2. **Efficient caching**: Content-addressable means natural deduplication
+3. **Progressive loading**: UI can show objects immediately, load media lazily
+4. **Cloud-ready**: Clean extension point for cloud sync without changing base storage
+5. **GC-aware**: Hash-based references allow proper garbage collection across dual storage systems
+

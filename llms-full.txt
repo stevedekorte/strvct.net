@@ -3863,6 +3863,249 @@ Source: /docs/Getting%20Started/
 
 # Getting Started
 
+Setup, integration, directory conventions, build pipeline, and running your first Strvct application.
+
+## Overview
+
+Strvct is designed to be integrated directly into your application codebase as a **Git submodule**. It runs as a client-side single-page application in the browser and requires no compile-step template transforms, virtual DOM bundlers, or complex build toolchains.
+
+```
++-------------------------------------------------------------------------+
+|                          Getting Started Flow                           |
++-------------------------------------------------------------------------+
+|  1. Add Submodule  -->  2. Declare Imports  -->  3. Run Build (CAM)    |
+|  4. Start Server   -->  5. Create Nodes     -->  6. Debug in DevTools   |
++-------------------------------------------------------------------------+
+```
+
+---
+
+## Prerequisites
+
+Before starting, ensure you have the following installed:
+- **Git** (with submodule support)
+- **Node.js** (v18+ recommended)
+- **Cursor / VSCode** (for Chrome DevTools debugging support)
+
+---
+
+## Adding Strvct to Your Project
+
+From your project's root directory, add Strvct as a Git submodule:
+
+```bash
+git submodule add https://github.com/stevedekorte/strvct.net.git strvct
+```
+
+If deploying your application to GitHub Pages or static hosts that run Jekyll by default, create a `.nojekyll` file in your root folder:
+
+```bash
+touch .nojekyll
+```
+
+---
+
+## Directory Structure & Conventions
+
+A standard Strvct application uses the following directory layout:
+
+```
+your-project/
+├── strvct/              # Framework submodule
+├── app/                 # Application domain models & source code
+│   ├── _imports.json    # Declares app source files
+│   └── Character.js     # Your domain classes
+├── resources/           # Binary assets (icons, images, sounds)
+├── build/               # Generated CAM artifacts (git-ignored)
+│   ├── _index.json      # Resource metadata catalog with SHA-256 hashes
+│   └── _cam.json.zip    # Zip bundle of hashed assets
+├── _imports.json        # Root imports file (links strvct + app)
+├── index.html           # HTML entry point
+└── .nojekyll            # Prevents GitHub Pages Jekyll processing
+```
+
+---
+
+## Declaring Imports (`_imports.json`)
+
+Strvct uses `_imports.json` files to discover source files and manage dependency order instead of standard ES module imports. Every folder containing JavaScript or CSS resources specifies an `_imports.json` array:
+
+```json
+[
+    "_css.css",
+    "strvct/_imports.json",
+    "app/_imports.json"
+]
+```
+
+### Import Rules:
+- Paths are relative to the directory containing the `_imports.json` file.
+- Direct file paths (e.g., `"Character.js"`, `"_css.css"`) are included in order.
+- Nested `_imports.json` paths (e.g., `"app/_imports.json"`) are resolved recursively.
+
+---
+
+## The Build Pipeline (Content-Addressable Memory)
+
+Strvct uses a **Content-Addressable Memory (CAM)** build system. The build process scans the root `_imports.json` tree and generates runtime resource bundles in the `build/` directory.
+
+<svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="ags" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">_imports.json Tree</text>
+  <text x="40" y="58" class="dim">Root &amp; nested source imports</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#ags)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">ImportsIndexer</text>
+  <text x="305" y="58" class="dim">Scans paths &amp; SHA-256 hashes</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#ags)"/>
+
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">build/ Catalog</text>
+  <text x="570" y="58" class="dim">_index.json &amp; _cam.json.zip</text>
+
+  <line class="flow" x1="675" y1="70" x2="675" y2="85"/>
+  <line class="flow" x1="410" y1="85" x2="675" y2="85"/>
+  <line class="flow" x1="410" y1="85" x2="410" y2="100" marker-end="url(#ags)"/>
+
+  <rect class="box" x="290" y="100" width="240" height="50"/>
+  <text x="305" y="120" class="b">Browser Runtime</text>
+  <text x="305" y="138" class="dim">SvResourceManager &amp; HashCache</text>
+</svg>
+
+### Running the Build Command:
+To run the source code indexer manually:
+
+```bash
+node ./strvct/source/boot/index-builder/ImportsIndexer.js
+```
+
+To index non-code media resources (icons, audio):
+
+```bash
+node ./strvct/source/boot/index-builder/SvResourceIndexer.js ./resources/icons ./resources/sounds
+```
+
+If your project includes a `justfile`, you can run:
+
+```bash
+just build
+```
+
+---
+
+## Running Locally
+
+Strvct includes a lightweight local HTTP/HTTPS web server (`CliWebServer.js`).
+
+Start the development server:
+
+```bash
+node ./strvct/webserver/CliWebServer.js --port 8000 --secure false
+```
+
+### Command Flags:
+- `--port <number>`: Sets the local server port (default: `8000`).
+- `--secure <true|false>`: Enables HTTPS with self-signed certificates or HTTP mode.
+- `--config <path>`: Optional server configuration file path.
+
+Open `http://localhost:8000` in your browser to load the application.
+
+---
+
+## Chrome DevTools & Debugging
+
+Because Strvct evaluates source files dynamically via the CAM loader, it appends `sourceURL` annotations to evaluated scripts. This enables full native browser debugging in Chrome DevTools or Cursor/VSCode:
+
+- **Breakpoints:** Set breakpoints directly in your source JavaScript files in Chrome DevTools Sources tab.
+- **Call Stacks:** Complete stack traces map directly back to original file paths and line numbers.
+
+### Cursor / VSCode `launch.json` Configuration:
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug Strvct App",
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}
+```
+
+---
+
+## Creating Your First Annotated Node
+
+Create your first domain model class inheriting from `SvStorableNode`:
+
+```javascript
+// app/Task.js
+(class Task extends SvStorableNode {
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("title", "New Task");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);   // Persists to IndexedDB
+            slot.setSyncsToView(true);       // Live UI updates
+            slot.setCanEditInspection(true); // Editable in Property Inspector
+        }
+        {
+            const slot = this.newSlot("isCompleted", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+        }
+    }
+
+    initPrototype () {
+        this.setTitle("Task");
+        this.setShouldStore(true);
+    }
+
+}.initThisClass());
+```
+
+Add `"app/Task.js"` to your `app/_imports.json`, run `just build`, and reload your browser. Strvct will automatically generate editable form tiles, handle local persistence, and make your task node navigable in the Miller column browser!
+
+---
+
+## Related Guides
+
+- [Technical Overview](../Technical%20Overview/): High-level architecture and design philosophy.
+- [Nodes](../Nodes/): Deep dive into `SvNode` inheritance and subnode management.
+- [Slots](../Slots/): Complete guide to property declaration and metadata annotations.
+
+
+---
+
+<!-- Page: docs/Getting Started/_unused -->
+Source: /docs/Getting%20Started/_unused/
+
+# Getting Started
+
 Setup, integration, and first steps with the Strvct framework.
 
 ## Prerequisites
@@ -7244,6 +7487,131 @@ Source: /docs/Nodes/
 
 # Nodes
 
+The core domain object abstraction, object graph hierarchy, and subnode management in Strvct.
+
+## Overview
+
+Nodes (`SvNode`) are the fundamental domain abstraction in Strvct. Every piece of application state—a document, a user profile, a RPG character sheet, a project folder, or a settings item—is represented as an object inheriting from `SvNode`.
+
+Nodes form a **hierarchical object graph**: every node holds an ordered array of child `subnodes` and a reference to its `parentNode`. The framework automatically derives the complete user interface from this object graph without hand-authored UI components.
+
+<svg viewBox="0 0 820 400" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="and" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <!-- 3 Rows of 2 Uniform Boxes (w: 345, h: 50) -->
+  <!-- Row 1 -->
+  <rect class="fill" x="40" y="20" width="345" height="50"/>
+  <text x="55" y="38" class="b">SvNode</text>
+  <text x="55" y="56" class="dim">Subnode tree &amp; parent relationships</text>
+
+  <line class="flow" x1="385" y1="45" x2="435" y2="45" marker-end="url(#and)"/>
+
+  <rect class="fill" x="435" y="20" width="345" height="50"/>
+  <text x="450" y="38" class="b">SvTitledNode</text>
+  <text x="450" y="56" class="dim">Title, subtitle, &amp; path labels</text>
+
+  <!-- Flow to Row 2 -->
+  <line class="flow" x1="607" y1="70" x2="607" y2="85"/>
+  <line class="flow" x1="212" y1="85" x2="607" y2="85"/>
+  <line class="flow" x1="212" y1="85" x2="212" y2="100" marker-end="url(#and)"/>
+
+  <!-- Row 2 -->
+  <rect class="fill" x="40" y="100" width="345" height="50"/>
+  <text x="55" y="118" class="b">SvInspectableNode</text>
+  <text x="55" y="136" class="dim">Property Inspector field generation</text>
+
+  <line class="flow" x1="385" y1="125" x2="435" y2="125" marker-end="url(#and)"/>
+
+  <rect class="fill" x="435" y="100" width="345" height="50"/>
+  <text x="450" y="118" class="b">SvViewableNode</text>
+  <text x="450" y="136" class="dim">View class resolution &amp; tile layout</text>
+
+  <!-- Flow to Row 3 -->
+  <line class="flow" x1="607" y1="150" x2="607" y2="165"/>
+  <line class="flow" x1="212" y1="165" x2="607" y2="165"/>
+  <line class="flow" x1="212" y1="165" x2="212" y2="180" marker-end="url(#and)"/>
+
+  <!-- Row 3 -->
+  <rect class="fill" x="40" y="180" width="345" height="50"/>
+  <text x="55" y="198" class="b">SvStorableNode</text>
+  <text x="55" y="216" class="dim">Persistence &amp; dirty tracking</text>
+
+  <line class="flow" x1="385" y1="205" x2="435" y2="205" marker-end="url(#and)"/>
+
+  <rect class="fill" x="435" y="180" width="345" height="50"/>
+  <text x="450" y="198" class="b">SvSummaryNode</text>
+  <text x="450" y="216" class="dim">Base class for application domain models</text>
+
+  <text x="410" y="260" text-anchor="middle" class="dim">Each node class level adds an isolated capability. Application domain models typically extend SvSummaryNode or SvStorableNode.</text>
+</svg>
+
+---
+
+## The Node Inheritance Chain
+
+| Class Name | Key Capability Added | Usage |
+|---|---|---|
+| `SvNode` | Subnode management, parent/owner references | Root base class |
+| `SvTitledNode` | Title, subtitle, note, ARIA accessibility, navigation path | Labeled nodes |
+| `SvTranslatableNode` | Per-node translation string cache for i18n | Internationalization |
+| `SvInspectableNode` | Property Inspector field generation from slot metadata | Live debugging |
+| `SvViewableNode` | View class selection, layout orientation, tile settings | Visual UI presentation |
+| `SvStyledNode` | Theme class name resolution | Programmatic styling |
+| `SvStorableNode` | Persistence dirty tracking & IndexedDB serialization | Persistent models |
+| `SvSummaryNode` | Configurable summary tile formatting | Standard app model base |
+
+---
+
+## Subnode Operations
+
+The primary structural relationship in Strvct is the parent-child node tree managed via `subnodes()`:
+
+```javascript
+// Adding subnodes
+parentNode.addSubnode(childNode);
+parentNode.addSubnodeAt(childNode, 0);
+
+// Querying subnodes
+parentNode.subnodeCount();
+parentNode.subnodeAt(index);
+parentNode.hasSubnode(childNode);
+
+// Removing subnodes
+parentNode.removeSubnode(childNode);
+
+// Reordering subnodes
+parentNode.moveSubnodesToIndex([nodeA, nodeB], 2);
+```
+
+When `addSubnode()` or `removeSubnode()` is called, the node automatically posts a change notification (`"didChangeSubnodes"`), causing active views (`SvNavView`, `SvTilesView`) to update smoothly without manual page refreshes.
+
+---
+
+## Related Guides
+
+- [Slots](../Slots/): Complete guide to property slots and metadata.
+- [Technical Overview](../Technical%20Overview/): High-level system architecture.
+
+
+---
+
+<!-- Page: docs/Nodes/_unused -->
+Source: /docs/Nodes/_unused/
+
+# Nodes
+
 The object model at the heart of STRVCT.
 
 ## Overview
@@ -7615,6 +7983,61 @@ Source: /docs/Notifications/Broadcaster/
 
 # Broadcaster
 
+Immediate, synchronous event broadcasting across object trees in `SvBroadcaster`.
+
+## Overview
+
+While `SvNotificationCenter` handles loose asynchronous change observations and `SvSyncScheduler` handles event-loop deferred rendering passes, **`SvBroadcaster`** handles **immediate, synchronous event broadcasts** down or up object subtrees.
+
+<svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="abc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">Root Node / View</text>
+  <text x="40" y="58" class="dim">Invokes broadcast()</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#abc)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">SvBroadcaster</text>
+  <text x="305" y="58" class="dim">Synchronous tree traversal</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#abc)"/>
+
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">Subtree Nodes</text>
+  <text x="570" y="58" class="dim">Immediate method execution</text>
+
+  <text x="410" y="110" text-anchor="middle" class="dim">Used for high-priority synchronous signals like window resizing, theme switching, or modal dismissals.</text>
+</svg>
+
+---
+
+## Related Guides
+
+- [Notification Center](../Notification%20Center/): Weak observer event dispatch.
+- [Sync Scheduler](../Sync%20Scheduler/): Coalesced event loop scheduling.
+
+
+---
+
+<!-- Page: docs/Notifications/Broadcaster/_unused -->
+Source: /docs/Notifications/Broadcaster/_unused/
+
+# Broadcaster
+
 Lightweight synchronous dispatch for high-frequency internal events.
 
 ## Overview
@@ -7688,6 +8111,95 @@ Use the notification center for most inter-layer communication — the deferred 
 
 <!-- Page: docs/Notifications/Notification Center -->
 Source: /docs/Notifications/Notification%20Center/
+
+# Notification Center
+
+Asynchronous event dispatching, weak observer observations, and decoupled change propagation in `SvNotificationCenter`.
+
+## Overview
+
+`SvNotificationCenter` is Strvct's primary loose-coupling mechanism. It allows model nodes, views, and framework services to communicate without holding direct references to each other.
+
+```
++-------------------------------------------------------------------------+
+|                    Notification Center Architecture                     |
++-------------------------------------------------------------------------+
+|  1. Post Notification  -->  2. Weak Observer Lookup  -->  3. Dispatch   |
++-------------------------------------------------------------------------+
+```
+
+<svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  </style>
+  <defs>
+    <marker id="anc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">Sender Node</text>
+  <text x="40" y="58" class="dim">posts named notification</text>
+
+  <line class="flow-dashed" x1="265" y1="45" x2="290" y2="45" marker-end="url(#anc)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">SvNotificationCenter</text>
+  <text x="305" y="58" class="dim">Lookup weak observers</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#anc)"/>
+
+  <rect class="box" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">Observer Target</text>
+  <text x="570" y="58" class="dim">Executes handler method</text>
+
+  <text x="410" y="110" text-anchor="middle" class="dim">Observers are held via weak references, preventing memory leaks when views or temporary objects are unmounted.</text>
+</svg>
+
+---
+
+## Observing Notifications
+
+Objects register to observe named notifications posted by specific target senders (or all senders):
+
+```javascript
+// Register an observer for a specific target node
+SvNotificationCenter.shared().newObservation()
+    .setSender(characterNode)
+    .setName("didChangeSlot")
+    .setObserver(viewInstance)
+    .setMethodName("onCharacterChanged")
+    .watch();
+```
+
+---
+
+## Weak References & Memory Safety
+
+Traditional event emitter listeners cause severe memory leaks if observers forget to unregister before being garbage collected. `SvNotificationCenter` eliminates this vulnerability by storing observers in **weak reference maps** (`WeakRef`).
+
+When an observing view is removed from the DOM and has no remaining strong references, JavaScript's garbage collector automatically reclaims it. `SvNotificationCenter` silently prunes dead weak references during dispatch passes without throwing errors.
+
+---
+
+## Related Guides
+
+- [Sync Scheduler](../Sync%20Scheduler/): Coalescing high-frequency notification dispatches.
+- [Broadcaster](../Broadcaster/): Synchronous inline event broadcasting.
+- [Slot Change Hooks](../Slot%20Change%20Hooks/): Declarative model change hooks.
+
+
+---
+
+<!-- Page: docs/Notifications/Notification Center/_unused -->
+Source: /docs/Notifications/Notification%20Center/_unused/
 
 # Notification Center
 
@@ -7868,6 +8380,61 @@ Source: /docs/Notifications/Slot%20Change%20Hooks/
 
 # Slot Change Hooks
 
+Declarative lifecycle hooks invoked automatically during slot mutation.
+
+## Overview
+
+When an auto-generated slot setter runs (e.g. `setName("Thorin")`), it checks for optional convention-based hook methods on the owning object before and after mutating internal state:
+
+```javascript
+(class Character extends SvStorableNode {
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("level", 1);
+            slot.setSlotType("Number");
+            slot.setSyncsToView(true);
+        }
+    }
+
+    // Optional hook called BEFORE value is mutated
+    willUpdateSlotLevel (oldValue, newValue) {
+        console.log("Level changing from", oldValue, "to", newValue);
+    }
+
+    // Optional hook called AFTER value is mutated
+    didUpdateSlotLevel (oldValue, newValue) {
+        this.recalculateHitPoints();
+    }
+
+}.initThisClass());
+```
+
+---
+
+## Hook Lifecycle Sequence
+
+1. **Setter Invoked:** `setName(newValue)`
+2. **`willUpdateSlotName(oldVal, newVal)`:** Called if defined on the object.
+3. **Value Assignment:** Internal private variable `_name` is updated.
+4. **`didUpdateSlotName(oldVal, newVal)`:** Called if defined on the object.
+5. **Mutation Notification:** If `setSyncsToView(true)` is set, posts `"didChangeSlot"` notification via `SvNotificationCenter`.
+
+---
+
+## Related Guides
+
+- [Slots](../../Slots/): Complete guide to slot metadata and declarations.
+- [Notification Center](../Notification%20Center/): Weak observer event dispatch.
+
+
+---
+
+<!-- Page: docs/Notifications/Slot Change Hooks/_unused -->
+Source: /docs/Notifications/Slot%20Change%20Hooks/_unused/
+
+# Slot Change Hooks
+
 Automatic per-slot callbacks that connect property changes to notifications and persistence.
 
 ## Overview
@@ -7971,6 +8538,76 @@ slot value changes
 
 <!-- Page: docs/Notifications/Sync Scheduler -->
 Source: /docs/Notifications/Sync%20Scheduler/
+
+# Sync Scheduler
+
+Coalescing, deduplication, and event-loop-deferred method execution in `SvSyncScheduler`.
+
+## Overview
+
+When multiple property slots mutate rapidly within a single user gesture (or batch data load), triggering a full UI re-render pass for every individual setter call would cause severe performance degradation and layout thrashing.
+
+`SvSyncScheduler` solves this by **coalescing and deduplicating** target and method calls within the browser event loop:
+
+<svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="ass" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">N Rapid Slot Mutations</text>
+  <text x="40" y="58" class="dim">Schedules syncFromNode()</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#ass)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">SvSyncScheduler</text>
+  <text x="305" y="58" class="dim">Deduplicates target/method</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#ass)"/>
+
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">End of Event Loop</text>
+  <text x="570" y="58" class="dim">Executes 1 single UI pass</text>
+
+  <text x="410" y="110" text-anchor="middle" class="dim">100 slot property mutations in 1 frame trigger exactly 1 UI render pass at the end of the loop.</text>
+</svg>
+
+---
+
+## Usage Pattern
+
+Views and persistent objects register deferred sync requests with `SvSyncScheduler`:
+
+```javascript
+// Schedule a deferred method execution
+SvSyncScheduler.shared().scheduleTargetAndMethod(view, "syncFromNode");
+```
+
+Regardless of how many times `scheduleTargetAndMethod(view, "syncFromNode")` is invoked during the current event loop, `view.syncFromNode()` executes **exactly once** when the scheduler flushes.
+
+---
+
+## Related Guides
+
+- [Notification Center](../Notification%20Center/): Asynchronous weak observation dispatch.
+- [Broadcaster](../Broadcaster/): Synchronous event broadcasting.
+
+
+---
+
+<!-- Page: docs/Notifications/Sync Scheduler/_unused -->
+Source: /docs/Notifications/Sync%20Scheduler/_unused/
 
 # Sync Scheduler
 
@@ -8150,6 +8787,89 @@ Source: /docs/Persistence/Cloud%20Object%20Pools/
 
 # Cloud Object Pools
 
+Versioned cloud persistence, delta synchronizations, and deterministic conflict resolution for Strvct object pools.
+
+## Overview
+
+While local object pools store data in IndexedDB for instant, zero-latency local-first execution, **Cloud Object Pools** (`SvCloudRecordStore`) synchronize object pool records across devices and cloud stores.
+
+```
++-------------------------------------------------------------------------+
+|                       Cloud Sync Architecture                           |
++-------------------------------------------------------------------------+
+|  Local IndexedDB Pool  -->  Compute Delta Rows  -->  Versioned Commit   |
+|  Cloud Record Store    -->  Conflict Check      -->  Atomic Push/Pull   |
++-------------------------------------------------------------------------+
+```
+
+<svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="acp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">Local IndexedDB Pool</text>
+  <text x="40" y="58" class="dim">Dirty nodes &amp; local version</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#acp)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">SvCloudRecordStore</text>
+  <text x="305" y="58" class="dim">Computes modified row deltas</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#acp)"/>
+
+  <rect class="box" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">Cloud Storage / Backend</text>
+  <text x="570" y="58" class="dim">Versioned atomic pool commits</text>
+
+  <text x="410" y="110" text-anchor="middle" class="dim">Shared row format across local IndexedDB and cloud backends enables zero-transform delta synchronization.</text>
+</svg>
+
+---
+
+## Unified Record Format & Backend Protocol
+
+Strvct uses the exact same record row format locally and in the cloud. A cloud record store implements four fundamental operations:
+
+1. **`open(poolId)`**: Opens or initializes a cloud object pool.
+2. **`changes(poolId, sinceVersion)`**: Retrieves modified record rows updated since a specific pool version number.
+3. **`children(poolId, parentPuuid)`**: Fetches child node records for lazy loading large subtrees.
+4. **`commit(poolId, expectedVersion, deltaRows)`**: Posts an atomic batch of modified rows.
+
+---
+
+## Versioning & Conflict Resolution
+
+- **Monotonic Pool Versions:** Every cloud object pool maintains an incrementing integer version number (`poolVersion`).
+- **Delta Transmissions:** Commits send only records modified since the last acknowledged cloud version, minimizing network payload sizes.
+- **Optimistic Concurrency Control:** When posting a commit, `expectedVersion` must match the server's current pool version. If another client committed changes in the interim, the commit is rejected, prompting the client to pull remote changes and merge before re-committing.
+
+---
+
+## Related Guides
+
+- [Local Object Pools](../Local%20Object%20Pools/): Local IndexedDB persistence engine.
+- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): SHA-256 binary asset storage.
+
+
+---
+
+<!-- Page: docs/Persistence/Cloud Object Pools/_unused -->
+Source: /docs/Persistence/Cloud%20Object%20Pools/_unused/
+
+# Cloud Object Pools
+
 Cloud persistence for object pools: one record per row, a version per pool, and a commit protocol.
 
 ## Overview
@@ -8324,6 +9044,74 @@ The older file-based collection sync (`SvCloudSyncSource`, `SvSyncCollectionSour
 
 <!-- Page: docs/Persistence/Local and Cloud Blob Storage -->
 Source: /docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/
+
+# Local and Cloud Blob Storage
+
+SHA-256 content-addressable binary asset storage for images, audio, video, and files.
+
+## Overview
+
+While domain object properties are serialized into standard JSON record rows, large binary assets (images, audio files, PDFs) are managed by `SvBlobPool`.
+
+Binary assets are stored using **Content-Addressable Storage (CAS)**:
+- The key for any binary blob is its **SHA-256 hash digest** string.
+- Object slots store hash reference strings (e.g., `"hash:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"`) rather than inline base64 data.
+- Duplicate uploads of identical binary files automatically resolve to the same SHA-256 key, providing zero-effort binary deduplication.
+
+<svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="abs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">Binary Asset / Upload</text>
+  <text x="40" y="58" class="dim">Image, audio, or PDF file</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#abs)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">SHA-256 Hash Digest</text>
+  <text x="305" y="58" class="dim">Computes content key</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#abs)"/>
+
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">SvBlobPool / Cache</text>
+  <text x="570" y="58" class="dim">IndexedDB &amp; Cloud Store</text>
+
+  <text x="410" y="110" text-anchor="middle" class="dim">Domain node slots store only SHA-256 hash strings; binary content is fetched asynchronously on demand.</text>
+</svg>
+
+---
+
+## Local & Cloud Sync Flow
+
+1. **Local Writes:** When a binary file is added, `SvBlobPool` computes its SHA-256 hash asynchronously and stores the ArrayBuffer in a dedicated IndexedDB blob store.
+2. **Lazy Cloud Fetching:** When rendering an image or playing an audio file, `SvBlobPool` checks local IndexedDB first. If missing, it fetches the raw binary from the cloud blob store using its SHA-256 key and caches it locally.
+3. **Automatic Deduplication:** Two different domain nodes referencing the exact same image share a single binary record in storage.
+
+---
+
+## Related Guides
+
+- [Local Object Pools](../Local%20Object%20Pools/): Domain object graph persistence.
+- [Cloud Object Pools](../Cloud%20Object%20Pools/): Cloud record synchronization.
+
+
+---
+
+<!-- Page: docs/Persistence/Local and Cloud Blob Storage/_unused -->
+Source: /docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/_unused/
 
 # Local and Cloud Blob Storage
 
@@ -8628,6 +9416,143 @@ referencedBlobHashesSet () {
 
 <!-- Page: docs/Persistence/Local Object Pools -->
 Source: /docs/Persistence/Local%20Object%20Pools/
+
+# Local Object Pools
+
+IndexedDB-backed persistence for domain object graphs using dirty tracking, local object pools, and atomic commits.
+
+## Overview
+
+Strvct's persistence engine is **local-first**: application state is stored directly in the browser's IndexedDB. Rather than requiring developers to write explicit SQL/ORM queries or API save calls, the framework monitors slot mutations automatically and commits dirty objects at the end of each browser event loop.
+
+```
++-------------------------------------------------------------------------+
+|                       Local Object Pool Architecture                    |
++-------------------------------------------------------------------------+
+|  1. Slot Setter  -->  2. Dirty Tracking  -->  3. End-of-Loop Commit   |
+|  4. Object Pool  -->  5. Record Store    -->  6. IndexedDB Transaction |
++-------------------------------------------------------------------------+
+```
+
+<svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="alp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <!-- 4 Uniform Boxes (w: 170, h: 50) -->
+  <rect class="box" x="20" y="20" width="170" height="50"/>
+  <text x="35" y="40" class="b">SvStorableNode</text>
+  <text x="35" y="58" class="dim">Slot setter marks dirty</text>
+
+  <line class="flow" x1="190" y1="45" x2="220" y2="45" marker-end="url(#alp)"/>
+
+  <rect class="fill" x="220" y="20" width="170" height="50"/>
+  <text x="235" y="40" class="b">SvObjectPool</text>
+  <text x="235" y="58" class="dim">In-memory dirty cache</text>
+
+  <line class="flow" x1="390" y1="45" x2="420" y2="45" marker-end="url(#alp)"/>
+
+  <rect class="fill" x="420" y="20" width="170" height="50"/>
+  <text x="435" y="40" class="b">SvLocalRecordStore</text>
+  <text x="435" y="58" class="dim">JSON row serializer</text>
+
+  <line class="flow" x1="590" y1="45" x2="620" y2="45" marker-end="url(#alp)"/>
+
+  <rect class="box" x="620" y="20" width="180" height="50"/>
+  <text x="635" y="40" class="b">IndexedDB</text>
+  <text x="635" y="58" class="dim">Atomic key-value store</text>
+
+  <!-- Footnote -->
+  <text x="410" y="110" text-anchor="middle" class="dim">Mutations post dirty-node notifications; SvObjectPool batches write operations into an atomic IndexedDB transaction at the end of the event loop.</text>
+</svg>
+
+---
+
+## The Object Pool Concept (`SvObjectPool`)
+
+In Strvct, persistence is organized into **Object Pools**. Each document or aggregate root object owns a pool identified by a `poolId`:
+
+- **Pool Isolation:** All domain objects within a document belong to the same `SvObjectPool`.
+- **In-Pool References (`{ "*": puuid }`):** Object relationships within the same pool store local persistent UUID pointers.
+- **Cross-Pool References (`{ "**": poolId }`):** References to objects in other document pools store external pool pointers, loaded asynchronously on demand.
+
+### Record Row Schema:
+Every object in a pool serializes into a clean JSON record row:
+
+```json
+{
+    "poolId": "p-10023",
+    "puuid": "u-88491",
+    "type": "Character",
+    "slots": {
+        "name": "Thorin Oakenshield",
+        "level": 12,
+        "inventory": { "*": "u-99210" }
+    }
+}
+```
+
+---
+
+## Dirty Tracking & Event Loop Commits
+
+Persistence operates with zero manual `save()` calls:
+
+1. **Setter Trigger:** Calling a slot setter marked `setShouldStoreSlot(true)` updates slot state and invokes `didMutate()`.
+2. **Dirty Set Registration:** `didMutate()` notifies the node's `SvObjectPool`, adding the object's `puuid` to the in-memory dirty set.
+3. **Coalesced Transaction:** At the end of the browser event loop, `SvObjectPool` iterates over dirty objects, serializes them to JSON records, and writes them to IndexedDB in a single **atomic transaction**.
+
+```javascript
+(class Character extends SvStorableNode {
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("name", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true); // Automatically registers with object pool dirty tracking
+        }
+    }
+
+    initPrototype () {
+        this.setShouldStore(true);
+    }
+
+}.initThisClass());
+```
+
+---
+
+## Garbage Collection & Object Pool Lifecycle
+
+`SvObjectPool` automatically manages local storage cleanup:
+
+1. **Mark & Sweep Tracing:** The object pool traces reachable node references starting from the pool root object.
+2. **Unreachable Deletion:** Stored records that are no longer reachable from the root object are automatically purged from IndexedDB during pool maintenance passes.
+3. **Zero Dangling Pointers:** Deleting a parent node cleans up its child subnode subtree without leaving orphan records in local storage.
+
+---
+
+## Related Guides
+
+- [Cloud Object Pools](../Cloud%20Object%20Pools/): Versioned cloud synchronization and conflict detection.
+- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): SHA-256 content-addressable binary asset storage.
+- [Technical Overview](../../Technical%20Overview/): High-level system architecture and local-first philosophy.
+
+
+---
+
+<!-- Page: docs/Persistence/Local Object Pools/_unused -->
+Source: /docs/Persistence/Local%20Object%20Pools/_unused/
 
 # Local Object Pools
 
@@ -11808,6 +12733,126 @@ This applies to all AI service requests (chat, image generation, text-to-speech,
 
 <!-- Page: docs/Slots -->
 Source: /docs/Slots/
+
+# Slots
+
+The property system: declaration, slot annotations, runtime type checks, and metadata consumers.
+
+## Overview
+
+Slots are Strvct's property system. In traditional JavaScript objects, instance fields are simple key-value pairs without metadata. In Strvct, declaring a property as a **slot** transforms it into a rich metadata carrier that each framework layer reads independently.
+
+```
++-------------------------------------------------------------------------+
+|                            Slot System Flow                             |
++-------------------------------------------------------------------------+
+|  newSlot("name", "")  -->  Auto Getter/Setter  -->  Type Verification   |
+|  Annotate Metadata    -->  Multi-Reader Bridge -->  Zero-Glue Layers    |
++-------------------------------------------------------------------------+
+```
+
+<svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="asl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <!-- Row 1: Centered Slot Metadata Box (w: 240, h: 50) -->
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">Slot Declaration</text>
+  <text x="305" y="58" class="dim">newSlot("name", "Thorin")</text>
+
+  <!-- Flow to Bottom Row (3 Columns) -->
+  <line class="flow" x1="410" y1="70" x2="410" y2="95"/>
+  <line class="flow" x1="145" y1="95" x2="675" y2="95"/>
+
+  <line class="flow" x1="145" y1="95" x2="145" y2="110" marker-end="url(#asl)"/>
+  <line class="flow" x1="410" y1="95" x2="410" y2="110" marker-end="url(#asl)"/>
+  <line class="flow" x1="675" y1="95" x2="675" y2="110" marker-end="url(#asl)"/>
+
+  <!-- Row 2: 3 Uniform Boxes (w: 240, h: 50) -->
+  <rect class="box" x="25" y="110" width="240" height="50"/>
+  <text x="40" y="130" class="b">UI Layer</text>
+  <text x="40" y="148" class="dim">Auto-generates Property Tiles</text>
+
+  <rect class="box" x="290" y="110" width="240" height="50"/>
+  <text x="305" y="130" class="b">Storage Layer</text>
+  <text x="305" y="148" class="dim">Serializes shouldStoreSlot</text>
+
+  <rect class="box" x="555" y="110" width="240" height="50"/>
+  <text x="570" y="130" class="b">AI Agent Surface</text>
+  <text x="570" y="148" class="dim">Generates JSON tool schemas</text>
+
+  <text x="410" y="195" text-anchor="middle" class="dim">Slots decouple business logic from UI, persistence, and AI tools; declare metadata once, every layer benefits automatically.</text>
+</svg>
+
+---
+
+## Declaration Syntax
+
+Slots are declared inside `initPrototypeSlots()` during class registration. Declaring a slot installs a private variable (`_slotName`), an auto-generated getter (`slotName()`), and an auto-generated setter (`setSlotName(value)`) on the prototype:
+
+```javascript
+(class Character extends SvStorableNode {
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("name", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);   // Included in IndexedDB record rows
+            slot.setSyncsToView(true);       // Posts didChangeSlot notification
+            slot.setCanEditInspection(true); // Editable field in Property Inspector
+        }
+        {
+            const slot = this.newSlot("level", 1);
+            slot.setSlotType("Number");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+        }
+    }
+
+}.initThisClass());
+```
+
+---
+
+## Slot Types & Constructor Variants
+
+| Constructor | Purpose |
+|---|---|
+| `newSlot(name, defaultValue)` | Standard slot constructor with auto getter and setter. |
+| `newWeakSlot(name, defaultValue)` | Creates a slot holding a `WeakRef`. Getter unwraps the reference; setter wraps it. Prevents retain cycles in parent-child back references. |
+| `newSubnodeFieldSlot(name, Class)` | Convenience constructor for subnode field properties. |
+| `overrideSlot(name, defaultValue)` | Overrides a slot inherited from a superclass, preserving metadata while changing the default value. |
+
+---
+
+## Runtime Type Checking
+
+Auto-generated setters enforce **runtime type checks** against `setSlotType()`. When a type mismatch occurs (e.g. attempting to pass a string to a `Number` slot), the setter logs a warning and attempts safe type coercion (e.g. `Number("12")`), protecting object graph state from corrupt data.
+
+---
+
+## Related Guides
+
+- [Nodes](../Nodes/): Core `SvNode` domain abstraction.
+- [Implementation Overview](../../Implementation%20Overview/): Deep dive into slot specs and class lifecycles.
+
+
+---
+
+<!-- Page: docs/Slots/_unused -->
+Source: /docs/Slots/_unused/
 
 # Slots
 
