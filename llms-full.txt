@@ -368,6 +368,271 @@ Source: /docs/Comparing%20to%20React/
 
 # Comparing to React
 
+A technical guide and conceptual "Rosetta Stone" for React developers exploring Strvct.
+
+## Core Architectural Divergence
+
+React and Strvct both keep user interfaces synchronized with application state, but they start from opposite design philosophies:
+
+- **React is a View-First Library:** You author component trees in JSX, manage component state (`useState`, `useReducer`, Redux, Zustand), and write custom render functions. You are responsible for integrating state management, form components, ORMs, REST/GraphQL APIs, routing, internationalization, and accessibility.
+- **Strvct is a Model-First Naked Objects Framework:** You declare the domain model (`SvStorableNode` classes) with annotated property **slots**. The framework automatically derives the user interface, manages local IndexedDB persistence and cloud sync, generates Miller column navigation, and provides an AI tool surface without hand-authored UI code.
+
+<svg viewBox="0 0 820 410" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+  </style>
+
+  <rect class="box" x="90" y="20" width="290" height="370"/>
+  <text x="105" y="42" class="b">React (View-First)</text>
+  <text x="105" y="62" class="dim">Component &amp; Rendering Library</text>
+
+  <rect class="fill" x="105" y="85" width="260" height="124"/>
+  <text x="120" y="105" class="b">You Must Author &amp; Maintain:</text>
+  <text x="120" y="123" class="dim">• UI Components (JSX / TSX)</text>
+  <text x="120" y="141" class="dim">• Form Controls &amp; Validation</text>
+  <text x="120" y="159" class="dim">• State Stores (Redux/Zustand)</text>
+  <text x="120" y="177" class="dim">• Routing &amp; Navigation Graphs</text>
+  <text x="120" y="195" class="dim">• REST/GraphQL/ORM Sync Logic</text>
+
+  <rect class="fill" x="105" y="224" width="260" height="106"/>
+  <text x="120" y="244" class="b">Framework Provides:</text>
+  <text x="120" y="262" class="dim">• Virtual DOM Reconciliation</text>
+  <text x="120" y="280" class="dim">• Component Lifecycle &amp; Hooks</text>
+  <text x="120" y="298" class="dim">• Event Delegation System</text>
+
+  <text x="105" y="354" class="dim">Requires continuous manual sync</text>
+  <text x="105" y="372" class="dim">across model, UI, &amp; API schemas.</text>
+
+  <rect class="box" x="440" y="20" width="290" height="370"/>
+  <text x="455" y="42" class="b">Strvct (Model-First)</text>
+  <text x="455" y="62" class="dim">Naked Objects Framework</text>
+
+  <rect class="fill" x="455" y="85" width="260" height="106"/>
+  <text x="470" y="105" class="b">You Author:</text>
+  <text x="470" y="123" class="dim">• Domain Models (SvNode classes)</text>
+  <text x="470" y="141" class="dim">• Slot Annotations (metadata)</text>
+  <text x="470" y="159" class="dim">• Action Methods (business logic)</text>
+
+  <rect class="fill" x="455" y="206" width="260" height="124"/>
+  <text x="470" y="226" class="b">Framework Provides Automatically:</text>
+  <text x="470" y="244" class="dim">• Miller Column UI Generation</text>
+  <text x="470" y="262" class="dim">• Local IndexedDB &amp; Cloud Sync</text>
+  <text x="470" y="280" class="dim">• Native AI Tool Surface</text>
+  <text x="470" y="298" class="dim">• Headless Node.js Execution</text>
+  <text x="470" y="316" class="dim">• Universal Accessibility &amp; i18n</text>
+
+  <text x="455" y="354" class="dim">Zero UI maintenance cost;</text>
+  <text x="455" y="372" class="dim">model change updates all layers.</text>
+</svg>
+
+---
+
+## Code Comparison: Defining a Editable Contact Record
+
+### The React Approach (Manual Component + State + Persistence Wiring)
+
+```jsx
+// ContactForm.jsx - Hand-authored UI component
+function ContactForm({ contactId, onSave }) {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        // Fetch from API or local store
+        api.getContact(contactId).then(data => {
+            setName(data.name);
+            setEmail(data.email);
+        });
+    }, [contactId]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!email.includes("@")) {
+            setErrors({ email: "Invalid email address" });
+            return;
+        }
+        await api.updateContact(contactId, { name, email });
+        onSave();
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="contact-form">
+            <label>Name:
+                <input value={name} onChange={e => setName(e.target.value)} />
+            </label>
+            <label>Email:
+                <input value={email} onChange={e => setEmail(e.target.value)} />
+                {errors.email && <span className="error">{errors.email}</span>}
+            </label>
+            <button type="submit">Save Changes</button>
+        </form>
+    );
+}
+```
+
+*Summary:* Requires manually coding state hooks, form inputs, validation error handlers, API serializers, and submit listeners.
+
+### The Strvct Approach (Model-First Slot Declaration)
+
+```javascript
+// Contact.js - Annotated domain model
+(class Contact extends SvStorableNode {
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("name", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);   // Persist to IndexedDB
+            slot.setSyncsToView(true);       // Live UI update
+            slot.setCanEditInspection(true); // Editable field
+        }
+        {
+            const slot = this.newSlot("email", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+        }
+    }
+
+    initPrototype () {
+        this.setTitle("Contact");
+        this.setShouldStore(true);
+    }
+
+}.initThisClass());
+```
+
+*Summary:* Declares properties and metadata once. Strvct automatically derives editable UI input fields, handles IndexedDB persistence, emits change notifications, generates Miller column navigation tiles, and exposes an AI tool specification.
+
+---
+
+## Concept Mapping ("Rosetta Stone")
+
+| React Concept | Strvct Equivalent | Architectural Difference |
+|---|---|---|
+| **Component (`JSX`)** | `SvNodeView` (Auto-generated or custom subclass) | React components render JSX trees. Strvct views are derived lazily at runtime from `SvNode` slot metadata. |
+| **State (`useState`)** | Slot getters/setters (`this.name()`, `this.setName(v)`) | React state lives in components. Strvct state lives in model slots (`setSyncsToView(true)`). |
+| **Context / Redux Store** | `SvNotificationCenter` & `SvModel` Object Graph | React uses context or external stores for global state. Strvct uses a single local object graph with notification observers. |
+| **Effects (`useEffect`)** | Notification Observations (`SvNotificationCenter`) | React runs effect hooks after render passes. Strvct observes model events via weak notifications. |
+| **React Router / Next.js** | Miller Column Navigation (`SvStackView`, `SvNavView`) | React maps URLs to components manually. Strvct derives navigation paths directly from parent-child object relationships. |
+| **ORM / REST API Sync** | `SvPersistentObjectPool` (IndexedDB + Cloud) | React requires custom API calls (Axios/TanStack Query). Strvct commits dirty nodes automatically at the end of each event loop. |
+| **Virtual DOM Reconciliation** | Per-Slot Notification Sync (`SvSyncScheduler`) | React diffs full virtual DOM trees. Strvct updates individual DOM elements directly via coalesced slot change passes. |
+| **Bundlers (Vite / Webpack)** | Content-Addressable Memory (`CAM`) System | React bundles code into chunks. Strvct caches individual source files in IndexedDB by SHA-256 hash. |
+| **TypeScript / Prop Types** | Slot Type Declarations (`slot.setSlotType("String")`) | React uses compile-time type checking. Strvct enforces runtime type checking on setters and AI JSON patches. |
+
+---
+
+## State & Change Propagation
+
+<svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  </style>
+  <defs>
+    <marker id="aro" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="30" y="20" width="360" height="240"/>
+  <text x="45" y="42" class="b">React (Unidirectional Data Flow)</text>
+
+  <rect class="fill" x="45" y="55" width="330" height="35"/>
+  <text x="60" y="77" class="dim">1. State Change (useState / Redux)</text>
+
+  <line class="flow" x1="210" y1="90" x2="210" y2="105" marker-end="url(#aro)"/>
+
+  <rect class="fill" x="45" y="105" width="330" height="35"/>
+  <text x="60" y="127" class="dim">2. Component Subtree Re-Render</text>
+
+  <line class="flow" x1="210" y1="140" x2="210" y2="155" marker-end="url(#aro)"/>
+
+  <rect class="fill" x="45" y="155" width="330" height="35"/>
+  <text x="60" y="177" class="dim">3. Virtual DOM Tree Diffing</text>
+
+  <line class="flow" x1="210" y1="190" x2="210" y2="205" marker-end="url(#aro)"/>
+
+  <rect class="fill" x="45" y="205" width="330" height="35"/>
+  <text x="60" y="227" class="dim">4. Real DOM Minimal Patch</text>
+
+
+  <rect class="box" x="430" y="20" width="360" height="240"/>
+  <text x="445" y="42" class="b">Strvct (Asymmetric Notification)</text>
+
+  <rect class="fill" x="445" y="55" width="330" height="35"/>
+  <text x="460" y="77" class="dim">1. View Calls Model Setter</text>
+
+  <line class="flow" x1="610" y1="90" x2="610" y2="105" marker-end="url(#aro)"/>
+
+  <rect class="fill" x="445" y="105" width="330" height="35"/>
+  <text x="460" y="127" class="dim">2. Model Slot Updates Internal State</text>
+
+  <line class="flow-dashed" x1="610" y1="140" x2="610" y2="155" marker-end="url(#aro)"/>
+
+  <rect class="fill" x="445" y="155" width="330" height="35"/>
+  <text x="460" y="177" class="dim">3. Notification Posted via Center</text>
+
+  <line class="flow" x1="610" y1="190" x2="610" y2="205" marker-end="url(#aro)"/>
+
+  <rect class="fill" x="445" y="205" width="330" height="35"/>
+  <text x="460" y="227" class="dim">4. Coalesced View Pull &amp; Render</text>
+</svg>
+
+- **React:** Uses unidirectional data flow with Virtual DOM diffing. A state update triggers a re-render of the component subtree, computing a Virtual DOM delta to patch the real DOM.
+- **Strvct:** Uses an asymmetric notification model. Views call setter methods on model nodes. Setters update slot state and post named notifications via `SvNotificationCenter`. `SvSyncScheduler` coalesces multiple updates within the event loop, notifying observing views to pull updated values directly.
+
+---
+
+## Detailed Paradigm Comparison
+
+| Dimension | React Ecosystem | Strvct Framework |
+|---|---|---|
+| **Primary Artifact** | Authored Component Trees (`JSX`) | Annotated Domain Models (`SvNode`) |
+| **UI Derivation** | Manual per screen | 100% Derived automatically |
+| **Persistence Strategy** | Custom integration (REST, GraphQL, Firebase) | Built-in local IndexedDB pools + Cloud Sync |
+| **Offline Support** | Complex PWA / Service Worker setup | Native local-first (offline by default) |
+| **AI Agent Interop** | Custom per-screen tool definitions | Native constant-size tool surface (`schema-fetch` / `apply-patch`) |
+| **Headless Testing** | Requires jsdom / Puppeteer | Native Node.js execution (zero DOM dependencies) |
+| **Internationalization** | Manual string wrapping & translation files | Intercepted centrally at tile primitive boundary |
+| **Module Ecosystem** | Full npm ecosystem & Vite / Webpack | Vendored libraries & Content-Addressable Memory (`CAM`) |
+
+---
+
+## Decision Matrix: When to Use Which?
+
+### Choose React When:
+- You are building a marketing site, landing page, or media-rich portal requiring highly branded, bespoke visuals.
+- Server-Side Rendering (SSR) or Search Engine Optimization (SEO) is a primary business requirement.
+- Your application relies heavily on third-party npm UI component libraries (e.g., shadcn/ui, MUI, Ant Design).
+- Your UI design bears no structural relationship to a structured domain model.
+
+### Choose Strvct When:
+- You are building a data-model-intensive application (CRMs, ERPs, project management, RPG gaming tools, settings panels).
+- You want zero-maintenance UI generation and client-side persistence without writing component or glue code.
+- You want native, zero-cost AI agent operability over your entire data model.
+- You are building a local-first application that must function offline with cloud synchronization.
+- You want ultra-fast, headless unit and integration testing under Node.js without browser automation.
+
+
+---
+
+<!-- Page: docs/Comparing to React/_unused -->
+Source: /docs/Comparing%20to%20React/_unused/
+
+# Comparing to React
+
 A guide for React developers exploring Strvct — what's different, what's similar, and when each approach makes more sense.
 
 ## The Core Difference
@@ -3778,6 +4043,345 @@ This creates a persistent node with an editable string property that automatical
 
 <!-- Page: docs/Implementation Overview -->
 Source: /docs/Implementation%20Overview/
+
+# Implementation Overview
+
+Deep technical specifications for class lifecycle, slots, views, persistence, notifications, and build infrastructure.
+
+## Introduction
+
+This document provides a detailed engineering specification of the Strvct framework implementation. It builds directly on the high-level concepts described in the [Technical Overview](../Technical%20Overview/) and the architectural foundations in [Naked Objects](../Naked%20Objects/).
+
+Strvct applications are composed of three primary layers: **Model**, **UI**, and **Storage**. The framework eliminates manual "glue" code by embedding structural metadata directly into model objects via **Slots** and **Slot Annotations**.
+
+<svg viewBox="0 0 820 430" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  </style>
+  <defs>
+    <marker id="aio" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="fill" x="220" y="20" width="380" height="70"/>
+  <text x="235" y="40" class="b">SvApp</text>
+  <text x="235" y="58" class="dim">Top-level coordinator; holds model + userInterface</text>
+  <text x="235" y="76" class="dim">SvWebUserInterface · SvCliUserInterface · SvHeadlessUserInterface</text>
+
+  <line class="flow" x1="410" y1="90" x2="410" y2="155"/>
+  <line class="flow" x1="130" y1="125" x2="690" y2="125"/>
+  <line class="flow" x1="130" y1="125" x2="130" y2="155" marker-end="url(#aio)"/>
+  <line class="flow" x1="410" y1="125" x2="410" y2="155" marker-end="url(#aio)"/>
+  <line class="flow" x1="690" y1="125" x2="690" y2="155" marker-end="url(#aio)"/>
+
+  <rect class="box" x="30" y="155" width="200" height="180"/>
+  <text x="45" y="177" class="b">UI Layer</text>
+  <text x="45" y="197" class="dim">SvUserInterface Root</text>
+  <rect class="fill" x="45" y="220" width="170" height="106"/>
+  <text x="60" y="240" class="b">SvNodeView Tree</text>
+  <text x="60" y="258" class="dim">Lazy Miller views;</text>
+  <text x="60" y="276" class="dim">Observes node slots;</text>
+  <text x="60" y="294" class="dim">Responds to user events;</text>
+  <text x="60" y="312" class="dim">No DOM leaks to model</text>
+
+  <rect class="box" x="310" y="155" width="200" height="180"/>
+  <text x="325" y="177" class="b">Model Layer</text>
+  <text x="325" y="197" class="dim">SvModel : SvStorableNode</text>
+  <rect class="fill" x="325" y="220" width="170" height="106"/>
+  <text x="340" y="240" class="b">Domain SvNode Graph</text>
+  <text x="340" y="258" class="dim">Root of persistent state;</text>
+  <text x="340" y="276" class="dim">Slots define properties;</text>
+  <text x="340" y="294" class="dim">Subnodes define children;</text>
+  <text x="340" y="312" class="dim">Runs headlessly in Node.js</text>
+
+  <rect class="box" x="590" y="155" width="200" height="180"/>
+  <text x="605" y="177" class="b">Storage Layer</text>
+  <text x="605" y="197" class="dim">SvPersistentObjectPool</text>
+  <rect class="fill" x="605" y="220" width="170" height="106"/>
+  <text x="620" y="240" class="b">IndexedDB &amp; Cloud</text>
+  <text x="620" y="258" class="dim">Monitors mutations;</text>
+  <text x="620" y="276" class="dim">Batches dirty nodes;</text>
+  <text x="620" y="294" class="dim">SHA-256 blob store;</text>
+  <text x="620" y="312" class="dim">Garbage collects pools</text>
+
+  <line class="flow-dashed" x1="310" y1="265" x2="230" y2="265" marker-end="url(#aio)"/>
+  <line class="flow" x1="230" y1="300" x2="310" y2="300" marker-end="url(#aio)"/>
+  <text x="270" y="243" text-anchor="middle" class="dim">mutation</text>
+  <text x="270" y="258" text-anchor="middle" class="dim">notification</text>
+  <text x="270" y="313" text-anchor="middle" class="dim">getter, setter,</text>
+  <text x="270" y="328" text-anchor="middle" class="dim">&amp; action calls</text>
+
+  <line class="flow-dashed" x1="510" y1="265" x2="590" y2="265" marker-end="url(#aio)"/>
+  <line class="flow" x1="590" y1="300" x2="510" y2="300" marker-end="url(#aio)"/>
+  <text x="550" y="243" text-anchor="middle" class="dim">mutation</text>
+  <text x="550" y="258" text-anchor="middle" class="dim">notification</text>
+  <text x="550" y="313" text-anchor="middle" class="dim">loads &amp;</text>
+  <text x="550" y="328" text-anchor="middle" class="dim">stores</text>
+
+  <text x="410" y="365" text-anchor="middle" class="dim">Model is the authoritative source of truth.</text>
+  <text x="410" y="385" text-anchor="middle" class="dim">Views and Storage hold weak references to Model nodes; Model holds zero references to Views or Storage in return.</text>
+  <text x="410" y="405" text-anchor="middle" class="dim">Slot annotations carry enough information for UI generation, persistence, and synchronization to be handled automatically.</text>
+</svg>
+
+---
+
+## The Object & Class System
+
+Strvct implements a structured class initialization pattern built on top of standard ES6 class syntax.
+
+### Class Lifecycle & Registration
+
+Classes are defined inside an IIFE (Immediately Invoked Function Expression) and self-register using `.initThisClass()`:
+
+```javascript
+(class Character extends SvStorableNode {
+
+    initPrototypeSlots () {
+        // Declare instance slots (properties + metadata)
+    }
+
+    initPrototype () {
+        // Configure class-wide prototype settings
+    }
+
+    init () {
+        super.init();
+        // Basic instance initialization
+    }
+
+    finalInit () {
+        super.finalInit();
+        // Relationship resolution & post-deserialization setup
+    }
+
+}.initThisClass());
+```
+
+#### Initialization Execution Sequence:
+1. **`initPrototypeSlots()`**: Invoked automatically during class registration. Defines slots and annotations on the class prototype. *Must never call `super`.*
+2. **`initPrototype()`**: Sets up prototype-wide default properties (e.g., `this.setShouldStore(true)`). *Must never call `super`.*
+3. **`init()`**: Called when an object is instantiated (`new Class()`). Performs basic property initialization. Always calls `super.init()`.
+4. **`finalInit()`**: Called after an object is fully instantiated or deserialized from IndexedDB. Sets up complex object references and child subnodes. Always calls `super.finalInit()`.
+
+### Slots & Slot Annotations
+
+Slots are Strvct's property system. Instead of raw instance fields, properties are declared in `initPrototypeSlots()`:
+
+```javascript
+initPrototypeSlots () {
+    {
+        const slot = this.newSlot("name", "Default Name");
+        slot.setSlotType("String");
+        slot.setShouldStoreSlot(true);   // Persists to IndexedDB
+        slot.setSyncsToView(true);       // Emits view update notifications
+        slot.setCanEditInspection(true); // Editable in Property Inspector
+    }
+    {
+        const slot = this.newSlot("inventory", null);
+        slot.setFinalInitProto(InventoryNode); // Auto-creates default instance
+        slot.setIsSubnodeField(true);         // Navigable tile in inspector
+    }
+}
+```
+
+#### Key Slot Annotations:
+- `setSlotType(typeName)`: Declares expected type (`String`, `Number`, `Boolean`, `Array`, `Object`, `ClassName`). Enforces runtime type checks on setters.
+- `setShouldStoreSlot(boolean)`: Controls whether the slot value is included in serialized JSON records.
+- `setSyncsToView(boolean)`: Triggers change notifications to observing views upon mutation.
+- `setCanEditInspection(boolean)`: Exposes property in the modifier-click (Option+Click) live Property Inspector.
+- `setIsSubnode(boolean)`: Adds slot value directly to the parent's `subnodes` array.
+- `setIsSubnodeField(boolean)`: Generates a navigable field tile in the inspector hierarchy.
+- `setFinalInitProto(Class)`: Auto-instantiates default child objects during `finalInit()` if no record was loaded from storage.
+
+### Categories & Protocols
+
+- **Categories (`initThisCategory()`):** Extend existing classes across multiple files without modifying the base definition file (e.g., `SvJsonGroup_patches.js` adding `applyJsonPatches()` to `SvJsonGroup`).
+- **Protocols (`NameProtocol`):** Define required interface method stubs inheriting from `Protocol` to enable runtime interface compliance checks.
+
+---
+
+## Model Layer Engineering
+
+### Node Hierarchy
+The domain model is an object graph inheriting from `SvNode`. Every node contains:
+- `subnodes`: An ordered, unique collection of child `SvNode` objects.
+- `parentNode`: Reference to the parent `SvNode`.
+- `title` / `subtitle`: String properties displayed in summary tiles.
+- `puuid`: Persistent unique identifier string.
+
+### Subnode Patterns
+1. **Stored Subnodes (`setIsSubnode(true)`):** Permanent parent-child ownership relationships where child nodes are stored directly inside the parent's `subnodes` array and persisted together.
+2. **Subnode Fields (`setIsSubnodeField(true)`):** Properties where value state remains in a slot on the parent node, but a navigable field tile (`SvField`) is generated in the UI for inspecting child subnodes.
+
+---
+
+## View Layer Architecture
+
+### Layered Class Hierarchy
+The view system uses a deep, single-inheritance hierarchy where each layer adds a isolated capability:
+
+```
+SvElementDomView        (Wraps DOM element, enables alternative render backends)
+ └─ SvCssDomView         (Manages inline CSS styles and class list)
+     └─ SvSubviewsDomView  (Manages child view hierarchy)
+         └─ SvListenerDomView (Event listener attachment)
+             └─ SvVisibleDomView  (Viewport visibility tracking)
+                 └─ SvGesturableDomView (Gesture recognizers: tap, pan, swipe, long-press)
+                     └─ SvResponderDomView  (Focus management & keyboard navigation)
+                         └─ SvControlDomView    (Target/Action pattern for control triggers)
+                             └─ SvStyledDomView     (State-based style states: selected, active, disabled)
+                                 └─ SvNodeView          (Binds model SvNode to DOM presentation)
+```
+
+### Navigation Primitives (Miller Columns)
+
+The UI is rendered using nested Miller Column container views:
+
+1. **`SvStackView`**: Core navigation container. Contains a `SvNavView` (master column) and `otherView` (detail area). Automatically collapses on mobile viewports into a push/pop stack with breadcrumbs.
+2. **`SvBrowserView`**: Top-level application shell extending `SvStackView` with header breadcrumb navigation.
+3. **`SvNavView`**: Single navigation column containing header, scrollable `SvTilesView`, and footer.
+4. **`SvTilesView`**: Scrollable container for `SvTile` items. Handles keyboard cursor selection, drag-and-drop, and reordering gestures.
+5. **`SvTile`**: Visual presentation of a single model node or property slot.
+
+<svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aio" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="20" y="20" width="780" height="240"/>
+  <text x="35" y="42" class="b">SvBrowserView</text>
+  <text x="35" y="60" class="dim">Breadcrumb Header: Workspace &gt; Projects &gt; Task</text>
+
+  <rect class="box" x="35" y="75" width="360" height="170"/>
+  <text x="50" y="95" class="b">SvNavView (Master Column)</text>
+  <rect class="fill" x="50" y="105" width="330" height="125"/>
+  <text x="65" y="125" class="b">SvTilesView</text>
+  <text x="65" y="145" class="dim">• SummaryTile: Project Alpha</text>
+  <text x="65" y="165" class="b">• SummaryTile: Project Beta  [*]</text>
+  <text x="65" y="185" class="dim">• SummaryTile: Project Gamma</text>
+
+  <rect class="box" x="425" y="75" width="360" height="170"/>
+  <text x="440" y="95" class="b">SvStackView (Detail Area)</text>
+  <rect class="fill" x="440" y="105" width="330" height="125"/>
+  <text x="455" y="125" class="b">SvNavView (Detail Column)</text>
+  <text x="455" y="145" class="dim">• PropertyTile: Name ("Project Beta")</text>
+  <text x="455" y="165" class="dim">• PropertyTile: Status ("Active")</text>
+  <text x="455" y="185" class="dim">• PropertyTile: Priority ("High")</text>
+
+  <line class="flow" x1="380" y1="165" x2="440" y2="165" marker-end="url(#aio)"/>
+</svg>
+
+---
+
+## Storage Layer Engineering
+
+### Persistent Object Pools (`SvPersistentObjectPool`)
+Application data is stored locally in IndexedDB as object pools (one pool per document):
+
+- **Row Key Format:** `poolId` + `puuid` (Persistent UUID).
+- **In-Pool References:** `{ "*": puuid }` (near references within the same document pool).
+- **Cross-Pool References:** `{ "**": poolId }` (far references to external document roots, loaded asynchronously).
+
+### Transactional Persistence Lifecycle
+1. **Mutation Tracking:** Modifying a slot marked `setShouldStoreSlot(true)` invokes `didMutate()`, marking the node dirty.
+2. **Event Loop Commit:** At the end of the current browser event loop, all dirty nodes are bundled into a single atomic IndexedDB transaction.
+3. **Deserialization Pipeline:** On load, `instanceFromRecordInStore()` instantiates a blank object, invokes `init()`, populates slot state via `loadFromRecord()`, and executes `finalInit()` to reconnect object references.
+4. **Garbage Collection:** Traces the stored graph from the pool root. Unreachable records are automatically deleted.
+5. **SHA-256 Blob Pool (`SvBlobPool`):** Large binary assets (images, audio, files) are stored in a content-addressable store keyed by SHA-256 hash. Records store hash references rather than binary payloads.
+
+---
+
+## Synchronization Infrastructure
+
+Strvct provides loose coupling across layers using three notification utilities:
+
+1. **`SvNotificationCenter`**: Asynchronous notification dispatch. Nodes post named notifications; observing views register to handle them.
+2. **`SvSyncScheduler`**: Coalesces multiple notification method invocations in one event loop into a single UI sync pass.
+3. **`SvBroadcaster`**: Immediate, synchronous event broadcast for high-frequency internal events.
+
+<svg viewBox="0 0 820 120" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  </style>
+  <defs>
+    <marker id="aio" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="fill" x="30" y="20" width="220" height="80"/>
+  <text x="45" y="42" class="b">Model Node Slot Setter</text>
+  <text x="45" y="60" class="dim">character.setName("Thorin")</text>
+  <text x="45" y="78" class="dim">Slot setter updates value</text>
+
+  <line class="flow-dashed" x1="250" y1="60" x2="300" y2="60" marker-end="url(#aio)"/>
+
+  <rect class="fill" x="300" y="20" width="220" height="80"/>
+  <text x="315" y="42" class="b">SvNotificationCenter</text>
+  <text x="315" y="60" class="dim">postNotification("didChange")</text>
+  <text x="315" y="78" class="dim">Dispatches to observers</text>
+
+  <line class="flow" x1="520" y1="60" x2="570" y2="60" marker-end="url(#aio)"/>
+
+  <rect class="fill" x="570" y="20" width="220" height="80"/>
+  <text x="585" y="42" class="b">SvSyncScheduler &amp; View</text>
+  <text x="585" y="60" class="dim">scheduleTargetAndMethod()</text>
+  <text x="585" y="78" class="dim">Coalesced view.syncFromNode()</text>
+</svg>
+
+---
+
+## Content-Addressable Build System (CAM)
+
+Strvct avoids standard ES module imports and Webpack/Vite bundlers, using a custom **Content-Addressable Memory (CAM)** build system:
+
+1. **`ImportsIndexer` (Build Time):** Recursively walks `_imports.json` files to discover source files and dependency order. Outputs:
+   - `_index.json`: Metadata catalog mapping resource paths to SHA-256 content hashes.
+   - `_cam.json.zip`: Zip-compressed content bundle keyed by SHA-256 hash.
+
+2. **`SvResourceManager` & `SvHashCache` (Runtime):**
+   - Fetches `_index.json` on app boot.
+   - Scans missing hashes against IndexedDB `SvHashCache`.
+   - If missing ratio $> 30\%$, downloads `_cam.json.zip` in one HTTP request.
+   - If missing ratio $\le 30\%$, fetches individual missing files on demand.
+   - Evaluates source files in dependency order via `eval()` with embedded `sourceURL` comments for complete DevTools debugging support.
+
+---
+
+## Related Guides
+
+- [Technical Overview](../Technical%20Overview/): High-level architecture and design philosophy.
+- [Naked Objects](../Naked%20Objects/): Theoretical foundations and production case studies.
+- [Comparing to React](../Comparing%20to%20React/): Guide for React developers exploring Strvct.
+
+
+---
+
+<!-- Page: docs/Implementation Overview/_unused -->
+Source: /docs/Implementation%20Overview/_unused/
 
 # Implementation Overview
 
@@ -10479,6 +11083,305 @@ Source: /docs/Services/AI%20Services/
 
 # AI Services
 
+Framework architecture for multi-provider AI integration, streaming execution, tool calling, and model-first operability.
+
+## Introduction & The Model-First AI Advantage
+
+Strvct provides a comprehensive, multi-provider AI infrastructure built directly into the framework. Unlike traditional applications where AI integration requires writing bespoke API wrappers, per-screen tool specifications, and custom JSON serializers, Strvct's **Naked Objects** architecture makes the entire domain model **natively AI-operable** out of the box.
+
+Because every domain class declares instance properties as **slots** with metadata annotations (`slotType`, `canEditInspection`, `isSubnodeField`), Strvct exposes a universal AI tool surface consisting of just two generic, constant-size functions:
+
+1. **`schema-fetch`**: Inspects slot metadata to generate JSON schemas for any domain class or live object instance.
+2. **`apply-patch`**: Validates and applies JSON patch payloads to mutate properties or update child relationships on live domain objects.
+
+<svg viewBox="0 0 820 230" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aai" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <!-- Row 1: AI Agent (x: 25) -> Generic Tool Surface (x: 290) -->
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="38" class="b">AI Agent / LLM</text>
+  <text x="40" y="56" class="dim">Generates JSON patches</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#aai)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="38" class="b">Generic Tool Surface</text>
+  <text x="305" y="56" class="dim">schema-fetch &amp; apply-patch</text>
+
+  <!-- Straight Down Flow to Annotation Bridge -->
+  <line class="flow" x1="410" y1="70" x2="410" y2="95" marker-end="url(#aai)"/>
+
+  <!-- Row 2: Strvct Annotation Bridge (x: 290) directly below Generic Tool Surface -->
+  <rect class="fill" x="290" y="95" width="240" height="50"/>
+  <text x="305" y="113" class="b">Strvct Annotation Bridge</text>
+  <text x="305" y="131" class="dim">Slot metadata annotations</text>
+
+  <!-- Flow to Bottom Row (3 Columns) -->
+  <line class="flow" x1="410" y1="145" x2="410" y2="158"/>
+  <line class="flow" x1="145" y1="158" x2="675" y2="158"/>
+
+  <line class="flow" x1="145" y1="158" x2="145" y2="170" marker-end="url(#aai)"/>
+  <line class="flow" x1="410" y1="158" x2="410" y2="170" marker-end="url(#aai)"/>
+  <line class="flow" x1="675" y1="158" x2="675" y2="170" marker-end="url(#aai)"/>
+
+  <!-- Row 3: 3 Uniform Boxes (x: 25, 290, 555) -->
+  <rect class="box" x="25" y="170" width="240" height="50"/>
+  <text x="40" y="188" class="b">UI Tile Updates</text>
+  <text x="40" y="206" class="dim">Live view renders</text>
+
+  <rect class="box" x="290" y="170" width="240" height="50"/>
+  <text x="305" y="188" class="b">IndexedDB Pool</text>
+  <text x="305" y="206" class="dim">Local persistence</text>
+
+  <rect class="box" x="555" y="170" width="240" height="50"/>
+  <text x="570" y="188" class="b">Sync Scheduler</text>
+  <text x="570" y="206" class="dim">Deferred notifications</text>
+</svg>
+
+This tool surface remains **constant in size** whether an application contains 5 domain classes or 500. When an AI agent generates an invalid patch, the framework's rejected response returns the slot schema, enabling the LLM to self-correct in real time.
+
+---
+
+## Service & Request Factory Architecture
+
+AI providers are implemented as paired service and request singletons inheriting from base infrastructure classes:
+
+- **`SvAiService`**: High-level provider service singleton (e.g., `SvAnthropicService`, `SvGeminiService`, `SvOpenAiService`). Manages authentication, endpoint resolution, and model capability registries.
+- **`SvAiRequest`**: Low-level HTTP request wrapper handling message formatting, custom headers, and streaming chunk parsing.
+
+<svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="asv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">SvAiService</text>
+  <text x="305" y="58" class="dim">Base Provider Service</text>
+
+  <line class="flow" x1="410" y1="70" x2="410" y2="85"/>
+  <line class="flow" x1="145" y1="85" x2="675" y2="85"/>
+
+  <line class="flow" x1="145" y1="85" x2="145" y2="100" marker-end="url(#asv)"/>
+  <line class="flow" x1="410" y1="85" x2="410" y2="100" marker-end="url(#asv)"/>
+  <line class="flow" x1="675" y1="85" x2="675" y2="100" marker-end="url(#asv)"/>
+
+  <rect class="box" x="25" y="100" width="240" height="50"/>
+  <text x="40" y="120" class="b">SvAnthropicService</text>
+  <text x="40" y="138" class="dim">Pairs with SvAnthropicRequest</text>
+
+  <rect class="box" x="290" y="100" width="240" height="50"/>
+  <text x="305" y="120" class="b">SvGeminiService</text>
+  <text x="305" y="138" class="dim">Pairs with SvGeminiRequest</text>
+
+  <rect class="box" x="555" y="100" width="240" height="50"/>
+  <text x="570" y="120" class="b">SvOpenAiService</text>
+  <text x="570" y="138" class="dim">Pairs with SvOpenAiRequest</text>
+</svg>
+
+### Automatic Factory Resolution
+
+`SvAiService` resolves its paired request class dynamically using naming conventions (`SvGeminiService` automatically pairs with `SvGeminiRequest`). Adding a new AI provider requires implementing the service and request subclass without registering explicit factory hooks.
+
+### Authentication & Token Flow
+
+Authentication is resolved via `apiKeyOrUserAuthToken()`:
+1. First checks `SvCredentialManager` for a Firebase bearer token (for production apps proxying requests through Firebase Cloud Functions to protect secrets).
+2. Falls back to a client-stored API key (for local development or direct user API key entry).
+
+---
+
+## AI Model Registry (`SvAiChatModel`)
+
+`SvAiChatModel` represents a specific LLM model instance (e.g., `claude-3-5-sonnet`, `gemini-1.5-pro`, `gpt-4o`). Each model definition includes:
+
+- `modelName`: Standard provider model identifier string.
+- `inputTokenLimit` / `outputTokenLimit`: Context window limits.
+- Capability Flags: `supportsTemperature`, `supportsTopP`, `supportsImageGeneration`, `supportsVideoGeneration`, `supportsTools`.
+
+The global `Services` node provides global helper methods to query models across all registered providers:
+
+```javascript
+const models = Services.shared().aiServices().chatModels();
+const model  = Services.shared().aiServices().chatModelWithName("claude-3-5-sonnet");
+```
+
+---
+
+## Conversations & Messaging (`SvAiConversation` & `SvAiMessage`)
+
+`SvAiConversation` manages conversational state, token counts, system prompts, tool call history, and active LLM chat requests.
+
+- **`SvAiMessage`**: Extends standard conversation messages with role designations (`system`, `user`, `assistant`).
+- **Role Mapping**: Provider services map generic role names to provider-specific conventions automatically (e.g., mapping `assistant` to `model` for Gemini APIs).
+
+---
+
+## The Assistant ToolKit & Function Execution
+
+Structured tool calling is coordinated by `SvAssistantToolKit`:
+
+<svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="atk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <!-- Row 1: 2 Boxes (w: 240, h: 50) -->
+  <rect class="box" x="140" y="20" width="240" height="50"/>
+  <text x="155" y="38" class="b">AI Response Stream</text>
+  <text x="155" y="56" class="dim">&lt;tool-call name="rollDice"&gt;</text>
+
+  <line class="flow" x1="380" y1="45" x2="440" y2="45" marker-end="url(#atk)"/>
+
+  <rect class="fill" x="440" y="20" width="240" height="50"/>
+  <text x="455" y="38" class="b">SvAssistantToolKit</text>
+  <text x="455" y="56" class="dim">Function Dispatcher</text>
+
+  <!-- Flow to Row 2 -->
+  <line class="flow" x1="560" y1="70" x2="560" y2="85"/>
+  <line class="flow" x1="260" y1="85" x2="560" y2="85"/>
+
+  <line class="flow" x1="260" y1="85" x2="260" y2="100" marker-end="url(#atk)"/>
+  <line class="flow" x1="560" y1="85" x2="560" y2="100" marker-end="url(#atk)"/>
+
+  <!-- Row 2: 2 Boxes (w: 240, h: 50) -->
+  <rect class="box" x="140" y="100" width="240" height="50"/>
+  <text x="155" y="120" class="b">Streaming Execution</text>
+  <text x="155" y="138" class="dim">Triggers audio &amp; FX inline</text>
+
+  <rect class="box" x="440" y="100" width="240" height="50"/>
+  <text x="455" y="120" class="b">Completion State Patch</text>
+  <text x="455" y="138" class="dim">Mutates live domain nodes</text>
+</svg>
+
+### 1. Tool Registration
+Methods on model nodes are marked as toolable during slot setup:
+
+```javascript
+const tool = this.methodNamed("rollDice");
+tool.setDescription("Roll dice for a combat check");
+tool.addParameter("notation", "String", "Standard dice notation like 2d6+3");
+tool.setIsToolable(true);
+```
+
+### 2. Execution Timing Phases
+Tools execute at specific points in the response lifecycle:
+- **Streaming Phase (`onStreamData`):** Executes in real time while tokens arrive (e.g., playing a sound effect or triggering a UI animation).
+- **Completion Phase (`onRequestComplete`):** Executes after the full response is validated (e.g., applying state mutations to domain nodes).
+- **Narration Phase (`onPlayback`):** Executes synchronized with Text-To-Speech (TTS) voice audio playback.
+
+---
+
+## Incremental Streaming Response Parser (`SvAiParsedResponseMessage`)
+
+AI responses arrive as continuous token streams. `SvAiParsedResponseMessage` parses structured XML tags incrementally during streaming without waiting for full response completion:
+
+- `<tool-call>`: Extracted and dispatched immediately to `SvAssistantToolKit`.
+- `<narration>`: Extracted and routed directly to the TTS voice audio queue for zero-latency speech synthesis.
+- `<thought>` / `<quote>` / `<sentence>`: Extracted for structured UI display in chat message views.
+
+---
+
+## Modular Prompt Composition (`SvAiPromptComposer`)
+
+`SvAiPromptComposer` builds complex system prompts dynamically using modular text template files without manual string concatenation in JavaScript:
+
+```
+[ Template File: SystemPrompt.txt ]
+"System rules: {{file$Rules.txt}}
+ Current Character: {{$characterSummary}}
+ Available Actions: {{$tableOfContents}}"
+```
+
+### Supported Substitution Directives:
+1. `{{file$Path/ToFile.txt}}`: Recursively embeds the contents of a secondary prompt template file.
+2. `{{$methodName}}`: Executes a getter method on the target domain object and inserts the string result.
+3. `{{$tableOfContents}}`: Generates a structured table of contents from headings in the prompt document.
+
+---
+
+## Provider Support Matrix
+
+| Service Class | Provider | Key Capabilities & Models |
+|---|---|---|
+| `SvAnthropicService` | Anthropic | Claude 3.5 Sonnet, Claude 3 Opus, native tool use |
+| `SvGeminiService` | Google | Gemini 1.5 Pro/Flash, text-to-video, multimodal inputs |
+| `SvOpenAiService` | OpenAI | GPT-4o, DALL-E 3 image generation, TTS voice synthesis |
+| `SvGroqService` | Groq | Ultra-low-latency inference (OpenAI compatible) |
+| `SvDeepSeekService` | DeepSeek | DeepSeek V3 / R1 reasoning models |
+| `SvXaiService` | xAI | Grok 2 models (OpenAI compatible) |
+| `SvImagineProService`| ImaginePro | Midjourney image generation via proxy API |
+
+---
+
+## Adding a New AI Provider
+
+To add a new AI provider, implement two classes following naming conventions:
+
+1. **Service Subclass (`SvNewProviderService.js`):**
+   ```javascript
+   (class SvNewProviderService extends SvAiService {
+       modelsJson () {
+           return [
+               { name: "new-model-v1", inputTokenLimit: 128000, outputTokenLimit: 4096 }
+           ];
+       }
+   }.initThisClass());
+   ```
+
+2. **Request Subclass (`SvNewProviderRequest.js`):**
+   ```javascript
+   (class SvNewProviderRequest extends SvAiRequest {
+       buildBody () {
+           // Format message payload for API endpoint
+       }
+       readDataChunk (chunk) {
+           // Parse streaming SSE chunks
+       }
+   }.initThisClass());
+   ```
+
+3. **Slot Registration:** Declare the new service slot in `Services.initPrototypeSlots()`. The service/request factory automatically binds `SvNewProviderService` to `SvNewProviderRequest`.
+
+
+---
+
+<!-- Page: docs/Services/AI Services/_unused -->
+Source: /docs/Services/AI%20Services/_unused/
+
+# AI Services
+
 Base classes, requests, conversations, tool calling, response parsing, and prompt composition.
 
 ## SvAiService
@@ -11243,6 +12146,268 @@ For the complete list, read `Slot.js` directly — the file is heavily commented
 
 <!-- Page: docs/Technical Overview -->
 Source: /docs/Technical%20Overview/
+
+# Technical Overview
+
+High-level architecture, core design philosophy, and system-wide concepts of the Strvct framework.
+
+## Introduction
+
+Strvct is an open-source, local-first **Naked Objects** framework built in client-side JavaScript. Instead of requiring developers to manually author and maintain separate domain models, UI component trees, form layouts, validators, client-side state stores, persistence mappings, localization dictionaries, and AI agent tool specifications, Strvct derives the complete application interface and operational infrastructure automatically from an annotated domain model.
+
+Applications built with Strvct operate as single-page web applications (SPAs) executing natively in the browser. The system is designed from the ground up for **local-first execution**: application state is stored locally in IndexedDB object pools, enabling instant, zero-latency user interaction and full offline functionality. When online, local object pools synchronize transparently with versioned cloud stores.
+
+<svg viewBox="0 0 820 240" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  </style>
+  <defs>
+    <marker id="ato" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="fill" x="40" y="20" width="740" height="65"/>
+  <text x="55" y="42" class="b">Annotated Domain Model (SvStorableNode Subclasses)</text>
+  <text x="55" y="60" class="dim">Single source of truth declaring slots, subnodes, and metadata annotations</text>
+
+  <line class="flow" x1="120" y1="85" x2="120" y2="125" marker-end="url(#ato)"/>
+  <line class="flow" x1="310" y1="85" x2="310" y2="125" marker-end="url(#ato)"/>
+  <line class="flow" x1="500" y1="85" x2="500" y2="125" marker-end="url(#ato)"/>
+  <line class="flow" x1="690" y1="85" x2="690" y2="125" marker-end="url(#ato)"/>
+
+  <rect class="box" x="40" y="125" width="160" height="90"/>
+  <text x="55" y="147" class="b">Auto-Generated UI</text>
+  <text x="55" y="165" class="dim">Miller column stacks,</text>
+  <text x="55" y="183" class="dim">tabs, &amp; doc sections</text>
+
+  <rect class="box" x="230" y="125" width="160" height="90"/>
+  <text x="245" y="147" class="b">Local &amp; Cloud Sync</text>
+  <text x="245" y="165" class="dim">IndexedDB pools &amp;</text>
+  <text x="245" y="183" class="dim">SHA-256 blob store</text>
+
+  <rect class="box" x="420" y="125" width="160" height="90"/>
+  <text x="435" y="147" class="b">Headless Execution</text>
+  <text x="435" y="165" class="dim">Runs in Node.js with</text>
+  <text x="435" y="183" class="dim">zero DOM dependencies</text>
+
+  <rect class="box" x="610" y="125" width="170" height="90"/>
+  <text x="625" y="147" class="b">Native AI Tool Surface</text>
+  <text x="625" y="165" class="dim">Constant tool size:</text>
+  <text x="625" y="183" class="dim">schema-fetch &amp; patch</text>
+</svg>
+
+Unlike traditional component frameworks (React, Vue, Svelte, Flutter) or compile-time code generators:
+- **No Pre-Rendered View Trees:** There is no build step that compiles templates into UI components or static layouts.
+- **Lazy Runtime View Derivation:** Views are instantiated lazily in response to user navigation through the object graph. Each step inspects target node slot annotations to resolve or create the appropriate `SvNodeView`.
+- **Bidirectional Live Synchronization:** Active views observe model nodes through deferred, deduplicated notifications. Updates flow bidirectionally between model and view without manual binding logic.
+- **Complete Decoupling:** Model objects hold zero references to UI classes or browser DOM elements. The entire domain graph runs headlessly in Node.js for testing, batch processing, or server-side workflows.
+
+---
+
+## The Model-First Triad
+
+Strvct organizes applications into three distinct layers connected by an asymmetric notification architecture:
+
+<svg viewBox="0 0 820 270" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  </style>
+  <defs>
+    <marker id="ato" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="30" y="20" width="200" height="160"/>
+  <text x="45" y="42" class="b">UI Layer</text>
+  <text x="45" y="62" class="dim">SvNodeView Hierarchy</text>
+  <rect class="fill" x="45" y="80" width="170" height="88"/>
+  <text x="60" y="100" class="b">Views</text>
+  <text x="60" y="118" class="dim">Observe node slots;</text>
+  <text x="60" y="136" class="dim">Created lazily on navigation;</text>
+  <text x="60" y="154" class="dim">Discarded when off-screen</text>
+
+  <rect class="box" x="310" y="20" width="200" height="160"/>
+  <text x="325" y="42" class="b">Model Layer</text>
+  <text x="325" y="62" class="dim">SvNode Object Graph</text>
+  <rect class="fill" x="325" y="80" width="170" height="88"/>
+  <text x="340" y="100" class="b">Domain Objects</text>
+  <text x="340" y="118" class="dim">Slots, subnodes,</text>
+  <text x="340" y="136" class="dim">annotations;</text>
+  <text x="340" y="154" class="dim">Zero UI references</text>
+
+  <rect class="box" x="590" y="20" width="200" height="160"/>
+  <text x="605" y="42" class="b">Storage Layer</text>
+  <text x="605" y="62" class="dim">SvPersistentObjectPool</text>
+  <rect class="fill" x="605" y="80" width="170" height="88"/>
+  <text x="620" y="100" class="b">IndexedDB / Cloud</text>
+  <text x="620" y="118" class="dim">Monitors mutations;</text>
+  <text x="620" y="136" class="dim">Batches per-loop changes</text>
+  <text x="620" y="154" class="dim">into atomic transactions</text>
+
+  <line class="flow-dashed" x1="310" y1="110" x2="230" y2="110" marker-end="url(#ato)"/>
+  <line class="flow" x1="230" y1="140" x2="310" y2="140" marker-end="url(#ato)"/>
+  <text x="270" y="88" text-anchor="middle" class="dim">mutation</text>
+  <text x="270" y="103" text-anchor="middle" class="dim">notification</text>
+  <text x="270" y="153" text-anchor="middle" class="dim">getter, setter,</text>
+  <text x="270" y="168" text-anchor="middle" class="dim">&amp; action calls</text>
+
+  <line class="flow-dashed" x1="510" y1="110" x2="590" y2="110" marker-end="url(#ato)"/>
+  <line class="flow" x1="590" y1="140" x2="510" y2="140" marker-end="url(#ato)"/>
+  <text x="550" y="88" text-anchor="middle" class="dim">mutation</text>
+  <text x="550" y="103" text-anchor="middle" class="dim">notification</text>
+  <text x="550" y="153" text-anchor="middle" class="dim">loads &amp;</text>
+  <text x="550" y="168" text-anchor="middle" class="dim">stores</text>
+
+  <text x="410" y="215" text-anchor="middle" class="dim">Model is the authoritative source of truth.</text>
+  <text x="410" y="235" text-anchor="middle" class="dim">Views and Storage hold weak references to Model nodes; Model holds zero references to Views or Storage in return.</text>
+</svg>
+
+### Layer Responsibilities
+
+1. **Model Layer (`SvNode` Graph):**
+   - Authoritative source of truth for all domain data and business logic.
+   - Composed of objects inheriting from `SvNode` (or `SvStorableNode`).
+   - Declares instance properties as **slots** enriched with metadata annotations.
+   - Emits change notifications when slots or subnode arrays mutate, but holds no references to views or persistence handlers.
+
+2. **UI Layer (`SvNodeView` Tree):**
+   - Renders visual presentation using lazy, auto-generated master-detail Miller column containers (`SvStackView`, `SvNavView`, `SvTilesView`, `SvTile`).
+   - Observes model notifications and pulls updated values on model mutation.
+   - Sends user edit commands back to the model via standard slot setters.
+
+3. **Storage Layer (`SvPersistentObjectPool`):**
+   - Monitors model mutation notifications automatically.
+   - Batches dirty objects at the end of each browser event loop into transactional IndexedDB operations.
+   - Syncs versioned delta commits with cloud storage for cross-device availability.
+
+---
+
+## The Multi-Reader Annotation Bridge
+
+The cornerstone of Strvct's architecture is the **Slot Annotation System**. Instead of raw instance variables, domain properties are declared as slots with metadata annotations.
+
+Slot annotations act as a **multi-reader decoupling bridge**. Each framework subsystem reads slot metadata independently to perform its job without cross-system dependencies:
+
+```
+                          +---> UI Generation (Property Tiles & Control Types)
+                          |
+                          +---> Local Storage & Cloud Sync (IndexedDB Records)
+                          |
+[ Slot Metadata Bridge ] -+---> Notification Engine (Coalesced Sync Passes)
+                          |
+                          +---> Native AI Tool Surface (JSON Patch Validation)
+                          |
+                          +---> Accessibility & i18n (ARIA Roles & Translation)
+```
+
+| Annotation Settor | Purpose & Subsystem Consumer |
+|---|---|
+| `setSlotType("String")` | Selects tile UI input control type, runtime type validation, and AI JSON schema generation. |
+| `setShouldStoreSlot(true)` | Directs `SvPersistentObjectPool` to include property in serialized storage records. |
+| `setSyncsToView(true)` | Instructs model setter to post notification triggers to active observing views. |
+| `setCanEditInspection(true)` | Exposes property in the modifier-click (Option+Click) live Property Inspector. |
+| `setIsSubnodeField(true)` | Exposes complex properties as navigable child nodes in the UI inspector hierarchy. |
+| `setFinalInitProto(ClassName)` | Auto-instantiates default child objects during initialization if absent from storage. |
+
+---
+
+## UI Synchronization Engine
+
+Strvct enforces an asymmetric, notification-driven synchronization architecture:
+
+1. **Push Phase (User Action):** When a user edits a property in the UI, the view calls the corresponding setter on the model node (e.g., `character.setName("Thorin")`).
+2. **Notification Phase:** The generated slot setter verifies the type, updates internal state, and posts a named change notification via `SvNotificationCenter`.
+3. **Pull Phase (Deferred View Sync):** Observing views receive the notification and schedule a sync pass with `SvSyncScheduler`.
+4. **Coalescing & Loop Avoidance:** `SvSyncScheduler` deduplicates multiple mutations within the same event loop, executing a single UI re-render pass at the end of the loop. If setter values have converged, sync halts automatically, preventing infinite update loops.
+5. **Memory Safety:** Notifications use weak-reference observation patterns, allowing unreferenced views and models to be garbage-collected cleanly without manual listener detachment.
+
+---
+
+## Local & Cloud Persistence
+
+Strvct combines local-first speed with seamless cloud synchronization:
+
+### 1. Local Object Pools (IndexedDB)
+- Application data is divided into **Object Pools** (one pool per document/aggregate root).
+- Each domain object is stored as a JSON row keyed by `poolId` and `puuid` (persistent UUID).
+- Object references within a pool are stored as `{ "*": puuid }`.
+- External cross-pool references are stored as `{ "**": poolId }`.
+- Mutations queue objects automatically for end-of-event-loop atomic IndexedDB commits.
+
+### 2. SHA-256 Content-Addressable Blob Store
+- Large binary assets (images, audio, files) are stored separately in `SvBlobPool`.
+- Keys are computed as SHA-256 content hashes, providing automatic binary deduplication.
+- Records store hash references rather than raw binary data, keeping IndexedDB records lean and fast.
+
+### 3. Versioned Cloud Commits
+- Cloud persistence mirror the same row format as local IndexedDB.
+- Saving a document computes delta rows modified since the last acknowledged pool version and posts an atomic commit.
+- Conflicts are detected deterministically per pool version rather than silently overwriting data.
+
+---
+
+## Content-Addressable Resource Delivery (CAM)
+
+Real-world Naked Objects applications load hundreds of domain classes, view handlers, and style assets into the browser. Traditional ES module loading (hundreds of individual HTTP requests) creates severe network latency, while standard Webpack/Vite bundlers invalidate full chunks on minor file edits.
+
+Strvct solves this with a **Content-Addressable Memory (CAM)** build and delivery pipeline:
+
+```
+[ Build Stage: ImportsIndexer ]
+  Scan _imports.json tree ---> Compute SHA-256 for each file
+  ---> Produce _index.json (path -> hash) & _cam.json.zip (compressed content)
+
+[ Runtime Stage: SvResourceManager & SvHashCache ]
+  Fetch _index.json ---> Compare against IndexedDB SvHashCache
+  ---> If delta ratio > 30%: Download _cam.json.zip in 1 request
+  ---> If delta ratio <= 30%: Download only missing hash files
+```
+
+### Key Benefits of CAM Delivery:
+- **Hash-Based Caching:** Assets are addressed and cached in IndexedDB by SHA-256 hash rather than URL path.
+- **Zero-Churn Redeployment:** Modifying a single source file invalidates only that file's hash in the cache; returning users download only the edited file.
+- **Cross-App Shared Caching:** Multiple Strvct applications running on the same origin share the local hash cache for common framework classes.
+- **Full Debugger Support:** JavaScript source files are evaluated dynamically via `eval()` with embedded `sourceURL` annotations, providing complete DevTools debugger capabilities (breakpoints, stack traces, step execution).
+
+---
+
+## Architectural Capabilities ("For Free")
+
+Because Strvct centralizes the pipeline from slot annotations to runtime views, several high-value capabilities fall out of the architecture automatically:
+
+1. **Natively AI-Operable Model:** Every class exposes a constant-size tool surface (`schema-fetch` + `apply-patch`). AI agents inspect schemas and patch live object graphs directly with automatic schema validation.
+2. **Headless Execution:** Domain models contain zero DOM dependencies and execute natively under Node.js for ultra-fast unit testing, simulations, or server execution.
+3. **Automatic Mobile Responsiveness:** Navigation columns (`SvStackView`) automatically collapse into mobile push/pop stacks with interactive breadcrumb headers on narrow viewports.
+4. **Live Property Inspector:** Modifier-clicking (Option+Click) any tile reveals a live inspector displaying all declared slots, storage flags, and validation states.
+5. **Type-Safe Cross-Window Drag & Drop:** Tiles support serialization to JSON MIME types for dragging data across browser windows, desktop apps, or Strvct instances.
+6. **Universal Accessibility & Localization:** ARIA roles, keyboard navigation, focus management, and AI string translation are applied centrally at the tile primitive level.
+
+---
+
+## Related Documentation
+
+- [Implementation Overview](../Implementation%20Overview/): Detailed engineering specifications for classes, slots, views, and persistence.
+- [Naked Objects](../Naked%20Objects/): Architectural paper detailing theoretical foundations and case studies.
+- [Comparing to React](../Comparing%20to%20React/): Guide for React developers exploring Strvct's model-first paradigm.
+
+
+---
+
+<!-- Page: docs/Technical Overview/_unused -->
+Source: /docs/Technical%20Overview/_unused/
 
 # Technical Overview
 

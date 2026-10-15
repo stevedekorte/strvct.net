@@ -1,16 +1,13 @@
 # Comparing to React
 
-A guide for React developers exploring Strvct — what's different, what's similar, and when each approach makes more sense.
+A technical guide and conceptual "Rosetta Stone" for React developers exploring Strvct.
 
-## The Core Difference
+## Core Architectural Divergence
 
-React and Strvct solve the same fundamental problem — keeping a UI in sync with application state — but start from opposite ends.
+React and Strvct both keep user interfaces synchronized with application state, but they start from opposite design philosophies:
 
-**React** is a view library. You describe what the UI looks like for a given state, and React makes the DOM match. Everything else — the model, persistence, routing, styling — is yours to choose.
-
-**Strvct** is a naked objects framework. You describe the domain model — its properties, relationships, and annotations — and the framework generates the UI, handles persistence, and manages navigation automatically. Custom views override the defaults when needed.
-
-They represent genuinely different philosophies about where developer effort should go.
+- **React is a View-First Library:** You author component trees in JSX, manage component state (`useState`, `useReducer`, Redux, Zustand), and write custom render functions. You are responsible for integrating state management, form components, ORMs, REST/GraphQL APIs, routing, internationalization, and accessibility.
+- **Strvct is a Model-First Naked Objects Framework:** You declare the domain model (`SvStorableNode` classes) with annotated property **slots**. The framework automatically derives the user interface, manages local IndexedDB persistence and cloud sync, generates Miller column navigation, and provides an AI tool surface without hand-authored UI code.
 
 <svg viewBox="0 0 820 410" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -19,87 +16,112 @@ They represent genuinely different philosophies about where developer effort sho
     .dim { fill: #666; }
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
   </style>
-  <defs>
-    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
+
   <rect class="box" x="90" y="20" width="290" height="370"/>
-  <text x="105" y="42" class="b">React</text>
-  <text x="105" y="62" class="dim">view library</text>
+  <text x="105" y="42" class="b">React (View-First)</text>
+  <text x="105" y="62" class="dim">Component &amp; Rendering Library</text>
+
   <rect class="fill" x="105" y="85" width="260" height="124"/>
-  <text x="120" y="105" class="b">You write</text>
-  <text x="120" y="123" class="dim">Components (JSX)</text>
-  <text x="120" y="141" class="dim">State management</text>
-  <text x="120" y="159" class="dim">Routing</text>
-  <text x="120" y="177" class="dim">Persistence</text>
-  <text x="120" y="195" class="dim">Styling, i18n, etc.</text>
+  <text x="120" y="105" class="b">You Must Author &amp; Maintain:</text>
+  <text x="120" y="123" class="dim">• UI Components (JSX / TSX)</text>
+  <text x="120" y="141" class="dim">• Form Controls &amp; Validation</text>
+  <text x="120" y="159" class="dim">• State Stores (Redux/Zustand)</text>
+  <text x="120" y="177" class="dim">• Routing &amp; Navigation Graphs</text>
+  <text x="120" y="195" class="dim">• REST/GraphQL/ORM Sync Logic</text>
+
   <rect class="fill" x="105" y="224" width="260" height="106"/>
-  <text x="120" y="244" class="b">Framework provides</text>
-  <text x="120" y="262" class="dim">DOM reconciliation</text>
-  <text x="120" y="280" class="dim">Component lifecycle</text>
-  <text x="120" y="298" class="dim">Hooks</text>
-  <text x="120" y="316" class="dim">Re-render scheduling</text>
-  <text x="105" y="354" class="dim">flexible runtime: SPA, SSR,</text>
-  <text x="105" y="372" class="dim">static, hybrid</text>
+  <text x="120" y="244" class="b">Framework Provides:</text>
+  <text x="120" y="262" class="dim">• Virtual DOM Reconciliation</text>
+  <text x="120" y="280" class="dim">• Component Lifecycle &amp; Hooks</text>
+  <text x="120" y="298" class="dim">• Event Delegation System</text>
+
+  <text x="105" y="354" class="dim">Requires continuous manual sync</text>
+  <text x="105" y="372" class="dim">across model, UI, &amp; API schemas.</text>
+
   <rect class="box" x="440" y="20" width="290" height="370"/>
-  <text x="455" y="42" class="b">Strvct</text>
-  <text x="455" y="62" class="dim">naked objects framework</text>
+  <text x="455" y="42" class="b">Strvct (Model-First)</text>
+  <text x="455" y="62" class="dim">Naked Objects Framework</text>
+
   <rect class="fill" x="455" y="85" width="260" height="106"/>
-  <text x="470" y="105" class="b">You write</text>
-  <text x="470" y="123" class="dim">Domain model (SvNode classes)</text>
-  <text x="470" y="141" class="dim">Slot annotations</text>
-  <text x="470" y="159" class="dim">Action methods</text>
-  <text x="470" y="177" class="dim">Custom views (only when needed)</text>
-  <rect class="fill" x="455" y="206" width="260" height="106"/>
-  <text x="470" y="226" class="b">Framework provides</text>
-  <text x="470" y="244" class="dim">UI generation from model</text>
-  <text x="470" y="262" class="dim">Persistence (IndexedDB + cloud)</text>
-  <text x="470" y="280" class="dim">Navigation, i18n, accessibility</text>
-  <text x="470" y="298" class="dim">Inspector, debug tools</text>
-  <text x="455" y="336" class="dim">local-first runtime;</text>
-  <text x="455" y="354" class="dim">offline by default, cloud sync optional</text>
+  <text x="470" y="105" class="b">You Author:</text>
+  <text x="470" y="123" class="dim">• Domain Models (SvNode classes)</text>
+  <text x="470" y="141" class="dim">• Slot Annotations (metadata)</text>
+  <text x="470" y="159" class="dim">• Action Methods (business logic)</text>
+
+  <rect class="fill" x="455" y="206" width="260" height="124"/>
+  <text x="470" y="226" class="b">Framework Provides Automatically:</text>
+  <text x="470" y="244" class="dim">• Miller Column UI Generation</text>
+  <text x="470" y="262" class="dim">• Local IndexedDB &amp; Cloud Sync</text>
+  <text x="470" y="280" class="dim">• Native AI Tool Surface</text>
+  <text x="470" y="298" class="dim">• Headless Node.js Execution</text>
+  <text x="470" y="316" class="dim">• Universal Accessibility &amp; i18n</text>
+
+  <text x="455" y="354" class="dim">Zero UI maintenance cost;</text>
+  <text x="455" y="372" class="dim">model change updates all layers.</text>
 </svg>
 
-## Architecture
+---
 
-React is flexible about where it runs. A React app can be a client-side SPA, a server-rendered application, or a hybrid. The modern ecosystem includes server-side rendering (Next.js, Remix), static site generation, and server components — but none of these are required. Many React applications are purely client-side.
+## Code Comparison: Defining a Editable Contact Record
 
-Strvct is **local-first** by design. Data is persisted client-side in IndexedDB automatically, rendering happens entirely on the client, and the UI is responsive without waiting on network round trips. Cloud sync is available for backup and cross-device access, but the application works fully offline.
-
-### What You Write
-
-In React, application code is primarily components — functions that return JSX describing the UI for a given state:
+### The React Approach (Manual Component + State + Persistence Wiring)
 
 ```jsx
-function Contact({ contact, onSave }) {
-    const [name, setName] = useState(contact.name);
-    const [email, setEmail] = useState(contact.email);
+// ContactForm.jsx - Hand-authored UI component
+function ContactForm({ contactId, onSave }) {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        // Fetch from API or local store
+        api.getContact(contactId).then(data => {
+            setName(data.name);
+            setEmail(data.email);
+        });
+    }, [contactId]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!email.includes("@")) {
+            setErrors({ email: "Invalid email address" });
+            return;
+        }
+        await api.updateContact(contactId, { name, email });
+        onSave();
+    };
+
     return (
-        <div className="contact">
-            <input value={name} onChange={e => setName(e.target.value)} />
-            <input value={email} onChange={e => setEmail(e.target.value)} />
-            <button onClick={() => onSave({ name, email })}>Save</button>
-        </div>
+        <form onSubmit={handleSubmit} className="contact-form">
+            <label>Name:
+                <input value={name} onChange={e => setName(e.target.value)} />
+            </label>
+            <label>Email:
+                <input value={email} onChange={e => setEmail(e.target.value)} />
+                {errors.email && <span className="error">{errors.email}</span>}
+            </label>
+            <button type="submit">Save Changes</button>
+        </form>
     );
 }
 ```
 
-This component handles rendering and editing but says nothing about persistence, navigation, or how the contact fits into a larger application. Those are separate concerns handled by other code — which is React's deliberate design choice. You compose the pieces you need.
+*Summary:* Requires manually coding state hooks, form inputs, validation error handlers, API serializers, and submit listeners.
 
-In Strvct, application code is primarily model classes — domain objects with annotated properties:
+### The Strvct Approach (Model-First Slot Declaration)
 
 ```javascript
+// Contact.js - Annotated domain model
 (class Contact extends SvStorableNode {
+
     initPrototypeSlots () {
         {
             const slot = this.newSlot("name", "");
             slot.setSlotType("String");
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setCanEditInspection(true);
+            slot.setShouldStoreSlot(true);   // Persist to IndexedDB
+            slot.setSyncsToView(true);       // Live UI update
+            slot.setCanEditInspection(true); // Editable field
         }
         {
             const slot = this.newSlot("email", "");
@@ -114,124 +136,123 @@ In Strvct, application code is primarily model classes — domain objects with a
         this.setTitle("Contact");
         this.setShouldStore(true);
     }
+
 }.initThisClass());
 ```
 
-This defines the data model, persistence, and UI behavior in one place. The framework generates editable fields, navigation tiles, and handles storage from the slot annotations. The tradeoff: you get less control over exactly how things look, and the annotation-driven style takes some getting used to.
+*Summary:* Declares properties and metadata once. Strvct automatically derives editable UI input fields, handles IndexedDB persistence, emits change notifications, generates Miller column navigation tiles, and exposes an AI tool specification.
 
-### State Management
+---
 
-React uses unidirectional data flow. State lives in components (via `useState` or `useReducer`) or in external stores (Redux, Zustand, MobX). Views are pure functions of state. When state changes, React re-renders the affected component subtree and diffs a virtual DOM against the real DOM to compute minimal updates. This model is predictable and easy to reason about — given the same props, a component always renders the same output.
+## Concept Mapping ("Rosetta Stone")
 
-Strvct uses an asymmetric notification pattern. Views hold direct references to their model objects and can send messages to them. Model objects post notifications when they change but have no knowledge of views. When a slot value changes, the setter posts a notification; views observing that node sync in response. The model layer functions independently of the UI — the same model runs headlessly in Node.js with no view layer at all.
-
-| | React | Strvct |
+| React Concept | Strvct Equivalent | Architectural Difference |
 |---|---|---|
-| State location | Components or external stores | Model objects (slots) |
-| Change detection | Virtual DOM diffing | Notification-based, per-slot |
-| Data flow | Unidirectional (state down, events up) | Asymmetric (views message models; models notify) |
-| Update granularity | Component subtree re-render | Individual slot/view sync |
-| Model-view coupling | Flexible (pure components to tightly coupled) | Strict separation (model has no knowledge of views) |
-| Headless execution | Requires mocking DOM APIs | Native (model runs without UI) |
+| **Component (`JSX`)** | `SvNodeView` (Auto-generated or custom subclass) | React components render JSX trees. Strvct views are derived lazily at runtime from `SvNode` slot metadata. |
+| **State (`useState`)** | Slot getters/setters (`this.name()`, `this.setName(v)`) | React state lives in components. Strvct state lives in model slots (`setSyncsToView(true)`). |
+| **Context / Redux Store** | `SvNotificationCenter` & `SvModel` Object Graph | React uses context or external stores for global state. Strvct uses a single local object graph with notification observers. |
+| **Effects (`useEffect`)** | Notification Observations (`SvNotificationCenter`) | React runs effect hooks after render passes. Strvct observes model events via weak notifications. |
+| **React Router / Next.js** | Miller Column Navigation (`SvStackView`, `SvNavView`) | React maps URLs to components manually. Strvct derives navigation paths directly from parent-child object relationships. |
+| **ORM / REST API Sync** | `SvPersistentObjectPool` (IndexedDB + Cloud) | React requires custom API calls (Axios/TanStack Query). Strvct commits dirty nodes automatically at the end of each event loop. |
+| **Virtual DOM Reconciliation** | Per-Slot Notification Sync (`SvSyncScheduler`) | React diffs full virtual DOM trees. Strvct updates individual DOM elements directly via coalesced slot change passes. |
+| **Bundlers (Vite / Webpack)** | Content-Addressable Memory (`CAM`) System | React bundles code into chunks. Strvct caches individual source files in IndexedDB by SHA-256 hash. |
+| **TypeScript / Prop Types** | Slot Type Declarations (`slot.setSlotType("String")`) | React uses compile-time type checking. Strvct enforces runtime type checking on setters and AI JSON patches. |
 
-### UI Generation
+---
 
-React requires you to write every view explicitly. This gives full control over appearance, layout, and interaction — and it means the UI can look like anything. The cost is that each new entity type needs its own component, often with repeated patterns for forms, lists, and detail views.
+## State & Change Propagation
 
-Strvct generates views from model annotations. A property marked `setCanEditInspection(true)` gets an editable field. A property marked as a subnode gets a navigable tile. The framework selects field types based on slot type. Custom views override the defaults by naming convention: create `ContactView` and the framework uses it for `Contact` nodes automatically.
+<svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  </style>
+  <defs>
+    <marker id="aro" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
 
-**React's strength**: Complete control over presentation. Bespoke UIs, data visualizations, highly branded experiences, and unconventional layouts are all straightforward.
+  <rect class="box" x="30" y="20" width="360" height="240"/>
+  <text x="45" y="42" class="b">React (Unidirectional Data Flow)</text>
 
-**Strvct's strength**: Consistent UI with minimal code. Applications with many model types get a working interface from model definitions alone. The tradeoff is that the generated UI follows the framework's visual conventions — stepping outside them requires custom views.
+  <rect class="fill" x="45" y="55" width="330" height="35"/>
+  <text x="60" y="77" class="dim">1. State Change (useState / Redux)</text>
 
-## Persistence
+  <line class="flow" x1="210" y1="90" x2="210" y2="105" marker-end="url(#aro)"/>
 
-React has no built-in persistence — you choose and integrate your own solution. This is intentional flexibility: REST APIs, GraphQL, Firebase, local storage, or ORMs all work. The tradeoff is integration effort and keeping the client model in sync with the persistence layer.
+  <rect class="fill" x="45" y="105" width="330" height="35"/>
+  <text x="60" y="127" class="dim">2. Component Subtree Re-Render</text>
 
-Strvct includes persistence as a core feature. Mark a class with `setShouldStore(true)` and slots with `setShouldStoreSlot(true)`, and the framework handles serialization, IndexedDB storage, dirty tracking, and transactional commits automatically. Changes are batched and committed at the end of each event loop.
+  <line class="flow" x1="210" y1="140" x2="210" y2="155" marker-end="url(#aro)"/>
 
-**React's strength**: Freedom to choose the right persistence strategy for each use case. Server-rendered apps, offline-first PWAs, and real-time collaborative tools all have different needs.
+  <rect class="fill" x="45" y="155" width="330" height="35"/>
+  <text x="60" y="177" class="dim">3. Virtual DOM Tree Diffing</text>
 
-**Strvct's strength**: Zero-effort client-side persistence. Because data is stored locally, there are no network round trips between the user and their data. Cloud sync adds backup and cross-device access without replacing the local store.
+  <line class="flow" x1="210" y1="190" x2="210" y2="205" marker-end="url(#aro)"/>
 
-## Navigation
+  <rect class="fill" x="45" y="205" width="330" height="35"/>
+  <text x="60" y="227" class="dim">4. Real DOM Minimal Patch</text>
 
-React relies on external routing libraries (React Router, Next.js routing). Routes map URL paths to components, and the resulting architecture supports deep linking, server-side rendering, and SEO naturally.
 
-Strvct generates navigation from the model graph. The UI is a Miller Column browser — selecting an item reveals its children in the next column. Breadcrumbs, column compaction on small screens, and keyboard navigation are built in. Adding a new level of hierarchy to the model automatically creates a new level of navigation.
+  <rect class="box" x="430" y="20" width="360" height="240"/>
+  <text x="445" y="42" class="b">Strvct (Asymmetric Notification)</text>
 
-**React's strength**: URL-driven routing fits the web's architecture. Any navigation pattern — tabs, modals, drawers, wizards — can be implemented.
+  <rect class="fill" x="445" y="55" width="330" height="35"/>
+  <text x="460" y="77" class="dim">1. View Calls Model Setter</text>
 
-**Strvct's strength**: Navigation is always consistent with the data structure, with no routing configuration to maintain. The limitation is that the Miller Column pattern works best for hierarchical data. Flat layouts, dashboards, or wizard flows require custom views.
+  <line class="flow" x1="610" y1="90" x2="610" y2="105" marker-end="url(#aro)"/>
 
-## Internationalization
+  <rect class="fill" x="445" y="105" width="330" height="35"/>
+  <text x="460" y="127" class="dim">2. Model Slot Updates Internal State</text>
 
-React has no built-in i18n. Libraries like `react-intl` require maintaining separate translation files for each language and wrapping every visible string. Mature tooling exists for extraction, translation management, and CI checks.
+  <line class="flow-dashed" x1="610" y1="140" x2="610" y2="155" marker-end="url(#aro)"/>
 
-Strvct translates the UI automatically. Because all UI text flows from model slots through a single rendering pipeline, translation is injected at that boundary without per-component work. The framework uses AI-powered translation with persistent caching, so adding a language is a configuration change rather than a translation project. The tradeoff is that AI translation quality, while generally good, may not match professional human translation for all domains.
+  <rect class="fill" x="445" y="155" width="330" height="35"/>
+  <text x="460" y="177" class="dim">3. Notification Posted via Center</text>
 
-## Resource Loading
+  <line class="flow" x1="610" y1="190" x2="610" y2="205" marker-end="url(#aro)"/>
 
-React applications use standard ES module imports and bundlers (Vite, Webpack, esbuild). These provide source maps, hot module replacement, tree shaking, and code splitting. Cache invalidation relies on filename hashing.
+  <rect class="fill" x="445" y="205" width="330" height="35"/>
+  <text x="460" y="227" class="dim">4. Coalesced View Pull &amp; Render</text>
+</svg>
 
-Strvct uses a custom Content-Addressable Memory (CAM) system. Resources are stored by SHA-256 content hash. On load, the framework compares hashes against a local cache and only downloads what's changed. This provides efficient content-based caching but means standard bundler tooling and source maps aren't available — debugging relies on sourceURL comments instead.
+- **React:** Uses unidirectional data flow with Virtual DOM diffing. A state update triggers a re-render of the component subtree, computing a Virtual DOM delta to patch the real DOM.
+- **Strvct:** Uses an asymmetric notification model. Views call setter methods on model nodes. Setters update slot state and post named notifications via `SvNotificationCenter`. `SvSyncScheduler` coalesces multiple updates within the event loop, notifying observing views to pull updated values directly.
 
-## Ecosystem and Tradeoffs
+---
 
-This is where the two approaches differ most significantly.
+## Detailed Paradigm Comparison
 
-**React** has a vast ecosystem. Component libraries, dev tools, testing frameworks, extensive documentation, and a large developer community mean that most problems have documented solutions and available help.
-
-**Strvct** bundles its core functionality — UI generation, state management, persistence, navigation, resource loading, and caching — and includes a small number of third-party libraries as vendored source files rather than npm packages. This avoids package manager churn and ensures the pieces work together, but the tradeoff is real: fewer third-party integrations, less documentation, a non-standard module system that can't use npm packages directly, and a smaller community. When you hit a problem, you're more likely to need to read the framework source than find a Stack Overflow answer.
-
-| | React | Strvct |
+| Dimension | React Ecosystem | Strvct Framework |
 |---|---|---|
-| Component libraries | Thousands (MUI, Ant Design, etc.) | Built-in tile system |
-| State management | Redux, Zustand, MobX, Jotai, etc. | Built-in (slots + notifications) |
-| Persistence | Choose your own | Built-in (IndexedDB + cloud sync) |
-| Routing | React Router, Next.js, etc. | Built-in (model graph navigation) |
-| Build tooling | Vite, Webpack, esbuild, etc. | Built-in (CAM resource system) |
-| TypeScript | First-class support | Not used (dynamic evaluation) |
-| npm ecosystem | Full access | Not used (vendored external libs) |
-| Debugging | React DevTools, source maps | sourceURL-based, read the source |
+| **Primary Artifact** | Authored Component Trees (`JSX`) | Annotated Domain Models (`SvNode`) |
+| **UI Derivation** | Manual per screen | 100% Derived automatically |
+| **Persistence Strategy** | Custom integration (REST, GraphQL, Firebase) | Built-in local IndexedDB pools + Cloud Sync |
+| **Offline Support** | Complex PWA / Service Worker setup | Native local-first (offline by default) |
+| **AI Agent Interop** | Custom per-screen tool definitions | Native constant-size tool surface (`schema-fetch` / `apply-patch`) |
+| **Headless Testing** | Requires jsdom / Puppeteer | Native Node.js execution (zero DOM dependencies) |
+| **Internationalization** | Manual string wrapping & translation files | Intercepted centrally at tile primitive boundary |
+| **Module Ecosystem** | Full npm ecosystem & Vite / Webpack | Vendored libraries & Content-Addressable Memory (`CAM`) |
 
-## When to Consider Each
+---
 
-### React is likely the better choice when:
+## Decision Matrix: When to Use Which?
 
-- You need a highly custom or branded visual design
-- Your team benefits from React's well-documented patterns and large talent pool
-- You need server-side rendering or static site generation
-- SEO is critical
-- You want access to the npm ecosystem and third-party components
-- Your UI structure doesn't mirror a hierarchical domain model
+### Choose React When:
+- You are building a marketing site, landing page, or media-rich portal requiring highly branded, bespoke visuals.
+- Server-Side Rendering (SSR) or Search Engine Optimization (SEO) is a primary business requirement.
+- Your application relies heavily on third-party npm UI component libraries (e.g., shadcn/ui, MUI, Ant Design).
+- Your UI design bears no structural relationship to a structured domain model.
 
-### Strvct is worth considering when:
-
-- Your application is data-model-driven (admin tools, content management, domain-heavy apps)
-- You want persistence and UI generation without integration work
-- You want a working UI from model definitions, with custom views only where needed
-- You prefer a single cohesive framework over assembling pieces
-- You're building a local-first or offline-capable application
-- You want your model layer testable without a browser
-
-### A note on SSR and SEO
-
-The "SEO is critical" and "needs server-side rendering" criteria above rule Strvct out for marketing sites, content platforms, and traditional e-commerce — cases where first-paint latency and search discoverability are competitive necessities. That category is smaller than the defaults of modern web frameworks make it appear. A large share of high-value consumer software today — ChatGPT, Claude, Cursor, Figma, Linear, Notion, Discord, Character.ai, Suno, Midjourney — is app-shell SPAs, where the logged-in product is the product and the marketing site, if there is one, sits on a different stack. For that class of product, SSR isn't load-bearing, and framework choices that center it (Next.js, Remix, server components) are solving a problem these apps don't have. Strvct targets this shape of software directly: an authenticated client-side application with heavy state, real-time interaction, and no meaningful SEO surface.
-
-## Concepts Mapping
-
-For React developers getting oriented, here's how familiar concepts map:
-
-| React Concept | Strvct Equivalent |
-|---|---|
-| Component | SvNodeView (auto-generated or custom) |
-| Props | Slot values (accessed via getters) |
-| State (useState) | Slots with `setSyncsToView(true)` |
-| Context / prop drilling | SvNotificationCenter (publish/subscribe) |
-| useEffect | Notification observations |
-| Redux / Zustand | Slots + notification system (built in) |
-| React Router | Model graph navigation (automatic) |
-| JSX | No equivalent — UI generated from annotations |
-| Virtual DOM | No equivalent — direct DOM updates via SvNodeView |
-| npm install | No equivalent — external libs vendored as source |
+### Choose Strvct When:
+- You are building a data-model-intensive application (CRMs, ERPs, project management, RPG gaming tools, settings panels).
+- You want zero-maintenance UI generation and client-side persistence without writing component or glue code.
+- You want native, zero-cost AI agent operability over your entire data model.
+- You are building a local-first application that must function offline with cloud synchronization.
+- You want ultra-fast, headless unit and integration testing under Node.js without browser automation.

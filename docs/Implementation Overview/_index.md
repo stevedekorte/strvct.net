@@ -1,12 +1,12 @@
 # Implementation Overview
 
-Implementation details for classes, slots, views, and persistence.
+Deep technical specifications for class lifecycle, slots, views, persistence, notifications, and build infrastructure.
 
 ## Introduction
 
-This document is intended to be read after [Naked Objects](../Naked%20Objects/) and the [Technical Overview](../Technical%20Overview/), which cover the design philosophy and high-level architecture of the Strvct framework. Here we go into the technical details of the implementation and how the various parts work together.
+This document provides a detailed engineering specification of the Strvct framework implementation. It builds directly on the high-level concepts described in the [Technical Overview](../Technical%20Overview/) and the architectural foundations in [Naked Objects](../Naked%20Objects/).
 
-Applications are typically composed of **Model**, **UI**, and **Storage** layers. Much of the code and potential bugs in complex real-world applications is the "glue" that synchronizes these layers. Strvct puts enough meta-information in the model layer — through slots and their annotations — to allow the UI and Storage layers, and the synchronization between them, to be handled automatically. You write the model and the rest is handled for you, though custom views can be added when needed.
+Strvct applications are composed of three primary layers: **Model**, **UI**, and **Storage**. The framework eliminates manual "glue" code by embedding structural metadata directly into model objects via **Slots** and **Slot Annotations**.
 
 <svg viewBox="0 0 820 430" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -23,92 +23,86 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
+
   <rect class="fill" x="220" y="20" width="380" height="70"/>
   <text x="235" y="40" class="b">SvApp</text>
-  <text x="235" y="58" class="dim">top-level application; holds model + userInterface</text>
-  <text x="235" y="76" class="dim">SvWebUI · SvCliUI · SvHeadlessUI implementations</text>
+  <text x="235" y="58" class="dim">Top-level coordinator; holds model + userInterface</text>
+  <text x="235" y="76" class="dim">SvWebUserInterface · SvCliUserInterface · SvHeadlessUserInterface</text>
+
   <line class="flow" x1="410" y1="90" x2="410" y2="155"/>
   <line class="flow" x1="130" y1="125" x2="690" y2="125"/>
   <line class="flow" x1="130" y1="125" x2="130" y2="155" marker-end="url(#aio)"/>
   <line class="flow" x1="410" y1="125" x2="410" y2="155" marker-end="url(#aio)"/>
   <line class="flow" x1="690" y1="125" x2="690" y2="155" marker-end="url(#aio)"/>
+
   <rect class="box" x="30" y="155" width="200" height="180"/>
-  <text x="45" y="177" class="b">UI layer</text>
-  <text x="45" y="197" class="dim">SvUserInterface root</text>
+  <text x="45" y="177" class="b">UI Layer</text>
+  <text x="45" y="197" class="dim">SvUserInterface Root</text>
   <rect class="fill" x="45" y="220" width="170" height="106"/>
-  <text x="60" y="240" class="b">SvNodeView tree</text>
-  <text x="60" y="258" class="dim">each view holds one node;</text>
-  <text x="60" y="276" class="dim">multiple views may share</text>
-  <text x="60" y="294" class="dim">a node; observes its slots;</text>
-  <text x="60" y="312" class="dim">created lazily on navigation</text>
+  <text x="60" y="240" class="b">SvNodeView Tree</text>
+  <text x="60" y="258" class="dim">Lazy Miller views;</text>
+  <text x="60" y="276" class="dim">Observes node slots;</text>
+  <text x="60" y="294" class="dim">Responds to user events;</text>
+  <text x="60" y="312" class="dim">No DOM leaks to model</text>
+
   <rect class="box" x="310" y="155" width="200" height="180"/>
-  <text x="325" y="177" class="b">Model layer</text>
+  <text x="325" y="177" class="b">Model Layer</text>
   <text x="325" y="197" class="dim">SvModel : SvStorableNode</text>
   <rect class="fill" x="325" y="220" width="170" height="106"/>
-  <text x="340" y="240" class="b">Domain SvNode graph</text>
-  <text x="340" y="258" class="dim">root of persistent state;</text>
-  <text x="340" y="276" class="dim">all data shapes are slots</text>
-  <text x="340" y="294" class="dim">on subclasses of SvNode;</text>
-  <text x="340" y="312" class="dim">no UI dependencies</text>
+  <text x="340" y="240" class="b">Domain SvNode Graph</text>
+  <text x="340" y="258" class="dim">Root of persistent state;</text>
+  <text x="340" y="276" class="dim">Slots define properties;</text>
+  <text x="340" y="294" class="dim">Subnodes define children;</text>
+  <text x="340" y="312" class="dim">Runs headlessly in Node.js</text>
+
   <rect class="box" x="590" y="155" width="200" height="180"/>
-  <text x="605" y="177" class="b">Storage layer</text>
+  <text x="605" y="177" class="b">Storage Layer</text>
   <text x="605" y="197" class="dim">SvPersistentObjectPool</text>
   <rect class="fill" x="605" y="220" width="170" height="106"/>
-  <text x="620" y="240" class="b">IndexedDB pool</text>
-  <text x="620" y="258" class="dim">observes mutations via</text>
-  <text x="620" y="276" class="dim">notifications; batches</text>
-  <text x="620" y="294" class="dim">end-of-loop commits;</text>
-  <text x="620" y="312" class="dim">handles GC on load</text>
+  <text x="620" y="240" class="b">IndexedDB &amp; Cloud</text>
+  <text x="620" y="258" class="dim">Monitors mutations;</text>
+  <text x="620" y="276" class="dim">Batches dirty nodes;</text>
+  <text x="620" y="294" class="dim">SHA-256 blob store;</text>
+  <text x="620" y="312" class="dim">Garbage collects pools</text>
+
   <line class="flow-dashed" x1="310" y1="265" x2="230" y2="265" marker-end="url(#aio)"/>
   <line class="flow" x1="230" y1="300" x2="310" y2="300" marker-end="url(#aio)"/>
   <text x="270" y="243" text-anchor="middle" class="dim">mutation</text>
   <text x="270" y="258" text-anchor="middle" class="dim">notification</text>
   <text x="270" y="313" text-anchor="middle" class="dim">getter, setter,</text>
   <text x="270" y="328" text-anchor="middle" class="dim">&amp; action calls</text>
+
   <line class="flow-dashed" x1="510" y1="265" x2="590" y2="265" marker-end="url(#aio)"/>
   <line class="flow" x1="590" y1="300" x2="510" y2="300" marker-end="url(#aio)"/>
   <text x="550" y="243" text-anchor="middle" class="dim">mutation</text>
   <text x="550" y="258" text-anchor="middle" class="dim">notification</text>
   <text x="550" y="313" text-anchor="middle" class="dim">loads &amp;</text>
   <text x="550" y="328" text-anchor="middle" class="dim">stores</text>
-  <text x="410" y="365" text-anchor="middle" class="dim">Model is the source of truth.</text>
-  <text x="410" y="385" text-anchor="middle" class="dim">Views and the storage system may hold references to the model, but the model holds none in return; it only posts notifications that they listen for.</text>
+
+  <text x="410" y="365" text-anchor="middle" class="dim">Model is the authoritative source of truth.</text>
+  <text x="410" y="385" text-anchor="middle" class="dim">Views and Storage hold weak references to Model nodes; Model holds zero references to Views or Storage in return.</text>
   <text x="410" y="405" text-anchor="middle" class="dim">Slot annotations carry enough information for UI generation, persistence, and synchronization to be handled automatically.</text>
 </svg>
 
-## Architecture Overview
+---
 
-The framework is organized around three layers with a notification-based synchronization system connecting them:
+## The Object & Class System
 
-- **Model** — A graph of `SvNode` objects. Nodes are the unit of both storage and UI presentation. Model objects hold no references to UI objects — they communicate outward solely by posting notifications, which the other layers observe.
-- **UI** — Composed of `SvNodeView` subclass instances. Each `SvNodeView` holds a reference to an `SvNode` and observes its change notifications. Multiple views may point to the same node instance.
-- **Storage** — A `SvPersistentObjectPool` that monitors node mutations, bundles changes within an event loop into atomic transactions, and handles automatic garbage collection of the stored object graph. Only model objects are persisted; UI objects are transient and recreated from the model on load.
+Strvct implements a structured class initialization pattern built on top of standard ES6 class syntax.
 
-### SvApp
+### Class Lifecycle & Registration
 
-`SvApp` is the top-level application class that coordinates these layers. It holds two key slots:
-
-- **`model`** (`SvModel`) — The root of the persistent model graph. `SvModel` extends `SvStorableNode` and contains the application's entire data structure. It has no dependencies on the UI layer.
-- **`userInterface`** (`SvUserInterface`) — The root of the UI layer. `SvUserInterface` is an abstract base class with multiple implementations: `SvWebUserInterface` for browsers, `SvCliUserInterface` for command-line use, and `SvHeadlessUserInterface` for running without any UI at all.
-
-At startup, `SvApp` opens the persistence store, loads or creates the model, then sets up the user interface. The UI class is selected by name via `userInterfaceClassName`, and applications choose the appropriate implementation based on the runtime environment — typically using `SvPlatform.isBrowserPlatform()` to decide.
-
-Because the model layer is completely independent of the UI, the same application code can run headlessly in Node.js for testing, batch processing, or server-side operations. The headless user interface is an empty implementation — the model runs, persists data, and processes logic without any DOM or browser APIs.
-
-## Class System
-
-### Class Definition
-
-Classes are defined using ES6 class syntax inside an IIFE and self-register via `.initThisClass()`:
+Classes are defined inside an IIFE (Immediately Invoked Function Expression) and self-register using `.initThisClass()`:
 
 ```javascript
-(class MyClass extends ParentClass {
+(class Character extends SvStorableNode {
+
     initPrototypeSlots () {
-        // Declare instance properties
+        // Declare instance slots (properties + metadata)
     }
 
     initPrototype () {
-        // Configure class-wide settings
+        // Configure class-wide prototype settings
     }
 
     init () {
@@ -118,209 +112,221 @@ Classes are defined using ES6 class syntax inside an IIFE and self-register via 
 
     finalInit () {
         super.finalInit();
-        // Complex initialization, object relationships
+        // Relationship resolution & post-deserialization setup
     }
+
 }.initThisClass());
 ```
 
-`initPrototypeSlots()` and `initPrototype()` should never call `super` — the framework calls them automatically on the entire class hierarchy from base to derived. Other initialization methods (`init()`, `finalInit()`) should call their parent methods with `super`.
+#### Initialization Execution Sequence:
+1. **`initPrototypeSlots()`**: Invoked automatically during class registration. Defines slots and annotations on the class prototype. *Must never call `super`.*
+2. **`initPrototype()`**: Sets up prototype-wide default properties (e.g., `this.setShouldStore(true)`). *Must never call `super`.*
+3. **`init()`**: Called when an object is instantiated (`new Class()`). Performs basic property initialization. Always calls `super.init()`.
+4. **`finalInit()`**: Called after an object is fully instantiated or deserialized from IndexedDB. Sets up complex object references and child subnodes. Always calls `super.finalInit()`.
 
-### Slots
+### Slots & Slot Annotations
 
-Slots are Strvct's property system. Rather than using raw instance variables, properties are declared as slots in `initPrototypeSlots()`, which auto-generates getter and setter methods and provides metadata for the UI and storage layers.
+Slots are Strvct's property system. Instead of raw instance fields, properties are declared in `initPrototypeSlots()`:
 
 ```javascript
 initPrototypeSlots () {
     {
-        const slot = this.newSlot("userName", "");
+        const slot = this.newSlot("name", "Default Name");
         slot.setSlotType("String");
-        slot.setShouldStoreSlot(true);   // persist to storage
-        slot.setSyncsToView(true);       // update views on change
-        slot.setCanEditInspection(true); // allow editing in inspector
+        slot.setShouldStoreSlot(true);   // Persists to IndexedDB
+        slot.setSyncsToView(true);       // Emits view update notifications
+        slot.setCanEditInspection(true); // Editable in Property Inspector
     }
     {
-        const slot = this.newSlot("settings", null);
-        slot.setFinalInitProto(SettingsNode); // auto-create on init
-        slot.setIsSubnodeField(true);         // show as navigable field
+        const slot = this.newSlot("inventory", null);
+        slot.setFinalInitProto(InventoryNode); // Auto-creates default instance
+        slot.setIsSubnodeField(true);         // Navigable tile in inspector
     }
 }
 ```
 
-Key slot annotations:
+#### Key Slot Annotations:
+- `setSlotType(typeName)`: Declares expected type (`String`, `Number`, `Boolean`, `Array`, `Object`, `ClassName`). Enforces runtime type checks on setters.
+- `setShouldStoreSlot(boolean)`: Controls whether the slot value is included in serialized JSON records.
+- `setSyncsToView(boolean)`: Triggers change notifications to observing views upon mutation.
+- `setCanEditInspection(boolean)`: Exposes property in the modifier-click (Option+Click) live Property Inspector.
+- `setIsSubnode(boolean)`: Adds slot value directly to the parent's `subnodes` array.
+- `setIsSubnodeField(boolean)`: Generates a navigable field tile in the inspector hierarchy.
+- `setFinalInitProto(Class)`: Auto-instantiates default child objects during `finalInit()` if no record was loaded from storage.
 
-- `setSlotType(typeName)` — Expected type, used for type checking and UI generation
-- `setShouldStoreSlot(true)` — Include this property in persistence records
-- `setSyncsToView(true)` — Trigger view synchronization when the value changes
-- `setFinalInitProto(SomeClass)` — Auto-create an instance of this class during `finalInit()` (won't override values loaded from storage)
-- `setIsSubnode(true)` — Add the slot value to the node's subnodes array
-- `setIsSubnodeField(true)` — Create a navigable tile for this property in the UI inspector
+### Categories & Protocols
 
-### Categories
+- **Categories (`initThisCategory()`):** Extend existing classes across multiple files without modifying the base definition file (e.g., `SvJsonGroup_patches.js` adding `applyJsonPatches()` to `SvJsonGroup`).
+- **Protocols (`NameProtocol`):** Define required interface method stubs inheriting from `Protocol` to enable runtime interface compliance checks.
 
-Categories extend existing classes with additional functionality from external files, promoting separation of concerns:
+---
 
-```javascript
-(class SvJsonGroup_patches extends SvJsonGroup {
-    applyJsonPatches (patches) { /* ... */ }
-}.initThisCategory());
-```
-
-Base classes must be loaded before their categories. Naming convention: `ClassName_categoryName`.
-
-### Protocols
-
-Protocols define a set of methods that a class must implement, enabling runtime verification of interface compliance. Declared by creating a subclass of `Protocol` with empty method stubs. Naming convention: `NameProtocol`.
-
-## Coding Conventions
-
-Instance properties:
-
-- Always begin with an underscore, e.g. `_propertyName`
-- Should almost never be accessed directly — always use accessor methods
-- Are never accessed directly by external objects
-- Getter: `propertyName()`, setter: `setPropertyName(value)`
-- Use `this.newSlot()` and `this.overrideSlot()` in `initPrototypeSlots()` to define instance properties
-- Use `this.newClassSlot()` in `initClass()` to define class properties
-
-## Model Layer
+## Model Layer Engineering
 
 ### Node Hierarchy
+The domain model is an object graph inheriting from `SvNode`. Every node contains:
+- `subnodes`: An ordered, unique collection of child `SvNode` objects.
+- `parentNode`: Reference to the parent `SvNode`.
+- `title` / `subtitle`: String properties displayed in summary tiles.
+- `puuid`: Persistent unique identifier string.
 
-The model is a graph of objects inheriting from `SvNode`. Every node has a `subnodes` array (its children) and a `parentNode` reference.
+### Subnode Patterns
+1. **Stored Subnodes (`setIsSubnode(true)`):** Permanent parent-child ownership relationships where child nodes are stored directly inside the parent's `subnodes` array and persisted together.
+2. **Subnode Fields (`setIsSubnodeField(true)`):** Properties where value state remains in a slot on the parent node, but a navigable field tile (`SvField`) is generated in the UI for inspecting child subnodes.
 
-Key base classes:
+---
 
-- **`SvNode`** — Base node class. Provides subnodes, parent references, notification posting, and slot infrastructure.
-- **`SvSummaryNode`** — Node with summary generation for UI display (title, subtitle, note).
-- **`SvStorableNode`** — Node with persistence support.
+## View Layer Architecture
 
-### Subnodes
+### Layered Class Hierarchy
+The view system uses a deep, single-inheritance hierarchy where each layer adds a isolated capability:
 
-There are two ways child nodes are used:
+```
+SvElementDomView        (Wraps DOM element, enables alternative render backends)
+ └─ SvCssDomView         (Manages inline CSS styles and class list)
+     └─ SvSubviewsDomView  (Manages child view hierarchy)
+         └─ SvListenerDomView (Event listener attachment)
+             └─ SvVisibleDomView  (Viewport visibility tracking)
+                 └─ SvGesturableDomView (Gesture recognizers: tap, pan, swipe, long-press)
+                     └─ SvResponderDomView  (Focus management & keyboard navigation)
+                         └─ SvControlDomView    (Target/Action pattern for control triggers)
+                             └─ SvStyledDomView     (State-based style states: selected, active, disabled)
+                                 └─ SvNodeView          (Binds model SvNode to DOM presentation)
+```
 
-**Stored subnodes** (`setIsSubnode(true)`) create a permanent parent-child relationship. The child is added to the parent's subnodes array and persisted with it. This is the pattern for collections — classes extending `SvJsonArrayNode` with `shouldStoreSubnodes(true)`.
+### Navigation Primitives (Miller Columns)
 
-**Subnode fields** (`setIsSubnodeField(true)`) create navigable UI tiles for structured properties. The data remains in the parent's slot; the field provides a navigation point in the inspector. This is the pattern for structured objects — classes with `shouldStoreSubnodes(false)`.
+The UI is rendered using nested Miller Column container views:
 
-### Fields
+1. **`SvStackView`**: Core navigation container. Contains a `SvNavView` (master column) and `otherView` (detail area). Automatically collapses on mobile viewports into a push/pop stack with breadcrumbs.
+2. **`SvBrowserView`**: Top-level application shell extending `SvStackView` with header breadcrumb navigation.
+3. **`SvNavView`**: Single navigation column containing header, scrollable `SvTilesView`, and footer.
+4. **`SvTilesView`**: Scrollable container for `SvTile` items. Handles keyboard cursor selection, drag-and-drop, and reordering gestures.
+5. **`SvTile`**: Visual presentation of a single model node or property slot.
 
-Fields are nodes that sync to a slot value via their `target` and `valueMethod` slots. They bridge the gap between a node's slot and its UI representation. Examples: `SvStringField`, `SvNumberField`, `SvImageWellField`.
+<svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aio" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
 
-## View Layer
+  <rect class="box" x="20" y="20" width="780" height="240"/>
+  <text x="35" y="42" class="b">SvBrowserView</text>
+  <text x="35" y="60" class="dim">Breadcrumb Header: Workspace &gt; Projects &gt; Task</text>
 
-### View Hierarchy
+  <rect class="box" x="35" y="75" width="360" height="170"/>
+  <text x="50" y="95" class="b">SvNavView (Master Column)</text>
+  <rect class="fill" x="50" y="105" width="330" height="125"/>
+  <text x="65" y="125" class="b">SvTilesView</text>
+  <text x="65" y="145" class="dim">• SummaryTile: Project Alpha</text>
+  <text x="65" y="165" class="b">• SummaryTile: Project Beta  [*]</text>
+  <text x="65" y="185" class="dim">• SummaryTile: Project Gamma</text>
 
-The view system is built from a layered class hierarchy where each layer adds a specific capability:
+  <rect class="box" x="425" y="75" width="360" height="170"/>
+  <text x="440" y="95" class="b">SvStackView (Detail Area)</text>
+  <rect class="fill" x="440" y="105" width="330" height="125"/>
+  <text x="455" y="125" class="b">SvNavView (Detail Column)</text>
+  <text x="455" y="145" class="dim">• PropertyTile: Name ("Project Beta")</text>
+  <text x="455" y="165" class="dim">• PropertyTile: Status ("Active")</text>
+  <text x="455" y="185" class="dim">• PropertyTile: Priority ("High")</text>
 
-`SvElementDomView` → `SvCssDomView` → `SvSubviewsDomView` → `SvListenerDomView` → `SvVisibleDomView` → `SvGesturableDomView` → `SvResponderDomView` → `SvControlDomView` → `SvSelectableDomView` → `SvEditableDomView` → `SvDomView` → `SvFlexDomView` → `SvStyledDomView` → `SvNodeView`
+  <line class="flow" x1="380" y1="165" x2="440" y2="165" marker-end="url(#aio)"/>
+</svg>
 
-Notable layers:
+---
 
-- **`SvElementDomView`** — Wraps a DOM element rather than extending it, keeping open the possibility of swapping the DOM as a render layer.
-- **`SvGesturableDomView`** — Gesture recognizer framework (tap, double-tap, pan, long-press, etc.).
-- **`SvResponderDomView`** — Focus management and keyboard navigation.
-- **`SvControlDomView`** — Target/action pattern for connecting views to handler objects.
-- **`SvStyledDomView`** — Named style states (selected, unselected, active, disabled) with theme class name support.
+## Storage Layer Engineering
 
-### SvNodeView
+### Persistent Object Pools (`SvPersistentObjectPool`)
+Application data is stored locally in IndexedDB as object pools (one pool per document):
 
-`SvNodeView` extends `SvStyledDomView` and is the bridge between model nodes and the DOM. It holds a reference to an `SvNode`, observes its change notifications, and synchronizes the view accordingly. Nearly all application-visible views are `SvNodeView` subclasses.
+- **Row Key Format:** `poolId` + `puuid` (Persistent UUID).
+- **In-Pool References:** `{ "*": puuid }` (near references within the same document pool).
+- **Cross-Pool References:** `{ "**": poolId }` (far references to external document roots, loaded asynchronously).
 
-### Navigation Structure
+### Transactional Persistence Lifecycle
+1. **Mutation Tracking:** Modifying a slot marked `setShouldStoreSlot(true)` invokes `didMutate()`, marking the node dirty.
+2. **Event Loop Commit:** At the end of the current browser event loop, all dirty nodes are bundled into a single atomic IndexedDB transaction.
+3. **Deserialization Pipeline:** On load, `instanceFromRecordInStore()` instantiates a blank object, invokes `init()`, populates slot state via `loadFromRecord()`, and executes `finalInit()` to reconnect object references.
+4. **Garbage Collection:** Traces the stored graph from the pool root. Unreachable records are automatically deleted.
+5. **SHA-256 Blob Pool (`SvBlobPool`):** Large binary assets (images, audio, files) are stored in a content-addressable store keyed by SHA-256 hash. Records store hash references rather than binary payloads.
 
-Strvct's UI is based on nested master-detail views using a Miller Column pattern:
+---
 
-- **`SvStackView`** — Core navigation unit. Contains a `SvNavView` (master column) and an `otherView` (detail area). Orientation can be left-right or top-bottom. Chains of StackViews automatically compact and expand based on available space.
-- **`SvBrowserView`** — Top-level `SvStackView` with a breadcrumb path header.
-- **`SvNavView`** — Navigation column containing a header, a scrollable `SvTilesView`, and a footer. Column width is resizable.
-- **`SvTilesView`** — Scrollable container for an array of `SvTile` views. Manages selection, cursor navigation, drag-and-drop, and keyboard input.
+## Synchronization Infrastructure
 
-When a user selects a tile, a new `SvStackView` is created in the detail area, with its `SvNavView` populated by the subnodes of the selected node. This recursive structure allows arbitrarily deep navigation.
+Strvct provides loose coupling across layers using three notification utilities:
 
-### SvTile Views
+1. **`SvNotificationCenter`**: Asynchronous notification dispatch. Nodes post named notifications; observing views register to handle them.
+2. **`SvSyncScheduler`**: Coalesces multiple notification method invocations in one event loop into a single UI sync pass.
+3. **`SvBroadcaster`**: Immediate, synchronous event broadcast for high-frequency internal events.
 
-Tiles are the individual items displayed in navigation columns:
+<svg viewBox="0 0 820 120" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  </style>
+  <defs>
+    <marker id="aio" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
 
-- **`SvTile`** — Base tile with selection, state-based styling, slide-to-delete, long-press reorder, and drag support.
-- **`SvTitledTile`** — Standard tile with title, subtitle, note, and optional thumbnail.
-- **`SvHeaderTile`** — Section header tile.
-- **`SvBreadCrumbsTile`** — Breadcrumb path that auto-compacts to fit available width.
+  <rect class="fill" x="30" y="20" width="220" height="80"/>
+  <text x="45" y="42" class="b">Model Node Slot Setter</text>
+  <text x="45" y="60" class="dim">character.setName("Thorin")</text>
+  <text x="45" y="78" class="dim">Slot setter updates value</text>
 
-### Field Tiles
+  <line class="flow-dashed" x1="250" y1="60" x2="300" y2="60" marker-end="url(#aio)"/>
 
-Field tiles present node properties as key/value pairs in the UI inspector:
+  <rect class="fill" x="300" y="20" width="220" height="80"/>
+  <text x="315" y="42" class="b">SvNotificationCenter</text>
+  <text x="315" y="60" class="dim">postNotification("didChange")</text>
+  <text x="315" y="78" class="dim">Dispatches to observers</text>
 
-- **`SvFieldTile`** — Base field tile with key, value, error, and note containers.
-- **`SvStringFieldTile`** — String property display and editing.
-- **`SvBooleanFieldTile`** — Boolean property with checkbox/toggle.
-- **`SvTextAreaFieldTile`** — Multi-line text editing.
-- **`SvImageWellFieldTile`** — Image display and selection.
-- **`SvPointerFieldTile`** — Object reference with navigation arrow.
-- **`SvActionFieldTile`** — Button that invokes an action method on the node.
+  <line class="flow" x1="520" y1="60" x2="570" y2="60" marker-end="url(#aio)"/>
 
-## Storage Layer
+  <rect class="fill" x="570" y="20" width="220" height="80"/>
+  <text x="585" y="42" class="b">SvSyncScheduler &amp; View</text>
+  <text x="585" y="60" class="dim">scheduleTargetAndMethod()</text>
+  <text x="585" y="78" class="dim">Coalesced view.syncFromNode()</text>
+</svg>
 
-### Record Format
+---
 
-The storage system is a record store backed by IndexedDB. Each row is keyed by its pool's id and the object's persistent unique ID (puuid), and its payload is a JSON record containing a type field and the stored slot values. A pool is one document, and its id is its root object's puuid; the cloud holds the same rows. On load, the type is used to locate the class, which is then asked to deserialize itself from the payload.
+## Content-Addressable Build System (CAM)
 
-Object references within a pool are stored as `{ "*": puuid }`, and references to another document as `{ "**": poolId }`. This uniform reference format enables the storage system to trace each pool's graph for automatic garbage collection — only objects reachable from the pool's root, by reference or by placement, survive collection.
+Strvct avoids standard ES module imports and Webpack/Vite bundlers, using a custom **Content-Addressable Memory (CAM)** build system:
 
-### Persistence Lifecycle
+1. **`ImportsIndexer` (Build Time):** Recursively walks `_imports.json` files to discover source files and dependency order. Outputs:
+   - `_index.json`: Metadata catalog mapping resource paths to SHA-256 content hashes.
+   - `_cam.json.zip`: Zip-compressed content bundle keyed by SHA-256 hash.
 
-Nodes opt into persistence via `setShouldStore(true)`, and individual slots via `setShouldStoreSlot(true)`. The `SvPersistentObjectPool` then:
+2. **`SvResourceManager` & `SvHashCache` (Runtime):**
+   - Fetches `_index.json` on app boot.
+   - Scans missing hashes against IndexedDB `SvHashCache`.
+   - If missing ratio $> 30\%$, downloads `_cam.json.zip` in one HTTP request.
+   - If missing ratio $\le 30\%$, fetches individual missing files on demand.
+   - Evaluates source files in dependency order via `eval()` with embedded `sourceURL` comments for complete DevTools debugging support.
 
-1. **Monitors mutations** — When a stored slot changes, the owning node is marked dirty via `didMutate()`.
-2. **Batches transactions** — All dirty objects are collected at the end of the current event loop and committed atomically.
-3. **Handles deserialization** — On load, `instanceFromRecordInStore()` creates a blank instance, `init()` runs, `loadFromRecord()` populates stored values, then `finalInit()` re-establishes object relationships. Slots with `setFinalInitProto()` only create default instances if no value was loaded from storage.
-4. **Garbage collects** — Walks each pool's stored graph from its root; unreachable rows are removed.
-5. **Commits to the cloud** — For a cloud document, the rows changed since the pool's last acknowledged version are sent as one versioned commit (see [Cloud Object Pools](../Persistence/Cloud%20Object%20Pools/)).
+---
 
-### Blob Storage
+## Related Guides
 
-Large binary data (images, audio) is stored separately in `SvBlobPool`, a content-addressable store using SHA-256 hashes as keys. Nodes store hash references rather than blob data directly. This separation avoids blocking the synchronous object pool API with large async I/O operations, and provides automatic deduplication.
-
-## Synchronization
-
-Strvct uses a notification-based system to keep layers synchronized without tight coupling. The key components are:
-
-- **`SvNotificationCenter`** — Deferred, deduplicated event dispatch. Nodes post named notifications; observers register to receive them.
-- **`SvSyncScheduler`** — Coalesces method calls so that multiple changes in one event loop result in a single sync pass.
-- **`SvBroadcaster`** — Lightweight immediate broadcast for high-frequency internal events.
-
-Observations use weak references, so garbage collection of either party automatically cleans up the subscription.
-
-For full details on posting, observing, scheduling, and weak reference cleanup, see the [Notifications](../Notifications/) guide. For sync loop detection, see the [Views](../Views/) guide.
-
-## Build System
-
-### Overview
-
-Strvct does not use standard ES module imports or bundlers like Webpack or Rollup. Instead, it uses a custom Content-Addressable Memory (CAM) build and loading system designed around two goals: minimal network transfers and fine-grained caching.
-
-### Motivation
-
-Standard ES module imports issue a separate HTTP request per file, which becomes a significant bottleneck for large applications with hundreds of source files. Bundlers address this but sacrifice fine-grained caching — changing one file invalidates the entire bundle. Strvct's CAM system provides the compression benefits of bundling while preserving per-file cache granularity through content hashing.
-
-### Build Process
-
-The build process runs two indexers:
-
-- **ImportsIndexer** scans `_imports.json` files throughout the source tree to discover all JavaScript and CSS resources and their dependency order. It produces two output files:
-  - `_index.json` — a metadata catalog listing every resource path and its SHA-256 content hash
-  - `_cam.json.zip` — a compressed bundle containing the actual file contents, keyed by hash
-
-- **SvResourceIndexer** scans specified directories (e.g. icons, sounds) and produces a similar index for non-code assets.
-
-### Runtime Loading
-
-At runtime, the client-side `SvResourceManager` loads the small `_index.json` first, then scans CAM-eligible hashes (js, css, svg, json, txt) against its local `SvHashCache` (an IndexedDB-backed store). If the ratio of missing bytes exceeds a threshold (default 30%), it downloads the full `_cam.json.zip` bundle; otherwise, individual cache misses are loaded on demand. The bundle is unpacked into the client-side IndexedDB database, keyed by content hash. On subsequent loads, resources are served directly from this local store. Because content is addressed by hash, identical content across different file paths is stored only once, and unchanged files are never re-downloaded — even across deployments. Stale cache entries are garbage-collected against the current index after every load.
-
-| Scenario | Missing Ratio | Action |
-|---|---|---|
-| Fresh install (empty cache) | 100% | Loads full CAM bundle |
-| No changes (fully cached) | 0% | Skips CAM, serves from cache |
-| Small update (few files changed) | ~5% | Skips CAM, loads individual files on demand |
-| Major update (many files changed) | ~60% | Loads full CAM bundle |
-
-Resources are loaded in dependency order as declared in `_imports.json` files. CSS is evaluated sequentially to preserve cascade ordering. JavaScript files are evaluated via `eval()` with `sourceURL` comments to enable full debugger support (breakpoints, stepping, source display in DevTools).
+- [Technical Overview](../Technical%20Overview/): High-level architecture and design philosophy.
+- [Naked Objects](../Naked%20Objects/): Theoretical foundations and production case studies.
+- [Comparing to React](../Comparing%20to%20React/): Guide for React developers exploring Strvct.

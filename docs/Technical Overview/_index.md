@@ -1,14 +1,70 @@
 # Technical Overview
 
-High-level architecture and key concepts of the Strvct framework.
+High-level architecture, core design philosophy, and system-wide concepts of the Strvct framework.
 
 ## Introduction
 
-Strvct applications run as client-side single-page apps in the browser. The framework makes heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for maintaining a persistent record store of application state in IndexedDB. The store is divided into object pools, one per document; a document's rows are committed to the cloud, which holds the same rows with a version per pool, allowing offline-first operation with seamless cloud persistence.
+Strvct is an open-source, local-first **Naked Objects** framework built in client-side JavaScript. Instead of requiring developers to manually author and maintain separate domain models, UI component trees, form layouts, validators, client-side state stores, persistence mappings, localization dictionaries, and AI agent tool specifications, Strvct derives the complete application interface and operational infrastructure automatically from an annotated domain model.
 
-Strvct is not a template system, a compile-time UI generator, or a component framework in the React/Flutter sense. There is no build step that produces views, no static component tree, and no pre-rendered layout. Views are created lazily at runtime as the user navigates the object graph — each navigation step inspects the target node's annotations, discovers an appropriate view class, and instantiates it. Once created, a view stays live and in sync with its model node through bidirectional notifications. The UI at any moment is a dynamic projection of the user's current navigation path, not a pre-built artifact.
+Applications built with Strvct operate as single-page web applications (SPAs) executing natively in the browser. The system is designed from the ground up for **local-first execution**: application state is stored locally in IndexedDB object pools, enabling instant, zero-latency user interaction and full offline functionality. When online, local object pools synchronize transparently with versioned cloud stores.
 
-This page covers the key concepts: the domain model, storage, UI synchronization, and the capabilities these enable. For the design rationale, see [Naked Objects](../Naked%20Objects/). For implementation details, see the [Implementation Overview](../Implementation%20Overview/).
+<svg viewBox="0 0 820 240" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  </style>
+  <defs>
+    <marker id="ato" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="fill" x="40" y="20" width="740" height="65"/>
+  <text x="55" y="42" class="b">Annotated Domain Model (SvStorableNode Subclasses)</text>
+  <text x="55" y="60" class="dim">Single source of truth declaring slots, subnodes, and metadata annotations</text>
+
+  <line class="flow" x1="120" y1="85" x2="120" y2="125" marker-end="url(#ato)"/>
+  <line class="flow" x1="310" y1="85" x2="310" y2="125" marker-end="url(#ato)"/>
+  <line class="flow" x1="500" y1="85" x2="500" y2="125" marker-end="url(#ato)"/>
+  <line class="flow" x1="690" y1="85" x2="690" y2="125" marker-end="url(#ato)"/>
+
+  <rect class="box" x="40" y="125" width="160" height="90"/>
+  <text x="55" y="147" class="b">Auto-Generated UI</text>
+  <text x="55" y="165" class="dim">Miller column stacks,</text>
+  <text x="55" y="183" class="dim">tabs, &amp; doc sections</text>
+
+  <rect class="box" x="230" y="125" width="160" height="90"/>
+  <text x="245" y="147" class="b">Local &amp; Cloud Sync</text>
+  <text x="245" y="165" class="dim">IndexedDB pools &amp;</text>
+  <text x="245" y="183" class="dim">SHA-256 blob store</text>
+
+  <rect class="box" x="420" y="125" width="160" height="90"/>
+  <text x="435" y="147" class="b">Headless Execution</text>
+  <text x="435" y="165" class="dim">Runs in Node.js with</text>
+  <text x="435" y="183" class="dim">zero DOM dependencies</text>
+
+  <rect class="box" x="610" y="125" width="170" height="90"/>
+  <text x="625" y="147" class="b">Native AI Tool Surface</text>
+  <text x="625" y="165" class="dim">Constant tool size:</text>
+  <text x="625" y="183" class="dim">schema-fetch &amp; patch</text>
+</svg>
+
+Unlike traditional component frameworks (React, Vue, Svelte, Flutter) or compile-time code generators:
+- **No Pre-Rendered View Trees:** There is no build step that compiles templates into UI components or static layouts.
+- **Lazy Runtime View Derivation:** Views are instantiated lazily in response to user navigation through the object graph. Each step inspects target node slot annotations to resolve or create the appropriate `SvNodeView`.
+- **Bidirectional Live Synchronization:** Active views observe model nodes through deferred, deduplicated notifications. Updates flow bidirectionally between model and view without manual binding logic.
+- **Complete Decoupling:** Model objects hold zero references to UI classes or browser DOM elements. The entire domain graph runs headlessly in Node.js for testing, batch processing, or server-side workflows.
+
+---
+
+## The Model-First Triad
+
+Strvct organizes applications into three distinct layers connected by an asymmetric notification architecture:
 
 <svg viewBox="0 0 820 270" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -26,137 +82,174 @@ This page covers the key concepts: the domain model, storage, UI synchronization
     </marker>
   </defs>
   <rect class="box" x="30" y="20" width="200" height="160"/>
-  <text x="45" y="42" class="b">UI</text>
-  <text x="45" y="62" class="dim">SvNodeView hierarchy</text>
+  <text x="45" y="42" class="b">UI Layer</text>
+  <text x="45" y="62" class="dim">SvNodeView Hierarchy</text>
   <rect class="fill" x="45" y="80" width="170" height="88"/>
   <text x="60" y="100" class="b">Views</text>
-  <text x="60" y="118" class="dim">observe a node's slots;</text>
-  <text x="60" y="136" class="dim">created lazily on navigation;</text>
-  <text x="60" y="154" class="dim">discarded when not needed</text>
+  <text x="60" y="118" class="dim">Observe node slots;</text>
+  <text x="60" y="136" class="dim">Created lazily on navigation;</text>
+  <text x="60" y="154" class="dim">Discarded when off-screen</text>
+
   <rect class="box" x="310" y="20" width="200" height="160"/>
-  <text x="325" y="42" class="b">Model</text>
-  <text x="325" y="62" class="dim">SvNode graph</text>
+  <text x="325" y="42" class="b">Model Layer</text>
+  <text x="325" y="62" class="dim">SvNode Object Graph</text>
   <rect class="fill" x="325" y="80" width="170" height="88"/>
-  <text x="340" y="100" class="b">Domain objects</text>
-  <text x="340" y="118" class="dim">slots, subnodes,</text>
+  <text x="340" y="100" class="b">Domain Objects</text>
+  <text x="340" y="118" class="dim">Slots, subnodes,</text>
   <text x="340" y="136" class="dim">annotations;</text>
-  <text x="340" y="154" class="dim">no UI references</text>
+  <text x="340" y="154" class="dim">Zero UI references</text>
+
   <rect class="box" x="590" y="20" width="200" height="160"/>
-  <text x="605" y="42" class="b">Storage</text>
+  <text x="605" y="42" class="b">Storage Layer</text>
   <text x="605" y="62" class="dim">SvPersistentObjectPool</text>
   <rect class="fill" x="605" y="80" width="170" height="88"/>
-  <text x="620" y="100" class="b">IndexedDB</text>
-  <text x="620" y="118" class="dim">monitors mutations;</text>
-  <text x="620" y="136" class="dim">bundles per-loop changes</text>
+  <text x="620" y="100" class="b">IndexedDB / Cloud</text>
+  <text x="620" y="118" class="dim">Monitors mutations;</text>
+  <text x="620" y="136" class="dim">Batches per-loop changes</text>
   <text x="620" y="154" class="dim">into atomic transactions</text>
+
   <line class="flow-dashed" x1="310" y1="110" x2="230" y2="110" marker-end="url(#ato)"/>
   <line class="flow" x1="230" y1="140" x2="310" y2="140" marker-end="url(#ato)"/>
   <text x="270" y="88" text-anchor="middle" class="dim">mutation</text>
   <text x="270" y="103" text-anchor="middle" class="dim">notification</text>
   <text x="270" y="153" text-anchor="middle" class="dim">getter, setter,</text>
   <text x="270" y="168" text-anchor="middle" class="dim">&amp; action calls</text>
+
   <line class="flow-dashed" x1="510" y1="110" x2="590" y2="110" marker-end="url(#ato)"/>
   <line class="flow" x1="590" y1="140" x2="510" y2="140" marker-end="url(#ato)"/>
   <text x="550" y="88" text-anchor="middle" class="dim">mutation</text>
   <text x="550" y="103" text-anchor="middle" class="dim">notification</text>
   <text x="550" y="153" text-anchor="middle" class="dim">loads &amp;</text>
   <text x="550" y="168" text-anchor="middle" class="dim">stores</text>
-  <text x="410" y="215" text-anchor="middle" class="dim">Model is the source of truth.</text>
-  <text x="410" y="235" text-anchor="middle" class="dim">Views and the storage system may hold references to the model, but the model holds none in return; it only posts notifications that they listen for.</text>
+
+  <text x="410" y="215" text-anchor="middle" class="dim">Model is the authoritative source of truth.</text>
+  <text x="410" y="235" text-anchor="middle" class="dim">Views and Storage hold weak references to Model nodes; Model holds zero references to Views or Storage in return.</text>
 </svg>
 
-## Domain Model
+### Layer Responsibilities
 
-The domain model is a cyclic graph of domain objects. Each domain object has:
+1. **Model Layer (`SvNode` Graph):**
+   - Authoritative source of truth for all domain data and business logic.
+   - Composed of objects inheriting from `SvNode` (or `SvStorableNode`).
+   - Declares instance properties as **slots** enriched with metadata annotations.
+   - Emits change notifications when slots or subnode arrays mutate, but holds no references to views or persistence handlers.
 
-- **Properties** (instance variables) and **actions** (methods)
-- a `subnodes` property containing an ordered unique collection of child domain objects
-- a `parentNode` property pointing to its parent domain object
-- property **annotations** [1] which allow for the automatic handling of UI and storage mechanisms
-- `title` and `subtitle` properties
-- a unique ID
+2. **UI Layer (`SvNodeView` Tree):**
+   - Renders visual presentation using lazy, auto-generated master-detail Miller column containers (`SvStackView`, `SvNavView`, `SvTilesView`, `SvTile`).
+   - Observes model notifications and pulls updated values on model mutation.
+   - Sends user edit commands back to the model via standard slot setters.
 
-The domain model can be seen as an ownership tree of domain objects, which may also contain non-ownership links between nodes.
+3. **Storage Layer (`SvPersistentObjectPool`):**
+   - Monitors model mutation notifications automatically.
+   - Batches dirty objects at the end of each browser event loop into transactional IndexedDB operations.
+   - Syncs versioned delta commits with cloud storage for cross-device availability.
 
-### Collection Managers
+---
 
-Complex collections of domain objects use Collection Manager domain objects to encapsulate collection-specific logic and data. For example, a Server class might have a guestConnections property referencing a GuestConnections instance whose subnodes are GuestConnection instances.
+## The Multi-Reader Annotation Bridge
 
-### Indirect UI Coupling
+The cornerstone of Strvct's architecture is the **Slot Annotation System**. Instead of raw instance variables, domain properties are declared as slots with metadata annotations.
 
-The domain model operates independently of UI, allowing for "headless" execution. It can, however, use annotations to provide optional UI hints without direct coupling. This is possible because model objects hold no references to UI objects and can only communicate with them via notifications.
+Slot annotations act as a **multi-reader decoupling bridge**. Each framework subsystem reads slot metadata independently to perform its job without cross-system dependencies:
 
-## Storage
+```
+                          +---> UI Generation (Property Tiles & Control Types)
+                          |
+                          +---> Local Storage & Cloud Sync (IndexedDB Records)
+                          |
+[ Slot Metadata Bridge ] -+---> Notification Engine (Coalesced Sync Passes)
+                          |
+                          +---> Native AI Tool Surface (JSON Patch Validation)
+                          |
+                          +---> Accessibility & i18n (ARIA Roles & Translation)
+```
 
-### Annotations
+| Annotation Settor | Purpose & Subsystem Consumer |
+|---|---|
+| `setSlotType("String")` | Selects tile UI input control type, runtime type validation, and AI JSON schema generation. |
+| `setShouldStoreSlot(true)` | Directs `SvPersistentObjectPool` to include property in serialized storage records. |
+| `setSyncsToView(true)` | Instructs model setter to post notification triggers to active observing views. |
+| `setCanEditInspection(true)` | Exposes property in the modifier-click (Option+Click) live Property Inspector. |
+| `setIsSubnodeField(true)` | Exposes complex properties as navigable child nodes in the UI inspector hierarchy. |
+| `setFinalInitProto(ClassName)` | Auto-instantiates default child objects during initialization if absent from storage. |
 
-Domain objects have a property which determines whether the object is persisted, as well as property annotations which determine which properties are persisted. Using this information, the system automatically manages persistence.
+---
 
-### Transactions
+## UI Synchronization Engine
 
-Mutations on persistent properties auto-queue domain objects for storage. Queued objects are bundled into a transaction committed at the end of the current event loop.
+Strvct enforces an asymmetric, notification-driven synchronization architecture:
 
-### Garbage Collection
+1. **Push Phase (User Action):** When a user edits a property in the UI, the view calls the corresponding setter on the model node (e.g., `character.setName("Thorin")`).
+2. **Notification Phase:** The generated slot setter verifies the type, updates internal state, and posts a named change notification via `SvNotificationCenter`.
+3. **Pull Phase (Deferred View Sync):** Observing views receive the notification and schedule a sync pass with `SvSyncScheduler`.
+4. **Coalescing & Loop Avoidance:** `SvSyncScheduler` deduplicates multiple mutations within the same event loop, executing a single UI re-render pass at the end of the loop. If setter values have converged, sync halts automatically, preventing infinite update loops.
+5. **Memory Safety:** Notifications use weak-reference observation patterns, allowing unreferenced views and models to be garbage-collected cleanly without manual listener detachment.
 
-Automatic garbage collection of the stored object graph occurs on startup, or when requested. Only objects reachable from the root domain object remain after garbage collection.
+---
 
-### Native Collections
+## Local & Cloud Persistence
 
-Native JavaScript collections (Array, ArrayBuffer, Map, Object, Set, and TypedArray) referenced by persistent properties of domain objects are also automatically persisted in their own records.
+Strvct combines local-first speed with seamless cloud synchronization:
 
-### Local Storage
+### 1. Local Object Pools (IndexedDB)
+- Application data is divided into **Object Pools** (one pool per document/aggregate root).
+- Each domain object is stored as a JSON row keyed by `poolId` and `puuid` (persistent UUID).
+- Object references within a pool are stored as `{ "*": puuid }`.
+- External cross-pool references are stored as `{ "**": poolId }`.
+- Mutations queue objects automatically for end-of-event-loop atomic IndexedDB commits.
 
-Persistent domain objects are stored client side in IndexedDB as rows of one record store. A row is keyed by its pool's id and the object's unique ID, and holds the object's JSON record; a pool's root row also carries its placement (the folder it sits in and a sort key) and the cloud version it last synced. The cloud holds the same rows, one record per row, and a document is saved by committing the rows changed since its version. See [Cloud Object Pools](../Persistence/Cloud%20Object%20Pools/).
+### 2. SHA-256 Content-Addressable Blob Store
+- Large binary assets (images, audio, files) are stored separately in `SvBlobPool`.
+- Keys are computed as SHA-256 content hashes, providing automatic binary deduplication.
+- Records store hash references rather than raw binary data, keeping IndexedDB records lean and fast.
 
-## Resource Delivery
+### 3. Versioned Cloud Commits
+- Cloud persistence mirror the same row format as local IndexedDB.
+- Saving a document computes delta rows modified since the last acknowledged pool version and posts an atomic commit.
+- Conflicts are detected deterministically per pool version rather than silently overwriting data.
 
-A naked objects application leans on having the full domain model present in the client. Real apps built this way run to hundreds of classes, plus view code, icons, and style resources. Standard JavaScript delivery mechanisms don't scale gracefully to that operating point:
+---
 
-- Loading ES modules individually issues one request per file; cold starts degrade linearly with class count.
-- Bundlers collapse many files into one, but any change to any file invalidates the entire chunk. Code splitting helps but requires manual chunking and still invalidates per chunk.
-- HTTP caches key on URL. Because deployments change URLs — via versioned filenames or query strings — clients re-download bytes they already have.
-- None of the above deduplicates identical code that appears at different paths.
+## Content-Addressable Resource Delivery (CAM)
 
-STRVCT replaces this with a content-addressable build. Every resource is keyed by the SHA-256 hash of its content. The build produces a small manifest and a bundle indexed by hash. At runtime:
+Real-world Naked Objects applications load hundreds of domain classes, view handlers, and style assets into the browser. Traditional ES module loading (hundreds of individual HTTP requests) creates severe network latency, while standard Webpack/Vite bundlers invalidate full chunks on minor file edits.
 
-- The manifest is fetched first and checked against a persistent client-side hash cache.
-- Any content already in the cache — from a previous load, a previous deployment, or a different STRVCT app on the same origin — is not re-fetched.
-- When enough content is missing to justify it, the app downloads the whole bundle in one request; when only a little is missing, it fetches those items directly. The threshold adapts to the actual delta.
-- The bundle itself is shipped zip-compressed, so cold loads pay for compressed bytes while the cache stores decompressed content keyed by hash.
-- Identical content at different paths is stored and transferred once.
+Strvct solves this with a **Content-Addressable Memory (CAM)** build and delivery pipeline:
 
-The practical behavior this produces is qualitatively different from what npm plus a bundler can deliver. A redeploy that changes a single file costs roughly that file's bytes, not a chunk's. A returning user after a year of development cycles fetches only content that is actually new. A first-time visitor who has used any other STRVCT app gets the shared framework for free. None of these properties are reachable by configuration on top of the mainstream stack; they require content-level identity, which URL-based caching doesn't have. This is what lets STRVCT keep its "usability gap" closed at the data-model scales it targets, where conventional tooling begins to impose latency and cache-invalidation costs that the framework's design intentionally eliminates.
+```
+[ Build Stage: ImportsIndexer ]
+  Scan _imports.json tree ---> Compute SHA-256 for each file
+  ---> Produce _index.json (path -> hash) & _cam.json.zip (compressed content)
 
-## UI Synchronization
+[ Runtime Stage: SvResourceManager & SvHashCache ]
+  Fetch _index.json ---> Compare against IndexedDB SvHashCache
+  ---> If delta ratio > 30%: Download _cam.json.zip in 1 request
+  ---> If delta ratio <= 30%: Download only missing hash files
+```
 
-Model-view synchronization is managed by views, which either pull or push changes to the domain objects they are presenting. Views push changes when a view property changes, and pull changes from domain objects when those objects post change notifications. Only annotated properties trigger sync operations. Both directions are coalesced and sent at the end of the event loop.
+### Key Benefits of CAM Delivery:
+- **Hash-Based Caching:** Assets are addressed and cached in IndexedDB by SHA-256 hash rather than URL path.
+- **Zero-Churn Redeployment:** Modifying a single source file invalidates only that file's hash in the cache; returning users download only the edited file.
+- **Cross-App Shared Caching:** Multiple Strvct applications running on the same origin share the local hash cache for common framework classes.
+- **Full Debugger Support:** JavaScript source files are evaluated dynamically via `eval()` with embedded `sourceURL` annotations, providing complete DevTools debugger capabilities (breakpoints, stack traces, step execution).
 
-### Sync Loop Avoidance
+---
 
-Bidirectional sync stops automatically as property changes trigger sync operations only when values actually differ, preventing infinite loops. If secondary changes do occur, the notification system detects the loop, halts it, and identifies the source.
+## Architectural Capabilities ("For Free")
 
-### Reference Loop Avoidance
+Because Strvct centralizes the pipeline from slot annotations to runtime views, several high-value capabilities fall out of the architecture automatically:
 
-Observations use weak references, allowing garbage collection of both posters and listeners. The Notification system automatically removes observations when the listener is collected.
+1. **Natively AI-Operable Model:** Every class exposes a constant-size tool surface (`schema-fetch` + `apply-patch`). AI agents inspect schemas and patch live object graphs directly with automatic schema validation.
+2. **Headless Execution:** Domain models contain zero DOM dependencies and execute natively under Node.js for ultra-fast unit testing, simulations, or server execution.
+3. **Automatic Mobile Responsiveness:** Navigation columns (`SvStackView`) automatically collapse into mobile push/pop stacks with interactive breadcrumb headers on narrow viewports.
+4. **Live Property Inspector:** Modifier-clicking (Option+Click) any tile reveals a live inspector displaying all declared slots, storage flags, and validation states.
+5. **Type-Safe Cross-Window Drag & Drop:** Tiles support serialization to JSON MIME types for dragging data across browser windows, desktop apps, or Strvct instances.
+6. **Universal Accessibility & Localization:** ARIA roles, keyboard navigation, focus management, and AI string translation are applied centrally at the tile primitive level.
 
-## Capabilities
+---
 
-The naked objects pattern enables several capabilities that would require significant per-component effort in a bespoke-view framework.
+## Related Documentation
 
-### Themes
-
-Themes can be used to customize the appearance of the UI. Domain objects can also request object-specific styles to be applied to them.
-
-### Importing and Exporting
-
-Drag and drop of domain objects into the UI and out of it for export is supported. Domain objects can register which MIME types they can be exported to and imported from. For example, a domain object can be dragged out of one browser window onto a user's desktop, or dropped into another Strvct app that accepts that MIME type. Domain objects have a standard property which lists valid subnode types, and this can be used to validate drops and auto-generate subnodes for imported data.
-
-### Internationalization
-
-Because the framework controls the model-to-view pipeline, it can intercept slot values at the view boundary and translate them transparently — no per-string wrapping required. This centralization also makes AI-powered translation viable. The framework can automatically discover every translatable string in the application by walking the model, and include semantic context with each string to improve translation quality. See the [Internationalization](../Internationalization/) guide for details.
-
-### JSON Schema
-
-Domain objects can automatically generate JSON Schema for themselves based on their properties and annotations. These schemas can be used to export metadata about the domain model, which is particularly useful when interacting with Large Language Models.
-
-[1]: https://bluishcoder.co.nz/self/transporter.pdf "David Ungar. (OOPSLA 1995). Annotating Objects for Transport to Other Worlds. In Proceedings of the Tenth Annual Conference on Object-Oriented Programming Systems, Languages, and Applications (OOPSLA '95). Austin, TX, USA. ACM Press."
+- [Implementation Overview](../Implementation%20Overview/): Detailed engineering specifications for classes, slots, views, and persistence.
+- [Naked Objects](../Naked%20Objects/): Architectural paper detailing theoretical foundations and case studies.
+- [Comparing to React](../Comparing%20to%20React/): Guide for React developers exploring Strvct's model-first paradigm.

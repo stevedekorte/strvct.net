@@ -6,7 +6,8 @@
 
 - [Documentation](/docs/): Guides, architecture, and API reference.
 - [Accessibility](/docs/Accessibility/): Automatic, framework-level ARIA support derived from the naked objects pattern.
-- [Comparing to React](/docs/Comparing%20to%20React/): A guide for React developers exploring Strvct — what's different, what's similar, and when each approach makes more sense.
+- [Comparing to React](/docs/Comparing%20to%20React/): A technical guide and conceptual "Rosetta Stone" for React developers exploring Strvct.
+- [Comparing to React](/docs/Comparing%20to%20React/_unused/): A guide for React developers exploring Strvct — what's different, what's similar, and when each approach makes more sense.
 - [Diagrams](/docs/Diagrams/): Architectural sketches of the Strvct framework. Working drafts; not yet placed in their final locations within the docs.
 - [Annotations](/docs/Diagrams/Annotations/)
 - [Diagram Conventions](/docs/Diagrams/Conventions/): Style and layout rules for the SVG diagrams used throughout the Strvct docs.
@@ -39,7 +40,8 @@
 - [Tile Container Views](/docs/Future%20Work/Tile%20Container%20Views/): Layout strategies for presenting a node's subnodes.
 - [Tile Views](/docs/Future%20Work/Tile%20Views/): Tile subclasses for presenting individual subnodes in specialized ways.
 - [Getting Started](/docs/Getting%20Started/): Setup, integration, and first steps with the Strvct framework.
-- [Implementation Overview](/docs/Implementation%20Overview/): Implementation details for classes, slots, views, and persistence.
+- [Implementation Overview](/docs/Implementation%20Overview/): Deep technical specifications for class lifecycle, slots, views, persistence, notifications, and build infrastructure.
+- [Implementation Overview](/docs/Implementation%20Overview/_unused/): Implementation details for classes, slots, views, and persistence.
 - [Inspectors and Debugging](/docs/Inspectors%20and%20Debugging/): Built-in tools for inspecting nodes and revealing hidden parts of the model graph at runtime.
 - [Inspirations](/docs/Inspirations/): Frameworks and ideas that shaped STRVCT's design.
 - [Internationalization](/docs/Internationalization/): AI-powered translation of UI text with persistent caching, batched requests, and smart content filtering.
@@ -72,13 +74,15 @@
 - [Modules](/docs/Reference/Modules/)
 - [Protocols](/docs/Reference/Protocols/)
 - [Services](/docs/Services/): AI, cloud, media, and IoT service integrations.
-- [AI Services](/docs/Services/AI%20Services/): Base classes, requests, conversations, tool calling, response parsing, and prompt composition.
+- [AI Services](/docs/Services/AI%20Services/): Framework architecture for multi-provider AI integration, streaming execution, tool calling, and model-first operability.
+- [AI Services](/docs/Services/AI%20Services/_unused/): Base classes, requests, conversations, tool calling, response parsing, and prompt composition.
 - [Cloud Storage](/docs/Services/Cloud%20Storage/): Firebase integration for cloud persistence and file storage.
 - [Home Assistant](/docs/Services/Home%20Assistant/): IoT device control via Home Assistant's WebSocket API.
 - [Media](/docs/Services/Media/): YouTube audio playback and browser speech recognition.
 - [Proxies](/docs/Services/Proxies/): Client-side proxy configuration for routing API calls through intermediary servers.
 - [Slots](/docs/Slots/): The property system: declaration, annotations, and the most common slot settings.
-- [Technical Overview](/docs/Technical%20Overview/): High-level architecture and key concepts of the Strvct framework.
+- [Technical Overview](/docs/Technical%20Overview/): High-level architecture, core design philosophy, and system-wide concepts of the Strvct framework.
+- [Technical Overview](/docs/Technical%20Overview/_unused/): High-level architecture and key concepts of the Strvct framework.
 - [Views](/docs/Views/): The view layer: auto-generated UI, custom views, and programmatic styling.
 - [Auto-Generated Views](/docs/Views/Auto-Generated%20Views/): How the view layer connects to model nodes, synchronizes state, and provides navigation — without writing any view code.
 - [Companion View](/docs/Views/Companion%20View/): A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
