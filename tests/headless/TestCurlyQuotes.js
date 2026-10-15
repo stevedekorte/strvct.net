@@ -13,8 +13,9 @@
  * and can never look at the character to the right of a quote.
  *
  * Covers:
- * - the String helper: openers vs closers, apostrophes, idempotence, and the
- *   precedingChar argument (a quote as the very last character of a chunk)
+ * - the String helper: openers vs closers, apostrophes, idempotence, the
+ *   precedingChar argument (a quote as the very last character of a chunk),
+ *   and foot/inch marks after a digit staying straight
  * - the stream reader: quotes educated across awkward chunk boundaries, and
  *   across a closed inline element (prev comes from the sibling's text)
  * - machine tags (<tool-call>) stay byte-exact so their JSON still parses
@@ -97,6 +98,9 @@ function testStringHelper () {
     check("he said \"".withCurlyQuotes() === "he said “", "a quote as the last char of the chunk needs no right context");
     check("'".withCurlyQuotes("") === "‘" && "'".withCurlyQuotes("o") === "’", "the same rule for single quotes");
     check("a`b'c".withCurlyQuotes() === "a`b’c", "backticks are left alone");
+    check("5'10\"".withCurlyQuotes() === "5'10\"", "foot and inch marks after a digit stay straight: 5'10\"");
+    check("a 10' pole".withCurlyQuotes() === "a 10' pole", "a lone foot mark stays straight");
+    check("'5'".withCurlyQuotes() === "‘5'", "…the cost: a closing quote right after a digit stays straight too");
 }
 
 function testStreamReader () {

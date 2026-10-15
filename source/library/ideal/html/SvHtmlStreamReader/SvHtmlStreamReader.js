@@ -111,11 +111,12 @@
    * education is on. tool-call / tool-call-result(s) / ai-request carry JSON
    * that is JSON.parse'd by the tag delegates; request-info, assistant-status,
    * no-op and system-error are machine chrome; code/pre/script/style are
-   * verbatim by definition.
+   * verbatim by definition. SvTextView skips the same tags when it educates
+   * the quotes it displays.
    * @returns {Set<string>}
    * @category Text
    */
-    defaultQuoteEducationSkipTagNames () {
+    static defaultQuoteEducationSkipTagNames () {
         return new Set([
             "tool-call",
             "tool-call-results",
@@ -130,6 +131,10 @@
             "script",
             "style"
         ]);
+    }
+
+    defaultQuoteEducationSkipTagNames () {
+        return this.thisClass().defaultQuoteEducationSkipTagNames();
     }
 
     /**
