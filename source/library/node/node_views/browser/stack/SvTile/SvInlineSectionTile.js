@@ -256,10 +256,13 @@
                 text-align: right !important;
                 margin: 0 !important;
             }
-            /* a row's title and note read in full, side by side: each wraps
-               (the note under itself, at the right) rather than one keeping
-               its whole width and clipping the other. A title keeps its
-               longest word whole; the note gives way. */
+            /* a row's title and note read in full: side by side when they
+               fit, else the note drops whole onto the next line, at the
+               right — never squeezed beside the title into a word per line,
+               and never clipping it. A title keeps its longest word whole. */
+            .SvInlineNested > :not(.SvInlineSection) :has(> * > .SvTileNoteView) {
+                flex-wrap: wrap !important;
+            }
             .SvInlineNested > :not(.SvInlineSection) :has(> .SvTileTitleView) {
                 flex: 1 1 auto !important;
                 min-width: min-content !important;
@@ -275,9 +278,10 @@
                 flex: 1 1 auto; /* a short summary at its right takes what the title leaves */
             }
             .SvInlineNested > :not(.SvInlineSection) :has(> .SvTileNoteView) {
-                flex: 0 1 auto !important;
+                flex: 0 0 auto !important; /* its whole width, or the next line */
                 min-width: 0 !important;
-                max-width: 55%;
+                max-width: 100%; /* longer than the row: it wraps there */
+                margin-left: auto;
                 padding-left: 12px;
             }
             .SvInlineNested > :not(.SvInlineSection) .SvTileNoteView {
@@ -319,6 +323,9 @@
             }
             .SvInlineNested > .SvTileLongSubtitle:not(.SvInlineSection) .SvTileSubtitleView {
                 padding-left: 20px !important; /* under the title, past the diamond (over the view's inline padding) */
+                width: 0 !important; /* fills the title's column without widening it, so an open */
+                min-width: 100% !important; /* description never pushes the note off its title's line */
+                box-sizing: border-box;
             }
             /* an open row's note stays on its title's line, not centered
                beside the description under it */
