@@ -56,9 +56,9 @@
     <text x="229" y="32" font-size="11px">nodePresentedNode()</text>
     <text x="590" y="14">View</text>
     <text x="522.0" y="53.0">Character</text>
-    <text x="572" y="44" text-anchor="start" font-weight="bold">At a Glance</text>
-    <text x="572" y="104" text-anchor="start" font-weight="bold">Abilities</text>
-    <text x="572" y="164" text-anchor="start" font-weight="bold">Belongings</text>
+    <text x="572" y="44" text-anchor="start">At a Glance</text>
+    <text x="572" y="104" text-anchor="start">Abilities</text>
+    <text x="572" y="164" text-anchor="start">Belongings</text>
     <path d="M478 39 L471 35 L471 43 Z" stroke="none"/>
   </g>
 </svg>

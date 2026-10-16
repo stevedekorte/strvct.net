@@ -44,13 +44,13 @@
     <text x="65.0" y="59.0">A</text>
     <text x="65.0" y="99.0">Selected</text>
     <text x="635" y="185">Detail View</text>
-    <text x="142" y="52" text-anchor="start" font-weight="bold">Section 1 (spans every column)</text>
-    <text x="142" y="112" text-anchor="start" font-weight="bold">Section 2</text>
+    <text x="142" y="52" text-anchor="start">Section 1 (spans every column)</text>
+    <text x="142" y="112" text-anchor="start">Section 2</text>
     <text x="150" y="136" text-anchor="start">key … value</text>
-    <text x="142" y="222" text-anchor="start" font-weight="bold">Section 3</text>
-    <text x="284" y="112" text-anchor="start" font-weight="bold">Section 4</text>
+    <text x="142" y="222" text-anchor="start">Section 3</text>
+    <text x="284" y="112" text-anchor="start">Section 4</text>
     <text x="292" y="164" text-anchor="start" font-style="italic">Group</text>
-    <text x="426" y="112" text-anchor="start" font-weight="bold">Section 5</text>
+    <text x="426" y="112" text-anchor="start">Section 5</text>
     <text x="434" y="195" text-anchor="start">Not inlined</text>
     <text x="548" y="195">›</text>
     <path d="M578 191 L571 187 L571 195 Z" stroke="none"/>
