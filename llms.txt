@@ -60,7 +60,7 @@
 - [Notifications](/docs/Notifications/): Event-driven communication between framework layers using observations, scheduling, and weak references.
 - [Broadcaster](/docs/Notifications/Broadcaster/): Immediate, synchronous event broadcasting across object trees in SvBroadcaster.
 - [Broadcaster](/docs/Notifications/Broadcaster/_unused/): Lightweight synchronous dispatch for high-frequency internal events.
-- [Notification Center](/docs/Notifications/Notification%20Center/): Asynchronous event dispatching, weak observer observations, and decoupled change propagation in SvNotificationCenter.
+- [Notification Center](/docs/Notifications/Notification%20Center/): Asynchronous event dispatching, dual WeakMap observation indexing, and decoupled change propagation in SvNotificationCenter.
 - [Notification Center](/docs/Notifications/Notification%20Center/_unused/): Deferred, deduplicated event dispatch with weak-reference cleanup.
 - [Slot Change Hooks](/docs/Notifications/Slot%20Change%20Hooks/): Declarative lifecycle hooks invoked automatically during slot mutation.
 - [Slot Change Hooks](/docs/Notifications/Slot%20Change%20Hooks/_unused/): Automatic per-slot callbacks that connect property changes to notifications and persistence.

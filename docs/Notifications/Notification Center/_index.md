@@ -1,12 +1,14 @@
 # Notification Center
 
-Asynchronous event dispatching, weak observer observations, and decoupled change propagation in `SvNotificationCenter`.
+Asynchronous event dispatching, dual WeakMap observation indexing, and decoupled change propagation in `SvNotificationCenter`.
 
 ## Overview
 
-`SvNotificationCenter` is Strvct's primary loose-coupling mechanism. It allows model nodes, views, and framework services to communicate without holding direct references to each other.
+In a framework where model, view, and storage layers must stay independent, objects announce state changes without holding direct references to observers. Direct method calls create tight coupling—the sender must hold a reference to every observer, and adding a new listener requires modifying sender code.
 
-<svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
+`SvNotificationCenter` solves this: senders post named notifications into a shared center, observers register interest by name and sender, and the two sides never reference each other directly.
+
+<svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -22,48 +24,96 @@ Asynchronous event dispatching, weak observer observations, and decoupled change
     </marker>
   </defs>
 
-  <rect class="box" x="25" y="20" width="240" height="50"/>
-  <text x="40" y="40" class="b">Sender Node</text>
-  <text x="40" y="58" class="dim">posts named notification</text>
+  <!-- 3 Columns: Senders, NotificationCenter, Observers (w: 240, h: 50) -->
+  <rect class="box" x="25" y="20" width="240" height="170"/>
+  <text x="40" y="42" class="b">Sender Objects (SvNode)</text>
 
-  <line class="flow-dashed" x1="265" y1="45" x2="290" y2="45" marker-end="url(#anc)"/>
+  <rect class="fill" x="40" y="60" width="210" height="40"/>
+  <text x="55" y="84" class="dim">this.postNoteNamed("didChange")</text>
 
-  <rect class="fill" x="290" y="20" width="240" height="50"/>
-  <text x="305" y="40" class="b">SvNotificationCenter</text>
-  <text x="305" y="58" class="dim">Lookup weak observers</text>
+  <rect class="fill" x="40" y="115" width="210" height="40"/>
+  <text x="55" y="139" class="dim">newNote().setInfo({...}).post()</text>
 
-  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#anc)"/>
+  <line class="flow-dashed" x1="265" y1="105" x2="290" y2="105" marker-end="url(#anc)"/>
 
-  <rect class="box" x="555" y="20" width="240" height="50"/>
-  <text x="570" y="40" class="b">Observer Target</text>
-  <text x="570" y="58" class="dim">Executes handler method</text>
+  <rect class="fill" x="290" y="20" width="240" height="170"/>
+  <text x="305" y="42" class="b">SvNotificationCenter</text>
 
-  <text x="410" y="110" text-anchor="middle" class="dim">Observers are held via weak references, preventing memory leaks when views or temporary objects are unmounted.</text>
+  <rect class="box" x="305" y="60" width="210" height="40"/>
+  <text x="320" y="80" class="b">_senderToObservations</text>
+  <text x="320" y="93" class="dim">WeakMap index for O(1) lookup</text>
+
+  <rect class="box" x="305" y="115" width="210" height="40"/>
+  <text x="320" y="135" class="b">_nameToObservations</text>
+  <text x="320" y="148" class="dim">WeakMap index by name</text>
+
+  <line class="flow" x1="530" y1="105" x2="555" y2="105" marker-end="url(#anc)"/>
+
+  <rect class="box" x="555" y="20" width="240" height="170"/>
+  <text x="570" y="42" class="b">Observer Objects (SvNodeView)</text>
+
+  <rect class="fill" x="570" y="60" width="210" height="40"/>
+  <text x="585" y="84" class="dim">View A: didChange(note)</text>
+
+  <rect class="fill" x="570" y="115" width="210" height="40"/>
+  <text x="585" y="139" class="dim">View B: customHandler(note)</text>
+
+  <text x="410" y="205" text-anchor="middle" class="dim">WeakRef observer storage prevents retain cycles; unmounted views are reclaimed automatically without manual unwatching.</text>
 </svg>
 
 ---
 
-## Observing Notifications
+## Posting Notifications
 
-Objects register to observe named notifications posted by specific target senders (or all senders):
+Senders post notifications when their state mutates:
 
 ```javascript
-// Register an observer for a specific target node
-SvNotificationCenter.shared().newObservation()
-    .setSender(characterNode)
-    .setName("didChangeSlot")
-    .setObserver(viewInstance)
-    .setMethodName("onCharacterChanged")
-    .watch();
+// Convenience method on SvNode:
+this.postNoteNamed("didUpdateNode");
+
+// Advanced notification with info dictionary:
+SvNotificationCenter.shared().newNote()
+    .setSender(this)
+    .setName("didUpdateNode")
+    .setInfo({ fieldName: "title", oldValue: "Draft", newValue: "Final" })
+    .post();
 ```
 
 ---
 
-## Weak References & Memory Safety
+## Observing Notifications & Convention Handlers
 
-Traditional event emitter listeners cause severe memory leaks if observers forget to unregister before being garbage collected. `SvNotificationCenter` eliminates this vulnerability by storing observers in **weak reference maps** (`WeakRef`).
+Objects register observations using `newObservation()`:
 
-When an observing view is removed from the DOM and has no remaining strong references, JavaScript's garbage collector automatically reclaims it. `SvNotificationCenter` silently prunes dead weak references during dispatch passes without throwing errors.
+```javascript
+// Register observation
+SvNotificationCenter.shared().newObservation()
+    .setSender(targetNode)
+    .setName("didUpdateNode")
+    .setObserver(this)
+    .startWatching();
+```
+
+### Handler Method Resolution:
+- **Default Convention:** When `targetNode` posts `"didUpdateNode"`, the notification center automatically calls `this.didUpdateNode(note)` on the observer if defined.
+- **Explicit Override:** To direct dispatch to a different method name, call `setSendName()`:
+
+```javascript
+obs.setSendName("handleNodeUpdate");
+```
+
+---
+
+## Dual WeakMap Indexing & Memory Safety
+
+To ensure zero performance impact as domain graphs grow, `SvNotificationCenter` maintains two internal index maps:
+1. `_senderToObservations`: A `WeakMap` mapping senders to their registered observations.
+2. `_nameToObservations`: A `WeakMap` mapping notification names to observations.
+
+During a post operation, the notification center intersects the two maps to retrieve target observations in $O(\text{observations on sender})$ time, avoiding full-table scans.
+
+### Memory Leak Protection:
+Observers are held in **`WeakRef`** wrappers. When an observing view is removed from the DOM and has no remaining strong references, JavaScript's garbage collector automatically reclaims it. Dead observations are cleaned up during dispatch passes without throwing errors.
 
 ---
 
@@ -71,4 +121,4 @@ When an observing view is removed from the DOM and has no remaining strong refer
 
 - [Sync Scheduler](../Sync%20Scheduler/): Coalescing high-frequency notification dispatches.
 - [Broadcaster](../Broadcaster/): Synchronous inline event broadcasting.
-- [Slot Change Hooks](../Slot%20Change%20Hooks/): Declarative model change hooks.
+- [Slot Change Hooks](../Slot%20Change%20Hooks/): Declarative model setter hooks.
