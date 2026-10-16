@@ -15217,5 +15217,5 @@ Key milestones from the first commit through present day Framework architecture,
 - **2026-06** — Naked Objects Paper: Naked Objects paper published and compiled to PDF via Tectonic; production case study of undreamedof.ai (~90 classes, 98% derived views)
 - **2026-07** — Record Store Cloud: SvRecordStore protocol migration: single row schema across local IndexedDB and versioned cloud (SvCloudRecordStore), replacing JSON+WAL with atomic row delta commits
 - **2026-08** — Staged Commits & Folders: SvStagedRecordCommit for multi-batch transactions (>450 ops/4MB), SvCloudFolder for zero-list document membership via scope root queries, and fractional ordering keys
-- **2026-09** — Inline Views: Advanced inline placement layouts (anchored tabs, document section flows, section folds, and companion node docking) for rich document composition
+- **2026-10** — Inline Views: Advanced inline placement layouts (anchored tabs, document section flows, section folds, and companion node docking) for rich document composition
 - **2026-10** — Architecture Docs: Comprehensive documentation rewrite: Technical Overview, Implementation Overview, React Rosetta Stone, AI Services, Getting Started, Persistence, Notifications, and SVG Diagram Conventions

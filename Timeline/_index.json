@@ -62,7 +62,7 @@
         {"date": "2026-06", "title": "Naked Objects Paper", "subtitle": "Naked Objects paper published and compiled to PDF via Tectonic; production case study of undreamedof.ai (~90 classes, 98% derived views)"},
         {"date": "2026-07", "title": "Record Store Cloud", "subtitle": "SvRecordStore protocol migration: single row schema across local IndexedDB and versioned cloud (SvCloudRecordStore), replacing JSON+WAL with atomic row delta commits"},
         {"date": "2026-08", "title": "Staged Commits & Folders", "subtitle": "SvStagedRecordCommit for multi-batch transactions (>450 ops/4MB), SvCloudFolder for zero-list document membership via scope root queries, and fractional ordering keys"},
-        {"date": "2026-09", "title": "Inline Views", "subtitle": "Advanced inline placement layouts (anchored tabs, document section flows, section folds, and companion node docking) for rich document composition"},
+        {"date": "2026-10", "title": "Inline Views", "subtitle": "Advanced inline placement layouts (anchored tabs, document section flows, section folds, and companion node docking) for rich document composition"},
         {"date": "2026-10", "title": "Architecture Docs", "subtitle": "Comprehensive documentation rewrite: Technical Overview, Implementation Overview, React Rosetta Stone, AI Services, Getting Started, Persistence, Notifications, and SVG Diagram Conventions"}
       ]
     }
