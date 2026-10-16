@@ -15214,3 +15214,8 @@ Key milestones from the first commit through present day Framework architecture,
 - **2026-04** — Accessibility: Automatic ARIA roles, labels, states, and landmarks derived from model annotations and view classes
 - **2026-04** — Public Cloud: SvPublicCloudSource for serving shared content via Firebase Storage manifests
 - **2026-05** — Cloud Documents: Read/write cloud filesystem with lease-based document sessions, write-ahead-log JSON-patch deltas, and abort-and-resync conflict handling
+- **2026-06** — Naked Objects Paper: Naked Objects paper published and compiled to PDF via Tectonic; production case study of undreamedof.ai (~90 classes, 98% derived views)
+- **2026-07** — Record Store Cloud: SvRecordStore protocol migration: single row schema across local IndexedDB and versioned cloud (SvCloudRecordStore), replacing JSON+WAL with atomic row delta commits
+- **2026-08** — Staged Commits & Folders: SvStagedRecordCommit for multi-batch transactions (>450 ops/4MB), SvCloudFolder for zero-list document membership via scope root queries, and fractional ordering keys
+- **2026-09** — Inline Section Folds: Interactive inline section fold state persistence (didChangeInlineCollapse) and SvNode.nodeCompanionNode() docking for responsive side-by-side view layout
+- **2026-10** — Architecture Docs: Comprehensive documentation rewrite: Technical Overview, Implementation Overview, React Rosetta Stone, AI Services, Getting Started, Persistence, Notifications, and SVG Diagram Conventions
