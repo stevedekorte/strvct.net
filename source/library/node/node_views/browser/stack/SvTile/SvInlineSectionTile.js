@@ -245,19 +245,133 @@
             .SvInlineNested .ValueViewContainer > :focus {
                 border-color: var(--sv-inline-row-rule) !important;
             }
+            /* a document's title (nodeInlineHeadingRole "display"): large, its
+               note on the line beneath; on a wide pane an image row stands
+               beside the section's other rows */
+            .SvInlineDisplay { container-type: inline-size; }
+            .SvInlineDisplay > .TileContentView > .SvInlineSectionHead {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 4px;
+                border-bottom: none;
+                position: relative;
+                padding-right: 28px;
+            }
+            .SvInlineDisplay > .TileContentView > .SvInlineSectionHead > .SvInlineSectionHeading {
+                font-family: var(--sv-inline-display-face, var(--sv-face-body, inherit));
+                font-size: var(--sv-inline-display-size, 40px);
+                line-height: 1.1;
+                letter-spacing: normal;
+                text-transform: none;
+                font-weight: 400;
+                color: var(--sv-text);
+                padding-left: 0 !important; /* a text view pads by its own em: the title and its note would start apart */
+            }
+            .SvInlineDisplay > .TileContentView > .SvInlineSectionHead > .SvInlineSectionNote {
+                text-align: left;
+                white-space: normal;
+                text-transform: none;
+                letter-spacing: normal;
+                font-size: var(--sv-inline-display-note-size, 19px);
+                color: var(--sv-text);
+                padding-left: 0 !important;
+            }
+            .SvInlineDisplay.SvInlineCollapsible > .TileContentView > .SvInlineSectionHead::after {
+                position: absolute;
+                right: 4px;
+                top: 0.9em;
+            }
+            @container (min-width: 600px) {
+                .SvInlineDisplay > .TileContentView > .SvInlineNested {
+                    display: grid !important;
+                    grid-template-columns: minmax(160px, 34%) minmax(0, 1fr);
+                    column-gap: 28px;
+                    align-items: start;
+                }
+                .SvInlineDisplay > .TileContentView > .SvInlineNested > :has(img) { grid-column: 1; grid-row: 1 / span 12; }
+                .SvInlineDisplay > .TileContentView > .SvInlineNested > :not(:has(img)) { grid-column: 2; }
+            }
+            /* tile layout roles (nodeTileLayout) */
+            .SvInlineNested > [data-tile-layout="kicker"], .SvInlineNested > [data-tile-layout="lede"], .SvInlineNested > [data-tile-layout="quote"] {
+                border-bottom: none !important;
+            }
+            [data-tile-layout="kicker"] .SvTileTitleView {
+                font-size: 12px !important;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                color: var(--sv-text-muted) !important;
+            }
+            [data-tile-layout="lede"] .SvTileTitleView, [data-tile-layout="quote"] .SvTileTitleView { display: none !important; }
+            [data-tile-layout="lede"] .SvTileSubtitleView, [data-tile-layout="quote"] .SvTileSubtitleView {
+                text-align: left !important;
+                width: 100% !important;
+                font-size: var(--sv-inline-lede-size, 17px) !important;
+                line-height: 1.55;
+                color: var(--sv-text) !important;
+            }
+            [data-tile-layout="quote"] .SvTileSubtitleView {
+                font-style: italic;
+                color: var(--sv-text-muted) !important;
+                border-left: 1px solid var(--sv-hairline);
+                padding-left: 16px !important;
+            }
+            /* stats: the group lays them out as a strip */
+            .SvInlineNested:has(> [data-tile-layout="stat"]) {
+                display: grid !important;
+                grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+                border-top: 1px solid var(--sv-text);
+                border-bottom: 1px solid var(--sv-text);
+            }
+            .SvInlineNested > [data-tile-layout="stat"] {
+                border-bottom: none !important;
+                border-right: 1px solid var(--sv-hairline);
+            }
+            [data-tile-layout="stat"] > .TileContentView {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                justify-content: flex-start !important;
+                gap: 2px;
+                padding: 12px 14px !important;
+            }
+            [data-tile-layout="stat"] > .TileContentView :has(> .SvTileTitleView),
+            [data-tile-layout="stat"] > .TileContentView :has(> .SvTileNoteView) { display: contents !important; }
+            [data-tile-layout="stat"] .SvTileTitleView {
+                order: 1;
+                font-size: 11px !important;
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: var(--sv-text-muted) !important;
+                padding-left: 0 !important;
+            }
+            [data-tile-layout="stat"] .SvTileNoteView {
+                order: 2;
+                font-size: var(--sv-inline-stat-size, 26px) !important;
+                color: var(--sv-text) !important;
+                text-align: left !important;
+                margin: 0 !important;
+            }
+            [data-tile-layout="stat"] .SvTileSubtitleView {
+                order: 3;
+                display: block !important;
+                font-style: italic;
+                text-align: left !important;
+                width: auto !important;
+                color: var(--sv-text-muted) !important;
+            }
             /* an empty list is left out of a document (SvTile marks it) */
             .SvInlineNested > .SvTileEmptyCollection,
             .SvInlineDocument > .SvTileEmptyCollection {
                 display: none !important;
             }
-            /* a short summary reads as a value: at the right of the title, on its line */
-            .SvInlineNested > :not(.SvTileLongSubtitle):not(.SvInlineSection) :has(> .SvTileTitleView) {
+            /* a short summary reads as a value: at the right of the title, on
+               its line (a row with a layout role lays out as its role says) */
+            .SvInlineNested > :not(.SvTileLongSubtitle):not(.SvInlineSection):not([data-tile-layout]) :has(> .SvTileTitleView) {
                 flex-direction: row !important;
                 align-items: baseline !important;
                 justify-content: space-between !important;
                 gap: 12px;
             }
-            .SvInlineNested > :not(.SvTileLongSubtitle):not(.SvInlineSection) .SvTileSubtitleView {
+            .SvInlineNested > :not(.SvTileLongSubtitle):not(.SvInlineSection):not([data-tile-layout]) .SvTileSubtitleView {
                 width: auto !important;
                 flex: 0 1 auto;
                 text-align: right !important;
@@ -428,6 +542,7 @@
         this.headingView().setString(node.translatedValueOfSlotNamed ? node.translatedValueOfSlotNamed("title") : node.title());
         this.headingNoteView().setString((node.nodeInlineHeadingNote && node.nodeInlineHeadingNote()) || "");
         this.element().classList.toggle("SvInlineSpans", !!(node.nodeSpansInlineColumns && node.nodeSpansInlineColumns()));
+        this.element().classList.toggle("SvInlineDisplay", !!(node.nodeInlineHeadingRole && node.nodeInlineHeadingRole() === "display"));
         this.syncCollapse();
         this.syncSectionTilesView();
         return this;

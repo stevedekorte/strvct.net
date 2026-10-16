@@ -647,9 +647,28 @@
             this.syncSurfaceFromNode();
             this.syncEmptyCollectionMark();
             this.syncEmphasisMark();
+            this.syncLayoutMark();
         }
         this.updateSubviews();
         this.syncOrientation();
+        return this;
+    }
+
+    /**
+     * @description Marks the tile with its node's layout role
+     * (nodeTileLayout) as data-tile-layout, for the inline document's
+     * stylesheet; no attribute when it has none.
+     * @returns {SvTile}
+     * @category Styling
+     */
+    syncLayoutMark () {
+        const node = this.node();
+        const layout = (node && node.nodeTileLayout) ? node.nodeTileLayout() : null;
+        if (layout) {
+            this.element().setAttribute("data-tile-layout", layout);
+        } else {
+            this.element().removeAttribute("data-tile-layout");
+        }
         return this;
     }
 

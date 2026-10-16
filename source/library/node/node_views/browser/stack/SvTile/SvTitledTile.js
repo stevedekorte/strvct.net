@@ -719,7 +719,9 @@
         // a stylesheet hook, from the model's text (no measuring): an inline
         // document folds a long description behind its title, and shows a
         // short summary ("+6", "20 · mod +5") as it is
-        this.element().classList.toggle("SvTileLongSubtitle", typeof subtitle === "string" && (subtitle.trim().length > 40 || subtitle.trim().includes("\n")));
+        // a tile with a layout role (a lede, a quote) shows its text as the role says, not behind a disclosure
+        const hasLayoutRole = !!(node.nodeTileLayout && node.nodeTileLayout());
+        this.element().classList.toggle("SvTileLongSubtitle", !hasLayoutRole && typeof subtitle === "string" && (subtitle.trim().length > 40 || subtitle.trim().includes("\n")));
         //this.noteView().setString(this.node().note())
         this.updateSubviews();
 

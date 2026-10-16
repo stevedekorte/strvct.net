@@ -510,6 +510,32 @@
     }
 
     /**
+     * @description How this node's tile lays out its parts in an inline
+     * document: null (title, then its note at the right) or a role —
+     * "stat" (a small label, the value large, the subtitle in italic words
+     * beneath; the stats in one group flow as a strip), "lede" (the subtitle
+     * as a paragraph, no title), "quote" (the subtitle in italic beside a
+     * rule) or "kicker" (the title as a small-caps line). Roles, not looks:
+     * the theme sets the sizes.
+     * @returns {String|null}
+     * @category Layout
+     */
+    nodeTileLayout () {
+        return null;
+    }
+
+    /**
+     * @description For an inline section: the role of its heading — null (a
+     * section heading) or "display" (a document's title: large, its note on
+     * the line beneath, and on a wide pane an image row beside the others).
+     * @returns {String|null}
+     * @category Layout
+     */
+    nodeInlineHeadingRole () {
+        return null;
+    }
+
+    /**
      * @description As an anchored tab: whether this node would like its pane
      * kept open — "pinned", "open" (open when there is room, unpinned) or null
      * (no opinion). A suggestion: the player's own pin or unpin of the tab
