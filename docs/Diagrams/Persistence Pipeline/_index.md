@@ -16,46 +16,73 @@ Drilling into Local Storage. The object pool persists slot mutations through the
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="box" x="120" y="20" width="250" height="415"/>
-  <text x="135" y="42" class="b">Object Pool (sync)</text>
-  <rect class="box" x="450" y="20" width="250" height="415"/>
-  <text x="465" y="42" class="b">Blob Pool (async)</text>
-  <rect class="fill" x="135" y="60" width="220" height="52"/>
-  <text x="150" y="80" class="b">SvNode setter called</text>
-  <text x="150" y="98" class="dim">slot mutation</text>
-  <line class="flow" x1="245" y1="112" x2="245" y2="137" marker-end="url(#a6)"/>
-  <rect class="fill" x="135" y="137" width="220" height="52"/>
-  <text x="150" y="157" class="b">addDirtyObject(self)</text>
-  <text x="150" y="175" class="dim">via ObjectPool</text>
-  <line class="flow" x1="245" y1="189" x2="245" y2="214" marker-end="url(#a6)"/>
-  <rect class="fill" x="135" y="214" width="220" height="52"/>
-  <text x="150" y="234" class="b">end of event loop</text>
-  <text x="150" y="252" class="dim">begin atomic txn</text>
-  <line class="flow" x1="245" y1="266" x2="245" y2="291" marker-end="url(#a6)"/>
-  <rect class="fill" x="135" y="291" width="220" height="52"/>
-  <text x="150" y="311" class="b">recordForStore() per object</text>
-  <text x="150" y="329" class="dim">row keyed by pool + puuid</text>
-  <rect class="fill" x="135" y="368" width="220" height="52"/>
-  <text x="150" y="388" class="b">GC: walk reachable</text>
-  <text x="150" y="406" class="dim">collect referenced hashes</text>
-  <rect class="fill" x="465" y="60" width="220" height="52"/>
-  <text x="480" y="80" class="b">asyncStoreBlob(blob)</text>
-  <text x="480" y="98" class="dim">from app code</text>
-  <line class="flow" x1="575" y1="112" x2="575" y2="137" marker-end="url(#a6)"/>
-  <rect class="fill" x="465" y="137" width="220" height="52"/>
-  <text x="480" y="157" class="b">sha256(blob) → hash</text>
-  <text x="480" y="175" class="dim">content-addressable key</text>
-  <line class="flow" x1="575" y1="189" x2="575" y2="214" marker-end="url(#a6)"/>
-  <rect class="fill" x="465" y="214" width="220" height="52"/>
-  <text x="480" y="234" class="b">write hash → data + meta</text>
-  <text x="480" y="252" class="dim">{hash} and {hash}/meta</text>
-  <line class="flow" x1="575" y1="266" x2="575" y2="291" marker-end="url(#a6)"/>
-  <rect class="fill" x="465" y="291" width="220" height="52"/>
-  <text x="480" y="311" class="b">node stores hash string</text>
-  <text x="480" y="329" class="dim">drives GC reachability</text>
-  <rect class="fill" x="465" y="368" width="220" height="52"/>
-  <text x="480" y="388" class="b">remove orphan blobs</text>
-  <text x="480" y="406" class="dim">not in referenced set</text>
-  <line class="flow" x1="355" y1="394" x2="465" y2="394" marker-end="url(#a6)"/>
-  <text x="410" y="387" text-anchor="middle" class="dim">ref hash set</text>
+
+  <!-- Left Column: Object Pool & Record Store -->
+  <rect class="box" x="40" y="20" width="350" height="410"/>
+  <text x="55" y="42" class="b">Object Pool &amp; Record Store (Synchronous)</text>
+
+  <rect class="fill" x="65" y="60" width="300" height="48"/>
+  <text x="80" y="80" class="b">SvNode Setter Mutates Slot</text>
+  <text x="80" y="96" class="dim">Slot setter invokes didMutate()</text>
+
+  <line class="flow" x1="215" y1="108" x2="215" y2="132" marker-end="url(#a6)"/>
+
+  <rect class="fill" x="65" y="132" width="300" height="48"/>
+  <text x="80" y="152" class="b">addDirtyObject(self)</text>
+  <text x="80" y="168" class="dim">Schedules deferred commit in SvObjectPool</text>
+
+  <line class="flow" x1="215" y1="180" x2="215" y2="204" marker-end="url(#a6)"/>
+
+  <rect class="fill" x="65" y="204" width="300" height="48"/>
+  <text x="80" y="224" class="b">End of Event Loop Commit</text>
+  <text x="80" y="240" class="dim">SvPersistentAtomicMap begins transaction</text>
+
+  <line class="flow" x1="215" y1="252" x2="215" y2="276" marker-end="url(#a6)"/>
+
+  <rect class="fill" x="65" y="276" width="300" height="48"/>
+  <text x="80" y="296" class="b">SvRecordRow Written to IndexedDB</text>
+  <text x="80" y="312" class="dim">Row payload keyed by (poolId + objectId)</text>
+
+  <line class="flow" x1="215" y1="324" x2="215" y2="348" marker-end="url(#a6)"/>
+
+  <rect class="fill" x="65" y="348" width="300" height="60"/>
+  <text x="80" y="368" class="b">Mark &amp; Sweep GC</text>
+  <text x="80" y="386" class="dim">Traces reachable nodes &amp; collects referenced</text>
+  <text x="80" y="400" class="dim">SHA-256 binary hash strings</text>
+
+  <!-- Right Column: Blob Pool -->
+  <rect class="box" x="430" y="20" width="350" height="410"/>
+  <text x="445" y="42" class="b">SHA-256 Blob Store (Asynchronous CAS)</text>
+
+  <rect class="fill" x="455" y="60" width="300" height="48"/>
+  <text x="470" y="80" class="b">asyncStoreBlob(ArrayBuffer)</text>
+  <text x="470" y="96" class="dim">Triggered from app code or media upload</text>
+
+  <line class="flow" x1="605" y1="108" x2="605" y2="132" marker-end="url(#a6)"/>
+
+  <rect class="fill" x="455" y="132" width="300" height="48"/>
+  <text x="470" y="152" class="b">sha256(ArrayBuffer) -&gt; Hash Digest</text>
+  <text x="470" y="168" class="dim">Computes content-addressable key</text>
+
+  <line class="flow" x1="605" y1="180" x2="605" y2="204" marker-end="url(#a6)"/>
+
+  <rect class="fill" x="455" y="204" width="300" height="48"/>
+  <text x="470" y="224" class="b">Write Hash -&gt; Data + Metadata</text>
+  <text x="470" y="240" class="dim">Stores raw binary in IndexedDB SvBlobPool</text>
+
+  <line class="flow" x1="605" y1="252" x2="605" y2="276" marker-end="url(#a6)"/>
+
+  <rect class="fill" x="455" y="276" width="300" height="48"/>
+  <text x="470" y="296" class="b">Domain Node Stores Hash String</text>
+  <text x="470" y="312" class="dim">Slot holds hash ref string ("hash:...")</text>
+
+  <line class="flow" x1="605" y1="324" x2="605" y2="348" marker-end="url(#a6)"/>
+
+  <rect class="fill" x="455" y="348" width="300" height="60"/>
+  <text x="470" y="368" class="b">Orphan Blob Purge</text>
+  <text x="470" y="386" class="dim">Deletes binary blobs not in GC referenced</text>
+  <text x="470" y="400" class="dim">hash set</text>
+
+  <!-- Bridge Arrow from Object Pool GC to Blob Store GC -->
+  <line class="flow" x1="365" y1="378" x2="455" y2="378" marker-end="url(#a6)"/>
 </svg>

@@ -2,7 +2,7 @@
 
 One slot declaration carries metadata that independent framework layers read without coordinating. Adding a new layer leaves existing layers unchanged.
 
-<svg viewBox="0 0 820 410" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 330" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -16,38 +16,49 @@ One slot declaration carries metadata that independent framework layers read wit
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="260" y="20" width="300" height="200"/>
-  <text x="275" y="40" class="b">a single slot declaration</text>
-  <text x="275" y="62" class="dim">newSlot("name", "")</text>
-  <text x="275" y="80" class="dim">  .setSlotType("String")</text>
-  <text x="275" y="98" class="dim">  .setShouldStoreSlot(true)</text>
-  <text x="275" y="116" class="dim">  .setSyncsToView(true)</text>
-  <text x="275" y="134" class="dim">  .setCanEditInspection(true)</text>
-  <text x="275" y="152" class="dim">  .setIsSubnodeField(true)</text>
-  <text x="275" y="170" class="dim">  .setFinalInitProto(Cls)</text>
-  <text x="275" y="188" class="dim">  .setTranslationContext(...)</text>
-  <line class="flow" x1="410" y1="220" x2="410" y2="240"/>
-  <line class="flow" x1="130" y1="240" x2="690" y2="240"/>
-  <line class="flow" x1="130" y1="240" x2="130" y2="270" marker-end="url(#a2)"/>
-  <line class="flow" x1="270" y1="240" x2="270" y2="270" marker-end="url(#a2)"/>
-  <line class="flow" x1="410" y1="240" x2="410" y2="270" marker-end="url(#a2)"/>
-  <line class="flow" x1="550" y1="240" x2="550" y2="270" marker-end="url(#a2)"/>
-  <line class="flow" x1="690" y1="240" x2="690" y2="270" marker-end="url(#a2)"/>
-  <rect class="box" x="65" y="270" width="130" height="52"/>
-  <text x="80" y="290" class="b">UI</text>
-  <text x="80" y="308" class="dim">type, edit, nav</text>
-  <rect class="box" x="205" y="270" width="130" height="52"/>
-  <text x="220" y="290" class="b">Storage</text>
-  <text x="220" y="308" class="dim">should-store</text>
-  <rect class="box" x="345" y="270" width="130" height="52"/>
-  <text x="360" y="290" class="b">Sync</text>
-  <text x="360" y="308" class="dim">syncsToView</text>
-  <rect class="box" x="485" y="270" width="130" height="52"/>
-  <text x="500" y="290" class="b">AI / Patch</text>
-  <text x="500" y="308" class="dim">type / schema</text>
-  <rect class="box" x="625" y="270" width="130" height="52"/>
-  <text x="640" y="290" class="b">i18n</text>
-  <text x="640" y="308" class="dim">translation ctx</text>
-  <text x="65" y="355" class="dim">No inter-layer coordination; each consumer reads only what it needs.</text>
-  <text x="65" y="375" class="dim">A new layer added later: have it read the slot metadata it cares about.</text>
+
+  <!-- Top Slot Declaration Box -->
+  <rect class="fill" x="240" y="20" width="340" height="170"/>
+  <text x="255" y="42" class="b">Single Slot Declaration (SvSlot)</text>
+  <text x="255" y="62" class="dim">const slot = this.newSlot("name", "");</text>
+  <text x="255" y="80" class="dim">slot.setSlotType("String");</text>
+  <text x="255" y="98" class="dim">slot.setShouldStoreSlot(true);</text>
+  <text x="255" y="116" class="dim">slot.setSyncsToView(true);</text>
+  <text x="255" y="134" class="dim">slot.setCanEditInspection(true);</text>
+  <text x="255" y="152" class="dim">slot.setIsSubnodeField(true);</text>
+  <text x="255" y="170" class="dim">slot.setFinalInitProto(Inventory);</text>
+
+  <!-- Flow Line to Bus -->
+  <line class="flow" x1="410" y1="190" x2="410" y2="215"/>
+  <line class="flow" x1="90" y1="215" x2="730" y2="215"/>
+
+  <!-- Arrows to 5 Layer Consumers -->
+  <line class="flow" x1="90" y1="215" x2="90" y2="235" marker-end="url(#a2)"/>
+  <line class="flow" x1="250" y1="215" x2="250" y2="235" marker-end="url(#a2)"/>
+  <line class="flow" x1="410" y1="215" x2="410" y2="235" marker-end="url(#a2)"/>
+  <line class="flow" x1="570" y1="215" x2="570" y2="235" marker-end="url(#a2)"/>
+  <line class="flow" x1="730" y1="215" x2="730" y2="235" marker-end="url(#a2)"/>
+
+  <!-- 5 Uniform Consumer Boxes (w: 140, h: 50) -->
+  <rect class="box" x="20" y="235" width="140" height="50"/>
+  <text x="35" y="255" class="b">UI Layer</text>
+  <text x="35" y="273" class="dim">Type, edit, &amp; nav</text>
+
+  <rect class="box" x="180" y="235" width="140" height="50"/>
+  <text x="195" y="255" class="b">Storage Layer</text>
+  <text x="195" y="273" class="dim">IndexedDB rows</text>
+
+  <rect class="box" x="340" y="235" width="140" height="50"/>
+  <text x="355" y="255" class="b">Sync Engine</text>
+  <text x="355" y="273" class="dim">Deferred notifications</text>
+
+  <rect class="box" x="500" y="235" width="140" height="50"/>
+  <text x="515" y="255" class="b">AI Tool Surface</text>
+  <text x="515" y="273" class="dim">schema-fetch &amp; patch</text>
+
+  <rect class="box" x="660" y="235" width="140" height="50"/>
+  <text x="675" y="255" class="b">i18n Engine</text>
+  <text x="675" y="273" class="dim">Translation context</text>
+
+  <text x="410" y="315" text-anchor="middle" class="dim">No inter-layer coordination; each consumer reads only its relevant slot metadata annotations.</text>
 </svg>

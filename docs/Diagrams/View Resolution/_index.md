@@ -2,7 +2,7 @@
 
 When a node becomes visible, the framework finds a view class by climbing the node's inheritance chain. Custom views are an override; the default is always available.
 
-<svg viewBox="0 0 820 360" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 330" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -16,37 +16,43 @@ When a node becomes visible, the framework finds a view class by climbing the no
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="52"/>
-  <text x="305" y="40" class="b">navigate to node N</text>
-  <text x="305" y="58" class="dim">instance of class C</text>
-  <line class="flow" x1="410" y1="72" x2="410" y2="95" marker-end="url(#a4)"/>
-  <rect class="fill" x="290" y="95" width="240" height="52"/>
-  <text x="305" y="115" class="b">C declares nodeViewClass()?</text>
-  <text x="305" y="133" class="dim">decision</text>
-  <line class="flow" x1="410" y1="147" x2="410" y2="170" marker-end="url(#a4)"/>
-  <text x="425" y="162" class="dim">no</text>
-  <rect class="fill" x="290" y="170" width="240" height="52"/>
-  <text x="305" y="190" class="b">look up</text>
-  <text x="305" y="208" class="dim">C.name + "View"</text>
-  <line class="flow" x1="410" y1="222" x2="410" y2="245" marker-end="url(#a4)"/>
-  <rect class="fill" x="290" y="245" width="240" height="52"/>
-  <text x="305" y="265" class="b">found?</text>
-  <text x="305" y="283" class="dim">decision</text>
-  <rect class="box" x="40" y="95" width="200" height="52"/>
-  <text x="55" y="115" class="b">use declared</text>
-  <text x="55" y="133" class="b">class</text>
-  <rect class="box" x="40" y="245" width="200" height="52"/>
-  <text x="55" y="265" class="b">climb to</text>
-  <text x="55" y="283" class="b">superclass</text>
-  <rect class="box" x="580" y="245" width="200" height="52"/>
-  <text x="595" y="265" class="b">use that</text>
-  <text x="595" y="283" class="b">view class</text>
-  <line class="flow" x1="290" y1="121" x2="240" y2="121" marker-end="url(#a4)"/>
-  <text x="265" y="113" text-anchor="middle" class="dim">yes</text>
-  <line class="flow" x1="530" y1="271" x2="580" y2="271" marker-end="url(#a4)"/>
-  <text x="555" y="263" text-anchor="middle" class="dim">yes</text>
-  <line class="flow" x1="290" y1="271" x2="240" y2="271" marker-end="url(#a4)"/>
-  <text x="265" y="263" text-anchor="middle" class="dim">no</text>
-  <path class="flow" d="M 140 245 L 140 196 L 290 196" marker-end="url(#a4)"/>
-  <text x="40" y="335" class="dim">Root reached without a match falls through to SvNodeView (default).</text>
+
+  <!-- Step 1: Navigate to Node -->
+  <rect class="fill" x="240" y="20" width="340" height="45"/>
+  <text x="255" y="46" class="b">Navigate to Node N (Instance of Class C)</text>
+
+  <line class="flow" x1="410" y1="65" x2="410" y2="90" marker-end="url(#a4)"/>
+
+  <!-- Step 2: C Declares nodeViewClass() -->
+  <rect class="fill" x="240" y="90" width="340" height="45"/>
+  <text x="255" y="116" class="b">C Declares nodeViewClass() Override?</text>
+
+  <!-- YES Branch Left -->
+  <line class="flow" x1="240" y1="112" x2="200" y2="112" marker-end="url(#a4)"/>
+  <rect class="box" x="20" y="90" width="180" height="45"/>
+  <text x="35" y="116" class="b">Use Declared Class</text>
+
+  <line class="flow" x1="410" y1="135" x2="410" y2="160" marker-end="url(#a4)"/>
+
+  <!-- Step 3: Look up C.name + "View" -->
+  <rect class="fill" x="240" y="160" width="340" height="45"/>
+  <text x="255" y="186" class="b">Look Up Class Name: C.name + "View"</text>
+
+  <line class="flow" x1="410" y1="205" x2="410" y2="230" marker-end="url(#a4)"/>
+
+  <!-- Step 4: Found Class? -->
+  <rect class="fill" x="240" y="230" width="340" height="45"/>
+  <text x="255" y="256" class="b">Found Matching View Class in Scope?</text>
+
+  <!-- YES Branch Right -->
+  <line class="flow" x1="580" y1="252" x2="620" y2="252" marker-end="url(#a4)"/>
+  <rect class="box" x="620" y="230" width="180" height="45"/>
+  <text x="635" y="256" class="b">Instantiate View Class</text>
+
+  <!-- NO Branch Left -->
+  <line class="flow" x1="240" y1="252" x2="200" y2="252" marker-end="url(#a4)"/>
+  <rect class="box" x="20" y="230" width="180" height="45"/>
+  <text x="35" y="256" class="b">Climb to Superclass</text>
+
+  <text x="410" y="305" text-anchor="middle" class="dim">Reaching the prototype root without a match falls back to SvNodeView (framework default view).</text>
 </svg>
