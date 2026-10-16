@@ -121,12 +121,18 @@
     }
 
     /**
-     * @description Shows a desktop notification via the Notification API
-     * (permission-gated by SvWebBrowserNotifications, which queues until
-     * granted). Suppressed while the document is visible unless
-     * info.onlyWhenHidden === false — visibility is UI state, so the
-     * decision lives here, never in the model.
-     * @param {Object} info - { title, body, tag, onlyWhenHidden }
+     * @description Shows a desktop notification. Suppressed while the
+     * document is visible unless info.onlyWhenHidden === false — visibility
+     * is UI state, so the decision lives here, never in the model.
+     *
+     * With permission granted and the framework service worker registered,
+     * it is shown through the worker (registration.showNotification): the
+     * only way on Android, where the page's Notification constructor throws;
+     * and a notification shown there can be closed later by its tag
+     * (closeUserNotifications), from this page or another of the app's.
+     * Otherwise it goes through the Notification API (SvWebBrowserNotifications,
+     * which queues until permission is granted).
+     * @param {Object} info - { title, body, tag, data, onlyWhenHidden }
      * @category User Attention
      */
     postUserNotification (info) {
@@ -134,6 +140,39 @@
         if (onlyWhenHidden && typeof document !== "undefined" && document.visibilityState === "visible") {
             return this;
         }
+        const registration = this.notificationRegistration();
+        if (registration) {
+            registration.showNotification(info.title || this.app().name(), this.workerNotificationOptions(info))
+                .catch(error => console.warn(this.logPrefix(), "showNotification failed:", error.message));
+            return this;
+        }
+        return this.postPageNotification(info);
+    }
+
+    /**
+     * @description The service worker registration to show notifications
+     * through, when there is one and permission is granted; else null.
+     * @returns {ServiceWorkerRegistration|null}
+     * @category User Attention
+     */
+    notificationRegistration () {
+        if (this.userNotificationsPermission() !== "granted" || typeof SvServiceWorker === "undefined") {
+            return null;
+        }
+        const registration = SvServiceWorker.shared().registration();
+        return (registration && registration.showNotification) ? registration : null;
+    }
+
+    workerNotificationOptions (info) {
+        const options = { body: info.body || "", icon: "/apple-touch-icon.png", data: info.data || {} };
+        if (info.tag) {
+            options.tag = info.tag; // a newer one with the same tag replaces it
+            options.renotify = true; // ...and still alerts
+        }
+        return options;
+    }
+
+    postPageNotification (info) {
         const note = SvWebBrowserNotifications.shared().newNote();
         note.setTitle(info.title || this.app().name());
         if (info.body) {
@@ -148,6 +187,24 @@
             }
         };
         note.tryToPost();
+        return this;
+    }
+
+    /**
+     * @description Closes the notifications showing under a tag (shown
+     * through the service worker) — a "your turn" once the turn has moved on,
+     * or once the player is back.
+     * @param {String} tag
+     * @returns {SvWebUserInterface}
+     * @category User Attention
+     */
+    closeUserNotifications (tag) {
+        const registration = this.notificationRegistration();
+        if (registration && registration.getNotifications) {
+            registration.getNotifications({ tag: tag })
+                .then(notes => notes.forEach(n => n.close()))
+                .catch(() => {});
+        }
         return this;
     }
 

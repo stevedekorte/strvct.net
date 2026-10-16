@@ -97,6 +97,17 @@
     }
 
     /**
+     * @description Closes the notifications showing under a tag. Base: none
+     * are shown, so nothing to close.
+     * @param {String} tag
+     * @returns {SvUserInterface}
+     * @category User Attention
+     */
+    closeUserNotifications (/*tag*/) {
+        return this;
+    }
+
+    /**
      * @description Current notification permission: "granted" | "denied" |
      * "default" | "unsupported".
      * @returns {string}

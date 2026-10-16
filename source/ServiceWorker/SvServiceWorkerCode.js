@@ -11,8 +11,13 @@
  * previous version's catch-all fetch handler answered any failed request
  * (wasm, streamed AI responses, images) with a cached index.html.
  *
- * Push handlers (self.addEventListener("push" | "notificationclick")) get
- * added here when the notifications feature lands.
+ * notificationclick: a tap on a notification the app showed through this
+ * worker (SvWebUserInterface.postUserNotification) brings the app forward —
+ * an open window is focused and told which notification it was; with none
+ * open, one is opened. The page decides what to do with it (the worker stays
+ * a dumb terminal: no app knowledge here).
+ *
+ * The push handler gets added here when push lands.
  */
 
 "use strict";
@@ -30,4 +35,19 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (/*event*/) => {
     console.log("[SvServiceWorker] activated");
+});
+
+self.addEventListener("notificationclick", (event) => {
+    event.notification.close();
+    const data = event.notification.data || {};
+    event.waitUntil(
+        self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
+            const open = windows.find(w => "focus" in w);
+            if (open) {
+                open.postMessage({ type: "svNotificationClick", tag: event.notification.tag, data: data });
+                return open.focus();
+            }
+            return self.clients.openWindow(data.url || "/"); // the app passes where to open
+        })
+    );
 });
