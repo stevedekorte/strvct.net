@@ -67,7 +67,7 @@
 - [Sync Scheduler](/docs/Notifications/Sync%20Scheduler/): Coalescing, deduplication, and event-loop-deferred method execution in SvSyncScheduler.
 - [Sync Scheduler](/docs/Notifications/Sync%20Scheduler/_unused/): Deferred, deduplicated method calls with priority ordering and loop detection.
 - [Persistence](/docs/Persistence/): Local storage, cloud sync, and blob management for object graphs.
-- [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/): Cloud persistence for object pools: one record per row, a version per pool, and a commit protocol.
+- [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/): Cloud persistence for object pools: one record per row, a version per pool, and an atomic commit protocol.
 - [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/_unused/): Cloud persistence for object pools: one record per row, a version per pool, and a commit protocol.
 - [Local and Cloud Blob Storage](/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/): SHA-256 content-addressable binary asset storage for images, audio, video, and files.
 - [Local and Cloud Blob Storage](/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/_unused/): Content-addressable storage for binary data like images, audio, and video.
@@ -89,7 +89,7 @@
 - [Home Assistant](/docs/Services/Home%20Assistant/): IoT device control via Home Assistant's WebSocket API.
 - [Media](/docs/Services/Media/): YouTube audio playback and browser speech recognition.
 - [Proxies](/docs/Services/Proxies/): Client-side proxy configuration for routing API calls through intermediary servers.
-- [Slots](/docs/Slots/): The property system: declaration, slot annotations, runtime type checks, and metadata consumers.
+- [Slots](/docs/Slots/): The property system: declaration, slot annotations, runtime type checks, lifecycle hooks, and metadata consumers.
 - [Slots](/docs/Slots/_unused/): The property system: declaration, annotations, and the most common slot settings.
 - [Technical Overview](/docs/Technical%20Overview/): High-level architecture, core design philosophy, and system-wide concepts of the Strvct framework.
 - [Technical Overview](/docs/Technical%20Overview/_unused/): High-level architecture and key concepts of the Strvct framework.

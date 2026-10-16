@@ -1,6 +1,6 @@
 # Slots
 
-The property system: declaration, slot annotations, runtime type checks, and metadata consumers.
+The property system: declaration, slot annotations, runtime type checks, lifecycle hooks, and metadata consumers.
 
 ## Overview
 
@@ -52,9 +52,13 @@ Slots are Strvct's property system. In traditional JavaScript objects, instance 
 
 ---
 
-## Declaration Syntax
+## Declaration Syntax & Slot Maps
 
-Slots are declared inside `initPrototypeSlots()` during class registration. Declaring a slot installs a private variable (`_slotName`), an auto-generated getter (`slotName()`), and an auto-generated setter (`setSlotName(value)`) on the prototype:
+Slots are declared inside `initPrototypeSlots()` during class registration. Declaring a slot installs a private variable (`_slotName`), an auto-generated getter (`slotName()`), and an auto-generated setter (`setSlotName(value)`) on the class prototype.
+
+Each class prototype maintains two slot maps:
+- **`slotsMap()`**: Map of slots defined directly on this specific class.
+- **`allSlotsMap()`**: Map of all slots from this class and every ancestor class, accumulated down the prototype chain.
 
 ```javascript
 (class Character extends SvStorableNode {
@@ -81,14 +85,63 @@ Slots are declared inside `initPrototypeSlots()` during class registration. Decl
 
 ---
 
-## Slot Types & Constructor Variants
+## Complete Annotation Setters Table
 
-| Constructor | Purpose |
-|---|---|
-| `newSlot(name, defaultValue)` | Standard slot constructor with auto getter and setter. |
-| `newWeakSlot(name, defaultValue)` | Creates a slot holding a `WeakRef`. Getter unwraps the reference; setter wraps it. Prevents retain cycles in parent-child back references. |
-| `newSubnodeFieldSlot(name, Class)` | Convenience constructor for subnode field properties. |
-| `overrideSlot(name, defaultValue)` | Overrides a slot inherited from a superclass, preserving metadata while changing the default value. |
+| Setter Method | Default | Purpose / Subsystem Consumer |
+|---|---|---|
+| `setSlotType("String")` | `"Object"` | Controls type validation, form field input type, and LLM JSON schema generation. |
+| `setShouldStoreSlot(true)` | `false` | Instructs `SvObjectPool` to include property in serialized IndexedDB record rows. |
+| `setIsInCloudRecord(true)` | `true` | When set to `false`, retains property in local IndexedDB but strips it from cloud commits. |
+| `setSyncsToView(true)` | `false` | Emits `"didChangeSlot"` notification via `SvNotificationCenter` upon mutation. |
+| `setCanEditInspection(true)` | `false` | Exposes field for direct editing in the modifier-click (Option+Click) Property Inspector. |
+| `setIsSubnodeField(true)` | `false` | Generates a navigable field tile (`SvField`) in the UI inspector hierarchy. |
+| `setFinalInitProto(ClassName)` | `null` | Auto-instantiates default child objects during `finalInit()` if absent from storage. |
+| `setValidValues([a, b])` | `null` | Restricts values to an allowed set, rendering dropdown options in the UI. |
+
+---
+
+## Slot Constructor Variants
+
+- **`newSlot(name, defaultValue)`**: Standard slot constructor with auto getter and setter.
+- **`newWeakSlot(name, defaultValue)`**: Creates a slot holding a `WeakRef`. The getter unwraps the weak reference automatically; the setter wraps new values in `WeakRef`. Prevents retain cycles in parent-child back references.
+- **`newSubnodeFieldSlot(name, Class)`**: Convenience constructor for navigable subnode field properties.
+- **`overrideSlot(name, defaultValue)`**: Overrides a slot inherited from a superclass, preserving metadata while changing the default value.
+
+---
+
+## Slot Change & Getter Hooks
+
+Auto-generated getters and setters execute optional lifecycle hooks on the owning object if defined:
+
+```javascript
+(class Character extends SvStorableNode {
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("inventory", null);
+            slot.setSlotType("Inventory");
+        }
+    }
+
+    // Optional lazy initialization hook called BEFORE getter returns value
+    willGetSlotInventory () {
+        if (!this._inventory) {
+            this.setInventory(Inventory.clone());
+        }
+    }
+
+    // Optional hook called BEFORE setter updates value
+    willUpdateSlotInventory (oldVal, newVal) {
+        console.log("Inventory changing from", oldVal, "to", newVal);
+    }
+
+    // Optional hook called AFTER setter updates value
+    didUpdateSlotInventory (oldVal, newVal) {
+        this.recalculateTotalWeight();
+    }
+
+}.initThisClass());
+```
 
 ---
 
@@ -102,3 +155,4 @@ Auto-generated setters enforce **runtime type checks** against `setSlotType()`. 
 
 - [Nodes](../Nodes/): Core `SvNode` domain abstraction.
 - [Implementation Overview](../../Implementation%20Overview/): Deep dive into slot specs and class lifecycles.
+- [Slot Change Hooks](../../Notifications/Slot%20Change%20Hooks/): Declarative setter hooks.

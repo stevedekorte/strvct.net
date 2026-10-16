@@ -385,7 +385,7 @@
     addAnchoredPaneForNode (node, frame) {
         const pane = SvBrowserView.clone();
         pane.setHandlesGlobalNavRequests(false); // embedded: the outer browser routes navigation into it
-        pane.setHidesBreadCrumbs(true); // its tab is its title
+        pane.setHidesBreadCrumbsAtRoot(true); // its tab is its title; below it, the crumbs are the way back
         pane.setAnchoredTabsHost(this.stackView()); // navigating or focusing in it makes it current
         pane.setIsRegisteredForFocus(true);
         pane.setNode(this.anchoredPaneTargetFor(node));

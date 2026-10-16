@@ -109,13 +109,13 @@
          */
         {
             /**
-             * @member {Boolean} hidesBreadCrumbs - the embedding view supplies
-             * this browser's title (an anchored-tabs pane: its tab is its
-             * title, and the outer browser's breadcrumbs follow the current
-             * pane), so the breadcrumb bar stays hidden
+             * @member {Boolean} hidesBreadCrumbsAtRoot - the embedding view
+             * supplies this browser's title (an anchored-tabs pane: its tab
+             * is its title), so the breadcrumb bar shows only once the
+             * browser is navigated below its root — then it is the way back
              * @category UI
              */
-            const slot = this.newSlot("hidesBreadCrumbs", false);
+            const slot = this.newSlot("hidesBreadCrumbsAtRoot", false);
             slot.setSlotType("Boolean");
         }
         {
@@ -350,9 +350,9 @@
      * @category UI
      */
     syncBreadCrumbsVisibilityHint () {
-        if (this.hidesBreadCrumbs()) {
+        if (this.hidesBreadCrumbsAtRoot()) {
             this.watchBreadCrumbsHintOwner(null);
-            this.breadCrumbsView().setIsDisplayHidden(true);
+            this.applyBreadCrumbsVisible(this.isBelowRoot());
             return this;
         }
         if (!this.handlesGlobalNavRequests()) {
@@ -365,6 +365,16 @@
         const wantsCrumbs = owner ? (owner.nodeWantsBreadCrumbs() !== false) : true;
         this.applyBreadCrumbsVisible(wantsCrumbs);
         return this;
+    }
+
+    /**
+     * @description Whether something below the root is selected: the path
+     * holds the root's node, then each selection after it.
+     * @returns {Boolean}
+     * @category UI
+     */
+    isBelowRoot () {
+        return this.selectedNodePathArray().length > 1;
     }
 
     /**
@@ -394,6 +404,9 @@
      * @category UI
      */
     applyBreadCrumbsVisible (visible) {
+        if (this._appliedCrumbsVisible === undefined && !visible) {
+            return this.hideBreadCrumbsNow(); // a new browser starts without them, no motion
+        }
         if (this._appliedCrumbsVisible === undefined) {
             this._appliedCrumbsVisible = true;
         }
@@ -430,6 +443,24 @@
                 }
             }, 16, "crumbsMotion");
         }
+        return this;
+    }
+
+    /**
+     * @description Hides the breadcrumb bar at once, as the end state of
+     * applyBreadCrumbsVisible(false) — zero height, not display none — so a
+     * later applyBreadCrumbsVisible(true) slides it in.
+     * @returns {SvBrowserView}
+     * @category UI
+     */
+    hideBreadCrumbsNow () {
+        this._appliedCrumbsVisible = false;
+        const crumbs = this.breadCrumbsView();
+        crumbs.setOverflowY("hidden");
+        crumbs.setMinHeight("0px");
+        crumbs.setMaxHeight("0px");
+        crumbs.setOpacity(0);
+        crumbs.setCssProperty("border-bottom-width", "0px");
         return this;
     }
 
