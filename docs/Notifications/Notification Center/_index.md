@@ -106,7 +106,7 @@ obs.setSendName("handleNodeUpdate");
 
 ## Dual WeakMap Indexing & Memory Safety
 
-To ensure zero performance impact as domain graphs grow, `SvNotificationCenter` maintains two internal index maps:
+To minimize dispatch overhead as domain graphs grow, `SvNotificationCenter` maintains two internal index maps:
 1. `_senderToObservations`: A `WeakMap` mapping senders to their registered observations.
 2. `_nameToObservations`: A `WeakMap` mapping notification names to observations.
 
