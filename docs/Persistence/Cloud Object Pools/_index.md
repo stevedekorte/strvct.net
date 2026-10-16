@@ -98,14 +98,17 @@ Scoped pool IDs ensure that two accounts cloning the same template document neve
 
 ## Record Row Columns (`SvRecordRow`)
 
-| Column | Root Row (`objectId == poolId`) | Child Row | Written By |
+| Column | Root Row (`objectId == poolId`) | Child Row (`objectId != poolId`) | Written By |
 |---|---|---|---|
-| `poolId`, `objectId` | Pool ID &amp; root object ID | Pool ID &amp; child object ID | Client |
+| `poolId` | The root object's `puuid` (identifies the pool) | The enclosing pool's `poolId` | Client |
+| `objectId` | The root object's `puuid` (`objectId == poolId`) | The child object's own distinct `puuid` (`objectId != poolId`) | Client |
 | `parentId`, `orderKey` | Folder ID &amp; fractional sort key | Sort key for windowed collections | Client |
 | `payloadJson` | Root object's slot record | Child object's slot record | Client (commit payload) |
 | `version` | Monotonic content sequence number | — | Server (mirrored down) |
 | `modifiedVersion`, `isDeleted` | Version that last updated row | Last modified version; tombstone flag | Server (mirrored down) |
 | `scopeId`, `state`, `owner` | Sharing boundary &amp; lifecycle state | `scopeId` only | Server |
+
+> **Identity Rule:** For the **Root Row**, `objectId` is identical to `poolId` (`objectId == poolId`), identifying the entire document pool and carrying server-owned metadata (`version`, `state`, `owner`). For **Child Rows**, `objectId` is the child object's own unique `puuid`, while `poolId` identifies the parent pool it belongs to (`objectId != poolId`).
 
 ### Local-Only Slots:
 A stored slot can be kept exclusively on the device: `slot.setIsInCloudRecord(false)` keeps it in the local IndexedDB record row but strips it when generating cloud commit payloads (`SvObjectPool.cloudPayloadFor`). Local view settings, scroll positions, and device sync timestamps use this mechanism to prevent triggering unnecessary cloud commits.
