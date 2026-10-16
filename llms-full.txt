@@ -13282,11 +13282,9 @@ Each class prototype maintains two slot maps:
             slot.setCanEditInspection(true); // Editable field in Property Inspector
         }
         {
-            const slot = this.newSlot("level", 1);
-            slot.setSlotType("Number");
-            slot.setShouldStoreSlot(true);
+            const slot = this.newSlot("ownerNode", null);
+            slot.setIsWeak(true);            // WeakRef memory safety
             slot.setSyncsToView(true);
-            slot.setCanEditInspection(true);
         }
     }
 
@@ -13300,13 +13298,21 @@ Each class prototype maintains two slot maps:
 | Setter Method | Default | Purpose / Subsystem Consumer |
 |---|---|---|
 | `setSlotType("String")` | `"Object"` | Controls type validation, form field input type, and LLM JSON schema generation. |
+| `setIsWeak(true)` | `false` | Holds value via `WeakRef` to prevent retain cycles in parent/owner back references. |
+| `setIsLazy(true)` | `false` | Defers initialization or loading until the first getter call. |
 | `setShouldStoreSlot(true)` | `false` | Instructs `SvObjectPool` to include property in serialized IndexedDB record rows. |
 | `setIsInCloudRecord(true)` | `true` | When set to `false`, retains property in local IndexedDB but strips it from cloud commits. |
 | `setSyncsToView(true)` | `false` | Emits `"didChangeSlot"` notification via `SvNotificationCenter` upon mutation. |
 | `setCanEditInspection(true)` | `false` | Exposes field for direct editing in the modifier-click (Option+Click) Property Inspector. |
-| `setIsSubnodeField(true)` | `false` | Generates a navigable field tile (`SvField`) in the UI inspector hierarchy. |
+| `setIsSubnode(true)` | `null` | Adds slot value automatically to parent's `subnodes` array during `finalInit()`. |
+| `setIsSubnodeField(true)` | `null` | Generates a navigable field tile (`SvField`) in the UI inspector hierarchy. |
 | `setFinalInitProto(ClassName)` | `null` | Auto-instantiates default child objects during `finalInit()` if absent from storage. |
+| `setIsBlobString(true)` | `false` | Long text slot whose payload spills to a SHA-256 text blob in storage. |
+| `setIsPromiseWrapped(true)` | `false` | Auto-wraps getter return values in a Promise for async interface operations. |
+| `setDuplicateOp("duplicate")` | `"nop"` | Cloning policy when duplicating nodes (`"nop"`, `"copyValue"`, `"duplicate"`). |
 | `setValidValues([a, b])` | `null` | Restricts values to an allowed set, rendering dropdown options in the UI. |
+| `setAllowsNullValue(true)` | `false` | Relaxes runtime validation to permit `null` slot values. |
+| `setTranslationContext("ui")` | `null` | Declares i18n category for auto-translating string values. |
 
 ---
 
