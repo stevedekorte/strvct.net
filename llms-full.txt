@@ -113,6 +113,8 @@ Declare domain models as JavaScript classes. Properties are declared as **slots*
 - docs/Comparing to React
 - docs/Implementation Overview
 - docs/Naked Objects
+- docs/Services/AI Services
+- Timeline
 - Example App
 - FAQ
 - [GitHub Repository](https://github.com/stevedekorte/strvct.net) — Source code, issues, and contributions.
