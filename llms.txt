@@ -67,11 +67,11 @@
 - [Sync Scheduler](/docs/Notifications/Sync%20Scheduler/): Coalescing, deduplication, and event-loop-deferred method execution in SvSyncScheduler.
 - [Sync Scheduler](/docs/Notifications/Sync%20Scheduler/_unused/): Deferred, deduplicated method calls with priority ordering and loop detection.
 - [Persistence](/docs/Persistence/): Local storage, cloud sync, and blob management for object graphs.
-- [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/): Versioned cloud persistence, delta synchronizations, and deterministic conflict resolution for Strvct object pools.
+- [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/): Cloud persistence for object pools: one record per row, a version per pool, and a commit protocol.
 - [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/_unused/): Cloud persistence for object pools: one record per row, a version per pool, and a commit protocol.
 - [Local and Cloud Blob Storage](/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/): SHA-256 content-addressable binary asset storage for images, audio, video, and files.
 - [Local and Cloud Blob Storage](/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/_unused/): Content-addressable storage for binary data like images, audio, and video.
-- [Local Object Pools](/docs/Persistence/Local%20Object%20Pools/): IndexedDB-backed persistence for domain object graphs using dirty tracking, local object pools, and atomic commits.
+- [Local Object Pools](/docs/Persistence/Local%20Object%20Pools/): IndexedDB-backed persistence for domain object graphs using dirty tracking, the local record store (SvLocalRecordStore), and atomic event-loop commits.
 - [Local Object Pools](/docs/Persistence/Local%20Object%20Pools/_unused/): IndexedDB-backed persistence for object graphs using dirty tracking and automatic serialization.
 - [Programming Idioms](/docs/Programming%20Idioms/): Recurring patterns and conventions for writing STRVCT code.
 - [Async Patterns](/docs/Programming%20Idioms/Async%20Patterns/): Extended promises, serial and parallel iteration, and concurrency control.

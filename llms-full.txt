@@ -8890,13 +8890,15 @@ Source: /docs/Persistence/Cloud%20Object%20Pools/
 
 # Cloud Object Pools
 
-Versioned cloud persistence, delta synchronizations, and deterministic conflict resolution for Strvct object pools.
+Cloud persistence for object pools: one record per row, a version per pool, and a commit protocol.
 
 ## Overview
 
-While local object pools store data in IndexedDB for instant, zero-latency local-first execution, **Cloud Object Pools** (`SvCloudRecordStore`) synchronize object pool records across devices and cloud stores.
+Every cloud document—a game session, a character sheet, a campaign catalog—is an **Object Pool**: a graph of records reachable from a single root record (`objectId == poolId`).
 
-<svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
+Locally, pool rows live in `SvLocalRecordStore` (IndexedDB). In the cloud, the **exact same rows** live in a cloud records collection (`SvCloudRecordStore`). There is no second format: a single mapper converts objects to rows on both sides, making cloud sync a simple operation of reading rows from one store and writing them into the other.
+
+<svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -8906,55 +8908,100 @@ While local object pools store data in IndexedDB for instant, zero-latency local
     .flow { stroke: #111; stroke-width: 1; fill: none; }
   </style>
   <defs>
-    <marker id="acp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <marker id="cop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
 
+  <!-- 3 Columns: Local, Cloud Record Store, Cloud Storage (w: 240, h: 50) -->
   <rect class="box" x="25" y="20" width="240" height="50"/>
-  <text x="40" y="40" class="b">Local IndexedDB Pool</text>
-  <text x="40" y="58" class="dim">Dirty nodes &amp; local version</text>
+  <text x="40" y="40" class="b">SvLocalRecordStore</text>
+  <text x="40" y="58" class="dim">Local IndexedDB rows</text>
 
-  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#acp)"/>
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#cop)"/>
 
   <rect class="fill" x="290" y="20" width="240" height="50"/>
   <text x="305" y="40" class="b">SvCloudRecordStore</text>
-  <text x="305" y="58" class="dim">Computes modified row deltas</text>
+  <text x="305" y="58" class="dim">Reads changes &amp; commits deltas</text>
 
-  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#acp)"/>
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#cop)"/>
 
   <rect class="box" x="555" y="20" width="240" height="50"/>
-  <text x="570" y="40" class="b">Cloud Storage / Backend</text>
-  <text x="570" y="58" class="dim">Versioned atomic pool commits</text>
+  <text x="570" y="40" class="b">Cloud Records Collection</text>
+  <text x="570" y="58" class="dim">One cloud document per row</text>
 
-  <text x="410" y="110" text-anchor="middle" class="dim">Shared row format across local IndexedDB and cloud backends enables zero-transform delta synchronization.</text>
+  <text x="410" y="110" text-anchor="middle" class="dim">Commits check expected baseVersion and apply row deltas atomically without document locks.</text>
 </svg>
 
----
-
-## Unified Record Format & Backend Protocol
-
-Strvct uses the exact same record row format locally and in the cloud. A cloud record store implements four fundamental operations:
-
-1. **`open(poolId)`**: Opens or initializes a cloud object pool.
-2. **`changes(poolId, sinceVersion)`**: Retrieves modified record rows updated since a specific pool version number.
-3. **`children(poolId, parentPuuid)`**: Fetches child node records for lazy loading large subtrees.
-4. **`commit(poolId, expectedVersion, deltaRows)`**: Posts an atomic batch of modified rows.
+### Core Rules of the Record Cloud:
+1. **Root Row Identity:** A pool's ID is its root object's `puuid` (`objectId == poolId`).
+2. **Server-Owned State:** The root row (and only the root row) carries server-owned columns: `version`, `state`, `parentId`, `orderKey`, and `owner`.
+3. **Folder Pools:** Folders are pools whose rows list placed children via root `parentId` references without storing explicit child lists.
+4. **Far References (`{ "**": poolId }`):** The only way to point across pool boundaries. Following a far reference is asynchronous.
+5. **Atomic Commit Protocol:** Edits reach the cloud through a single commit protocol that compares base versions and applies row deltas.
 
 ---
 
-## Versioning & Conflict Resolution
+## Record Row Columns (`SvRecordRow`)
 
-- **Monotonic Pool Versions:** Every cloud object pool maintains an incrementing integer version number (`poolVersion`).
-- **Delta Transmissions:** Commits send only records modified since the last acknowledged cloud version, minimizing network payload sizes.
-- **Optimistic Concurrency Control:** When posting a commit, `expectedVersion` must match the server's current pool version. If another client committed changes in the interim, the commit is rejected, prompting the client to pull remote changes and merge before re-committing.
+| Column | Root Row (`objectId == poolId`) | Child Row | Written By |
+|---|---|---|---|
+| `poolId`, `objectId` | Identifies pool and root object | Identifies pool and child object | Client |
+| `parentId`, `orderKey` | Identifies folder placement & fractional sort order | Fractional sort order for windowed collections | Client |
+| `payloadJson` | Root object's slot record | Child object's slot record | Client (commit payload) |
+| `version` | Monotonic content sequence number | — | Server (mirrored down) |
+| `modifiedVersion`, `isDeleted` | Version that last updated row | Last modified version; tombstone flag | Server (mirrored down) |
+| `scopeId`, `state`, `owner` | Sharing boundary & lifecycle state | `scopeId` only | Server |
+
+---
+
+## The Record Store Protocol (`SvRecordStoreProtocol`)
+
+Every record store implementation conforms to `SvRecordStoreProtocol`:
+
+- **`asyncOpen(poolId)`**: Returns `{ root, records, version, state }` for the entire pool.
+- **`asyncReadChanges(poolId, sinceVersion)`**: Returns `{ rows, tombstones, version, reloadRequired }` updated after `sinceVersion`.
+- **`asyncChildren(nodeId, range)`**: Returns root rows placed under `nodeId` ordered by `(orderKey, objectId)`.
+- **`asyncCommit({ poolId, baseVersion, requestId, writes, deletes })`**: Posts an atomic transaction. Returns `{ status: "committed", version }`, `"conflict"`, or `"refused"`.
+
+---
+
+## Commit Mechanics & Conflict Resolution
+
+Edits are saved locally first at the end of the event loop, and sent to the cloud via `SvObjectPool.asyncCommitToCloud()`:
+
+1. **Compute Delta:** Flushes local writes and computes rows changed since the last synced snapshot (`cloudChanges()`).
+2. **Post Commit:** Sends modified rows with the local root's `version` as `baseVersion` and a unique `requestId`.
+3. **Optimistic Concurrency Control:**
+   - **`committed`**: The server's new `version` is stamped on local rows, and the snapshot advances.
+   - **`conflict`**: Another client committed first. The local pool reloads remote changes (`cloud wins`).
+   - **`refused`**: The commit violated a rule (e.g. attempting to modify server-owned columns).
+
+---
+
+## Staged Commits for Large Payload Transactions
+
+For commits exceeding server transaction limits (`maxOpsPerCommit()` 450 ops or 4MB payload), `SvStagedRecordCommit` stages the transaction:
+1. **Begin:** Reserves the next version via a compare-and-set operation.
+2. **Batch Writes:** Pushes row updates in sequential batches.
+3. **Finalize:** Commits the root row, version, and request receipt in a final transaction.
+
+If a stage is abandoned mid-way, the next access to the pool automatically rolls back incomplete batches from saved pre-images.
+
+---
+
+## Folders & Scope Root Listings (`SvCloudFolder`)
+
+Folders (`SvCloudFolder`) manage collections of document pools via fractional order keys (`SvOrderKey`):
+- **Root Row Scope Listing:** A folder queries scope root rows (`asyncScopeRootRows(scopeId)`). Each root row contains enough metadata (title, subtitle, thumbnail hash) to display placeholder tiles without opening child pools.
+- **Tombstone Queues:** Deleting a document queues a pending delete descriptor (`pendingCloudDeletes`) that survives reloads until confirmed by the server.
 
 ---
 
 ## Related Guides
 
 - [Local Object Pools](../Local%20Object%20Pools/): Local IndexedDB persistence engine.
-- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): SHA-256 binary asset storage.
+- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): SHA-256 content-addressable binary asset storage.
 
 
 ---
@@ -9513,11 +9560,20 @@ Source: /docs/Persistence/Local%20Object%20Pools/
 
 # Local Object Pools
 
-IndexedDB-backed persistence for domain object graphs using dirty tracking, local object pools, and atomic commits.
+IndexedDB-backed persistence for domain object graphs using dirty tracking, the local record store (`SvLocalRecordStore`), and atomic event-loop commits.
 
 ## Overview
 
-Strvct's persistence engine is **local-first**: application state is stored directly in the browser's IndexedDB. Rather than requiring developers to write explicit SQL/ORM queries or API save calls, the framework monitors slot mutations automatically and commits dirty objects at the end of each browser event loop.
+Strvct's persistence engine is **local-first**: application state is stored directly in the browser's IndexedDB. Rather than requiring developers to write explicit SQL/ORM queries or API save calls, the framework monitors slot mutations automatically, serializes dirty domain objects into **Record Rows** (`SvRecordRow`), and commits them to IndexedDB at the end of each browser event loop.
+
+```
++-------------------------------------------------------------------------+
+|                       Local Record Store Architecture                   |
++-------------------------------------------------------------------------+
+|  1. Slot Setter  -->  2. Object Pool Dirty Set  -->  3. Serializer      |
+|  4. SvRecordRow  -->  5. SvLocalRecordStore     -->  6. IndexedDB Commit |
++-------------------------------------------------------------------------+
+```
 
 <svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -9534,104 +9590,96 @@ Strvct's persistence engine is **local-first**: application state is stored dire
     </marker>
   </defs>
 
-  <!-- 4 Uniform Boxes (w: 170, h: 50) -->
-  <rect class="box" x="20" y="20" width="170" height="50"/>
-  <text x="35" y="40" class="b">SvStorableNode</text>
-  <text x="35" y="58" class="dim">Slot setter marks dirty</text>
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">SvStorableNode</text>
+  <text x="40" y="58" class="dim">Slot setter marks dirty</text>
 
-  <line class="flow" x1="190" y1="45" x2="220" y2="45" marker-end="url(#alp)"/>
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#alp)"/>
 
-  <rect class="fill" x="220" y="20" width="170" height="50"/>
-  <text x="235" y="40" class="b">SvObjectPool</text>
-  <text x="235" y="58" class="dim">In-memory dirty cache</text>
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">SvObjectPool &amp; Row Serializer</text>
+  <text x="305" y="58" class="dim">Encapsulates state as SvRecordRow</text>
 
-  <line class="flow" x1="390" y1="45" x2="420" y2="45" marker-end="url(#alp)"/>
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#alp)"/>
 
-  <rect class="fill" x="420" y="20" width="170" height="50"/>
-  <text x="435" y="40" class="b">SvLocalRecordStore</text>
-  <text x="435" y="58" class="dim">JSON row serializer</text>
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">SvLocalRecordStore</text>
+  <text x="570" y="58" class="dim">Atomic IndexedDB transaction</text>
 
-  <line class="flow" x1="590" y1="45" x2="620" y2="45" marker-end="url(#alp)"/>
-
-  <rect class="box" x="620" y="20" width="180" height="50"/>
-  <text x="635" y="40" class="b">IndexedDB</text>
-  <text x="635" y="58" class="dim">Atomic key-value store</text>
-
-  <!-- Footnote -->
   <text x="410" y="110" text-anchor="middle" class="dim">Mutations post dirty-node notifications; SvObjectPool batches write operations into an atomic IndexedDB transaction at the end of the event loop.</text>
 </svg>
 
 ---
 
-## The Object Pool Concept (`SvObjectPool`)
+## The Record Store Pattern (`SvLocalRecordStore`)
 
-In Strvct, persistence is organized into **Object Pools**. Each document or aggregate root object owns a pool identified by a `poolId`:
+Strvct organizes persistence around the **Record Store pattern**. Instead of legacy JSON snapshots with write-ahead log (`WAL`) files, every domain object is serialized as an independent record row stored in `SvLocalRecordStore`:
 
-- **Pool Isolation:** All domain objects within a document belong to the same `SvObjectPool`.
-- **In-Pool References (`{ "*": puuid }`):** Object relationships within the same pool store local persistent UUID pointers.
-- **Cross-Pool References (`{ "**": poolId }`):** References to objects in other document pools store external pool pointers, loaded asynchronously on demand.
+- **Pool Root (`objectId == poolId`):** The primary object of a document owns the pool. Its `puuid` serves as `poolId`.
+- **Near References (`{ "*": puuid }`):** References between objects within the same pool store local persistent UUID pointers.
+- **Far References (`{ "**": poolId }`):** Pointers to objects in other document pools store external pool IDs and are loaded asynchronously on demand.
 
-### Record Row Schema:
-Every object in a pool serializes into a clean JSON record row:
+### Record Row Schema (`SvRecordRow`):
 
 ```json
 {
-    "poolId": "p-10023",
-    "puuid": "u-88491",
-    "type": "Character",
-    "slots": {
-        "name": "Thorin Oakenshield",
-        "level": 12,
-        "inventory": { "*": "u-99210" }
+    "poolId": "u-88491",
+    "objectId": "u-88491",
+    "parentId": "folder-12",
+    "orderKey": "a0",
+    "payloadJson": {
+        "type": "Character",
+        "slots": {
+            "name": "Thorin Oakenshield",
+            "level": 12,
+            "inventory": { "*": "u-99210" }
+        }
     }
 }
 ```
 
 ---
 
-## Dirty Tracking & Event Loop Commits
+## Local-Only Slots
 
-Persistence operates with zero manual `save()` calls:
-
-1. **Setter Trigger:** Calling a slot setter marked `setShouldStoreSlot(true)` updates slot state and invokes `didMutate()`.
-2. **Dirty Set Registration:** `didMutate()` notifies the node's `SvObjectPool`, adding the object's `puuid` to the in-memory dirty set.
-3. **Coalesced Transaction:** At the end of the browser event loop, `SvObjectPool` iterates over dirty objects, serializes them to JSON records, and writes them to IndexedDB in a single **atomic transaction**.
+A slot marked for persistence can be kept on the device without being synced to cloud storage:
 
 ```javascript
-(class Character extends SvStorableNode {
-
-    initPrototypeSlots () {
-        {
-            const slot = this.newSlot("name", "");
-            slot.setSlotType("String");
-            slot.setShouldStoreSlot(true); // Automatically registers with object pool dirty tracking
-        }
-    }
-
-    initPrototype () {
-        this.setShouldStore(true);
-    }
-
-}.initThisClass());
+slot.setIsInCloudRecord(false);
 ```
+
+Local-only slots are serialized into the local IndexedDB record row payload, but stripped when generating cloud commit payloads (`SvObjectPool.cloudPayloadFor`). Device-specific state, local view settings, and sync timestamps use this mechanism to prevent triggering unnecessary cloud commits.
 
 ---
 
-## Garbage Collection & Object Pool Lifecycle
+## Garbage Collection
 
-`SvObjectPool` automatically manages local storage cleanup:
+`SvObjectPool` automatically manages local storage cleanup using mark-and-sweep tracing:
 
-1. **Mark & Sweep Tracing:** The object pool traces reachable node references starting from the pool root object.
-2. **Unreachable Deletion:** Stored records that are no longer reachable from the root object are automatically purged from IndexedDB during pool maintenance passes.
-3. **Zero Dangling Pointers:** Deleting a parent node cleans up its child subnode subtree without leaving orphan records in local storage.
+1. **Mark Phase:** Traces reachable node references starting from the pool's root object (`objectId == poolId`), following `{ "*": puuid }` pointers.
+2. **Sweep Phase:** Any record in IndexedDB belonging to the `poolId` that was not visited during the trace is purged.
+
+---
+
+## Class Name Conversions (`ClassRenames.json`)
+
+When refactoring or renaming a domain class in JavaScript, existing stored IndexedDB records contain the old class name. Strvct handles class migrations via `ClassRenames.json`:
+
+```json
+{
+    "OldCharacterClass": "Character"
+}
+```
+
+During deserialization, `SvLocalRecordStore` consults the conversion map, instantiating the new class while preserving existing data on disk.
 
 ---
 
 ## Related Guides
 
-- [Cloud Object Pools](../Cloud%20Object%20Pools/): Versioned cloud synchronization and conflict detection.
-- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): SHA-256 content-addressable binary asset storage.
-- [Technical Overview](../../Technical%20Overview/): High-level system architecture and local-first philosophy.
+- [Cloud Object Pools](../Cloud%20Object%20Pools/): Versioned cloud record store synchronization and commits.
+- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): Content-addressable binary asset storage.
+- [Technical Overview](../../Technical%20Overview/): High-level architecture and local-first triad.
 
 
 ---

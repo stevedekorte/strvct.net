@@ -1,10 +1,19 @@
 # Local Object Pools
 
-IndexedDB-backed persistence for domain object graphs using dirty tracking, local object pools, and atomic commits.
+IndexedDB-backed persistence for domain object graphs using dirty tracking, the local record store (`SvLocalRecordStore`), and atomic event-loop commits.
 
 ## Overview
 
-Strvct's persistence engine is **local-first**: application state is stored directly in the browser's IndexedDB. Rather than requiring developers to write explicit SQL/ORM queries or API save calls, the framework monitors slot mutations automatically and commits dirty objects at the end of each browser event loop.
+Strvct's persistence engine is **local-first**: application state is stored directly in the browser's IndexedDB. Rather than requiring developers to write explicit SQL/ORM queries or API save calls, the framework monitors slot mutations automatically, serializes dirty domain objects into **Record Rows** (`SvRecordRow`), and commits them to IndexedDB at the end of each browser event loop.
+
+```
++-------------------------------------------------------------------------+
+|                       Local Record Store Architecture                   |
++-------------------------------------------------------------------------+
+|  1. Slot Setter  -->  2. Object Pool Dirty Set  -->  3. Serializer      |
+|  4. SvRecordRow  -->  5. SvLocalRecordStore     -->  6. IndexedDB Commit |
++-------------------------------------------------------------------------+
+```
 
 <svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -21,101 +30,93 @@ Strvct's persistence engine is **local-first**: application state is stored dire
     </marker>
   </defs>
 
-  <!-- 4 Uniform Boxes (w: 170, h: 50) -->
-  <rect class="box" x="20" y="20" width="170" height="50"/>
-  <text x="35" y="40" class="b">SvStorableNode</text>
-  <text x="35" y="58" class="dim">Slot setter marks dirty</text>
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">SvStorableNode</text>
+  <text x="40" y="58" class="dim">Slot setter marks dirty</text>
 
-  <line class="flow" x1="190" y1="45" x2="220" y2="45" marker-end="url(#alp)"/>
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#alp)"/>
 
-  <rect class="fill" x="220" y="20" width="170" height="50"/>
-  <text x="235" y="40" class="b">SvObjectPool</text>
-  <text x="235" y="58" class="dim">In-memory dirty cache</text>
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">SvObjectPool &amp; Row Serializer</text>
+  <text x="305" y="58" class="dim">Encapsulates state as SvRecordRow</text>
 
-  <line class="flow" x1="390" y1="45" x2="420" y2="45" marker-end="url(#alp)"/>
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#alp)"/>
 
-  <rect class="fill" x="420" y="20" width="170" height="50"/>
-  <text x="435" y="40" class="b">SvLocalRecordStore</text>
-  <text x="435" y="58" class="dim">JSON row serializer</text>
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">SvLocalRecordStore</text>
+  <text x="570" y="58" class="dim">Atomic IndexedDB transaction</text>
 
-  <line class="flow" x1="590" y1="45" x2="620" y2="45" marker-end="url(#alp)"/>
-
-  <rect class="box" x="620" y="20" width="180" height="50"/>
-  <text x="635" y="40" class="b">IndexedDB</text>
-  <text x="635" y="58" class="dim">Atomic key-value store</text>
-
-  <!-- Footnote -->
   <text x="410" y="110" text-anchor="middle" class="dim">Mutations post dirty-node notifications; SvObjectPool batches write operations into an atomic IndexedDB transaction at the end of the event loop.</text>
 </svg>
 
 ---
 
-## The Object Pool Concept (`SvObjectPool`)
+## The Record Store Pattern (`SvLocalRecordStore`)
 
-In Strvct, persistence is organized into **Object Pools**. Each document or aggregate root object owns a pool identified by a `poolId`:
+Strvct organizes persistence around the **Record Store pattern**. Instead of legacy JSON snapshots with write-ahead log (`WAL`) files, every domain object is serialized as an independent record row stored in `SvLocalRecordStore`:
 
-- **Pool Isolation:** All domain objects within a document belong to the same `SvObjectPool`.
-- **In-Pool References (`{ "*": puuid }`):** Object relationships within the same pool store local persistent UUID pointers.
-- **Cross-Pool References (`{ "**": poolId }`):** References to objects in other document pools store external pool pointers, loaded asynchronously on demand.
+- **Pool Root (`objectId == poolId`):** The primary object of a document owns the pool. Its `puuid` serves as `poolId`.
+- **Near References (`{ "*": puuid }`):** References between objects within the same pool store local persistent UUID pointers.
+- **Far References (`{ "**": poolId }`):** Pointers to objects in other document pools store external pool IDs and are loaded asynchronously on demand.
 
-### Record Row Schema:
-Every object in a pool serializes into a clean JSON record row:
+### Record Row Schema (`SvRecordRow`):
 
 ```json
 {
-    "poolId": "p-10023",
-    "puuid": "u-88491",
-    "type": "Character",
-    "slots": {
-        "name": "Thorin Oakenshield",
-        "level": 12,
-        "inventory": { "*": "u-99210" }
+    "poolId": "u-88491",
+    "objectId": "u-88491",
+    "parentId": "folder-12",
+    "orderKey": "a0",
+    "payloadJson": {
+        "type": "Character",
+        "slots": {
+            "name": "Thorin Oakenshield",
+            "level": 12,
+            "inventory": { "*": "u-99210" }
+        }
     }
 }
 ```
 
 ---
 
-## Dirty Tracking & Event Loop Commits
+## Local-Only Slots
 
-Persistence operates with zero manual `save()` calls:
-
-1. **Setter Trigger:** Calling a slot setter marked `setShouldStoreSlot(true)` updates slot state and invokes `didMutate()`.
-2. **Dirty Set Registration:** `didMutate()` notifies the node's `SvObjectPool`, adding the object's `puuid` to the in-memory dirty set.
-3. **Coalesced Transaction:** At the end of the browser event loop, `SvObjectPool` iterates over dirty objects, serializes them to JSON records, and writes them to IndexedDB in a single **atomic transaction**.
+A slot marked for persistence can be kept on the device without being synced to cloud storage:
 
 ```javascript
-(class Character extends SvStorableNode {
-
-    initPrototypeSlots () {
-        {
-            const slot = this.newSlot("name", "");
-            slot.setSlotType("String");
-            slot.setShouldStoreSlot(true); // Automatically registers with object pool dirty tracking
-        }
-    }
-
-    initPrototype () {
-        this.setShouldStore(true);
-    }
-
-}.initThisClass());
+slot.setIsInCloudRecord(false);
 ```
+
+Local-only slots are serialized into the local IndexedDB record row payload, but stripped when generating cloud commit payloads (`SvObjectPool.cloudPayloadFor`). Device-specific state, local view settings, and sync timestamps use this mechanism to prevent triggering unnecessary cloud commits.
 
 ---
 
-## Garbage Collection & Object Pool Lifecycle
+## Garbage Collection
 
-`SvObjectPool` automatically manages local storage cleanup:
+`SvObjectPool` automatically manages local storage cleanup using mark-and-sweep tracing:
 
-1. **Mark & Sweep Tracing:** The object pool traces reachable node references starting from the pool root object.
-2. **Unreachable Deletion:** Stored records that are no longer reachable from the root object are automatically purged from IndexedDB during pool maintenance passes.
-3. **Zero Dangling Pointers:** Deleting a parent node cleans up its child subnode subtree without leaving orphan records in local storage.
+1. **Mark Phase:** Traces reachable node references starting from the pool's root object (`objectId == poolId`), following `{ "*": puuid }` pointers.
+2. **Sweep Phase:** Any record in IndexedDB belonging to the `poolId` that was not visited during the trace is purged.
+
+---
+
+## Class Name Conversions (`ClassRenames.json`)
+
+When refactoring or renaming a domain class in JavaScript, existing stored IndexedDB records contain the old class name. Strvct handles class migrations via `ClassRenames.json`:
+
+```json
+{
+    "OldCharacterClass": "Character"
+}
+```
+
+During deserialization, `SvLocalRecordStore` consults the conversion map, instantiating the new class while preserving existing data on disk.
 
 ---
 
 ## Related Guides
 
-- [Cloud Object Pools](../Cloud%20Object%20Pools/): Versioned cloud synchronization and conflict detection.
-- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): SHA-256 content-addressable binary asset storage.
-- [Technical Overview](../../Technical%20Overview/): High-level system architecture and local-first philosophy.
+- [Cloud Object Pools](../Cloud%20Object%20Pools/): Versioned cloud record store synchronization and commits.
+- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): Content-addressable binary asset storage.
+- [Technical Overview](../../Technical%20Overview/): High-level architecture and local-first triad.
