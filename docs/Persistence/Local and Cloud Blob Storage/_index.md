@@ -57,5 +57,5 @@ Binary assets are stored using **Content-Addressable Storage (CAS)**:
 
 ## Related Guides
 
-- [Local Object Pools](../Local%20Object%20Pools/): Domain object graph persistence.
-- [Cloud Object Pools](../Cloud%20Object%20Pools/): Cloud record synchronization.
+- [Local Object Pools](../Local%20Object%20Pools/index.html): Domain object graph persistence.
+- [Cloud Object Pools](../Cloud%20Object%20Pools/index.html): Cloud record synchronization.

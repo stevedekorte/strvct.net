@@ -153,6 +153,6 @@ Auto-generated setters enforce **runtime type checks** against `setSlotType()`. 
 
 ## Related Guides
 
-- [Nodes](../Nodes/): Core `SvNode` domain abstraction.
-- [Implementation Overview](../../Implementation%20Overview/): Deep dive into slot specs and class lifecycles.
-- [Slot Change Hooks](../../Notifications/Slot%20Change%20Hooks/): Declarative setter hooks.
+- [Nodes](../Nodes/index.html): Core `SvNode` domain abstraction.
+- [Implementation Overview](../../Implementation%20Overview/index.html): Deep dive into slot specs and class lifecycles.
+- [Slot Change Hooks](../../Notifications/Slot%20Change%20Hooks/index.html): Declarative setter hooks.

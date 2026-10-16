@@ -44,5 +44,5 @@ While `SvNotificationCenter` handles loose asynchronous change observations and 
 
 ## Related Guides
 
-- [Notification Center](../Notification%20Center/): Weak observer event dispatch.
-- [Sync Scheduler](../Sync%20Scheduler/): Coalesced event loop scheduling.
+- [Notification Center](../Notification%20Center/index.html): Weak observer event dispatch.
+- [Sync Scheduler](../Sync%20Scheduler/index.html): Coalesced event loop scheduling.

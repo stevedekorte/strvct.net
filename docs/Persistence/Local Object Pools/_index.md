@@ -206,6 +206,6 @@ When refactoring domain class names in code, existing stored records contain the
 
 ## Related Guides
 
-- [Cloud Object Pools](../Cloud%20Object%20Pools/): Versioned cloud record store synchronization and commits.
-- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): Content-addressable binary asset storage.
-- [Technical Overview](../../Technical%20Overview/): High-level architecture and local-first triad.
+- [Cloud Object Pools](../Cloud%20Object%20Pools/index.html): Versioned cloud record store synchronization and commits.
+- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/index.html): Content-addressable binary asset storage.
+- [Technical Overview](../../Technical%20Overview/index.html): High-level architecture and local-first triad.

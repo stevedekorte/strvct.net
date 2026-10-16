@@ -44,5 +44,5 @@ When an auto-generated slot setter runs (e.g. `setName("Thorin")`), it checks fo
 
 ## Related Guides
 
-- [Slots](../../Slots/): Complete guide to slot metadata and declarations.
-- [Notification Center](../Notification%20Center/): Weak observer event dispatch.
+- [Slots](../../Slots/index.html): Complete guide to slot metadata and declarations.
+- [Notification Center](../Notification%20Center/index.html): Weak observer event dispatch.

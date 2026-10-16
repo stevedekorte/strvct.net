@@ -4296,9 +4296,9 @@ Add `"app/Task.js"` to your `app/_imports.json`, run `just build`, and reload yo
 
 ## Related Guides
 
-- [Technical Overview](../Technical%20Overview/): High-level architecture and design philosophy.
-- [Nodes](../Nodes/): Deep dive into `SvNode` inheritance and subnode management.
-- [Slots](../Slots/): Complete guide to property declaration and metadata annotations.
+- [Technical Overview](../Technical%20Overview/index.html): High-level architecture and design philosophy.
+- [Nodes](../Nodes/index.html): Deep dive into `SvNode` inheritance and subnode management.
+- [Slots](../Slots/index.html): Complete guide to property declaration and metadata annotations.
 
 
 ---
@@ -4818,9 +4818,9 @@ Strvct avoids standard ES module imports and Webpack/Vite bundlers, using a cust
 
 ## Related Guides
 
-- [Technical Overview](../Technical%20Overview/): High-level architecture and design philosophy.
-- [Naked Objects](../Naked%20Objects/): Theoretical foundations and production case studies.
-- [Comparing to React](../Comparing%20to%20React/): Guide for React developers exploring Strvct.
+- [Technical Overview](../Technical%20Overview/index.html): High-level architecture and design philosophy.
+- [Naked Objects](../Naked%20Objects/index.html): Theoretical foundations and production case studies.
+- [Comparing to React](../Comparing%20to%20React/index.html): Guide for React developers exploring Strvct.
 
 
 ---
@@ -7803,8 +7803,8 @@ When `addSubnode()` or `removeSubnode()` is called, the node automatically posts
 
 ## Related Guides
 
-- [Slots](../Slots/): Complete guide to property slots and metadata.
-- [Technical Overview](../Technical%20Overview/): High-level system architecture.
+- [Slots](../Slots/index.html): Complete guide to property slots and metadata.
+- [Technical Overview](../Technical%20Overview/index.html): High-level system architecture.
 
 
 ---
@@ -8229,8 +8229,8 @@ While `SvNotificationCenter` handles loose asynchronous change observations and 
 
 ## Related Guides
 
-- [Notification Center](../Notification%20Center/): Weak observer event dispatch.
-- [Sync Scheduler](../Sync%20Scheduler/): Coalesced event loop scheduling.
+- [Notification Center](../Notification%20Center/index.html): Weak observer event dispatch.
+- [Sync Scheduler](../Sync%20Scheduler/index.html): Coalesced event loop scheduling.
 
 
 ---
@@ -8435,9 +8435,9 @@ Observers are held in **`WeakRef`** wrappers. When an observing view is removed 
 
 ## Related Guides
 
-- [Sync Scheduler](../Sync%20Scheduler/): Coalescing high-frequency notification dispatches.
-- [Broadcaster](../Broadcaster/): Synchronous inline event broadcasting.
-- [Slot Change Hooks](../Slot%20Change%20Hooks/): Declarative model setter hooks.
+- [Sync Scheduler](../Sync%20Scheduler/index.html): Coalescing high-frequency notification dispatches.
+- [Broadcaster](../Broadcaster/index.html): Synchronous inline event broadcasting.
+- [Slot Change Hooks](../Slot%20Change%20Hooks/index.html): Declarative model change hooks.
 
 
 ---
@@ -8668,8 +8668,8 @@ When an auto-generated slot setter runs (e.g. `setName("Thorin")`), it checks fo
 
 ## Related Guides
 
-- [Slots](../../Slots/): Complete guide to slot metadata and declarations.
-- [Notification Center](../Notification%20Center/): Weak observer event dispatch.
+- [Slots](../../Slots/index.html): Complete guide to slot metadata and declarations.
+- [Notification Center](../Notification%20Center/index.html): Weak observer event dispatch.
 
 
 ---
@@ -8844,8 +8844,8 @@ Regardless of how many times `scheduleTargetAndMethod(view, "syncFromNode")` is 
 
 ## Related Guides
 
-- [Notification Center](../Notification%20Center/): Asynchronous weak observation dispatch.
-- [Broadcaster](../Broadcaster/): Synchronous event broadcasting.
+- [Notification Center](../Notification%20Center/index.html): Asynchronous weak observation dispatch.
+- [Broadcaster](../Broadcaster/index.html): Synchronous event broadcasting.
 
 
 ---
@@ -9251,9 +9251,9 @@ A pointer across pool boundaries is stored as `{ "**": poolId }`, naming the tar
 
 ## Related Guides
 
-- [Local Object Pools](../Local%20Object%20Pools/): Local IndexedDB persistence engine.
-- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): SHA-256 binary asset storage.
-- [Technical Overview](../../Technical%20Overview/): High-level system architecture.
+- [Local Object Pools](../Local%20Object%20Pools/index.html): Local IndexedDB persistence engine.
+- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/index.html): Content-addressable binary asset storage.
+- [Technical Overview](../../Technical%20Overview/index.html): High-level system architecture.
 
 
 ---
@@ -9497,8 +9497,8 @@ Binary assets are stored using **Content-Addressable Storage (CAS)**:
 
 ## Related Guides
 
-- [Local Object Pools](../Local%20Object%20Pools/): Domain object graph persistence.
-- [Cloud Object Pools](../Cloud%20Object%20Pools/): Cloud record synchronization.
+- [Local Object Pools](../Local%20Object%20Pools/index.html): Domain object graph persistence.
+- [Cloud Object Pools](../Cloud%20Object%20Pools/index.html): Cloud record synchronization.
 
 
 ---
@@ -10018,9 +10018,9 @@ When refactoring domain class names in code, existing stored records contain the
 
 ## Related Guides
 
-- [Cloud Object Pools](../Cloud%20Object%20Pools/): Versioned cloud record store synchronization and commits.
-- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): Content-addressable binary asset storage.
-- [Technical Overview](../../Technical%20Overview/): High-level architecture and local-first triad.
+- [Cloud Object Pools](../Cloud%20Object%20Pools/index.html): Versioned cloud record store synchronization and commits.
+- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/index.html): Content-addressable binary asset storage.
+- [Technical Overview](../../Technical%20Overview/index.html): High-level architecture and local-first triad.
 
 
 ---
@@ -13363,9 +13363,9 @@ Auto-generated setters enforce **runtime type checks** against `setSlotType()`. 
 
 ## Related Guides
 
-- [Nodes](../Nodes/): Core `SvNode` domain abstraction.
-- [Implementation Overview](../../Implementation%20Overview/): Deep dive into slot specs and class lifecycles.
-- [Slot Change Hooks](../../Notifications/Slot%20Change%20Hooks/): Declarative setter hooks.
+- [Nodes](../Nodes/index.html): Core `SvNode` domain abstraction.
+- [Implementation Overview](../../Implementation%20Overview/index.html): Deep dive into slot specs and class lifecycles.
+- [Slot Change Hooks](../../Notifications/Slot%20Change%20Hooks/index.html): Declarative setter hooks.
 
 
 ---
@@ -13963,9 +13963,9 @@ Because Strvct centralizes the pipeline from slot annotations to runtime views, 
 
 ## Related Documentation
 
-- [Implementation Overview](../Implementation%20Overview/): Detailed engineering specifications for classes, slots, views, and persistence.
-- [Naked Objects](../Naked%20Objects/): Architectural paper detailing theoretical foundations and case studies.
-- [Comparing to React](../Comparing%20to%20React/): Guide for React developers exploring Strvct's model-first paradigm.
+- [Implementation Overview](../Implementation%20Overview/index.html): Detailed engineering specifications for classes, slots, views, and persistence.
+- [Naked Objects](../Naked%20Objects/index.html): Architectural paper detailing theoretical foundations and case studies.
+- [Comparing to React](../Comparing%20to%20React/index.html): Guide for React developers exploring Strvct's model-first paradigm.
 
 
 ---

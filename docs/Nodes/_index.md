@@ -114,5 +114,5 @@ When `addSubnode()` or `removeSubnode()` is called, the node automatically posts
 
 ## Related Guides
 
-- [Slots](../Slots/): Complete guide to property slots and metadata.
-- [Technical Overview](../Technical%20Overview/): High-level system architecture.
+- [Slots](../Slots/index.html): Complete guide to property slots and metadata.
+- [Technical Overview](../Technical%20Overview/index.html): High-level system architecture.

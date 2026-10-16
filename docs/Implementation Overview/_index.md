@@ -327,6 +327,6 @@ Strvct avoids standard ES module imports and Webpack/Vite bundlers, using a cust
 
 ## Related Guides
 
-- [Technical Overview](../Technical%20Overview/): High-level architecture and design philosophy.
-- [Naked Objects](../Naked%20Objects/): Theoretical foundations and production case studies.
-- [Comparing to React](../Comparing%20to%20React/): Guide for React developers exploring Strvct.
+- [Technical Overview](../Technical%20Overview/index.html): High-level architecture and design philosophy.
+- [Naked Objects](../Naked%20Objects/index.html): Theoretical foundations and production case studies.
+- [Comparing to React](../Comparing%20to%20React/index.html): Guide for React developers exploring Strvct.

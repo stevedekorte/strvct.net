@@ -230,6 +230,6 @@ Add `"app/Task.js"` to your `app/_imports.json`, run `just build`, and reload yo
 
 ## Related Guides
 
-- [Technical Overview](../Technical%20Overview/): High-level architecture and design philosophy.
-- [Nodes](../Nodes/): Deep dive into `SvNode` inheritance and subnode management.
-- [Slots](../Slots/): Complete guide to property declaration and metadata annotations.
+- [Technical Overview](../Technical%20Overview/index.html): High-level architecture and design philosophy.
+- [Nodes](../Nodes/index.html): Deep dive into `SvNode` inheritance and subnode management.
+- [Slots](../Slots/index.html): Complete guide to property declaration and metadata annotations.

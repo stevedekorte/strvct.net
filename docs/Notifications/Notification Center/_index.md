@@ -119,6 +119,6 @@ Observers are held in **`WeakRef`** wrappers. When an observing view is removed 
 
 ## Related Guides
 
-- [Sync Scheduler](../Sync%20Scheduler/): Coalescing high-frequency notification dispatches.
-- [Broadcaster](../Broadcaster/): Synchronous inline event broadcasting.
-- [Slot Change Hooks](../Slot%20Change%20Hooks/): Declarative model setter hooks.
+- [Sync Scheduler](../Sync%20Scheduler/index.html): Coalescing high-frequency notification dispatches.
+- [Broadcaster](../Broadcaster/index.html): Synchronous inline event broadcasting.
+- [Slot Change Hooks](../Slot%20Change%20Hooks/index.html): Declarative model change hooks.

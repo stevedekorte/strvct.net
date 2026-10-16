@@ -220,6 +220,6 @@ A pointer across pool boundaries is stored as `{ "**": poolId }`, naming the tar
 
 ## Related Guides
 
-- [Local Object Pools](../Local%20Object%20Pools/): Local IndexedDB persistence engine.
-- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/): SHA-256 binary asset storage.
-- [Technical Overview](../../Technical%20Overview/): High-level system architecture.
+- [Local Object Pools](../Local%20Object%20Pools/index.html): Local IndexedDB persistence engine.
+- [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/index.html): Content-addressable binary asset storage.
+- [Technical Overview](../../Technical%20Overview/index.html): High-level system architecture.

@@ -250,6 +250,6 @@ Because Strvct centralizes the pipeline from slot annotations to runtime views, 
 
 ## Related Documentation
 
-- [Implementation Overview](../Implementation%20Overview/): Detailed engineering specifications for classes, slots, views, and persistence.
-- [Naked Objects](../Naked%20Objects/): Architectural paper detailing theoretical foundations and case studies.
-- [Comparing to React](../Comparing%20to%20React/): Guide for React developers exploring Strvct's model-first paradigm.
+- [Implementation Overview](../Implementation%20Overview/index.html): Detailed engineering specifications for classes, slots, views, and persistence.
+- [Naked Objects](../Naked%20Objects/index.html): Architectural paper detailing theoretical foundations and case studies.
+- [Comparing to React](../Comparing%20to%20React/index.html): Guide for React developers exploring Strvct's model-first paradigm.

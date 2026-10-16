@@ -59,5 +59,5 @@ Regardless of how many times `scheduleTargetAndMethod(view, "syncFromNode")` is 
 
 ## Related Guides
 
-- [Notification Center](../Notification%20Center/): Asynchronous weak observation dispatch.
-- [Broadcaster](../Broadcaster/): Synchronous event broadcasting.
+- [Notification Center](../Notification%20Center/index.html): Asynchronous weak observation dispatch.
+- [Broadcaster](../Broadcaster/index.html): Synchronous event broadcasting.
