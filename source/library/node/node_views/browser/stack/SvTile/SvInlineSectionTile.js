@@ -318,7 +318,7 @@
             /* stats: the group lays them out as a strip */
             .SvInlineNested:has(> [data-tile-layout="stat"]) {
                 display: grid !important;
-                grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
                 border-top: 1px solid var(--sv-text);
                 border-bottom: 1px solid var(--sv-text);
             }
@@ -331,21 +331,23 @@
                 align-items: flex-start !important;
                 justify-content: flex-start !important;
                 gap: 2px;
-                padding: 12px 14px !important;
+                padding: 10px 10px !important;
             }
             [data-tile-layout="stat"] > .TileContentView :has(> .SvTileTitleView),
             [data-tile-layout="stat"] > .TileContentView :has(> .SvTileNoteView) { display: contents !important; }
             [data-tile-layout="stat"] .SvTileTitleView {
                 order: 1;
-                font-size: 11px !important;
-                letter-spacing: 0.22em;
+                font-size: 10px !important;
+                letter-spacing: 0.14em;
+                white-space: nowrap !important;
                 text-transform: uppercase;
                 color: var(--sv-text-muted) !important;
                 padding-left: 0 !important;
             }
             [data-tile-layout="stat"] .SvTileNoteView {
                 order: 2;
-                font-size: var(--sv-inline-stat-size, 26px) !important;
+                font-size: var(--sv-inline-stat-size, 20px) !important;
+                white-space: nowrap !important;
                 color: var(--sv-text) !important;
                 text-align: left !important;
                 margin: 0 !important;
@@ -354,6 +356,8 @@
                 order: 3;
                 display: block !important;
                 font-style: italic;
+                font-size: var(--sv-inline-stat-note-size, 14px) !important;
+                line-height: 1.25;
                 text-align: left !important;
                 width: auto !important;
                 color: var(--sv-text-muted) !important;
@@ -398,14 +402,14 @@
             .SvInlineNested > :not(.SvTileLongSubtitle):not(.SvInlineSection) .SvTileTitleView {
                 flex: 1 1 auto; /* a short summary at its right takes what the title leaves */
             }
-            .SvInlineNested > :not(.SvInlineSection) :has(> .SvTileNoteView) {
+            .SvInlineNested > :not(.SvInlineSection):not([data-tile-layout]) :has(> .SvTileNoteView) {
                 flex: 0 0 auto !important; /* its whole width, or the next line */
                 min-width: 0 !important;
                 max-width: 100%; /* longer than the row: it wraps there */
                 margin-left: auto;
                 padding-left: 12px;
             }
-            .SvInlineNested > :not(.SvInlineSection) .SvTileNoteView {
+            .SvInlineNested > :not(.SvInlineSection):not([data-tile-layout]) .SvTileNoteView {
                 white-space: normal !important;
                 text-align: right !important;
             }
