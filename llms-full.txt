@@ -17,7 +17,7 @@ A naked-objects framework for JavaScript
 
 **You write the domain model. The framework handles the rest.**
 
-STRVCT implements the **Naked Objects** pattern: annotated model classes (inheriting from `SvStorableNode`) serve as the single source of truth for your application. From slot metadata annotations, the framework derives responsive Miller column user interfaces, manages local-first IndexedDB object pools, handles versioned cloud synchronization, and provides a constant-size tool surface for AI agents.
+STRVCT implements the **Naked Objects** pattern: annotated model classes (inheriting from `SvStorableNode`) serve as the single source of truth for your application. From slot metadata annotations, the framework derives responsive, orientation-flexible master-detail views (Miller columns, side-by-side tabs, and inline document section flows) that compose recursively across the domain object graph, manages local-first IndexedDB object pools, handles versioned cloud synchronization, and provides a constant-size tool surface for AI agents.
 
 Because domain models carry explicit metadata and remain completely independent of the view layer, the same application code runs natively in the browser, on the command line, or headlessly in Node.js for ultra-fast unit testing.
 
@@ -99,7 +99,7 @@ Declare domain models as JavaScript classes. Properties are declared as **slots*
 
 ## Key Framework Capabilities
 
-- **Automatic Miller Navigation** — Views are derived lazily from the model graph using recursive, orientation-flexible Miller column containers (`SvStackView`, `SvTilesView`, `SvTile`) that collapse automatically on mobile viewports.
+- **Recursive Master-Detail Engine** — Derives orientation-flexible Miller columns, side-by-side tabs, and inline document section flows that compose recursively across the object graph and collapse automatically on narrow viewports.
 - **Multi-Reader Slot Annotations** — Slot metadata drives form generation, type validation, local persistence, notification triggers, Property Inspector fields, and LLM JSON schemas without glue code.
 - **Natively AI-Operable** — Exposes a constant-size tool surface (`schema-fetch` and `apply-patch`) across all domain classes, allowing LLMs to inspect schemas and patch live object graphs with automatic validation.
 - **Local-First & Cloud Sync** — Automatic dirty tracking commits modifications to IndexedDB at the end of each event loop. Syncs versioned atomic deltas to cloud stores.
