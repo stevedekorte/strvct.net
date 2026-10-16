@@ -27,9 +27,11 @@
       "type": "ContentCards",
       "columns": 3,
       "items": [
+        "docs",
         "docs/Getting Started",
         "docs/Technical Overview",
         "docs/Comparing to React",
+        "docs/Implementation Overview",
         "docs/Naked Objects",
         "Example App",
         "FAQ",

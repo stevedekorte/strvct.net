@@ -107,9 +107,11 @@ Declare domain models as JavaScript classes. Properties are declared as **slots*
 - **Derived Accessibility & Localization** — ARIA roles, focus management, keyboard navigation, and AI string translations are handled centrally at the tile primitive boundary.
 - **Content-Addressable Memory (CAM)** — Scans source imports to build SHA-256 content-hashed bundles for optimal caching and zero-churn redeployments.
 
+- docs
 - docs/Getting Started
 - docs/Technical Overview
 - docs/Comparing to React
+- docs/Implementation Overview
 - docs/Naked Objects
 - Example App
 - FAQ
