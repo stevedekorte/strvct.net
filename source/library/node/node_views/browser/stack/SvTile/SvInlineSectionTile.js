@@ -644,6 +644,14 @@
         return !this.handleHeadEvent(event); // false stops propagation
     }
 
+    onAlternateEnterKeyUp (event) {
+        return this.onEnterKeyUp(event); // Option+Enter: everything inside
+    }
+
+    onShiftEnterKeyUp (event) {
+        return this.onEnterKeyUp(event);
+    }
+
     onSpaceKeyUp (event) {
         return this.onEnterKeyUp(event);
     }
