@@ -659,7 +659,7 @@
         if (this.isVertical()) {
             const w = this.node().nodeMinTileWidth();
             if (w && !Type.isNullOrUndefined(w)) {
-                this.setMinWidth(w);
+                this.syncMinWidthClaim(w);
                 this.setMinAndMaxHeight("100%");
             }
         } else {
@@ -684,6 +684,28 @@
         }
 
         //console.log(this.svTypeId(), " syncFromNode done");
+        return this;
+    }
+
+    /**
+     * @description A column's minimum width from its node's width claim
+     * (nodeMinTileWidth), never more than the room it has: a column that
+     * fills the leftover width has no minimum (it flexes; see
+     * makeOrientationRight), and any other is held to the available width.
+     * The claim stamped as it was overrode the fit on every sync, so the
+     * narration's 900px reading claim made it 900px wide in a 390px phone
+     * pane, its text running off both sides (2026-10-15).
+     * @param {Number} w - the node's width claim, in px
+     * @returns {SvNavView}
+     * @category Layout
+     */
+    syncMinWidthClaim (w) {
+        if (this.shouldCurrentlyFillAvailble()) {
+            this.setMinWidth("0px");
+            return this;
+        }
+        const available = this.availableNavWidth() - 1;
+        this.setMinWidth(available > 0 ? Math.min(w, available) : w);
         return this;
     }
 
