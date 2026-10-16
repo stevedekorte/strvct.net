@@ -38,20 +38,12 @@
           "subtitle": "Source code, issues, and contributions.",
           "href": "https://github.com/stevedekorte/strvct.net",
           "arrow": "View"
-        },
-        {
-          "title": "LLM Index (llms.txt)",
-          "subtitle": "Curated index for AI agents and LLMs.",
-          "href": "llms.txt",
-          "arrow": "View"
-        },
-        {
-          "title": "Full LLM Content (llms-full.txt)",
-          "subtitle": "Exhaustive documentation for LLM context.",
-          "href": "llms-full.txt",
-          "arrow": "View"
         }
       ]
+    },
+    {
+      "type": "ContentText",
+      "body": "<p>For AI agents: <a href=\"llms.txt\">llms.txt</a> (curated index) and <a href=\"llms-full.txt\">llms-full.txt</a> (full content).</p>"
     }
   ]
 }

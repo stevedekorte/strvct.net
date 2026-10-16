@@ -114,8 +114,8 @@ Declare domain models as JavaScript classes. Properties are declared as **slots*
 - Example App
 - FAQ
 - [GitHub Repository](https://github.com/stevedekorte/strvct.net) — Source code, issues, and contributions.
-- [LLM Index (llms.txt)](llms.txt) — Curated index for AI agents and LLMs.
-- [Full LLM Content (llms-full.txt)](llms-full.txt) — Exhaustive documentation for LLM context.
+
+For AI agents: [llms.txt](llms.txt) (curated index) and [llms-full.txt](llms-full.txt) (full content).
 
 
 ---
