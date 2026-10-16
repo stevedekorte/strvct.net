@@ -101,7 +101,7 @@ Declare domain models as JavaScript classes. Properties are declared as **slots*
 
 - **Recursive Master-Detail Engine** — Derives orientation-flexible Miller columns, side-by-side tabs, and inline document section flows that compose recursively across the object graph and collapse automatically on narrow viewports.
 - **Multi-Reader Slot Annotations** — Slot metadata drives form generation, type validation, local persistence, notification triggers, Property Inspector fields, and LLM JSON schemas without glue code.
-- **Natively AI-Operable** — Exposes a constant-size tool surface (`schema-fetch` and `apply-patch`) across all domain classes, allowing LLMs to inspect schemas and patch live object graphs with automatic validation.
+- **Natively AI-Operable ($O(1)$ Tool Surface)** — Traditional stacks force AI agents to generate code across 5 separate layers per feature ($O(N)$ growth). STRVCT flips this: because UI, persistence, and sync are derived from slot metadata, AI agents operate over a **constant-size $O(1)$ tool surface** (`schema-fetch` and `apply-patch`) regardless of scale, and can even mint brand-new model classes at runtime.
 - **Local-First & Cloud Sync** — Automatic dirty tracking commits modifications to IndexedDB at the end of each event loop. Syncs versioned atomic deltas to cloud stores.
 - **Headless Node.js Execution** — Domain models hold zero DOM dependencies, running headlessly in Node.js for ultra-fast unit testing and batch processing.
 - **Derived Accessibility & Localization** — ARIA roles, focus management, keyboard navigation, and AI string translations are handled centrally at the tile primitive boundary.
