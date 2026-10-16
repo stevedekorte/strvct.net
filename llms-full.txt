@@ -15,6 +15,118 @@ A naked-objects framework for JavaScript
 
 ## About
 
+**You write the domain model. The framework handles the rest.**
+
+STRVCT implements the **Naked Objects** pattern: annotated model classes (inheriting from `SvStorableNode`) serve as the single source of truth for your application. From slot metadata annotations, the framework derives responsive Miller column user interfaces, manages local-first IndexedDB object pools, handles versioned cloud synchronization, and provides a constant-size tool surface for AI agents.
+
+Because domain models carry explicit metadata and remain completely independent of the view layer, the same application code runs natively in the browser, on the command line, or headlessly in Node.js for ultra-fast unit testing.
+
+## Architecture Overview
+
+text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  
+  
+    
+      
+    
+  
+
+  
+  Annotated Domain Model (SvStorableNode Subclasses)
+  Single source of truth declaring property slots, subnodes, and metadata annotations
+
+  - 
+  - 
+  - 
+  - 
+
+  
+  Auto-Generated UI
+  Miller column views,
+  tabs, & doc flows
+
+  
+  Local & Cloud Sync
+  IndexedDB pools &
+  SHA-256 CAS store
+
+  
+  Headless Execution
+  Runs in Node.js with
+  zero DOM dependencies
+
+  
+  Native AI Tool Surface
+  Constant tool size:
+  schema-fetch & patch
+
+## Model-First Syntax
+
+Declare domain models as JavaScript classes. Properties are declared as **slots** enriched with metadata annotations that each framework layer reads independently:
+
+```
+(class Task extends SvStorableNode {
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("title", "New Task");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);   // Persisted to IndexedDB
+            slot.setSyncsToView(true);       // Live UI updates
+            slot.setCanEditInspection(true); // Editable field tile
+        }
+        {
+            const slot = this.newSlot("isCompleted", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+        }
+    }
+
+    initPrototype () {
+        this.setTitle("Task");
+        this.setShouldStore(true);
+    }
+
+}.initThisClass());
+```
+
+## Key Framework Capabilities
+
+- **Automatic Miller Navigation** — Views are derived lazily from the model graph using recursive, orientation-flexible Miller column containers (`SvStackView`, `SvTilesView`, `SvTile`) that collapse automatically on mobile viewports.
+- **Multi-Reader Slot Annotations** — Slot metadata drives form generation, type validation, local persistence, notification triggers, Property Inspector fields, and LLM JSON schemas without glue code.
+- **Natively AI-Operable** — Exposes a constant-size tool surface (`schema-fetch` and `apply-patch`) across all domain classes, allowing LLMs to inspect schemas and patch live object graphs with automatic validation.
+- **Local-First & Cloud Sync** — Automatic dirty tracking commits modifications to IndexedDB at the end of each event loop. Syncs versioned atomic deltas to cloud stores.
+- **Headless Node.js Execution** — Domain models hold zero DOM dependencies, running headlessly in Node.js for ultra-fast unit testing and batch processing.
+- **Derived Accessibility & Localization** — ARIA roles, focus management, keyboard navigation, and AI string translations are handled centrally at the tile primitive boundary.
+- **Content-Addressable Memory (CAM)** — Scans source imports to build SHA-256 content-hashed bundles for optimal caching and zero-churn redeployments.
+
+- docs/Getting Started
+- docs/Technical Overview
+- docs/Comparing to React
+- docs/Naked Objects
+- Example App
+- FAQ
+- [GitHub Repository](https://github.com/stevedekorte/strvct.net) — Source code, issues, and contributions.
+- [LLM Index (llms.txt)](llms.txt) — Curated index for AI agents and LLMs.
+- [Full LLM Content (llms-full.txt)](llms-full.txt) — Exhaustive documentation for LLM context.
+
+
+---
+
+<!-- Page: _unused -->
+Source: /_unused/
+
+A naked-objects framework for JavaScript
+
+## About
+
 You write the domain model.
 The framework handles the rest.
 

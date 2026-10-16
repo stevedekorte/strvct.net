@@ -6,32 +6,52 @@
     {
       "type": "ContentText",
       "title": "About",
-      "body": "<p>You write the domain model.<br>The framework handles the rest.</p><p>STRVCT implements the naked-objects pattern: annotated model classes become the single source of truth. From those annotations the framework produces a live interface, manages persistence, and keeps every layer synchronized at runtime. Custom views can still be written when needed; most of the time they are not.</p><p>Because the model is independent of the UI, the same application code runs in the browser, on the command line, or headlessly in Node.js. Persistence is transparent (IndexedDB by default, optional cloud sync). Accessibility, internationalization, and gesture handling are derived rather than hand-coded.</p><p>Because the model carries explicit annotations and remains independent of the view layer, the same structure that is easy for humans to reason about is also relatively easy for language models to generate and maintain. The parts that models still struggle with most—keeping complex UI, state, and persistence correctly synchronized—are largely handled by the framework rather than generated as fragile glue code.</p><p>The result is software whose structure stays close to the domain itself.</p><p>For a detailed treatment of this approach, see <a href=\"docs/Naked%20Objects/\">Closing the Usability Gap in Naked Objects</a>.</p>"
+      "body": "<p><strong>You write the domain model. The framework handles the rest.</strong></p><p>STRVCT implements the <strong>Naked Objects</strong> pattern: annotated model classes (inheriting from <code>SvStorableNode</code>) serve as the single source of truth for your application. From slot metadata annotations, the framework derives responsive Miller column user interfaces, manages local-first IndexedDB object pools, handles versioned cloud synchronization, and provides a constant-size tool surface for AI agents.</p><p>Because domain models carry explicit metadata and remain completely independent of the view layer, the same application code runs natively in the browser, on the command line, or headlessly in Node.js for ultra-fast unit testing.</p>"
     },
     {
       "type": "ContentText",
-      "title": "Key Features",
-      "body": "<ul><li><strong>Automatic UI</strong> — Views are generated from the model graph using a Miller Column inspired navigation pattern. Custom views can override defaults when needed.</li><li><strong>Slot System</strong> — Properties are declared as slots with annotations that control type checking, persistence, UI generation, view synchronization, and other features.</li><li><strong>Notification-Based Sync</strong> — The model layer communicates to the views layer through deferred, deduplicated notifications with automatic sync loop detection.</li><li><strong>Transparent Persistence</strong> — No custom serialization code required. Declare which objects and slots to persist, and the framework handles dirty tracking, automatic commits, and garbage collection via IndexedDB.</li><li><strong>Cloud Sync</strong> — Object pools sync to Firebase Storage using a write-ahead log of delta files for efficient incremental updates.</li><li><strong>Gesture System</strong> — Unifies mouse and touch input gestures.</li><li><strong>Internationalization</strong> — AI-powered translation of UI text with no per-component wiring. The naked objects pattern means every slot value is translated at the model-to-view boundary automatically.</li><li><strong>Accessibility</strong> — Automatic ARIA roles, labels, and states derived from the model. Slot metadata maps to aria-required, aria-valuemin/max, and aria-description; view classes emit landmark roles, live regions, and focus-visible styling.</li><li><strong>Content-Addressable Build</strong> — Custom resource loading with content hashing for optimal caching and minimal network transfers.</li></ul>"
+      "title": "Architecture Overview",
+      "body": "<svg viewBox=\"0 0 820 220\" width=\"820\" xmlns=\"http://www.w3.org/2000/svg\">\n  <style>\n    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }\n    .b { font-weight: 600; }\n    .dim { fill: #666; }\n    .box { fill: none; stroke: #111; stroke-width: 1; }\n    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }\n    .flow { stroke: #111; stroke-width: 1; fill: none; }\n  </style>\n  <defs>\n    <marker id=\"ahp\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\">\n      <path d=\"M0,0 L10,5 L0,10 z\" fill=\"#111\"/>\n    </marker>\n  </defs>\n\n  <rect class=\"fill\" x=\"40\" y=\"20\" width=\"740\" height=\"55\"/>\n  <text x=\"55\" y=\"42\" class=\"b\">Annotated Domain Model (SvStorableNode Subclasses)</text>\n  <text x=\"55\" y=\"60\" class=\"dim\">Single source of truth declaring property slots, subnodes, and metadata annotations</text>\n\n  <line class=\"flow\" x1=\"120\" y1=\"75\" x2=\"120\" y2=\"115\" marker-end=\"url(#ahp)\"/>\n  <line class=\"flow\" x1=\"310\" y1=\"75\" x2=\"310\" y2=\"115\" marker-end=\"url(#ahp)\"/>\n  <line class=\"flow\" x1=\"500\" y1=\"75\" x2=\"500\" y2=\"115\" marker-end=\"url(#ahp)\"/>\n  <line class=\"flow\" x1=\"690\" y1=\"75\" x2=\"690\" y2=\"115\" marker-end=\"url(#ahp)\"/>\n\n  <rect class=\"box\" x=\"40\" y=\"115\" width=\"160\" height=\"85\"/>\n  <text x=\"55\" y=\"137\" class=\"b\">Auto-Generated UI</text>\n  <text x=\"55\" y=\"155\" class=\"dim\">Miller column views,</text>\n  <text x=\"55\" y=\"173\" class=\"dim\">tabs, &amp; doc flows</text>\n\n  <rect class=\"box\" x=\"230\" y=\"115\" width=\"160\" height=\"85\"/>\n  <text x=\"245\" y=\"137\" class=\"b\">Local &amp; Cloud Sync</text>\n  <text x=\"245\" y=\"155\" class=\"dim\">IndexedDB pools &amp;</text>\n  <text x=\"245\" y=\"173\" class=\"dim\">SHA-256 CAS store</text>\n\n  <rect class=\"box\" x=\"420\" y=\"115\" width=\"160\" height=\"85\"/>\n  <text x=\"435\" y=\"137\" class=\"b\">Headless Execution</text>\n  <text x=\"435\" y=\"155\" class=\"dim\">Runs in Node.js with</text>\n  <text x=\"435\" y=\"173\" class=\"dim\">zero DOM dependencies</text>\n\n  <rect class=\"box\" x=\"610\" y=\"115\" width=\"170\" height=\"85\"/>\n  <text x=\"625\" y=\"137\" class=\"b\">Native AI Tool Surface</text>\n  <text x=\"625\" y=\"155\" class=\"dim\">Constant tool size:</text>\n  <text x=\"625\" y=\"173\" class=\"dim\">schema-fetch &amp; patch</text>\n</svg>"
+    },
+    {
+      "type": "ContentText",
+      "title": "Model-First Syntax",
+      "body": "<p>Declare domain models as JavaScript classes. Properties are declared as <strong>slots</strong> enriched with metadata annotations that each framework layer reads independently:</p><pre><code>(class Task extends SvStorableNode {\n\n    initPrototypeSlots () {\n        {\n            const slot = this.newSlot(\"title\", \"New Task\");\n            slot.setSlotType(\"String\");\n            slot.setShouldStoreSlot(true);   // Persisted to IndexedDB\n            slot.setSyncsToView(true);       // Live UI updates\n            slot.setCanEditInspection(true); // Editable field tile\n        }\n        {\n            const slot = this.newSlot(\"isCompleted\", false);\n            slot.setSlotType(\"Boolean\");\n            slot.setShouldStoreSlot(true);\n            slot.setSyncsToView(true);\n            slot.setCanEditInspection(true);\n        }\n    }\n\n    initPrototype () {\n        this.setTitle(\"Task\");\n        this.setShouldStore(true);\n    }\n\n}.initThisClass());</code></pre>"
+    },
+    {
+      "type": "ContentText",
+      "title": "Key Framework Capabilities",
+      "body": "<ul><li><strong>Automatic Miller Navigation</strong> — Views are derived lazily from the model graph using recursive, orientation-flexible Miller column containers (<code>SvStackView</code>, <code>SvTilesView</code>, <code>SvTile</code>) that collapse automatically on mobile viewports.</li><li><strong>Multi-Reader Slot Annotations</strong> — Slot metadata drives form generation, type validation, local persistence, notification triggers, Property Inspector fields, and LLM JSON schemas without glue code.</li><li><strong>Natively AI-Operable</strong> — Exposes a constant-size tool surface (<code>schema-fetch</code> and <code>apply-patch</code>) across all domain classes, allowing LLMs to inspect schemas and patch live object graphs with automatic validation.</li><li><strong>Local-First &amp; Cloud Sync</strong> — Automatic dirty tracking commits modifications to IndexedDB at the end of each event loop. Syncs versioned atomic deltas to cloud stores.</li><li><strong>Headless Node.js Execution</strong> — Domain models hold zero DOM dependencies, running headlessly in Node.js for ultra-fast unit testing and batch processing.</li><li><strong>Derived Accessibility &amp; Localization</strong> — ARIA roles, focus management, keyboard navigation, and AI string translations are handled centrally at the tile primitive boundary.</li><li><strong>Content-Addressable Memory (CAM)</strong> — Scans source imports to build SHA-256 content-hashed bundles for optimal caching and zero-churn redeployments.</li></ul>"
     },
     {
       "type": "ContentCards",
-      "columns": 2,
+      "columns": 3,
       "items": [
+        "docs/Getting Started",
+        "docs/Technical Overview",
+        "docs/Comparing to React",
+        "docs/Naked Objects",
         "Example App",
         "FAQ",
-        "docs",
-        "Timeline",
         {
           "title": "GitHub Repository",
           "subtitle": "Source code, issues, and contributions.",
           "href": "https://github.com/stevedekorte/strvct.net",
           "arrow": "View"
+        },
+        {
+          "title": "LLM Index (llms.txt)",
+          "subtitle": "Curated index for AI agents and LLMs.",
+          "href": "llms.txt",
+          "arrow": "View"
+        },
+        {
+          "title": "Full LLM Content (llms-full.txt)",
+          "subtitle": "Exhaustive documentation for LLM context.",
+          "href": "llms-full.txt",
+          "arrow": "View"
         }
       ]
-    },
-    {
-      "type": "ContentText",
-      "body": "<p>For AI agents: <a href=\"llms.txt\">llms.txt</a> (curated index) and <a href=\"llms-full.txt\">llms-full.txt</a> (full content).</p>"
     }
   ]
 }

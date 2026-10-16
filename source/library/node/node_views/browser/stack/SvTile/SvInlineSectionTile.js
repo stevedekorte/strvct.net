@@ -25,6 +25,10 @@
  * state, kept on the section's element like an open row. A fold the player
  * makes is told to the node (didChangeInlineCollapse, if it answers it), so
  * a node that remembers it can start the section that way next time.
+ *
+ * With Option/Alt or Shift held, a tap (or Enter) on any section's heading
+ * opens or closes everything inside at once (toggleAllInside): the nearest
+ * rows and sections inside that open, looking through groups that do not.
  */
 (class SvInlineSectionTile extends SvTile {
 
@@ -138,6 +142,7 @@
                 display: none !important; /* an untitled group: its rows follow the section's own heading */
             }
             .SvInlineSectionHead {
+                user-select: none; /* a heading is a control: Shift-click opens everything inside, not a text selection */
                 display: flex !important;
                 flex-direction: row !important;
                 align-items: baseline !important;
@@ -498,10 +503,12 @@
         if (isCollapsible) {
             head.setAriaRole("button");
             head.setAttribute("tabindex", "0");
+            head.setAttribute("title", "Option- or Shift-click to open or close everything inside");
         } else {
             head.setAriaRole(null);
             head.removeAttribute("tabindex");
             head.removeAttribute("aria-expanded");
+            head.removeAttribute("title");
         }
         return this;
     }
@@ -537,22 +544,104 @@
      * @category Inline
      */
     isFoldEvent (event) {
-        return !!(event && this.isCollapsible() && this.headView().element().contains(event.target));
+        return !!(event && this.isCollapsible() && this.isHeadEvent(event));
     }
 
-    onTapComplete (aGesture) {
-        if (this.isFoldEvent(aGesture.downEvent())) {
+    isHeadEvent (event) {
+        return this.headView().element().contains(event.target);
+    }
+
+    /**
+     * @description Whether an event on the heading asks for everything
+     * inside (Option/Alt or Shift held) — on any section's heading, so a
+     * group that does not fold (a spell level) still opens its rows.
+     * @param {Event} event
+     * @returns {Boolean}
+     * @category Inline
+     */
+    isFoldAllEvent (event) {
+        return !!(event && (event.altKey || event.shiftKey) && this.isHeadEvent(event));
+    }
+
+    /**
+     * @description A tap or Enter on the heading: with Option/Alt or Shift,
+     * everything inside opens or closes; else the section folds or opens.
+     * @param {Event} event
+     * @returns {Boolean} whether the event was the heading's
+     * @category Inline
+     */
+    handleHeadEvent (event) {
+        if (this.isFoldAllEvent(event)) {
+            this.toggleAllInside();
+            return true;
+        }
+        if (this.isFoldEvent(event)) {
+            this.toggleCollapsed();
+            return true;
+        }
+        return false;
+    }
+
+    // --- everything inside ---
+
+    /**
+     * @description Opens or closes everything inside at once: a folded
+     * section opens with all of it open; an open one stays open and sets
+     * all of it to the opposite of the first, so a second time undoes it.
+     * @returns {SvInlineSectionTile}
+     * @category Inline
+     */
+    toggleAllInside () {
+        const targets = this.innerFoldTargets();
+        const open = this.isCollapsed() || (targets.length > 0 && !targets[0].isInlineOpen());
+        this.setIsInlineOpen(true);
+        targets.forEach(target => target.setIsInlineOpen(open));
+        return this;
+    }
+
+    innerFoldTargets () {
+        return this.sectionTilesView().inlineFoldTargets();
+    }
+
+    /**
+     * @description As something inside another section: a section that
+     * folds opens and closes itself; one that does not is looked through.
+     * @returns {Array<SvTile>}
+     * @category Inline
+     */
+    inlineFoldTargets () {
+        return this.isCollapsible() ? [this] : this.innerFoldTargets();
+    }
+
+    isInlineOpenable () {
+        return this.isCollapsible();
+    }
+
+    isInlineOpen () {
+        return !this.isCollapsed();
+    }
+
+    /**
+     * @description Opens or folds the section as the player would, so a
+     * node that remembers its fold hears of it.
+     * @param {Boolean} aBool
+     * @returns {SvInlineSectionTile}
+     * @category Inline
+     */
+    setIsInlineOpen (aBool) {
+        if (this.isCollapsible() && aBool !== this.isInlineOpen()) {
             this.toggleCollapsed();
         }
         return this;
     }
 
+    onTapComplete (aGesture) {
+        this.handleHeadEvent(aGesture.downEvent());
+        return this;
+    }
+
     onEnterKeyUp (event) {
-        if (this.isFoldEvent(event)) {
-            this.toggleCollapsed();
-            return false; // stop propagation
-        }
-        return true;
+        return !this.handleHeadEvent(event); // false stops propagation
     }
 
     onSpaceKeyUp (event) {

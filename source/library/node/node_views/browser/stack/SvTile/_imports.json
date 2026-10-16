@@ -5,6 +5,7 @@
     "SvTile_gestures.js",
     "SvTile_slideGesture.js",
     "SvTile_styling.js",
+    "SvTile_inline.js",
     "SvTitledTile.js",
     "SvInlineSectionTile.js",
     "SvMeterNodeTile.js",

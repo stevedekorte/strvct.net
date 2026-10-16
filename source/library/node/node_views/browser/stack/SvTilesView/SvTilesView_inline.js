@@ -191,9 +191,19 @@
      * @category Inline
      */
     toggleInlineRow (tile) {
-        tile.element().classList.toggle("SvInlineOpen");
-        tile.setAttribute("aria-expanded", tile.element().classList.contains("SvInlineOpen") ? "true" : "false");
+        tile.setIsInlineOpen(!tile.isInlineOpen());
         return this;
+    }
+
+    /**
+     * @description The nearest things inside this view that open or close:
+     * its rows with descriptions and its sections that fold, looking through
+     * sections that do not fold (a spell level's group) to what they hold.
+     * @returns {Array<SvTile>}
+     * @category Inline
+     */
+    inlineFoldTargets () {
+        return this.tiles().flatMap(tile => tile.inlineFoldTargets ? tile.inlineFoldTargets() : []);
     }
 
 }.initThisCategory());
