@@ -35,3 +35,8 @@ notes on Scroll bars theme options
 */
 
 
+
+/* a tile whose node is there but not available now (nodeTileEmphasis "muted") */
+.SvTileMuted > .TileContentView {
+    opacity: var(--sv-tile-muted-opacity, 0.45);
+}

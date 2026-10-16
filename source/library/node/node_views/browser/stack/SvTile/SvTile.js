@@ -646,9 +646,24 @@
             this.syncAriaFromNode();
             this.syncSurfaceFromNode();
             this.syncEmptyCollectionMark();
+            this.syncEmphasisMark();
         }
         this.updateSubviews();
         this.syncOrientation();
+        return this;
+    }
+
+    /**
+     * @description Marks a tile whose node asks to be muted
+     * (nodeTileEmphasis): a class, styled by the theme's
+     * --sv-tile-muted-opacity.
+     * @returns {SvTile}
+     * @category Styling
+     */
+    syncEmphasisMark () {
+        const node = this.node();
+        const emphasis = node.nodeTileEmphasis ? node.nodeTileEmphasis() : null;
+        this.element().classList.toggle("SvTileMuted", emphasis === "muted");
         return this;
     }
 

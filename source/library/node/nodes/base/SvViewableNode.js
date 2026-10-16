@@ -498,6 +498,18 @@
     }
 
     /**
+     * @description How strongly this node's tile reads among its siblings: null
+     * (as usual) or "muted" — there, but not available now (a spell with no
+     * slot left to cast it). A role, not a look: the theme says how a muted
+     * tile reads (--sv-tile-muted-opacity).
+     * @returns {String|null}
+     * @category Layout
+     */
+    nodeTileEmphasis () {
+        return null;
+    }
+
+    /**
      * @description As an anchored tab: whether this node would like its pane
      * kept open — "pinned", "open" (open when there is room, unpinned) or null
      * (no opinion). A suggestion: the player's own pin or unpin of the tab
