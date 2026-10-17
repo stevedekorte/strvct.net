@@ -513,15 +513,36 @@
      * @description How this node's tile lays out its parts in an inline
      * document: null (title, then its note at the right) or a role —
      * "stat" (a small label, the value large, the subtitle in italic words
-     * beneath; the stats in one group flow as a strip), "lede" (the subtitle
+     * beneath; the stats in one group lay out as a two-column grid, and a stat
+     * that spans columns (nodeSpansInlineColumns) takes a whole line), "lede" (the subtitle
      * as a paragraph, no title), "quote" (the subtitle in italic beside a
-     * rule), "tagline" (the subtitle as an italic line, at the size of a
-     * display heading's note) or "kicker" (the title as a small-caps line). Roles, not looks:
+     * rule), "figure" (an image, square, in a thin frame)
+     * or "kicker" (the title as a small-caps line). Roles, not looks:
      * the theme sets the sizes.
      * @returns {String|null}
      * @category Layout
      */
     nodeTileLayout () {
+        return null;
+    }
+
+    /**
+     * @description A tile's meter, as a fraction from 0 to 1 (a stat's
+     * health), drawn as a thin bar under its value; null for none.
+     * @returns {Number|null}
+     * @category Layout
+     */
+    nodeTileMeterFraction () {
+        return null;
+    }
+
+    /**
+     * @description For an inline section: a line under its heading, in
+     * italic (a display heading's tagline); null for none.
+     * @returns {String|null}
+     * @category Layout
+     */
+    nodeInlineHeadingSubtitle () {
         return null;
     }
 

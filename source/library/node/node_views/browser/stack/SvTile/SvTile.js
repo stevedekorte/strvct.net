@@ -669,6 +669,25 @@
         } else {
             this.element().removeAttribute("data-tile-layout");
         }
+        this.element().classList.toggle("SvTileSpans", !!(layout && node.nodeSpansInlineColumns && node.nodeSpansInlineColumns()));
+        return this.syncMeterMark();
+    }
+
+    /**
+     * @description Marks the tile with its node's meter fraction
+     * (nodeTileMeterFraction) as data-tile-meter and --sv-tile-meter, which
+     * the inline document's stylesheet draws as a bar; none without one.
+     * @returns {SvTile}
+     * @category Styling
+     */
+    syncMeterMark () {
+        const node = this.node();
+        const fraction = (node && node.nodeTileMeterFraction) ? node.nodeTileMeterFraction() : null;
+        const hasMeter = typeof fraction === "number" && isFinite(fraction);
+        this.element().toggleAttribute("data-tile-meter", hasMeter);
+        if (hasMeter) {
+            this.element().style.setProperty("--sv-tile-meter", Math.round(Math.max(0, Math.min(1, fraction)) * 100) + "%");
+        }
         return this;
     }
 
