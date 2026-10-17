@@ -1,147 +1,108 @@
 # Async Patterns
 
-Extended promises, serial and parallel iteration, and concurrency control.
+Promise extensions, serial and parallel async array iteration, and error context rethrowing with `Error.rethrow()`.
 
-## Promise.clone()
+## Overview
 
-STRVCT extends the native `Promise` class (via `Promise_ideal.js`) with a factory method that exposes the resolve and reject functions as callable methods on the promise itself. This is the foundation for most async coordination in the framework.
+STRVCT extends native JavaScript `Promise` and `Array` prototypes via categories (`Promise_ideal.js`, `Array_promises.js`) to provide clean, chainable asynchronous primitives without importing external async utility libraries.
+
+<svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">Array_promises Extensions</text>
+  <text x="40" y="58" class="dim">promiseSerialForEach / Map</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#aap)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">Promise_ideal Extensions</text>
+  <text x="305" y="58" class="dim">status, timeouts, &amp; clone()</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#aap)"/>
+
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">Error.rethrow() Context</text>
+  <text x="570" y="58" class="dim">Chained error stack traces</text>
+
+  <text x="410" y="110" text-anchor="middle" class="dim">Asynchronous array operations execute cleanly in serial sequence or bounded parallel batches without raw promise boilerplate.</text>
+</svg>
+
+---
+
+## Async Array Iteration (`Array_promises.js`)
+
+STRVCT adds asynchronous iteration methods directly to `Array.prototype`:
+
+### 1. Serial Execution (`promiseSerialForEach` / `promiseSerialMap`)
+Executes an async callback for each element in strict sequential order, awaiting each element before starting the next:
 
 ```javascript
-const promise = Promise.clone();
-promise.setLabel("loadUserData");
+// Executes sequentially
+await items.promiseSerialForEach(async (item) => {
+    await processItem(item);
+});
 
-// Later, from any code that holds a reference:
-promise.callResolveFunc(result);
-// or:
-promise.callRejectFunc(error);
-```
-
-### Why not `new Promise()`?
-
-The native constructor captures resolve/reject inside the executor callback, making them inaccessible outside it. `Promise.clone()` stores them as properties so the promise can be resolved externally — by a different method, a timer, or a network callback — without nesting all the logic inside the constructor.
-
-### Status tracking
-
-Cloned promises track their state explicitly:
-
-```javascript
-promise.isPending()    // true until resolved or rejected
-promise.isResolved()   // true after callResolveFunc()
-promise.isRejected()   // true after callRejectFunc()
-promise.isCompleted()  // true if resolved or rejected
-```
-
-Calling `callResolveFunc()` or `callRejectFunc()` on an already-completed promise throws an assertion error, catching double-resolution bugs immediately.
-
-### Timeouts
-
-```javascript
-const promise = Promise.clone();
-promise.setLabel("apiCall");
-promise.beginTimeout(5000); // reject after 5 seconds if still pending
-```
-
-The timeout auto-cancels on resolution or rejection. The rejection message includes the label and duration for debugging.
-
-### Await hooks
-
-```javascript
-const promise = Promise.clone();
-promise.setOnAwaitFunc((p) => {
-    // Called the first time someone awaits this promise.
-    // Useful for lazy initialization — don't start the work
-    // until someone actually needs the result.
-    startExpensiveOperation(p);
+// Maps results sequentially
+const results = await items.promiseSerialMap(async (item) => {
+    return await fetchDetails(item);
 });
 ```
 
-The framework also tracks `hasAwaiters()` — whether anyone is currently waiting on the promise.
-
-### Common pattern: deferred resolution
-
-The most frequent use of `Promise.clone()` is to bridge callback-style or event-driven code into async/await:
-
-```javascript
-async fetchData () {
-    const promise = Promise.clone();
-    promise.setLabel("fetchData");
-    promise.beginTimeout(10000);
-
-    this.setOnResponseCallback((data) => {
-        promise.callResolveFunc(data);
-    });
-
-    this.setOnErrorCallback((error) => {
-        promise.callRejectFunc(error);
-    });
-
-    this.sendRequest();
-    return promise;
-}
-```
-
-## Array async iteration
-
-`Array_promises.js` adds methods for controlled async iteration. These are categories on `Array`, so they're available on any array.
-
-### Serial iteration
-
-```javascript
-await items.promiseSerialForEach(async (item, index) => {
-    await processItem(item);
-});
-```
-
-Processes one item at a time, in order. Throws immediately if any iteration fails.
-
-### Serial with yielding
-
-```javascript
-await items.promiseSerialTimeoutsForEach(async (item, index, total) => {
-    await processItem(item);
-}, 0); // delay in ms between iterations
-```
-
-Like serial, but inserts a `setTimeout` between iterations. This yields control back to the event loop between items, preventing UI freezes during long-running sequences. A delay of `0` still yields; higher values add intentional pacing.
-
-### Parallel
+### 2. Parallel Execution (`promiseParallelMap`)
+Executes async callbacks in parallel across all array elements:
 
 ```javascript
 const results = await items.promiseParallelMap(async (item) => {
-    return await transform(item);
-});
-
-// or when you don't need results:
-await items.promiseParallelForEach(async (item) => {
-    await processItem(item);
+    return await fetchDetails(item);
 });
 ```
 
-All items processed concurrently via `Promise.all()`. Fast, but can overwhelm APIs or exhaust resources if the array is large.
+---
 
-### Concurrency-limited batching
+## Promise Extensions (`Promise_ideal.js`)
+
+`Promise_ideal.js` extends `Promise` with status introspection and timeout helpers:
 
 ```javascript
-await items.promiseConcurrentSerialTimeoutsForEach(
-    async (item, index, total) => {
-        await callApi(item);
-    },
-    3,    // maxConcurrent — at most 3 in flight at once
-    100,  // delay in ms between batches
-    async (error, item, index) => {
-        // optional error handler — log and continue
-        console.error("Failed:", item, error);
-    }
-);
+const promise = Promise.clone(); // Instantiates wrapper promise
+promise.isPending();             // Returns true while unresolved
+promise.isResolved();            // Returns true when resolved
+promise.isRejected();            // Returns true on rejection
+
+// Timeout protection
+await promise.timeout(5000, "Operation timed out after 5s");
 ```
 
-The workhorse for API-heavy operations. Runs up to `maxConcurrent` items simultaneously, yields between batches, and supports per-item error handling without aborting the whole sequence. Uses `Promise.clone()` internally for coordination.
+---
 
-## Choosing the right iteration method
+## Chained Error Context (`Error.rethrow()`)
 
-| Method | Concurrency | Yielding | Error handling | Use when |
-|--------|------------|----------|----------------|----------|
-| `promiseSerialForEach` | 1 | No | Fail-fast | Order matters, small arrays |
-| `promiseSerialTimeoutsForEach` | 1 | Yes | Fail-fast | Order matters, UI must stay responsive |
-| `promiseParallelMap` | All | No | Fail-fast | Independent items, bounded array size |
-| `promiseConcurrentSerialTimeoutsForEach` | N | Yes | Configurable | API calls, large arrays, rate limiting |
+When catching and rethrowing errors in async pipelines, `Error.rethrow()` preserves the original error stack while adding contextual messages:
+
+```javascript
+try {
+    await pool.commitStoreDirtyObjects();
+} catch (error) {
+    throw Error.rethrow(`Failed to commit object pool ${pool.poolId()}`, error);
+}
+```
+
+---
+
+## Related Guides
+
+- [Categories](../Categories/index.html): Class extension pattern.
+- [Protocols](../Protocols/index.html): Interface declaration and conformance checking.

@@ -17,12 +17,18 @@
 - [View ↔ Model ↔ Storage Syncing](/docs/Diagrams/Sync%20Flow/)
 - [View Resolution](/docs/Diagrams/View%20Resolution/)
 - [Events and Gestures](/docs/Events%20and%20Gestures/): Event flow, listeners, gesture recognizers, timers, keyboard handling, and drag-and-drop.
-- [Drag and Drop](/docs/Events%20and%20Gestures/Drag%20and%20Drop/): Browser drag-and-drop support for views and nodes, covering both drop targets and drag sources.
+- [Drag and Drop](/docs/Events%20and%20Gestures/Drag%20and%20Drop/): Browser drag-and-drop support for views and nodes, covering drop targets, drag sources, and MIME-type dispatch.
+- [Drag and Drop](/docs/Events%20and%20Gestures/Drag%20and%20Drop/_unused/): Browser drag-and-drop support for views and nodes, covering both drop targets and drag sources.
 - [Event Flow](/docs/Events%20and%20Gestures/Event%20Flow/): The end-to-end path from a browser event to an application handler.
+- [Event Flow](/docs/Events%20and%20Gestures/Event%20Flow/_unused/): The end-to-end path from a browser event to an application handler.
 - [Event Listeners](/docs/Events%20and%20Gestures/Event%20Listeners/): Thin wrappers around native DOM events that forward to handler methods on views.
+- [Event Listeners](/docs/Events%20and%20Gestures/Event%20Listeners/_unused/): Thin wrappers around native DOM events that forward to handler methods on views.
 - [Gesture Recognizers](/docs/Events%20and%20Gestures/Gesture%20Recognizers/): Higher-level state machines that interpret sequences of events as meaningful gestures.
+- [Gesture Recognizers](/docs/Events%20and%20Gestures/Gesture%20Recognizers/_unused/): Higher-level state machines that interpret sequences of events as meaningful gestures.
 - [Keyboard and Focus](/docs/Events%20and%20Gestures/Keyboard%20and%20Focus/): Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
+- [Keyboard and Focus](/docs/Events%20and%20Gestures/Keyboard%20and%20Focus/_unused/): Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
 - [Timers](/docs/Events%20and%20Gestures/Timers/): Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
+- [Timers](/docs/Events%20and%20Gestures/Timers/_unused/): Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
 - [Future Work](/docs/Future%20Work/): Design ideas, architectural discussions, and potential future improvements.
 - [Accessibility Testing & Tuning](/docs/Future%20Work/Accessibility%20Testing%20%26%20Tuning/): Validating and refining the framework's ARIA implementation across screen readers, devices, and applications.
 - [Async Final Initialization](/docs/Future%20Work/Async%20Final%20Initialization/): Adding an async phase to the object initialization lifecycle.
@@ -50,12 +56,18 @@
 - [Internationalization](/docs/Internationalization/): AI-powered translation of UI text with per-language IndexedDB persistence, batched requests, and content filtering.
 - [Internationalization](/docs/Internationalization/_unused/): AI-powered translation of UI text with persistent caching, batched requests, and smart content filtering.
 - [Lifecycle](/docs/Lifecycle/): Boot sequence, node initialization, view synchronization, and persistence cycles.
-- [App Lifecycle](/docs/Lifecycle/App%20Lifecycle/): SvApp initialization, extension points, and readiness signaling.
+- [App Lifecycle](/docs/Lifecycle/App%20Lifecycle/): SvApp singleton initialization sequence, extension points, runtime environment hooks, user alert routing, and UI readiness promises.
+- [App Lifecycle](/docs/Lifecycle/App%20Lifecycle/_unused/): SvApp initialization, extension points, and readiness signaling.
 - [Boot Sequence](/docs/Lifecycle/Boot%20Sequence/): How the application loads from first script tag to a running app.
-- [Headless Execution](/docs/Lifecycle/Headless%20Execution/): Running STRVCT applications in Node.js without a browser.
+- [Boot Sequence](/docs/Lifecycle/Boot%20Sequence/_unused/): How the application loads from first script tag to a running app.
+- [Headless Execution](/docs/Lifecycle/Headless%20Execution/): Running STRVCT applications natively in Node.js without DOM or browser dependencies.
+- [Headless Execution](/docs/Lifecycle/Headless%20Execution/_unused/): Running STRVCT applications in Node.js without a browser.
 - [Node Lifecycle](/docs/Lifecycle/Node%20Lifecycle/): Creation, three-phase initialization, parent-child relationships, and update notifications.
+- [Node Lifecycle](/docs/Lifecycle/Node%20Lifecycle/_unused/): Creation, three-phase initialization, parent-child relationships, and update notifications.
 - [Persistence Lifecycle](/docs/Lifecycle/Persistence%20Lifecycle/): How objects are stored, loaded, and kept in sync with the local record store and the cloud.
+- [Persistence Lifecycle](/docs/Lifecycle/Persistence%20Lifecycle/_unused/): How objects are stored, loaded, and kept in sync with the local record store and the cloud.
 - [View Synchronization](/docs/Lifecycle/View%20Synchronization/): How views discover nodes, synchronize state, and batch updates efficiently.
+- [View Synchronization](/docs/Lifecycle/View%20Synchronization/_unused/): How views discover nodes, synchronize state, and batch updates efficiently.
 - [Naked Objects](/docs/Naked%20Objects/): From Domain Models to Complete Applications
 - [Naked Objects](/docs/Naked%20Objects%20Old/): From Domain Models to Complete Applications
 - [Nodes](/docs/Nodes/): The core domain object abstraction, object graph hierarchy, and subnode management in Strvct.
@@ -77,10 +89,14 @@
 - [Local Object Pools](/docs/Persistence/Local%20Object%20Pools/): IndexedDB-backed persistence for domain object graphs using dirty tracking, the local record store (SvLocalRecordStore), and atomic event-loop commits.
 - [Local Object Pools](/docs/Persistence/Local%20Object%20Pools/_unused/): IndexedDB-backed persistence for object graphs using dirty tracking and automatic serialization.
 - [Programming Idioms](/docs/Programming%20Idioms/): Recurring patterns and conventions for writing STRVCT code.
-- [Async Patterns](/docs/Programming%20Idioms/Async%20Patterns/): Extended promises, serial and parallel iteration, and concurrency control.
-- [Categories](/docs/Programming%20Idioms/Categories/): Extending existing classes by adding methods from separate files.
-- [Protocols](/docs/Programming%20Idioms/Protocols/): Declaring interfaces and verifying conformance at runtime.
-- [Style Guide](/docs/Programming%20Idioms/Style%20Guide/): Naming conventions, formatting rules, and code structure patterns.
+- [Async Patterns](/docs/Programming%20Idioms/Async%20Patterns/): Promise extensions, serial and parallel async array iteration, and error context rethrowing with Error.rethrow().
+- [Async Patterns](/docs/Programming%20Idioms/Async%20Patterns/_unused/): Extended promises, serial and parallel iteration, and concurrency control.
+- [Categories](/docs/Programming%20Idioms/Categories/): Extending existing classes by adding methods from separate files without subclassing.
+- [Categories](/docs/Programming%20Idioms/Categories/_unused/): Extending existing classes by adding methods from separate files.
+- [Protocols](/docs/Programming%20Idioms/Protocols/): Declaring interfaces and verifying conformance at runtime with fail-fast registration checks.
+- [Protocols](/docs/Programming%20Idioms/Protocols/_unused/): Declaring interfaces and verifying conformance at runtime.
+- [Style Guide](/docs/Programming%20Idioms/Style%20Guide/): Coding conventions, self-initializing class patterns, method chaining, and file structure rules across STRVCT.
+- [Style Guide](/docs/Programming%20Idioms/Style%20Guide/_unused/): Naming conventions, formatting rules, and code structure patterns.
 - [Reference](/docs/Reference/): Class hierarchy, module hierarchy, and protocol definitions.
 - [Classes](/docs/Reference/Classes/)
 - [Modules](/docs/Reference/Modules/)

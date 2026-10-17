@@ -19,11 +19,17 @@
   <url><loc>https://strvct.net/docs/Diagrams/View%20Resolution/</loc></url>
   <url><loc>https://strvct.net/docs/Events%20and%20Gestures/</loc></url>
   <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Drag%20and%20Drop/</loc></url>
+  <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Drag%20and%20Drop/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Event%20Flow/</loc></url>
+  <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Event%20Flow/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Event%20Listeners/</loc></url>
+  <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Event%20Listeners/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Gesture%20Recognizers/</loc></url>
+  <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Gesture%20Recognizers/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Keyboard%20and%20Focus/</loc></url>
+  <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Keyboard%20and%20Focus/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Timers/</loc></url>
+  <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Timers/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Future%20Work/</loc></url>
   <url><loc>https://strvct.net/docs/Future%20Work/Accessibility%20Testing%20%26%20Tuning/</loc></url>
   <url><loc>https://strvct.net/docs/Future%20Work/Async%20Final%20Initialization/</loc></url>
@@ -52,11 +58,17 @@
   <url><loc>https://strvct.net/docs/Internationalization/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Lifecycle/</loc></url>
   <url><loc>https://strvct.net/docs/Lifecycle/App%20Lifecycle/</loc></url>
+  <url><loc>https://strvct.net/docs/Lifecycle/App%20Lifecycle/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Lifecycle/Boot%20Sequence/</loc></url>
+  <url><loc>https://strvct.net/docs/Lifecycle/Boot%20Sequence/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Lifecycle/Headless%20Execution/</loc></url>
+  <url><loc>https://strvct.net/docs/Lifecycle/Headless%20Execution/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Lifecycle/Node%20Lifecycle/</loc></url>
+  <url><loc>https://strvct.net/docs/Lifecycle/Node%20Lifecycle/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Lifecycle/Persistence%20Lifecycle/</loc></url>
+  <url><loc>https://strvct.net/docs/Lifecycle/Persistence%20Lifecycle/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Lifecycle/View%20Synchronization/</loc></url>
+  <url><loc>https://strvct.net/docs/Lifecycle/View%20Synchronization/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Naked%20Objects/</loc></url>
   <url><loc>https://strvct.net/docs/Naked%20Objects%20Old/</loc></url>
   <url><loc>https://strvct.net/docs/Nodes/</loc></url>
@@ -79,9 +91,13 @@
   <url><loc>https://strvct.net/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Programming%20Idioms/</loc></url>
   <url><loc>https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/</loc></url>
+  <url><loc>https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Programming%20Idioms/Categories/</loc></url>
+  <url><loc>https://strvct.net/docs/Programming%20Idioms/Categories/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Programming%20Idioms/Protocols/</loc></url>
+  <url><loc>https://strvct.net/docs/Programming%20Idioms/Protocols/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Programming%20Idioms/Style%20Guide/</loc></url>
+  <url><loc>https://strvct.net/docs/Programming%20Idioms/Style%20Guide/_unused/</loc></url>
   <url><loc>https://strvct.net/docs/Reference/</loc></url>
   <url><loc>https://strvct.net/docs/Reference/Classes/</loc></url>
   <url><loc>https://strvct.net/docs/Reference/Modules/</loc></url>

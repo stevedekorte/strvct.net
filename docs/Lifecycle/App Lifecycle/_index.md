@@ -1,90 +1,132 @@
 # App Lifecycle
 
-SvApp initialization, extension points, and readiness signaling.
+`SvApp` singleton initialization sequence, extension points, runtime environment hooks, user alert routing, and UI readiness promises.
 
 ## Overview
 
-`SvApp` is the application singleton. It owns the persistent store, the root model object, and the top-level UI. Subclasses override a small number of hook methods to set up their model and UI without needing to manage the initialization order themselves.
+`SvApp` is the application singleton. It owns the persistent object pool, root model object graph, and top-level user interface (`SvUserInterface`). Subclasses override a small set of hook methods to initialize application models and user interfaces in a clean, predictable order.
 
-## Extension Points
+<svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="alc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
 
-| Method | When it runs | What to do here |
-|--------|-------------|-----------------|
-| `setupModel()` | Store is open, root object exists | Initialize your data model, add top-level nodes |
-| `setupUi()` | Model is ready | Customize the UI setup |
-| `appDidInit()` | Everything is wired up | Post-init work, the app is now live |
-| `afterAppUiDidInit()` | UI is visible | Handle URL parameters, trigger initial navigation |
-| `handleSearchParams(params)` | Called from `afterAppUiDidInit` | Process URL query parameters |
+  <rect class="fill" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">1. setupModel()</text>
+  <text x="40" y="58" class="dim">Store open, root object exists</text>
 
-Use `rootSubnodeWithTitleForProto(title, proto)` to add top-level objects — it creates them on first run and reuses them from storage on subsequent loads.
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#alc)"/>
 
-## Waiting for Readiness
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">2. setupUi()</text>
+  <text x="305" y="58" class="dim">Model ready; UI instantiated</text>
 
-The app exposes a promise for code that needs to wait:
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#alc)"/>
+
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">3. appDidInit()</text>
+  <text x="570" y="58" class="dim">Posts "appDidInit" note</text>
+
+  <line class="flow" x1="675" y1="70" x2="675" y2="85"/>
+  <line class="flow" x1="410" y1="85" x2="675" y2="85"/>
+  <line class="flow" x1="410" y1="85" x2="410" y2="100" marker-end="url(#alc)"/>
+
+  <rect class="fill" x="290" y="100" width="240" height="50"/>
+  <text x="305" y="120" class="b">4. afterAppUiDidInit()</text>
+  <text x="305" y="138" class="dim">UI visible; processes URL params</text>
+
+  <text x="410" y="185" text-anchor="middle" class="dim">Model initialization is fully separated from UI rendering; app runs identically in browser or headless Node.js.</text>
+</svg>
+
+---
+
+## Extension Point Hook Methods
+
+| Hook Method | When Executed | Purpose & Usage |
+|---|---|---|
+| `setupModel()` | Object pool store is open; root model exists. | Initialize application data models; create or fetch top-level subnodes. |
+| `setupUi()` | Model object graph is ready. | Customize top-level UI presentation and window settings. |
+| `appDidInit()` | Everything is wired up and live. | Post-initialization tasks; posts `"appDidInit"` notification. |
+| `afterAppUiDidInit()` | UI elements are mounted and visible. | Parse URL search parameters via `handleSearchParams(params)`. |
+| `handleSearchParams(params)` | Called automatically from `afterAppUiDidInit()`. | Process URL query parameters for deep-linking. |
+
+### Top-Level Root Subnode Persistence (`rootSubnodeWithTitleForProto`):
+To instantiate top-level application root nodes safely across reloads:
 
 ```javascript
-await SvApp.shared().didInitPromise();
-// App is now fully initialized
-```
-
-For synchronous checks:
-
-```javascript
-if (SvApp.hasShared() && SvApp.shared().hasDoneAppInit()) {
-    // Safe to interact with app
+setupModel () {
+    super.setupModel();
+    // Creates on first run; reuses from storage on subsequent loads
+    this._tasksNode = this.rootSubnodeWithTitleForProto("Tasks", TaskManagerNode);
 }
 ```
 
-## Notifications
+---
 
-- **`"appDidInit"`** — Posted when initialization is complete. Useful for observers that need to run setup code after the app is ready.
-- **`"onAppDeveloperModeChangedNote"`** — Posted when developer mode is toggled.
+## Waiting for Initialization & UI Readiness
 
-## Runtime Lifecycle Events
-
-Beyond startup, the app reacts to environment events at runtime. These arrive as **environment-agnostic hooks on `SvModel`** (default no-ops — override in your model), routed through `SvApp`. The environment layer translates concrete signals into them, so the same overrides work in a browser and headless. A model implementing these never touches the DOM, `window`, or any view class, so it stays headless-testable.
-
-| Hook (on `SvModel`) | Browser source | Headless source | Purpose |
-|--------|----------------|-----------------|---------|
-| `onAppDidGoOnline()` | `online` event | — | Connectivity restored |
-| `onAppDidGoOffline()` | `offline` event | — | Connectivity lost |
-| `onAppWillSuspend()` | `visibilitychange` (hidden) | — | App backgrounded — flush volatile state |
-| `onAppWillTerminate() → Boolean` | `beforeunload` | `SIGTERM` / `SIGINT` | Shutdown/unload — do synchronous cleanup; return `true` to request a block (e.g. the browser's unsaved-changes prompt) |
-
-Routing and translation:
-
-- `SvApp.onApp*` fans each event out to `this.model()` — and is the natural place to notify other participants later.
-- **Browser:** `SvWebUserInterface` owns an `SvWindowListener` + `SvDocumentListener` (delegate = itself) via the event system and maps the DOM events. `beforeunload` is delivered **synchronously** to its delegate method, which returns `false` to drive the framework's `preventDefault()` — so `onAppWillTerminate()` returning `true` produces the prompt, and the cleanup runs in time (a queued notification would fire too late).
-- **Headless:** `SvHeadlessUserInterface` maps process termination signals to `onAppWillTerminate()`.
-
-## User Alerts
-
-Any model can ask that a message be shown to the user — without referencing views, the DOM, or the concept of a user. It posts a notification; the UI layer presents it (or logs it, headless):
+### 1. App Initialization Promise (`didInitPromise`)
+Code that needs to wait for complete application setup awaits `didInitPromise()`:
 
 ```javascript
-this.postNoteNamed("onRequestUserAlert", {
-    name: "someMachineId",   // for logs/telemetry — not shown to the user
-    title: "Heading",         // optional
-    message: "The text shown to the user.",
-    level: "error"            // "info" | "warning" | "error"
-});
+await SvApp.shared().didInitPromise();
+// App is now fully initialized and live
 ```
 
-`SvUserInterface` observes `onRequestUserAlert` and calls `presentUserAlert(info)`. `SvWebUserInterface` opens an `SvPanelView`; the base (headless) implementation logs it. The presenting view reference stays in the UI layer, never in the model that posted the alert.
-
-## UI Readiness
-
-UI-dependent work (e.g. posting a navigation request) should **wait** for the UI rather than poll or retry. The app exposes a promise that resolves once the UI is ready to navigate — or, headless, once the environment reports there is no navigable UI:
+### 2. UI Readiness Promise (`promiseUserInterfaceReady`)
+UI-dependent code (e.g. sending navigation selection requests) awaits `promiseUserInterfaceReady()`:
 
 ```javascript
 const ui = await SvApp.shared().promiseUserInterfaceReady();
 if (ui.providesNavigation()) {
-    // safe to navigate, e.g. post "onRequestSelectNodePath"
+    // Safe to send navigation requests
+    this.postNoteNamed("onRequestSelectNodePath", { path: ["Workspace", "Tasks"] });
 }
 ```
 
-- Resolves with the `userInterface()`. `providesNavigation()` is `true` for a web UI, `false` headless — so the same model code skips UI-only work when there's no navigable UI.
-- The promise is created up front, so awaiting **after** readiness resolves immediately.
-- **Browser:** `SvBrowserView` calls `SvApp.markUserInterfaceReady()` once its root column is materialized (the genuine "ready to navigate" point). **Headless:** `SvHeadlessUserInterface` marks it after init.
+---
 
-This replaces DOM polling / retry loops in models: await the promise, then post the request once.
+## Runtime Environment Event Hooks
+
+`SvApp` captures environment lifecycle signals and translates them into environment-agnostic hooks on `SvModel`:
+
+| Model Hook Method (`SvModel`) | Browser Signal Event | Headless Signal Event | Purpose & Action |
+|---|---|---|---|
+| `onAppDidGoOnline()` | `online` event | — | Network connectivity restored |
+| `onAppDidGoOffline()` | `offline` event | — | Network connectivity lost |
+| `onAppWillSuspend()` | `visibilitychange` (hidden) | — | App backgrounded; flush volatile state |
+| `onAppWillTerminate()` | `beforeunload` (sync) | `SIGTERM` / `SIGINT` | Shutdown/unload cleanup. Return `true` to block unload. |
+
+---
+
+## Model User Alerts (`onRequestUserAlert`)
+
+Domain models request user notifications without referencing UI or DOM classes:
+
+```javascript
+this.postNoteNamed("onRequestUserAlert", {
+    name: "syncFailure",
+    title: "Sync Error",
+    message: "Failed to sync changes with cloud store.",
+    level: "error" // "info" | "warning" | "error"
+});
+```
+
+`SvUserInterface` observes `onRequestUserAlert`. In the browser (`SvWebUserInterface`), it opens an `SvPanelView` overlay; in headless Node.js, it logs the alert to console.
+
+---
+
+## Related Guides
+
+- [Headless Execution](../Headless%20Execution/index.html): Running applications under Node.js.
+- [Boot Sequence](../Boot%20Sequence/index.html): CAM resource loading and script evaluation.

@@ -1839,6 +1839,159 @@ Source: /docs/Events%20and%20Gestures/Drag%20and%20Drop/
 
 # Drag and Drop
 
+Browser drag-and-drop support for views and nodes, covering drop targets, drag sources, and MIME-type dispatch.
+
+## Overview
+
+The browser's native HTML5 drag-and-drop API is low-level and inconsistent—you must manually parse `DataTransfer` objects, handle files versus text strings differently, prevent default browser navigation on dropped files, and manage empty-space drops that bypass child elements.
+
+STRVCT wraps this into a clean, declarative protocol:
+- **Drop Targets:** Views register to accept dropped content (`setIsRegisteredForBrowserDrop(true)`). Dropped data arrives pre-parsed, typed by MIME, and dispatched directly to a handler method named by convention.
+- **Drag Sources:** Views register as draggable sources (`setIsRegisteredForBrowserDrag(true)`), populating `DataTransfer` payloads when a drag initiates.
+
+<svg viewBox="0 0 820 500" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="add" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
+  <text x="235" y="40" class="b">1. Browser DOM Drop Event</text>
+  <text x="235" y="58" class="dim">DataTransfer with files, text, HTML, or JSON</text>
+
+  <line class="flow" x1="410" y1="72" x2="410" y2="115" marker-end="url(#add)"/>
+
+  <rect class="fill" x="220" y="115" width="380" height="70"/>
+  <text x="235" y="135" class="b">2. SvDropListener Target Check</text>
+  <text x="235" y="153" class="dim">dragenter / dragover / dragleave / drop;</text>
+  <text x="235" y="171" class="dim">Checks view.acceptsDrop(event)</text>
+
+  <line class="flow" x1="410" y1="185" x2="410" y2="235" marker-end="url(#add)"/>
+
+  <rect class="fill" x="220" y="235" width="380" height="106"/>
+  <text x="235" y="255" class="b">3. MIME-Type Convention Dispatch</text>
+  <text x="235" y="273" class="dim">text/plain  →  onBrowserDropTextPlain(dataChunk)</text>
+  <text x="235" y="291" class="dim">text/html   →  onBrowserDropTextHtml(dataChunk)</text>
+  <text x="235" y="309" class="dim">image/png   →  onBrowserDropImagePng(dataChunk)</text>
+  <text x="235" y="327" class="dim">app/json    →  onBrowserDropApplicationJson(chunk)</text>
+
+  <line class="flow" x1="410" y1="341" x2="410" y2="385" marker-end="url(#add)"/>
+
+  <rect class="fill" x="220" y="385" width="380" height="70"/>
+  <text x="235" y="405" class="b">4. View or Model Node Handler Runs</text>
+  <text x="235" y="423" class="dim">Application processes typed data chunk;</text>
+  <text x="235" y="441" class="dim">unhandled MIME types are silently ignored</text>
+
+  <text x="410" y="490" text-anchor="middle" class="dim">Register drop support via setIsRegisteredForBrowserDrop(true) and implement one handler method per accepted MIME type.</text>
+</svg>
+
+---
+
+## Key Framework Classes
+
+| File / Class Name | Purpose & Responsibilities |
+|---|---|
+| `SvDomView_browserDragAndDrop.js` | Category on `SvDomView` implementing drop/drag target APIs. |
+| `SvDropListener.js` | Manages element drop event listeners (`dragenter`, `dragover`, `dragleave`, `drop`). |
+| `SvDragListener.js` | Manages element drag source event listeners (`dragstart`, `dragend`). |
+| `SvDocumentBody.js` | Global drop prevention on `document.body` to stop browser file navigation. |
+
+---
+
+## Drop Targets API
+
+### 1. Registering a View for Drops
+```javascript
+init () {
+    super.init();
+    this.setIsRegisteredForBrowserDrop(true); // Attaches SvDropListener
+    return this;
+}
+```
+
+### 2. Accepting or Rejecting Drops
+Override `acceptsDrop(event)` to inspect incoming transfer types:
+
+```javascript
+acceptsDrop (event) {
+    // Inspect event.dataTransfer.types
+    return event.dataTransfer.types.includes("text/plain");
+}
+```
+
+### 3. MIME Type Method Dispatch (`dropMethodForMimeType`)
+
+| MIME Type | Convention Handler Method Name |
+|---|---|
+| `text/plain` | `onBrowserDropTextPlain(dataChunk)` |
+| `text/html` | `onBrowserDropTextHtml(dataChunk)` |
+| `image/png` | `onBrowserDropImagePng(dataChunk)` |
+| `image/jpeg` | `onBrowserDropImageJpeg(dataChunk)` |
+| `application/json` | `onBrowserDropApplicationJson(dataChunk)` |
+
+### 4. Data Chunk Object (`SvDataUrl`)
+Dropped payloads are wrapped in an `SvDataUrl` instance (`dataChunk`):
+- `dataChunk.mimeType()`: Returns the MIME type string.
+- `dataChunk.decodedData()`: Returns the decoded string or JSON content.
+- `dataChunk.setDataUrlString(url)`: Contains the data URL string for dropped files.
+
+### 5. Visual Drag Highlighting
+Override styling hooks for hover feedback:
+```javascript
+dragHighlight () {
+    this.setBorder("2px dashed cornflowerblue");
+}
+
+dragUnhighlight () {
+    this.setBorder("none");
+}
+```
+
+---
+
+## Drag Sources API
+
+To make a view draggable:
+
+```javascript
+init () {
+    super.init();
+    this.setIsRegisteredForBrowserDrag(true);
+    return this;
+}
+
+// Populate transfer payload on drag start
+onBrowserDragStart (event) {
+    const dt = event.dataTransfer;
+    dt.setData("text/plain", this.node().title());
+    dt.setData("application/json", JSON.stringify(this.node().asJson()));
+}
+```
+
+---
+
+## Related Guides
+
+- [Gesture Recognizers](../Gesture%20Recognizers/index.html): Touch and mouse gesture state machines.
+- [Keyboard and Focus](../Keyboard%20and%20Focus/index.html): Modifier-aware key routing.
+
+
+---
+
+<!-- Page: docs/Events and Gestures/Drag and Drop/_unused -->
+Source: /docs/Events%20and%20Gestures/Drag%20and%20Drop/_unused/
+
+# Drag and Drop
+
 Browser drag-and-drop support for views and nodes, covering both drop targets and drag sources.
 
 ## Overview
@@ -2176,6 +2329,88 @@ For raw event listeners (without gestures), the handler is called directly on th
 
 ---
 
+<!-- Page: docs/Events and Gestures/Event Flow/_unused -->
+Source: /docs/Events%20and%20Gestures/Event%20Flow/_unused/
+
+# Event Flow
+
+The end-to-end path from a browser event to an application handler.
+
+## Overview
+
+Raw DOM events are too low-level for most application code. Distinguishing a tap from a long-press from a pan requires tracking timing, movement thresholds, and finger counts — and when multiple gestures compete on the same element, the browser offers no arbitration. STRVCT's event pipeline absorbs this complexity: raw events feed into gesture recognizer state machines, a central SvGestureManager resolves conflicts (so a tap and a long-press on the same view don't both fire), and the application only sees clean, high-level callbacks like `onTapComplete` or `onPanMove`. Views that don't need gestures can still handle raw events directly — the gesture layer is additive, not mandatory.
+
+<svg viewBox="0 0 820 540" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aef" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
+  <text x="235" y="40" class="b">1. Browser DOM Event</text>
+  <text x="235" y="58" class="dim">mouse, touch, keyboard, drop, ...</text>
+  <line class="flow" x1="410" y1="72" x2="410" y2="110" marker-end="url(#aef)"/>
+  <rect class="fill" x="220" y="110" width="380" height="70"/>
+  <text x="235" y="130" class="b">2. SvEventListener</text>
+  <text x="235" y="148" class="dim">calls named method on delegate view;</text>
+  <text x="235" y="166" class="dim">returning false stops propagation</text>
+  <line class="flow" x1="410" y1="180" x2="410" y2="215" marker-end="url(#aef)"/>
+  <text x="425" y="202" class="dim">if a gesture recognizer is attached</text>
+  <rect class="fill" x="220" y="215" width="380" height="70"/>
+  <text x="235" y="235" class="b">3. Recognizer state machine updates</text>
+  <text x="235" y="253" class="dim">tracks finger count, timing, movement;</text>
+  <text x="235" y="271" class="dim">requests activation when conditions are met</text>
+  <line class="flow" x1="410" y1="285" x2="410" y2="320" marker-end="url(#aef)"/>
+  <rect class="fill" x="220" y="320" width="380" height="70"/>
+  <text x="235" y="340" class="b">4. SvGestureManager arbitrates</text>
+  <text x="235" y="358" class="dim">resolves competing gestures across views;</text>
+  <text x="235" y="376" class="dim">if accepted, sends delegate messages</text>
+  <line class="flow" x1="410" y1="390" x2="410" y2="425" marker-end="url(#aef)"/>
+  <rect class="fill" x="220" y="425" width="380" height="70"/>
+  <text x="235" y="445" class="b">5. View handler executes</text>
+  <text x="235" y="463" class="dim">onGestureBegin / Move / Complete / Cancelled,</text>
+  <text x="235" y="481" class="dim">or raw onMouseDown, etc., for non-gesture events</text>
+  <text x="410" y="525" text-anchor="middle" class="dim">For raw event listeners (no gesture), steps 3 and 4 are skipped; the listener calls the view handler directly at step 2.</text>
+</svg>
+
+
+For raw event listeners (without gestures), the handler is called directly on the view at step 2, skipping the gesture layer.
+
+## Detailed Steps
+
+1. **Browser fires a native DOM event** (mouse, touch, keyboard, etc.) on a DOM element.
+
+2. **An `SvEventListener` receives it.** The listener was registered on the view's element via `addEventListener()`. It calls the corresponding method on its delegate — typically the view itself. For example, a `mousedown` event calls `onMouseDown(event)` on the view.
+
+3. **Returning `false` stops propagation.** If the handler returns `false`, `event.stopPropagation()` is called, preventing the event from bubbling to ancestor elements.
+
+4. **Gesture recognizers observe the event.** If the view has gesture recognizers attached, they receive the raw event and update their internal state machines. For example, a `SvTapGestureRecognizer` tracks mousedown/mouseup timing and position.
+
+5. **The recognizer requests activation.** When the gesture's conditions are met (correct finger count, sufficient movement, hold duration, etc.), it calls `SvGestureManager.requestActiveGesture()`.
+
+6. **SvGestureManager arbitrates.** The singleton manager checks whether another gesture is already active, considers the view hierarchy, and decides whether to accept or reject the request. Competing gestures on the same or ancestor views are cancelled.
+
+7. **The recognizer sends delegate messages.** If accepted, the recognizer calls phase methods on the view: `onGestureBegin`, `onGestureMove`, `onGestureComplete`, or `onGestureCancelled`.
+
+8. **The view executes application logic.** The handler method runs whatever the application needs — updating model state, triggering animations, navigating, etc.
+
+## Special Cases
+
+- **Keyboard events** route through `SvKeyboard`, which generates modifier-aware method names (e.g., `onShiftAKeyDown`).
+- **Drag-and-drop events** route through `SvDropListener`/`SvDragListener` and the MIME dispatch chain in `SvDomView_browserDragAndDrop`.
+- **Focus events** interact with the responder chain in `SvResponderDomView`.
+
+
+---
+
 <!-- Page: docs/Events and Gestures/Event Listeners -->
 Source: /docs/Events%20and%20Gestures/Event%20Listeners/
 
@@ -2314,8 +2549,298 @@ Listeners are automatically removed when a view is retired from the hierarchy. T
 
 ---
 
+<!-- Page: docs/Events and Gestures/Event Listeners/_unused -->
+Source: /docs/Events%20and%20Gestures/Event%20Listeners/_unused/
+
+# Event Listeners
+
+Thin wrappers around native DOM events that forward to handler methods on views.
+
+## Architecture
+
+Calling `addEventListener` directly ties views to specific DOM event names and requires manual bookkeeping — tracking which listeners are registered, removing them at the right time, and ensuring handlers exist before registering. Event listeners centralize this: they register lazily on first use, group related events (e.g., all mouse events) into a single toggle, dispatch to named methods on the view, and clean up automatically when the view is retired. This keeps views focused on handling events rather than managing listener lifecycle.
+
+Event listening is built on two base classes:
+
+- **`SvEventListener`** — Wraps a single DOM event. Registers with a target element, and when the event fires, calls a named method on its delegate (typically the view).
+- **`SvEventSetListener`** — Groups related `SvEventListener` instances. Subclasses define which events they cover via `setupListeners()`.
+
+Views manage their listeners through `SvListenerDomView`, which maintains a map of listener class names to listener instances. Listeners are created lazily on first access and cleaned up when the view is removed.
+
+<svg viewBox="0 0 820 380" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="ael" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
+  <text x="235" y="40" class="b">SvListenerDomView</text>
+  <text x="235" y="58" class="dim">manages a map of listeners; lazy creation, automatic cleanup</text>
+  <line class="flow" x1="410" y1="72" x2="410" y2="135"/>
+  <line class="flow" x1="160" y1="105" x2="660" y2="105"/>
+  <line class="flow" x1="160" y1="105" x2="160" y2="135" marker-end="url(#ael)"/>
+  <line class="flow" x1="410" y1="105" x2="410" y2="135" marker-end="url(#ael)"/>
+  <line class="flow" x1="660" y1="105" x2="660" y2="135" marker-end="url(#ael)"/>
+  <rect class="fill" x="60" y="135" width="200" height="88"/>
+  <text x="75" y="155" class="b">SvMouseListener</text>
+  <text x="75" y="173" class="dim">mousedown, mouseup,</text>
+  <text x="75" y="191" class="dim">mouseover, mouseleave,</text>
+  <text x="75" y="209" class="dim">click, dblclick, contextmenu</text>
+  <rect class="fill" x="310" y="135" width="200" height="52"/>
+  <text x="325" y="155" class="b">SvKeyboardListener</text>
+  <text x="325" y="173" class="dim">keydown, keyup, input</text>
+  <rect class="fill" x="560" y="135" width="200" height="70"/>
+  <text x="575" y="155" class="b">SvTouchListener</text>
+  <text x="575" y="173" class="dim">touchstart, touchmove,</text>
+  <text x="575" y="191" class="dim">touchend, touchcancel</text>
+  <line class="flow" x1="160" y1="223" x2="160" y2="280" marker-end="url(#ael)"/>
+  <line class="flow" x1="410" y1="240" x2="410" y2="280" marker-end="url(#ael)"/>
+  <line class="flow" x1="660" y1="240" x2="660" y2="280" marker-end="url(#ael)"/>
+  <rect class="box" x="60" y="280" width="200" height="60"/>
+  <text x="75" y="304" class="dim">view.onMouseDown(event)</text>
+  <text x="75" y="322" class="dim">view.onClick(event), ...</text>
+  <rect class="box" x="310" y="280" width="200" height="60"/>
+  <text x="325" y="304" class="dim">view.onKeyDown(event)</text>
+  <text x="325" y="322" class="dim">view.onKeyUp(event)</text>
+  <rect class="box" x="560" y="280" width="200" height="60"/>
+  <text x="575" y="304" class="dim">view.onTouchStart(event)</text>
+  <text x="575" y="322" class="dim">view.onTouchMove(event)</text>
+  <text x="410" y="370" text-anchor="middle" class="dim">Each listener registers lazily on first use and cleans up automatically when the view is removed.</text>
+</svg>
+
+## Available Listeners
+
+| Listener | Events |
+|----------|--------|
+| `SvMouseListener` | mousedown, mouseup, mouseover, mouseleave, click, dblclick, contextmenu |
+| `SvMouseMoveListener` | mousemove (separate to avoid overhead when not needed) |
+| `SvTouchListener` | touchstart, touchmove, touchcancel, touchend |
+| `SvTouchMoveListener` | touchmove (separate for same reason) |
+| `SvKeyboardListener` | keydown, keyup, input |
+| `SvFocusListener` | focus, blur, focusin, focusout |
+| `SvDragListener` | dragstart, drag, dragend |
+| `SvDropListener` | dragenter, dragover, dragleave, drop |
+| `SvScrollListener` | scroll |
+| `SvWheelListener` | wheel |
+| `SvClipboardListener` | copy, cut, paste |
+| `SvSelectListener` | select |
+| `SvWindowListener` | resize |
+| `SvAnimationListener` | animationstart, animationend, animationiteration |
+| `SvTransitionListener` | transitionend |
+| `SvGamePadListener` | gamepadconnected, gamepaddisconnected |
+
+## Registering for Events
+
+Views provide convenience methods for common event families:
+
+```javascript
+view.setIsRegisteredForMouse(true);    // onMouseDown, onMouseUp, etc.
+view.setIsRegisteredForKeyboard(true); // onKeyDown, onKeyUp
+view.setIsRegisteredForFocus(true);    // onFocus, onBlur
+view.setIsRegisteredForClicks(true);   // uses a SvTapGestureRecognizer internally
+view.setIsRegisteredForWindowResize(true);
+view.setIsRegisteredForBrowserDrop(true);
+```
+
+Event handler methods are called by name on the view. Returning `false` from a handler calls `event.stopPropagation()` to prevent the event from bubbling.
+
+## Listener Lifecycle
+
+Listeners are created lazily when first accessed via `SvListenerDomView.listenerNamed()`:
+
+```javascript
+listenerNamed (className) {
+    const map = this.eventListenersMap();
+    if (!map.has(className)) {
+        const instance = Object.getClassNamed(className).clone()
+            .setListenTarget(this.element())
+            .setDelegate(this);
+        map.set(className, instance);
+    }
+    return map.get(className);
+}
+```
+
+The listener target is the view's DOM element. The delegate is the view itself.
+
+`SvEventSetListener.start()` iterates its child `SvEventListener` instances, each of which:
+
+1. Checks `delegateCanRespond()` — verifies the delegate has the handler method
+2. Calls `addEventListener()` on the target element with the configured options
+
+`stop()` removes all event listeners. `setIsListening(bool)` toggles between started and stopped states.
+
+If the listen target, delegate, or capture mode changes while listening, the listener automatically stops, updates its configuration, and restarts via `resync()`.
+
+## Cleanup
+
+Listeners are automatically removed when a view is retired from the hierarchy. The view's `prepareToRetire()` calls `removeAllListeners()`, which stops every registered `SvEventSetListener` and clears the listener map. No manual cleanup is needed for views that follow normal lifecycle patterns.
+
+
+---
+
 <!-- Page: docs/Events and Gestures/Gesture Recognizers -->
 Source: /docs/Events%20and%20Gestures/Gesture%20Recognizers/
+
+# Gesture Recognizers
+
+Higher-level state machines that interpret sequences of events as meaningful gestures.
+
+## Unified Input Architecture
+
+The browser provides two separate event families for pointing—mouse events on desktop and touch events on mobile—with different semantics, coordinate systems, and lifecycle patterns. Without an abstraction layer, every interactive view needs parallel code paths for both input types, plus logic to prevent ghost clicks and handle edge cases where both fire simultaneously.
+
+Gesture recognizers eliminate this complexity:
+- They consume raw mouse and touch events internally and present a single, input-agnostic interface to the view.
+- A `SvPanGestureRecognizer` works identically whether driven by a mouse drag or a finger swipe—the view implements `onPanBegin` once and it works on every device.
+- New interaction features are automatically cross-platform from the first line of code, with no per-device testing or branching required.
+
+Mouse input naturally supports single-finger gestures (tap, pan, long-press, slide). Multi-finger gestures (pinch, rotation) require touch input or desktop Shift-click multi-touch emulation.
+
+<svg viewBox="0 0 820 520" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="agr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
+  <text x="235" y="40" class="b">1. Raw Mouse / Touch Input Stream</text>
+  <text x="235" y="58" class="dim">Unified input abstraction</text>
+
+  <line class="flow" x1="410" y1="72" x2="410" y2="110" marker-end="url(#agr)"/>
+
+  <rect class="fill" x="220" y="110" width="380" height="70"/>
+  <text x="235" y="130" class="b">2. SvGestureRecognizer State Machine</text>
+  <text x="235" y="148" class="dim">Tracks finger count, timing, movement, hold;</text>
+  <text x="235" y="166" class="dim">Tap, Pan, Pinch, Rotation, LongPress, Slide</text>
+
+  <line class="flow" x1="410" y1="180" x2="410" y2="225" marker-end="url(#agr)"/>
+
+  <rect class="fill" x="220" y="225" width="380" height="70"/>
+  <text x="235" y="245" class="b">3. SvGestureManager Singleton Arbitration</text>
+  <text x="235" y="263" class="dim">Arbitrates competing gestures;</text>
+  <text x="235" y="281" class="dim">Cancels conflicts across view hierarchy</text>
+
+  <line class="flow" x1="410" y1="295" x2="410" y2="340" marker-end="url(#agr)"/>
+
+  <rect class="fill" x="220" y="340" width="380" height="88"/>
+  <text x="235" y="360" class="b">4. Delegate Phase Messages Sent to View</text>
+  <text x="235" y="378" class="dim">onGestureBegin → onGestureMove → onGestureComplete</text>
+  <text x="235" y="396" class="dim">(or onGestureCancelled if interrupted)</text>
+
+  <line class="flow" x1="410" y1="428" x2="410" y2="475" marker-end="url(#agr)"/>
+
+  <rect class="fill" x="220" y="475" width="380" height="34"/>
+  <text x="235" y="495" class="b">5. Application Handler Executes</text>
+</svg>
+
+---
+
+## How Gestures Work
+
+A gesture recognizer is a state machine attached to a view via `addGestureRecognizer()`. When gesture conditions are met, the recognizer sends delegate messages to the view:
+
+```
+acceptsGestureType(gesture)     — Optional: can the view accept this gesture?
+onGestureTypeBegin(gesture)     — Gesture recognized and started
+onGestureTypeMove(gesture)      — Gesture in progress
+onGestureTypeComplete(gesture)  — Gesture completed successfully
+onGestureTypeCancelled(gesture) — Gesture interrupted or cancelled
+```
+
+---
+
+## Complete Gesture Recognizers Suite
+
+| Recognizer Class | Detects | Primary Configuration Settors |
+|---|---|---|
+| **`SvTapGestureRecognizer`** | Single or multi-tap | `setNumberOfTapsRequired()`, `setNumberOfFingersRequired()`, `setMaxHoldPeriod()` |
+| **`SvPanGestureRecognizer`** | Click-and-drag panning | `setMinNumberOfFingersRequired()`, `setMaxNumberOfFingersAllowed()` |
+| **`SvPinchGestureRecognizer`** | Two-finger pinch/zoom | Fixed to 2 fingers |
+| **`SvRotationGestureRecognizer`** | Two-finger rotation | Fixed to 2 fingers |
+| **`SvLongPressGestureRecognizer`** | Press-and-hold gesture | `setTimePeriod()` (default 500ms) |
+| **`SvSlideGestureRecognizer`** | Directional slide | `setDirection("left"|"right"|"up"|"down")`, `setMaxPerpendicularDistToBegin()` |
+| **`SvEdgePanGestureRecognizer`** | Pan starting at view edge | Subclasses for left, right, top, bottom edges |
+| **`SvScreenEdgePan`** | Pan starting at screen boundary | Subclasses for left, right, top, bottom screen boundaries |
+
+---
+
+## Adding Gestures & Convenience API
+
+```javascript
+// Convenience methods on SvDomView
+view.addDefaultTapGesture();       // Single tap
+view.addDefaultDoubleTapGesture(); // Double tap
+view.addDefaultPanGesture();       // Drag panning
+
+// Custom recognizer configuration
+const gesture = SvLongPressGestureRecognizer.clone();
+gesture.setTimePeriod(800); // 800ms hold requirement
+view.addGestureRecognizer(gesture);
+
+// View implements callback handler
+onLongPressComplete (gesture) {
+    this.openContextMenu();
+}
+```
+
+---
+
+## Global Arbitration (`SvGestureManager`)
+
+`SvGestureManager` is a singleton that coordinates competing gestures globally across the entire view tree:
+- **Priority & Hierarchy:** Child views can steal control from parent views.
+- **Active Lock:** Once a gesture is accepted, competing gestures on the same or ancestor views are automatically cancelled.
+- **Explicit Cancellation:** Views can cancel gestures programmatically: `view.cancelAllGesturesExcept(panGesture)`.
+
+---
+
+## Cleanup, Teardown & Memory Safety
+
+When a view is retired and unmounted from the DOM hierarchy, `prepareToRetire()` executes a 3-step cleanup pipeline:
+
+1. **`removeAllGestureRecognizers()`:** Stops each recognizer, removes DOM listeners, and clears the view target.
+2. **`removeAllListeners()`:** Unbinds all element-level DOM event listeners.
+3. **`cancelAllTimeouts()`:** Clears any pending gesture hold timers.
+
+### Weak Reference Timers:
+Gesture recognizers use **`addWeakTimeout()`** for internal hold delays. `addWeakTimeout()` holds only a `WeakRef` to the view target, enabling unmounted views to be reclaimed cleanly by JavaScript's garbage collector without timer leaks.
+
+---
+
+## Multi-Touch Desktop Emulation
+
+On desktop browsers, holding **Shift** while clicking simulates a second touch point. This allows testing multi-finger pinch, zoom, and rotation gestures using a standard mouse.
+
+---
+
+## Related Guides
+
+- [Drag and Drop](../Drag%20and%20Drop/index.html): HTML5 drag-and-drop MIME dispatch.
+- [Keyboard and Focus](../Keyboard%20and%20Focus/index.html): Modifier-aware key routing.
+
+
+---
+
+<!-- Page: docs/Events and Gestures/Gesture Recognizers/_unused -->
+Source: /docs/Events%20and%20Gestures/Gesture%20Recognizers/_unused/
 
 # Gesture Recognizers
 
@@ -2467,6 +2992,109 @@ Source: /docs/Events%20and%20Gestures/Keyboard%20and%20Focus/
 
 Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
 
+## Overview
+
+The browser's native keyboard handling has two critical gaps:
+1. `keydown` and `keyup` events tell you which key was pressed, but not which other keys are currently held.
+2. DOM `focus` is element-level without a concept of a view hierarchy responder chain or tab-order routing between custom view containers.
+
+STRVCT addresses both:
+- **`SvKeyboard` Singleton:** Tracks global keyboard state and generates **modifier-aware method names** (e.g. `onShiftAKeyDown`, `onAlternate_D_KeyDown`).
+- **`SvResponderDomView`:** Layers a responder chain on top of DOM focus to manage focus acquisition, loss, and Tab-key navigation through the view tree.
+
+<svg viewBox="0 0 820 460" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="akf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="fill" x="220" y="20" width="380" height="52"/>
+  <text x="235" y="40" class="b">1. Raw keydown Event</text>
+  <text x="235" y="58" class="dim">key: "A", modifiers: Shift held</text>
+
+  <line class="flow" x1="410" y1="72" x2="410" y2="115" marker-end="url(#akf)"/>
+
+  <rect class="fill" x="220" y="115" width="380" height="70"/>
+  <text x="235" y="135" class="b">2. SvKeyboard Singleton</text>
+  <text x="235" y="153" class="dim">Tracks currently pressed keys &amp; modifiers;</text>
+  <text x="235" y="171" class="dim">Builds method name: "onShiftAKeyDown"</text>
+
+  <line class="flow" x1="410" y1="185" x2="410" y2="235" marker-end="url(#akf)"/>
+
+  <rect class="fill" x="220" y="235" width="380" height="70"/>
+  <text x="235" y="255" class="b">3. Responder Chain (SvResponderDomView)</text>
+  <text x="235" y="273" class="dim">First responder (focused view) receives event;</text>
+  <text x="235" y="291" class="dim">nextKeyView controls Tab-order routing</text>
+
+  <line class="flow" x1="410" y1="305" x2="410" y2="355" marker-end="url(#akf)"/>
+
+  <rect class="fill" x="220" y="355" width="380" height="52"/>
+  <text x="235" y="375" class="b">4. view.onShiftAKeyDown(event) Runs</text>
+  <text x="235" y="393" class="dim">View-specific key handler executes</text>
+
+  <text x="410" y="445" text-anchor="middle" class="dim">Views handle specific key combinations by implementing named methods; no modifier-flag parsing required.</text>
+</svg>
+
+---
+
+## Modifier-Aware Method Naming Pattern
+
+When a key event fires, `SvKeyboard` generates a method name following the pattern:
+
+```
+on[Modifiers][KeyName]Key[Down|Up]
+```
+
+### Examples:
+- Pressing **A** with **Shift**: `onShiftAKeyDown(event)`
+- Pressing **D** with **Option/Alt** and **Shift**: `onAlternate_D_KeyDown(event)` (toggles Developer Mode)
+- Pressing **Enter**: `onEnterKeyDown(event)`
+- Pressing **Escape**: `onEscapeKeyDown(event)`
+
+---
+
+## Platform Modifier Mappings
+
+- **macOS:** Command key maps to `MetaLeft` / `MetaRight` (`onMetaKey...`). Option key maps to `Alternate` (`onAlternateKey...`).
+- **Windows / Linux:** Control key maps to `Control` (`onControlKey...`). Alt key maps to `Alternate` (`onAlternateKey...`).
+
+---
+
+## Responder Chain (`SvResponderDomView`)
+
+`SvResponderDomView` provides focus management methods across the view tree:
+
+- **`acceptsFirstResponder()`:** Returns `true` if the view can receive keyboard focus.
+- **`becomeFirstResponder()`:** Acquires focus, updates styling, and calls `willBecomeFirstResponder()`.
+- **`releaseFirstResponder()`:** Releases focus and calls `willReleaseFirstResponder()`.
+- **`nextKeyView`:** References the next view in the tab order, enabling Tab key navigation across view inputs.
+
+---
+
+## Related Guides
+
+- [Gesture Recognizers](../Gesture%20Recognizers/index.html): Touch and mouse gesture state machines.
+- [Drag and Drop](../Drag%20and%20Drop/index.html): HTML5 drag-and-drop MIME dispatch.
+
+
+---
+
+<!-- Page: docs/Events and Gestures/Keyboard and Focus/_unused -->
+Source: /docs/Events%20and%20Gestures/Keyboard%20and%20Focus/_unused/
+
+# Keyboard and Focus
+
+Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
+
 ## SvKeyboard
 
 The browser's native keyboard handling has two gaps that matter for an application framework. First, `keydown` and `keyup` events tell you which key was just pressed but not which other keys are already held — there is no built-in API for querying current keyboard state. Second, the DOM's `focus` model is element-level: it knows which element has focus, but has no concept of a focus chain through a view hierarchy, tab-order navigation between views, or a centralized way for views to declare whether they accept keyboard input. `SvKeyboard` and the responder chain address these: a singleton tracks live key state and generates modifier-aware method names (so views handle `onShiftAKeyDown` instead of parsing modifier flags), while `SvResponderDomView` layers a responder chain on top of DOM focus to manage keyboard routing through the view tree.
@@ -2535,6 +3163,159 @@ The responder chain ensures that keyboard events are routed to the focused view,
 
 <!-- Page: docs/Events and Gestures/Timers -->
 Source: /docs/Events%20and%20Gestures/Timers/
+
+# Timers
+
+Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
+
+## Object_timeouts
+
+All objects in STRVCT inherit timeout management through the `Object_timeouts` category on `Object`. This provides named, trackable timeouts that can be cancelled individually or in bulk — replacing direct `setTimeout` calls throughout the framework.
+
+Direct `setTimeout` calls are fire-and-forget: there is no built-in way to cancel them by name, deduplicate them, or cancel all pending timers on an object at once. Worse, because the browser's timer queue holds a strong reference to the callback closure — which typically captures `this` — the target object cannot be garbage collected until every pending timer fires, even if nothing else references it. `Object_timeouts` solves both problems: named timeouts with automatic deduplication prevent timer accumulation, and the `addWeakTimeout` variant breaks the strong reference chain so that unreachable objects can be collected without waiting for their timers.
+
+### Basic Usage
+
+```javascript
+// Fire after a delay
+this.addTimeout(() => this.doSomething(), 1000);
+
+// Named timeout (replaces any existing timeout with the same name)
+this.addTimeout(() => this.poll(), 5000, "pollTimer");
+
+// Cancel a named timeout
+this.clearTimeoutNamed("pollTimer");
+
+// Cancel all timeouts on this object
+this.cancelAllTimeouts();
+```
+
+### Strong vs Weak Timeouts
+
+The framework provides two timeout methods with different garbage collection behavior:
+
+**`addTimeout(func, delay, name)`** — The standard timeout. The browser's timer queue holds a strong reference to the callback closure, which typically captures `this`. This **prevents the object from being garbage collected** until the timer fires. Use this when the work must happen regardless of the object's lifecycle — network retries, resource cleanup, message delivery guarantees.
+
+**`addWeakTimeout(func, delay, name)`** — A GC-friendly timeout. Stores the callback on the object itself and uses only a `WeakRef` in the `setTimeout` closure. If the object becomes unreachable before the timer fires, it can be collected and the timer silently becomes a no-op. Use this for work that only matters while the object is alive — UI updates, animations, gesture state management.
+
+```javascript
+// Strong: retry must happen even if no one holds a reference to this request
+this.addTimeout(() => this.retryRequest(), 5000);
+
+// Weak: animation only matters if the view still exists
+this.addWeakTimeout(() => this.fadeOut(), 300);
+```
+
+<svg viewBox="0 0 820 380" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .strong { stroke: #111; stroke-width: 1; fill: none; }
+    .weak { stroke: #888; stroke-width: 1; stroke-dasharray: 4 3; fill: none; }
+  </style>
+  <defs>
+    <marker id="at" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+    <marker id="atw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
+    </marker>
+  </defs>
+  <rect class="box" x="40" y="20" width="350" height="302"/>
+  <text x="55" y="42" class="b">addTimeout · strong</text>
+  <text x="55" y="62" class="dim">closure pins the object alive</text>
+  <rect class="fill" x="55" y="85" width="320" height="52"/>
+  <text x="70" y="105" class="b">Browser timer queue</text>
+  <text x="70" y="123" class="dim">held by the JS engine</text>
+  <line class="strong" x1="215" y1="137" x2="215" y2="170" marker-end="url(#at)"/>
+  <text x="227" y="162" class="dim">strong ref</text>
+  <rect class="fill" x="55" y="170" width="320" height="52"/>
+  <text x="70" y="190" class="b">Callback closure</text>
+  <text x="70" y="208" class="dim">captures the object directly</text>
+  <line class="strong" x1="215" y1="222" x2="215" y2="255" marker-end="url(#at)"/>
+  <text x="227" y="247" class="dim">strong ref</text>
+  <rect class="fill" x="55" y="255" width="320" height="52"/>
+  <text x="70" y="275" class="b">Object</text>
+  <text x="70" y="293" class="dim">pinned; cannot be collected</text>
+  <rect class="box" x="430" y="20" width="350" height="302"/>
+  <text x="445" y="42" class="b">addWeakTimeout · GC-friendly</text>
+  <text x="445" y="62" class="dim">weak link breaks the chain</text>
+  <rect class="fill" x="445" y="85" width="320" height="52"/>
+  <text x="460" y="105" class="b">Browser timer queue</text>
+  <text x="460" y="123" class="dim">held by the JS engine</text>
+  <line class="strong" x1="605" y1="137" x2="605" y2="170" marker-end="url(#at)"/>
+  <text x="617" y="162" class="dim">strong ref</text>
+  <rect class="fill" x="445" y="170" width="320" height="52"/>
+  <text x="460" y="190" class="b">Closure</text>
+  <text x="460" y="208" class="dim">holds only WeakRef + Symbol</text>
+  <line class="weak" x1="605" y1="222" x2="605" y2="255" marker-end="url(#atw)"/>
+  <text x="617" y="247" class="dim">weak ref</text>
+  <rect class="fill" x="445" y="255" width="320" height="52"/>
+  <text x="460" y="275" class="b">Object</text>
+  <text x="460" y="293" class="dim">collectable; timer becomes no-op</text>
+  <text x="410" y="370" text-anchor="middle" class="dim">The weak link between closure and object breaks the reference chain that would otherwise pin the object alive.</text>
+</svg>
+
+### How Weak Timeouts Work
+
+A regular `setTimeout` closure captures `this`, creating a strong reference chain from the browser's timer queue to the object. This prevents garbage collection even if nothing else references the object.
+
+`addWeakTimeout` breaks this chain:
+
+1. The callback is stored on the object in a `weakTimeoutCallbackMap` (keyed by Symbol)
+2. The `setTimeout` closure captures only a `WeakRef` to the object and the Symbol key
+3. When the timer fires, it calls `deref()` on the `WeakRef`
+4. If the object was collected, `deref()` returns `undefined` and the timer is a no-op
+5. If the object is still alive, the callback is retrieved from the map and executed
+
+The callback itself may capture `this` via a closure (e.g., `() => this.doSomething()`), but since it is stored *on the object*, this creates a reference cycle rather than a rooted chain. The cycle is collectible by the mark-and-sweep GC when no external root references the object.
+
+### When to Use Which
+
+| Scenario | Method | Reason |
+|----------|--------|--------|
+| Network request retry | `addTimeout` | Retry must fire to avoid silent failures |
+| Polling for external state | `addTimeout` | External operation continues regardless |
+| Resource cleanup (e.g., revoking blob URLs) | `addTimeout` | Leak prevention must happen |
+| Peer connection heartbeat | `addTimeout` | Connection health requires it |
+| View animation timing | `addWeakTimeout` | No view = nothing to animate |
+| Gesture deactivation delay | `addWeakTimeout` | No gesture = nothing to deactivate |
+| UI scroll/focus scheduling | `addWeakTimeout` | No view = nothing to scroll or focus |
+| Coach mark display delay | `addWeakTimeout` | No view = nothing to display |
+
+### Naming and Deduplication
+
+When a name is provided, `addTimeout` and `addWeakTimeout` both cancel any existing timeout with the same name before scheduling the new one. This prevents accumulation of duplicate timers:
+
+```javascript
+// Each call replaces the previous "autoSave" timer
+this.addTimeout(() => this.save(), 5000, "autoSave");
+```
+
+### Bulk Cancellation
+
+`cancelAllTimeouts()` cancels every pending timeout (both strong and weak) on the object. This is called by `prepareToRetire()` during view teardown, but can also be called manually when resetting an object's state.
+
+## Integration with Views
+
+Gesture recognizers and views use `addWeakTimeout` for their internal timers:
+
+- **`SvGestureRecognizer.didFinish()`** — Deferred deactivation after gesture completes
+- **`SvLongPressGestureRecognizer`** — Long-press detection timer
+- **`SvTapGestureRecognizer`** — Maximum hold period before cancellation
+- **`SvDomView_animations`** — CSS transition timing and sequencing
+- **`SvResponderDomView`** — Deferred focus management
+
+These timers do not prevent their views from being garbage collected if the view is removed from the hierarchy.
+
+
+---
+
+<!-- Page: docs/Events and Gestures/Timers/_unused -->
+Source: /docs/Events%20and%20Gestures/Timers/_unused/
 
 # Timers
 
@@ -6402,6 +7183,145 @@ Source: /docs/Lifecycle/App%20Lifecycle/
 
 # App Lifecycle
 
+`SvApp` singleton initialization sequence, extension points, runtime environment hooks, user alert routing, and UI readiness promises.
+
+## Overview
+
+`SvApp` is the application singleton. It owns the persistent object pool, root model object graph, and top-level user interface (`SvUserInterface`). Subclasses override a small set of hook methods to initialize application models and user interfaces in a clean, predictable order.
+
+<svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="alc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="fill" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">1. setupModel()</text>
+  <text x="40" y="58" class="dim">Store open, root object exists</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#alc)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">2. setupUi()</text>
+  <text x="305" y="58" class="dim">Model ready; UI instantiated</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#alc)"/>
+
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">3. appDidInit()</text>
+  <text x="570" y="58" class="dim">Posts "appDidInit" note</text>
+
+  <line class="flow" x1="675" y1="70" x2="675" y2="85"/>
+  <line class="flow" x1="410" y1="85" x2="675" y2="85"/>
+  <line class="flow" x1="410" y1="85" x2="410" y2="100" marker-end="url(#alc)"/>
+
+  <rect class="fill" x="290" y="100" width="240" height="50"/>
+  <text x="305" y="120" class="b">4. afterAppUiDidInit()</text>
+  <text x="305" y="138" class="dim">UI visible; processes URL params</text>
+
+  <text x="410" y="185" text-anchor="middle" class="dim">Model initialization is fully separated from UI rendering; app runs identically in browser or headless Node.js.</text>
+</svg>
+
+---
+
+## Extension Point Hook Methods
+
+| Hook Method | When Executed | Purpose & Usage |
+|---|---|---|
+| `setupModel()` | Object pool store is open; root model exists. | Initialize application data models; create or fetch top-level subnodes. |
+| `setupUi()` | Model object graph is ready. | Customize top-level UI presentation and window settings. |
+| `appDidInit()` | Everything is wired up and live. | Post-initialization tasks; posts `"appDidInit"` notification. |
+| `afterAppUiDidInit()` | UI elements are mounted and visible. | Parse URL search parameters via `handleSearchParams(params)`. |
+| `handleSearchParams(params)` | Called automatically from `afterAppUiDidInit()`. | Process URL query parameters for deep-linking. |
+
+### Top-Level Root Subnode Persistence (`rootSubnodeWithTitleForProto`):
+To instantiate top-level application root nodes safely across reloads:
+
+```javascript
+setupModel () {
+    super.setupModel();
+    // Creates on first run; reuses from storage on subsequent loads
+    this._tasksNode = this.rootSubnodeWithTitleForProto("Tasks", TaskManagerNode);
+}
+```
+
+---
+
+## Waiting for Initialization & UI Readiness
+
+### 1. App Initialization Promise (`didInitPromise`)
+Code that needs to wait for complete application setup awaits `didInitPromise()`:
+
+```javascript
+await SvApp.shared().didInitPromise();
+// App is now fully initialized and live
+```
+
+### 2. UI Readiness Promise (`promiseUserInterfaceReady`)
+UI-dependent code (e.g. sending navigation selection requests) awaits `promiseUserInterfaceReady()`:
+
+```javascript
+const ui = await SvApp.shared().promiseUserInterfaceReady();
+if (ui.providesNavigation()) {
+    // Safe to send navigation requests
+    this.postNoteNamed("onRequestSelectNodePath", { path: ["Workspace", "Tasks"] });
+}
+```
+
+---
+
+## Runtime Environment Event Hooks
+
+`SvApp` captures environment lifecycle signals and translates them into environment-agnostic hooks on `SvModel`:
+
+| Model Hook Method (`SvModel`) | Browser Signal Event | Headless Signal Event | Purpose & Action |
+|---|---|---|---|
+| `onAppDidGoOnline()` | `online` event | — | Network connectivity restored |
+| `onAppDidGoOffline()` | `offline` event | — | Network connectivity lost |
+| `onAppWillSuspend()` | `visibilitychange` (hidden) | — | App backgrounded; flush volatile state |
+| `onAppWillTerminate()` | `beforeunload` (sync) | `SIGTERM` / `SIGINT` | Shutdown/unload cleanup. Return `true` to block unload. |
+
+---
+
+## Model User Alerts (`onRequestUserAlert`)
+
+Domain models request user notifications without referencing UI or DOM classes:
+
+```javascript
+this.postNoteNamed("onRequestUserAlert", {
+    name: "syncFailure",
+    title: "Sync Error",
+    message: "Failed to sync changes with cloud store.",
+    level: "error" // "info" | "warning" | "error"
+});
+```
+
+`SvUserInterface` observes `onRequestUserAlert`. In the browser (`SvWebUserInterface`), it opens an `SvPanelView` overlay; in headless Node.js, it logs the alert to console.
+
+---
+
+## Related Guides
+
+- [Headless Execution](../Headless%20Execution/index.html): Running applications under Node.js.
+- [Boot Sequence](../Boot%20Sequence/index.html): CAM resource loading and script evaluation.
+
+
+---
+
+<!-- Page: docs/Lifecycle/App Lifecycle/_unused -->
+Source: /docs/Lifecycle/App%20Lifecycle/_unused/
+
+# App Lifecycle
+
 SvApp initialization, extension points, and readiness signaling.
 
 ## Overview
@@ -6601,8 +7521,222 @@ Schedulers are paused during setup so that model and UI initialization don't tri
 
 ---
 
+<!-- Page: docs/Lifecycle/Boot Sequence/_unused -->
+Source: /docs/Lifecycle/Boot%20Sequence/_unused/
+
+# Boot Sequence
+
+How the application loads from first script tag to a running app.
+
+## Overview
+
+The boot process has three phases: load the boot loader, load all resources via the content-addressable memory system, then create and run the app. Each phase completes fully before the next begins, so by the time application code runs, every class and resource is available.
+
+<svg viewBox="0 0 820 690" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="abs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="40" y="20" width="740" height="117"/>
+  <text x="55" y="42" class="b">1. Initial Bootstrap</text>
+  <rect class="fill" x="55" y="70" width="345" height="52"/>
+  <text x="70" y="90" class="b">Browser loads boot loader</text>
+  <text x="70" y="108" class="dim">single script tag entry point</text>
+  <rect class="fill" x="420" y="70" width="345" height="52"/>
+  <text x="435" y="90" class="b">Core boot files</text>
+  <text x="435" y="108" class="dim">Object, Promise, IndexedDB, HashCache, ResourceManager</text>
+  <line class="flow" x1="410" y1="137" x2="410" y2="180" marker-end="url(#abs)"/>
+  <rect class="box" x="40" y="180" width="740" height="214"/>
+  <text x="55" y="202" class="b">2. Resource Loading</text>
+  <text x="55" y="220" class="dim">ResourceManager.shared().setupAndRun()</text>
+  <rect class="fill" x="55" y="235" width="710" height="34"/>
+  <text x="70" y="255" class="dim">Load _index.json: resource metadata + content hashes</text>
+  <rect class="fill" x="55" y="273" width="710" height="34"/>
+  <text x="70" y="293" class="dim">Check HashCache: skip downloads for unchanged content</text>
+  <rect class="fill" x="55" y="311" width="710" height="34"/>
+  <text x="70" y="331" class="dim">Download _cam.json.zip (compressed bundle) on cache miss</text>
+  <rect class="fill" x="55" y="349" width="710" height="34"/>
+  <text x="70" y="369" class="dim">Evaluate CSS sequentially, then JS in dependency order; filter env-inappropriate files</text>
+  <line class="flow" x1="410" y1="394" x2="410" y2="424" marker-end="url(#abs)"/>
+  <rect class="box" x="40" y="424" width="740" height="214"/>
+  <text x="55" y="446" class="b">3. App Creation</text>
+  <text x="55" y="464" class="dim">SvApp.loadAndRunShared()</text>
+  <rect class="fill" x="55" y="479" width="710" height="34"/>
+  <text x="70" y="499" class="dim">Open persistent store; load root object from store</text>
+  <rect class="fill" x="55" y="517" width="710" height="34"/>
+  <text x="70" y="537" class="dim">Pause schedulers; setupModel(); setupUi()</text>
+  <rect class="fill" x="55" y="555" width="710" height="34"/>
+  <text x="70" y="575" class="dim">appDidInit fires: post notification, unhide root view, handle URL params</text>
+  <rect class="fill" x="55" y="593" width="710" height="34"/>
+  <text x="70" y="613" class="dim">Resume schedulers</text>
+  <text x="410" y="675" text-anchor="middle" class="dim">Each phase completes before the next; application code runs only after every class and resource is available.</text>
+</svg>
+
+## 1. Initial Bootstrap
+
+The browser loads the boot loader script. Core boot files are loaded in parallel and evaluated sequentially. These include: Object extensions, Promise extensions, IndexedDB support, HashCache, and ResourceManager.
+
+## 2. Resource Loading
+
+`ResourceManager.shared().setupAndRun()` drives this phase:
+
+1. Loads `_index.json` containing resource metadata and content hashes.
+2. Checks `HashCache` for cached resources — unchanged content is never re-downloaded.
+3. Downloads `_cam.json.zip` (compressed content bundle) on cache miss.
+4. Evaluates CSS resources sequentially (cascade order matters).
+5. Filters out environment-inappropriate resources (e.g., `browser-only/` files in Node.js) via `StrvctFile.canUseInCurrentEnv()`.
+6. Evaluates JavaScript resources in dependency order.
+
+After this phase, all classes are defined and available globally. See [Headless Execution](../Headless%20Execution/) for details on how the boot sequence adapts to Node.js.
+
+## 3. App Creation
+
+`SvApp.loadAndRunShared()` creates the app singleton and opens the persistent store:
+
+```
+SvApp.loadAndRunShared()
+  ├── setStore(defaultStore())
+  ├── loadFromStore()
+  │   ├── store.promiseOpen()
+  │   └── store.rootOrIfAbsentFromClosure()
+  └── run()
+      └── setup()
+          ├── pauseSchedulers()
+          ├── setupModel()
+          ├── setupUi()
+          ├── appDidInit()
+          │   ├── setHasDoneAppInit(true)
+          │   ├── postNoteNamed("appDidInit")
+          │   ├── unhideRootView()
+          │   └── afterAppUiDidInit()
+          │       ├── handleSearchParams()
+          │       └── didInitPromise.resolve()
+          └── resumeSchedulers()
+```
+
+Schedulers are paused during setup so that model and UI initialization don't trigger premature sync cycles. They resume once everything is wired up.
+
+
+---
+
 <!-- Page: docs/Lifecycle/Headless Execution -->
 Source: /docs/Lifecycle/Headless%20Execution/
+
+# Headless Execution
+
+Running STRVCT applications natively in Node.js without DOM or browser dependencies.
+
+## Overview
+
+STRVCT's domain model layer, persistence engine, and boot sequence execute natively in Node.js. The same application domain classes that run in the browser run headlessly under Node.js—with identical storage behavior, slot metadata annotations, and object lifecycles—just without DOM or view classes.
+
+This enables ultra-fast unit/integration testing, server-side processing, batch simulations, and CLI tools.
+
+<svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="ahe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">Shared Domain Model</text>
+  <text x="40" y="58" class="dim">SvStorableNode subclasses</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#ahe)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">Environment Filtering</text>
+  <text x="305" y="58" class="dim">server-only / browser-only</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#ahe)"/>
+
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">LevelDB Storage Backend</text>
+  <text x="570" y="58" class="dim">classic-level via SvIndexedDbFolder</text>
+
+  <text x="410" y="110" text-anchor="middle" class="dim">Model code holds zero DOM references; views observe the model, but the model is completely unaware of views.</text>
+</svg>
+
+---
+
+## Environment Detection (`SvPlatform`)
+
+```javascript
+// Environment checks
+if (SvPlatform.isNodePlatform()) {
+    // Node.js specific code
+} else if (SvPlatform.isBrowserPlatform()) {
+    // Browser specific code
+}
+```
+
+---
+
+## Directory Filtering Conventions (`browser-only` & `server-only`)
+
+During boot resource discovery, `StrvctFile.canUseInCurrentEnv()` inspects path segments:
+- In **Node.js**: Files in `browser-only/` paths are skipped.
+- In **Browser**: Files in `server-only/` paths are skipped.
+
+### The Same-Name Class Pattern:
+This convention provides environment-specific implementations of the exact same class interface:
+
+```
+source/boot/browser-only/SvIndexedDbFolder.js   # Uses native IndexedDB
+source/boot/server-only/SvIndexedDbFolder.js     # Uses LevelDB via classic-level
+```
+
+---
+
+## Browser API Shims for Node.js (`server-only`)
+
+In `source/library/ideal/categories/server-only/`:
+
+| Shim File | Browser API Polyfilled | Node.js Implementation |
+|---|---|---|
+| `XMLHttpRequestShim.js` | `XMLHttpRequest` | Wraps `xhr2` package |
+| `FileReaderShim.js` | `FileReader` | Reads ArrayBuffer and text from Blobs |
+| `ImageShim.js` | `Image`, `HTMLCanvasElement` | Wraps `canvas` package |
+| `FontFaceShim.js` | `FontFace` | Stub accepting font declarations |
+
+---
+
+## Storage Engine Parity
+
+Storage works identically in both environments through `SvIndexedDbFolder`:
+- **Browser:** Writes to native IndexedDB.
+- **Node.js:** Writes to LevelDB (`classic-level`) in `./data/leveldb/`.
+
+---
+
+## Related Guides
+
+- [App Lifecycle](../App%20Lifecycle/index.html): `SvApp` startup and readiness promises.
+- [Local Object Pools](../../Persistence/Local%20Object%20Pools/index.html): Persistent object pools.
+
+
+---
+
+<!-- Page: docs/Lifecycle/Headless Execution/_unused -->
+Source: /docs/Lifecycle/Headless%20Execution/_unused/
 
 # Headless Execution
 
@@ -6868,6 +8002,105 @@ didUpdateSlotFoo (oldValue, newValue) {
 
 ---
 
+<!-- Page: docs/Lifecycle/Node Lifecycle/_unused -->
+Source: /docs/Lifecycle/Node%20Lifecycle/_unused/
+
+# Node Lifecycle
+
+Creation, three-phase initialization, parent-child relationships, and update notifications.
+
+## Class Hierarchy
+
+```
+Object → ProtoClass → SvNode → SvViewableNode → SvStyledNode → SvStorableNode
+```
+
+## Three-Phase Initialization
+
+Every node goes through the same sequence, whether freshly created or loaded from storage:
+
+### 1. `init()` — Primitives and slots
+
+- Calls `super.init()`
+- Initializes slots via `initializeSlots()`
+- Sets up notification observers
+- Configures mutation watching
+
+Only set primitive values and simple defaults here. Don't create child objects — they may be about to arrive from the store.
+
+### 2. `finalInit()` — Complex objects and relationships
+
+- Calls `super.finalInit()`
+- Creates objects for slots with `setFinalInitProto()` — but only if the slot wasn't already populated from storage
+- Establishes object relationships
+
+This is where you detect whether the object is new or loaded:
+
+```javascript
+finalInit () {
+    super.finalInit();
+    if (!this.hasStoredData()) {
+        this.randomizeValues();
+    }
+}
+```
+
+### 3. `afterInit()` → `didInit()` — Post-initialization
+
+- Sets `_hasDoneInit = true`
+- Triggers initial notifications
+- Can be scheduled for end of event loop
+
+By this point the full object graph is ready and it's safe to interact with other objects.
+
+## Creating Instances
+
+Always use `ProtoClass.clone()` rather than `new`. `clone()` runs the full three-phase sequence automatically.
+
+## Parent-Child Relationships
+
+**Adding subnodes:**
+- `addSubnode(node)` — Add to end
+- `addSubnodeAt(node, index)` — Add at specific position
+- Automatically sets `parentNode`
+- Triggers `didChangeSubnodeList()`
+
+**Removing subnodes:**
+- `removeSubnode(node)` — Remove specific node
+- Clears `parentNode` reference
+- Triggers `didChangeSubnodeList()`
+
+## Update Notifications
+
+When a slot value changes, the framework fires a notification chain:
+
+```
+setSlotValue(newValue)
+  └── didUpdateSlot(slot, oldValue, newValue)
+      ├── didUpdateSlot[SlotName](oldValue, newValue)
+      └── didMutate() [for storable nodes]
+```
+
+Additional update methods:
+- `didUpdateNode()` — Manual update trigger
+- `didUpdateNodeIfInitialized()` — Only fires if `hasDoneInit()` is true, preventing spurious notifications during setup
+- `didChangeSubnodeList()` — Fired when the subnodes array changes
+
+## Conditional Updates
+
+A common pattern is to guard update logic so it only runs after initialization is complete:
+
+```javascript
+didUpdateSlotFoo (oldValue, newValue) {
+    if (this.hasDoneInit()) {
+        this.didUpdateNode();
+    }
+}
+```
+
+
+---
+
 <!-- Page: docs/Lifecycle/Persistence Lifecycle -->
 Source: /docs/Lifecycle/Persistence%20Lifecycle/
 
@@ -6957,8 +8190,172 @@ shutdown () {
 
 ---
 
+<!-- Page: docs/Lifecycle/Persistence Lifecycle/_unused -->
+Source: /docs/Lifecycle/Persistence%20Lifecycle/_unused/
+
+# Persistence Lifecycle
+
+How objects are stored, loaded, and kept in sync with the local record store and the cloud.
+
+## Overview
+
+Persistence in STRVCT is automatic. Objects marked as storable are tracked for changes, serialized at the end of each event loop, and written as rows of their pool in the local record store (IndexedDB). A pool that is a cloud document later commits the rows that changed to the cloud. On reload, they're deserialized and re-initialized through the same three-phase lifecycle as new objects. The goal is transparency — a class shouldn't need different code paths for "new" and "loaded."
+
+## Storing Objects
+
+### Marking Dirty
+
+When a storable slot changes, the framework automatically marks the object as dirty:
+
+1. `didMutate()` is called from the slot's `didUpdateSlot()` hook.
+2. The object is added to the store's dirty set.
+3. At the end of the event loop, all dirty objects are auto-committed.
+
+### Serialization
+
+```
+recordForStore(store)
+  ├── Serialize slots marked with setShouldStoreSlot(true)
+  ├── Convert object references to { "*": puuid } (or { "**": poolId } across pools)
+  └── Return JSON-compatible record
+```
+
+Only slots explicitly marked with `setShouldStoreSlot(true)` are persisted. Object references are stored as persistent unique IDs (puuids) rather than direct pointers, so the full object graph can be reconstructed on load.
+
+## Loading Objects
+
+Loading reverses the process in three steps:
+
+### 1. Instance Creation
+
+```
+instanceFromRecordInStore(record, store)
+  ├── Create blank instance
+  ├── Call init()
+  └── Return for population
+```
+
+### 2. Data Population
+
+```
+loadFromRecord(record, store)
+  ├── Restore slot values
+  ├── Resolve object references via puuids
+  └── Skip slots with setFinalInitProto() (they'll be handled next)
+```
+
+### 3. Relationship Restoration
+
+`finalInit()` re-establishes complex relationships. Slots configured with `setFinalInitProto()` only create default instances if the slot wasn't already populated from the store — this is the key mechanism that makes the three-phase lifecycle work for both new and loaded objects.
+
+## Persistence-Aware Initialization
+
+When you need initialization logic that only runs for newly created objects (not loaded ones):
+
+```javascript
+finalInit () {
+    super.finalInit();
+    if (!this.hasStoredData()) {
+        this.randomizeValues();
+    }
+}
+```
+
+## Store Events
+
+- `didLoadFromStore(store)` — Called after all objects have been loaded and initialized. Safe to access the full object graph.
+- `willStore()` — Called just before serialization. Optional hook for pre-save cleanup.
+
+## Clean Shutdown
+
+```javascript
+shutdown () {
+    this.stopWatchingNode();
+    this.subnodes().forEach(node => node.shutdown());
+    this.removeFromParent();
+}
+```
+
+
+---
+
 <!-- Page: docs/Lifecycle/View Synchronization -->
 Source: /docs/Lifecycle/View%20Synchronization/
+
+# View Synchronization
+
+How views discover nodes, synchronize state, and batch updates efficiently.
+
+## View Discovery
+
+The framework creates views automatically when a node needs to be displayed:
+
+1. The node calls `nodeViewClass()`.
+2. The framework searches for `NodeClassNameView` or `NodeClassNameTile`.
+3. Falls back up the inheritance chain until a match is found.
+4. Creates an instance via `clone()` and associates it via `setNode()`.
+
+```
+SvNodeView.newSubviewForSubnode(node)
+  ├── Determine view class
+  ├── Create instance via clone()
+  └── Associate via setNode()
+```
+
+## Model to View
+
+When a node property marked with `setSyncsToView(true)` changes:
+
+1. The node's `didUpdateSlot()` fires.
+2. An `onUpdatedNode` notification is posted.
+3. The observing view schedules `syncFromNode()` via `SvSyncScheduler` at priority 2.
+4. At the end of the event loop, the view updates its DOM and subviews.
+
+## View to Model
+
+When the user interacts with a view:
+
+1. The view calls an action method on the node.
+2. The node updates its internal state.
+3. This triggers a model-to-view sync, completing the cycle.
+
+View-to-model syncs run at priority 0 (higher than model-to-view), ensuring user edits are applied before any reactive updates.
+
+## The Sync Scheduler
+
+`SvSyncScheduler` is central to performance:
+
+- **Batching** — Multiple slot changes in the same event loop produce a single sync call, not one per change.
+- **Coalescing** — Duplicate sync requests for the same view are collapsed.
+- **Loop detection** — The scheduler detects and breaks infinite sync cycles.
+- **Pausing** — Schedulers can be paused during bulk operations (e.g. app startup) and resumed afterward.
+
+```javascript
+// Multiple updates, single sync cycle
+this.scheduleSyncToView();
+this.otherProperty().scheduleSyncToView();
+// Both handled in one pass
+```
+
+## View Lifecycle Events
+
+- `willAddSubview(subview)` — Before adding a child view
+- `willRemoveSubview(subview)` — Before removing a child view
+- `willRemove()` — Before this view is removed from its parent
+- `onVisibility()` — Element becomes visible (via IntersectionObserver)
+- `didChangeNode()` — The node reference changed
+
+## Performance
+
+- **Lazy creation** — Views are only created when their node becomes visible in the navigation.
+- **Visibility tracking** — `IntersectionObserver` integration means off-screen views can skip expensive updates.
+- **Batched updates** — The sync scheduler ensures that rapid state changes don't cause redundant DOM work.
+
+
+---
+
+<!-- Page: docs/Lifecycle/View Synchronization/_unused -->
+Source: /docs/Lifecycle/View%20Synchronization/_unused/
 
 # View Synchronization
 
@@ -10892,6 +12289,121 @@ Source: /docs/Programming%20Idioms/Async%20Patterns/
 
 # Async Patterns
 
+Promise extensions, serial and parallel async array iteration, and error context rethrowing with `Error.rethrow()`.
+
+## Overview
+
+STRVCT extends native JavaScript `Promise` and `Array` prototypes via categories (`Promise_ideal.js`, `Array_promises.js`) to provide clean, chainable asynchronous primitives without importing external async utility libraries.
+
+<svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="50"/>
+  <text x="40" y="40" class="b">Array_promises Extensions</text>
+  <text x="40" y="58" class="dim">promiseSerialForEach / Map</text>
+
+  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#aap)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="50"/>
+  <text x="305" y="40" class="b">Promise_ideal Extensions</text>
+  <text x="305" y="58" class="dim">status, timeouts, &amp; clone()</text>
+
+  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#aap)"/>
+
+  <rect class="fill" x="555" y="20" width="240" height="50"/>
+  <text x="570" y="40" class="b">Error.rethrow() Context</text>
+  <text x="570" y="58" class="dim">Chained error stack traces</text>
+
+  <text x="410" y="110" text-anchor="middle" class="dim">Asynchronous array operations execute cleanly in serial sequence or bounded parallel batches without raw promise boilerplate.</text>
+</svg>
+
+---
+
+## Async Array Iteration (`Array_promises.js`)
+
+STRVCT adds asynchronous iteration methods directly to `Array.prototype`:
+
+### 1. Serial Execution (`promiseSerialForEach` / `promiseSerialMap`)
+Executes an async callback for each element in strict sequential order, awaiting each element before starting the next:
+
+```javascript
+// Executes sequentially
+await items.promiseSerialForEach(async (item) => {
+    await processItem(item);
+});
+
+// Maps results sequentially
+const results = await items.promiseSerialMap(async (item) => {
+    return await fetchDetails(item);
+});
+```
+
+### 2. Parallel Execution (`promiseParallelMap`)
+Executes async callbacks in parallel across all array elements:
+
+```javascript
+const results = await items.promiseParallelMap(async (item) => {
+    return await fetchDetails(item);
+});
+```
+
+---
+
+## Promise Extensions (`Promise_ideal.js`)
+
+`Promise_ideal.js` extends `Promise` with status introspection and timeout helpers:
+
+```javascript
+const promise = Promise.clone(); // Instantiates wrapper promise
+promise.isPending();             // Returns true while unresolved
+promise.isResolved();            // Returns true when resolved
+promise.isRejected();            // Returns true on rejection
+
+// Timeout protection
+await promise.timeout(5000, "Operation timed out after 5s");
+```
+
+---
+
+## Chained Error Context (`Error.rethrow()`)
+
+When catching and rethrowing errors in async pipelines, `Error.rethrow()` preserves the original error stack while adding contextual messages:
+
+```javascript
+try {
+    await pool.commitStoreDirtyObjects();
+} catch (error) {
+    throw Error.rethrow(`Failed to commit object pool ${pool.poolId()}`, error);
+}
+```
+
+---
+
+## Related Guides
+
+- [Categories](../Categories/index.html): Class extension pattern.
+- [Protocols](../Protocols/index.html): Interface declaration and conformance checking.
+
+
+---
+
+<!-- Page: docs/Programming Idioms/Async Patterns/_unused -->
+Source: /docs/Programming%20Idioms/Async%20Patterns/_unused/
+
+# Async Patterns
+
 Extended promises, serial and parallel iteration, and concurrency control.
 
 ## Promise.clone()
@@ -11046,6 +12558,148 @@ Source: /docs/Programming%20Idioms/Categories/
 
 # Categories
 
+Extending existing classes by adding methods from separate files without subclassing.
+
+## Overview
+
+Categories allow developers to add methods to an existing class without modifying its original file. Borrowed from Objective-C and Smalltalk traditions, categories are used throughout STRVCT to separate concerns—keeping core class files focused on essential logic while adding specialized behaviors in dedicated extension files.
+
+A category is a class that extends the target class but executes **`.initThisCategory()`** instead of `.initThisClass()`. The framework copies the category's prototype and static methods onto the target class's prototype rather than creating a new class entry in the registry.
+
+<svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aca" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="170"/>
+  <text x="40" y="42" class="b">Category Extension File</text>
+
+  <rect class="fill" x="40" y="60" width="210" height="40"/>
+  <text x="55" y="80" class="b">class SvJsonGroup_patches</text>
+  <text x="55" y="93" class="dim">Extends base class</text>
+
+  <rect class="fill" x="40" y="115" width="210" height="40"/>
+  <text x="55" y="135" class="b">.initThisCategory()</text>
+  <text x="55" y="148" class="dim">Executes method merge</text>
+
+  <line class="flow" x1="265" y1="105" x2="290" y2="105" marker-end="url(#aca)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="170"/>
+  <text x="305" y="42" class="b">Method Merge Engine</text>
+
+  <rect class="box" x="305" y="60" width="210" height="40"/>
+  <text x="320" y="80" class="b">Prototype Methods</text>
+  <text x="320" y="93" class="dim">Copied to base prototype</text>
+
+  <rect class="box" x="305" y="115" width="210" height="40"/>
+  <text x="320" y="135" class="b">Static Methods</text>
+  <text x="320" y="148" class="dim">Copied to base constructor</text>
+
+  <line class="flow" x1="530" y1="105" x2="555" y2="105" marker-end="url(#aca)"/>
+
+  <rect class="box" x="555" y="20" width="240" height="170"/>
+  <text x="570" y="42" class="b">Target Base Class</text>
+
+  <rect class="fill" x="570" y="60" width="210" height="40"/>
+  <text x="585" y="80" class="b">SvJsonGroup Prototype</text>
+  <text x="585" y="93" class="dim">Gains applyJsonPatches()</text>
+
+  <rect class="fill" x="570" y="115" width="210" height="40"/>
+  <text x="585" y="135" class="b">instanceof Unchanged</text>
+  <text x="585" y="148" class="dim">No extra prototype layer</text>
+</svg>
+
+---
+
+## Defining a Category (`.initThisCategory()`)
+
+```javascript
+// SvJsonGroup_patches.js — adds JSON Patch methods to SvJsonGroup
+(class SvJsonGroup_patches extends SvJsonGroup {
+
+    applyJsonPatches (patches) {
+        // Implementation
+    }
+
+    applyPatch (operation) {
+        // Single patch operation
+    }
+
+}.initThisCategory());
+```
+
+Executing `.initThisCategory()` instructs the class registration system to merge all prototype and static methods into the parent class (`SvJsonGroup`). No new class entry is created in the global class registry.
+
+---
+
+## Naming Conventions & `_imports.json` Order
+
+- **File & Class Naming:** Category files and classes use an underscore to separate the target base class name from the category purpose:
+  `SvJsonGroup_patches.js`, `Array_promises.js`, `Promise_ideal.js`.
+- **Import Dependency Order:** The base class **must** be listed before its category files in `_imports.json`:
+
+```json
+[
+    "SvJsonGroup.js",
+    "SvJsonGroup_patches.js",
+    "SvJsonGroup_clientState.js"
+]
+```
+
+---
+
+## Extending JavaScript Builtins
+
+Categories are used heavily during boot to extend native JavaScript objects without polluting the global scope with global functions:
+
+```javascript
+// Promise_ideal.js — adds clone(), status tracking, and timeouts
+(class Promise_ideal extends Promise {
+    static clone () { /* ... */ }
+    callResolveFunc (...args) { /* ... */ }
+    isPending () { /* ... */ }
+}.initThisCategory());
+
+// Array_promises.js — adds async iteration methods
+(class Array_promises extends Array {
+    async promiseSerialForEach (aBlock) { /* ... */ }
+    async promiseParallelMap (aBlock) { /* ... */ }
+}.initThisCategory());
+```
+
+---
+
+## Category Constraints & Rules
+
+1. **No New Slots:** Categories can only add methods—they **cannot** add new slots via `initPrototypeSlots()`, as prototype slots must be defined during initial class registration.
+2. **`instanceof` Compatibility:** `instanceof` checks are completely unaffected. An instance of `SvJsonGroup` answers `true` for `instanceof SvJsonGroup` and does not add a prototype link layer.
+3. **Full `this` Access:** Category methods execute with full access to `this` and all slots and methods of the base class.
+
+---
+
+## Related Guides
+
+- [Protocols](../Protocols/index.html): Interface declaration and conformance checking.
+- [Style Guide](../Style%20Guide/index.html): Coding standards and class patterns.
+
+
+---
+
+<!-- Page: docs/Programming Idioms/Categories/_unused -->
+Source: /docs/Programming%20Idioms/Categories/_unused/
+
+# Categories
+
 Extending existing classes by adding methods from separate files.
 
 ## Overview
@@ -11155,6 +12809,164 @@ This means:
 
 <!-- Page: docs/Programming Idioms/Protocols -->
 Source: /docs/Programming%20Idioms/Protocols/
+
+# Protocols
+
+Declaring interfaces and verifying conformance at runtime with fail-fast registration checks.
+
+## Overview
+
+Protocols are STRVCT's interface system. A protocol defines a set of methods that a class promises to implement. Unlike informal duck-typing (where code checks for individual methods at call sites), protocols name the contract, support inheritance, and verify conformance at class registration time.
+
+The defining feature of STRVCT's protocol engine is **fail-fast verification**: when a class declares conformance to a protocol via `addProtocol()`, the framework immediately verifies that all required methods exist. If any method is missing, an error is thrown at startup—moving bugs from rare runtime surprises to instant, deterministic startup failures.
+
+<svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="apr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="170"/>
+  <text x="40" y="42" class="b">Protocol Declaration</text>
+
+  <rect class="fill" x="40" y="60" width="210" height="40"/>
+  <text x="55" y="80" class="b">SvAudioClipProtocol</text>
+  <text x="55" y="93" class="dim">Extends Protocol class</text>
+
+  <rect class="fill" x="40" y="115" width="210" height="40"/>
+  <text x="55" y="135" class="b">.initThisProtocol()</text>
+  <text x="55" y="148" class="dim">Registers interface stubs</text>
+
+  <line class="flow" x1="265" y1="105" x2="290" y2="105" marker-end="url(#apr)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="170"/>
+  <text x="305" y="42" class="b">Implementer Class</text>
+
+  <rect class="box" x="305" y="60" width="210" height="40"/>
+  <text x="320" y="80" class="b">initPrototype()</text>
+  <text x="320" y="93" class="dim">this.addProtocol(Protocol)</text>
+
+  <rect class="box" x="305" y="115" width="210" height="40"/>
+  <text x="320" y="135" class="b">Method Implementations</text>
+  <text x="320" y="148" class="dim">play(), stop(), addDelegate()</text>
+
+  <line class="flow" x1="530" y1="105" x2="555" y2="105" marker-end="url(#apr)"/>
+
+  <rect class="box" x="555" y="20" width="240" height="170"/>
+  <text x="570" y="42" class="b">Startup Conformance Check</text>
+
+  <rect class="fill" x="570" y="60" width="210" height="40"/>
+  <text x="585" y="80" class="b">Set Intersection O(1)</text>
+  <text x="585" y="93" class="dim">Verifies required methods</text>
+
+  <rect class="fill" x="570" y="115" width="210" height="40"/>
+  <text x="585" y="135" class="b">Pass or Instant Error</text>
+  <text x="585" y="148" class="dim">Fails fast at boot if missing</text>
+</svg>
+
+---
+
+## Defining a Protocol (`.initThisProtocol()`)
+
+A protocol inherits from `Protocol` and declares empty method stubs representing the interface:
+
+```javascript
+(class SvAudioClipProtocol extends Protocol {
+
+    play () {
+    }
+
+    stop () {
+    }
+
+    addDelegate (audioClipDelegate) {
+    }
+
+    removeDelegate (audioClipDelegate) {
+    }
+
+}.initThisProtocol());
+```
+
+### Protocol Rules:
+- Execute `.initThisProtocol()` at class registration.
+- Class name **must** end with `Protocol` (enforced at startup).
+- Method bodies are empty stubs defining expected parameters.
+
+---
+
+## Implementing & Verifying a Protocol (`addProtocol`)
+
+Implementers call `addProtocol()` inside `initPrototype()`:
+
+```javascript
+(class SvWaSound extends SvSummaryNode {
+
+    initPrototype () {
+        this.addProtocol(SvAudioClipProtocol);
+    }
+
+    play () {
+        // Implementation
+    }
+
+    stop () {
+        // Implementation
+    }
+
+    addDelegate (delegate) {
+        // Implementation
+    }
+
+    removeDelegate (delegate) {
+        // Implementation
+    }
+
+}.initThisClass());
+```
+
+---
+
+## Protocol Verification API
+
+| Method | Purpose & Return Value |
+|---|---|
+| `addProtocol(protocol)` | Registers protocol; throws startup error if any method is missing. |
+| `conformsToProtocol(protocol)` | Returns `true` if class conforms to specified protocol. |
+| `assertConformsToProtocol(protocol)` | Throws exception if class does not conform. |
+| `methodsConformToProtocol(protocol)` | Returns array of methods satisfying the protocol. |
+| `Protocol.allProtocols()` | Returns set of all registered protocol subclasses. |
+
+---
+
+## Formal Framework Protocols
+
+- **`SvAudioClipProtocol`:** Audio playback interface (`play()`, `stop()`, `addDelegate()`, `removeDelegate()`).
+- **`SvAudioClipDelegateProtocol`:** Callback interface (`onSoundEnded(audioClip)`).
+- **`SvDragSourceProtocol`:** Drag source callbacks (`onDragSourceBegin()`, `onDragSourceDropped()`, `onDragSourceEnd()`).
+- **`SvDragDestinationProtocol`:** Drop target callbacks (`onDragDestinationEnter()`, `acceptsDrop()`, `onDragDestinationHover()`).
+
+---
+
+## Related Guides
+
+- [Categories](../Categories/index.html): Class extension pattern.
+- [Style Guide](../Style%20Guide/index.html): Coding standards and conventions.
+
+
+---
+
+<!-- Page: docs/Programming Idioms/Protocols/_unused -->
+Source: /docs/Programming%20Idioms/Protocols/_unused/
 
 # Protocols
 
@@ -11312,6 +13124,105 @@ Formal protocols address all three. The trade-off is a small amount of ceremony 
 
 <!-- Page: docs/Programming Idioms/Style Guide -->
 Source: /docs/Programming%20Idioms/Style%20Guide/
+
+# Style Guide
+
+Coding conventions, self-initializing class patterns, method chaining, and file structure rules across STRVCT.
+
+## Overview
+
+STRVCT follows smalltalk-inspired JavaScript coding conventions to ensure codebase consistency, high-signal readability, and predictable framework behavior.
+
+---
+
+## 1. Class Declaration & Self-Registration Pattern
+
+Classes are wrapped in IIFE closures and self-register using `.initThisClass()` (or `.initThisCategory()` for categories):
+
+```javascript
+(class Character extends SvStorableNode {
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("name", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+        }
+    }
+
+    initPrototype () {
+        this.setTitle("Character");
+        this.setShouldStore(true);
+    }
+
+    init () {
+        super.init();
+        // Basic instance setup
+    }
+
+    finalInit () {
+        super.finalInit();
+        // Post-deserialization relationship wiring
+    }
+
+}.initThisClass());
+```
+
+---
+
+## 2. Naming Conventions
+
+- **Class Names:** PascalCase with framework prefix (`SvNode`, `SvStackView`, `SvPersistentObjectPool`).
+- **Category Files & Classes:** Base class name + underscore + category purpose (`SvJsonGroup_patches.js`, `Array_promises.js`).
+- **Protocols:** Always end with `Protocol` (`SvAudioClipProtocol`, `SvDragSourceProtocol`).
+- **Slot Getters & Setters:** Getter matches slot name (`node.name()`); setter prepends `set` (`node.setName("Thorin")`).
+- **Boolean Methods:** Prepend `is`, `has`, `should`, or `can` (`node.isSubnode()`, `slot.shouldStoreSlot()`, `view.canInspect()`).
+
+---
+
+## 3. Chained Method Setters
+
+All configuration setters on views and slots return `this` to allow clean method chaining:
+
+```javascript
+const view = SvDomView.clone()
+    .setPosition("absolute")
+    .setTop("0px")
+    .setLeft("0px")
+    .setWidth("100%")
+    .setHeight("100%")
+    .setBackgroundColor("#111");
+```
+
+---
+
+## 4. `_imports.json` Dependency Ordering
+
+Every folder specifies its resource list and subfolder dependencies in `_imports.json`. Base class files **must** precede category extensions or subclass files:
+
+```json
+[
+    "_css.css",
+    "SvNode.js",
+    "SvNode_subnodes.js",
+    "SvStorableNode.js"
+]
+```
+
+---
+
+## Related Guides
+
+- [Categories](../Categories/index.html): Extending existing classes via categories.
+- [Protocols](../Protocols/index.html): Interface declaration and conformance checks.
+- [Async Patterns](../Async%20Patterns/index.html): Asynchronous array iteration and promise helpers.
+
+
+---
+
+<!-- Page: docs/Programming Idioms/Style Guide/_unused -->
+Source: /docs/Programming%20Idioms/Style%20Guide/_unused/
 
 # Style Guide
 

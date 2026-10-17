@@ -2,29 +2,16 @@
 
 Higher-level state machines that interpret sequences of events as meaningful gestures.
 
-## Unified Input
+## Unified Input Architecture
 
-The browser provides two separate event families for pointing — mouse events on desktop and touch events on mobile — with different semantics, coordinate systems, and lifecycle patterns. Without an abstraction layer, every interactive view needs parallel code paths for both input types, plus logic to prevent ghost clicks and handle edge cases where both fire simultaneously.
+The browser provides two separate event families for pointing—mouse events on desktop and touch events on mobile—with different semantics, coordinate systems, and lifecycle patterns. Without an abstraction layer, every interactive view needs parallel code paths for both input types, plus logic to prevent ghost clicks and handle edge cases where both fire simultaneously.
 
-Gesture recognizers eliminate this. They consume raw mouse and touch events internally and present a single, input-agnostic interface to the view. A `SvPanGestureRecognizer` works identically whether driven by a mouse drag or a finger swipe — the view implements `onPanBegin` once and it works on every device. This is not just a convenience; it means new interaction features are automatically cross-platform from the first line of code, with no per-device testing or branching required.
+Gesture recognizers eliminate this complexity:
+- They consume raw mouse and touch events internally and present a single, input-agnostic interface to the view.
+- A `SvPanGestureRecognizer` works identically whether driven by a mouse drag or a finger swipe—the view implements `onPanBegin` once and it works on every device.
+- New interaction features are automatically cross-platform from the first line of code, with no per-device testing or branching required.
 
-Mouse input naturally supports only single-finger gestures (tap, pan, long-press, slide), since a mouse has one cursor. Multi-finger gestures like pinch and rotation require touch input — or the Shift+click emulation described below, which simulates a second finger for desktop testing.
-
-## How Gestures Work
-
-A gesture recognizer is a state machine that observes raw events on a view and interprets them as a gesture with defined phases: **begin**, **move**, **complete**, or **cancelled**.
-
-Each recognizer is attached to a view via `addGestureRecognizer()`. When the gesture's conditions are met (correct finger count, sufficient movement, etc.), the recognizer sends delegate messages to the view:
-
-```
-acceptsGestureType(gesture)   — optional: can the view accept this gesture?
-onGestureTypeBegin(gesture)   — gesture recognized and started
-onGestureTypeMove(gesture)    — gesture is in progress
-onGestureTypeComplete(gesture) — gesture finished successfully
-onGestureTypeCancelled(gesture) — gesture was interrupted
-```
-
-For example, a `SvPanGestureRecognizer` sends `onPanBegin`, `onPanMove`, `onPanComplete`, and `onPanCancelled`.
+Mouse input naturally supports single-finger gestures (tap, pan, long-press, slide). Multi-finger gestures (pinch, rotation) require touch input or desktop Shift-click multi-touch emulation.
 
 <svg viewBox="0 0 820 520" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -40,100 +27,119 @@ For example, a `SvPanGestureRecognizer` sends `onPanBegin`, `onPanMove`, `onPanC
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
+
   <rect class="fill" x="220" y="20" width="380" height="52"/>
-  <text x="235" y="40" class="b">Raw events stream</text>
-  <text x="235" y="58" class="dim">mouse + touch, unified input</text>
+  <text x="235" y="40" class="b">1. Raw Mouse / Touch Input Stream</text>
+  <text x="235" y="58" class="dim">Unified input abstraction</text>
+
   <line class="flow" x1="410" y1="72" x2="410" y2="110" marker-end="url(#agr)"/>
+
   <rect class="fill" x="220" y="110" width="380" height="70"/>
-  <text x="235" y="130" class="b">SvGestureRecognizer · state machine</text>
-  <text x="235" y="148" class="dim">tracks finger count, timing, movement, hold;</text>
-  <text x="235" y="166" class="dim">tap, pan, pinch, rotation, long-press, slide</text>
+  <text x="235" y="130" class="b">2. SvGestureRecognizer State Machine</text>
+  <text x="235" y="148" class="dim">Tracks finger count, timing, movement, hold;</text>
+  <text x="235" y="166" class="dim">Tap, Pan, Pinch, Rotation, LongPress, Slide</text>
+
   <line class="flow" x1="410" y1="180" x2="410" y2="225" marker-end="url(#agr)"/>
-  <text x="425" y="212" class="dim">when gesture conditions are met</text>
+
   <rect class="fill" x="220" y="225" width="380" height="70"/>
-  <text x="235" y="245" class="b">SvGestureManager · singleton</text>
-  <text x="235" y="263" class="dim">arbitrates competing gestures;</text>
-  <text x="235" y="281" class="dim">cancels conflicts on same / ancestor views</text>
+  <text x="235" y="245" class="b">3. SvGestureManager Singleton Arbitration</text>
+  <text x="235" y="263" class="dim">Arbitrates competing gestures;</text>
+  <text x="235" y="281" class="dim">Cancels conflicts across view hierarchy</text>
+
   <line class="flow" x1="410" y1="295" x2="410" y2="340" marker-end="url(#agr)"/>
-  <text x="425" y="327" class="dim">if accepted</text>
+
   <rect class="fill" x="220" y="340" width="380" height="88"/>
-  <text x="235" y="360" class="b">Delegate messages to view</text>
+  <text x="235" y="360" class="b">4. Delegate Phase Messages Sent to View</text>
   <text x="235" y="378" class="dim">onGestureBegin → onGestureMove → onGestureComplete</text>
   <text x="235" y="396" class="dim">(or onGestureCancelled if interrupted)</text>
-  <text x="235" y="414" class="dim">e.g. onPanBegin, onPinchMove, onTapComplete</text>
+
   <line class="flow" x1="410" y1="428" x2="410" y2="475" marker-end="url(#agr)"/>
+
   <rect class="fill" x="220" y="475" width="380" height="34"/>
-  <text x="235" y="495" class="b">View handler runs</text>
+  <text x="235" y="495" class="b">5. Application Handler Executes</text>
 </svg>
 
-## Available Gestures
+---
 
-| Recognizer | Detects | Key Configuration |
-|------------|---------|-------------------|
-| `SvTapGestureRecognizer` | Single or multi-tap | `numberOfTapsRequired`, `numberOfFingersRequired`, `maxHoldPeriod` |
-| `SvPanGestureRecognizer` | Click-and-drag | `minNumberOfFingersRequired`, `maxNumberOfFingersAllowed` |
-| `SvPinchGestureRecognizer` | Two-finger pinch/zoom | Fixed to 2 fingers |
-| `SvRotationGestureRecognizer` | Two-finger rotation | Fixed to 2 fingers |
-| `SvLongPressGestureRecognizer` | Press-and-hold | `timePeriod` (default 500ms) |
-| `SvSlideGestureRecognizer` | Directional slide | `direction` ("left", "right", "up", "down"), `maxPerpendicularDistToBegin` |
-| `SvEdgePanGestureRecognizer` | Pan from view edge | Subclasses for left, right, top, bottom |
-| `SvScreenEdgePanGestureRecognizer` | Pan from screen edge | Subclasses for left, right, top, bottom |
+## How Gestures Work
 
-## Adding Gestures to a View
+A gesture recognizer is a state machine attached to a view via `addGestureRecognizer()`. When gesture conditions are met, the recognizer sends delegate messages to the view:
 
-Common gestures have convenience methods:
-
-```javascript
-view.addDefaultTapGesture();       // single tap
-view.addDefaultDoubleTapGesture(); // double tap
-view.addDefaultPanGesture();       // drag
+```
+acceptsGestureType(gesture)     — Optional: can the view accept this gesture?
+onGestureTypeBegin(gesture)     — Gesture recognized and started
+onGestureTypeMove(gesture)      — Gesture in progress
+onGestureTypeComplete(gesture)  — Gesture completed successfully
+onGestureTypeCancelled(gesture) — Gesture interrupted or cancelled
 ```
 
-For custom configuration, clone a recognizer and configure it:
+---
+
+## Complete Gesture Recognizers Suite
+
+| Recognizer Class | Detects | Primary Configuration Settors |
+|---|---|---|
+| **`SvTapGestureRecognizer`** | Single or multi-tap | `setNumberOfTapsRequired()`, `setNumberOfFingersRequired()`, `setMaxHoldPeriod()` |
+| **`SvPanGestureRecognizer`** | Click-and-drag panning | `setMinNumberOfFingersRequired()`, `setMaxNumberOfFingersAllowed()` |
+| **`SvPinchGestureRecognizer`** | Two-finger pinch/zoom | Fixed to 2 fingers |
+| **`SvRotationGestureRecognizer`** | Two-finger rotation | Fixed to 2 fingers |
+| **`SvLongPressGestureRecognizer`** | Press-and-hold gesture | `setTimePeriod()` (default 500ms) |
+| **`SvSlideGestureRecognizer`** | Directional slide | `setDirection("left"|"right"|"up"|"down")`, `setMaxPerpendicularDistToBegin()` |
+| **`SvEdgePanGestureRecognizer`** | Pan starting at view edge | Subclasses for left, right, top, bottom edges |
+| **`SvScreenEdgePan`** | Pan starting at screen boundary | Subclasses for left, right, top, bottom screen boundaries |
+
+---
+
+## Adding Gestures & Convenience API
 
 ```javascript
+// Convenience methods on SvDomView
+view.addDefaultTapGesture();       // Single tap
+view.addDefaultDoubleTapGesture(); // Double tap
+view.addDefaultPanGesture();       // Drag panning
+
+// Custom recognizer configuration
 const gesture = SvLongPressGestureRecognizer.clone();
-gesture.setTimePeriod(800); // 800ms hold
+gesture.setTimePeriod(800); // 800ms hold requirement
 view.addGestureRecognizer(gesture);
-// implement onLongPressComplete(gesture) on the view
+
+// View implements callback handler
+onLongPressComplete (gesture) {
+    this.openContextMenu();
+}
 ```
 
-## SvGestureManager
+---
 
-`SvGestureManager` is a singleton that coordinates competing gestures globally. When a gesture requests activation, the manager decides whether to accept it based on:
+## Global Arbitration (`SvGestureManager`)
 
-- Whether another gesture is already active
-- View hierarchy (child views can steal control from parent views)
-- Whether the existing active gesture accepts cancellation
+`SvGestureManager` is a singleton that coordinates competing gestures globally across the entire view tree:
+- **Priority & Hierarchy:** Child views can steal control from parent views.
+- **Active Lock:** Once a gesture is accepted, competing gestures on the same or ancestor views are automatically cancelled.
+- **Explicit Cancellation:** Views can cancel gestures programmatically: `view.cancelAllGesturesExcept(panGesture)`.
 
-This prevents conflicts — for example, a tap gesture and a pan gesture on the same view won't fire simultaneously. The first gesture to request activation after meeting its conditions wins, and competing gestures are cancelled.
+---
 
-Views can also explicitly cancel gestures:
+## Cleanup, Teardown & Memory Safety
 
-```javascript
-view.cancelAllGesturesExcept(panGesture);
-```
+When a view is retired and unmounted from the DOM hierarchy, `prepareToRetire()` executes a 3-step cleanup pipeline:
 
-## Cleanup and Lifecycle
+1. **`removeAllGestureRecognizers()`:** Stops each recognizer, removes DOM listeners, and clears the view target.
+2. **`removeAllListeners()`:** Unbinds all element-level DOM event listeners.
+3. **`cancelAllTimeouts()`:** Clears any pending gesture hold timers.
 
-Gesture recognizers are automatically cleaned up when a view is retired. When a view loses its parent and is removed from the view hierarchy, its `prepareToRetire()` method runs a three-step teardown:
+### Weak Reference Timers:
+Gesture recognizers use **`addWeakTimeout()`** for internal hold delays. `addWeakTimeout()` holds only a `WeakRef` to the view target, enabling unmounted views to be reclaimed cleanly by JavaScript's garbage collector without timer leaks.
 
-1. **`removeAllGestureRecognizers()`** — Each recognizer is stopped (removing its event listeners) and its view target is cleared.
-2. **`removeAllListeners()`** — All event listeners registered on the view's element are removed.
-3. **`cancelAllTimeouts()`** — Any pending timers (such as long-press delays) are cancelled.
+---
 
-Individual gestures can also be removed at any time with `removeGestureRecognizer(gesture)`, which stops the recognizer and detaches it from the view. Some recognizers set `shouldRemoveOnComplete(true)` to automatically remove themselves after firing once — useful for one-shot gestures.
+## Multi-Touch Desktop Emulation
 
-This means application code rarely needs to manage gesture cleanup manually. As long as views are properly removed from the hierarchy, all gesture state is released automatically.
+On desktop browsers, holding **Shift** while clicking simulates a second touch point. This allows testing multi-finger pinch, zoom, and rotation gestures using a standard mouse.
 
-## Garbage Collection
+---
 
-Modern JavaScript engines use mark-and-sweep garbage collection, which correctly handles circular references. When a view is removed from its parent and no other rooted object references it, the entire cluster — view, gesture recognizers, and element-level event listeners — becomes unreachable and is collected automatically without explicit cleanup.
+## Related Guides
 
-The main GC concern is listeners registered on **rooted targets** like `window` or `document`, since those targets' internal listener registries hold strong references back to the callback (and through it, the gesture and view). Most gesture recognizers only attach `window` listeners temporarily during active tracking (between the down/press and up/finish events), so they clean up naturally when the gesture completes. `SvScreenEdgePanGestureRecognizer` is the exception — it registers permanent `window` listeners and must be explicitly stopped or removed.
-
-Timers (`setTimeout`) also root their target until they fire. Gesture recognizers use `addWeakTimeout()` for their internal timers (deactivation delays, long-press detection, etc.), which holds only a `WeakRef` to the target — allowing the object to be collected if it becomes unreachable, with the timer silently becoming a no-op.
-
-## Multi-Touch Emulation
-
-On desktop, holding Shift while clicking simulates a second finger. This allows testing pinch, rotation, and other multi-touch gestures without a touch device. The emulation is handled transparently by the gesture recognizer base class.
+- [Drag and Drop](../Drag%20and%20Drop/index.html): HTML5 drag-and-drop MIME dispatch.
+- [Keyboard and Focus](../Keyboard%20and%20Focus/index.html): Modifier-aware key routing.

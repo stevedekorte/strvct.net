@@ -1,47 +1,94 @@
 # Categories
 
-Extending existing classes by adding methods from separate files.
+Extending existing classes by adding methods from separate files without subclassing.
 
 ## Overview
 
-Categories allow you to add methods to an existing class without modifying its original file. This is borrowed from Objective-C/Smalltalk traditions and is used throughout STRVCT to separate concerns — keeping core class files focused on essential functionality while adding specialized behavior in dedicated files.
+Categories allow developers to add methods to an existing class without modifying its original file. Borrowed from Objective-C and Smalltalk traditions, categories are used throughout STRVCT to separate concerns—keeping core class files focused on essential logic while adding specialized behaviors in dedicated extension files.
 
-A category is a class that extends the target class but calls `initThisCategory()` instead of `initThisClass()`. The framework copies the category's methods onto the target class's prototype rather than creating a new class in the hierarchy.
+A category is a class that extends the target class but executes **`.initThisCategory()`** instead of `.initThisClass()`. The framework copies the category's prototype and static methods onto the target class's prototype rather than creating a new class entry in the registry.
 
-## Defining a category
+<svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aca" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="25" y="20" width="240" height="170"/>
+  <text x="40" y="42" class="b">Category Extension File</text>
+
+  <rect class="fill" x="40" y="60" width="210" height="40"/>
+  <text x="55" y="80" class="b">class SvJsonGroup_patches</text>
+  <text x="55" y="93" class="dim">Extends base class</text>
+
+  <rect class="fill" x="40" y="115" width="210" height="40"/>
+  <text x="55" y="135" class="b">.initThisCategory()</text>
+  <text x="55" y="148" class="dim">Executes method merge</text>
+
+  <line class="flow" x1="265" y1="105" x2="290" y2="105" marker-end="url(#aca)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="170"/>
+  <text x="305" y="42" class="b">Method Merge Engine</text>
+
+  <rect class="box" x="305" y="60" width="210" height="40"/>
+  <text x="320" y="80" class="b">Prototype Methods</text>
+  <text x="320" y="93" class="dim">Copied to base prototype</text>
+
+  <rect class="box" x="305" y="115" width="210" height="40"/>
+  <text x="320" y="135" class="b">Static Methods</text>
+  <text x="320" y="148" class="dim">Copied to base constructor</text>
+
+  <line class="flow" x1="530" y1="105" x2="555" y2="105" marker-end="url(#aca)"/>
+
+  <rect class="box" x="555" y="20" width="240" height="170"/>
+  <text x="570" y="42" class="b">Target Base Class</text>
+
+  <rect class="fill" x="570" y="60" width="210" height="40"/>
+  <text x="585" y="80" class="b">SvJsonGroup Prototype</text>
+  <text x="585" y="93" class="dim">Gains applyJsonPatches()</text>
+
+  <rect class="fill" x="570" y="115" width="210" height="40"/>
+  <text x="585" y="135" class="b">instanceof Unchanged</text>
+  <text x="585" y="148" class="dim">No extra prototype layer</text>
+</svg>
+
+---
+
+## Defining a Category (`.initThisCategory()`)
 
 ```javascript
-// SvJsonGroup_patches.js — adds JSON Patch support to SvJsonGroup
+// SvJsonGroup_patches.js — adds JSON Patch methods to SvJsonGroup
 (class SvJsonGroup_patches extends SvJsonGroup {
 
     applyJsonPatches (patches) {
-        // patch implementation
+        // Implementation
     }
 
     applyPatch (operation) {
-        // single patch operation
+        // Single patch operation
     }
 
 }.initThisCategory());
 ```
 
-The key difference from a normal class: `.initThisCategory()` instead of `.initThisClass()`. This tells the framework to merge the methods into the parent class rather than registering a new class.
+Executing `.initThisCategory()` instructs the class registration system to merge all prototype and static methods into the parent class (`SvJsonGroup`). No new class entry is created in the global class registry.
 
-## Naming convention
+---
 
-Category files use an underscore to separate the base class name from the category purpose:
+## Naming Conventions & `_imports.json` Order
 
-```
-SvJsonGroup.js                  // base class
-SvJsonGroup_patches.js          // JSON Patch operations
-SvJsonGroup_clientState.js      // client state tool methods
-```
-
-The category class name follows the same pattern: `SvJsonGroup_patches`, `Array_promises`, `Promise_ideal`.
-
-## Loading order
-
-Base classes must be loaded before their categories. In `_imports.json` files, list the base class first:
+- **File & Class Naming:** Category files and classes use an underscore to separate the target base class name from the category purpose:
+  `SvJsonGroup_patches.js`, `Array_promises.js`, `Promise_ideal.js`.
+- **Import Dependency Order:** The base class **must** be listed before its category files in `_imports.json`:
 
 ```json
 [
@@ -51,14 +98,14 @@ Base classes must be loaded before their categories. In `_imports.json` files, l
 ]
 ```
 
-If a category loads before its base class, the `extends` clause will fail because the base class doesn't exist yet.
+---
 
-## Extending JavaScript builtins
+## Extending JavaScript Builtins
 
-Categories are commonly used to extend native JavaScript classes. The boot system includes several:
+Categories are used heavily during boot to extend native JavaScript objects without polluting the global scope with global functions:
 
 ```javascript
-// Promise_ideal.js — adds clone(), status tracking, timeouts
+// Promise_ideal.js — adds clone(), status tracking, and timeouts
 (class Promise_ideal extends Promise {
     static clone () { /* ... */ }
     callResolveFunc (...args) { /* ... */ }
@@ -72,34 +119,17 @@ Categories are commonly used to extend native JavaScript classes. The boot syste
 }.initThisCategory());
 ```
 
-After these categories load, every `Promise` and `Array` instance has the new methods — no imports needed.
+---
 
-## When to use categories
+## Category Constraints & Rules
 
-**Good uses:**
+1. **No New Slots:** Categories can only add methods—they **cannot** add new slots via `initPrototypeSlots()`, as prototype slots must be defined during initial class registration.
+2. **`instanceof` Compatibility:** `instanceof` checks are completely unaffected. An instance of `SvJsonGroup` answers `true` for `instanceof SvJsonGroup` and does not add a prototype link layer.
+3. **Full `this` Access:** Category methods execute with full access to `this` and all slots and methods of the base class.
 
-- Separating a large class into thematic files (e.g., persistence, UI, serialization)
-- Adding framework methods to JavaScript builtins
-- Adding app-specific behavior to framework classes without forking them
-- Keeping a base class stable while iterating on extensions
+---
 
-**Avoid when:**
+## Related Guides
 
-- The methods need their own slots or state — categories can't add slots, only methods
-- You need polymorphism (override behavior in subclasses) — a subclass is the right tool
-- The base class is in an external library that doesn't use the STRVCT class system
-
-## How it works internally
-
-`initThisCategory()` iterates over the category class's own methods (both prototype and static) and copies them onto the target class. It does not create a new entry in the class registry — `SvJsonGroup_patches` is not a class you can instantiate or look up by name. It's purely a delivery mechanism for methods.
-
-This means:
-
-- `instanceof` checks are unaffected — an `SvJsonGroup` instance won't show as `instanceof SvJsonGroup_patches`
-- Category methods have full access to `this` and the base class's slots and methods
-- If two categories define the same method name on the same base class, the last one loaded wins (with a warning)
-
-## Related patterns
-
-- [Slot Patterns](../Slot%20Patterns/) — how to declare properties on classes
-- [Lifecycle](../../Lifecycle/) — `initPrototypeSlots` / `initPrototype` and the initialization chain, which categories cannot participate in (only methods are merged)
+- [Protocols](../Protocols/index.html): Interface declaration and conformance checking.
+- [Style Guide](../Style%20Guide/index.html): Coding standards and class patterns.

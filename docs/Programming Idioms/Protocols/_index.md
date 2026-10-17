@@ -1,25 +1,79 @@
 # Protocols
 
-Declaring interfaces and verifying conformance at runtime.
+Declaring interfaces and verifying conformance at runtime with fail-fast registration checks.
 
 ## Overview
 
-Protocols are STRVCT's interface system. A protocol defines a set of methods that a class promises to implement. Unlike duck-typing (where you check for individual methods at call sites), protocols give the contract a name, make it inheritable, and verify it at registration time rather than at the point of use.
+Protocols are STRVCT's interface system. A protocol defines a set of methods that a class promises to implement. Unlike informal duck-typing (where code checks for individual methods at call sites), protocols name the contract, support inheritance, and verify conformance at class registration time.
 
-The most important property of the protocol system is **fail-fast verification**: when a class declares that it conforms to a protocol, the framework immediately checks that all required methods are present. **If any are missing, an error is thrown at startup** -- not later when a rarely-exercised code path happens to call the missing method. This moves an entire category of bugs from runtime surprises to immediate, deterministic failures.
+The defining feature of STRVCT's protocol engine is **fail-fast verification**: when a class declares conformance to a protocol via `addProtocol()`, the framework immediately verifies that all required methods exist. If any method is missing, an error is thrown at startup—moving bugs from rare runtime surprises to instant, deterministic startup failures.
 
-The conformance check is also designed to be very fast. It uses a single set-subset operation -- each required method name is looked up in the class's `Set` of slot names in O(1). Since this runs once at startup during class registration, there is zero per-call overhead. The cost is paid once, upfront, and the guarantee holds for the lifetime of the application.
+<svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="apr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
 
-The system is inspired by Objective-C's `@protocol` and Smalltalk's message categories.
+  <rect class="box" x="25" y="20" width="240" height="170"/>
+  <text x="40" y="42" class="b">Protocol Declaration</text>
 
-## Defining a protocol
+  <rect class="fill" x="40" y="60" width="210" height="40"/>
+  <text x="55" y="80" class="b">SvAudioClipProtocol</text>
+  <text x="55" y="93" class="dim">Extends Protocol class</text>
 
-A protocol is a subclass of `Protocol` that lists the required methods as empty instance methods:
+  <rect class="fill" x="40" y="115" width="210" height="40"/>
+  <text x="55" y="135" class="b">.initThisProtocol()</text>
+  <text x="55" y="148" class="dim">Registers interface stubs</text>
+
+  <line class="flow" x1="265" y1="105" x2="290" y2="105" marker-end="url(#apr)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="170"/>
+  <text x="305" y="42" class="b">Implementer Class</text>
+
+  <rect class="box" x="305" y="60" width="210" height="40"/>
+  <text x="320" y="80" class="b">initPrototype()</text>
+  <text x="320" y="93" class="dim">this.addProtocol(Protocol)</text>
+
+  <rect class="box" x="305" y="115" width="210" height="40"/>
+  <text x="320" y="135" class="b">Method Implementations</text>
+  <text x="320" y="148" class="dim">play(), stop(), addDelegate()</text>
+
+  <line class="flow" x1="530" y1="105" x2="555" y2="105" marker-end="url(#apr)"/>
+
+  <rect class="box" x="555" y="20" width="240" height="170"/>
+  <text x="570" y="42" class="b">Startup Conformance Check</text>
+
+  <rect class="fill" x="570" y="60" width="210" height="40"/>
+  <text x="585" y="80" class="b">Set Intersection O(1)</text>
+  <text x="585" y="93" class="dim">Verifies required methods</text>
+
+  <rect class="fill" x="570" y="115" width="210" height="40"/>
+  <text x="585" y="135" class="b">Pass or Instant Error</text>
+  <text x="585" y="148" class="dim">Fails fast at boot if missing</text>
+</svg>
+
+---
+
+## Defining a Protocol (`.initThisProtocol()`)
+
+A protocol inherits from `Protocol` and declares empty method stubs representing the interface:
 
 ```javascript
 (class SvAudioClipProtocol extends Protocol {
 
     play () {
+    }
+
+    stop () {
     }
 
     addDelegate (audioClipDelegate) {
@@ -28,22 +82,19 @@ A protocol is a subclass of `Protocol` that lists the required methods as empty 
     removeDelegate (audioClipDelegate) {
     }
 
-    stop () {
-    }
-
 }.initThisProtocol());
 ```
 
-Key points:
+### Protocol Rules:
+- Execute `.initThisProtocol()` at class registration.
+- Class name **must** end with `Protocol` (enforced at startup).
+- Method bodies are empty stubs defining expected parameters.
 
-- Call `.initThisProtocol()` instead of `.initThisClass()`. This registers the protocol and asserts the naming convention.
-- The class name **must** end with `Protocol` (enforced at runtime).
-- Method bodies are empty -- they exist to declare the interface, not to provide default implementations.
-- Use the `@interface` JSDoc tag (not `@class`) in the file's module comment.
+---
 
-## Implementing a protocol
+## Implementing & Verifying a Protocol (`addProtocol`)
 
-A class declares conformance by calling `addProtocol()` in its `initPrototype()` method:
+Implementers call `addProtocol()` inside `initPrototype()`:
 
 ```javascript
 (class SvWaSound extends SvSummaryNode {
@@ -53,98 +104,48 @@ A class declares conformance by calling `addProtocol()` in its `initPrototype()`
     }
 
     play () {
-        // actual implementation
-    }
-
-    addDelegate (audioClipDelegate) {
-        // actual implementation
-    }
-
-    removeDelegate (audioClipDelegate) {
-        // actual implementation
+        // Implementation
     }
 
     stop () {
-        // actual implementation
+        // Implementation
+    }
+
+    addDelegate (delegate) {
+        // Implementation
+    }
+
+    removeDelegate (delegate) {
+        // Implementation
     }
 
 }.initThisClass());
 ```
 
-When `addProtocol()` is called, the framework immediately checks that the class's methods satisfy the protocol. If any required method is missing, an error is thrown at class-registration time -- not later when the method would have been called.
+---
 
-## Verification API
+## Protocol Verification API
 
-The protocol system provides several methods on `ProtoClass` (available to all STRVCT classes):
-
-| Method | Purpose |
+| Method | Purpose & Return Value |
 |---|---|
-| `addProtocol(protocol)` | Declare conformance; throws if methods are missing |
-| `conformsToProtocol(protocol)` | Returns `true` if the class has registered the protocol |
-| `assertConformsToProtocol(protocol)` | Throws if the class doesn't conform |
-| `methodsConformToProtocol(protocol)` | Returns which methods satisfy the protocol |
-| `implementsMethodNamesSet(set)` | Checks if the class implements a given set of method names |
+| `addProtocol(protocol)` | Registers protocol; throws startup error if any method is missing. |
+| `conformsToProtocol(protocol)` | Returns `true` if class conforms to specified protocol. |
+| `assertConformsToProtocol(protocol)` | Throws exception if class does not conform. |
+| `methodsConformToProtocol(protocol)` | Returns array of methods satisfying the protocol. |
+| `Protocol.allProtocols()` | Returns set of all registered protocol subclasses. |
 
-On the `Protocol` class itself:
+---
 
-| Method | Purpose |
-|---|---|
-| `Protocol.allProtocols()` | Returns all registered protocol subclasses |
-| `protocol.addImplementer(class)` | Records a class as an implementer (called automatically by `addProtocol`) |
-| `protocol.implementers()` | Returns the set of all classes that conform to this protocol |
+## Formal Framework Protocols
 
-## Protocol inheritance
+- **`SvAudioClipProtocol`:** Audio playback interface (`play()`, `stop()`, `addDelegate()`, `removeDelegate()`).
+- **`SvAudioClipDelegateProtocol`:** Callback interface (`onSoundEnded(audioClip)`).
+- **`SvDragSourceProtocol`:** Drag source callbacks (`onDragSourceBegin()`, `onDragSourceDropped()`, `onDragSourceEnd()`).
+- **`SvDragDestinationProtocol`:** Drop target callbacks (`onDragDestinationEnter()`, `acceptsDrop()`, `onDragDestinationHover()`).
 
-Protocols are classes, so they support inheritance. A protocol can extend another protocol to build larger interfaces from smaller ones:
+---
 
-```javascript
-(class SvExtendedAudioProtocol extends SvAudioClipProtocol {
+## Related Guides
 
-    seek (position) {
-    }
-
-    duration () {
-    }
-
-}.initThisProtocol());
-```
-
-A class that conforms to `SvExtendedAudioProtocol` must implement both its own methods and those inherited from `SvAudioClipProtocol`.
-
-## Existing protocols
-
-The framework currently declares four formal protocols:
-
-- **`SvAudioClipProtocol`** -- playback interface: `play()`, `stop()`, `addDelegate()`, `removeDelegate()`
-- **`SvAudioClipDelegateProtocol`** -- callback interface: `onSoundEnded(audioClip)`
-- **`SvDragSourceProtocol`** -- drag source callbacks: `onDragSourceBegin()`, `onDragSourceDropped()`, `onDragSourceEnd()`, `acceptsDropHover()`, and others
-- **`SvDragDestinationProtocol`** -- drop target callbacks: `onDragDestinationEnter()`, `onDragDestinationHover()`, `onDragDestinationExit()`, `acceptsDropHoverComplete()`, `acceptsDrop()`, and others
-
-## Protocols vs. duck-typing
-
-Many parts of the codebase use informal duck-typing -- checking for a method's existence before calling it:
-
-```javascript
-if (node && node.nodeAcceptsDrop) {
-    node.nodeAcceptsDrop(droppedNode);
-}
-```
-
-This works, but it has drawbacks:
-
-- The interface contract is implicit -- you have to read call sites to discover what methods are expected.
-- There's no early verification -- a missing method surfaces only when the code path is hit at runtime.
-- There's no way to query which classes implement the interface.
-
-Formal protocols address all three. The trade-off is a small amount of ceremony (defining the protocol class and calling `addProtocol`). For optional interfaces where not every class is expected to conform, duck-typing remains appropriate. For interfaces that represent a real contract between components, a protocol is the better choice.
-
-## Naming conventions
-
-- Protocol class names always end with `Protocol`: `SvAudioClipProtocol`, `SvDragSourceProtocol`
-- Protocol files live alongside the classes they relate to (e.g., the audio protocols are in `library/node/audio/`)
-- Delegate protocols follow the pattern `SvThingDelegateProtocol` for callback interfaces
-
-## Related patterns
-
-- [Categories](../Categories/) -- extending classes with methods from separate files (protocols define *what* methods to implement; categories *add* methods)
-- [Complete Protocols](../../Future%20Work/Complete%20Protocols/) -- future work on formalizing the codebase's many undeclared protocols
+- [Categories](../Categories/index.html): Class extension pattern.
+- [Style Guide](../Style%20Guide/index.html): Coding standards and conventions.
