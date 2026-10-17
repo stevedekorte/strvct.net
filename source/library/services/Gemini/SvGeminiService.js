@@ -35,6 +35,19 @@
     modelsJson () {
         return [
             {
+                // Rates at https://ai.google.dev/gemini-api/docs/pricing#gemini-4-argon
+                // (retrieved 2026-10-16): $2.00/$10.00 per MTok intro through
+                // 2026-11-30 (then $4.00/$20.00); cache read $0.10 (implicit
+                // caching only). Output pricing covers thinking tokens. Window
+                // is 1,048,576; capped here like the other game models
+                // (compaction pressure + per-turn input cost bound).
+                "name": "gemini-4-argon",
+                "title": "Gemini 4 Argon",
+                "inputTokenLimit": 200000,
+                "outputTokenLimit": 65536,
+                "notes": "Assistants' default model ($2/$10 per MTok intro through 2026-11-30, then $4/$20; cache read $0.10, implicit only). Thinking tokens bill as output. thinking_level low|medium|high."
+            },
+            {
                 // Rates at https://ai.google.dev/gemini-api/docs/pricing#gemini-3.8-flash
                 // (retrieved 2026-09-03): $0.75/$3.75 per MTok intro through
                 // 2026-12-31 (then $1.50/$7.50); cache read $0.075. Output
@@ -46,7 +59,7 @@
                 "title": "Gemini 3.8 Flash",
                 "inputTokenLimit": 200000,
                 "outputTokenLimit": 65536,
-                "notes": "Game default model ($0.75/$3.75 per MTok intro through 2026-12-31, then $1.50/$7.50; cache read $0.075). Thinking tokens bill as output. thinking_level low|medium|high (no token budgets)."
+                "notes": "AI players' former model ($0.75/$3.75 per MTok intro through 2026-12-31, then $1.50/$7.50; cache read $0.075). Thinking tokens bill as output. thinking_level low|medium|high (no token budgets)."
             },
             {
                 // GA 2026-07-21 (blog.google Gemini 3.6 Flash announcement).

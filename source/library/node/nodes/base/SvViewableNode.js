@@ -516,7 +516,7 @@
      * beneath; the stats in one group lay out as a two-column grid, and a stat
      * that spans columns (nodeSpansInlineColumns) takes a whole line), "lede" (the subtitle
      * as a paragraph, no title), "quote" (the subtitle in italic beside a
-     * rule), "figure" (an image, square, in a thin frame)
+     * rule), "figure" (an image, whole, in a thin frame)
      * or "kicker" (the title as a small-caps line). Roles, not looks:
      * the theme sets the sizes.
      * @returns {String|null}

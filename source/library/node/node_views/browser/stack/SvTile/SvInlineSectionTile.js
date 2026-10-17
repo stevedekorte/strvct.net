@@ -336,7 +336,7 @@
                 border-left: 1px solid var(--sv-hairline);
                 padding-left: 16px !important;
             }
-            /* a figure: an image, square, in a thin frame */
+            /* a figure: an image, whole, in a thin frame */
             .SvInlineNested > [data-tile-layout="figure"] { border-bottom: none !important; }
             [data-tile-layout="figure"] > .TileContentView {
                 padding: 7px !important;
@@ -352,9 +352,7 @@
             [data-tile-layout="figure"] img {
                 width: 100% !important;
                 height: auto !important;
-                max-height: none !important;
-                aspect-ratio: 1 / 1;
-                object-fit: cover;
+                max-height: none !important; /* the whole image, at its own shape */
             }
             /* stats: the group lays them out as a grid of two columns */
             .SvInlineNested:has(> [data-tile-layout="stat"]) {
