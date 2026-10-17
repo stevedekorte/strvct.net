@@ -515,7 +515,8 @@
      * "stat" (a small label, the value large, the subtitle in italic words
      * beneath; the stats in one group flow as a strip), "lede" (the subtitle
      * as a paragraph, no title), "quote" (the subtitle in italic beside a
-     * rule) or "kicker" (the title as a small-caps line). Roles, not looks:
+     * rule), "tagline" (the subtitle as an italic line, at the size of a
+     * display heading's note) or "kicker" (the title as a small-caps line). Roles, not looks:
      * the theme sets the sizes.
      * @returns {String|null}
      * @category Layout
