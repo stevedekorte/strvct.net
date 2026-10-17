@@ -1,17 +1,15 @@
 # Inspectors and Debugging
 
-Built-in tools for inspecting nodes and revealing hidden parts of the model graph at runtime.
+Built-in tools for live Property Inspection, Developer Mode graph toggles, and Chrome DevTools source debugging.
 
 ## Overview
 
-Because STRVCT generates the UI from annotated model nodes, the same machinery can render an *alternate* view of any node — one that exposes its slots directly. Two interactions take advantage of this:
+Because STRVCT generates user interfaces from annotated model nodes, the framework can automatically derive an **alternate Property Inspector view** for any domain object.
 
-- **Option-Click** on a tile opens an **inspector** for that node — a column of field tiles, one per inspectable slot, showing the slot's current value, type, and editability.
-- **Option-Shift-D** toggles **developer mode** — a global flag that applications use to reveal nodes and subnodes normally hidden from end users.
+- **Option-Click (Alt-Click):** Option-clicking any tile opens its **Property Inspector** in the next column—a dynamically generated field tile stack displaying declared property slots, values, types, and editability flags.
+- **Option-Shift-D (Alt-Shift-D):** Toggles **Developer Mode** globally (`SvApp.shared().developerMode()`), revealing hidden diagnostic subnodes, raw state inspectors, and AI message logs.
 
-Both work in any STRVCT application without per-node setup.
-
-<svg viewBox="0 0 820 390" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -25,85 +23,105 @@ Both work in any STRVCT application without per-node setup.
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="88"/>
-  <text x="235" y="40" class="b">Option-click a tile</text>
-  <text x="235" y="58" class="dim">on any node in the running app</text>
-  <line class="flow" x1="410" y1="108" x2="410" y2="133" marker-end="url(#ains)"/>
-  <rect class="fill" x="220" y="133" width="380" height="88"/>
-  <text x="235" y="153" class="b">Inspector node generated on demand</text>
-  <text x="235" y="171" class="dim">framework walks the target's slot metadata;</text>
-  <text x="235" y="189" class="dim">one field tile per slot whose canInspect() is true</text>
-  <line class="flow" x1="410" y1="221" x2="410" y2="246" marker-end="url(#ains)"/>
-  <rect class="fill" x="220" y="246" width="380" height="88"/>
-  <text x="235" y="266" class="b">Field tiles open in the next column</text>
-  <text x="235" y="284" class="dim">slot name · current value · type-aware editor;</text>
-  <text x="235" y="302" class="dim">edits write through to the live object,</text>
-  <text x="235" y="320" class="dim">persistence and view sync follow automatically</text>
-  <text x="220" y="370" class="dim">Option-Shift-D toggles developer mode globally, revealing nodes that applications hide from end users.</text>
+
+  <rect class="box" x="25" y="20" width="240" height="230"/>
+  <text x="40" y="42" class="b">User Gesture Trigger</text>
+
+  <rect class="fill" x="40" y="60" width="210" height="45"/>
+  <text x="55" y="80" class="b">Option-Click Tile</text>
+  <text x="55" y="95" class="dim">justAlternateTap() on tile</text>
+
+  <rect class="fill" x="40" y="115" width="210" height="45"/>
+  <text x="55" y="135" class="b">Option-Shift-D</text>
+  <text x="55" y="150" class="dim">Toggles developerMode()</text>
+
+  <rect class="fill" x="40" y="170" width="210" height="45"/>
+  <text x="55" y="190" class="b">Chrome DevTools</text>
+  <text x="55" y="205" class="dim">sourceURL breakpoint debugging</text>
+
+  <line class="flow" x1="265" y1="135" x2="290" y2="135" marker-end="url(#ains)"/>
+
+  <rect class="fill" x="290" y="20" width="240" height="230"/>
+  <text x="305" y="42" class="b">SvInspectableNode Engine</text>
+
+  <rect class="box" x="305" y="60" width="210" height="45"/>
+  <text x="320" y="80" class="b">setupInspectorFromSlots()</text>
+  <text x="320" y="95" class="dim">Walks allSlotsMap() on prototype</text>
+
+  <rect class="box" x="305" y="115" width="210" height="45"/>
+  <text x="320" y="135" class="b">nodeInspector()</text>
+  <text x="320" y="150" class="dim">Generates field stack on demand</text>
+
+  <rect class="box" x="305" y="170" width="210" height="45"/>
+  <text x="320" y="190" class="b">onAppDeveloperModeNote</text>
+  <text x="320" y="205" class="dim">Posts global toggle notification</text>
+
+  <line class="flow" x1="530" y1="135" x2="555" y2="135" marker-end="url(#ains)"/>
+
+  <rect class="box" x="555" y="20" width="240" height="230"/>
+  <text x="570" y="42" class="b">Live Runtime Presentation</text>
+
+  <rect class="fill" x="570" y="60" width="210" height="45"/>
+  <text x="585" y="80" class="b">Field Tile Column</text>
+  <text x="585" y="95" class="dim">Opens editable slot controls</text>
+
+  <rect class="fill" x="570" y="115" width="210" height="45"/>
+  <text x="585" y="135" class="b">Hidden Subnodes Revealed</text>
+  <text x="585" y="150" class="dim">Toggles setIsVisible() on subnodes</text>
+
+  <rect class="fill" x="570" y="170" width="210" height="45"/>
+  <text x="585" y="190" class="b">Write-Through Sync</text>
+  <text x="585" y="205" class="dim">Edits update live object pool</text>
 </svg>
 
-## Option-Click: Inspect a Tile
+---
 
-Holding **Option** while clicking a tile opens an inspector view in the next column instead of navigating into the node's normal subnodes.
+## Option-Click: Property Inspector
 
-### What you see
+Holding **Option** while clicking any tile opens an inspector view in the next column instead of navigating to the node's standard subnodes.
 
-The inspector is itself a node — generated on demand from the target's slot metadata. It contains one field tile for every slot whose configuration permits inspection (`canInspect()` returns true on the slot, which is set automatically when you call `setSlotType(...)` or related annotations). Each field tile shows:
+### Mechanism & Implementation (`SvInspectableNode`):
+1. **Gesture Interception:** The tile gesture handler (`SvTile.justAlternateTap()`) catches the Option-Click gesture and sets `isInspecting = true` on the tile.
+2. **Inspector Generation:** `SvInspectableNode.nodeInspector()` clones an inspector node and populates it via `setupInspectorFromSlots()`.
+3. **Slot Map Inspection:** `setupInspectorFromSlots()` walks `allSlotsMap()` down the node's class inheritance chain, instantiating an `SvFieldTile` for every slot where `slot.canInspect()` returns `true`.
+4. **Live Write-Through:** Edits made inside the inspector write directly through to the live object node, automatically triggering IndexedDB persistence and view change notifications.
 
-- the slot name as the field key,
-- the current slot value rendered with a type-appropriate editor (string, number, boolean, options list, pointer, etc.),
-- whether the value is editable in place (controlled by `setCanEditInspection(true|false)` on the slot).
+### Inspector Slot Annotations:
+- `slot.setCanEditInspection(true)`: Controls whether the slot value is editable in place inside the inspector.
+- `slot.setInspectorPath("Section/Subsection")`: Groups slots into collapsible inspector section headers.
 
-Slots can be grouped into sections by setting `setInspectorPath("Section/Subsection")`, which causes the inspector to nest summary nodes for organization.
-
-### Why it's useful
-
-The inspector reveals state that the tile's normal title/subtitle does not — internal flags, cached values, type information, references to other nodes. Because the editor is the same one the framework uses for forms, edits made in the inspector mutate the live object and propagate through the standard sync and persistence pipelines.
-
-### Implementation note
-
-`SvInspectableNode.nodeInspector()` lazily clones a base node and populates it via `setupInspectorFromSlots()`, which walks `allSlotsMap()` and creates a field for each inspectable slot. The tile gesture handler `justAlternateTap()` flips `isInspecting` on the tile, and `nodeTileLink()` then returns the inspector node instead of the regular link target — so the next column displays the inspector. The mechanism reuses the standard view pipeline, which is why no inspector-specific UI code exists.
+---
 
 ## Option-Shift-D: Developer Mode
 
-Pressing **Option+Shift+D** anywhere in a `SvBrowserView` toggles `SvApp.shared().developerMode()`. The framework posts an `onAppDeveloperModeChangedNote` notification when the flag flips; subscribers respond by toggling `isVisible` on nodes and slots that should appear only in developer mode.
+Pressing **Option+Shift+D** anywhere in `SvBrowserView` toggles `SvApp.shared().developerMode()`. The app posts an `onAppDeveloperModeChangedNote` notification when toggled.
 
-### What gets revealed
+### Opt-In Subnode Visibility Code Pattern:
 
-Each application decides what is "hidden" — the framework only provides the toggle and the notification. Typical patterns include:
-
-- internal subnodes used for diagnostics or backing storage,
-- service configuration or resource indexes,
-- raw JSON / clipboard-export actions,
-- AI message history that's normally suppressed (system messages, parser internals).
-
-Nodes opt in by observing the note and calling `setIsVisible(devMode)` on the subnodes that should appear or disappear:
+Domain nodes register to observe the notification and show or hide diagnostic subnodes:
 
 ```javascript
-init () {
-    super.init();
-    this.watchForNote("onAppDeveloperModeChangedNote");
-}
+(class Character extends SvStorableNode {
 
-onAppDeveloperModeChangedNote (/*aNote*/) {
-    const devMode = this.app().developerMode();
-    this.diagnostics().setIsVisible(devMode);
-    this.rawState().setIsVisible(devMode);
-}
+    init () {
+        super.init();
+        this.watchForNote("onAppDeveloperModeChangedNote");
+    }
+
+    onAppDeveloperModeChangedNote (/*aNote*/) {
+        const devMode = this.app().developerMode();
+        this.diagnosticsNode().setIsVisible(devMode);
+        this.rawStateNode().setIsVisible(devMode);
+        this.aiMessageHistory().setIsVisible(devMode);
+    }
+
+}.initThisClass());
 ```
 
-Once visible, these subnodes are navigable like any other — Option-Click works on them too, so developer mode and the inspector compose naturally.
+---
 
-### Implementation note
+## Related Guides
 
-The handler lives on `SvBrowserView` (`onAlternate_D_KeyDown`) and is bound by the standard keyboard naming convention: capital `D` implies the Shift modifier, and `Alternate` is the Option/Alt key. `toggleDeveloperMode()` flips a stored slot on `SvApp`, so the state survives navigation and persists across reloads if the slot is configured to store.
-
-## Composition
-
-The two features are independent but pair well:
-
-1. Press **Option-Shift-D** to surface developer-only nodes.
-2. Navigate into them like any other model node.
-3. **Option-Click** any tile to inspect its slots when the title and subtitle don't tell you enough.
-
-Because both operations reuse the same view pipeline as the rest of the framework, anything that can be displayed can be inspected, and anything that can be hidden can be revealed — without writing UI code for either case.
+- [Nodes](../Nodes/index.html): Core `SvNode` domain abstraction.
+- [Slots](../Slots/index.html): Complete guide to slot metadata and declarations.
+- [Getting Started](../Getting%20Started/index.html): DevTools configuration and debugging launch configs.

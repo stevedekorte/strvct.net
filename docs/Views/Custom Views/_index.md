@@ -1,17 +1,28 @@
 # Custom Views
 
-How to create custom view classes when the auto-generated UI doesn't fit.
+Authoring custom view classes, DOM wrappers, flex shortcuts, and model synchronization for specialized media.
 
-## When to Create a Custom View
+## Overview
 
-The auto-generated view system handles the common case: a node's slots and subnodes produce tiles, field editors, and navigation automatically. Custom views are for situations where you need a specific layout, non-standard DOM elements, or visual behavior that doesn't map to the tile-based pattern — overlays, canvas-based rendering, media players, or composite displays.
+While auto-generated views handle structured domain data, custom view classes are created for **specialized media** where spatial layout carries irreducible domain meaning: WebGL 3D viewports, canvas drawing, media players, overlay panels, or battle maps.
 
-## The Basic Pattern
+```
++-------------------------------------------------------------------------+
+|                         Custom View Lifecycle                           |
++-------------------------------------------------------------------------+
+|  1. Extend SvNodeView  -->  2. Instantiate via clone()  --> 3. addSubview |
+|  4. Chained Setters    -->  5. syncFromNode()           --> 6. DevTools  |
++-------------------------------------------------------------------------+
+```
 
-A custom view extends `SvDomView` (or one of its ancestors) and configures itself in `init()`:
+---
+
+## The Custom View Pattern
+
+Custom views extend `SvDomView` (or `SvNodeView`) and perform setup inside `init()`:
 
 ```javascript
-(class MyOverlayView extends SvDomView {
+(class MyOverlayView extends SvNodeView {
 
     init () {
         super.init();
@@ -23,46 +34,13 @@ A custom view extends `SvDomView` (or one of its ancestors) and configures itsel
         this.makeFlexAndCenterContent();
         this.setBackgroundColor("rgba(0, 0, 0, 0.5)");
         this.setZIndex(9999);
-        return this;
-    }
 
-}.initThisClass());
-```
-
-All styling uses named property methods — there are no CSS files to manage. Every setter returns `this`, so calls chain naturally. See the Programmatic Styling page for the full API.
-
-## Creating Child Views
-
-Child views are created with `clone()` (not `new`) and added with `addSubview()`:
-
-```javascript
-init () {
-    super.init();
-    this.makeFlexAndCenterContent();
-
-    const label = SvDomView.clone();
-    label.setInnerHTML("Hello");
-    label.setColor("white");
-    label.setFontSize("24px");
-    this.addSubview(label);
-
-    return this;
-}
-```
-
-`clone()` runs the full initialization lifecycle (`init()` then `finalInit()` then `afterInit()`). Use `addSubview()` to establish the parent/child relationship — it handles both the framework's view tree and the underlying DOM.
-
-## Connecting to a Node
-
-To make a custom view respond to model changes, extend `SvNodeView` instead of `SvDomView` and implement `syncFromNode()`:
-
-```javascript
-(class MyStatusView extends SvNodeView {
-
-    init () {
-        super.init();
+        // Create child view via clone()
         this._label = SvDomView.clone();
+        this._label.setColor("white");
+        this._label.setFontSize("24px");
         this.addSubview(this._label);
+
         return this;
     }
 
@@ -77,28 +55,28 @@ To make a custom view respond to model changes, extend `SvNodeView` instead of `
 }.initThisClass());
 ```
 
-`syncFromNode()` is called automatically whenever the observed node posts a change notification. The sync scheduler batches these calls so multiple rapid changes produce a single update.
+---
 
-## View Resolution for Custom Views
+## View Construction Rules: `clone()` vs `new`
 
-The framework finds views by naming convention: for a node class `MyWidget`, it looks for `MyWidgetView`. To use a custom view for a node type, just name the class to match:
+- **Always Use `clone()`:** View instances MUST be instantiated via `Class.clone()` rather than `new Class()`.
+- **Initialization Phases:** `clone()` executes the three-phase lifecycle automatically: `init()` $\rightarrow$ `finalInit()` $\rightarrow$ `afterInit()`.
+- **View Tree & DOM Tree:** `this.addSubview(childView)` establishes both the internal framework subview hierarchy and appends the underlying DOM element.
 
-- `UoCharacter` uses `UoCharacterView` (if it exists)
-- `UoSession` uses `UoSessionView`
-- Falls back to ancestor class names if no exact match
+---
 
-You can also override on the node side with `nodeViewClassName()` to point at a different view class.
+## `SvFlexDomView` Layout Shortcuts
 
-## Convenience Methods
+| Shortcut Method | CSS Property Modifications |
+|---|---|
+| `makeFlexAndCenterContent()` | Sets `display: flex`, `justify-content: center`, `align-items: center`. |
+| `makeStandardFlexView()` | Sets `display: flex`, `position: relative`, `overflow: hidden`. |
+| `fillParentView()` | Sets `width: 100%` and `height: 100%`. |
+| `newFlexSubview()` | Creates and appends a flex child with `min-width: 0` and `min-height: 0`. |
 
-`SvFlexDomView` provides shortcuts for common layout patterns:
+---
 
-| Method | Effect |
-|--------|--------|
-| `makeFlexAndCenterContent()` | Sets display flex, centers both axes |
-| `flexCenterContent()` | Centers content horizontally and vertically |
-| `makeStandardFlexView()` | Flex display, relative positioning, centered, overflow hidden |
-| `fillParentView()` | Sets width and height to 100% |
-| `newFlexSubview()` | Creates and adds a flex child with min dimensions set |
+## Related Guides
 
-These eliminate the most common multi-property patterns and keep `init()` methods concise.
+- [Auto-Generated Views](../Auto-Generated%20Views/index.html): View resolution and stack containers.
+- [Responsive Views](../Responsive/index.html): Viewport compaction and column collapse.

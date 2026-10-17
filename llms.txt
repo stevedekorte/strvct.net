@@ -5,7 +5,8 @@
 ## Documentation
 
 - [Documentation](/docs/): Guides, architecture, and API reference.
-- [Accessibility](/docs/Accessibility/): Automatic, framework-level ARIA support derived from the naked objects pattern.
+- [Accessibility](/docs/Accessibility/): Automatic, framework-level ARIA support, keyboard navigation, and preference adaptation derived from slot metadata annotations and view classes.
+- [Accessibility](/docs/Accessibility/_unused/): Automatic, framework-level ARIA support derived from the naked objects pattern.
 - [Comparing to React](/docs/Comparing%20to%20React/): A technical guide and conceptual "Rosetta Stone" for React developers exploring Strvct.
 - [Comparing to React](/docs/Comparing%20to%20React/_unused/): A guide for React developers exploring Strvct — what's different, what's similar, and when each approach makes more sense.
 - [Diagrams](/docs/Diagrams/): Architectural sketches of the Strvct framework. Working drafts; not yet placed in their final locations within the docs.
@@ -43,9 +44,11 @@
 - [Getting Started](/docs/Getting%20Started/_unused/): Setup, integration, and first steps with the Strvct framework.
 - [Implementation Overview](/docs/Implementation%20Overview/): Deep technical specifications for class lifecycle, slots, views, persistence, notifications, and build infrastructure.
 - [Implementation Overview](/docs/Implementation%20Overview/_unused/): Implementation details for classes, slots, views, and persistence.
-- [Inspectors and Debugging](/docs/Inspectors%20and%20Debugging/): Built-in tools for inspecting nodes and revealing hidden parts of the model graph at runtime.
+- [Inspectors and Debugging](/docs/Inspectors%20and%20Debugging/): Built-in tools for live Property Inspection, Developer Mode graph toggles, and Chrome DevTools source debugging.
+- [Inspectors and Debugging](/docs/Inspectors%20and%20Debugging/_unused/): Built-in tools for inspecting nodes and revealing hidden parts of the model graph at runtime.
 - [Inspirations](/docs/Inspirations/): Frameworks and ideas that shaped STRVCT's design.
-- [Internationalization](/docs/Internationalization/): AI-powered translation of UI text with persistent caching, batched requests, and smart content filtering.
+- [Internationalization](/docs/Internationalization/): AI-powered translation of UI text with per-language IndexedDB persistence, batched requests, and content filtering.
+- [Internationalization](/docs/Internationalization/_unused/): AI-powered translation of UI text with persistent caching, batched requests, and smart content filtering.
 - [Lifecycle](/docs/Lifecycle/): Boot sequence, node initialization, view synchronization, and persistence cycles.
 - [App Lifecycle](/docs/Lifecycle/App%20Lifecycle/): SvApp initialization, extension points, and readiness signaling.
 - [Boot Sequence](/docs/Lifecycle/Boot%20Sequence/): How the application loads from first script tag to a running app.
@@ -94,11 +97,15 @@
 - [Technical Overview](/docs/Technical%20Overview/): High-level architecture, core design philosophy, and system-wide concepts of the Strvct framework.
 - [Technical Overview](/docs/Technical%20Overview/_unused/): High-level architecture and key concepts of the Strvct framework.
 - [Views](/docs/Views/): The view layer: auto-generated UI, custom views, and programmatic styling.
-- [Auto-Generated Views](/docs/Views/Auto-Generated%20Views/): How the view layer connects to model nodes, synchronizes state, and provides navigation — without writing any view code.
+- [Auto-Generated Views](/docs/Views/Auto-Generated%20Views/): How the view layer connects to model nodes, resolves view classes, synchronizes state, and provides navigation without hand-authored UI code.
+- [Auto-Generated Views](/docs/Views/Auto-Generated%20Views/_unused/): How the view layer connects to model nodes, synchronizes state, and provides navigation — without writing any view code.
 - [Companion View](/docs/Views/Companion%20View/): A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
-- [Custom Views](/docs/Views/Custom%20Views/): How to create custom view classes when the auto-generated UI doesn't fit.
+- [Companion View](/docs/Views/Companion%20View/_unused/): A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
+- [Custom Views](/docs/Views/Custom%20Views/): Authoring custom view classes, DOM wrappers, flex shortcuts, and model synchronization for specialized media.
+- [Custom Views](/docs/Views/Custom%20Views/_unused/): How to create custom view classes when the auto-generated UI doesn't fit.
 - [Programmatic Styling](/docs/Views/Programmatic%20Styling/): Named CSS methods, the chainable API, and why STRVCT avoids CSS files.
-- [Responsive](/docs/Views/Responsive/): How the view layer adapts the master-detail composition to different viewport sizes without per-screen layout code.
+- [Responsive Views](/docs/Views/Responsive/): Automatic viewport compaction, last-column stretching, and per-node width hooks without per-screen layout code.
+- [Responsive](/docs/Views/Responsive/_unused/): How the view layer adapts the master-detail composition to different viewport sizes without per-screen layout code.
 - [Themes and Style States](/docs/Views/Themes%20and%20Style%20States/): How views resolve their appearance from theme classes, style states, and node configuration.
 
 ## _unused

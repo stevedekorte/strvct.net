@@ -1,111 +1,173 @@
 # Auto-Generated Views
 
-How the view layer connects to model nodes, synchronizes state, and provides navigation — without writing any view code.
+How the view layer connects to model nodes, resolves view classes, synchronizes state, and provides navigation without hand-authored UI code.
 
 ## Overview
 
-The defining feature of a naked objects framework is that the UI is derived from the model. In STRVCT, every node automatically gets a visual representation: the framework discovers the right view class, creates instances, wires up observation, and keeps the view synchronized as the model changes. Application developers define model classes and get a fully navigable, editable UI for free.
+In STRVCT, every domain node (`SvNode`) automatically receives a visual presentation: the framework discovers the matching view class, instantiates views lazily on demand, wires up observation notifications, and keeps views synchronized as model slots mutate.
 
-## SvDomView Hierarchy
+<svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="agv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
 
-Rather than subclassing DOM elements directly, STRVCT wraps them. Each layer in the view class hierarchy adds one capability:
+  <!-- Step 1: SvNode -->
+  <rect class="box" x="25" y="20" width="240" height="230"/>
+  <text x="40" y="42" class="b">Domain Model (SvNode)</text>
 
-- **`SvElementDomView`** — Wraps a DOM element. Manages creation, type, and class attributes.
-- **`SvVisibleDomView`** — Visibility toggling.
-- **`SvResponderDomView`** — Responder chain for keyboard and mouse event routing.
-- **`SvListenerDomView`** — Event listener registration and removal.
-- **`SvControlDomView`** — Target/action pattern for connecting views to handlers.
-- **`SvSelectableDomView`** — Selection state with styled feedback.
-- **`SvEditableDomView`** — Content editability and edit mode.
-- **`SvGesturableDomView`** — Gesture recognizers: tap, double-tap, pan, long-press, pinch.
-- **`SvFlexDomView`** — Flexbox layout: direction, wrap, grow, shrink, basis, alignment.
-- **`SvStyledDomView`** — Named style states (unselected, selected, active, disabled) with theme support.
-- **`SvSubviewsDomView`** — Parent/child view hierarchy.
-- **`SvCssDomView`** — CSS variable application from dictionaries.
-- **`SvDomView`** — Combines all layers above.
-- **`SvNodeView`** — Adds model-to-view synchronization. The primary class for application views.
+  <rect class="fill" x="40" y="60" width="210" height="45"/>
+  <text x="55" y="80" class="b">Declared Slots</text>
+  <text x="55" y="95" class="dim">Slot metadata &amp; annotations</text>
 
-## SvNodeView
+  <rect class="fill" x="40" y="115" width="210" height="45"/>
+  <text x="55" y="135" class="b">Ordered Subnodes</text>
+  <text x="55" y="150" class="dim">Child subnode graph</text>
 
-`SvNodeView` is the bridge between model nodes and the DOM. It holds a reference to an `SvNode`, observes change notifications, and manages the subview lifecycle.
+  <rect class="fill" x="40" y="170" width="210" height="45"/>
+  <text x="55" y="190" class="b">Slot Setter Mutation</text>
+  <text x="55" y="205" class="dim">Posts didChangeSlot note</text>
 
-- `setNode(aNode)` — Assigns a node and begins observation via `SvNotificationCenter`.
-- `syncFromNode()` — Diffs visible subnodes against current subviews: creates, reuses, or removes as needed.
-- `subviewProtoForSubnode(aSubnode)` — Resolves which view class to use (see View Resolution).
-- `syncCssFromNode()` — Applies CSS variables defined on the node to the DOM element.
+  <line class="flow" x1="265" y1="135" x2="290" y2="135" marker-end="url(#agv)"/>
 
-## View Resolution
+  <!-- Step 2: Resolution & Sync -->
+  <rect class="fill" x="290" y="20" width="240" height="230"/>
+  <text x="305" y="42" class="b">View Resolution Engine</text>
 
-The framework discovers view classes by naming convention: append `"View"` or `"SvTile"` to the node's class name.
+  <rect class="box" x="305" y="60" width="210" height="45"/>
+  <text x="320" y="80" class="b">nodeViewClassName</text>
+  <text x="320" y="95" class="dim">Explicit override check</text>
 
-1. Check for an explicit `nodeViewClassName` override on the node.
-2. Walk the node's class hierarchy from most-derived to base.
-3. For each ancestor, look up `ClassName + "View"`.
-4. Return the first match.
+  <rect class="box" x="305" y="115" width="210" height="45"/>
+  <text x="320" y="135" class="b">Name Convention Lookup</text>
+  <text x="320" y="150" class="dim">Walks ClassName + "View"</text>
 
-For a `MySpecialNode` extending `SvStorableNode`, the lookup tries `MySpecialNodeView`, then `SvStorableNodeView`, and so on. No registration required — just name the view class to match.
+  <rect class="box" x="305" y="170" width="210" height="45"/>
+  <text x="320" y="190" class="b">SvSyncScheduler Pass</text>
+  <text x="320" y="205" class="dim">Coalesces view.syncFromNode()</text>
 
-## Synchronization
+  <line class="flow" x1="530" y1="135" x2="555" y2="135" marker-end="url(#agv)"/>
 
-`SvSyncScheduler` batches and coordinates all synchronization between nodes and views.
+  <!-- Step 3: Generated View Hierarchy -->
+  <rect class="box" x="555" y="20" width="240" height="230"/>
+  <text x="570" y="42" class="b">Generated Miller Column UI</text>
 
-**Model to view**: A slot change triggers `didUpdateSlot()` on the node, which posts an `onUpdatedNode` notification. Observing views schedule a sync at priority 2, executed at the end of the event loop.
+  <rect class="fill" x="570" y="60" width="210" height="45"/>
+  <text x="585" y="80" class="b">SvStackView / SvNavView</text>
+  <text x="585" y="95" class="dim">Master-detail layout column</text>
 
-**View to model**: A user edit triggers `scheduleSyncToNode()` at priority 0 (higher than model-to-view). The view calls the node's setter, which posts its own change notification, completing the cycle.
+  <rect class="fill" x="570" y="115" width="210" height="45"/>
+  <text x="585" y="135" class="b">SvTilesView &amp; SvTile</text>
+  <text x="585" y="150" class="dim">Scrollable tile selection list</text>
 
-The scheduler coalesces duplicate calls, detects sync loops, and can be paused during bulk operations. Slot setters only fire hooks when the value actually changes, preventing redundant cascades at the source.
+  <rect class="fill" x="570" y="170" width="210" height="45"/>
+  <text x="585" y="190" class="b">SvFieldTile Controls</text>
+  <text x="585" y="205" class="dim">Type-appropriate field editors</text>
+</svg>
 
-## Navigation
+---
 
-### SvStackView
+## `SvDomView` Single-Inheritance Layering
 
-`SvStackView` is the single recursive building block of all navigation. It splits into two regions:
+Rather than subclassing raw HTML elements directly, STRVCT wraps DOM elements in a single-inheritance hierarchy where each layer adds one capability:
 
-- **`SvNavView`** (master) — A column with a header, a scrollable `SvTilesView`, and a footer.
-- **`otherView`** (detail) — The content of the selected item — typically another `SvStackView`.
+| View Class Layer | Added Capability |
+|---|---|
+| **`SvElementDomView`** | Wraps DOM element; manages creation, type, and class attributes. |
+| **`SvVisibleDomView`** | Visibility toggling (`setIsVisible(bool)`). |
+| **`SvResponderDomView`** | Responder chain for keyboard and mouse event routing. |
+| **`SvListenerDomView`** | DOM event listener registration and removal. |
+| **`SvControlDomView`** | Target/action pattern connecting views to event handlers. |
+| **`SvSelectableDomView`** | Selection state with styled visual feedback. |
+| **`SvEditableDomView`** | Content editability and edit mode toggling. |
+| **`SvGesturableDomView`** | Gesture recognizers (tap, double-tap, pan, long-press, pinch). |
+| **`SvFlexDomView`** | Flexbox layout properties (direction, wrap, grow, shrink, alignment). |
+| **`SvStyledDomView`** | State-based styling (unselected, selected, active, disabled) with theme support. |
+| **`SvSubviewsDomView`** | Parent/child subview hierarchy management. |
+| **`SvCssDomView`** | Applies CSS variables from dictionaries to element styles. |
+| **`SvDomView`** | Aggregates all layers above into the complete DOM view wrapper. |
+| **`SvNodeView`** | Binds model `SvNode` to DOM presentation; handles observation & sync. |
 
-Selecting a tile creates a new `SvStackView` in the detail area for the selected node's subnodes. This is the entire navigation mechanism: the same master-detail split, repeated at every level.
+---
 
-**Orientation** is set per node — `"right"` for horizontal (master left, detail right) or `"down"` for vertical (master top, detail below). Mixing orientations at different depths produces horizontal Miller Columns, vertical drill-down, or hybrids, all from the same structure.
+## `SvNodeView` Bridge Methods
 
-**Compaction**: When nested columns would exceed the viewport, upper columns collapse automatically. Navigating back re-expands them. Tiles along the selection path are highlighted; the focused tile gets a distinct highlight.
+`SvNodeView` is the primary class for application views:
+- `setNode(aNode)`: Assigns a model node and registers change observations via `SvNotificationCenter`.
+- `syncFromNode()`: Diffs visible subnodes against active subviews, instantiating, reusing, or purging views as needed.
+- `subviewProtoForSubnode(aSubnode)`: Resolves which view class to instantiate for a child subnode.
+- `syncCssFromNode()`: Applies CSS variables defined on the model node to the DOM element.
 
-### SvBrowserView
+---
 
-`SvBrowserView` is the top-level container — a `SvStackView` whose detail area contains another `SvStackView`, whose detail area contains another, to any depth. It adds a breadcrumb header that auto-compacts on narrow viewports, replacing truncated segments with a back arrow.
+## View Resolution Lookup Algorithm
 
-- `navigateToNode(aNode)` — Navigate directly to a node.
-- `selectNodePathArray(pathArray)` — Set the navigation path programmatically.
+When a node becomes visible, the framework discovers its view class using naming conventions:
 
-## SvTilesView
+1. **Explicit Override:** Check for an explicit `nodeViewClassName` override on the node.
+2. **Inheritance Walk:** Walk the node's class hierarchy from most-derived to base (`SvNode`).
+3. **Convention Lookup:** For each class ancestor, check for `ClassName + "View"` in global scope.
+4. **Fallback:** If no match is found down to the root, fall back to default `SvNodeView`.
 
-`SvTilesView` is the scrollable column that displays one `SvTile` per visible subnode. It handles selection, keyboard navigation (arrow keys, Enter, Escape), long-press reordering, pinch gestures, and drag-and-drop between columns. Layout direction follows the parent `SvStackView`.
+*Example:* For `Character` extending `SvStorableNode`, resolution checks `CharacterView` $\rightarrow$ `SvStorableNodeView` $\rightarrow$ `SvNodeView`.
 
-## Tiles
+---
 
-Tiles are the items in a navigation column. All extend `SvNodeView`.
+## Navigation Containers (`SvStackView` & `SvBrowserView`)
 
-**`SvTile`** — The base class. Provides selection feedback, slide-to-delete (an inner `contentView` slides to reveal action buttons beneath), long-press reorder, and a style cascade that checks the node, then the tile, then the parent column.
+### `SvStackView`
+`SvStackView` is the recursive building block of navigation, splitting into two areas:
+- **`SvNavView` (Master):** A column containing a header, scrollable `SvTilesView`, and footer.
+- **`otherView` (Detail):** Content area for the selected tile—typically a child `SvStackView`.
 
-**`SvTitledTile`** — The default. Displays title, subtitle, and note from `SvSummaryNode`.
+Selecting a tile creates a new child `SvStackView` in the detail area. **Orientation** is set per node (`"right"` for horizontal master-left/detail-right, `"down"` for vertical master-top/detail-below).
 
-**`SvHeaderTile`** — A non-selectable section header.
+### `SvBrowserView`
+Top-level application container managing nested `SvStackView` columns to arbitrary depth. Includes a breadcrumb header that auto-compacts on narrow viewports:
+- `navigateToNode(aNode)`: Navigates directly to a target node in the graph.
+- `selectNodePathArray(pathArray)`: Programmatically sets the full navigation path.
 
-**`SvBreadCrumbsTile`** — A breadcrumb path that auto-compacts to fit.
+---
 
-## Field Tiles
+## Tile Classes & Field Tiles
 
-Field tiles present individual slot values as editable key/value rows. The base `SvFieldTile` has four regions: key, value, error, and note.
+Tiles are individual items rendered inside `SvTilesView` columns:
 
-| Class | Purpose |
-|-------|---------|
-| `SvStringFieldTile` | Single-line text input |
-| `SvTextAreaFieldTile` | Multi-line text editing |
-| `SvBooleanFieldTile` | Checkbox toggle |
-| `SvPasswordFieldTile` | Masked password input |
-| `SvActionFieldTile` | Button that invokes a node method |
-| `SvPointerFieldTile` | Object reference with navigation arrow |
-| `SvImageWellFieldTile` | Image display and drag in/out |
-| `SvVideoWellFieldTile` | Video display and drag in/out |
+| Tile Class | Purpose & Visual Presentation |
+|---|---|
+| **`SvTile`** | Base tile class. Handles selection, long-press reorder, slide-to-delete, and style state cascades. |
+| **`SvTitledTile`** | Default tile. Displays title, subtitle, and note from `SvSummaryNode`. |
+| **`SvHeaderTile`** | Non-selectable section header tile. |
+| **`SvBreadCrumbsTile`** | Compact breadcrumb trail tile. |
 
-Not every field type needs its own tile — `SvNumberField` uses the string tile with numeric validation.
+### Field Tiles (`SvFieldTile`):
+
+Field tiles render key-value property slots as editable controls:
+
+| Field Tile Class | Property Control Type |
+|---|---|
+| **`SvStringFieldTile`** | Single-line text input |
+| **`SvTextAreaFieldTile`** | Multi-line text area editor |
+| **`SvBooleanFieldTile`** | Checkbox toggle control |
+| **`SvPasswordFieldTile`** | Masked password text input |
+| **`SvActionFieldTile`** | Button triggering a node method |
+| **`SvPointerFieldTile`** | Object reference with navigation arrow |
+| **`SvImageWellFieldTile`** | Image preview well with drag-and-drop support |
+| **`SvVideoWellFieldTile`** | Video player well with drag-and-drop support |
+
+---
+
+## Related Guides
+
+- [Custom Views](../Custom%20Views/index.html): Authoring custom view subclasses.
+- [Companion View](../Companion%20View/index.html): Docked secondary views.
+- [Responsive Views](../Responsive/index.html): Column compaction and mobile collapse.
