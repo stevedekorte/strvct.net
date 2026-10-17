@@ -74,7 +74,33 @@
         const sheen = SvFlexDomView.clone();
         sheen.setElementClassName("SvShimmerOverlaySheen");
         this.addSubview(sheen);
+        this.addTimeout(() => this.reportIfStillSweeping(), 20000, "reportIfStillSweeping");
         return this;
+    }
+
+    /**
+     * @description A tripwire: a shimmer still on screen after 20 s is a
+     * loading state nobody ended. Names who holds it — the views above it,
+     * their nodes, and the owner's state — so the stuck case can be found.
+     * Reads no geometry (isConnected and the view tree only).
+     * @category Debugging
+     */
+    reportIfStillSweeping () {
+        if (!this.element().isConnected) {
+            return;
+        }
+        const owner = this.parentView();
+        const chain = [];
+        for (let v = owner; v && chain.length < 6; v = v.parentView()) {
+            const node = v.node ? v.node() : null;
+            chain.push(v.svType() + (node ? "(" + node.svType() + ")" : ""));
+        }
+        const state = {
+            renderState: owner && owner.renderState ? owner.renderState() : undefined,
+            isWorking: owner && owner.isWorking ? owner.isWorking() : undefined,
+            isDepressed: owner && owner.isDepressed ? owner.isDepressed() : undefined
+        };
+        console.warn("[SvShimmerOverlayView] still sweeping after 20s: " + chain.join(" < ") + " " + JSON.stringify(state));
     }
 
     /**
