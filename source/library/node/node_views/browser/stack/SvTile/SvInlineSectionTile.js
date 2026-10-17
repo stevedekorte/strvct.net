@@ -276,9 +276,10 @@
                 padding-left: 0 !important; /* a text view pads by its own em: the title and its note would start apart */
             }
             .SvInlineDisplay > .TileContentView > .SvInlineSectionHead > .SvInlineSectionSubheading {
-                font-size: var(--sv-inline-display-note-size, 20px);
+                font-size: var(--sv-inline-display-subtitle-size, 19px);
+                color: var(--sv-inline-display-subtitle-color, var(--sv-text)); /* a theme may give the tagline its accent */
                 padding-left: 0 !important;
-                margin-top: 2px;
+                margin-top: 4px;
             }
             .SvInlineDisplay > .TileContentView > .SvInlineSectionHead > .SvInlineSectionNote {
                 text-align: left;
