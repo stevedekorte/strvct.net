@@ -268,18 +268,19 @@
             .SvInlineDisplay > .TileContentView > .SvInlineSectionHead > .SvInlineSectionHeading {
                 font-family: var(--sv-inline-display-face, var(--sv-face-body, inherit));
                 font-size: var(--sv-inline-display-size, 52px);
-                line-height: 1.1;
+                line-height: 1;
                 letter-spacing: normal;
                 text-transform: none;
                 font-weight: 400;
                 color: var(--sv-text);
                 padding-left: 0 !important; /* a text view pads by its own em: the title and its note would start apart */
+                padding-bottom: 0 !important; /* ...and half an em under 52px type parts it from its tagline */
             }
             .SvInlineDisplay > .TileContentView > .SvInlineSectionHead > .SvInlineSectionSubheading {
                 font-size: var(--sv-inline-display-subtitle-size, 19px);
                 color: var(--sv-inline-display-subtitle-color, var(--sv-text)); /* a theme may give the tagline its accent */
-                padding-left: 0 !important;
-                margin-top: 4px;
+                padding: 0 !important; /* close under the title, a line with it */
+                margin: 2px 0 10px 0;
             }
             .SvInlineDisplay > .TileContentView > .SvInlineSectionHead > .SvInlineSectionNote {
                 text-align: left;
