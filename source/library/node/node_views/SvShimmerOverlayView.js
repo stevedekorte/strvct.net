@@ -100,7 +100,9 @@
             isWorking: owner && owner.isWorking ? owner.isWorking() : undefined,
             isDepressed: owner && owner.isDepressed ? owner.isDepressed() : undefined
         };
-        console.warn("[SvShimmerOverlayView] still sweeping after 20s: " + chain.join(" < ") + " " + JSON.stringify(state));
+        const message = "[SvShimmerOverlayView] still sweeping after 20s: " + chain.join(" < ") + " " + JSON.stringify(state);
+        console.warn(message);
+        SvErrorReport.asyncSend(new Error(message), { kind: "stuckShimmer", chain: chain, state: state }); // to the server's log, for a case seen only on someone else's screen
     }
 
     /**
