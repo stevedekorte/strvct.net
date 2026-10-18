@@ -114,6 +114,7 @@
         }
         if (document.visibilityState === "hidden") {
             this.app().onAppWillSuspend();
+            SvNotificationCenter.shared().newNote().setSender(this).setName("onAppDidBecomeHidden").post();
         } else if (document.visibilityState === "visible") {
             SvNotificationCenter.shared().newNote().setSender(this).setName("onAppDidBecomeActive").post();
         }
@@ -394,7 +395,9 @@
      * @category User Attention
      */
     onRequestUserNotificationsPermission (/*aNote*/) {
-        SvWebBrowserNotifications.shared().requestPermission();
+        SvWebBrowserNotifications.shared().requestPermission().then(() => {
+            SvNotificationCenter.shared().newNote().setSender(this).setName("onUserNotificationsPermissionChanged").setInfo({ permission: this.userNotificationsPermission() }).post();
+        });
         return this;
     }
 
