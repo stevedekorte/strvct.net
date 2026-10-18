@@ -1,4 +1,5 @@
 [
+    "SvStreamReaderDelegateProtocol.js",
     "SvStreamNode.js",
     "SvStreamTextNode.js",
     "SvStreamElementNode.js",

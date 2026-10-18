@@ -58,7 +58,7 @@
 
     /**
      * @static
-     * @description
+     * @description Returns whether instances of this class should be stored.
      * @returns {boolean}
      */
     static shouldStore () {

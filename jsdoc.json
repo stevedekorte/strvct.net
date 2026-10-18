@@ -2,7 +2,7 @@
   "source": {
     "include": ["source"],
     "includePattern": ".+\\.js$",
-    "excludePattern": "(node_modules|jsdocs|external-libs|_ideal\\.js$)"
+    "excludePattern": "(node_modules|jsdocs|external-libs|_ideal\\.js$|_unused)"
   },
   "sourceType": "module",
   "opts": {

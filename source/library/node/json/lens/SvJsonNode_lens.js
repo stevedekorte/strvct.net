@@ -2,8 +2,7 @@
 
 /**
  * @module library.node.json.lens
- *
- * Lens emission walk — `serializeWithLens` — for the JSON node classes.
+ * @description Lens emission walk — `serializeWithLens` — for the JSON node classes.
  * This is a SEPARATE walk from `serializeToJson`: plain (no-lens) dumps go
  * through the untouched serializeToJson path and stay byte-identical; the
  * lens walk delegates to serializeToJson for unbounded `full` subtrees, so

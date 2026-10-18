@@ -141,7 +141,13 @@ Implementers call `addProtocol()` inside `initPrototype()`:
 - **`SvAudioClipProtocol`:** Audio playback interface (`play()`, `stop()`, `addDelegate()`, `removeDelegate()`).
 - **`SvAudioClipDelegateProtocol`:** Callback interface (`onSoundEnded(audioClip)`).
 - **`SvDragSourceProtocol`:** Drag source callbacks (`onDragSourceBegin()`, `onDragSourceDropped()`, `onDragSourceEnd()`).
-- **`SvDragDestinationProtocol`:** Drop target callbacks (`onDragDestinationEnter()`, `acceptsDrop()`, `onDragDestinationHover()`).
+- **`SvDragDestinationProtocol`:** Drop target callbacks (`onDragDestinationEnter()`, `acceptsDrop()`).
+- **`SvAiRequestDelegateProtocol`:** AI HTTP request lifecycle and streaming callbacks (`onRequestBegin()`, `onStreamData()`, `onRequestComplete()`, `onRequestFailure()`).
+- **`SvAiResponseParserDelegateProtocol`:** AI response stream parsing callbacks (`onParsedResponseChunk()`, `onOrphanedToolCallTag()`, `onParsedResponseComplete()`).
+- **`SvImageGenerationDelegateProtocol`:** AI image generation callbacks (`onImageGenerationBegin()`, `didFetchDataUrl()`, `onImageGenerated()`, `onImageGenerationFailure()`).
+- **`SvPeerConnectionDelegateProtocol`:** WebRTC peer connection and signaling server callbacks (`onPeerServerOpen()`, `onPeerConnection()`, `onOpenPeerConnection()`, `onClosePeerConnection()`).
+- **`SvStreamReaderDelegateProtocol`:** SAX-style stream reader token callbacks (`onStreamTagOpen()`, `onStreamTagContent()`, `onStreamTagClose()`, `onStreamParseError()`).
+- **`SvCompanionNodeProtocol`:** Companion view docking interface (`nodeCompanionNode()`, `nodeCompanionWidth()`, `nodeCompanionEdge()`).
 
 ---
 

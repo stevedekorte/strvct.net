@@ -1,4 +1,5 @@
 [
+    "SvAiRequestDelegateProtocol.js",
     "SvXhrRequest.js",
     "SvAiRequest.js",
     "errors/_imports.json"

@@ -73,7 +73,7 @@
      * (or null if the node was deleted) on every change. Returns an
      * unsubscribe function.
      * @param {string} _id
-     * @param {function(Object|null):void} _onSnap
+     * @param {Function} _onSnap
      * @param {function(Error):void} [_onErr]
      * @returns {function():void} unsubscribe
      */
@@ -121,7 +121,7 @@
      * @param {string} args.hash         "sha256:<64 hex>"
      * @param {string} args.scopeRootId
      * @param {string} [args.mimeType]
-     * @returns {Promise<{hash:string, exists:boolean, uploadUrl?:string, contentType?:string}>}
+     * @returns {Promise<Object>}
      */
     async blobUploadUrl (args) {
         return this.callFunction("blob-upload-url", args);
