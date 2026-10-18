@@ -187,6 +187,24 @@
    * @category Request Handling
    */
     /**
+     * @description Two same-role messages' contents as one: strings join with
+     * a newline; when either is a list of content blocks (an image), the
+     * blocks are kept and the strings become text blocks — joining them as
+     * strings turned an image into "[object Object]".
+     * @param {String|Array} a
+     * @param {String|Array} b
+     * @returns {String|Array}
+     * @category Request Handling
+     */
+    mergedContent (a, b) {
+        if (!Array.isArray(a) && !Array.isArray(b)) {
+            return a + "\n" + b;
+        }
+        const blocks = (c) => Array.isArray(c) ? c : [{ type: "text", text: c }];
+        return blocks(a).concat(blocks(b));
+    }
+
+    /**
      * @description Text and an image as Anthropic content blocks.
      * @param {String} text
      * @param {String} mimeType
@@ -241,7 +259,7 @@
                 && (message.isEphemeral === true) === (lastMessage.isEphemeral === true);
             if (message.role === lastRole && sameEphemerality) {
                 //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n"
-                lastMessage.content = lastMessage.content + "\n" + message.content;
+                lastMessage.content = this.mergedContent(lastMessage.content, message.content);
             } else {
                 newMessages.push(message);
             }

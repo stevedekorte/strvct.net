@@ -402,6 +402,7 @@
 
         console.log(this.logPrefix(), "Sending request to Gemini...");
 
+        request.setRejectsOnFinalError(true); // a failed request rejects instead of leaving this await pending
         await request.asyncSendAndStreamResponse();
 
         if (request.error()) {

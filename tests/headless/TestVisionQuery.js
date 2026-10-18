@@ -56,6 +56,7 @@ function fakeModel (name, service, outcome) {
             return {
                 setBodyJson: (b) => { body = b; sent.push(b); },
                 setTimeoutPeriodInMs: () => {},
+                setRejectsOnFinalError: (v) => { model.rejects = v; },
                 asyncSendAndStreamResponse: async () => {},
                 error: () => outcome.error ? new Error(outcome.error) : null,
                 fullContent: () => outcome.text || "",
@@ -87,6 +88,10 @@ async function main () {
     }
     check(threw, "a service without vision says so");
 
+    const merged = anthropic.mergedContent("Please begin.", aParts);
+    check(Array.isArray(merged) && merged[0].text === "Please begin." && merged[1].type === "image", "Anthropic merges a text message with an image message as blocks, not \"[object Object]\"");
+    check(anthropic.mergedContent("a", "b") === "a\nb", "...and two strings as before");
+
     console.log("\nThe data URL's type and bytes");
     const parts = SvVisionQuery.clone().setDataUrl(dataUrl).imageParts();
     check(parts.mimeType === "image/png" && parts.base64 === "iVBORw0KGgo=", "image/png and its bytes, not a guessed jpeg");
@@ -117,6 +122,7 @@ async function main () {
     const description = await SvVisionQuery.describing(dataUrl).asyncAnswer();
     check(description === "People or creatures: 1.", "the answer, trimmed: " + JSON.stringify(description));
     const body = models.describer.sent[0];
+    check(body.model === "describer" && models.describer.rejects === true, "the body names the model, and a failed request will reject (so failover follows)");
     check(body.messages[0].role === "system" && body.messages[1].content[1].inline_data.data === "iVBORw0KGgo=", "the request: the instruction, then the question with the image in the model's shape");
     const answer = await SvVisionQuery.asking(dataUrl, "Is he holding a towel?").asyncAnswer();
     check(answer.startsWith("Yes") && models.asker.sent.length === 1 && models.backup.sent.length === 1, "the question model failed; the failover answered once");

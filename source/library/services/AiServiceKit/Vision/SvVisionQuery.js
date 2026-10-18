@@ -135,8 +135,9 @@
      */
     async asyncAnswerWith (chatModel) {
         const request = chatModel.newChatRequest();
-        request.setBodyJson({ messages: this.messagesFor(chatModel.service()) });
+        request.setBodyJson({ model: chatModel.modelName(), messages: this.messagesFor(chatModel.service()) });
         request.setTimeoutPeriodInMs(this.timeoutMs());
+        request.setRejectsOnFinalError(true); // a failed request rejects, so failover can follow
         await request.asyncSendAndStreamResponse();
         if (request.error()) {
             throw new Error(chatModel.modelName() + ": " + request.error().message);

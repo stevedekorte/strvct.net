@@ -230,6 +230,7 @@ Please create a detailed checklist of elements that should be present in an imag
 
         console.log(this.logPrefix(), "Sending checklist generation request to", this.evaluationModel() + "...");
 
+        request.setRejectsOnFinalError(true); // a failed request rejects instead of leaving this await pending
         await request.asyncSendAndStreamResponse();
 
         if (request.error()) {

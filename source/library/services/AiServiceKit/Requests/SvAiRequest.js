@@ -306,6 +306,19 @@
         }
 
         /**
+     * @member {Boolean} rejectsOnFinalError - A caller outside a conversation
+     * (a vision query, an image evaluation) awaits asyncSendAndStreamResponse
+     * for its answer, so a request that fails for good must reject it. Off by
+     * default: a conversation recovers through its delegate (onRequestError)
+     * instead, and an HTTP failure used to leave the promise pending for it.
+     */
+        {
+            const slot = this.newSlot("rejectsOnFinalError", false);
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
      * @member {Number} retryCount - Automatic retries attempted so far on this request.
      */
         {
@@ -1226,6 +1239,9 @@
         this.classifyRecovery(e);
         console.error(this.logPrefix(), e.message);
         this.sendDelegateMessage("onRequestError", [this, e]);
+        if (this.rejectsOnFinalError() && !e.svIsRetrying && this.xhrPromise()) {
+            this.xhrPromise().callRejectFuncIfPending(e); // no retry is coming: the caller awaiting the answer hears it failed
+        }
         return this;
     }
 
