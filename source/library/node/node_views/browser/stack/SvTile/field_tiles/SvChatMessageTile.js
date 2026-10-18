@@ -127,7 +127,12 @@
         }
 
         const e = this.speakableElementWithText(text);
-        assert(e);
+        if (!e) {
+            // the sentence isn't rendered here (its pane is closed, as when a
+            // phone shows another tab): nothing to unhighlight — never throw
+            // from the speech notification over presentation (see onSpeakingText)
+            return;
+        }
         this.unhighlightElement(e);
     }
 
