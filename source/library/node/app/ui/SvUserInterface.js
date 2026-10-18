@@ -151,6 +151,101 @@
         return false;
     }
 
+    // --- installed app, device, push (platform capabilities; base: headless) ---
+
+    /**
+     * @description Whether the app runs installed (from a home screen or dock) rather than in a browser tab.
+     * @returns {Boolean}
+     * @category Installed App
+     */
+    isInstalledApp () {
+        return false;
+    }
+
+    /**
+     * @description Whether the platform offers its own install prompt now (promptInstall would show it).
+     * @returns {Boolean}
+     * @category Installed App
+     */
+    canPromptInstall () {
+        return false;
+    }
+
+    /**
+     * @description Shows the platform's install prompt. Resolves true when the user installs.
+     * @returns {Promise<Boolean>}
+     * @category Installed App
+     */
+    async promptInstall () {
+        return false;
+    }
+
+    /**
+     * @description A name for the platform and browser, for choosing install
+     * steps: "ios-safari", "ios-other" (Chrome, Edge or Firefox on iOS),
+     * "android", "desktop-chromium", "mac-safari", "firefox", "other" or
+     * "headless".
+     * @returns {String}
+     * @category Installed App
+     */
+    platformName () {
+        return "headless";
+    }
+
+    /**
+     * @description A small value kept on this device only (a dismissed
+     * prompt, the last release seen) — never synced. Base: for this run.
+     * @param {String} key
+     * @returns {*} the value, or null
+     * @category Device Values
+     */
+    deviceValue (key) {
+        return this.deviceValues().has(key) ? this.deviceValues().get(key) : null;
+    }
+
+    setDeviceValue (key, value) {
+        this.deviceValues().set(key, value);
+        return this;
+    }
+
+    deviceValues () {
+        if (!this._deviceValues) {
+            this._deviceValues = new Map();
+        }
+        return this._deviceValues;
+    }
+
+    /**
+     * @description Restarts the app on its current release (a page reload in a browser). Base: nothing to reload.
+     * @category Lifecycle
+     */
+    reloadApp () {
+        console.log("[" + this.svType() + "] reloadApp: nothing to reload");
+        return this;
+    }
+
+    /**
+     * @description Copies text for the user to paste elsewhere. Resolves true on success.
+     * @param {String} text
+     * @returns {Promise<Boolean>}
+     * @category Clipboard
+     */
+    async asyncCopyText (/*text*/) {
+        return false;
+    }
+
+    /**
+     * @description This device's push subscription for the app's push key,
+     * created when needed (permission must already be granted), as JSON
+     * ({ endpoint, keys }); null where push is unavailable.
+     * @param {String} vapidPublicKey - the server's public key, base64url
+     * @returns {Promise<Object|null>}
+     * @category Push
+     */
+    async asyncPushSubscriptionJson (/*vapidPublicKey*/) {
+        return null;
+    }
+
     assertCanRun () {
         // override in subclasses with any checks that need to be done before running
         return true;

@@ -17,7 +17,8 @@
  * open, one is opened. The page decides what to do with it (the worker stays
  * a dumb terminal: no app knowledge here).
  *
- * The push handler gets added here when push lands.
+ * push: shows a notification the server composed in full (title, body, tag,
+ * url), and keeps the app badge at the number of notifications showing.
  */
 
 "use strict";
@@ -44,10 +45,55 @@ self.addEventListener("notificationclick", (event) => {
         self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
             const open = windows.find(w => "focus" in w);
             if (open) {
+                // Safari's standalone app can't be navigated from here: the page navigates itself
                 open.postMessage({ type: "svNotificationClick", tag: event.notification.tag, data: data });
                 return open.focus();
             }
             return self.clients.openWindow(data.url || "/"); // the app passes where to open
-        })
+        }).then(() => syncBadgeToNotifications())
     );
 });
+
+// push: the server sends a complete notification ({ title, body, tag, url,
+// data }); the worker shows it as-is. One notification per tag: a newer one
+// replaces it. The badge counts the notifications still showing (one per
+// session and kind), so it is right even while the app is closed.
+self.addEventListener("push", (event) => {
+    let payload = {};
+    try {
+        payload = event.data ? event.data.json() : {};
+    } catch (e) {
+        payload = { title: event.data ? event.data.text() : "" };
+    }
+    const options = {
+        body: payload.body || "",
+        tag: payload.tag || undefined,
+        renotify: !!payload.tag,
+        icon: payload.icon || "/apple-touch-icon.png",
+        badge: payload.badgeIcon || undefined,
+        data: Object.assign({ url: payload.url || "/" }, payload.data || {})
+    };
+    event.waitUntil(
+        self.registration.showNotification(payload.title || "UndreamedOf", options).then(() => syncBadgeToNotifications())
+    );
+});
+
+// the browser replaced this device's subscription: subscribe again with the
+// same options; the app registers the new endpoint the next time it opens,
+// and the server drops the old one when a send to it fails
+self.addEventListener("pushsubscriptionchange", (event) => {
+    const options = event.oldSubscription ? event.oldSubscription.options : null;
+    if (!options) {
+        return;
+    }
+    event.waitUntil(self.registration.pushManager.subscribe(options).catch(() => null));
+});
+
+function syncBadgeToNotifications () {
+    if (!self.navigator || typeof self.navigator.setAppBadge !== "function") {
+        return Promise.resolve();
+    }
+    return self.registration.getNotifications().then((list) => {
+        return list.length ? self.navigator.setAppBadge(list.length) : self.navigator.clearAppBadge();
+    }).catch(() => null);
+}

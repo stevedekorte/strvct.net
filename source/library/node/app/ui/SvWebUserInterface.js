@@ -18,6 +18,16 @@
             const slot = this.newSlot("lifecycleDocumentListener", null);
             slot.setSlotType("SvDocumentListener");
         }
+        {
+            const slot = this.newSlot("deferredInstallPrompt", null); // the browser's beforeinstallprompt event, held until the user asks to install
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("noticeBarView", null); // renders the app's notices
+            slot.setSlotType("SvNoticeBarView");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     init () {
@@ -28,6 +38,8 @@
 
     async afterAppDidInit () {
         this.setupDocTheme();
+        this.setupNoticeBar();
+        this.watchForNote("onServiceWorkerMessage");
         // Seed initial connectivity: the `offline` event only fires on a
         // transition, so a cold start while already offline would otherwise
         // look online. Done here (not setup) so consumers created during the
@@ -104,6 +116,164 @@
             this.app().onAppWillSuspend();
         } else if (document.visibilityState === "visible") {
             SvNotificationCenter.shared().newNote().setSender(this).setName("onAppDidBecomeActive").post();
+        }
+    }
+
+    // --- notices ---
+
+    /**
+     * @description Renders the app's notices (SvApp.notices()) as a bar over the page.
+     * @category Notices
+     */
+    setupNoticeBar () {
+        if (this.noticeBarView() || !this.app().notices) {
+            return this;
+        }
+        const bar = SvNoticeBarView.clone().showNotices(this.app().notices());
+        this.setNoticeBarView(bar);
+        this.documentBodyView().addSubview(bar);
+        return this;
+    }
+
+    // --- installed app ---
+
+    isInstalledApp () {
+        const standalone = (q) => typeof window.matchMedia === "function" && window.matchMedia(q).matches;
+        return standalone("(display-mode: standalone)") || standalone("(display-mode: window-controls-overlay)") || navigator.standalone === true;
+    }
+
+    canPromptInstall () {
+        return this.deferredInstallPrompt() !== null;
+    }
+
+    async promptInstall () {
+        const prompt = this.deferredInstallPrompt();
+        if (!prompt) {
+            return false;
+        }
+        this.setDeferredInstallPrompt(null); // a prompt can be shown once
+        prompt.prompt();
+        const choice = await prompt.userChoice;
+        this.postNoteNamed("onInstallAvailabilityChanged");
+        return !!(choice && choice.outcome === "accepted");
+    }
+
+    /**
+     * @description beforeinstallprompt: the browser can install the app.
+     * Held (not shown) until the user asks, from the install guide.
+     * @param {Event} event
+     * @category Installed App
+     */
+    onBeforeInstallPrompt (event) {
+        event.preventDefault();
+        this.setDeferredInstallPrompt(event);
+        this.postNoteNamed("onInstallAvailabilityChanged");
+        return true;
+    }
+
+    onAppInstalled (/*event*/) {
+        this.setDeferredInstallPrompt(null);
+        this.postNoteNamed("onInstallAvailabilityChanged");
+        return true;
+    }
+
+    platformName () {
+        const ua = navigator.userAgent || "";
+        const isIos = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+        if (isIos) {
+            return /CriOS|EdgiOS|FxiOS|OPiOS/.test(ua) ? "ios-other" : "ios-safari";
+        }
+        if (/Android/.test(ua)) {
+            return "android";
+        }
+        if (/Firefox\//.test(ua)) {
+            return "firefox";
+        }
+        if (/Chrome\/|Edg\//.test(ua)) {
+            return "desktop-chromium";
+        }
+        if (/Macintosh/.test(ua) && /Safari\//.test(ua)) {
+            return "mac-safari";
+        }
+        return "other";
+    }
+
+    // --- device values, reload, clipboard ---
+
+    deviceValue (key) {
+        try {
+            const raw = window.localStorage.getItem("sv." + key);
+            return raw === null ? null : JSON.parse(raw);
+        } catch (e) {
+            return super.deviceValue(key);
+        }
+    }
+
+    setDeviceValue (key, value) {
+        try {
+            window.localStorage.setItem("sv." + key, JSON.stringify(value));
+        } catch (e) {
+            super.setDeviceValue(key, value);
+        }
+        return this;
+    }
+
+    reloadApp () {
+        window.location.reload();
+        return this;
+    }
+
+    async asyncCopyText (text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // --- push ---
+
+    async asyncPushSubscriptionJson (vapidPublicKey) {
+        const registration = await SvServiceWorker.shared().asyncRegistration();
+        if (!registration || !registration.pushManager || this.userNotificationsPermission() !== "granted") {
+            return null;
+        }
+        const key = SvWebUserInterface.bytesFromBase64Url(vapidPublicKey);
+        let subscription = await registration.pushManager.getSubscription();
+        if (subscription && !SvWebUserInterface.sameBytes(subscription.options && subscription.options.applicationServerKey, key)) {
+            await subscription.unsubscribe(); // made for another key: replace it
+            subscription = null;
+        }
+        if (!subscription) {
+            subscription = await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+        }
+        return subscription.toJSON();
+    }
+
+    static bytesFromBase64Url (text) {
+        const base64 = (text + "===".slice((text.length + 3) % 4)).replace(/-/g, "+").replace(/_/g, "/");
+        return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+    }
+
+    static sameBytes (buffer, bytes) {
+        if (!buffer) {
+            return false;
+        }
+        const a = new Uint8Array(buffer);
+        return a.length === bytes.length && a.every((v, i) => v === bytes[i]);
+    }
+
+    /**
+     * @description A message from the service worker. A tapped notification
+     * becomes onUserNotificationClicked (info: { tag, data }) for the app to act on.
+     * @param {SvNotification} aNote - info: the message data
+     * @category Push
+     */
+    onServiceWorkerMessage (aNote) {
+        const message = aNote.info() || {};
+        if (message.type === "svNotificationClick") {
+            SvNotificationCenter.shared().newNote().setSender(this).setName("onUserNotificationClicked").setInfo({ tag: message.tag, data: message.data || {} }).post();
         }
     }
 

@@ -89,6 +89,12 @@
          * @category UI
          */
         {
+            const slot = this.newSlot("notices", null); // the notices showing now (SvNotices): model code shows them, the UI renders them
+            slot.setSlotType("SvNotices");
+            slot.setFinalInitProto(SvNotices);
+            slot.setShouldStoreSlot(false);
+        }
+        {
             const slot = this.newSlot("userInterface", null);
             slot.setSlotType("SvUserInterface");
             //slot.setFinalInitProto(SvUserInterface);

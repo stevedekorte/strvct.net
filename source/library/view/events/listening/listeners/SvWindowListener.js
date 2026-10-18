@@ -54,6 +54,9 @@
 
         this.addEventNameAndMethodName("error", "onWindowError");
 
+        this.addEventNameAndMethodName("beforeinstallprompt", "onBeforeInstallPrompt"); // the browser can install the app (Chrome, Edge)
+        this.addEventNameAndMethodName("appinstalled", "onAppInstalled");
+
         this.addEventNameAndMethodName("hashchange", "onHashChange"); // fires specifically when the hash portion of the URL changes
         this.addEventNameAndMethodName("popstate", "onPopState"); // fires when navigating through session history (back/forward buttons), but only for entries added with pushState() or replaceState()
         // For most hash-based navigation needs, hashchange is the simpler and more direct approach.

@@ -3,6 +3,7 @@
     "SvClientReport.js",
     "SvAsyncTimer.js",
     "SvModel.js",
+    "notices/_imports.json",
     "ui/_imports.json",
     "SvApp.js"
 ]

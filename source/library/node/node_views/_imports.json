@@ -4,6 +4,7 @@
     "SvNodeView_accessibility.js",
     "SvCoachableView.js",
     "SvShimmerOverlayView.js",
+    "SvNoticeBarView.js",
     "SvImageWellView.js",
     "SvImageView.js",
     "SvVideoWellView.js",

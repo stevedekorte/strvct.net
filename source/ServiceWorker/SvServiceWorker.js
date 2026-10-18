@@ -45,6 +45,7 @@ class SvServiceWorker extends Object {
     init () {
         this._isRegistered = false;
         this._registration = null;
+        this._registrationPromise = null;
         return this;
     }
 
@@ -79,14 +80,50 @@ class SvServiceWorker extends Object {
         this._isRegistered = true;
 
         const path = "strvct/source/ServiceWorker/SvServiceWorkerCode.js";
+        if (!this._isListeningForMessages) {
+            this._isListeningForMessages = true;
+            navigator.serviceWorker.addEventListener("message", (event) => this.onWorkerMessage(event.data));
+        }
+        this._registrationPromise = navigator.serviceWorker.register(path);
 
         try {
-            this._registration = await navigator.serviceWorker.register(path);
+            this._registration = await this._registrationPromise;
             this.onRegistered();
         } catch (error) {
             this._isRegistered = false; // allow a later retry
+            this._registrationPromise = null;
             this.onError(error);
         }
+    }
+
+    /**
+     * @description The registration once registering has settled; null where
+     * there is no service worker, or registering failed.
+     * @returns {Promise<ServiceWorkerRegistration|null>}
+     * @category Service Worker Registration
+     */
+    async asyncRegistration () {
+        if (this._registration) {
+            return this._registration;
+        }
+        if (!this._registrationPromise) {
+            return null;
+        }
+        try {
+            return await this._registrationPromise;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    /**
+     * @description A message posted by the worker (a tapped notification) is
+     * announced as onServiceWorkerMessage, for the UI layer to act on.
+     * @param {Object} data
+     * @category Messages
+     */
+    onWorkerMessage (data) {
+        SvNotificationCenter.shared().newNote().setSender(this).setName("onServiceWorkerMessage").setInfo(data || {}).post();
     }
 
     /**
