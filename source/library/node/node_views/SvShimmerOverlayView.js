@@ -102,7 +102,9 @@
         };
         const message = "[SvShimmerOverlayView] still sweeping after 20s: " + chain.join(" < ") + " " + JSON.stringify(state);
         console.warn(message);
-        SvErrorReport.asyncSend(new Error(message), { kind: "stuckShimmer", chain: chain, state: state }); // to the server's log, for a case seen only on someone else's screen
+        if (state.isWorking !== true) { // a slow generation is still working: only a shimmer nobody owns any more is reported
+            SvErrorReport.asyncSend(new Error(message), { kind: "stuckShimmer", chain: chain, state: state }); // to the server's log, for a case seen only on someone else's screen
+        }
     }
 
     /**

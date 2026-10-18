@@ -555,6 +555,7 @@
         SvInlineSectionTile.ensureInlineCss();
         this.removeAllGestureRecognizers(); // version 1: a section is read, not slid, dragged or selected
         this.addDefaultTapGesture(); // a tap on its heading folds it (rows inside take their own taps first)
+        this.setIsSelectable(false); // read, not selected: no press look (its onTapComplete folds, so nothing would release one)
         this.element().classList.add("SvInlineSection");
         this.setAriaRole("group");
         this.setupHeadingView();
