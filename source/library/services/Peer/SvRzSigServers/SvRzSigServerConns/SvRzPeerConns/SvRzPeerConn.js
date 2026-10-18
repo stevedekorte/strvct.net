@@ -627,26 +627,6 @@
 
     // --- delegate ---
 
-    /**
-   * @description Sends a delegate message.
-   * @param {string} methodName - The method name to call.
-   * @param {Array} args - The arguments to pass to the method.
-   */
-    sendDelegateMessage (methodName, args = [this]) {
-        const d = this.delegate();
-        if (d) {
-            const m = d[methodName];
-            if (m) {
-                this.logDebug("sending delegate message " + methodName);
-                m.apply(d, args);
-            } else {
-                this.logDebug("delegate " + this.delegate().svTypeId() + " missing method " + methodName);
-            }
-        } else {
-            this.logDebug("no delegate");
-        }
-    }
-
     // --- sending ---
 
     /**
@@ -851,6 +831,16 @@
     sendPong () {
     //console.log(this.svTypeId() + " sendPong")
         this.send({ name: "RzPeerConnPong" });
+    }
+
+    /**
+     * @description The messages this sends its delegate (sendDelegateMessage
+     * warns on one the protocol does not declare).
+     * @returns {Protocol}
+     * @category Delegation
+     */
+    delegateProtocol () {
+        return SvRzPeerConnDelegateProtocol;
     }
 
 }.initThisClass());

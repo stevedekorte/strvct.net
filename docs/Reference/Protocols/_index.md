@@ -1,32 +1,41 @@
 # Protocols
 
-Protocol definitions and implementations in the STRVCT framework.
+Protocol definitions and implementations in the STRVCT framework. See [Protocols](../../Programming%20Idioms/Protocols/index.html) for required and optional methods and delegate protocols.
 
 - library
   - ideal
+    - protocol
+      - [SvDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fprotocol%2FSvDelegateProtocol.js) (the base of every delegate protocol)
     - html
       - SvHtmlStreamReader
-        - [SvStreamReaderDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fhtml%2FSvHtmlStreamReader%2FSvStreamReaderDelegateProtocol.js)
+        - [SvHtmlStreamReaderDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fhtml%2FSvHtmlStreamReader%2FSvHtmlStreamReaderDelegateProtocol.js) (implemented by: SvAiParsedResponseMessage)
   - node
     - audio
       - [SvAudioClipDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Faudio%2FSvAudioClipDelegateProtocol.js) (implemented by: SvAudioQueue)
       - [SvAudioClipProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Faudio%2FSvAudioClipProtocol.js)
+    - fields
+      - image
+        - [SvProgressiveImageSourceProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Ffields%2Fimage%2FSvProgressiveImageSourceProtocol.js)
+    - storage
+      - records
+        - [SvRecordStoreProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Frecords%2FSvRecordStoreProtocol.js) (implemented by: SvLocalRecordStore, SvMemoryRecordStore, SvCloudRecordStore)
     - node_views
       - browser
         - stack
-          - SvAnchoredTabs
-            - [SvCompanionNodeProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FSvAnchoredTabs%2FSvCompanionNodeProtocol.js)
+          - SvEdgeHandle
+            - [SvCollapsibleRegionProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FSvEdgeHandle%2FSvCollapsibleRegionProtocol.js)
           - SvTilesView
             - [SvDragDestinationProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FSvTilesView%2FSvDragDestinationProtocol.js)
             - [SvDragSourceProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FSvTilesView%2FSvDragSourceProtocol.js)
   - services
     - AiServiceKit
-      - Parsing
-        - [SvAiResponseParserDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FParsing%2FSvAiResponseParserDelegateProtocol.js)
+      - [SvConversationMessageDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FSvConversationMessageDelegateProtocol.js) (implemented by: SvConversation)
       - Requests
-        - [SvAiRequestDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FRequests%2FSvAiRequestDelegateProtocol.js)
+        - [SvAiRequestDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FRequests%2FSvAiRequestDelegateProtocol.js) (implemented by: SvAiResponseMessage)
+        - [SvXhrRequestDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FRequests%2FSvXhrRequestDelegateProtocol.js) (implemented by: SvAiRequest, SvFileToDownload)
     - ImaginePro
       - Text to Image
-        - [SvImageGenerationDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FImaginePro%2FText%2520to%2520Image%2FSvImageGenerationDelegateProtocol.js)
+        - [SvImagineProImageGenerationDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FImaginePro%2FText%2520to%2520Image%2FSvImagineProImageGenerationDelegateProtocol.js)
     - Peer
-      - [SvPeerConnectionDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FPeer%2FSvPeerConnectionDelegateProtocol.js)
+      - [SvRzPeerConnDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FPeer%2FSvRzPeerConnDelegateProtocol.js)
+      - [SvRzSigServerConnDelegateProtocol](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FPeer%2FSvRzSigServerConnDelegateProtocol.js)

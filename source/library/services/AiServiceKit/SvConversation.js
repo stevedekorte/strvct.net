@@ -49,6 +49,7 @@
    * @category Initialization
    */
     initPrototype () {
+        this.addProtocol(SvConversationMessageDelegateProtocol); // its messages' delegate
         this.setCanDelete(true);
         this.setNodeCanEditTitle(true);
         this.setTitle("Untitled");

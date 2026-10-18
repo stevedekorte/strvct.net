@@ -453,6 +453,10 @@
         this.setShouldStoreSubnodes(false);
     }
 
+    initPrototype () {
+        this.addProtocol(SvXhrRequestDelegateProtocol); // its XHR request's delegate
+    }
+
     /**
    * Initializes the SvAiRequest instance
    */
@@ -1689,6 +1693,16 @@
         this._awaitingReconnect = false;
         console.log(this.logPrefix(), "connectivity restored — retrying request");
         this.retryRequest();
+    }
+
+    /**
+     * @description The messages this sends its delegate (sendDelegateMessage
+     * warns on one the protocol does not declare).
+     * @returns {Protocol}
+     * @category Delegation
+     */
+    delegateProtocol () {
+        return SvAiRequestDelegateProtocol;
     }
 
 }).initThisClass();

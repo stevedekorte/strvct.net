@@ -72,7 +72,7 @@
      * Watch a single node by id, delivering hydrated SvFsNode instances
      * (or null on delete) to the callback.
      * @param {string} id
-     * @param {Function} onSnap
+     * @param {function(?SvFsNode): void} onSnap
      * @param {function(Error):void} [onErr]
      * @returns {Object} listener-pool handle
      */

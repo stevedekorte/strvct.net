@@ -5,41 +5,70 @@
  */
 
 /**
- * @class SvAiRequestDelegateProtocol
- * @extends Protocol
- * @classdesc Delegate protocol for AI request lifecycle events and streaming data callbacks.
+ * @interface SvAiRequestDelegateProtocol
+ * @extends SvDelegateProtocol
+ * @classdesc What an AI request tells its delegate through its life and as its response streams in. Sent by SvAiRequest (sendDelegateMessage); every message is
+ * optional. Written from the sends in SvAiRequest — when it sends a new message,
+ * add it here (the delegate-message tripwire and TestDelegateProtocols say so).
  */
-
-(class SvAiRequestDelegateProtocol extends Protocol {
+(class SvAiRequestDelegateProtocol extends SvDelegateProtocol {
 
     /**
-     * @description Handles the start of an AI HTTP request.
-     * @param {Object} aiRequest - The AI request instance.
+     * @description The request was sent.
+     * @param {SvAiRequest} request - The request.
+     * @category Delegation
      */
-    onRequestBegin (aiRequest) {
+    onRequestBegin (request) {
     }
 
     /**
-     * @description Handles incoming streaming SSE data chunks.
-     * @param {string} dataChunk - Incoming text stream chunk.
-     * @param {Object} aiRequest - The AI request instance.
+     * @description The response began streaming.
+     * @param {SvAiRequest} request - The request.
+     * @category Delegation
      */
-    onStreamData (dataChunk, aiRequest) {
+    onStreamStart (request) {
     }
 
     /**
-     * @description Handles successful completion of an AI request.
-     * @param {Object} aiRequest - The AI request instance.
+     * @description Streamed text arrived.
+     * @param {SvAiRequest} request - The request.
+     * @param {String} chunk - The visible text that arrived.
+     * @category Delegation
      */
-    onRequestComplete (aiRequest) {
+    onStreamData (request, chunk) {
     }
 
     /**
-     * @description Handles AI request failures or HTTP error responses.
-     * @param {Object} aiRequest - The AI request instance.
-     * @param {Error} error - Error instance or message string.
+     * @description The stream finished.
+     * @param {SvAiRequest} request - The request.
+     * @category Delegation
      */
-    onRequestFailure (aiRequest, error) {
+    onStreamEnd (request) {
+    }
+
+    /**
+     * @description The stream was aborted.
+     * @param {SvAiRequest} request - The request.
+     * @category Delegation
+     */
+    onStreamAbort (request) {
+    }
+
+    /**
+     * @description The request finished (successfully or not).
+     * @param {SvAiRequest} request - The request.
+     * @category Delegation
+     */
+    onRequestComplete (request) {
+    }
+
+    /**
+     * @description The request failed.
+     * @param {SvAiRequest} request - The request.
+     * @param {Error} error - What went wrong.
+     * @category Delegation
+     */
+    onRequestError (request, error) {
     }
 
 }.initThisProtocol());

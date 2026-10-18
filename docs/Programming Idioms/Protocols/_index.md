@@ -124,30 +124,103 @@ Implementers call `addProtocol()` inside `initPrototype()`:
 
 ---
 
+## Required and Optional Methods
+
+`addProtocol()` checks only a protocol's **required** methods. A protocol names the ones an adopter may leave out with the static `optionalMethodNames()`; by default there are none, so every declared method is required.
+
+```javascript
+(class SvExampleProtocol extends Protocol {
+
+    static optionalMethodNames () {
+        return ["describe"];
+    }
+
+    play () {
+    }
+
+    describe () {
+    }
+
+}.initThisProtocol());
+```
+
+---
+
+## Delegate Protocols
+
+A **delegate protocol** declares the messages one kind of object sends its delegate through `sendDelegateMessage()`. A delegate implements only the messages it cares about, so a delegate protocol extends `SvDelegateProtocol`, which makes every message optional. Adopting one declares who listens; it never fails.
+
+Name a delegate protocol after its sender (`SvHtmlStreamReader` → `SvHtmlStreamReaderDelegateProtocol`), and declare exactly what the sender sends, with the arguments it sends them with:
+
+```javascript
+(class SvHtmlStreamReaderDelegateProtocol extends SvDelegateProtocol {
+
+    onHtmlStreamReaderPushNode (reader, node) {
+    }
+
+    // ...
+
+}.initThisProtocol());
+```
+
+The **sender** names its protocol:
+
+```javascript
+delegateProtocol () {
+    return SvHtmlStreamReaderDelegateProtocol;
+}
+```
+
+and each **delegate** adopts it in `initPrototype()` with `this.addProtocol(SvHtmlStreamReaderDelegateProtocol)`.
+
+Two checks keep the declaration and the code from drifting apart:
+
+- **At runtime**, `sendDelegateMessage()` warns once per sender class and message when a sender that names a protocol sends a message the protocol does not declare.
+- **In tests**, `tests/headless/TestDelegateProtocols.js` scans the source. Every message a sender sends must be declared, every declared message must be sent (a declared message nobody sends is an invented interface), and every delegate protocol must be named by a sender.
+
+A protocol file loads before any class that adopts it: list it first in its folder's `_imports.json`, or in a folder that loads earlier.
+
+---
+
 ## Protocol Verification API
 
 | Method | Purpose & Return Value |
 |---|---|
-| `addProtocol(protocol)` | Registers protocol; throws startup error if any method is missing. |
-| `conformsToProtocol(protocol)` | Returns `true` if class conforms to specified protocol. |
-| `assertConformsToProtocol(protocol)` | Throws exception if class does not conform. |
-| `methodsConformToProtocol(protocol)` | Returns array of methods satisfying the protocol. |
-| `Protocol.allProtocols()` | Returns set of all registered protocol subclasses. |
+| `addProtocol(protocol)` | Registers the protocol; throws if a required method is missing. |
+| `conformsToProtocol(protocol)` | `true` if the class has added the protocol. |
+| `assertConformsToProtocol(protocol)` | Throws if the class has not added the protocol. |
+| `methodsConformToProtocol(protocol)` | `true` if the object implements every required method. |
+| `Protocol.protocolMethodNames()` | Every method the protocol declares, including those of ancestor protocols. |
+| `Protocol.optionalMethodNames()` / `requiredMethodNames()` | The declared methods an adopter may leave out / must implement. |
+| `Protocol.declaresMethodNamed(name)` | Whether the protocol declares the method (required or optional). |
+| `Protocol.allProtocols()` | Every protocol class. |
 
 ---
 
-## Formal Framework Protocols
+## Framework Protocols
 
-- **`SvAudioClipProtocol`:** Audio playback interface (`play()`, `stop()`, `addDelegate()`, `removeDelegate()`).
-- **`SvAudioClipDelegateProtocol`:** Callback interface (`onSoundEnded(audioClip)`).
-- **`SvDragSourceProtocol`:** Drag source callbacks (`onDragSourceBegin()`, `onDragSourceDropped()`, `onDragSourceEnd()`).
-- **`SvDragDestinationProtocol`:** Drop target callbacks (`onDragDestinationEnter()`, `acceptsDrop()`).
-- **`SvAiRequestDelegateProtocol`:** AI HTTP request lifecycle and streaming callbacks (`onRequestBegin()`, `onStreamData()`, `onRequestComplete()`, `onRequestFailure()`).
-- **`SvAiResponseParserDelegateProtocol`:** AI response stream parsing callbacks (`onParsedResponseChunk()`, `onOrphanedToolCallTag()`, `onParsedResponseComplete()`).
-- **`SvImageGenerationDelegateProtocol`:** AI image generation callbacks (`onImageGenerationBegin()`, `didFetchDataUrl()`, `onImageGenerated()`, `onImageGenerationFailure()`).
-- **`SvPeerConnectionDelegateProtocol`:** WebRTC peer connection and signaling server callbacks (`onPeerServerOpen()`, `onPeerConnection()`, `onOpenPeerConnection()`, `onClosePeerConnection()`).
-- **`SvStreamReaderDelegateProtocol`:** SAX-style stream reader token callbacks (`onStreamTagOpen()`, `onStreamTagContent()`, `onStreamTagClose()`, `onStreamParseError()`).
-- **`SvCompanionNodeProtocol`:** Companion view docking interface (`nodeCompanionNode()`, `nodeCompanionWidth()`, `nodeCompanionEdge()`).
+The protocol files are the source of truth. These are the ones the framework declares:
+
+**Capabilities** (every method required)
+
+- **`SvAudioClipProtocol`:** something that plays (`play()`, `stop()`, `addDelegate()`, `removeDelegate()`).
+- **`SvRecordStoreProtocol`:** a record store: local, memory or cloud.
+- **`SvProgressiveImageSourceProtocol`:** a node whose image arrives in stages (aspect ratio, preview, working, failed).
+- **`SvCollapsibleRegionProtocol`:** a region that expands and collapses (`isExpanded()`, `toggleExpanded()`, `collapsibleAxis()`).
+- **`SvDragSourceProtocol`** and **`SvDragDestinationProtocol`:** the two ends of a drag (`onDragSource…`, `onDragDestination…`, `acceptsDrop…`).
+
+**Delegate protocols** (every message optional)
+
+| Protocol | Sender | Delegates |
+|---|---|---|
+| `SvAudioClipDelegateProtocol` | an audio clip | `SvAudioQueue` |
+| `SvHtmlStreamReaderDelegateProtocol` | `SvHtmlStreamReader` | `SvAiParsedResponseMessage` |
+| `SvXhrRequestDelegateProtocol` | `SvXhrRequest` | `SvAiRequest`, `SvFileToDownload` |
+| `SvAiRequestDelegateProtocol` | `SvAiRequest` | `SvAiResponseMessage` |
+| `SvConversationMessageDelegateProtocol` | `SvConversationMessage` and its subclasses | `SvConversation` |
+| `SvImagineProImageGenerationDelegateProtocol` | `SvImagineProImageGeneration` | — |
+| `SvRzSigServerConnDelegateProtocol` | `SvRzSigServerConn` | — |
+| `SvRzPeerConnDelegateProtocol` | `SvRzPeerConn` | — |
 
 ---
 

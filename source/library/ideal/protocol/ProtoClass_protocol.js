@@ -55,7 +55,7 @@
         assert(protocol.isClass() && protocol.isKindOf(Protocol), "Protocol " + protocol + " is not a subclass of Protocol");
 
         if (!this.methodsConformToProtocol(protocol)) {
-            const missing = protocol.protocolMethodNames().filter(name => typeof (this[name]) !== "function");
+            const missing = protocol.requiredMethodNames().filter(name => typeof (this[name]) !== "function");
             throw new Error(this.svType() + " does not conform to protocol " + protocol.svType() + " — missing: " + missing.join(", "));
         }
 
@@ -83,11 +83,11 @@
     /**
     * @method methodsConformToProtocol
     * @param {Protocol} protocol
-    * @returns {Boolean} True if this object implements every method the protocol declares.
+    * @returns {Boolean} True if this object implements every method the protocol requires.
     * @category Protocol Analysis
     */
     methodsConformToProtocol (protocol) {
-        return protocol.protocolMethodNames().every(name => typeof (this[name]) === "function");
+        return protocol.requiredMethodNames().every(name => typeof (this[name]) === "function");
     }
 
     /**

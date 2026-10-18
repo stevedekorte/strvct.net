@@ -1346,6 +1346,7 @@
     // ---- delegate ----
 
     sendDelegateMessage (methodName, args = [this]) {
+        this.checkDelegateMessageIsDeclared(methodName);
 
         const sendDelegateFunc = (d, methodName, args) => {
             const f = d[methodName];
@@ -1369,6 +1370,28 @@
                     sendDelegateFunc(d, methodName, args);
                 });
             }
+        }
+    }
+
+    /**
+     * @description A drift tripwire: when this object names its delegate
+     * protocol (delegateProtocol()), warns once per class and message on a
+     * message the protocol does not declare — the protocol is out of date.
+     * @param {String} methodName
+     * @category Delegation
+     */
+    checkDelegateMessageIsDeclared (methodName) {
+        const protocol = this.delegateProtocol ? this.delegateProtocol() : null;
+        if (!protocol || protocol.declaresMethodNamed(methodName)) {
+            return;
+        }
+        const key = this.svType() + "." + methodName;
+        if (!Object.hasOwn(ProtoClass, "_undeclaredDelegateMessages")) {
+            ProtoClass._undeclaredDelegateMessages = new Set();
+        }
+        if (!ProtoClass._undeclaredDelegateMessages.has(key)) {
+            ProtoClass._undeclaredDelegateMessages.add(key);
+            console.warn(this.svType() + " sent its delegate '" + methodName + "', which " + protocol.svType() + " does not declare — add it to the protocol");
         }
     }
 

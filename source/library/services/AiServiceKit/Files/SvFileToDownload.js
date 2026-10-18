@@ -146,6 +146,7 @@
     }
 
     initPrototype () {
+        this.addProtocol(SvXhrRequestDelegateProtocol); // its download request's delegate
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
         this.setSubnodeClasses([]);

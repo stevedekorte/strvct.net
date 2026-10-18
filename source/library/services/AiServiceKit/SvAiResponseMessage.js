@@ -173,6 +173,10 @@
         this.setShouldStore(true);
     }
 
+    initPrototype () {
+        this.addProtocol(SvAiRequestDelegateProtocol); // its request's delegate
+    }
+
     /**
    * Initializes the SvAiResponseMessage instance.
 

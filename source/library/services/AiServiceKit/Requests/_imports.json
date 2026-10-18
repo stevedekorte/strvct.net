@@ -1,4 +1,5 @@
 [
+    "SvXhrRequestDelegateProtocol.js",
     "SvAiRequestDelegateProtocol.js",
     "SvXhrRequest.js",
     "SvAiRequest.js",

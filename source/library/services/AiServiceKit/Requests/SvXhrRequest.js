@@ -1840,5 +1840,14 @@
         return causes.length > 0 ? causes.join("; ") : "unknown error";
     }
 
+    /**
+     * @description The messages this sends its delegate (sendDelegateMessage
+     * warns on one the protocol does not declare).
+     * @returns {Protocol}
+     * @category Delegation
+     */
+    delegateProtocol () {
+        return SvXhrRequestDelegateProtocol;
+    }
 
 }).initThisClass();

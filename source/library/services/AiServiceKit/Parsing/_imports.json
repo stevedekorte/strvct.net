@@ -1,5 +1,4 @@
 [
-    "SvAiResponseParserDelegateProtocol.js",
     "SvAiParsedResponseMessage.js",
     "SvAiParsedResponseMessage_parsing.js",
     "SvAiParsedResponseMessage_streaming.js",

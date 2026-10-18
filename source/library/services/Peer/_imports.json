@@ -1,5 +1,6 @@
 [
-    "SvPeerConnectionDelegateProtocol.js",
+    "SvRzPeerConnDelegateProtocol.js",
+    "SvRzSigServerConnDelegateProtocol.js",
     "external-libs/_imports.json",
     "SvRzSigServers/_imports.json",
     "SvPeerService.js"

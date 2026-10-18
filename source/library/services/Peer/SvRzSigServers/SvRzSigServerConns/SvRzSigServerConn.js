@@ -1114,21 +1114,13 @@
     // --- delegate ---
 
     /**
-   * @description Sends a delegate message.
-
-   * @param {string} methodName - The method name.
-   * @param {Array} args - The arguments.
-   * @returns {SvRzSigServerConn} The current instance.
-   */
-    sendDelegateMessage (methodName, args = []) {
-        const d = this.delegate();
-        if (d) {
-            const m = d[methodName];
-            if (m) {
-                m.apply(d, args);
-            }
-        }
+     * @description The messages this sends its delegate (sendDelegateMessage
+     * warns on one the protocol does not declare).
+     * @returns {Protocol}
+     * @category Delegation
+     */
+    delegateProtocol () {
+        return SvRzSigServerConnDelegateProtocol;
     }
-
 
 }.initThisClass());

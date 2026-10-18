@@ -1,4 +1,5 @@
 [
+    "SvConversationMessageDelegateProtocol.js",
     "ImageEditor/_imports.json",
     "Requests/_imports.json",
     "Files/_imports.json",

@@ -17,6 +17,12 @@
 *
 * Be sure that the jsdoc comment for the protocol class includes "interface" (instead of class) tag in the class jsdocs.
 *
+* Required and optional methods:
+*
+* addProtocol() requires an adopter to implement every REQUIRED method. A protocol names its optional
+* ones with the static optionalMethodNames(); by default none are. A delegate protocol (SvDelegateProtocol)
+* declares every message its sender may send, all optional: a delegate implements the ones it uses.
+*
 * Notes:
 *
 * Using the instance methods of subclasses of the Protocol class to define Protocols has pros and cons:
@@ -91,6 +97,39 @@
     * @returns {Array} The declared protocol method names.
     * @category Query
     */
+    /**
+    * @description The declared methods an adopter may leave out. None, unless a protocol says otherwise.
+    * @returns {Array} The optional method names.
+    * @category Query
+    */
+    static optionalMethodNames () {
+        return [];
+    }
+
+    /**
+    * @description The methods an adopter must implement: the declared ones less the optional ones.
+    * @returns {Array} The required method names.
+    * @category Query
+    */
+    static requiredMethodNames () {
+        const optional = new Set(this.optionalMethodNames());
+        return this.protocolMethodNames().filter(name => !optional.has(name));
+    }
+
+    /**
+    * @description Whether this protocol declares the named method (required or optional).
+    * The names are gathered once per protocol class.
+    * @param {String} methodName
+    * @returns {Boolean}
+    * @category Query
+    */
+    static declaresMethodNamed (methodName) {
+        if (!Object.hasOwn(this, "_declaredMethodNameSet")) {
+            this._declaredMethodNameSet = new Set(this.protocolMethodNames());
+        }
+        return this._declaredMethodNameSet.has(methodName);
+    }
+
     static protocolMethodNames () {
         const names = new Set();
         let proto = this.prototype;
@@ -132,7 +171,7 @@
     * @category Comparison
     */
     isSupersetOfProtocol (protocol) {
-        this.thisClass().assertValueIsProtocolClass(aProtocol);
+        this.thisClass().assertValueIsProtocolClass(protocol);
         return protocol.conformsToProtocol(this);
     }
 

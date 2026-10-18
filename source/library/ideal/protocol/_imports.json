@@ -1,4 +1,5 @@
 [
     "Protocol.js",
+    "SvDelegateProtocol.js",
     "ProtoClass_protocol.js"
 ]

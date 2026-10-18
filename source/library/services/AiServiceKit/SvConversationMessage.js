@@ -694,7 +694,7 @@
     }
 
     didUpdateSlotError (/*oldValue, newValue*/) {
-        this.sendDelegateMessage("onMessageError", this);
+        this.sendDelegateMessage("onMessageError"); // the message itself (it passed `this` bare, which apply() spread to no arguments)
     }
 
     /**
@@ -1077,6 +1077,16 @@
     cleanupIfIncomplete () {
         // called on startup to clean up any incomplete messages
         // subclasses should override, as needed
+    }
+
+    /**
+     * @description The messages this sends its delegate (sendDelegateMessage
+     * warns on one the protocol does not declare).
+     * @returns {Protocol}
+     * @category Delegation
+     */
+    delegateProtocol () {
+        return SvConversationMessageDelegateProtocol;
     }
 
 }.initThisClass());
