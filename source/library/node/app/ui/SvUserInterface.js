@@ -183,7 +183,8 @@
     /**
      * @description A name for the platform and browser, for choosing install
      * steps: "ios-safari", "ios-other" (Chrome, Edge or Firefox on iOS),
-     * "android", "desktop-chromium", "mac-safari", "firefox", "other" or
+     * "android", "desktop-chromium", "mac-chromium", "mac-safari", "firefox",
+     * "other" or
      * "headless".
      * @returns {String}
      * @category Installed App

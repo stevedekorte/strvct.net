@@ -190,7 +190,7 @@
             return "firefox";
         }
         if (/Chrome\/|Edg\//.test(ua)) {
-            return "desktop-chromium";
+            return /Macintosh/.test(ua) ? "mac-chromium" : "desktop-chromium";
         }
         if (/Macintosh/.test(ua) && /Safari\//.test(ua)) {
             return "mac-safari";

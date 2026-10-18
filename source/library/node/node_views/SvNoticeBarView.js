@@ -78,7 +78,7 @@
             .SvNoticeBar {
                 position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 100000;
                 align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
-                max-width: min(720px, calc(100vw - 16px)); box-sizing: border-box; margin-top: 8px;
+                width: min(720px, calc(100vw - 16px)); box-sizing: border-box; margin-top: 8px;
                 padding: 10px 14px 10px 18px;
                 background: var(--sv-surface-panel, var(--sv-background, #f4f1e8));
                 color: var(--sv-text, #2b2620);
@@ -86,7 +86,11 @@
                 box-shadow: 0 6px 24px rgba(0,0,0,0.12);
                 font-family: var(--sv-face-body, inherit); font-size: 16px; line-height: 1.35;
             }
-            .SvNoticeBar .SvNoticeMessage { flex: 1 1 220px; min-width: 0; }
+            .SvNoticeBar .SvNoticeMessage { flex: 1 1 260px; min-width: 0; }
+            @media (max-width: 520px) {
+                .SvNoticeBar { justify-content: flex-start; gap: 10px; }
+                .SvNoticeBar .SvNoticeMessage { flex-basis: 100%; }
+            }
             .SvNoticeBar .SvNoticeButton {
                 flex: none; cursor: pointer; user-select: none; touch-action: manipulation;
                 min-height: 36px; padding: 6px 12px; display: inline-flex; align-items: center;
