@@ -379,6 +379,20 @@
     }
 
     /**
+     * @description The content of a user message carrying text and one image,
+     * in this service's own shape (each provider spells an image part
+     * differently). A service without vision says so.
+     * @param {String} text - The instruction or question.
+     * @param {String} mimeType - The image's type ("image/png").
+     * @param {String} base64 - The image bytes, base64-encoded.
+     * @returns {Array<Object>} The message content parts.
+     * @category Vision
+     */
+    visionUserContent (/*text, mimeType, base64*/) {
+        throw new Error(this.svType() + " cannot send images");
+    }
+
+    /**
    * @description Returns the chat request class for the service.
    * @returns {Function} The chat request class.
    * @throws {Error} If the chat request class is not found.

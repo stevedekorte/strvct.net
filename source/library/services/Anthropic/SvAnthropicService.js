@@ -186,6 +186,18 @@
    * @returns {SvAnthropicService} The service instance.
    * @category Request Handling
    */
+    /**
+     * @description Text and an image as Anthropic content blocks.
+     * @param {String} text
+     * @param {String} mimeType
+     * @param {String} base64
+     * @returns {Array<Object>}
+     * @category Vision
+     */
+    visionUserContent (text, mimeType, base64) {
+        return [{ type: "image", source: { type: "base64", media_type: mimeType, data: base64 } }, { type: "text", text: text }];
+    }
+
     prepareToSendRequest (aRequest) {
 
         const bodyJson = aRequest.bodyJson();

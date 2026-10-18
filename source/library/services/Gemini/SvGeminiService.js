@@ -452,6 +452,18 @@
         return true;
     }
 
+    /**
+     * @description Text and an image as Gemini parts (passed through as-is by prepareToSendRequest).
+     * @param {String} text
+     * @param {String} mimeType
+     * @param {String} base64
+     * @returns {Array<Object>}
+     * @category Vision
+     */
+    visionUserContent (text, mimeType, base64) {
+        return [{ text: text }, { inline_data: { mime_type: mimeType, data: base64 } }];
+    }
+
     prepareToSendRequest (aRequest) {
     // Chat endpoint is now built dynamically in getChatEndpointWithKey()
 

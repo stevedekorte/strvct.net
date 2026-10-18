@@ -2,6 +2,7 @@
     "SvConversationMessageDelegateProtocol.js",
     "ImageEditor/_imports.json",
     "Requests/_imports.json",
+    "Vision/_imports.json",
     "Files/_imports.json",
     "SvAiChatModel.js",
     "SvAiChatModels.js",
