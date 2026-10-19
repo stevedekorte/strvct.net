@@ -17,9 +17,9 @@ A naked-objects framework for JavaScript
 
 **You write the domain model. The framework handles the rest.**
 
-STRVCT implements the **Naked Objects** pattern: annotated model classes (inheriting from `SvStorableNode`) serve as the single source of truth for your application. From slot metadata annotations, the framework derives responsive, orientation-flexible master-detail views (Miller columns, side-by-side tabs, and inline document section flows) that compose recursively across the domain object graph, manages local-first IndexedDB object pools, handles versioned cloud synchronization, and provides a constant-size tool surface for AI agents.
+STRVCT is a JavaScript framework that eliminates manual UI component authoring, state management boilerplate, and API glue code. By declaring your application's domain model once with property metadata annotations, STRVCT automatically derives responsive user interfaces, manages local-first IndexedDB persistence, handles versioned cloud synchronization, and provides a constant-size tool surface for AI agents.
 
-Because domain models carry explicit metadata and remain completely independent of the view layer, the same application code runs natively in the browser, on the command line, or headlessly in Node.js for ultra-fast unit testing.
+This approach implements the **Naked Objects** architectural pattern: annotated domain classes (inheriting from `SvStorableNode`) serve as the single source of truth. Because domain models contain zero DOM or browser dependencies, the exact same application code runs natively in the browser, on the command line, or headlessly in Node.js for ultra-fast unit testing.
 
 ## Architecture Overview
 
@@ -67,26 +67,23 @@ text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12
 
 ## Model-First Syntax
 
-Declare domain models as JavaScript classes. Properties are declared as **slots** enriched with metadata annotations that each framework layer reads independently:
+Declare domain models as JavaScript classes. Properties are declared as **slots** with method-chained metadata annotations that each framework layer reads independently:
 
 ```
 (class Task extends SvStorableNode {
 
     initPrototypeSlots () {
-        {
-            const slot = this.newSlot("title", "New Task");
-            slot.setSlotType("String");
-            slot.setShouldStoreSlot(true);   // Persisted to IndexedDB
-            slot.setSyncsToView(true);       // Live UI updates
-            slot.setCanEditInspection(true); // Editable field tile
-        }
-        {
-            const slot = this.newSlot("isCompleted", false);
-            slot.setSlotType("Boolean");
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setCanEditInspection(true);
-        }
+        this.newSlot("title", "New Task")
+            .setSlotType("String")
+            .setShouldStoreSlot(true)   // Persisted to IndexedDB
+            .setSyncsToView(true)       // Live UI updates
+            .setCanEditInspection(true); // Editable form tile
+
+        this.newSlot("isCompleted", false)
+            .setSlotType("Boolean")
+            .setShouldStoreSlot(true)
+            .setSyncsToView(true)
+            .setCanEditInspection(true);
     }
 
     initPrototype () {
@@ -96,12 +93,13 @@ Declare domain models as JavaScript classes. Properties are declared as **slots*
 
 }.initThisClass());
 ```
+*A single 5-line slot declaration replaces a custom form component, a validator, an ORM storage schema, and an LLM tool specification.*
 
 ## Key Framework Capabilities
 
 - **Recursive Master-Detail Engine** — Derives orientation-flexible Miller columns, side-by-side tabs, and inline document section flows that compose recursively across the object graph and collapse automatically on narrow viewports.
 - **Multi-Reader Slot Annotations** — Slot metadata drives form generation, type validation, local persistence, notification triggers, Property Inspector fields, and LLM JSON schemas without glue code.
-- **Natively AI-Operable ($O(1)$ Tool Surface)** — Traditional stacks force AI agents to generate code across 5 separate layers per feature ($O(N)$ growth). STRVCT flips this: because UI, persistence, and sync are derived from slot metadata, AI agents operate over a **constant-size $O(1)$ tool surface** (`schema-fetch` and `apply-patch`) regardless of scale, and can even mint brand-new model classes at runtime.
+- **Natively AI-Operable (`O(1)` Tool Surface)** — Traditional stacks force AI agents to generate code across 5 separate layers per feature (causing `O(N)` tool growth). STRVCT flips this: because UI, persistence, and sync are derived from slot metadata, AI agents operate over a **constant-size `O(1)` tool surface** (`schema-fetch` and `apply-patch`) regardless of scale, and can even mint brand-new model classes at runtime.
 - **Local-First & Cloud Sync** — Automatic dirty tracking commits modifications to IndexedDB at the end of each event loop. Syncs versioned atomic deltas to cloud stores.
 - **Headless Node.js Execution** — Domain models hold zero DOM dependencies, running headlessly in Node.js for ultra-fast unit testing and batch processing.
 - **Derived Accessibility & Localization** — ARIA roles, focus management, keyboard navigation, and AI string translations are handled centrally at the tile primitive boundary.
