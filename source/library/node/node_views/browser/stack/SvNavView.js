@@ -421,6 +421,7 @@
         } else {
             this.makeOrientationDown();
         }
+        this.tilesView().syncOrientation(); // the list follows its column (it may have synced before it had a stack)
         this.updateWidthForWindow();
         // Orientation stamping writes generic values over the collapsible-
         // region layout (SvStackScrollView.makeVertical sets flexGrow 1

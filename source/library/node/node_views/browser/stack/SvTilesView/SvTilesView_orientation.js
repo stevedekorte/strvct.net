@@ -4,8 +4,8 @@
 /** * @class SvTilesView_orientation
  * @extends SvTilesView
  * @classdesc SvTilesView_orientation extends SvTilesView to handle orientation-related functionality.
- 
- 
+
+
  */
 
 
@@ -21,7 +21,15 @@
      * @category Orientation
      */
     syncOrientation () {
-        if (this.isVertical()) {
+        const isVertical = this.isVertical();
+        if (isVertical === null) {
+            // not in a stack yet: the direction isn't known, so stamp none —
+            // "down" stamped here stuck when the column arrived by a path
+            // selection (About's list ran sideways); the column re-syncs us
+            // (SvNavView.syncOrientation)
+            return this;
+        }
+        if (isVertical) {
             this.makeOrientationRight();
         } else {
             this.makeOrientationDown();
