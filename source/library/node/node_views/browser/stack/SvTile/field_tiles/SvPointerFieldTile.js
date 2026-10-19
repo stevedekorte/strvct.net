@@ -28,8 +28,10 @@
 
         if (this.shouldShowNavArrow()) {
             this.makeNoteRightArrow();
+            this.setIsShowingNavArrow(true); // the note styling keeps the chevron's dimmed opacity
         } else {
             this.hideNoteRightArrow();
+            this.setIsShowingNavArrow(false);
         }
 
         if (this.isSelected()) {

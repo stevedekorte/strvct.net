@@ -66,6 +66,16 @@
             slot.setSlotType("SvDomView");
         }
         /**
+         * @member {Boolean} isShowingNavArrow - the note area shows the
+         * navigation chevron (showNavArrow), so the note styling keeps its
+         * dimmed opacity
+         * @category UI
+         */
+        {
+            const slot = this.newSlot("isShowingNavArrow", false);
+            slot.setSlotType("Boolean");
+        }
+        /**
          * @member {SvDomView} thumbnailView
          * @category UI
          */
@@ -353,11 +363,13 @@
                 const iconName = node.noteIconName();
                 const isNavigationIcon = iconName === "right-arrow" || iconName === "right-gray";
                 const canShowIcon = !isNavigationIcon || !node.canNavTo || node.canNavTo();
-                if (iconName && canShowIcon && !node.noteIsSubnodeCount()) {
+                if (iconName && canShowIcon && !node.noteIsSubnodeCount() && isNavigationIcon) {
+                    this.showNavArrow(); // one look for "opens": the pointer field's chevron
+                } else if (iconName && canShowIcon && !node.noteIsSubnodeCount()) {
                     this.hideNoteView();
                     this.showNoteIconView();
                 } else {
-                    this.showNoteView();
+                    this.showNoteView(); // clears a previous arrow
                     this.hideNoteIconView();
                 }
                 this.syncTrailingContentAreaReservation();
@@ -577,6 +589,7 @@
      */
     showNoteView () {
         const nv = this.noteView();
+        this.setIsShowingNavArrow(false);
         nv.unhideDisplay();
         nv.setString(this.node().translatedValueOfSlotNamed("note"));
         // Clear any background image that might have been set (e.g. right arrow)
@@ -613,7 +626,7 @@
         } else {
             nv.setRealBackgroundColor(null);
             nv.setColor(null);
-            nv.setOpacity(null);
+            nv.setOpacity(this.navArrowOpacity());
             nv.setPaddingLeft(null);
             nv.setPaddingRight(null);
             nv.setBorderRadius(null);
@@ -771,6 +784,36 @@
         nv.setMinAndMaxWidth(10);
         nv.setMinAndMaxHeight(10);
         return this;
+    }
+
+    /**
+     * @description The navigation arrow, drawn as SvPointerFieldTile draws
+     * its own: a small gray chevron in the note area, brighter when the row
+     * is selected. A row's own node and a pointer field to a node looked
+     * different side by side (What's New beside The Game, 2026-10-19).
+     * @returns {SvTitledTile}
+     * @category UI
+     */
+    showNavArrow () {
+        this.hideNoteIconView();
+        this.showNoteView();
+        this.makeNoteRightArrow();
+        this.setIsShowingNavArrow(true);
+        this.noteView().setOpacity(this.navArrowOpacity());
+        return this;
+    }
+
+    /**
+     * @description The chevron's opacity, dim until its row is selected;
+     * null (none) when the note shows no chevron.
+     * @returns {Number|null}
+     * @category UI
+     */
+    navArrowOpacity () {
+        if (!this.isShowingNavArrow()) {
+            return null;
+        }
+        return this.isSelected() ? 1 : 0.4;
     }
 
     hideNoteRightArrow () {
