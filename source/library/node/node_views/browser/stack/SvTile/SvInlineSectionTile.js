@@ -296,15 +296,17 @@
                 right: 4px;
                 top: 0.9em;
             }
+            /* on a wide pane, a display section with a picture sets it beside
+               the rows; one without a picture keeps its rows in one column */
             @container (min-width: 600px) {
-                .SvInlineDisplay > .TileContentView > .SvInlineNested {
+                .SvInlineDisplay > .TileContentView > .SvInlineNested:has(> :has(img)) {
                     display: grid !important;
                     grid-template-columns: minmax(160px, 34%) minmax(0, 1fr);
                     column-gap: 28px;
                     align-items: start;
                 }
-                .SvInlineDisplay > .TileContentView > .SvInlineNested > :has(img) { grid-column: 1; grid-row: 1 / span 12; }
-                .SvInlineDisplay > .TileContentView > .SvInlineNested > :not(:has(img)) { grid-column: 2; }
+                .SvInlineDisplay > .TileContentView > .SvInlineNested:has(> :has(img)) > :has(img) { grid-column: 1; grid-row: 1 / span 12; }
+                .SvInlineDisplay > .TileContentView > .SvInlineNested:has(> :has(img)) > :not(:has(img)) { grid-column: 2; }
             }
             /* a display section's rows read flush with its title */
             .SvInlineDisplay > .TileContentView > .SvInlineNested > [data-tile-layout] > .TileContentView,
