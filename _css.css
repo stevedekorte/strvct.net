@@ -343,3 +343,9 @@ html :active {
         outline-offset: -1px;
     }
 }
+
+/* an element shown full screen keeps the page's ground, not the browser's
+   black backdrop (dark text stayed dark on it) */
+:fullscreen {
+    background-color: var(--sv-surface);
+}

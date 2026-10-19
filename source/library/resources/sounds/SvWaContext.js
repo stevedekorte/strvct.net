@@ -205,6 +205,43 @@
      * @returns {SvWaContext} The instance
      * @category Setup
      */
+    /**
+     * @description The setup promise, with a warning if it is slow: audio
+     * waits for the page's first user gesture, and a sound queued before one
+     * waits silently otherwise.
+     * @returns {Promise}
+     * @category Setup
+     */
+    async promiseSetupNoting () {
+        if (!this.isSetup()) {
+            const timer = setTimeout(() => console.warn("[SvWaContext] a sound is waiting for the audio context, which starts on the page's first user gesture (none seen yet)"), 5000);
+            await this.setupPromise();
+            clearTimeout(timer);
+        }
+        return this;
+    }
+
+    /**
+     * @description Resumes the audio context if the browser suspended it (a
+     * change of audio device, such as headphones switching to headset mode
+     * when a microphone opens): sounds started on a suspended context never
+     * play and never end. Logs when it happens.
+     * @returns {Promise<SvWaContext>}
+     * @category Setup
+     */
+    async asyncResumeIfSuspended () {
+        const context = this.audioContext();
+        if (context && context.state === "suspended") {
+            console.warn("[SvWaContext] the audio context was suspended; resuming");
+            try {
+                await context.resume();
+            } catch (e) {
+                console.warn("[SvWaContext] resume failed:", e.message);
+            }
+        }
+        return this;
+    }
+
     setupIfNeeded () {
         if (!this.isSetup()) {
             this.setAudioContext(new window.AudioContext());
@@ -223,7 +260,7 @@
      */
     async promiseDecodeArrayBuffer (audioArrayBuffer) {
         // NOTE: may mutate audioArrayBuffer!!!!!!!!!!
-        await this.setupPromise(); // should we throw an error instead?
+        await this.promiseSetupNoting(); // should we throw an error instead?
 
         const promise = Promise.clone();
         assert(audioArrayBuffer instanceof ArrayBuffer, "audioArrayBuffer must be an ArrayBuffer");

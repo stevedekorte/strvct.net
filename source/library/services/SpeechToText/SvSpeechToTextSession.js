@@ -409,7 +409,9 @@
    * @param {Event} event - The result event.
    */
     onResult (event) {
-    //this.logDebug("onResult")
+        if (!this.isAwaitingTranscript()) {
+            return; // a late result after this recording's words were delivered: not part of them
+        }
 
         let interim = "";
         let final = "";

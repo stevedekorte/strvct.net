@@ -598,6 +598,7 @@
             return Promise.resolve();
         }
 
+        await SvWaContext.shared().asyncResumeIfSuspended(); // a suspended context would start this sound and never play it
         this.setPlayPromise(Promise.clone());
         this.setSource(this.newAudioSource()); // setups source with decoded buffer
         this.syncToSource(this.source());

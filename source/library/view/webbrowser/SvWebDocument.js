@@ -143,6 +143,38 @@
         );
     }
 
+    /**
+     * @description Whether this browser can show an element full screen
+     * (iPhone Safari can't, outside video).
+     * @returns {Boolean}
+     * @category Fullscreen
+     */
+    canFullscreen () {
+        return !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+    }
+
+    /**
+     * @description Shows an element full screen, or leaves full screen if
+     * anything is. Must run inside a user gesture (a tap).
+     * @param {Element} element
+     * @returns {SvWebDocument}
+     * @category Fullscreen
+     */
+    toggleFullscreenElement (element) {
+        if (this.isFullscreen()) {
+            const exit = document.exitFullscreen || document.webkitExitFullscreen;
+            if (exit) {
+                exit.call(document);
+            }
+        } else {
+            const request = element.requestFullscreen || element.webkitRequestFullscreen;
+            if (request) {
+                Promise.resolve(request.call(element)).catch(e => console.warn("[SvWebDocument] full screen refused:", e.message));
+            }
+        }
+        return this;
+    }
+
 }).initThisClass();
 
 SvWebDocument.shared();
