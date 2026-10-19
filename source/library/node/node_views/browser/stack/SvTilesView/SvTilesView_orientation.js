@@ -62,8 +62,10 @@
 
 
         this.setMinWidth("100%");
+        this.setWidth(null); // clear down's fit-content: a list once stamped down grew past its column
         this.setHeight("fit-content");
         this.setMinHeight("100%");
+        this.setMaxHeight(null);
 
         this.logDebug("makeOrientationRight on ", this.node() ? this.node().title() : null);
 
@@ -87,6 +89,7 @@
 
         this.setMinWidth("100%");
         this.setWidth("fit-content");
+        this.setHeight(null); // clear right's fit-content
         this.setMinAndMaxHeight("100%");
 
         this.logDebug("makeOrientationDown on ", this.node() ? this.node().title() : null);
