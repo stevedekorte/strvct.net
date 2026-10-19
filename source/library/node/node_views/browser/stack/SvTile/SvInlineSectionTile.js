@@ -324,7 +324,27 @@
                 color: var(--sv-text-muted) !important;
             }
             [data-tile-layout="lede"] .SvTileTitleView, [data-tile-layout="quote"] .SvTileTitleView { display: none !important; }
+            /* a role row directly in a document (no section around it: a page
+               of ledes) reads as a row in a section does — its own height,
+               wrapped, no row rule */
+            .SvInlineDocument > [data-tile-layout] {
+                display: block !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: 0 !important;
+                max-height: none !important;
+                white-space: normal !important;
+                border-bottom: none !important;
+                margin-bottom: 0.9em;
+            }
+            .SvInlineDocument > [data-tile-layout] > .TileContentView {
+                min-height: 0 !important;
+                height: auto !important;
+            }
             [data-tile-layout="lede"] .SvTileSubtitleView, [data-tile-layout="quote"] .SvTileSubtitleView {
+                white-space: normal !important; /* a sentence, in full: never cut to one line */
+                overflow: visible !important;
+                text-overflow: clip !important;
                 text-align: left !important;
                 width: 100% !important;
                 font-size: var(--sv-inline-lede-size, 17px) !important;
