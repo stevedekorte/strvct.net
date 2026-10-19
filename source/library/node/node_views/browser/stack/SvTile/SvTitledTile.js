@@ -715,6 +715,7 @@
         const node = this.node();
         this.titleView().setString(node.translatedValueOfSlotNamed("title"));
         const subtitle = node.translatedValueOfSlotNamed("subtitle");
+        this.subtitleView().setAllowsHtml(Boolean(node.nodeSubtitleIsHtml && node.nodeSubtitleIsHtml()));
         this.subtitleView().setString(subtitle);
         // a stylesheet hook, from the model's text (no measuring): an inline
         // document folds a long description behind its title, and shows a

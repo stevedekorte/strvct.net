@@ -475,6 +475,17 @@
     }
 
     /**
+     * @description Whether this node's subtitle is HTML (a sentence with an
+     * inline icon, say) rather than plain text. The node is responsible for
+     * escaping anything it didn't write.
+     * @returns {Boolean}
+     * @category Layout
+     */
+    nodeSubtitleIsHtml () {
+        return false;
+    }
+
+    /**
      * @description The node whose subnodes this node's column shows: this
      * node itself, by default. A node may present another in its place — a
      * character presents its sheet, a readable document built from it — while
