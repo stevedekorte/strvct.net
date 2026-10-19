@@ -274,7 +274,9 @@
         if (await this.dataMatchesHash(hash)) {
             return this;
         }
-        throw new Error("resource '" + this.path() + "' does not match its index hash after a cache-bypassing fetch — the served build is inconsistent; not caching it");
+        const error = new Error("resource '" + this.path() + "' does not match its index hash after a cache-bypassing fetch — the served build is inconsistent; not caching it");
+        error.name = "SvBuildMismatchError"; // SvResourceManager recovers when a new build went live mid-load
+        throw error;
     }
 
     async dataMatchesHash (hash) {

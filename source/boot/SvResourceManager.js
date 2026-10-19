@@ -138,10 +138,93 @@
         }
         await this.promiseLoadIndex();
         this.bootPerfMark("indexLoaded");
-        await this.promiseLoadCamIfNeeded();
-        this.bootPerfMark("camReady");
-        await this.evalIndexResources();
+        try {
+            await this.promiseLoadCamIfNeeded();
+            this.bootPerfMark("camReady");
+            await this.evalIndexResources();
+        } catch (error) {
+            await this.asyncRecoverFromBuildMismatch(error);
+        }
         return this;
+    }
+
+    // --- a new build going live mid-load ---
+
+    /**
+     * @category Build Mismatch
+     * @description A resource didn't match its index hash even fetched past
+     * every cache. Usually a deploy went live while this page loaded: the
+     * index is one build, the file another. Then the page reloads once, to
+     * start cleanly on the new build. If the index hasn't changed, the served
+     * build itself is broken, a reload won't help, and the error stands; so
+     * it does when this tab already reloaded for that build (no loop).
+     * Anything other than a mismatch is rethrown untouched.
+     * @param {Error} error
+     * @returns {Promise<void>} never settles when the page reloads
+     */
+    async asyncRecoverFromBuildMismatch (error) {
+        if (error.name !== "SvBuildMismatchError" || !this.canReloadPage()) {
+            throw error;
+        }
+        const servedHash = await this.asyncServedIndexHash();
+        if (!this.shouldReloadForServedIndexHash(servedHash)) {
+            throw error;
+        }
+        console.warn(this.logPrefix(), "a new build went live while loading (index " + String(this._indexHash).slice(0, 8) + " → " + servedHash.slice(0, 8) + ") — reloading once");
+        this.setReloadedForIndexHash(servedHash);
+        this.reloadPage();
+        await new Promise(() => {}); // the page is going away
+    }
+
+    /**
+     * @category Build Mismatch
+     * @description Whether the served index differs from the one this load
+     * used, and this tab hasn't already reloaded for it.
+     * @param {string|null} servedHash
+     * @returns {boolean}
+     */
+    shouldReloadForServedIndexHash (servedHash) {
+        const changed = !!(servedHash && this._indexHash && servedHash !== this._indexHash);
+        return changed && this.reloadedForIndexHash() !== servedHash;
+    }
+
+    /**
+     * @category Build Mismatch
+     * @description The index hash the server has now, fetched past every cache; null if unavailable.
+     * @returns {Promise<string|null>}
+     */
+    async asyncServedIndexHash () {
+        try {
+            const resource = await SvUrlResource.with("build/_index.json.hash").setFetchCacheMode("reload").promiseLoad();
+            const hash = resource.dataAsText().trim();
+            return /^[0-9a-f]{64}$/.test(hash) ? hash : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    canReloadPage () {
+        return SvPlatform.isBrowserPlatform();
+    }
+
+    reloadPage () {
+        window.location.reload();
+    }
+
+    reloadedForIndexHash () {
+        try {
+            return window.sessionStorage.getItem("svReloadedForIndexHash");
+        } catch (e) {
+            return null; // storage blocked: the hash check alone still stops a loop on an unchanged index
+        }
+    }
+
+    setReloadedForIndexHash (hash) {
+        try {
+            window.sessionStorage.setItem("svReloadedForIndexHash", hash);
+        } catch (e) {
+            // storage blocked: see reloadedForIndexHash
+        }
     }
 
     /**
