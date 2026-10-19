@@ -812,8 +812,23 @@
         return "down";
     }
 
+    /**
+     * @description Whether this tile's direction is still unknown: it is a
+     * row in a column's list that hasn't joined its stack yet. direction()
+     * would guess "down", and stamping that guess laid a column's rows out
+     * sideways when the column arrived by a path selection; the list
+     * re-syncs its rows once it knows. Rows in an inline section, and tiles
+     * outside a list (a column's header or footer), keep the guess.
+     * @returns {Boolean}
+     */
+    isAwaitingDirection () {
+        const tilesView = this.tilesView();
+        const inList = !!(tilesView && tilesView.isInlineNested && !tilesView.isInlineNested());
+        return inList && !this.stackView();
+    }
+
     syncOrientation () {
-        if (!this.parentView()) {
+        if (!this.parentView() || this.isAwaitingDirection()) {
             return this;
         }
 

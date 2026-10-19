@@ -13,6 +13,14 @@
 
 (class SvTilesView_orientation extends SvTilesView {
 
+    initPrototypeSlots_orientation () {
+        {
+            const slot = this.newSlot("appliedIsVertical", null); // the direction last stamped on the rows; null before it was known
+            slot.setSlotType("Boolean");
+            slot.setAllowsNullValue(true);
+        }
+    }
+
     // --- orientation ---
 
     /**
@@ -33,6 +41,13 @@
             this.makeOrientationRight();
         } else {
             this.makeOrientationDown();
+        }
+        if (this.appliedIsVertical() !== isVertical) {
+            // the direction became known, or changed: rows that synced
+            // before (or under the other direction) follow. Not every sync:
+            // a list syncs per node update, per streamed token in a chat.
+            this.setAppliedIsVertical(isVertical);
+            this.tiles().forEach(tile => tile.syncOrientation());
         }
         return this;
     }
