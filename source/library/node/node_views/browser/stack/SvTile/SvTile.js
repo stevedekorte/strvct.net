@@ -828,7 +828,11 @@
     }
 
     syncOrientation () {
-        if (!this.parentView() || this.isAwaitingDirection()) {
+        if (!this.parentView()) {
+            return this;
+        }
+        if (this.isAwaitingDirection()) {
+            this.tilesView().setAppliedIsVertical(null); // the list re-stamps its rows on its next sync, once it knows
             return this;
         }
 
