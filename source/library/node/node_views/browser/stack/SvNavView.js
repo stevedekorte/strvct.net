@@ -478,6 +478,21 @@
         return (aNode && aNode.nodePresentedNode) ? (aNode.nodePresentedNode() || aNode) : aNode;
     }
 
+    /**
+     * @description Keeps the tiles on the node's presented node when that
+     * changes: a node may present another only some of the time (a roster of
+     * one presents its member).
+     * @returns {SvNavView}
+     * @category Node Management
+     */
+    syncPresentedNode () {
+        const presented = this.presentedNodeFor(this.node());
+        if (presented && this.tilesView().node() !== presented) {
+            this.tilesView().setNode(presented);
+        }
+        return this;
+    }
+
     shouldCurrentlyFillAvailble () {
         const node = this.presentedNodeFor(this.node());
         if (node) {
@@ -670,6 +685,7 @@
             }
         }
 
+        this.syncPresentedNode();
         this.syncHeaderFooterBindings();
         this.headerView().syncFromNode();
         this.footerView().syncFromNode();
