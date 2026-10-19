@@ -354,7 +354,10 @@
    */
     startInputTimeout () {
         this.clearInputTimeout();
-        if (this.usesInputTimeout()) {
+        // only while recording: a late interim result can arrive after stop(),
+        // and a timer started then fired onInput a second time (resolving the
+        // transcript promise twice)
+        if (this.usesInputTimeout() && this.isRecording()) {
             const tid = this.addTimeout(() => this.onInputTimeout(), this.inputTimeoutMs());
             this.setInputTimeoutId(tid);
         }
@@ -489,8 +492,11 @@
    * @description Handles the input event.
    */
     onInput () {
-    // copy any interm to full Transcript
-    // any transcript marked final was (presumably) already added to full transcript in onResult()
+        if (!this.isAwaitingTranscript()) {
+            return; // this recording's transcript was already delivered
+        }
+        // copy any interm to full Transcript
+        // any transcript marked final was (presumably) already added to full transcript in onResult()
         this.appendToFullTranscript(this.interimTranscript());
         this.setInterimTranscript("");
         this.setFinalTranscript("");
@@ -516,9 +522,30 @@
         const error = event.error;
         this.sendDelegateMessage("onSpeechError", [this, error]);
         console.warn(this.svTypeId() + " error: " + error);
-        if (this.transcriptPromise()) {
+        if (this.isAwaitingTranscript()) {
             this.transcriptPromise().callRejectFunc(error);
         }
+    }
+
+    /**
+   * @description Whether this recording's transcript is still to be
+   * delivered: started, and neither resolved nor rejected yet.
+   * @returns {boolean}
+   */
+    isAwaitingTranscript () {
+        const p = this.transcriptPromise();
+        return !!(p && !p.isCompleted());
+    }
+
+    /**
+   * @description Stops listening and delivers what was heard (onSpeechInput),
+   * as the input timeout does: a "done speaking" tap.
+   * @returns {SvSpeechToTextSession} The current instance.
+   */
+    finish () {
+        this.clearInputTimeout();
+        this.onInput();
+        return this;
     }
 
     /**
@@ -531,7 +558,11 @@
             this.setTranscriptPromise(Promise.clone());
             this.clearTranscript();
             this.setupIfNeeded();
-            this.startInputTimeout();
+            // no pause timer yet: it measures the pause AFTER speech, and
+            // starts with the first words heard (onResult). Started here, it
+            // ended a session before the speaker had begun (or while the
+            // browser asked for the microphone); a session nobody speaks
+            // into ends by the recognizer's own no-speech limit
             this.recognition().start();
             this.setIsRecording(true);
         }

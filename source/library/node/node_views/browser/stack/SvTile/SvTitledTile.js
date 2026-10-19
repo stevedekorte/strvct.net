@@ -66,6 +66,17 @@
             slot.setSlotType("SvDomView");
         }
         /**
+         * @member {Boolean} hasSubtitleHtmlFromHint - the subtitle view
+         * allows HTML because the node's nodeSubtitleIsHtml asked; only then
+         * does the hint turn it back off (tiles that set allowsHtml
+         * themselves, like chat messages, keep their own setting)
+         * @category UI
+         */
+        {
+            const slot = this.newSlot("hasSubtitleHtmlFromHint", false);
+            slot.setSlotType("Boolean");
+        }
+        /**
          * @member {Boolean} isShowingNavArrow - the note area shows the
          * navigation chevron (showNavArrow), so the note styling keeps its
          * dimmed opacity
@@ -728,7 +739,7 @@
         const node = this.node();
         this.titleView().setString(node.translatedValueOfSlotNamed("title"));
         const subtitle = node.translatedValueOfSlotNamed("subtitle");
-        this.subtitleView().setAllowsHtml(Boolean(node.nodeSubtitleIsHtml && node.nodeSubtitleIsHtml()));
+        this.syncSubtitleHtmlFromHint(node);
         this.subtitleView().setString(subtitle);
         // a stylesheet hook, from the model's text (no measuring): an inline
         // document folds a long description behind its title, and shows a
@@ -783,6 +794,22 @@
 
         nv.setMinAndMaxWidth(10);
         nv.setMinAndMaxHeight(10);
+        return this;
+    }
+
+    /**
+     * @description Applies the node's nodeSubtitleIsHtml hint: turns HTML on
+     * when the node asks, and off again only if the hint turned it on.
+     * @param {SvNode} node
+     * @returns {SvTitledTile}
+     * @category Data
+     */
+    syncSubtitleHtmlFromHint (node) {
+        const wantsHtml = Boolean(node.nodeSubtitleIsHtml && node.nodeSubtitleIsHtml());
+        if (wantsHtml || this.hasSubtitleHtmlFromHint()) {
+            this.subtitleView().setAllowsHtml(wantsHtml);
+            this.setHasSubtitleHtmlFromHint(wantsHtml);
+        }
         return this;
     }
 
