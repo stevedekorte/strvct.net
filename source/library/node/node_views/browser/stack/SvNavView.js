@@ -1017,7 +1017,10 @@
     syncContentMaxWidth () {
         const node = this.node();
         const w = (node && node.nodeContentMaxWidth) ? node.nodeContentMaxWidth() : null;
-        const pad = w ? ("max(0px, calc((100% - " + w + ") / 2))") : null;
+        // centered at the measure, never closer to the edge than the content's
+        // own gutter (a document's; 0 elsewhere) — a pane narrower than the
+        // measure put a document's text flush against the column's edge
+        const pad = w ? ("max(var(--sv-content-gutter, 0px), calc((100% - " + w + ") / 2))") : null;
         [this.tilesView(), this.footerView()].forEach(v => {
             if (v) {
                 v.setPaddingLeft(pad);

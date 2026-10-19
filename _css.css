@@ -173,6 +173,7 @@
     /* INLINE DOCUMENTS (SvTilesView_inline, SvInlineSectionTile): a node's
        next levels shown in place as sections in columns. */
     --sv-inline-document-padding: 24px 24px 40px;           /* around the document */
+    --sv-inline-document-gutter: 24px;                      /* the least side margin when a reading measure centers it */
     --sv-inline-column-gap: 48px;                           /* between columns */
     --sv-inline-section-gap: 32px;                          /* below each section */
     --sv-inline-heading-color: var(--sv-text);              /* a section's heading */

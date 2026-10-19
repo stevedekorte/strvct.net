@@ -67,6 +67,7 @@
                 column-count: var(--inline-max-columns); /* with a width, a count is the most columns */
                 column-gap: var(--sv-inline-column-gap);
                 padding: var(--sv-inline-document-padding);
+                --sv-content-gutter: var(--sv-inline-document-gutter); /* the floor under a reading measure's centering (SvNavView.syncContentMaxWidth) */
                 box-sizing: border-box;
                 height: auto !important;
             }
