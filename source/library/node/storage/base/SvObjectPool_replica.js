@@ -53,10 +53,67 @@
     async asyncApplyReplicaChanges (changes) {
         assert(this.isReplica(), "only a replica applies the host's changes");
         const rows = changes.rows.map(row => this.replicaRowFrom(row, changes.version));
-        await this.asyncWriteReplicaRows(rows, changes.tombstones || [], changes.version);
+        const tombstones = changes.tombstones || [];
+        const arriving = rows.filter(row => row.parentId && !this.activeObjectForPid(row.objectId)); // windowed elements not loaded yet
+        this.dropLiveWindowedElements(tombstones);
+        await this.asyncWriteReplicaRows(rows, tombstones, changes.version);
         await this.asyncPrefetchTextBlobsForRows(rows);
         this.reloadLiveObjects(rows.map(row => row.objectId));
-        (changes.tombstones || []).forEach(key => this.activeObjects().delete(key.objectId));
+        this.addArrivingWindowedElements(arriving);
+        tombstones.forEach(key => this.activeObjects().delete(key.objectId));
+        return this;
+    }
+
+    /**
+     * @description New windowed elements (a chat message) join their
+     * collection's loaded window — no record references them, so no reload
+     * reaches them. A collection whose window is not loaded needs nothing: it
+     * reads them when it loads.
+     * @param {Array<Object>} rows - rows whose objects were not loaded
+     * @category Replica
+     */
+    addArrivingWindowedElements (rows) {
+        const byParent = new Map();
+        rows.forEach((row) => {
+            const parent = this.activeObjectForPid(row.parentId);
+            if (parent && parent.subnodesAreWindowed && parent.subnodesAreWindowed()) {
+                if (!byParent.has(parent)) {
+                    byParent.set(parent, []);
+                }
+                byParent.get(parent).push(row.objectId);
+            }
+        });
+        byParent.forEach((pids, parent) => parent.didReceiveWindowedElements(this.loadWindowedObjects(pids)));
+        return this;
+    }
+
+    loadWindowedObjects (pids) {
+        this.beginWindowLoad(); // a load, not an edit
+        try {
+            const objects = pids.map(pid => this.objectForPid(pid)).filter(obj => !Type.isNullOrUndefined(obj));
+            if (!this.isFinalizing() && this.loadingPids().count() > 0) {
+                this.didInitLoadingPids();
+            }
+            return objects;
+        } finally {
+            this.endWindowLoad();
+        }
+    }
+
+    /**
+     * @description Removed windowed elements leave their collection's loaded
+     * window (before their rows go).
+     * @param {Array<Object>} tombstones
+     * @category Replica
+     */
+    dropLiveWindowedElements (tombstones) {
+        tombstones.forEach((key) => {
+            const element = this.activeObjectForPid(key.objectId);
+            const parent = element && element.parentNode ? element.parentNode() : null;
+            if (parent && parent.subnodesAreWindowed && parent.subnodesAreWindowed()) {
+                parent.didLoseWindowedElement(element);
+            }
+        });
         return this;
     }
 

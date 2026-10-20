@@ -45,11 +45,36 @@ async function boot () {
 function defineClasses () {
     const SvStorableNode = SvGlobals.get("SvStorableNode");
 
+    (class TestRpMessage extends SvStorableNode {
+        initPrototypeSlots () {
+            {
+                const slot = this.newSlot("text", "");
+                slot.setSlotType("String");
+                slot.setShouldStoreSlot(true);
+                slot.setIsInCloudJson(true);
+            }
+        }
+    }).initThisClass();
+
+    (class TestRpChat extends SvStorableNode { // a windowed collection, like a session's chat
+        initPrototype () {
+            this.setShouldStoreSubnodes(true);
+            this.setSubnodesAreWindowed(true);
+        }
+    }).initThisClass();
+
     (class TestRpTable extends SvStorableNode {
         static replicaClass () {
             return SvGlobals.get("TestRpTableReplica");
         }
         initPrototypeSlots () {
+            {
+                const slot = this.newSlot("chat", null);
+                slot.setSlotType("TestRpChat");
+                slot.setShouldStoreSlot(true);
+                slot.setIsInCloudJson(true);
+                slot.setFinalInitProto(SvGlobals.get("TestRpChat"));
+            }
             {
                 const slot = this.newSlot("label", "");
                 slot.setSlotType("String");
@@ -206,6 +231,26 @@ async function main () {
     await replica.asyncApplyReplicaChanges(pulled);
     const rOrc = rTable.subnodes().at(0);
     check(rOrc.name() === "Orc Chief" && rOrc.hitPoints() === 7 && replica.replicaVersion() === notice.version, "after the pull the replica has both changes, at the host's version");
+
+    console.log("\nChat messages (a windowed collection) join and leave the loaded window");
+    const rChat = rTable.chat();
+    rChat.loadLatestWindowIfNoneLoaded();
+    const said = SvGlobals.get("TestRpMessage").clone(); said.setText("The orc snarls.");
+    table.chat().addSubnode(said);
+    result = await hostCommit();
+    await replica.asyncApplyReplicaChanges(noticeOf(result));
+    check(rChat.subnodes().length === 1 && rChat.subnodes().at(0).text() === "The orc snarls." && rChat.subnodes().at(0).parentNode() === rChat, "a new message appears in the player's chat");
+    const said2 = SvGlobals.get("TestRpMessage").clone(); said2.setText("Roll initiative.");
+    table.chat().addSubnode(said2);
+    result = await hostCommit();
+    await replica.asyncApplyReplicaChanges(noticeOf(result));
+    check(rChat.subnodes().map(m => m.text()).join(" | ") === "The orc snarls. | Roll initiative.", "the next lands after it, in order");
+    check(replica.dirtyObjects().size === 0, "receiving them dirtied nothing");
+    table.chat().removeSubnode(said);
+    await host.asyncDeleteRecordRow(said.puuid()); // a windowed element's row goes explicitly, as a deleted chat message's does
+    result = await hostCommit();
+    await replica.asyncApplyReplicaChanges(noticeOf(result));
+    check(rChat.subnodes().map(m => m.text()).join(" | ") === "Roll initiative.", "a removed message leaves the player's chat (" + rChat.subnodes().map(m => m.text()).join(" | ") + ")");
 
     console.log("\nA replica stores nothing of its own");
     rOrc.setName("renamed by the player");

@@ -668,6 +668,59 @@
     }
 
     /**
+     * @description Windowed elements that arrived from elsewhere (a replica
+     * applying its host's changes) join the loaded window in order-key order
+     * — a new chat message lands at the end. A load, not an edit: nothing is
+     * dirtied; the views are told through the update note.
+     * @param {Array<SvNode>} elements
+     * @returns {SvNode}
+     * @category Record Store
+     */
+    didReceiveWindowedElements (elements) {
+        const pool = this.windowedPool();
+        const array = this.subnodes();
+        const known = new Set(array);
+        const fresh = elements.filter(e => e && !known.has(e));
+        if (!pool || fresh.length === 0) {
+            return this;
+        }
+        const keyOf = (e) => pool.orderKeyForPid(e.puuid()) || "";
+        const merged = array.slice().concat(fresh).sort((a, b) => (keyOf(a) < keyOf(b) ? -1 : (keyOf(a) > keyOf(b) ? 1 : 0)));
+        array.unhooked_splice(0, array.length, ...merged); // a load: the array is not a stored object here and must not dirty
+        fresh.forEach(e => e.setParentNode(this));
+        this.didLoadWindow(fresh);
+        return this.noteWindowChanged();
+    }
+
+    /**
+     * @description A windowed element removed elsewhere (a replica applying
+     * its host's changes) leaves the loaded window.
+     * @param {SvNode} element
+     * @returns {SvNode}
+     * @category Record Store
+     */
+    didLoseWindowedElement (element) {
+        const array = this.subnodes();
+        const index = array.indexOf(element);
+        if (index === -1) {
+            return this;
+        }
+        array.unhooked_splice(index, 1);
+        return this.noteWindowChanged();
+    }
+
+    noteWindowChanged () {
+        this.scheduleMethod("onDidReorderSubnodes");
+        if (this.hasDoneInit()) {
+            const note = this.didUpdateNodeNote();
+            if (note) {
+                note.post(); // views re-read; never didUpdateNode(), which walks application hooks
+            }
+        }
+        return this;
+    }
+
+    /**
      * @description True when this node is the root of its own pool: a direct
      * subnode of a collection whose subnodesArePools. (The home root has no
      * parent and is its pool's root by construction.)
