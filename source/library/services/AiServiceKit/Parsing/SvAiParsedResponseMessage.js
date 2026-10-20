@@ -177,9 +177,25 @@
     }
 
     updateContent (html) {
-        this.setContent(html);
+        this.setContent(this.withoutMarkupDebris(html));
         this.sendDelegateMessage("onMessageUpdate");
         return this;
+    }
+
+    /**
+     * @description The content without fragments of broken markup that some
+     * models write as text: Gemini 4 Argon sometimes ends a reply with a
+     * private aside in the tail of a CDATA block, missing its opening
+     * (`!]?> Let's wait for the tool results.]]>`), which the HTML parser
+     * keeps as visible text. A fragment still streaming (no `]]>` yet) is
+     * hidden too. Whole comments, CDATA and processing instructions never
+     * reach the content: the parser drops them.
+     * @param {String} html
+     * @returns {String}
+     * @category Content
+     */
+    withoutMarkupDebris (html) {
+        return html.replace(/!\]\?>[^<]*?(\]\]>|$)/g, "");
     }
 
     // --- handling embedded requests inside content ---

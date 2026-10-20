@@ -243,6 +243,23 @@ async function main () {
     r = refusal(root, [{ op: "add", path: "/items/0/_type", value: "SvJsonArrayNode" }]);
     check(r && r.refusedBeforeApply && String(r.error).includes("replace the whole element"), "a _type naming a different class is refused before anything applies");
 
+    console.log("\nAn element naming no class is refused, not silently dropped");
+    root = newRoot();
+    expectRefused(root, [{ op: "replace", path: "/items", value: [{ _type: "TestPfMadeUp", name: "x" }] }], 0, "unknown _type 'TestPfMadeUp'", "replacing an array with elements of an invented class");
+    check(String((refusal(root, [{ op: "replace", path: "/items", value: [{ _type: "TestPfMadeUp" }] }]) || {}).error).includes("holds TestPfItem"), "…and the error names the class the array holds");
+    expectRefused(root, [{ op: "add", path: "/items/-", value: { _type: "TestPfMadeUp", name: "x" } }], 0, "unknown _type 'TestPfMadeUp'", "appending an element of an invented class");
+    expectRefused(root, [{ op: "replace", path: "/items", value: ["a-string-id"] }], 0, "a bare string", "replacing an array of objects with bare string ids");
+    expectRefused(root, [{ op: "add", path: "/items/-", value: "a-string-id" }], 0, "holds TestPfItem objects", "appending a bare string to an array of objects");
+    expectRefused(root, [{ op: "add", path: "/items/-", value: { name: "x", faction: "party" } }], 0, "unknown field 'faction' in a TestPfItem", "an element with an invented field");
+    expectRefused(root, [{ op: "replace", path: "/items", value: [{ name: "x", initiative: 12 }] }], 0, "unknown field 'initiative'", "a replaced array whose elements carry an invented field");
+    expectRefused(root, [{ op: "replace", path: "/details", value: { heading: "h", subheading: "s" } }], 0, "unknown field 'subheading' in a TestPfDetails", "a group slot written with an invented field");
+    root = newRoot();
+    r = refusal(root, [{ op: "replace", path: "/details", value: { heading: "h", extra: { anything: { goes: 1 } } } }]);
+    check(r === null && root.details().heading() === "h", "a plain JSON-object slot's contents are not field-checked");
+    root = newRoot();
+    r = refusal(root, [{ op: "add", path: "/items/-", value: { _type: "TestPfItem", name: "real" } }]);
+    check(r === null && root.items().subnodes().at(3).name() === "real", "an element naming a real class still applies");
+
     console.log("\nA valid batch applies exactly as before");
     root = newRoot();
     r = refusal(root, [{ op: "replace", path: "/label", value: "new" }, { op: "add", path: "/items/-", value: { name: "d", count: 4 } }, { op: "remove", path: "/items/0" }]);

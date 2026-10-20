@@ -148,6 +148,10 @@
         if (container.failure) {
             return container.failure;
         }
+        const typeFailure = this.preflightJsonTypes(operation, container, segments[segments.length - 1]);
+        if (typeFailure) {
+            return typeFailure;
+        }
         const containerPath = "/" + segments.slice(0, -1).join("/");
         if (container.kind === "array" && touchedArrays.has(containerPath)) {
             // An earlier operation of this batch changed this array's length, so
@@ -305,6 +309,144 @@
             return this.preflightValueFitsSlot(operation.value, slot);
         }
         return null;
+    }
+
+    /**
+     * @description Refuses an add/replace whose value the deserializer would
+     * silently turn into nothing: a `_type` no class answers to (the element
+     * is skipped with a console warning), or a bare string/number where an
+     * array holds objects (it becomes an EMPTY element). Either way the patch
+     * reported success while the array came out empty or full of blanks
+     * (2026-10-20: "UoInitiativeCounter" entries left the combat tracker
+     * blank; string ids in a location's activeCreatures became null
+     * references). The error names what the array holds.
+     * @returns {String|null} the failure, or null
+     * @category Preflight
+     */
+    preflightJsonTypes (operation, container, key) {
+        if (operation.op !== "add" && operation.op !== "replace") {
+            return null;
+        }
+        const array = this.preflightTargetArray(container, key);
+        const holds = array ? " — this array holds " + this.preflightElementTypeNames(array) : "";
+        const unknownType = this.unknownJsonTypeIn(operation.value);
+        if (unknownType) {
+            return "unknown _type '" + unknownType + "' (no such class; never invent _type names" + holds + ")";
+        }
+        const unknownKey = this.unknownKeyIn(operation.value, this.preflightValueClass(container, key));
+        if (unknownKey) {
+            return unknownKey;
+        }
+        const elements = container.kind === "array" ? [operation.value] : (Type.isArray(operation.value) ? operation.value : []);
+        const bare = elements.find(e => !Type.isDictionary(e) && !Type.isArray(e));
+        if (array && bare !== undefined && this.preflightArrayHoldsObjects(array)) {
+            return "a bare " + (typeof bare) + " (" + JSON.stringify(bare) + ") cannot be an element here" + holds + " objects; write each element as an object with that class's fields";
+        }
+        return null;
+    }
+
+    /**
+     * @description The class a value written at this target deserializes
+     * into: the array's default element class, or the slot's declared class.
+     * For an array-valued slot, the array class (its elements are checked
+     * through it). Null when the target is not a typed node.
+     * @returns {Class|null}
+     * @category Preflight
+     */
+    preflightValueClass (container, key) {
+        if (container.kind === "array") {
+            return container.node.defaultSubnodeClass();
+        }
+        const slot = container.kind === "group" ? container.node.getSlot(key) : null;
+        return slot ? this.preflightClassOfSlot(slot) : null;
+    }
+
+    preflightClassOfSlot (slot) {
+        const aClass = SvGlobals.get(slot.slotType());
+        return aClass && Type.isFunction(aClass.isKindOf) && aClass.isKindOf(SvJsonIdNode) ? aClass : null;
+    }
+
+    /**
+     * @description The first field inside a JSON value that its class does
+     * not have, as a failure string, or null. Deserializing skips unknown
+     * fields with only a console warning, so an invented `faction` left
+     * `factionId` at its default while the patch reported success.
+     * @returns {String|null}
+     * @category Preflight
+     */
+    unknownKeyIn (value, aClass) {
+        if (!aClass) {
+            return null;
+        }
+        if (Type.isArray(value)) {
+            const elementClass = aClass.isKindOf(SvJsonArrayNode) ? aClass.prototype.defaultSubnodeClass() : null;
+            return value.map(v => this.unknownKeyIn(v, elementClass)).find(f => f) || null;
+        }
+        if (!Type.isDictionary(value)) {
+            return null;
+        }
+        const valueClass = Type.isString(value._type) ? SvJsonIdNode.classForJsonType(value._type) : aClass;
+        if (!valueClass || !valueClass.isKindOf(SvJsonGroup) || valueClass.prototype.shouldStoreSubnodes()) {
+            return null; // subnode-keyed groups (titles, not slots) are judged at apply time
+        }
+        return Object.keys(value).filter(k => !k.startsWith("_")).map(k => this.unknownKeyInField(value, k, valueClass)).find(f => f) || null;
+    }
+
+    unknownKeyInField (value, key, valueClass) {
+        const slot = valueClass.prototype.getSlot(key);
+        if (!slot) {
+            return "unknown field '" + key + "' in a " + valueClass.svType() + " (its fields: [" + valueClass.jsonSchemaSlots().map(sl => sl.name()).join(", ") + "]) — never invent field names";
+        }
+        return this.unknownKeyIn(value[key], this.preflightClassOfSlot(slot));
+    }
+
+    preflightElementTypeNames (array) {
+        return array.subnodeClasses().map(c => c.svType()).join(" or ");
+    }
+
+    /**
+     * @description Whether every element class of an array is a slot-backed
+     * object (so a primitive element cannot deserialize into one).
+     * @returns {Boolean}
+     * @category Preflight
+     */
+    preflightArrayHoldsObjects (array) {
+        const classes = array.subnodeClasses();
+        return classes.length > 0 && classes.every(c => c.isKindOf(SvJsonGroup));
+    }
+
+    /**
+     * @description The first `_type` inside a JSON value that names no class
+     * (renames followed), or null.
+     * @returns {String|null}
+     * @category Preflight
+     */
+    unknownJsonTypeIn (value) {
+        if (Type.isArray(value)) {
+            return value.map(v => this.unknownJsonTypeIn(v)).find(t => t) || null;
+        }
+        if (!Type.isDictionary(value)) {
+            return null;
+        }
+        if (Type.isString(value._type) && !SvJsonIdNode.classForJsonType(value._type)) {
+            return value._type;
+        }
+        return Object.values(value).map(v => this.unknownJsonTypeIn(v)).find(t => t) || null;
+    }
+
+    /**
+     * @description The array node an operation writes into or replaces: the
+     * container itself, or the array a slot holds. Null otherwise.
+     * @returns {SvJsonArrayNode|null}
+     * @category Preflight
+     */
+    preflightTargetArray (container, key) {
+        if (container.kind === "array") {
+            return container.node;
+        }
+        const slot = container.kind === "group" ? container.node.getSlot(key) : null;
+        const value = slot ? slot.onInstanceGetValue(container.node) : null;
+        return this.preflightIsArray(value) && value.subnodeClasses ? value : null;
     }
 
     preflightValueFitsSlot (value, slot) {
