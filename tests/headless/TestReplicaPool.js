@@ -190,6 +190,7 @@ async function main () {
     // --- the player ---
     console.log("\nA player imports the projection as a replica");
     const playerStore = SvLocalRecordStore.clone().useMemoryMap();
+    playerStore.setOutlivesItsPools(true); // as in the app: closing a document's pool leaves the shared store open
     await playerStore.asyncOpenStore();
     const replica = await playerStore.asyncImportOpenedPool(await cloud.asyncOpen(projectionId), host.poolId(), { isReplica: true });
     const rTable = replica.rootObject();
@@ -251,6 +252,14 @@ async function main () {
     result = await hostCommit();
     await replica.asyncApplyReplicaChanges(noticeOf(result));
     check(rChat.subnodes().map(m => m.text()).join(" | ") === "Roll initiative.", "a removed message leaves the player's chat (" + rChat.subnodes().map(m => m.text()).join(" | ") + ")");
+
+    console.log("\nA replica reopens as a replica");
+    playerStore.closeLivePool(host.poolId());
+    const reopened = playerStore.openPoolWithId(host.poolId());
+    reopened.readRootObject();
+    check(reopened.isReplica() && reopened.rootObject().thisClass() === TestRpTableReplica && reopened.replicaVersion() === replica.replicaVersion(), "after closing, the store opens it as a replica again, at its version (" + reopened.rootObject().svType() + ")");
+    const caughtUp = await playerStore.asyncImportPoolChanges(await cloud.asyncReadChanges(projectionId, reopened.replicaVersion()), host.poolId());
+    check(caughtUp.isReplica(), "and catching up from the changes keeps it one");
 
     console.log("\nA replica stores nothing of its own");
     rOrc.setName("renamed by the player");

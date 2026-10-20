@@ -114,6 +114,7 @@
     openPoolWithId (poolId) {
         const row = this.rootRowForPool(poolId);
         const pool = this.newPoolWithId(poolId);
+        pool.setIsReplica(this.isReplicaPoolId(poolId)); // before anything loads: a replica loads replica classes
         if (row) {
             pool.setParentNodeId(row.parentId);
             pool.setOrderKey(row.orderKey);
@@ -212,6 +213,9 @@
         const poolId = localPoolId || SvRecordRow.localPoolId(opened.root.poolId);
         this.closeLivePool(poolId);
         await this.asyncDeletePool(poolId);
+        if (options.isReplica === true) {
+            await this.asyncMarkReplicaPool(poolId, true);
+        }
         const rows = [opened.root].concat(opened.records).map(row => this.localRowFromCloudRow(Object.assign({}, row, { poolId: poolId })));
         await this.asyncPut(rows);
         return this.asyncOpenImportedPool(poolId, rows, options);
@@ -263,8 +267,7 @@
      * @category Import
      */
     async asyncOpenImportedPool (poolId, importedRows, options = {}) {
-        const pool = this.openPoolWithId(poolId);
-        pool.setIsReplica(options.isReplica === true); // before the root loads: a replica loads replica classes
+        const pool = this.openPoolWithId(poolId); // a replica (asyncMarkReplicaPool) opens as one
         pool.setLastSyncedSnapshot(Object.assign({}, pool.asJson()));
         await pool.asyncPrefetchTextBlobsForRows(importedRows);
         pool.readRootObject();
@@ -390,7 +393,35 @@
     async asyncDeletePool (poolId) {
         const keys = this.rowsForPool(poolId).map(row => ({ poolId: row.poolId, objectId: row.objectId }));
         await this.asyncDelete(keys);
+        if (this.isReplicaPoolId(poolId)) {
+            await this.asyncMarkReplicaPool(poolId, false);
+        }
         return keys.length;
+    }
+
+    // --- replica pools (SvObjectPool_replica) ---
+
+    /**
+     * @description Whether a stored pool is a replica — a read-only copy of a
+     * hosted document's projection — so it opens as one after a reload.
+     * @param {String} poolId
+     * @returns {Boolean}
+     * @category Replicas
+     */
+    isReplicaPoolId (poolId) {
+        const ids = this.settingAt("replicaPoolIds");
+        return Array.isArray(ids) && ids.includes(poolId);
+    }
+
+    async asyncMarkReplicaPool (poolId, isReplica) {
+        const ids = new Set(this.settingAt("replicaPoolIds") || []);
+        if (isReplica) {
+            ids.add(poolId);
+        } else {
+            ids.delete(poolId);
+        }
+        await this.asyncSetSetting("replicaPoolIds", [...ids]);
+        return this;
     }
 
     async asyncCommit (commit) {
