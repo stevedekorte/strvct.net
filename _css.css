@@ -345,7 +345,9 @@ html :active {
 }
 
 /* an element shown full screen keeps the page's ground, not the browser's
-   black backdrop (dark text stayed dark on it) */
+   black backdrop (dark text stayed dark on it), and drops the edge rules it
+   had as a column (a hairline down the screen's right edge) */
 :fullscreen {
     background-color: var(--sv-surface);
+    border: none !important;
 }
