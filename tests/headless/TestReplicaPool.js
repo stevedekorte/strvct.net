@@ -63,10 +63,7 @@ function defineClasses () {
         }
     }).initThisClass();
 
-    (class TestRpTable extends SvStorableNode {
-        static replicaClass () {
-            return SvGlobals.get("TestRpTableReplica");
-        }
+    (class TestRpTableBase extends SvStorableNode { // what host and player share (as UoSession is to its two)
         initPrototypeSlots () {
             {
                 const slot = this.newSlot("chat", null);
@@ -87,10 +84,21 @@ function defineClasses () {
         }
     }).initThisClass();
 
-    (class TestRpTableReplica extends SvGlobals.get("TestRpTable") { // the player's behavior over the same state
+    (class TestRpTable extends SvGlobals.get("TestRpTableBase") { // the host's class
         static replicaClass () {
-            return this;
+            return SvGlobals.get("TestRpTableReplica");
         }
+        initPrototypeSlots () {
+            {
+                const slot = this.newSlot("hostDeskNote", ""); // in the host's cloud JSON, but the replica class has no such slot
+                slot.setSlotType("String");
+                slot.setShouldStoreSlot(true);
+                slot.setIsInCloudJson(true);
+            }
+        }
+    }).initThisClass();
+
+    (class TestRpTableReplica extends SvGlobals.get("TestRpTableBase") { // the player's behavior over the same state
         initPrototypeSlots () {
             {
                 const slot = this.newSlot("listChanges", 0);
@@ -173,6 +181,7 @@ async function main () {
     await host.promiseOpen();
     const table = host.rootOrIfAbsentFromClosure(() => TestRpTable.clone());
     table.setLabel("Round 1");
+    table.setHostDeskNote("the abbot is the vampire");
     const goblin = TestRpNpc.clone(); goblin.setName("Goblin"); goblin.setNotes("carries the key");
     table.addSubnode(goblin);
     await host.commitStoreDirtyObjects();
@@ -197,6 +206,7 @@ async function main () {
     check(replica.isReplica() && rTable.thisClass() === TestRpTableReplica, "the root loads as the class's replica class (" + rTable.svType() + ")");
     const rGoblin = rTable.subnodes().at(0);
     check(rGoblin.name() === "Goblin" && rGoblin.notes() === "" && replica.replicaVersion() === 1, "it holds the projection at version 1, without the host-only notes");
+    check(!JSON.stringify(await cloud.asyncOpen(projectionId)).includes("abbot"), "a slot only the host's class has is not projected (the replica could not hold it)");
 
     console.log("\nThe host's next commit applies to the live objects, in place");
     goblin.setHitPoints(3);

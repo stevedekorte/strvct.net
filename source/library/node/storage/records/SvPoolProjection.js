@@ -15,7 +15,8 @@
  * uses (`cloudJsonSchemaSlots()`: slots marked isInCloudJson): a record keeps
  * only those slots (and its subnodes, for a class that stores them), less any
  * host-only slot (`slot.setIsHostOnly(true)` — cloud state the host keeps from
- * its players, like a GM's secrets). The projection holds exactly the records
+ * its players, like a GM's secrets) and any slot the class's replicaClass()
+ * has no slot for (what a replica could not hold). The projection holds exactly the records
  * reachable from the root through what is kept; a record whose class is
  * host-only (`static isHostOnly()`), or that is not a node at all, is left out
  * with everything reachable only through it, and a reference to a left-out
@@ -244,7 +245,9 @@
             return null;
         }
         const localOnly = SvObjectPool.localOnlySlotNamesForType(type);
-        const names = new Set(aClass.cloudJsonSchemaSlots().filter(slot => !slot.isHostOnly() && !localOnly.has(slot.name())).map(slot => slot.name()));
+        const replicaClass = aClass.replicaClass ? aClass.replicaClass() : aClass;
+        const replicaHas = (name) => !!replicaClass.prototype.allSlotsMap().get(name); // a replica holds only what its class has a slot for
+        const names = new Set(aClass.cloudJsonSchemaSlots().filter(slot => !slot.isHostOnly() && !localOnly.has(slot.name()) && replicaHas(slot.name())).map(slot => slot.name()));
         if (aClass.prototype.shouldStoreSubnodes && aClass.prototype.shouldStoreSubnodes()) {
             names.add("subnodes");
         }
