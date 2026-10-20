@@ -6,8 +6,8 @@
 /** * @class SvBooleanFieldTile
  * @extends SvFieldTile
  * @classdesc Represents a boolean field tile in the browser stack.
- 
- 
+
+
  */
 
 (class SvBooleanFieldTile extends SvFieldTile {
@@ -79,6 +79,8 @@
      */
     syncFromNode () {
         super.syncFromNode();
+        const node = this.node();
+        this.booleanView().setBooleanStyle(node && node.nodeBooleanStyle ? node.nodeBooleanStyle() : "checkbox"); // a checkbox, or a switch (SvSwitchField)
         this.booleanView().updateAppearance();
 
         // Accessibility: reflect checked state

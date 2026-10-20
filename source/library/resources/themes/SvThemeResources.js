@@ -153,4 +153,19 @@
         return theme;
     }
 
+    /**
+     * @description Removes the stored theme with this title, if there is one
+     * (a retired built-in).
+     * @param {String} name
+     * @returns {SvThemeResources}
+     * @category Theme Management
+     */
+    removeThemeNamed (name) {
+        const theme = this.themeNamed(name);
+        if (theme) {
+            this.removeSubnode(theme);
+        }
+        return this;
+    }
+
 }.initThisClass());

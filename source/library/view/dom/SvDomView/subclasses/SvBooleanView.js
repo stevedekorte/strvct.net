@@ -57,6 +57,27 @@
             slot.setSlotType("Boolean");
         }
         /**
+         * @member {String} booleanStyle - "checkbox" (the default) or
+         * "switch": a sliding switch in SVG, colored by the theme's
+         * --sv-switch-* tokens. Set by the field tile from its node
+         * (SvBooleanField.nodeBooleanStyle).
+         * @category Appearance
+         */
+        {
+            const slot = this.newSlot("booleanStyle", "checkbox");
+            slot.setSlotType("String");
+        }
+        /**
+         * @member {SvDomView} switchView - the switch's SVG, made when the
+         * style first becomes "switch"
+         * @category View Components
+         */
+        {
+            const slot = this.newSlot("switchView", null);
+            slot.setSlotType("SvDomView");
+            slot.setAllowsNullValue(true);
+        }
+        /**
          * @member {SvDomView} innerCheckView
          * @category View Components
          */
@@ -159,6 +180,7 @@
      */
     setIsEditable (aBool) {
         this._isEditable = aBool;
+        this.syncSwitchEditableLook();
 
         if (this._isEditable) {
             const g = this.addDefaultTapGesture();
@@ -249,12 +271,106 @@
         // so we can update our appearance to match changes to the parent view's style
 
         //const color = this.getComputedCssProperty("color") // this can cause a reflow, so avoid it
+        if (this.isSwitch()) {
+            this.switchView().element().setAttribute("data-on", this.value() ? "true" : "false"); // CSS slides the knob
+            return this;
+        }
         const color = "white";
 
         this.outerCheckView().setStrokeColor(color);
         this.innerCheckView().setFillColor(this.value() ? color : "transparent");
 
         return this;
+    }
+
+    // --- the switch style ---
+
+    isSwitch () {
+        return this.booleanStyle() === "switch";
+    }
+
+    /**
+     * @description The style changed: show the value as a sliding switch, or
+     * as the checkbox. The switch's SVG is made on first use.
+     * @category Appearance
+     */
+    didUpdateSlotBooleanStyle (/*oldValue, newValue*/) {
+        const isSwitch = this.isSwitch();
+        if (isSwitch) {
+            this.setupSwitchViewIfNeeded();
+        }
+        this.innerCheckView().setDisplay(isSwitch ? "none" : "flex");
+        this.outerCheckView().setDisplay(isSwitch ? "none" : "flex");
+        if (this.switchView()) {
+            this.switchView().setDisplay(isSwitch ? "block" : "none");
+        }
+        const w = isSwitch ? this.thisClass().switchWidth() : this.checkboxSize();
+        const h = isSwitch ? this.thisClass().switchHeight() : this.checkboxSize();
+        this.setMinAndMaxWidth(w);
+        this.setMinAndMaxHeight(h);
+        this.setOverflow(isSwitch ? "visible" : "hidden"); // the knob's shadow falls outside the track
+        this.syncSwitchEditableLook();
+        this.updateAppearance();
+    }
+
+    syncSwitchEditableLook () {
+        this.setOpacity(this.isSwitch() && !this.isEditable() ? 0.5 : null); // a read-only switch reads as one
+        return this;
+    }
+
+    static switchWidth () {
+        return 46;
+    }
+
+    static switchHeight () {
+        return 28;
+    }
+
+    setupSwitchViewIfNeeded () {
+        if (!this.switchView()) {
+            this.thisClass().ensureSwitchCss();
+            const v = SvDomView.clone();
+            v.setPointerEvents("none"); // the boolean view takes the tap
+            v.setMinAndMaxWidth(this.thisClass().switchWidth()); // the switch's own size, unclipped (the knob's shadow overhangs)
+            v.setMinAndMaxHeight(this.thisClass().switchHeight());
+            v.setOverflow("visible");
+            v.setInnerHtml("<svg class=\"SvSwitch\" viewBox=\"0 0 46 28\" width=\"46\" height=\"28\" aria-hidden=\"true\">"
+                + "<rect class=\"SvSwitchTrack\" x=\"0.5\" y=\"0.5\" width=\"45\" height=\"27\" rx=\"13.5\"/>"
+                + "<circle class=\"SvSwitchKnob\" cx=\"14\" cy=\"14\" r=\"11.5\"/></svg>");
+            this.addSubview(v);
+            this.setSwitchView(v);
+        }
+        return this;
+    }
+
+    /**
+     * @description The switch's look, installed once. Colors are theme
+     * tokens (--sv-switch-on, -off, -knob, -edge, -shadow; defaults in
+     * _css.css); the knob slides and the track's color changes by CSS
+     * transition when the wrapper's data-on flips — nothing measured.
+     * @category Appearance
+     */
+    static ensureSwitchCss () {
+        if (this._hasSwitchCss) {
+            return;
+        }
+        this._hasSwitchCss = true;
+        SvWebDocument.shared().addStyleSheetString(`
+            .SvSwitch { display: block; overflow: visible; }
+            .SvSwitch .SvSwitchTrack {
+                fill: var(--sv-switch-off);
+                stroke: var(--sv-switch-edge);
+                stroke-width: 1;
+                transition: fill 0.22s ease;
+            }
+            [data-on="true"] > .SvSwitch .SvSwitchTrack { fill: var(--sv-switch-on); stroke: transparent; }
+            .SvSwitch .SvSwitchKnob {
+                fill: var(--sv-switch-knob);
+                filter: drop-shadow(0 1.5px 1.5px var(--sv-switch-shadow));
+                transition: transform 0.22s cubic-bezier(.2,.8,.2,1);
+            }
+            [data-on="true"] > .SvSwitch .SvSwitchKnob { transform: translateX(18px); }
+        `);
     }
 
     /**

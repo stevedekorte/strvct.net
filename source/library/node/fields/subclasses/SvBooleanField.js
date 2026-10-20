@@ -146,4 +146,14 @@
     }
     */
 
+    /**
+     * @description How the value is shown: "checkbox", or "switch" (a
+     * sliding switch, SvSwitchField). Read by SvBooleanFieldTile.
+     * @returns {String}
+     * @category Appearance
+     */
+    nodeBooleanStyle () {
+        return "checkbox";
+    }
+
 }.initThisClass());
