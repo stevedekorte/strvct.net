@@ -11,12 +11,17 @@
  * its replicas may read, committed to a second cloud pool alongside the truth
  * (Plans/Server-Hosted Sessions, M1a).
  *
- * The projection holds exactly the records reachable from the root without
- * passing through anything host-only: a record whose class is host-only
- * (`static isHostOnly()`) is left out with everything reachable only through
- * it, a host-only slot (`slot.setIsHostOnly(true)`) is dropped from its
- * record, and a reference to a left-out record is cut (null in a slot, removed
- * from an array). Object ids are the truth's, so references line up.
+ * What replicas may see is an allow-list, the same one the "Cloud" JSON view
+ * uses (`cloudJsonSchemaSlots()`: slots marked isInCloudJson): a record keeps
+ * only those slots (and its subnodes, for a class that stores them), less any
+ * host-only slot (`slot.setIsHostOnly(true)` — cloud state the host keeps from
+ * its players, like a GM's secrets). The projection holds exactly the records
+ * reachable from the root through what is kept; a record whose class is
+ * host-only (`static isHostOnly()`), or that is not a node at all, is left out
+ * with everything reachable only through it, and a reference to a left-out
+ * record is cut (null in a slot, removed from an array). A stored slot nobody
+ * marked for players therefore never reaches them. Object ids are the truth's,
+ * so references line up.
  *
  * Each commit sends what changed since the last projected state (its own
  * snapshot: payload and placement per record), as writes and deletes for the
@@ -155,8 +160,11 @@
             return { source: source, projected: null, refs: [] };
         }
         if (Array.isArray(record.entries)) {
-            const dropped = this.droppedSlotNamesForType(record.type);
-            record.entries = record.entries.filter(entry => !dropped.has(entry[0]));
+            const kept = this.keptSlotNamesForType(record.type);
+            if (kept === null) {
+                return { source: source, projected: null, refs: [] }; // not a node: nothing of it is marked for players
+            }
+            record.entries = record.entries.filter(entry => kept.has(entry[0]));
         }
         const refs = [];
         const projected = this.cutHostOnlyRefs(record, sources, refs);
@@ -215,34 +223,39 @@
     }
 
     /**
-     * @description The entries a record of this type leaves out of the
-     * projection: its host-only slots and its local-only ones (what the
-     * truth's cloud copy leaves out too).
-     * @returns {Set<String>}
+     * @description The entries a record of this type keeps in the projection:
+     * its cloud JSON slots (isInCloudJson), and `subnodes` when the class
+     * stores them, less its host-only and local-only slots. Null for a class
+     * that is not a node (nothing of it is marked for players).
+     * @returns {Set<String>|null}
      * @category Classes
      */
-    droppedSlotNamesForType (type) {
-        const cache = SvPoolProjection.droppedSlotNamesCache();
+    keptSlotNamesForType (type) {
+        const cache = SvPoolProjection.keptSlotNamesCache();
         if (!cache.has(type)) {
-            const names = new Set(SvObjectPool.localOnlySlotNamesForType(type));
-            const aClass = this.pool().classForName(type);
-            if (aClass && aClass.prototype && aClass.prototype.allSlotsMap) {
-                aClass.prototype.allSlotsMap().forEachKV((name, slot) => {
-                    if (slot.isHostOnly && slot.isHostOnly()) {
-                        names.add(name);
-                    }
-                });
-            }
-            cache.set(type, names);
+            cache.set(type, this.computeKeptSlotNames(type));
         }
         return cache.get(type);
     }
 
-    static droppedSlotNamesCache () {
-        if (!this._droppedSlotNamesCache) {
-            this._droppedSlotNamesCache = new Map();
+    computeKeptSlotNames (type) {
+        const aClass = this.pool().classForName(type);
+        if (!aClass || !aClass.cloudJsonSchemaSlots) {
+            return null;
         }
-        return this._droppedSlotNamesCache;
+        const localOnly = SvObjectPool.localOnlySlotNamesForType(type);
+        const names = new Set(aClass.cloudJsonSchemaSlots().filter(slot => !slot.isHostOnly() && !localOnly.has(slot.name())).map(slot => slot.name()));
+        if (aClass.prototype.shouldStoreSubnodes && aClass.prototype.shouldStoreSubnodes()) {
+            names.add("subnodes");
+        }
+        return names;
+    }
+
+    static keptSlotNamesCache () {
+        if (!this._keptSlotNamesCache) {
+            this._keptSlotNamesCache = new Map();
+        }
+        return this._keptSlotNamesCache;
     }
 
     // --- commits ---

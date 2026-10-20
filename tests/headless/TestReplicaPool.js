@@ -54,6 +54,7 @@ function defineClasses () {
                 const slot = this.newSlot("label", "");
                 slot.setSlotType("String");
                 slot.setShouldStoreSlot(true);
+                slot.setIsInCloudJson(true);
             }
         }
         initPrototype () {
@@ -84,17 +85,20 @@ function defineClasses () {
                 const slot = this.newSlot("name", "");
                 slot.setSlotType("String");
                 slot.setShouldStoreSlot(true);
+                slot.setIsInCloudJson(true);
             }
             {
                 const slot = this.newSlot("hitPoints", 10);
                 slot.setSlotType("Number");
                 slot.setShouldStoreSlot(true);
+                slot.setIsInCloudJson(true);
             }
             {
                 const slot = this.newSlot("notes", "");
                 slot.setSlotType("String");
                 slot.setShouldStoreSlot(true);
-                slot.setIsHostOnly(true);
+                slot.setIsInCloudJson(true); // in the host's cloud JSON, like unknownToPlayers…
+                slot.setIsHostOnly(true); // …but kept from its players
             }
         }
         initPrototype () {

@@ -51,6 +51,7 @@ function defineClasses () {
                 const slot = this.newSlot("label", "");
                 slot.setSlotType("String");
                 slot.setShouldStoreSlot(true);
+                slot.setIsInCloudJson(true);
             }
         }
         initPrototype () {
@@ -64,12 +65,19 @@ function defineClasses () {
                 const slot = this.newSlot("name", "");
                 slot.setSlotType("String");
                 slot.setShouldStoreSlot(true);
+                slot.setIsInCloudJson(true);
+            }
+            {
+                const slot = this.newSlot("lastToolCallId", ""); // stored bookkeeping nobody marked for players
+                slot.setSlotType("String");
+                slot.setShouldStoreSlot(true);
             }
             {
                 const slot = this.newSlot("notes", ""); // the GM's private notes on this NPC
                 slot.setSlotType("String");
                 slot.setShouldStoreSlot(true);
-                slot.setIsHostOnly(true);
+                slot.setIsInCloudJson(true); // in the host's cloud JSON, like unknownToPlayers…
+                slot.setIsHostOnly(true); // …but kept from its players
             }
         }
         initPrototype () {
@@ -86,6 +94,7 @@ function defineClasses () {
                 const slot = this.newSlot("plot", "");
                 slot.setSlotType("String");
                 slot.setShouldStoreSlot(true);
+                slot.setIsInCloudJson(true);
             }
         }
         initPrototype () {
@@ -141,7 +150,7 @@ async function main () {
     await pool.promiseOpen();
     const root = pool.rootOrIfAbsentFromClosure(() => TestPjDoc.clone());
     root.setLabel("the table");
-    const npc = TestPjNpc.clone(); npc.setName("Vorn"); npc.setNotes("secretly the vampire's thrall");
+    const npc = TestPjNpc.clone(); npc.setName("Vorn"); npc.setNotes("secretly the vampire's thrall"); npc.setLastToolCallId("call_123");
     const secret = TestPjSecret.clone(); secret.setPlot("the abbot is the vampire");
     const hidden = TestPjNpc.clone(); hidden.setName("The Abbot"); // ordinary class, reachable only through the secret
     secret.addSubnode(hidden);
@@ -164,6 +173,7 @@ async function main () {
     check(!ids.has(secret.puuid()), "the host-only object is left out");
     check(!ids.has(hidden.puuid()), "…and so is what is reachable only through it (The Abbot)");
     check(!payloadOf(opened, npc.puuid()).includes("thrall") && payloadOf(opened, npc.puuid()).includes("Vorn"), "a host-only slot is dropped from its record; the rest stays");
+    check(!payloadOf(opened, npc.puuid()).includes("call_123"), "a stored slot not marked for players (isInCloudJson) is left out");
     check(![...opened.records, opened.root].some(r => r.payloadJson.includes(secret.puuid())), "no projected record references the left-out object");
     check(!JSON.stringify(opened).includes("the abbot is the vampire") && !JSON.stringify(opened).includes("thrall"), "no secret text reaches the projection at all");
     const truth = await cloud.asyncOpen(pool.poolId());
