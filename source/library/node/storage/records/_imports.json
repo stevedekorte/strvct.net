@@ -3,6 +3,7 @@
     "SvRecordRow.js",
     "SvRecordStoreProtocol.js",
     "SvStagedRecordCommit.js",
+    "SvPoolProjection.js",
     "SvMemoryRecordStore.js",
     "SvLocalRecordStore.js",
     "SvCloudRecordStore.js"

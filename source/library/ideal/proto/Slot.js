@@ -771,6 +771,28 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         return v === undefined ? true : v;
     }
 
+    /**
+     * @description Marks a stored slot as host-only: it stays in the hosted
+     * document's truth pool and is left out of the projection its replicas
+     * read (SvPoolProjection) — the GM's secrets, an AI's private context.
+     * A reference held only through host-only slots is not projected either.
+     * @param {Boolean} b
+     * @category Is Host Only
+     */
+    setIsHostOnly (b) {
+        this.setAnnotation("isHostOnly", b);
+        return this;
+    }
+
+    /**
+     * @description Whether this slot is left out of a hosted document's
+     * projection (default false).
+     * @category Is Host Only
+     */
+    isHostOnly () {
+        return this.getAnnotation("isHostOnly") === true;
+    }
+
     setJsonSchemaPattern (s) {
         this.setAnnotation("jsonSchemaPattern", s);
         return this;

@@ -10,6 +10,18 @@
 
 (class ProtoClass_store extends ProtoClass {
 
+    /**
+     * @description Whether instances of this class are host-only: kept in a
+     * hosted document's truth pool and never projected to its replicas, along
+     * with everything reachable only through them (SvPoolProjection). Override
+     * to return true for a class whose every instance is private to the host.
+     * @returns {Boolean}
+     * @category Projection
+     */
+    static isHostOnly () {
+        return false;
+    }
+
     static logPrefix () {
         return "[" + this.svType() + " Class] ";
     }

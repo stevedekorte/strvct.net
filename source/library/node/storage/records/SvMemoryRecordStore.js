@@ -157,22 +157,65 @@
         return result;
     }
 
+    /**
+     * @description Applies a commit — and its paired `projection`, a second
+     * pool committed with it, both or neither (Plans/Server-Hosted Sessions
+     * M1a) — answering as the cloud does: `{ status, version }`, plus
+     * `projectionVersion` for a pair.
+     * @category Commit
+     */
     commitResult (commit) {
-        const root = this.rootRowForPool(commit.poolId) || this.createdRootFor(commit);
-        if (!root) {
-            return { status: "refused", reason: "unknown pool '" + commit.poolId + "' (a pool is created by a baseVersion 0 commit carrying its root record)" };
+        const parts = commit.projection ? [commit, commit.projection] : [commit];
+        if (parts.length === 2 && commit.projection.poolId === commit.poolId) {
+            return { status: "refused", reason: "a projection is a different pool" };
         }
-        const refusal = this.commitRefusal(commit);
+        const checks = parts.map(part => this.commitCheck(part));
+        const refused = checks.find(check => check.status === "refused");
+        if (refused) {
+            return { status: "refused", reason: refused.reason };
+        }
+        const blocked = checks.find(check => check.status !== "ready");
+        if (blocked) {
+            return this.commitAnswer(blocked.status, checks);
+        }
+        checks.forEach((check) => {
+            check.version = this.applyCommit(check.part, check.root || this.createdRootFor(check.part));
+        });
+        return this.commitAnswer("committed", checks);
+    }
+
+    /**
+     * @description One pool's part of a commit checked against its root,
+     * changing nothing: "ready" (with the root, or null for a creating
+     * commit), "refused", "busy" or "conflict" (with the pool's version).
+     * @category Commit
+     */
+    commitCheck (part) {
+        const root = this.rootRowForPool(part.poolId);
+        const creates = !root && part.baseVersion === 0 && (part.writes || []).some(row => SvRecordRow.isRoot(row));
+        if (!root && !creates) {
+            return { status: "refused", reason: "unknown pool '" + part.poolId + "' (a pool is created by a baseVersion 0 commit carrying its root record)" };
+        }
+        const refusal = this.commitRefusal(part);
         if (refusal) {
             return { status: "refused", reason: refusal };
         }
-        if (this.isStaging(commit.poolId)) {
-            return { status: "busy", version: root.version };
+        const version = root ? root.version : 0;
+        if (this.isStaging(part.poolId)) {
+            return { status: "busy", version: version };
         }
-        if (root.version !== commit.baseVersion) {
-            return { status: "conflict", version: root.version };
+        if (version !== part.baseVersion) {
+            return { status: "conflict", version: version };
         }
-        return { status: "committed", version: this.applyCommit(commit, root) };
+        return { status: "ready", part: part, root: root, version: version };
+    }
+
+    commitAnswer (status, checks) {
+        const answer = { status: status, version: checks[0].version };
+        if (checks.length === 2) {
+            answer.projectionVersion = checks[1].version;
+        }
+        return answer;
     }
 
     /**

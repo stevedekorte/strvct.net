@@ -713,9 +713,16 @@
      * the new version is mirrored onto the root row (server-owned, written through
      * the non-dirtying path) and the snapshot advances; on "conflict" nothing
      * changes and the caller reloads; a refusal is returned as is.
+     *
+     * With `options.projection` (an SvPoolProjection) the projection's changes
+     * ride the same commit — one transaction, both or neither — when the two fit
+     * in one; otherwise the truth commits first and the projection follows on
+     * its own, so the projection never gets ahead of the truth. The answer then
+     * carries `projection: { version, baseVersion, writes, deletes }` — what the
+     * replicas' copy received, for the caller's notice.
      * @param {SvCloudRecordStore} cloudStore
-     * @param {Object} [options] { create: { scopeId } } for a pool's first commit
-     * @returns {Promise<Object>} { status: "committed"|"conflict"|"refused"|"unchanged", version?, reason? }
+     * @param {Object} [options] { cloudPoolId, create: { scopeId } for a pool's first commit, projection }
+     * @returns {Promise<Object>} { status: "committed"|"conflict"|"refused"|"unchanged", version?, reason?, projection? }
      * @category Cloud Mirror
      */
     async asyncCommitToCloud (cloudStore, options = {}) {
@@ -723,8 +730,12 @@
         const rootRow = this.rowForPid(this.poolId());
         assert(rootRow, "the pool has no root row to commit");
         const changed = this.cloudChanges();
+        const projection = options.projection || null;
+        const projected = projection ? projection.changes() : null;
         if (changed.isEmpty) {
-            return { status: "unchanged", version: rootRow.version || 0 };
+            return (projected && !projected.isEmpty)
+                ? this.asyncCommitProjection(cloudStore, projection, projected, { status: "unchanged", version: rootRow.version || 0 })
+                : { status: "unchanged", version: rootRow.version || 0 };
         }
         // What this commit sends, as a snapshot: taken now, not after the
         // network wait — records stored locally while the commit is in flight
@@ -732,6 +743,30 @@
         // synced, so they never reached the cloud while records sent later
         // referenced them (dangling refs in a dev session, 2026-09-26).
         const sentSnapshot = Object.assign({}, this.asJson());
+        const commit = this.cloudCommitFor(changed, rootRow, options);
+        const isPaired = !!(projected && !projected.isEmpty) && this.fitsInOneCommit(cloudStore, commit, projection.commitPart(projected));
+        if (isPaired) {
+            commit.projection = projection.commitPart(projected);
+        }
+        const result = await cloudStore.asyncCommit(commit);
+        if (result && result.status === "committed") {
+            await this.mirrorCloudVersion(result.version, commit);
+            this.setLastSyncedSnapshot(sentSnapshot);
+            if (isPaired) {
+                return this.answerWithProjection(result, projection, projected, result.projectionVersion);
+            }
+            return (projected && !projected.isEmpty) ? this.asyncCommitProjection(cloudStore, projection, projected, result) : result;
+        }
+        if (result && result.status === "conflict") {
+            if (isPaired && result.version === commit.baseVersion) {
+                projection.didConflict(result.projectionVersion); // only the projection moved: resend it whole next time
+            }
+            return Object.assign({ commit: commit }, result); // what was refused, for the caller to tell whether reloading loses it
+        }
+        return result;
+    }
+
+    cloudCommitFor (changed, rootRow, options) {
         // the cloud names the pool by its scoped id (SvRecordRow.localPoolId)
         const cloudPoolId = options.cloudPoolId || this.poolId();
         const commit = {
@@ -744,15 +779,46 @@
         if (options.create) {
             commit.create = options.create;
         }
-        const result = await cloudStore.asyncCommit(commit);
+        return commit;
+    }
+
+    /**
+     * @description Whether a truth commit and its projection fit in one
+     * transaction (the backend's operation and payload limits, counted together).
+     * @returns {Boolean}
+     * @category Cloud Mirror
+     */
+    fitsInOneCommit (cloudStore, commit, projectionPart) {
+        const parts = [commit, projectionPart];
+        const ops = parts.reduce((n, part) => n + part.writes.length + part.deletes.length, 0);
+        const bytes = parts.reduce((n, part) => n + SvStagedRecordCommit.payloadBytes(part.writes), 0);
+        return ops <= cloudStore.maxOpsPerCommit() && bytes <= cloudStore.maxBytesPerCommit();
+    }
+
+    /**
+     * @description Commits the projection on its own (after the truth, or when
+     * only the projection changed — its first commit, or a resend after a
+     * conflict); staged by the cloud store when it is large.
+     * @returns {Promise<Object>} the truth's answer, with the projection's added
+     * @category Cloud Mirror
+     */
+    async asyncCommitProjection (cloudStore, projection, projected, truthAnswer) {
+        const part = Object.assign({ requestId: Object.newUuid() }, projection.commitPart(projected));
+        const result = await cloudStore.asyncCommit(part);
         if (result && result.status === "committed") {
-            await this.mirrorCloudVersion(result.version, commit);
-            this.setLastSyncedSnapshot(sentSnapshot);
+            return this.answerWithProjection(truthAnswer, projection, projected, result.version);
         }
         if (result && result.status === "conflict") {
-            return Object.assign({ commit: commit }, result); // what was refused, for the caller to tell whether reloading loses it
+            projection.didConflict(result.version);
         }
-        return result;
+        console.warn(this.logPrefix() + "projection commit " + (result && result.status) + (result && result.reason ? " (" + result.reason + ")" : ""));
+        return truthAnswer;
+    }
+
+    answerWithProjection (answer, projection, projected, version) {
+        const baseVersion = projection.version();
+        projection.didCommit(version, projected);
+        return Object.assign({}, answer, { projection: { version: version, baseVersion: baseVersion, writes: projected.writes, deletes: projected.deletes } });
     }
 
     /**
