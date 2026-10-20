@@ -319,11 +319,11 @@
     }
 
     static switchWidth () {
-        return 46;
+        return 36; // the drawing is 46×28 (its viewBox), shown smaller
     }
 
     static switchHeight () {
-        return 28;
+        return 22;
     }
 
     setupSwitchViewIfNeeded () {
@@ -334,7 +334,7 @@
             v.setMinAndMaxWidth(this.thisClass().switchWidth()); // the switch's own size, unclipped (the knob's shadow overhangs)
             v.setMinAndMaxHeight(this.thisClass().switchHeight());
             v.setOverflow("visible");
-            v.setInnerHtml("<svg class=\"SvSwitch\" viewBox=\"0 0 46 28\" width=\"46\" height=\"28\" aria-hidden=\"true\">"
+            v.setInnerHtml("<svg class=\"SvSwitch\" viewBox=\"0 0 46 28\" width=\"" + this.thisClass().switchWidth() + "\" height=\"" + this.thisClass().switchHeight() + "\" aria-hidden=\"true\">"
                 + "<rect class=\"SvSwitchTrack\" x=\"0.5\" y=\"0.5\" width=\"45\" height=\"27\" rx=\"13.5\"/>"
                 + "<circle class=\"SvSwitchKnob\" cx=\"14\" cy=\"14\" r=\"11.5\"/></svg>");
             this.addSubview(v);

@@ -80,12 +80,35 @@
     syncFromNode () {
         super.syncFromNode();
         const node = this.node();
-        this.booleanView().setBooleanStyle(node && node.nodeBooleanStyle ? node.nodeBooleanStyle() : "checkbox"); // a checkbox, or a switch (SvSwitchField)
+        const style = node && node.nodeBooleanStyle ? node.nodeBooleanStyle() : "checkbox";
+        this.booleanView().setBooleanStyle(style); // a checkbox, or a switch (SvSwitchField)
+        this.syncSwitchSide(style === "switch");
         this.booleanView().updateAppearance();
 
         // Accessibility: reflect checked state
         this.setAriaChecked(this.ariaIsChecked());
 
+        return this;
+    }
+
+    /**
+     * @description A checkbox sits before its label; a switch after it, at
+     * the row's right edge (the label takes the room between). Order and
+     * flex writes only; same-value writes are skipped.
+     * @param {Boolean} isSwitch
+     * @returns {SvBooleanFieldTile}
+     * @category Layout
+     */
+    syncSwitchSide (isSwitch) {
+        const sections = this.kvSection().subviews();
+        const count = sections.length;
+        sections.forEachKV((i, sv) => sv.setOrder(isSwitch ? i : count - 1 - i));
+        this.keyView().setPaddingLeft(isSwitch ? "0em" : "0.5em"); // a switch's label lines up with its neighbours' titles
+        const label = sections.at(0);
+        if (label) {
+            label.setFlexGrow(isSwitch ? 1 : null);
+            label.setJustifyContent(isSwitch ? "flex-start" : null);
+        }
         return this;
     }
 
