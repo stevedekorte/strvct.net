@@ -581,6 +581,18 @@
     }
 
     /**
+     * @description As an anchored tab: the group of tabs this one is an
+     * alternative to (any string; null for none). Tabs in a group share one
+     * place: opening one closes the other, and a pin moves with it
+     * (SvAnchoredTabsLayout). E.g. two views of the same content.
+     * @returns {String|null}
+     * @category Layout
+     */
+    nodeAnchoredTabGroup () {
+        return null;
+    }
+
+    /**
      * @description As an anchored tab: the key that names this tab across
      * reloads and devices' saved pins — stable and unique among its siblings.
      * Default: the title (a tab's label is what the player pinned).

@@ -13,7 +13,7 @@
  * gestures, it keeps which tabs are open, pinned and evicted, and answers the
  * pane widths. The view renders that state; it makes no layout decisions.
  *
- * A tab spec: { id, minWidth, comfortableWidth?, isAvailable?, pinPreference?, tabWidth? }
+ * A tab spec: { id, minWidth, comfortableWidth?, isAvailable?, pinPreference?, tabWidth?, group? }
  * where tabWidth is the tab's own width in the tab row (measured by the view)
  * and pinPreference is "pinned", "open" or null (the node's suggestion,
  * nodeTabPinPreference()). The player's own pin or unpin of a tab overrides
@@ -36,6 +36,10 @@
  *   its pane — when the container has room for that. When it doesn't, the
  *   panes keep their content minimums and the view squeezes the closed tabs.
  *   Tab widths never close a pane.
+ * - Tabs that name the same group (nodeAnchoredTabGroup) are alternatives
+ *   sharing one place: opening one pins it, and unpins and closes the
+ *   others. A member never returns (from eviction or a remembered pin)
+ *   while another member of its group is open.
  */
 (class SvAnchoredTabsLayout extends ProtoClass {
 
@@ -133,7 +137,7 @@
      */
     restorePlayerPins () {
         this.tabSpecs().filter(t => this.playerPinOverrides().get(t.id) === true && !this.isOpen(t.id)).forEach(t => {
-            if (t.isAvailable && this.fitsWith(t.id)) {
+            if (t.isAvailable && this.fitsWith(t.id) && !this.hasOpenGroupMate(t.id)) {
                 this.openIds().add(t.id);
             } else {
                 this.recordEviction(t.id);
@@ -149,7 +153,8 @@
             comfortableWidth: spec.comfortableWidth || spec.minWidth || 1,
             isAvailable: spec.isAvailable !== false,
             pinPreference: spec.pinPreference || null,
-            tabWidth: spec.tabWidth || 0
+            tabWidth: spec.tabWidth || 0,
+            group: spec.group || null
         };
     }
 
@@ -174,6 +179,9 @@
     }
 
     openOrRememberForPreference (tab) {
+        if (this.hasOpenGroupMate(tab.id)) {
+            return this; // its alternative holds the place
+        }
         if (this.fitsWith(tab.id)) {
             this.openIds().add(tab.id);
         } else if (tab.pinPreference === "pinned") {
@@ -198,8 +206,9 @@
 
     /**
      * @description Tap / click: a closed tab opens (pinned panes stay,
-     * unpinned ones are replaced by it); an open unpinned tab closes (unless
-     * it is the last pane); an open pinned tab does nothing.
+     * unpinned ones are replaced by it — or, when a group-mate is open, it
+     * takes that mate's place and nothing else moves); an open unpinned tab
+     * closes (unless it is the last pane); an open pinned tab does nothing.
      * @param {String} id
      * @returns {SvAnchoredTabsLayout}
      * @category Gestures
@@ -210,6 +219,9 @@
         }
         if (this.isOpen(id)) {
             return this.isPinned(id) ? this : this.closeByHand(id);
+        }
+        if (this.hasOpenGroupMate(id)) {
+            return this.openByHand(id); // an alternative swaps places with its open mate; the other panes stay
         }
         this.openIdsInOrder().filter(open => !this.isPinned(open)).forEach(open => this.openIds().delete(open));
         return this.openByHand(id);
@@ -293,9 +305,54 @@
 
     openByHand (id) {
         this.evictionSeqs().delete(id);
+        this.yieldGroupTo(id);
         this.openIds().add(id);
         this.setCurrentTabId(id);
         return this.makeRoom("opening", id);
+    }
+
+    // --- groups ---
+
+    groupOf (id) {
+        const tab = this.tabWithId(id);
+        return tab ? tab.group : null;
+    }
+
+    /**
+     * @description The other tabs in this tab's group (none when it has no group).
+     * @param {String} id
+     * @returns {Array<String>}
+     * @category Groups
+     */
+    groupMatesOf (id) {
+        const group = this.groupOf(id);
+        return group ? this.tabSpecs().filter(t => t.group === group && t.id !== id).map(t => t.id) : [];
+    }
+
+    /**
+     * @description Opening this tab: it is pinned (the chosen alternative
+     * holds the group's place), its group-mates are unpinned and closed, and
+     * mates waiting to return stop waiting.
+     * @param {String} id
+     * @returns {SvAnchoredTabsLayout}
+     * @category Groups
+     */
+    yieldGroupTo (id) {
+        const mates = this.groupMatesOf(id);
+        if (mates.length === 0) {
+            return this;
+        }
+        this.playerPinOverrides().set(id, true); // the chosen alternative holds the place
+        mates.forEach(mate => {
+            this.playerPinOverrides().set(mate, false);
+            this.openIds().delete(mate);
+            this.evictionSeqs().delete(mate);
+        });
+        return this;
+    }
+
+    hasOpenGroupMate (id) {
+        return this.groupMatesOf(id).some(mate => this.isOpen(mate));
     }
 
     closeByHand (id) {
@@ -547,7 +604,7 @@
     }
 
     mostRecentlyEvictedAvailable () {
-        const waiting = [...this.evictionSeqs().entries()].filter(([id]) => this.isAvailable(id) && !this.isOpen(id));
+        const waiting = [...this.evictionSeqs().entries()].filter(([id]) => this.isAvailable(id) && !this.isOpen(id) && !this.hasOpenGroupMate(id));
         waiting.sort((a, b) => b[1] - a[1]);
         return waiting.length > 0 ? waiting[0][0] : null;
     }

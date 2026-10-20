@@ -175,7 +175,7 @@
     --sv-inline-document-padding: 24px 24px 40px;           /* around the document */
     --sv-inline-document-gutter: 24px;
     /* the Boolean switch style (SvBooleanView, booleanStyle "switch") */
-    --sv-switch-on: #6a9f58;                   /* track, on */
+    --sv-switch-on: rgba(255, 255, 255, 0.5);  /* track, on: white at half (Steve, 2026-10-20) */
     --sv-switch-off: rgba(255, 255, 255, 0.16); /* track, off */
     --sv-switch-edge: rgba(255, 255, 255, 0.22); /* track edge, off */
     --sv-switch-knob: #f4f4f4;

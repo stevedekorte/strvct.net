@@ -18,7 +18,8 @@
  *
  * Tab hints read from each subnode: isVisible (available), nodeMinTileWidth
  * (comfortable width), nodeMinTileWidthWhenYielding (minimum, else the
- * comfortable width), nodeTabPinPreference.
+ * comfortable width), nodeTabPinPreference, nodeAnchoredTabGroup (tabs that
+ * are alternatives, sharing one place).
  *
  * Entry points live on SvStackView itself (a category cannot override what
  * the class defines): syncFromNode picks the "down" direction and
@@ -148,7 +149,8 @@
             comfortableWidth: comfortable,
             isAvailable: node.isVisible ? node.isVisible() !== false : true,
             pinPreference: node.nodeTabPinPreference ? node.nodeTabPinPreference() : null,
-            tabWidth: this.anchoredTabWidthFor(node)
+            tabWidth: this.anchoredTabWidthFor(node),
+            group: node.nodeAnchoredTabGroup ? node.nodeAnchoredTabGroup() : null
         };
     }
 
@@ -932,6 +934,7 @@
             this.safeUpdateCompactionChain(); // the claim follows the pins (anchoredClaimWidth)
         } else if (!this.anchoredReturnTabToBase(node)) {
             this.anchoredLayout().tapTab(id);
+            this.storeAnchoredPins(); // a group's pin may have moved to this tab
         }
         this.applyAnchoredLayout(true);
         this.scrollTabIntoView(tile);

@@ -65,6 +65,41 @@ function newLayout (width, tabs = sessionTabs()) {
 
 const open = (layout) => layout.openIdsInOrder().join(",");
 
+// Narration and Theatre: two views of the story, one place (a group)
+function groupTabs () {
+    const tabs = sessionTabs();
+    tabs[0].group = "story";
+    tabs.splice(1, 0, { id: "theatre", minWidth: 400, comfortableWidth: 560, group: "story" });
+    return tabs;
+}
+
+function testGroups () {
+    console.log("\ngrouped tabs share one place: the one chosen is pinned, the other unpinned");
+    let layout = newLayout(1500, groupTabs());
+    check(open(layout) === "narration" && layout.isPinned("narration"), "Narration opens pinned: " + open(layout));
+    layout.tapTab("scene");
+    layout.tapTab("theatre");
+    check(open(layout) === "theatre,scene", "opening Theatre closes Narration (its group-mate), not Scene: " + open(layout));
+    check(layout.isPinned("theatre") && !layout.isPinned("narration"), "…and Narration's pin moved to Theatre");
+    layout.tapTab("narration");
+    check(open(layout) === "narration,scene" && layout.isPinned("narration") && !layout.isPinned("theatre"), "back to Narration: Theatre closes, the pin moves back: " + open(layout));
+
+    layout = newLayout(1500, groupTabs());
+    layout.setTabPinned("narration", false);
+    layout.tapTab("theatre");
+    check(open(layout) === "theatre" && layout.isPinned("theatre") && !layout.isPinned("narration"), "choosing a member pins it and unpins the other, pinned before or not: " + open(layout));
+
+    layout = newLayout(1500, groupTabs());
+    layout.tapTab("theatre");
+    layout.updateContainerWidth(300); // narrow: everything but one pane closes
+    layout.updateContainerWidth(1500); // wide again
+    check(!(layout.isOpen("narration") && layout.isOpen("theatre")), "an evicted member doesn't return beside its open mate: " + open(layout));
+
+    layout = newLayout(1500, groupTabs());
+    layout.pinTab("theatre");
+    check(open(layout) === "theatre" && layout.isPinned("theatre"), "pinning a closed member opens it in the group's place: " + open(layout));
+}
+
 function testOpeningAndGestures () {
     console.log("\nopening, the tap gesture, and the pin gesture");
     const layout = newLayout(1500);
@@ -327,6 +362,7 @@ function testInvariants () {
     testRememberedPins();
     testTabSegments();
     testInvariants();
+    testGroups();
     console.log("\n=============================");
     console.log("Passed: " + passed + "  Failed: " + failed);
     console.log("=============================");
