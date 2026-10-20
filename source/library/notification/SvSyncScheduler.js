@@ -128,6 +128,18 @@
         }
 
         /**
+         * @member {Map} passActions - The actions the running pass took from
+         * the queue (key → action), so unscheduling during the pass reaches
+         * them: a view retired by an earlier action of the pass must not
+         * then receive its own queued sync (it no longer has an element).
+         * @category State
+         */
+        {
+            const slot = this.newSlot("passActions", new Map());
+            slot.setSlotType("Map");
+        }
+
+        /**
          * @member {Boolean} isPaused
          * @category State
          */
@@ -341,6 +353,11 @@
                 this.removeActionKey(action.actionsKey());
             });
         }
+        this.passActions().forEach(action => {
+            if (action.target() === target) {
+                action.setIsUnscheduled(true);
+            }
+        });
 
         assert(!this.hasActionsForTarget()); // todo: remove this sanity check
         return this;
@@ -356,6 +373,10 @@
     unscheduleTargetAndMethod (target, syncMethod) {
         const k = this.newActionForTargetAndMethod(target, syncMethod).actionsKey();
         this.removeActionKey(k);
+        const passAction = this.passActions().get(k);
+        if (passAction) {
+            passAction.setIsUnscheduled(true);
+        }
         return this;
     }
 
@@ -424,11 +445,12 @@
         this.logDebug("Sync");
 
         const actions = this.orderedActions();
+        this.setPassActions(new Map(actions.map(action => [action.actionsKey(), action])));
         this.actions().clear();
 
         actions.forEach((action) => {
             if (action.isUnscheduled()) {
-                throw new Error("action is unscheduled");
+                // unscheduled by an earlier action of this pass (its target retired)
             } else {
                 this.setCurrentAction(action);
                 const actionError = action.tryToSend();
@@ -440,6 +462,7 @@
         });
 
         this.setCurrentAction(null);
+        this.passActions().clear();
         this.setIsProcessing(false);
 
         if (error) {
