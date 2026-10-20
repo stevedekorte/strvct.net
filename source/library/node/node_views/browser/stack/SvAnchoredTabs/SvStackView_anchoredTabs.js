@@ -527,6 +527,8 @@
                     border-bottom: none !important;
                 }
                 .SvAnchoredTabRow {
+                    user-select: none; /* a tab is a control: tapping one never selects its label */
+                    -webkit-user-select: none;
                     box-shadow: inset 0 -1px 0 var(--sv-anchor-tab-rule);
                 }
                 .SvAnchoredTabRow > * {
