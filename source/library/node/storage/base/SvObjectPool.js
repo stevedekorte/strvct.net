@@ -187,6 +187,11 @@
             slot.setDescription("root row placement: this pool's sort key under its parent, or null");
         }
         {
+            const slot = this.newSlot("isReplica", false);
+            slot.setSlotType("Boolean");
+            slot.setDescription("a replica: a read-only copy of a hosted document's projection — it loads each class's replicaClass() and never stores local changes (SvObjectPool_replica)");
+        }
+        {
             const slot = this.newSlot("lastSyncedSnapshot", null);
             slot.setSlotType("Object");
             slot.setDescription("cloud mirror: the pool.json (record JSON by puuid) as last uploaded or downloaded, for delta collection");
@@ -1579,6 +1584,10 @@
             return this;
         }
 
+        if (this.isReplica()) {
+            return this; // a replica's rows mirror the host's projection; local changes are not its to store
+        }
+
         const puuid = anObject.puuid();
 
         if (this.isStoringObject(anObject)) {
@@ -1937,6 +1946,18 @@
      * @param {String} className - the name of the class
      * @returns {Class}
      */
+    /**
+     * @description The class a record of aClass loads as here: its replica
+     * class in a replica pool (a hosted document's host and replica run
+     * different behavior over the same stored state), else itself.
+     * @param {Class|null} aClass
+     * @returns {Class|null}
+     * @category Loading
+     */
+    loadClassFor (aClass) {
+        return (aClass && this.isReplica() && aClass.replicaClass) ? aClass.replicaClass() : aClass;
+    }
+
     classForName (className) {
         const m = this.classNameConversionMap();
         if (m.has(className)) {
@@ -1958,7 +1979,7 @@
             return null;
         }
 
-        const aClass = this.classForName(className);
+        const aClass = this.loadClassFor(this.classForName(className));
 
         if (!aClass) {
             const error = "missing class '" + className + "' - returning null";

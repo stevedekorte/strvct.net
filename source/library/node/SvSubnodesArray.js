@@ -119,6 +119,28 @@
         return this;
     }
 
+    /**
+     * @description Loads a newer record in place (a replica applying the
+     * host's changes): the subnodes are replaced through the hooked mutators,
+     * so the owner hears of the change, and new members get it as parent.
+     * @param {Object} aRecord
+     * @param {Object} aStore
+     * @returns {SvSubnodesArray}
+     * @category Storage
+     */
+    reloadFromRecord (aRecord, aStore) {
+        const subnodes = aRecord.values.map(v => aStore.unrefValue(v)).filter(v => v !== null && v !== undefined);
+        if (this.hasSameValuesAs(subnodes)) {
+            return this;
+        }
+        this.copyFrom(subnodes);
+        const owner = this.owner();
+        if (owner) {
+            subnodes.filter(sn => sn.parentNode && sn.parentNode() !== owner).forEach(sn => sn.setParentNode(owner));
+        }
+        return this;
+    }
+
     didInit () {
         super.didInit();
         assert(this.hasDoneInit());

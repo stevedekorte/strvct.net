@@ -207,14 +207,14 @@
      * and are kept as the mirror. Opens the pool and reads its root.
      * @category Import
      */
-    async asyncImportOpenedPool (opened, localPoolId = null) {
+    async asyncImportOpenedPool (opened, localPoolId = null, options = {}) {
         // a cloud pool id is scoped ("<scope>:<local>"); locally the pool keeps its own id
         const poolId = localPoolId || SvRecordRow.localPoolId(opened.root.poolId);
         this.closeLivePool(poolId);
         await this.asyncDeletePool(poolId);
         const rows = [opened.root].concat(opened.records).map(row => this.localRowFromCloudRow(Object.assign({}, row, { poolId: poolId })));
         await this.asyncPut(rows);
-        return this.asyncOpenImportedPool(poolId, rows);
+        return this.asyncOpenImportedPool(poolId, rows, options);
     }
 
     /**
@@ -262,8 +262,9 @@
      * @returns {Promise<SvObjectPool>}
      * @category Import
      */
-    async asyncOpenImportedPool (poolId, importedRows) {
+    async asyncOpenImportedPool (poolId, importedRows, options = {}) {
         const pool = this.openPoolWithId(poolId);
+        pool.setIsReplica(options.isReplica === true); // before the root loads: a replica loads replica classes
         pool.setLastSyncedSnapshot(Object.assign({}, pool.asJson()));
         await pool.asyncPrefetchTextBlobsForRows(importedRows);
         pool.readRootObject();

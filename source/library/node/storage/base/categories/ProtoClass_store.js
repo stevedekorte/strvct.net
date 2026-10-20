@@ -22,6 +22,17 @@
         return false;
     }
 
+    /**
+     * @description The class a replica of this class's records loads as — a
+     * hosted document's host and its players run different behavior over the
+     * same stored state (SvObjectPool isReplica). Override to name it.
+     * @returns {Class}
+     * @category Projection
+     */
+    static replicaClass () {
+        return this;
+    }
+
     static logPrefix () {
         return "[" + this.svType() + " Class] ";
     }
@@ -235,6 +246,19 @@
         });
 
         return this;
+    }
+
+    /**
+     * @description Loads a newer record into this live object, in place (a
+     * replica applying the host's changes): its slots are set from the record
+     * as on a load, so views observing them update.
+     * @param {Object} aRecord
+     * @param {Object} aStore
+     * @returns {Object} this
+     * @category Storage
+     */
+    reloadFromRecord (aRecord, aStore) {
+        return this.loadFromRecord(aRecord, aStore);
     }
 
     /*

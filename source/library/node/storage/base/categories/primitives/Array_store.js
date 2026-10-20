@@ -6,8 +6,8 @@
 /** * @class Array_store
  * @extends Array
  * @classdesc An Array category with additional methods for storage and serialization.
- 
- 
+
+
  */
 
 (class Array_store extends Array {
@@ -53,6 +53,27 @@
             loadedValues.forEach(v => this.push(v));
         }
         return this;
+    }
+
+    /**
+     * @description Loads a newer record into this live array, in place: its
+     * contents are replaced through the hooked mutators (so observers hear of
+     * it) when they differ.
+     * @param {Object} aRecord
+     * @param {Object} aStore
+     * @returns {Array_store} this
+     * @category Deserialization
+     */
+    reloadFromRecord (aRecord, aStore) {
+        const values = aRecord.values.map(v => aStore.unrefValue(v));
+        if (!this.hasSameValuesAs(values)) {
+            this.copyFrom(values);
+        }
+        return this;
+    }
+
+    hasSameValuesAs (values) {
+        return this.length === values.length && values.every((v, i) => this[i] === v);
     }
 
     /**
