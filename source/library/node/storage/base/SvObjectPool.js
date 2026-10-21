@@ -2430,6 +2430,9 @@
     }
 
     async asyncDeleteRecordRow (pid) {
+        if (this.isReplica()) {
+            return this; // a replica's rows mirror the host's projection: it deletes nothing of its own
+        }
         await this.recordStore().asyncDelete([{ poolId: this.poolId(), objectId: pid }]);
         // a windowed element left its collection: no record references it, so
         // the change is the pool's (its root's) to hear of

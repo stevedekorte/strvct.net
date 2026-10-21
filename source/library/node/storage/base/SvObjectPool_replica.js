@@ -151,9 +151,16 @@
     reloadLiveObjects (pids) {
         pids.forEach((pid) => {
             const obj = this.activeObjectForPid(pid);
-            if (obj && obj.reloadFromRecord) {
-                obj.reloadFromRecord(this.recordForPid(pid), this);
+            if (!obj || !obj.reloadFromRecord) {
+                return;
             }
+            const record = this.recordForPid(pid);
+            if (!record) {
+                const row = this.recordStore().rowForKey(this.poolId(), pid);
+                console.warn(this.logPrefix() + "replica: no record for live " + obj.svType() + " " + pid + " after writing its row (row " + (row ? (row.isDeleted ? "deleted" : "present") : "missing") + ") — skipped");
+                return;
+            }
+            obj.reloadFromRecord(record, this);
         });
         return this;
     }

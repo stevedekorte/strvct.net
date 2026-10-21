@@ -274,6 +274,8 @@ async function main () {
     console.log("\nA replica stores nothing of its own");
     rOrc.setName("renamed by the player");
     check(replica.dirtyObjects().size === 0, "a local change marks nothing dirty");
+    await replica.asyncDeleteRecordRow(rOrc.puuid());
+    check(!!playerStore.rowForKey(host.poolId(), rOrc.puuid()), "a local delete removes no row (a node's delete deletes its row directly)");
 
     await host.promiseClose();
 }
