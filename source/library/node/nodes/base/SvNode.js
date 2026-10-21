@@ -648,7 +648,6 @@
     }
 
     insertLoadedElementsAtFront (elements) {
-        if (this.svType() === "UoAiChat") { console.warn("DEBUG-ORDER window load " + elements.length + " at front of " + this.subnodes().length + " | " + new Error().stack.split("\n").slice(2, 7).map(l => l.trim()).join(" < ")); } // TEMP
         const array = this.subnodes();
         const known = new Set(array);
         const fresh = elements.filter(e => !known.has(e));
