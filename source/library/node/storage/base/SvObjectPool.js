@@ -2412,7 +2412,8 @@
      * @category Windowed Collections
      */
     loadWindowedElements (node, beforeKey, limit) {
-        const rows = this.recordStore().windowedRowsForNode(this.poolId(), node.puuid(), beforeKey, limit);
+        const rows = this.recordStore().windowedRowsForNode(this.poolId(), node.puuid(), beforeKey, limit)
+            .filter(row => !this.isLiveDetachedElement(row.objectId, node));
         this.beginWindowLoad();
         try {
             const objects = rows.map(row => this.objectForPid(row.objectId)).filter(obj => !Type.isNullOrUndefined(obj));
@@ -2423,6 +2424,23 @@
         } finally {
             this.endWindowLoad();
         }
+    }
+
+    /**
+     * @description Whether a windowed row belongs to an element that is in
+     * memory but no longer in this collection — removed (its row goes on a
+     * later tick: deleteWindowedRowIfDetached) or moved. A window load must
+     * not bring it back: a conversation cleared at session start had its old
+     * messages loaded back AHEAD of the new system prompt, which then went to
+     * the model as an ordinary message (Gemini: "Invalid message role: system").
+     * @param {String} pid
+     * @param {SvNode} node - the collection being loaded
+     * @returns {Boolean}
+     * @category Windowed Collections
+     */
+    isLiveDetachedElement (pid, node) {
+        const live = this.activeObjectForPid(pid);
+        return !!live && Type.isFunction(live.parentNode) && live.parentNode() !== node;
     }
 
     windowedElementCount (node) {
@@ -3036,10 +3054,27 @@
     sweep () {
         const unmarkedPidSet = this.allPidsSet().difference(this.markedSet());
         unmarkedPidSet.forEach(pid => {
+            this.warnIfSweepingLiveObject(pid);
             this.onCollectPid(pid);
             this.recordStore().deleteRowInBatch(this.poolId(), pid);
         });
         return unmarkedPidSet.count();
+    }
+
+    /**
+     * @description Collecting the row of an object that is still live (in
+     * memory, in this pool) means the reachability walk missed it — its row
+     * goes while the object stays, so it vanishes on the next load (and a
+     * replica never receives it). Diagnostic.
+     * @category Collection
+     */
+    warnIfSweepingLiveObject (pid) {
+        const obj = this.activeObjectForPid(pid);
+        if (obj && obj.parentNode && obj.parentNode()) {
+            const row = this.rowForPid(pid);
+            const parent = obj.parentNode();
+            console.warn(this.logPrefix() + "collect: sweeping the row of live " + obj.svType() + " " + pid + " (row parentId " + (row && row.parentId) + "; its parent " + parent.svType() + " " + (parent.puuid ? parent.puuid() : "?") + ", marked " + this.markedSet().has(parent.puuid ? parent.puuid() : null) + ")");
+        }
     }
 
     onCollectPid (pid) {

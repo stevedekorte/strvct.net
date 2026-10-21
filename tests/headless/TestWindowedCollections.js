@@ -290,6 +290,21 @@ async function main () {
         await pool.commitStoreDirtyObjects();
     }
 
+    console.log("\nA window load does not bring back elements removed before their rows go");
+    {
+        const chatC = SvGlobals.get("TestWinChat").clone();
+        session2.setChat(chatC);
+        ["old1", "old2"].forEach(t => chatC.addSubnode(newMessage(t)));
+        await pool.commitStoreDirtyObjects();
+        chatC.removeAllSubnodes(); // a conversation cleared at session start: the rows go on a later tick
+        chatC.addSubnode(newMessage("system prompt"));
+        chatC.subnodes().splice(0, chatC.subnodes().length); // as if the window were unloaded…
+        chatC.loadLatestWindow(); // …and something loaded it before the cleared rows were deleted
+        check(!/old/.test(texts(chatC)), "the cleared messages are not loaded back (" + texts(chatC) + ")");
+        session2.setChat(chat2);
+        await pool.commitStoreDirtyObjects();
+    }
+
     await pool.promiseClose();
 }
 

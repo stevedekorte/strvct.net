@@ -187,12 +187,29 @@
     enrollAsWindowedElement (collection) {
         const pool = SvObjectPool.poolOfObject(collection);
         if (!pool || pool.isLoadingWindow() || !this.shouldStore()) {
+            this.warnIfEnrollmentSkipped(collection, pool);
             return this;
         }
         if (!pool.hasActiveObject(this)) {
             pool.addActiveObject(this);
         }
         pool.addDirtyObject(this);
+        return this;
+    }
+
+    /**
+     * @description A new element (no row yet) that joins a windowed collection
+     * during a window load is not enrolled, so it is never stored — it
+     * vanishes on reload, and a replica never receives it. Diagnostic.
+     * @category Record Store
+     */
+    warnIfEnrollmentSkipped (collection, pool) {
+        if (!pool || !this.shouldStore() || (pool.isReplica && pool.isReplica())) {
+            return this; // no pool yet: the collection enrolls its elements when it is stored (enrollWindowedElementsOf)
+        }
+        if (!pool.rowForPid(this.puuid())) {
+            console.warn("[SvStorableNode] new windowed element " + this.svType() + " " + this.puuid() + " joined " + collection.svType() + " during a window load — not enrolled, so it will not be stored", new Error().stack);
+        }
         return this;
     }
 
