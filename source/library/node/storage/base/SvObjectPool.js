@@ -758,15 +758,14 @@
         const isPaired = !!(projected && !projected.isEmpty) && this.fitsInOneCommit(cloudStore, commit, projection.commitPart(projected));
         if (isPaired) {
             commit.projection = projection.commitPart(projected);
+        } else if (projected && !projected.isEmpty) {
+            return this.asyncCommitBesideProjection(cloudStore, { commit, sentSnapshot }, { projection, projected });
         }
         const result = await cloudStore.asyncCommit(commit);
         if (result && result.status === "committed") {
             await this.mirrorCloudVersion(result.version, commit);
             this.setLastSyncedSnapshot(sentSnapshot);
-            if (isPaired) {
-                return this.answerWithProjection(result, projection, projected, result.projectionVersion);
-            }
-            return (projected && !projected.isEmpty) ? this.asyncCommitProjection(cloudStore, projection, projected, result) : result;
+            return isPaired ? this.answerWithProjection(result, projection, projected, result.projectionVersion) : result;
         }
         if (result && result.status === "conflict") {
             if (isPaired && result.version === commit.baseVersion) {
@@ -807,22 +806,87 @@
     }
 
     /**
-     * @description Commits the projection on its own (after the truth, or when
-     * only the projection changed — its first commit, or a resend after a
-     * conflict); staged by the cloud store when it is large.
+     * @description Commits the projection on its own, when only the projection
+     * changed (its first commit, or a resend after a conflict).
      * @returns {Promise<Object>} the truth's answer, with the projection's added
      * @category Cloud Mirror
      */
     async asyncCommitProjection (cloudStore, projection, projected, truthAnswer) {
-        const part = Object.assign({ requestId: Object.newUuid() }, projection.commitPart(projected));
-        const result = await cloudStore.asyncCommit(part);
+        const result = await this.asyncSendProjection(cloudStore, { projection, projected }, null);
+        return this.answerFromProjection(truthAnswer, { projection, projected }, result);
+    }
+
+    /**
+     * @description A truth commit too large to pair with its projection: both
+     * are sent at once (each staged when large), and the projection's
+     * publication waits for the truth's — it is aborted when the truth did not
+     * land, so players never see a version the truth lacks.
+     * @param {Object} truth - { commit, sentSnapshot }
+     * @param {Object} side - { projection, projected }
+     * @returns {Promise<Object>} the truth's answer, with the projection's added
+     * @category Cloud Mirror
+     */
+    async asyncCommitBesideProjection (cloudStore, truth, side) {
+        let openGate = null;
+        const gate = new Promise(resolve => { openGate = resolve; });
+        const projectionWork = this.asyncSendProjection(cloudStore, side, gate);
+        const result = await this.asyncCommitTruthOpening(cloudStore, truth, openGate);
+        const projectionResult = await projectionWork;
+        return (result && result.status === "committed") ? this.answerFromProjection(result, side, projectionResult) : result;
+    }
+
+    /**
+     * @description Commits the truth and then opens the projection's gate —
+     * true when it landed, false otherwise (including a throw).
+     * @returns {Promise<Object>} the truth's answer (a conflict carries the commit)
+     * @category Cloud Mirror
+     */
+    async asyncCommitTruthOpening (cloudStore, truth, openGate) {
+        let result = null;
+        try {
+            result = await cloudStore.asyncCommit(truth.commit);
+            if (result && result.status === "committed") {
+                await this.mirrorCloudVersion(result.version, truth.commit);
+                this.setLastSyncedSnapshot(truth.sentSnapshot);
+            }
+        } finally {
+            openGate(!!result && result.status === "committed");
+        }
+        return (result && result.status === "conflict") ? Object.assign({ commit: truth.commit }, result) : result;
+    }
+
+    /**
+     * @description Sends the projection's changes as their own commit, gated
+     * when given a gate; a failure is answered, not thrown, since the truth
+     * may already have landed (the changes stay unsent and go with the next save).
+     * @returns {Promise<Object>} the projection commit's answer
+     * @category Cloud Mirror
+     */
+    async asyncSendProjection (cloudStore, side, gate) {
+        const part = Object.assign({ requestId: Object.newUuid() }, side.projection.commitPart(side.projected));
+        try {
+            return await cloudStore.asyncCommit(part, { finalizeGate: gate });
+        } catch (error) {
+            return { status: "failed", reason: error && error.message };
+        }
+    }
+
+    /**
+     * @description The truth's answer, with the projection's added when it
+     * committed; a conflict marks the projection for a whole resend.
+     * @returns {Object}
+     * @category Cloud Mirror
+     */
+    answerFromProjection (truthAnswer, side, result) {
         if (result && result.status === "committed") {
-            return this.answerWithProjection(truthAnswer, projection, projected, result.version);
+            return this.answerWithProjection(truthAnswer, side.projection, side.projected, result.version);
         }
         if (result && result.status === "conflict") {
-            projection.didConflict(result.version);
+            side.projection.didConflict(result.version);
         }
-        console.warn(this.logPrefix() + "projection commit " + (result && result.status) + (result && result.reason ? " (" + result.reason + ")" : ""));
+        if (!result || result.status !== "aborted") {
+            console.warn(this.logPrefix() + "projection commit " + (result && result.status) + (result && result.reason ? " (" + result.reason + ")" : ""));
+        }
         return truthAnswer;
     }
 

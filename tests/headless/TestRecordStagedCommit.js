@@ -139,6 +139,24 @@ async function main () {
     try { await m3.asyncStageFinalize({ poolId: "r", requestId: "s" }); } catch (e) { late = e.code; }
     check(late === "failed-precondition", "the abandoned stage cannot finalize");
 
+    console.log("\nA finalize gate holds publication; a closed gate aborts the stage");
+    const SvStagedRecordCommit2 = SvGlobals.get("SvStagedRecordCommit");
+    const m4 = SvMemoryRecordStore.clone().setMaxOpsPerCommit(200);
+    await seed(m4, "g", ["a"]);
+    const gated = { poolId: "g", baseVersion: 1, requestId: "gs", writes: [row("g", "g", { v: 2 })].concat(Array.from({ length: 450 }, (_, i) => row("g", "n" + i, { v: 2 }))), deletes: [] };
+    let openGate = null;
+    const running = m4.asyncCommit(gated, { finalizeGate: new Promise(resolve => { openGate = resolve; }) });
+    await new Promise(r => setTimeout(r, 20));
+    check(m4.stages().has("g") && (await m4.asyncOpen("g")).state === "busy", "written, but held at the gate (the pool stays busy)");
+    openGate(false);
+    check((await running).status === "aborted", "a closed gate answers aborted");
+    const afterAbort = await m4.asyncOpen("g");
+    check(afterAbort.state === "ready" && afterAbort.version === 1 && afterAbort.records.length === 1, "the pool is as it was: version 1, the new rows gone");
+    check((await m4.asyncCommit(Object.assign({}, gated, { requestId: "gs2" }), { finalizeGate: Promise.resolve(true) })).status === "committed", "an open gate finalizes");
+    check((await m4.asyncCommit({ poolId: "g", baseVersion: 2, requestId: "small", writes: [row("g", "a", { v: 3 })], deletes: [] }, { finalizeGate: Promise.resolve(false) })).status === "aborted", "an unstaged commit behind a closed gate is not sent");
+    check((await m4.asyncStageAbort({ poolId: "g", requestId: "nothing-open" })).status === "aborted", "aborting a stage that is not open is a no-op");
+    check(typeof SvStagedRecordCommit2.prototype.asyncPassesGate === "function", "the driver checks its gate before finalize");
+
     console.log("\nA pool commits a large change through the cloud store; a busy pool is retried");
     const cloudMemory = SvMemoryRecordStore.clone();
     const cloud = SvCloudRecordStore.clone().setBackend(fakeBackendOver(cloudMemory)).setBusyRetryDelays([5, 5, 5]);

@@ -10,6 +10,11 @@
  *   asyncStageBegin({ poolId, baseVersion, requestId, create? })  → { status: "staging"|"conflict"|"busy"|"committed"|"refused", version }
  *   asyncStageWrite({ poolId, requestId, writes, deletes })        → { status: "staging" } (a batch; never the root)
  *   asyncStageFinalize({ poolId, requestId, rootWrite })           → { status: "committed", version }
+ *   asyncStageAbort({ poolId, requestId })                         → { status: "aborted" } (undone now)
+ *
+ * A finalize gate (a promise of a boolean) holds finalize until another commit
+ * has landed — a projection waits for its truth — and aborts the stage if that
+ * commit did not.
  *
  * The store reserves the next version at begin, keeps the pre-image of each row
  * the stage overwrites, answers every other reader and writer of the pool "busy"
@@ -33,6 +38,12 @@
         {
             const slot = this.newSlot("maxOpsPerWrite", 200);
             slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("finalizeGate", null);
+            slot.setSlotType("Promise");
+            slot.setAllowsNullValue(true);
+            slot.setDescription("resolves true to finalize, false to abort; null finalizes at once");
         }
         {
             const slot = this.newSlot("maxConcurrentWrites", 4);
@@ -70,7 +81,20 @@
             return begun;
         }
         await this.asyncWriteBatches();
+        if (!await this.asyncPassesGate()) {
+            return this.store().asyncStageAbort({ poolId: commit.poolId, requestId: commit.requestId });
+        }
         return this.store().asyncStageFinalize({ poolId: commit.poolId, requestId: commit.requestId, rootWrite: this.rootWrite() });
+    }
+
+    /**
+     * @description Whether finalize may go ahead: no gate, or a gate that
+     * opened (the commit it waits for landed).
+     * @returns {Promise<Boolean>}
+     * @category Writing
+     */
+    async asyncPassesGate () {
+        return this.finalizeGate() ? !!(await this.finalizeGate()) : true;
     }
 
     /**

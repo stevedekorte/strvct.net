@@ -142,13 +142,17 @@
 
     // --- cloud commit protocol ---
 
-    async asyncCommit (commit) {
+    async asyncCommit (commit, options = {}) {
         const receiptKey = commit.poolId + " " + commit.requestId;
         if (this.receipts().has(receiptKey)) {
             return this.receipts().get(receiptKey); // a retry gets the first answer
         }
+        const gate = options.finalizeGate || null;
         if (this.maxOpsPerCommit() !== null && SvStagedRecordCommit.needsStaging(commit, this.maxOpsPerCommit(), Infinity)) {
-            return this.asyncCommitStaged(commit);
+            return this.asyncCommitStaged(commit, gate);
+        }
+        if (gate && !await gate) {
+            return { status: "aborted" };
         }
         const result = this.commitResult(commit);
         if (result.status === "committed") {
@@ -294,9 +298,9 @@
 
     // --- staged commits ---
 
-    async asyncCommitStaged (commit) {
+    async asyncCommitStaged (commit, gate = null) {
         try {
-            return await SvStagedRecordCommit.clone().setStore(this).setCommit(commit).setMaxOpsPerWrite(this.maxOpsPerCommit()).asyncRun();
+            return await SvStagedRecordCommit.clone().setStore(this).setCommit(commit).setMaxOpsPerWrite(this.maxOpsPerCommit()).setFinalizeGate(gate).asyncRun();
         } catch (error) {
             if (error.code === "failed-precondition" || error.code === "invalid-argument") {
                 return { status: "refused", reason: error.message };
@@ -363,6 +367,14 @@
         const result = { status: "committed", version: stage.reservedVersion };
         this.receipts().set(receiptKey, result);
         return result;
+    }
+
+    async asyncStageAbort (args) {
+        const stage = this.stages().get(args.poolId);
+        if (stage && stage.requestId === args.requestId) {
+            this.rollBackStage(args.poolId, stage);
+        }
+        return { status: "aborted" };
     }
 
     openStage (poolId, requestId) {

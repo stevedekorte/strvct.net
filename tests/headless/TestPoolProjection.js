@@ -226,6 +226,23 @@ async function main () {
     opened = await cloud.asyncOpen(projectionId);
     check(extras.every(n => opened.records.some(r => r.objectId === n.puuid())), "the projection caught up");
 
+    console.log("\nWhen the truth is refused, the projection sent beside it is not published");
+    const more = [5, 6, 7, 8].map((i) => { const n = TestPjNpc.clone(); n.setName("Guard " + i); root.addSubnode(n); return n; });
+    await pool.commitStoreDirtyObjects();
+    const projectionBefore = (await cloud.asyncOpen(projectionId)).version;
+    cloudMemory.rootRowForPool(pool.poolId()).version += 1; // someone else committed the truth meanwhile
+    cloud.maxOpsPerCommit = () => 8;
+    result = await pool.asyncCommitToCloud(cloud, { projection });
+    delete cloud.maxOpsPerCommit;
+    check(result.status === "conflict" && !!result.commit, "the truth conflicts (and carries what was refused)");
+    opened = await cloud.asyncOpen(projectionId);
+    check(opened.version === projectionBefore && !more.some(n => opened.records.some(r => r.objectId === n.puuid())), "the projection did not move: v" + opened.version);
+    check(!projection.changes().isEmpty, "its changes stay unsent, for the next save");
+    cloudMemory.rootRowForPool(pool.poolId()).version -= 1;
+    calls.length = 0;
+    result = await pool.asyncCommitToCloud(cloud, { projection });
+    check(result.status === "committed" && result.projection, "the next save sends both");
+
     console.log("\nA host reopening a session it committed marks the projection in sync");
     const reopened = SvPoolProjection.clone().setPool(pool).setCloudPoolId(projectionId).markInSync(opened.version);
     check(reopened.changes().isEmpty && reopened.version() === opened.version, "nothing to send until something changes");

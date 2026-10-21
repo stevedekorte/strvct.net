@@ -202,17 +202,23 @@
      * @description The commit protocol. A refusal (invalid argument, permission,
      * precondition) arrives as a thrown error from the backend and is returned as
      * `{ status: "refused", reason }` so callers see the three outcomes the
-     * protocol names.
+     * protocol names. `options.finalizeGate` (a promise of a boolean) holds the
+     * commit's publication until another commit has landed, and answers
+     * `{ status: "aborted" }` when that commit did not.
      * @category Write
      */
-    async asyncCommit (commit) {
-        return this.asyncRetryWhileBusy(() => this.asyncCommitOnce(commit), answer => !!answer && answer.status === "busy");
+    async asyncCommit (commit, options = {}) {
+        return this.asyncRetryWhileBusy(() => this.asyncCommitOnce(commit, options), answer => !!answer && answer.status === "busy");
     }
 
-    async asyncCommitOnce (commit) {
+    async asyncCommitOnce (commit, options = {}) {
         try {
+            const gate = options.finalizeGate || null;
             if (SvStagedRecordCommit.needsStaging(commit, this.maxOpsPerCommit(), this.maxBytesPerCommit())) {
-                return await SvStagedRecordCommit.clone().setStore(this).setCommit(commit).asyncRun();
+                return await SvStagedRecordCommit.clone().setStore(this).setCommit(commit).setFinalizeGate(gate).asyncRun();
+            }
+            if (gate && !await gate) {
+                return { status: "aborted" };
             }
             return await this.call("records-commit", commit);
         } catch (error) {
@@ -271,6 +277,10 @@
 
     async asyncStageFinalize (args) {
         return this.call("records-stage-finalize", args);
+    }
+
+    async asyncStageAbort (args) {
+        return this.call("records-stage-abort", args);
     }
 
 }.initThisClass());
