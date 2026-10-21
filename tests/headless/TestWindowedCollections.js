@@ -301,6 +301,11 @@ async function main () {
         chatC.subnodes().splice(0, chatC.subnodes().length); // as if the window were unloaded…
         chatC.loadLatestWindow(); // …and something loaded it before the cleared rows were deleted
         check(!/old/.test(texts(chatC)), "the cleared messages are not loaded back (" + texts(chatC) + ")");
+        const leaving = [...pool.leavingWindowedPids()];
+        leaving.forEach(pid => pool.activeObjects().delete(pid)); // and when they are no longer in memory either
+        chatC.subnodes().splice(0, chatC.subnodes().length);
+        chatC.loadLatestWindow();
+        check(leaving.length === 2 && !/old/.test(texts(chatC)), "nor when only their rows remain (" + texts(chatC) + ", " + leaving.length + " leaving)");
         session2.setChat(chat2);
         await pool.commitStoreDirtyObjects();
     }

@@ -168,11 +168,33 @@
         }
         const joinsWindow = newValue && newValue.subnodesAreWindowed && newValue.subnodesAreWindowed();
         if (joinsWindow) {
+            this.noteWindowedLeaving(newValue, false);
             this.enrollAsWindowedElement(newValue);
         }
         const leavesWindow = oldValue && oldValue.subnodesAreWindowed && oldValue.subnodesAreWindowed() && !newValue;
         if (leavesWindow) {
+            this.noteWindowedLeaving(oldValue, true);
             this.scheduleMethod("deleteWindowedRowIfDetached");
+        }
+        return this;
+    }
+
+    /**
+     * @description Tells the collection's pool this element is leaving (its
+     * row goes on a later tick) or back, so a window load in between does not
+     * load it back.
+     * @param {SvNode} collection
+     * @param {Boolean} isLeaving
+     * @category Record Store
+     */
+    noteWindowedLeaving (collection, isLeaving) {
+        const pool = SvObjectPool.poolOfObject(collection) || SvObjectPool.poolOfObject(this);
+        if (pool && pool.leavingWindowedPids) {
+            if (isLeaving) {
+                pool.leavingWindowedPids().add(this.puuid());
+            } else {
+                pool.leavingWindowedPids().delete(this.puuid());
+            }
         }
         return this;
     }
@@ -257,7 +279,10 @@
         }
         const pool = SvObjectPool.poolOfObject(this);
         if (pool && pool.hasRecordForPid(this.puuid())) {
-            pool.asyncDeleteRecordRow(this.puuid()); // its subtree is swept by the next collect
+            pool.asyncDeleteRecordRow(this.puuid()) // its subtree is swept by the next collect
+                .then(() => pool.leavingWindowedPids().delete(this.puuid()));
+        } else if (pool) {
+            pool.leavingWindowedPids().delete(this.puuid());
         }
         return this;
     }

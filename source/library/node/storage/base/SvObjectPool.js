@@ -187,6 +187,12 @@
             slot.setDescription("root row placement: this pool's sort key under its parent, or null");
         }
         {
+            const slot = this.newSlot("leavingWindowedPids", null);
+            slot.setSlotType("Set");
+            slot.setFinalInitProto(Set);
+            slot.setDescription("windowed elements detached from their collection whose rows are not deleted yet — a window load skips them");
+        }
+        {
             const slot = this.newSlot("isReplica", false);
             slot.setSlotType("Boolean");
             slot.setDescription("a replica: a read-only copy of a hosted document's projection — it loads each class's replicaClass() and never stores local changes (SvObjectPool_replica)");
@@ -2413,7 +2419,7 @@
      */
     loadWindowedElements (node, beforeKey, limit) {
         const rows = this.recordStore().windowedRowsForNode(this.poolId(), node.puuid(), beforeKey, limit)
-            .filter(row => !this.isLiveDetachedElement(row.objectId, node));
+            .filter(row => !this.isLeavingWindowedElement(row.objectId, node));
         this.beginWindowLoad();
         try {
             const objects = rows.map(row => this.objectForPid(row.objectId)).filter(obj => !Type.isNullOrUndefined(obj));
@@ -2427,9 +2433,10 @@
     }
 
     /**
-     * @description Whether a windowed row belongs to an element that is in
-     * memory but no longer in this collection — removed (its row goes on a
-     * later tick: deleteWindowedRowIfDetached) or moved. A window load must
+     * @description Whether a windowed row belongs to an element that left
+     * this collection — removed (its row goes on a later tick:
+     * deleteWindowedRowIfDetached; noted in leavingWindowedPids meanwhile) or
+     * moved. A window load must
      * not bring it back: a conversation cleared at session start had its old
      * messages loaded back AHEAD of the new system prompt, which then went to
      * the model as an ordinary message (Gemini: "Invalid message role: system").
@@ -2438,7 +2445,10 @@
      * @returns {Boolean}
      * @category Windowed Collections
      */
-    isLiveDetachedElement (pid, node) {
+    isLeavingWindowedElement (pid, node) {
+        if (this.leavingWindowedPids().has(pid)) {
+            return true; // detached, its row not deleted yet — whether or not the object is still in memory
+        }
         const live = this.activeObjectForPid(pid);
         return !!live && Type.isFunction(live.parentNode) && live.parentNode() !== node;
     }
