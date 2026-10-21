@@ -153,6 +153,29 @@
         }
 
         /**
+     * @member {Boolean} keyIsVisible - Whether the speaker heading shows. Set
+     * on the host at run time (the conversation hides it when a message is
+     * added; an image message shows its status there), so it travels with the
+     * message: a copy that receives its messages without adding them (a
+     * replica's window) would otherwise show every one under "Narrator".
+     * @category UI
+     */
+        {
+            const slot = this.overrideSlot("keyIsVisible");
+            slot.setIsInCloudJson(true);
+        }
+
+        /**
+     * @member {Boolean} valueIsVisible - Whether the value shows (an image or
+     * video message hides it while it generates); travels for the same reason.
+     * @category UI
+     */
+        {
+            const slot = this.overrideSlot("valueIsVisible");
+            slot.setIsInCloudJson(true);
+        }
+
+        /**
      * @member {String} displayLifetime - How long the message stays visible
      * to the user (Plans/Disappearing Messages): "keep" (default, never
      * expires), "after-messages-deep:N" (expires once ≥ N messages from the
