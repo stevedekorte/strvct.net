@@ -11,10 +11,11 @@
  *   asyncStageWrite({ poolId, requestId, writes, deletes })        → { status: "staging" } (a batch; never the root)
  *   asyncStageFinalize({ poolId, requestId, rootWrite })           → { status: "committed", version }
  *
- * The store reserves the next version at begin, keeps each touched row's
- * pre-image, answers every other reader and writer of the pool "busy" until
- * finalize, and rolls an abandoned stage back — so the result is the same one
- * version a single commit would make, or nothing.
+ * The store reserves the next version at begin, keeps the pre-image of each row
+ * the stage overwrites, answers every other reader and writer of the pool "busy"
+ * until finalize, and rolls an abandoned stage back — so the result is the same
+ * one version a single commit would make, or nothing. Batches touch disjoint
+ * rows, so they are sent a few at a time; finalize waits for all of them.
  */
 (class SvStagedRecordCommit extends ProtoClass {
 
@@ -32,6 +33,11 @@
         {
             const slot = this.newSlot("maxOpsPerWrite", 200);
             slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("maxConcurrentWrites", 4);
+            slot.setSlotType("Number");
+            slot.setDescription("batches in flight at once (each is its own request and transaction)");
         }
         {
             const slot = this.newSlot("maxBytesPerWrite", 2 * 1024 * 1024);
@@ -63,10 +69,27 @@
         if (begun.status !== "staging") {
             return begun;
         }
-        for (const batch of this.batches()) {
-            await this.store().asyncStageWrite(Object.assign({ poolId: commit.poolId, requestId: commit.requestId }, batch));
-        }
+        await this.asyncWriteBatches();
         return this.store().asyncStageFinalize({ poolId: commit.poolId, requestId: commit.requestId, rootWrite: this.rootWrite() });
+    }
+
+    /**
+     * @description Sends the batches, up to maxConcurrentWrites at a time; the
+     * first failure rejects (the stage stays open, and expires if abandoned).
+     * @returns {Promise}
+     * @category Writing
+     */
+    async asyncWriteBatches () {
+        const commit = this.commit();
+        const pending = this.batches();
+        const sendNext = async () => {
+            while (pending.length > 0) {
+                const batch = pending.shift();
+                await this.store().asyncStageWrite(Object.assign({ poolId: commit.poolId, requestId: commit.requestId }, batch));
+            }
+        };
+        const lanes = Math.max(1, Math.min(this.maxConcurrentWrites(), pending.length));
+        await Promise.all(Array.from({ length: lanes }, sendNext));
     }
 
     beginArgs () {
