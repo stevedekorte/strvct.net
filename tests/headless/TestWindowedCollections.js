@@ -306,6 +306,18 @@ async function main () {
         chatC.subnodes().splice(0, chatC.subnodes().length);
         chatC.loadLatestWindow();
         check(leaving.length === 2 && !/old/.test(texts(chatC)), "nor when only their rows remain (" + texts(chatC) + ", " + leaving.length + " leaving)");
+        await pool.commitStoreDirtyObjects();
+
+        const chatD = SvGlobals.get("TestWinChat").clone(); // a chat whose window was never loaded when it was cleared
+        session2.setChat(chatD);
+        ["unseen1", "unseen2"].forEach(t => chatD.addSubnode(newMessage(t)));
+        await pool.commitStoreDirtyObjects();
+        await new Promise(resolve => setTimeout(resolve, 0)); // let pending row deletions settle
+        chatD.subnodes().unhooked_splice(0, chatD.subnodes().length); // its window is unloaded: the rows are in the store only
+        chatD.removeAllSubnodes(); // cleared (a session start) — must take the unloaded elements too
+        chatD.addSubnode(newMessage("system prompt"));
+        chatD.loadOlderWindow(); // the reader scrolls up
+        check(!/unseen/.test(texts(chatD)), "clearing a chat also clears the elements it never loaded (" + texts(chatD) + ")");
         session2.setChat(chat2);
         await pool.commitStoreDirtyObjects();
     }

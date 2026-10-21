@@ -180,6 +180,22 @@
     }
 
     /**
+     * @description Removing all of a windowed collection's subnodes also
+     * discards the elements it has not loaded (they are in the store only).
+     * @returns {SvStorableNode}
+     * @category Record Store
+     */
+    removeAllSubnodes () {
+        if (this.subnodesAreWindowed()) {
+            const pool = this.windowedPool();
+            if (pool) {
+                pool.discardUnloadedWindowedElementsOf(this);
+            }
+        }
+        return super.removeAllSubnodes();
+    }
+
+    /**
      * @description Tells the collection's pool this element is leaving (its
      * row goes on a later tick) or back, so a window load in between does not
      * load it back.

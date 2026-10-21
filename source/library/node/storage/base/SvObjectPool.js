@@ -2453,6 +2453,31 @@
         return !!live && Type.isFunction(live.parentNode) && live.parentNode() !== node;
     }
 
+    /**
+     * @description Discards the stored elements of a windowed node that are
+     * not loaded — what clearing the node must also take (the loaded ones go
+     * through their own detach). Each is noted as leaving until its row is
+     * deleted, so no window load brings it back: a chat cleared at session
+     * start with its window unloaded kept its old messages, and an older-window
+     * load put them AHEAD of the new system prompt ("Invalid message role:
+     * system" from Gemini).
+     * @param {SvNode} node
+     * @returns {Number} how many were discarded
+     * @category Windowed Collections
+     */
+    discardUnloadedWindowedElementsOf (node) {
+        if (this.isReplica()) {
+            return 0; // a replica's rows mirror the host's projection
+        }
+        const loaded = new Set((node._subnodes || []).map(sn => sn.puuid()));
+        const unloaded = this.recordStore().windowedRowsForNode(this.poolId(), node.puuid(), null, null).filter(row => !loaded.has(row.objectId));
+        unloaded.forEach((row) => {
+            this.leavingWindowedPids().add(row.objectId);
+            this.asyncDeleteRecordRow(row.objectId).then(() => this.leavingWindowedPids().delete(row.objectId)); // their subtrees are swept by the next collect
+        });
+        return unloaded.length;
+    }
+
     windowedElementCount (node) {
         return this.recordStore().windowedRowCountForNode(this.poolId(), node.puuid());
     }
