@@ -648,6 +648,7 @@
     }
 
     insertLoadedElementsAtFront (elements) {
+        if (this.svType() === "UoAiChat") { console.warn("DEBUG-ORDER window load " + elements.length + " at front of " + this.subnodes().length + " | " + new Error().stack.split("\n").slice(2, 7).map(l => l.trim()).join(" < ")); } // TEMP
         const array = this.subnodes();
         const known = new Set(array);
         const fresh = elements.filter(e => !known.has(e));
@@ -1379,7 +1380,13 @@
      * @returns {SvNode} This instance.
      */
     removeAllSubnodes () {
-        if (this.subnodeCount()) {
+        // the loaded subnodes, not subnodeCount(): for a windowed collection
+        // that is the store's count, which misses elements added since the
+        // last store pass — a chat holding only new messages was not cleared,
+        // so a session's opening system prompt landed after them ("Invalid
+        // message role: system" from Gemini)
+        const hasLoaded = Array.isArray(this._subnodes) && this._subnodes.length > 0;
+        if (hasLoaded || (!this.subnodesAreWindowed() && this.subnodeCount())) { // a lazy, unmaterialized list still counts
             this.subnodes().slice().forEach((subnode) => {
                 this.justRemoveSubnode(subnode);
             });

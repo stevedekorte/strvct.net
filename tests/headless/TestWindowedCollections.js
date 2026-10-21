@@ -318,6 +318,14 @@ async function main () {
         chatD.addSubnode(newMessage("system prompt"));
         chatD.loadOlderWindow(); // the reader scrolls up
         check(!/unseen/.test(texts(chatD)), "clearing a chat also clears the elements it never loaded (" + texts(chatD) + ")");
+
+        const chatE = SvGlobals.get("TestWinChat").clone(); // a stored chat with no stored elements
+        session2.setChat(chatE);
+        await pool.commitStoreDirtyObjects();
+        ["new1", "new2"].forEach(t => chatE.addSubnode(newMessage(t))); // added since the last store pass: the store counts none
+        check(chatE.subnodeCount() === 0 && chatE.subnodes().length === 2, "the store counts none of them (" + chatE.subnodeCount() + " stored, 2 loaded)");
+        chatE.removeAllSubnodes();
+        check(chatE.subnodes().length === 0, "clearing removes elements not yet stored (" + texts(chatE) + ")");
         session2.setChat(chat2);
         await pool.commitStoreDirtyObjects();
     }
