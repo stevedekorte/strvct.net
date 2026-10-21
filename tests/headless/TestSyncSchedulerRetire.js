@@ -79,6 +79,35 @@ async function main () {
     scheduler.fullSyncNow();
     check(log.join(",") === "tile3", "a later pass sends normally (got " + log.join(",") + ")");
     check(scheduler.passActions().size === 0, "the pass's snapshot is cleared afterwards");
+
+    console.log("\nA retired target is never scheduled, however it is asked");
+    const goneLog = [];
+    const gone = newTarget(goneLog, "gone");
+    let isGone = true;
+    gone.isRetired = () => isGone;
+    const warnings = [];
+    const originalWarn = console.warn;
+    console.warn = (...args) => { warnings.push(String(args[0])); };
+    const scheduled = scheduler.scheduleTargetAndMethod(gone, "syncFromNode", 0); // e.g. a revived observation
+    scheduler.scheduleTargetAndMethod(gone, "syncFromNode", 0); // asked again
+    console.warn = originalWarn;
+    scheduler.fullSyncNow();
+    check(scheduled === false && goneLog.length === 0, "refused, and it received nothing (got " + goneLog.join(",") + ")");
+    check(warnings.filter(w => w.includes("retired view")).length === 1, "reported once, not per ask (" + warnings.length + " warnings)");
+
+    console.log("\nA target that retires while queued is skipped by the pass");
+    log = [];
+    const later = newTarget(log, "later");
+    let isLaterRetired = false;
+    later.isRetired = () => isLaterRetired;
+    scheduler.scheduleTargetAndMethod(later, "syncFromNode", 0);
+    isLaterRetired = true; // retired without being unscheduled
+    scheduler.fullSyncNow();
+    check(log.length === 0, "the queued sync was dropped (got " + log.join(",") + ")");
+    isGone = false;
+    scheduler.scheduleTargetAndMethod(gone, "syncFromNode", 0);
+    scheduler.fullSyncNow();
+    check(goneLog.join(",") === "gone", "a live target is scheduled as before (got " + goneLog.join(",") + ")");
 }
 
 main().then(() => {

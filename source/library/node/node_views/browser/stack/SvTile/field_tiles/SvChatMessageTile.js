@@ -336,7 +336,10 @@
      */
     syncFromNode () {
         const node = this.node();
-        this.watchSender(node);
+        // (No watchSender(node) here: the node view's own observation — this
+        // observer, this sender, any note — already delivers the speech notes,
+        // and re-adding it on every sync revived it after retirement, so a
+        // retired tile heard its node again and synced with no element.)
         // Expose the message's role ("user" / "assistant") to CSS so themes
         // can style them differently (e.g. a left rule on player messages).
         if (node && node.role) {
@@ -701,6 +704,17 @@
             this.hideDisplay();
         }
         return this.disconnectProgressCompactObserver();
+    }
+
+    /**
+     * @description A retired tile stops its intersection observer, whose
+     * callback would otherwise still reach it.
+     * @returns {SvChatMessageTile}
+     * @category Lifecycle
+     */
+    prepareToRetire () {
+        this.disconnectProgressCompactObserver();
+        return super.prepareToRetire();
     }
 
     disconnectProgressCompactObserver () {

@@ -128,6 +128,16 @@
         }
 
         /**
+         * @member {Set} retiredTargetWarnings - "Class.method" pairs already
+         * reported as asked of a retired view (warnOfRetiredTargetOnce).
+         * @category State
+         */
+        {
+            const slot = this.newSlot("retiredTargetWarnings", new Set()); // "Class.method" already reported
+            slot.setSlotType("Set");
+        }
+
+        /**
          * @member {Map} passActions - The actions the running pass took from
          * the queue (key → action), so unscheduling during the pass reaches
          * them: a view retired by an earlier action of the pass must not
@@ -247,6 +257,10 @@
      * @category Scheduling
      */
     scheduleTargetAndMethod (target, syncMethod, optionalOrder) { // higher order performed last
+        if (this.isRetiredTarget(target)) {
+            this.warnOfRetiredTargetOnce(target, syncMethod);
+            return false;
+        }
         if (!this.hasScheduledTargetAndMethod(target, syncMethod)) {
             const newAction = this.newActionForTargetAndMethod(target, syncMethod, optionalOrder);
             this.logDebug(() => "    -> scheduling " + newAction.description());
@@ -272,6 +286,34 @@
         }
 
         return false;
+    }
+
+    /**
+     * @description Whether a target has retired (a view whose element is gone
+     * or going): a sync sent to it would touch a null element, so it is never
+     * scheduled — whatever path asked (a revived observation, a timer, an
+     * observer callback).
+     * @param {Object} target
+     * @returns {Boolean}
+     * @category Scheduling
+     */
+    isRetiredTarget (target) {
+        return !!target && typeof target.isRetired === "function" && target.isRetired();
+    }
+
+    /**
+     * @description Reports, once per class and method, a sync asked of a
+     * retired target — with the asking stack, so the path that still reaches
+     * a retired view can be found and closed.
+     * @category Scheduling
+     */
+    warnOfRetiredTargetOnce (target, syncMethod) {
+        const key = (target.svType ? target.svType() : typeof target) + "." + syncMethod;
+        if (!this.retiredTargetWarnings().has(key)) {
+            this.retiredTargetWarnings().add(key);
+            console.warn("SvSyncScheduler: refused to schedule " + key + " on a retired view (first time for this class/method)", new Error("scheduled from").stack);
+        }
+        return this;
     }
 
     /**
@@ -449,8 +491,8 @@
         this.actions().clear();
 
         actions.forEach((action) => {
-            if (action.isUnscheduled()) {
-                // unscheduled by an earlier action of this pass (its target retired)
+            if (action.isUnscheduled() || this.isRetiredTarget(action.target())) {
+                // unscheduled by an earlier action of this pass, or its target retired
             } else {
                 this.setCurrentAction(action);
                 const actionError = action.tryToSend();

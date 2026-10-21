@@ -56,6 +56,15 @@
 
     initPrototypeSlots () {
         /**
+         * @member {boolean} isRetired - Set as retirement begins: a retired view
+         * has (or is about to lose) its element, so nothing may sync it again
+         * (SvSyncScheduler refuses to schedule it).
+         */
+        {
+            const slot = this.newSlot("isRetired", false);
+            slot.setSlotType("Boolean");
+        }
+        /**
          * @member {string} elementClassName
          */
         {
@@ -163,6 +172,7 @@
      * @returns {SvElementDomView} The current instance
      */
     prepareToRetire () {
+        this.setIsRetired(true);
 
         console.log(this.svTypeId() + " prepareToRetire");
         assert(!this.hasParentView());
