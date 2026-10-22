@@ -3000,8 +3000,35 @@
             const recordClass = SvGlobals.globals()[recordType];
             assert(recordClass && recordClass.isClass && recordClass.isClass(), "missing class for " + recordType);
         }
-
+        this.warnIfRecordOverBudget(record.type, jsonString.length);
         return jsonString;
+    }
+
+    /**
+     * @description Record size discipline (Plans/Record Store §5): records
+     * stay small (stored Strings are capped, BlobStrings spill), so one over
+     * this budget means a class keeps unbounded data inline (a growing list, a
+     * large JSON value) — named here, once per class, long before a row nears a
+     * backend's per-row limit (Firestore's 1 MiB).
+     * @category Record Size
+     */
+    warnIfRecordOverBudget (type, length) {
+        if (length > SvObjectPool.recordBudgetLength() && !SvObjectPool.overBudgetTypes().has(type)) {
+            SvObjectPool.overBudgetTypes().add(type);
+            console.warn(this.logPrefix() + "a " + type + " record is " + length + " characters, over the " + SvObjectPool.recordBudgetLength() + " record budget (Record Store §5) — move its unbounded data to rows or text blobs");
+        }
+        return this;
+    }
+
+    static recordBudgetLength () {
+        return 65536;
+    }
+
+    static overBudgetTypes () {
+        if (!this._overBudgetTypes) {
+            this._overBudgetTypes = new Set();
+        }
+        return this._overBudgetTypes;
     }
 
     storeBlobsReferencedByObject (obj) {

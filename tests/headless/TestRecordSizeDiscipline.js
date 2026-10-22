@@ -159,6 +159,17 @@ async function main () {
     check(root2.subnodes().first().body() === "short body", "…and the inline one as before");
     check(pool2.dirtyObjects().size === 0, "reading spilled text back marked nothing dirty");
 
+    console.log("\nThe record budget");
+    const budgetWarnings = [];
+    const warnB = console.warn;
+    console.warn = (...args) => { budgetWarnings.push(args.join(" ")); };
+    try {
+        pool2.warnIfRecordOverBudget("TestBudgetDoc", SvPersistentObjectPool.recordBudgetLength() + 1);
+        pool2.warnIfRecordOverBudget("TestBudgetDoc", SvPersistentObjectPool.recordBudgetLength() + 2);
+        pool2.warnIfRecordOverBudget("TestSmallDoc", 100);
+    } finally { console.warn = warnB; }
+    check(budgetWarnings.filter(w => w.includes("record budget")).length === 1, "a record over the budget warns once per class, and a small one not at all");
+
     console.log("\nThe collection warning");
     const warnings = [];
     const originalWarn = console.warn;
