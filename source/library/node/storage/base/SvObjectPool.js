@@ -755,6 +755,7 @@
         // referenced them (dangling refs in a dev session, 2026-09-26).
         const sentSnapshot = Object.assign({}, this.asJson());
         const commit = this.cloudCommitFor(changed, rootRow, options);
+        await cloudStore.asyncEnsureCommitLimits(); // fitsInOneCommit reads them
         const isPaired = !!(projected && !projected.isEmpty) && this.fitsInOneCommit(cloudStore, commit, projection.commitPart(projected));
         if (isPaired) {
             commit.projection = projection.commitPart(projected);

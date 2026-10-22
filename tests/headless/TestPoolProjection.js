@@ -106,6 +106,9 @@ function defineClasses () {
 function fakeBackendOver (memoryStore, calls) {
     return {
         callFunction: async (name, args) => {
+            if (name === "records-limits") {
+                return { backing: "firestore", maxOpsPerCommit: 450, maxBytesPerCommit: 4 * 1024 * 1024 }; // asked once; not one of the calls under test
+            }
             calls.push({ name, args });
             switch (name) {
                 case "records-open": return { pool: await memoryStore.asyncOpen(args.poolId) };

@@ -53,11 +53,12 @@ function defineClasses () {
     }).initThisClass();
 }
 
-/** A backend routing callFunction to a memory store the way the Firebase routes do. */
-function fakeBackendOver (memoryStore) {
+/** A backend routing callFunction to a memory store the way the Firebase routes do; it reports Firestore's commit limits unless given others. */
+function fakeBackendOver (memoryStore, limits = { backing: "firestore", maxOpsPerCommit: 450, maxBytesPerCommit: 4 * 1024 * 1024 }) {
     return {
         callFunction: async (name, args) => {
             switch (name) {
+                case "records-limits": return limits;
                 case "records-open": return { pool: await memoryStore.asyncOpen(args.poolId) };
                 case "records-changes": return { changes: await memoryStore.asyncReadChanges(args.poolId, args.sinceVersion) };
                 case "records-children": return { rows: await memoryStore.asyncChildren(args.parentId, { after: args.after, limit: args.limit }) };
@@ -173,7 +174,7 @@ async function main () {
     let calls = []; const inner = cloud.backend().callFunction; cloud.backend().callFunction = async (n, a) => { calls.push(n); return inner(n, a); };
     const result = await pool.asyncCommitToCloud(cloud);
     check(result.status === "committed" && result.version === 1, "committed: " + JSON.stringify(result) + " (" + pool.count() + " records)");
-    check(calls[0] === "records-stage-begin" && calls[calls.length - 1] === "records-stage-finalize" && calls.filter(c => c === "records-stage-write").length === Math.ceil((pool.count() - 1) / 200), "staged: " + calls.join(" "));
+    check(calls[0] === "records-limits" && calls[1] === "records-stage-begin" && calls[calls.length - 1] === "records-stage-finalize" && calls.filter(c => c === "records-stage-write").length === Math.ceil((pool.count() - 1) / 200), "staged: " + calls.join(" "));
     check((await cloud.asyncOpen(pool.poolId())).records.length === pool.count() - 1, "the cloud holds every record");
     check(store.rowForKey(pool.poolId(), pool.poolId()).version === 1, "the version is mirrored locally");
 
@@ -185,6 +186,18 @@ async function main () {
     cloud.setBusyRetryDelays([20, 20, 20]);
     const afterWait = await cloud.asyncOpen(pool.poolId());
     check(afterWait && afterWait.state === "ready" && afterWait.version === 2, "open retries through a stage that finishes");
+
+    console.log("\nA backend that serves large commits whole (Spanner) gets them whole: no staging");
+    const bigMemory = SvMemoryRecordStore.clone();
+    const bigCloud = SvCloudRecordStore.clone().setBackend(fakeBackendOver(bigMemory, { backing: "spanner", maxOpsPerCommit: 6000, maxBytesPerCommit: 16 * 1024 * 1024 }));
+    for (let i = 0; i < 520; i++) { const c = TestCloudDoc.clone(); c.setLabel("w" + i); root.addSubnode(c); }
+    await pool.commitStoreDirtyObjects();
+    const localVersion = store.rowForKey(pool.poolId(), pool.poolId()).version;
+    await bigMemory.asyncPut([SvRecordRow.newRow({ poolId: pool.poolId(), objectId: pool.poolId(), ownerUid: "u1", version: localVersion, payloadJson: "{}" })]);
+    calls = []; const bigInner = bigCloud.backend().callFunction; bigCloud.backend().callFunction = async (n, a) => { calls.push(n); return bigInner(n, a); };
+    const whole = await pool.asyncCommitToCloud(bigCloud);
+    check(whole.status === "committed" && JSON.stringify(calls) === JSON.stringify(["records-limits", "records-commit"]), "the 520-record change in one commit, the limits asked once: " + calls.join(" "));
+    check(bigCloud.maxOpsPerCommit() === 6000, "the store keeps the backend's limit");
 
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);

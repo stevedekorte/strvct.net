@@ -20,6 +20,8 @@
  *                     ordered by parentId, orderKey, objectId — a folder's children
  *                     are the rows placed under it)
  *   records-commit    { poolId, baseVersion, requestId, writes, deletes, create? } → { status, version }
+ *   records-limits    {} → { backing, maxOpsPerCommit, maxBytesPerCommit } — the largest
+ *                     commit the backing serves whole (asked once, before the first commit)
  *   records-stage-begin / -write / -finalize — a commit too large for one
  *                     transaction, driven by SvStagedRecordCommit
  *
@@ -42,18 +44,61 @@
             slot.setDescription("scopeId → the in-flight read of its root rows, shared by concurrent asks");
         }
         {
+            const slot = this.newSlot("commitLimits", null);
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+            slot.setDescription("the backend's { backing, maxOpsPerCommit, maxBytesPerCommit }, once asked; null until then");
+        }
+        {
+            const slot = this.newSlot("hasWarnedOfCommitLimits", false);
+            slot.setSlotType("Boolean");
+            slot.setDescription("whether a failed records-limits ask was reported (once per store)");
+        }
+        {
             const slot = this.newSlot("busyRetryDelays", [250, 500, 1000, 2000, 4000, 8000, 8000, 8000]);
             slot.setSlotType("Array");
             slot.setDescription("ms waited between retries while the pool is busy (another client's staged commit)");
         }
     }
 
+    /**
+     * @description The most operations one commit may carry before it must be
+     * staged: the backend's answer, else the smallest backing's (Firestore, 450).
+     * @returns {Number}
+     * @category Write
+     */
     maxOpsPerCommit () {
-        return 450; // records.js MAX_OPS_PER_COMMIT
+        const limits = this.commitLimits();
+        return limits && Number.isInteger(limits.maxOpsPerCommit) ? limits.maxOpsPerCommit : 450;
     }
 
     maxBytesPerCommit () {
-        return 4 * 1024 * 1024; // well under the request and transaction limits
+        const limits = this.commitLimits();
+        return limits && Number.isInteger(limits.maxBytesPerCommit) ? limits.maxBytesPerCommit : 4 * 1024 * 1024;
+    }
+
+    /**
+     * @description Asks the backend once how large a commit it serves whole
+     * (Firestore stages above 450 operations; Spanner takes thousands). Until
+     * it answers, or if it cannot, the smaller limits hold — staging is the
+     * safe default on Firestore.
+     * @category Write
+     */
+    async asyncEnsureCommitLimits () {
+        if (this.commitLimits()) {
+            return;
+        }
+        try {
+            const limits = await this.call("records-limits", {});
+            if (limits && Number.isInteger(limits.maxOpsPerCommit)) {
+                this.setCommitLimits(limits);
+            }
+        } catch (error) {
+            if (!this.hasWarnedOfCommitLimits()) {
+                this.setHasWarnedOfCommitLimits(true);
+                console.warn("SvCloudRecordStore: records-limits failed; using the default commit limits until it answers:", error && error.message);
+            }
+        }
     }
 
     /**
@@ -212,6 +257,7 @@
     }
 
     async asyncCommitOnce (commit, options = {}) {
+        await this.asyncEnsureCommitLimits();
         try {
             const gate = options.finalizeGate || null;
             if (SvStagedRecordCommit.needsStaging(commit, this.maxOpsPerCommit(), this.maxBytesPerCommit())) {
