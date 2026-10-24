@@ -111,3 +111,10 @@ SvFieldValueView br {
     padding-right: 0 !important;
 }
 
+
+/* Progressive Disclosure (SvChatMessageTile.syncDisclosure): while a response
+   is narrated on this device, what the voice has not reached yet takes no
+   space, so the message does not jump as it is revealed. */
+[data-disclosure="on"] [data-pd-hidden] {
+    display: none !important;
+}

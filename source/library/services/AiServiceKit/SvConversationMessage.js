@@ -1112,4 +1112,20 @@
         return SvConversationMessageDelegateProtocol;
     }
 
+    /**
+     * @description Not visible while it waits for a response before it to
+     * finish being disclosed (SvConversation_disclosure); otherwise as set.
+     * Views list only visible messages, so a held message appears when the
+     * voice reaches it — nothing is hidden from the model.
+     * @returns {Boolean}
+     * @category Disclosure
+     */
+    isVisible () {
+        const conv = this.conversation ? this.conversation() : null;
+        if (conv && typeof conv.isHeldBehindDisclosure === "function" && conv.isHeldBehindDisclosure(this)) {
+            return false;
+        }
+        return super.isVisible();
+    }
+
 }.initThisClass());

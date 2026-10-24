@@ -64,7 +64,9 @@
         this.setupHtmlStreamReader();
         this.htmlStreamReader().beginHtmlStream();
         this.setContent("");
+        this.setSentenceCount(0);
         this._orphanedToolCallTags = [];
+        this.beginDisclosureIfWanted(); // a live response, narrated on this device: shown as it is spoken
     }
 
     /**
@@ -107,6 +109,7 @@
 
         if (request.error()) {
             const err = request.error();
+            this.revealAll(); // an error shows whatever there is
             if (err.svIsRetrying) {
                 // Transient, a retry is scheduled: show a waiting status, not
                 // red error text (the retry's onStreamStart resets content).
@@ -172,6 +175,7 @@
         }
 
         super.onStreamEnd(request);
+        this.finishDisclosureIfNarrationDone(); // nothing was spoken, or it has all been spoken already
     }
 
     // --- SvHtmlStreamReader delegate methods ---
@@ -203,6 +207,9 @@
             //const html = reader.rootNode().asHtml();
             const nodeTag = streamNode.name().toLowerCase();
             const text = streamNode.textContent().trim();
+            // every <sentence> is numbered — spoken or not, ignored or not — so
+            // the index is its order among the rendered message's sentences
+            const sentenceIndex = nodeTag === "sentence" ? this.nextSentenceIndex() : null;
 
             const ignoredAncestor = streamNode.detectAncestor(node => this.tagsToIgnoreInsideSet().has(node.name()));
             const shouldIgnore = ignoredAncestor;
@@ -266,7 +273,7 @@
                         this.playTtsPauseMs(50); // pause for location name
                     }
 
-                    this.narrateSentence(speak, this.speakerIdForStreamNode(streamNode)); // null = narrator; grouped with its neighbours
+                    this.narrateSentence(speak, this.speakerIdForStreamNode(streamNode), sentenceIndex); // null = narrator; grouped with its neighbours
 
                     if (nodeTag !== "sentence") {
                         this.playTtsPauseMs(15);
@@ -277,7 +284,7 @@
                     // of the voice setting (see _voiceNarration.js). Opt-in
                     // per conversation — the theatre CC wants it; assistant
                     // chats must NOT highlight silently (reads as broken).
-                    this.paceCaptionText(speak);
+                    this.paceCaptionText({ text: speak, index: sentenceIndex });
                 }
                 //console.log("onHtmlStreamReaderPopNode html = [" + html + "]");
             }
@@ -301,6 +308,7 @@
     processStreamContent () { // see processStreamContent
         // TODO: add check if we are currently streaming repsonse and/or speaking
         this.setIsComplete(false); // otherwise markAsComplete won't call delegate
+        this.setSentenceCount(0); // a re-parse numbers the sentences again; it never discloses (no onStreamStart)
         this.setupHtmlStreamReader();
         this.htmlStreamReader().beginHtmlStream();
         this.htmlStreamReader().onStreamHtml(this.content());

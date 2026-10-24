@@ -78,18 +78,43 @@
     }
 
     /**
+     * @description The element a speaking note is about: the sentence at its
+     * index (its order among the message's sentences) when that one reads
+     * the same, else the first with its text. A note may carry a bare string.
+     * @param {Object|String} sentence - { text, index } or the text
+     * @returns {Element|undefined}
+     * @category Speech
+     */
+    speakableElementForSentence (sentence) {
+        const text = this.textOfSentence(sentence);
+        const index = (sentence && typeof sentence === "object") ? sentence.index : null;
+        if (Number.isInteger(index)) {
+            const e = this.speakableElements()[index];
+            if (e && e.textContent.trim() === text) {
+                return e;
+            }
+        }
+        return this.speakableElementWithText(text);
+    }
+
+    textOfSentence (sentence) {
+        return String((sentence && typeof sentence === "object") ? sentence.text : sentence);
+    }
+
+    /**
      * @description Handles the speaking text event.
      * @param {Object} aNote - The notification object.
      * @category Speech
      */
     onSpeakingText (aNote) {
-        const text = aNote.info();
+        const sentence = aNote.info();
+        const text = this.textOfSentence(sentence);
 
         if (text.includes("<break time=")) {
             return;
         }
 
-        const e = this.speakableElementWithText(text);
+        const e = this.speakableElementForSentence(sentence);
         if (!e) {
             // Best-effort presentation: the sentence's div may not have
             // rendered yet — the text-paced caption clock (voice off) posts
@@ -120,13 +145,13 @@
      * @category Speech
      */
     onSpokeText (aNote) {
-        const text = aNote.info();
+        const sentence = aNote.info();
 
-        if (text.includes("<break time=")) {
+        if (this.textOfSentence(sentence).includes("<break time=")) {
             return;
         }
 
-        const e = this.speakableElementWithText(text);
+        const e = this.speakableElementForSentence(sentence);
         if (!e) {
             // the sentence isn't rendered here (its pane is closed, as when a
             // phone shows another tab): nothing to unhighlight — never throw
@@ -355,6 +380,7 @@
             this.setAttribute("data-complete", node.isComplete() ? "true" : "false");
         }
         super.syncFromNode(); // This now includes syncDotsFromNode
+        this.syncDisclosure(); // after the value merged in this sync's content
         if (node && node.isComplete && !node.valueIsComplete) {
             if (node.isComplete()) {
                 this.hideValueDots();
@@ -366,6 +392,77 @@
         this.animateSupersededProgressTags();
         this.scheduleProgressCompactWatch();
         return this;
+    }
+
+    // --- Progressive Disclosure ---
+
+    /**
+     * @description Shows the message only as far as it has been spoken while
+     * its node is disclosing (SvAiParsedResponseMessage_disclosure): marks
+     * the sentences past `disclosedThrough`, and everything after the last
+     * one shown, `data-pd-hidden`, which CSS hides (field_tiles/_css.css).
+     * Derived from the node each sync — new streamed content arrives
+     * unmarked and is marked in the same sync, before paint — and reads only
+     * attributes and document order, never geometry.
+     * @returns {SvChatMessageTile}
+     * @category Disclosure
+     */
+    syncDisclosure () {
+        const node = this.node();
+        const isDisclosing = !!(node && node.isDisclosing && node.isDisclosing());
+        const root = this.valueView() ? this.valueView().element() : null;
+        if (!root) {
+            return this;
+        }
+        if (isDisclosing) {
+            this.setAttribute("data-disclosure", "on");
+            this.markDisclosure(root, node.disclosedThrough());
+        } else if (this.getAttribute("data-disclosure")) {
+            this.element().removeAttribute("data-disclosure");
+            root.querySelectorAll("[data-pd-hidden]").forEach(el => el.removeAttribute("data-pd-hidden"));
+        }
+        return this;
+    }
+
+    markDisclosure (root, disclosedThrough) {
+        const sentences = this.speakableElements();
+        const last = disclosedThrough >= 0 ? sentences[disclosedThrough] || null : null;
+        const sentenceSet = new Set(sentences);
+        root.querySelectorAll("*").forEach(el => {
+            const hide = sentenceSet.has(el) ? sentences.indexOf(el) > disclosedThrough : this.isAfterDisclosure(el, last);
+            if (hide !== el.hasAttribute("data-pd-hidden")) {
+                if (hide) {
+                    el.setAttribute("data-pd-hidden", "");
+                } else {
+                    el.removeAttribute("data-pd-hidden");
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
+     * @description Whether an element (not a sentence) comes after the last
+     * sentence shown and so waits: anything following it that does not
+     * contain it; before any sentence is shown, everything. A working-status
+     * line (narration-progress) always shows — it is the GM at work, not the
+     * story.
+     * @param {Element} el
+     * @param {Element|null} last - the last sentence shown
+     * @returns {Boolean}
+     * @category Disclosure
+     */
+    isAfterDisclosure (el, last) {
+        if (el.closest("narration-progress") || el.querySelector("narration-progress")) {
+            return false;
+        }
+        if (!last) {
+            return true;
+        }
+        if (el.contains(last) || last.contains(el)) {
+            return false; // it holds the sentence shown, or is part of it
+        }
+        return (last.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
     }
 
     isChatDebugMode () {

@@ -14,13 +14,28 @@
     sentences are highlighted in turn across it (onSpeakingText per
     sentence, as before).
 
+    Each sentence carries its index — its order among the response's
+    <sentence> elements, which is also its order in the rendered message — so
+    the speaking notes say which sentence is being spoken ({ text, index }),
+    not only its text (a repeated sentence highlighted the wrong one), and
+    Progressive Disclosure can show the response up to it (_disclosure.js).
+
 */
 
 (class SvAiParsedResponseMessage_voiceNarration extends SvAiParsedResponseMessage {
 
     initPrototypeSlots_voiceNarration () {
         {
-            const slot = this.newSlot("narrationGroup", null); // { speakerId, sentences }: waiting to go out as one request
+            const slot = this.newSlot("sentenceCount", 0); // sentences seen so far: the next one's index
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("queuedSentenceGroups", null); // [{ transcript, sentences }] queued for speech, not yet started
+            slot.setSlotType("Array");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("narrationGroup", null); // { speakerId, sentences: [{ text, index }] }: waiting to go out as one request
             slot.setSlotType("Object");
             slot.setAllowsNullValue(true);
         }
@@ -34,8 +49,8 @@
             slot.setAllowsNullValue(true);
         }
         {
-            const slot = this.newSlot("highlightedSentence", null); // the sentence being spoken now
-            slot.setSlotType("String");
+            const slot = this.newSlot("highlightedSentence", null); // { text, index }: the sentence being spoken now
+            slot.setSlotType("Object");
             slot.setAllowsNullValue(true);
         }
     }
@@ -118,11 +133,26 @@
         this.setIsDoneSpeaking(true);
         this.clearTimeoutNamed("narrationGroupFlush");
         this.setNarrationGroup(null); // not yet requested: never will be
+        this.setQueuedSentenceGroups(null);
         const controller = this.narrationController();
         if (controller) {
             controller.stopSpeaking();
         }
+        this.revealAll(); // anything that stops narration shows the rest
         return this;
+    }
+
+    /**
+     * @description The next sentence's index — its order among the response's
+     * sentences, counted as each one closes in the stream (the order they
+     * are rendered in).
+     * @returns {Number}
+     * @category Voice Narration
+     */
+    nextSentenceIndex () {
+        const index = this.sentenceCount();
+        this.setSentenceCount(index + 1);
+        return index;
     }
 
     session () {
@@ -187,15 +217,16 @@
      * full one, or a pause in the stream.
      * @param {String} text
      * @param {String|null} speakerId - null: the narrator
+     * @param {Number|null} index - the sentence's index in the response
      * @returns {SvAiParsedResponseMessage}
      * @category Voice Narration
      */
-    narrateSentence (text, speakerId = null) {
+    narrateSentence (text, speakerId = null, index = null) {
         const group = this.narrationGroup();
         if (group && group.speakerId !== speakerId) {
             this.flushNarrationGroup();
         }
-        this.addToNarrationGroup(text, speakerId);
+        this.addToNarrationGroup({ text: text, index: index }, speakerId);
         if (this.narrationGroupIsFull()) {
             return this.flushNarrationGroup();
         }
@@ -203,11 +234,11 @@
         return this;
     }
 
-    addToNarrationGroup (text, speakerId) {
+    addToNarrationGroup (sentence, speakerId) {
         if (!this.narrationGroup()) {
             this.setNarrationGroup({ speakerId: speakerId, sentences: [] });
         }
-        this.narrationGroup().sentences.push(text);
+        this.narrationGroup().sentences.push(sentence);
         return this;
     }
 
@@ -221,7 +252,7 @@
     narrationGroupIsFull () {
         const sentences = this.narrationGroup().sentences;
         const maxSentences = Math.min(this.narrationGroupCount() + 1, 4);
-        return sentences.length >= maxSentences || sentences.join(" ").length >= 500;
+        return sentences.length >= maxSentences || this.transcriptOf(sentences).length >= 500;
     }
 
     /**
@@ -252,16 +283,48 @@
 
     /**
      * @description Queues sentences as one speech request, remembering them
-     * so they can be highlighted in turn as the sound plays.
-     * @param {Array<String>} sentences
+     * so they can be highlighted in turn as the sound plays. They are
+     * recorded by transcript before the request goes out too: a sound whose
+     * audio is ready at once can start before the request returns it.
+     * @param {Array<Object>} sentences - [{ text, index }]
      * @param {String|null} speakerId
      * @category Voice Narration
      */
     voiceNarrateSentences (sentences, speakerId) {
-        const sound = this.voiceNarrateText(sentences.join(" "), speakerId);
+        const transcript = this.transcriptOf(sentences);
+        this.queuedSentenceGroupsArray().push({ transcript: transcript, sentences: sentences });
+        const sound = this.voiceNarrateText(transcript, speakerId);
         if (sound) {
             this.soundSentencesMap().set(sound, sentences);
         }
+        this.noteNarrationQueued();
+    }
+
+    transcriptOf (sentences) {
+        return sentences.map(s => s.text).join(" ");
+    }
+
+    queuedSentenceGroupsArray () {
+        if (!this.queuedSentenceGroups()) {
+            this.setQueuedSentenceGroups([]);
+        }
+        return this.queuedSentenceGroups();
+    }
+
+    /**
+     * @description A started sound's sentences: by the sound, else by its
+     * transcript among the groups queued (a sound that started before its
+     * request returned). Takes the group off the queued list. Null for a
+     * sound this message did not queue as sentences.
+     * @param {SvWaSound} sound
+     * @returns {Array<Object>|null}
+     * @category Voice Narration
+     */
+    takeSentencesForSound (sound) {
+        const queued = this.queuedSentenceGroupsArray();
+        const at = queued.findIndex(g => g.transcript === sound.transcript());
+        const fromQueue = at === -1 ? null : queued.splice(at, 1)[0].sentences;
+        return this.soundSentencesMap().get(sound) || fromQueue;
     }
 
     soundSentencesMap () {
@@ -295,7 +358,15 @@
     // --- highlighting a sound's sentences in turn ---
 
     onSoundStarted (sound) {
-        const sentences = this.soundSentencesMap().get(sound) || [sound.transcript()];
+        const transcript = sound.transcript() || "";
+        if (transcript.startsWith("<break")) {
+            return; // a pause between sentences: nothing to show
+        }
+        let sentences = this.takeSentencesForSound(sound);
+        if (!sentences) {
+            console.warn(this.svTypeId() + ".onSoundStarted: no sentences for the sound — highlighting its whole transcript [" + transcript.clipWithEllipsis(40) + "]");
+            sentences = [{ text: transcript, index: null }];
+        }
         this.highlightSentence(sentences[0]);
         this.scheduleSentenceHighlights(sentences, 1000 * sound.duration() / (sound.playbackRate() || 1));
     }
@@ -304,32 +375,39 @@
      * @description Moves the highlight through a sound's later sentences,
      * each at its share of the sound by length — speech runs close to
      * evenly per character.
-     * @param {Array<String>} sentences
+     * @param {Array<Object>} sentences - [{ text, index }]
      * @param {Number} durationMs - the sound's playing time
      * @category Voice Narration
      */
     scheduleSentenceHighlights (sentences, durationMs) {
-        const total = sentences.reduce((sum, t) => sum + t.length, 0) || 1;
+        const total = sentences.reduce((sum, s) => sum + s.text.length, 0) || 1;
         let before = 0;
-        sentences.forEach((text, i) => {
+        sentences.forEach((sentence, i) => {
             if (i > 0) {
-                this.addTimeout(() => this.highlightSentence(text), durationMs * before / total, "sentenceHighlight" + i);
+                this.addTimeout(() => this.highlightSentence(sentence), durationMs * before / total, "sentenceHighlight" + i);
             }
-            before += text.length;
+            before += sentence.text.length;
         });
     }
 
-    highlightSentence (text) {
+    /**
+     * @description The sentence being spoken now: highlighted, and shown
+     * (Progressive Disclosure) up to and including it.
+     * @param {Object} sentence - { text, index }
+     * @category Voice Narration
+     */
+    highlightSentence (sentence) {
         this.unhighlightSentence();
-        this.setHighlightedSentence(text);
-        this.onSpeakingText(text);
+        this.setHighlightedSentence(sentence);
+        this.advanceDisclosure(sentence.index);
+        this.onSpeakingText(sentence);
     }
 
     unhighlightSentence () {
-        const text = this.highlightedSentence();
-        if (text !== null) {
+        const sentence = this.highlightedSentence();
+        if (sentence !== null) {
             this.setHighlightedSentence(null);
-            this.onSpokeText(text);
+            this.onSpokeText(sentence);
         }
     }
 
@@ -338,14 +416,20 @@
         sentences.forEach((text, i) => this.clearTimeoutNamed("sentenceHighlight" + i)); // a sound cut short
         this.soundSentencesMap().delete(sound);
         this.unhighlightSentence();
+        this.finishDisclosureIfNarrationDone();
     }
 
-    onSpeakingText (text) {
-        this.postNoteNamed("onSpeakingText").setInfo(text); //.setIsDebugging(true);
+    /**
+     * @description Posts that a sentence started being spoken (or captioned).
+     * @param {Object} sentence - { text, index }: index is its order in the response, null when unknown
+     * @category Voice Narration
+     */
+    onSpeakingText (sentence) {
+        this.postNoteNamed("onSpeakingText").setInfo(sentence);
     }
 
-    onSpokeText (text) {
-        this.postNoteNamed("onSpokeText").setInfo(text); //.setIsDebugging(true);
+    onSpokeText (sentence) {
+        this.postNoteNamed("onSpokeText").setInfo(sentence);
     }
 
     // --- caption pacing without audio ---
@@ -360,12 +444,12 @@
     /**
      * @description Queues a sentence for text-paced captioning; starts the
      * pacer if idle.
-     * @param {String} text - the sentence to caption.
+     * @param {Object} sentence - { text, index }: the sentence to caption.
      * @returns {SvAiParsedResponseMessage}
      * @category Caption Pacing
      */
-    paceCaptionText (text) {
-        this.pacedCaptionQueue().push(text);
+    paceCaptionText (sentence) {
+        this.pacedCaptionQueue().push(sentence);
         if (!this._pacedCaptionActive) {
             this._pacedCaptionActive = true;
             // A beat before the first sentence: the pacer runs at parse time,
@@ -387,17 +471,17 @@
     }
 
     showNextPacedCaption () {
-        const text = this.pacedCaptionQueue().shift();
-        if (Type.isNullOrUndefined(text)) {
+        const sentence = this.pacedCaptionQueue().shift();
+        if (Type.isNullOrUndefined(sentence)) {
             this._pacedCaptionActive = false;
             return this;
         }
         this._pacedCaptionActive = true;
-        this.onSpeakingText(text);
+        this.onSpeakingText(sentence);
         this.addTimeout(() => {
-            this.onSpokeText(text);
+            this.onSpokeText(sentence);
             this.showNextPacedCaption();
-        }, this.readingTimeMsForText(text), "pacedCaption");
+        }, this.readingTimeMsForText(sentence.text), "pacedCaption");
         return this;
     }
 

@@ -2,5 +2,6 @@
     "SvAiParsedResponseMessage.js",
     "SvAiParsedResponseMessage_parsing.js",
     "SvAiParsedResponseMessage_streaming.js",
-    "SvAiParsedResponseMessage_voiceNarration.js"
+    "SvAiParsedResponseMessage_voiceNarration.js",
+    "SvAiParsedResponseMessage_disclosure.js"
 ]
