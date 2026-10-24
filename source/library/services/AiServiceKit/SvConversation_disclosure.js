@@ -8,9 +8,9 @@
  * _disclosure.js), the messages after it — a roll request, a choice, the
  * next response of the turn — wait to be shown until it finishes, so the
  * voice reaches "roll for initiative" before the roll does. Nothing is
- * hidden from the model: held messages only report themselves not visible
- * (SvConversationMessage.isVisible), and every view that lists messages
- * already leaves those out.
+ * hidden from the model: the conversation only reports held messages not
+ * visible as its subnodes (subnodeIsVisible), which every view of it asks —
+ * whatever a message's own isVisible() override does.
  */
 
 (class SvConversation_disclosure extends SvConversation {
@@ -56,6 +56,17 @@
         const messages = this.messages();
         const at = messages.indexOf(disclosing);
         return at !== -1 && messages.indexOf(message) > at;
+    }
+
+    /**
+     * @description A message shows unless it waits behind a disclosing
+     * response, then as it says itself.
+     * @param {SvConversationMessage} aMessage
+     * @returns {Boolean}
+     * @category Disclosure
+     */
+    subnodeIsVisible (aMessage) {
+        return !this.isHeldBehindDisclosure(aMessage) && aMessage.isVisible();
     }
 
     /**

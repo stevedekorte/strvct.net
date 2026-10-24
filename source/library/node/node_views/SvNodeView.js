@@ -310,7 +310,7 @@
      */
     visibleSubnodes () {
         const node = this.node();
-        return node.subnodes().filter(subnode => subnode.isVisible());
+        return node.subnodes().filter(subnode => node.subnodeIsVisible(subnode));
     }
 
     /**
@@ -606,12 +606,18 @@
         return s;
     }
 
+    /**
+     * @description Whether this view's node is shown: as its parent says
+     * (SvNode.subnodeIsVisible), or its own isVisible() at a root.
+     * @returns {Boolean}
+     */
     nodeIsVisible () {
         const node = this.node();
-        if (node) {
-            return node.isVisible();
+        if (!node) {
+            return false;
         }
-        return false;
+        const parent = node.parentNode();
+        return parent ? parent.subnodeIsVisible(node) : node.isVisible();
     }
 
 }.initThisClass());

@@ -138,6 +138,8 @@
         if (controller) {
             controller.stopSpeaking();
         }
+        this.clearSentenceHighlightTimers();
+        this.unhighlightSentence(); // a stopped sound never ends: the sentence it was on is no longer spoken
         this.revealAll(); // anything that stops narration shows the rest
         return this;
     }
@@ -401,6 +403,18 @@
         this.setHighlightedSentence(sentence);
         this.advanceDisclosure(sentence.index);
         this.onSpeakingText(sentence);
+    }
+
+    /**
+     * @description Cancels the highlights scheduled across the sound playing
+     * now (narration stopped).
+     * @category Voice Narration
+     */
+    clearSentenceHighlightTimers () {
+        this.soundSentencesMap().forEach(sentences => {
+            sentences.forEach((sentence, i) => this.clearTimeoutNamed("sentenceHighlight" + i));
+        });
+        return this;
     }
 
     unhighlightSentence () {

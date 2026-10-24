@@ -115,6 +115,7 @@
         }
 
         const e = this.speakableElementForSentence(sentence);
+        this.unhighlightAllSentences(); // the previous sentence is over, found or not
         if (!e) {
             // Best-effort presentation: the sentence's div may not have
             // rendered yet — the text-paced caption clock (voice off) posts
@@ -122,10 +123,11 @@
             // TTS clock's audio latency always hid this race. Never throw
             // from inside the notification pipeline over a missed highlight;
             // the next sentence re-syncs the highlighting.
-            console.warn(this.svTypeId() + ".onSpeakingText: no rendered div yet for [" + text.clipWithEllipsis(40) + "] — skipping highlight");
+            const index = (sentence && typeof sentence === "object") ? sentence.index : null;
+            const at = Number.isInteger(index) ? this.speakableElements()[index] : null;
+            console.warn(this.svTypeId() + ".onSpeakingText: no rendered element for sentence " + index + " [" + text.clipWithEllipsis(60) + "]" + (at ? " — element " + index + " reads [" + at.textContent.clipWithEllipsis(60) + "]" : "") + " — skipping highlight");
             return;
         }
-        this.unhighlightAllSentences();
         this.highlightElement(e);
     }
 
@@ -427,9 +429,10 @@
     markDisclosure (root, disclosedThrough) {
         const sentences = this.speakableElements();
         const last = disclosedThrough >= 0 ? sentences[disclosedThrough] || null : null;
+        const anchor = last || sentences[0] || null; // nothing spoken yet: what precedes the first sentence shows
         const sentenceSet = new Set(sentences);
         root.querySelectorAll("*").forEach(el => {
-            const hide = sentenceSet.has(el) ? sentences.indexOf(el) > disclosedThrough : this.isAfterDisclosure(el, last);
+            const hide = sentenceSet.has(el) ? sentences.indexOf(el) > disclosedThrough : this.isAfterDisclosure(el, anchor);
             if (hide !== el.hasAttribute("data-pd-hidden")) {
                 if (hide) {
                     el.setAttribute("data-pd-hidden", "");
@@ -442,27 +445,24 @@
     }
 
     /**
-     * @description Whether an element (not a sentence) comes after the last
-     * sentence shown and so waits: anything following it that does not
-     * contain it; before any sentence is shown, everything. A working-status
-     * line (narration-progress) always shows — it is the GM at work, not the
-     * story.
+     * @description Whether an element (not a sentence) waits for the voice:
+     * anything after the anchor — the last sentence spoken, or before any is,
+     * the first sentence — that does not contain it. Working-status lines
+     * (narration-progress) follow the same rule. With no sentence yet, only
+     * a working-status line shows: the GM at work, nothing of the story.
      * @param {Element} el
-     * @param {Element|null} last - the last sentence shown
+     * @param {Element|null} anchor
      * @returns {Boolean}
      * @category Disclosure
      */
-    isAfterDisclosure (el, last) {
-        if (el.closest("narration-progress") || el.querySelector("narration-progress")) {
-            return false;
+    isAfterDisclosure (el, anchor) {
+        if (!anchor) {
+            return !(el.closest("narration-progress") || el.querySelector("narration-progress"));
         }
-        if (!last) {
-            return true;
+        if (el.contains(anchor) || anchor.contains(el)) {
+            return false; // it holds the anchor, or is part of it
         }
-        if (el.contains(last) || last.contains(el)) {
-            return false; // it holds the sentence shown, or is part of it
-        }
-        return (last.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+        return (anchor.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
     }
 
     isChatDebugMode () {

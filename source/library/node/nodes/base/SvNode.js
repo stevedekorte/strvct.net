@@ -889,7 +889,20 @@
     }
 
     firstVisibleSubnode () {
-        return this.subnodes().detect(sn => sn.isVisible());
+        return this.subnodes().detect(sn => this.subnodeIsVisible(sn));
+    }
+
+    /**
+     * @description Whether a subnode is shown in this node's views: its own
+     * isVisible(), unless this container holds it back. Views ask the parent
+     * (visibleSubnodes, SvNodeView.nodeIsVisible), so a container's rule
+     * applies to every kind of child whatever its isVisible() overrides.
+     * @param {SvNode} aSubnode
+     * @returns {Boolean}
+     * @category Visibility
+     */
+    subnodeIsVisible (aSubnode) {
+        return aSubnode.isVisible();
     }
 
     /**

@@ -642,7 +642,7 @@
         //this.syncCssFromNode()
         const node = this.node();
         if (node) {
-            this.setIsDisplayHidden(!node.isVisible());
+            this.setIsDisplayHidden(!this.nodeIsVisible());
             this.syncAriaFromNode();
             this.syncSurfaceFromNode();
             this.syncEmptyCollectionMark();

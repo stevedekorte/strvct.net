@@ -750,7 +750,7 @@
         //this.noteView().setString(this.node().note())
         this.updateSubviews();
 
-        this.setIsDisplayHidden(!node.isVisible());
+        this.setIsDisplayHidden(!this.nodeIsVisible());
 
         return this;
     }
