@@ -246,9 +246,23 @@ async function main () {
     result = await pool.asyncCommitToCloud(cloud, { projection });
     check(result.status === "committed" && result.projection, "the next save sends both");
 
-    console.log("\nA host reopening a session it committed marks the projection in sync");
-    const reopened = SvPoolProjection.clone().setPool(pool).setCloudPoolId(projectionId).markInSync(opened.version);
+    console.log("\nA host reopening a session starts from the rows the cloud projection holds");
+    opened = await cloud.asyncOpen(projectionId);
+    const reopened = SvPoolProjection.clone().setPool(pool).setCloudPoolId(projectionId).markInSyncWith(opened);
     check(reopened.changes().isEmpty && reopened.version() === opened.version, "nothing to send until something changes");
+
+    console.log("\nA row the truth no longer has (a crashed host's last stream) is deleted by the next commit");
+    await cloudMemory.asyncPut([SvRecordRow.newRow({ poolId: projectionId, objectId: "standIn1", parentId: pool.poolId(), orderKey: "zz", modifiedVersion: opened.version, payloadJson: JSON.stringify({ type: "TestPjNpc", entries: [["name", "a response cut off mid-stream"]] }) })]);
+    opened = await cloud.asyncOpen(projectionId);
+    check(opened.records.some(r => r.objectId === "standIn1"), "the cloud projection holds the stray row");
+    const afterCrash = SvPoolProjection.clone().setPool(pool).setCloudPoolId(projectionId).markInSyncWith(opened);
+    const pending = afterCrash.changes();
+    check(pending.deletes.length === 1 && pending.deletes[0].objectId === "standIn1" && pending.writes.length === 0, "its only change is the stray row's delete (" + JSON.stringify({ deletes: pending.deletes.map(d => d.objectId), writes: pending.writes.length }) + ")");
+    root.setLabel("the table, after the crash");
+    await pool.commitStoreDirtyObjects();
+    result = await pool.asyncCommitToCloud(cloud, { projection: afterCrash });
+    opened = await cloud.asyncOpen(projectionId);
+    check(result.status === "committed" && !opened.records.some(r => r.objectId === "standIn1"), "…and it is gone from the cloud projection");
 
     await pool.promiseClose();
 }

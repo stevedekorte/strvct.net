@@ -274,7 +274,7 @@
         const snapshot = new Map();
         const writes = [];
         now.forEach((row, pid) => {
-            const signature = row.payloadJson + "\u0000" + row.parentId + "\u0000" + row.orderKey;
+            const signature = this.signatureOf(row);
             snapshot.set(pid, signature);
             if (last.get(pid) !== signature) {
                 writes.push(Object.assign({ poolId: this.cloudPoolId(), objectId: pid }, this.writeColumns(row)));
@@ -282,6 +282,17 @@
         });
         const deletes = [...last.keys()].filter(pid => !now.has(pid)).map(pid => ({ poolId: this.cloudPoolId(), objectId: pid }));
         return { writes: writes, deletes: deletes, snapshot: snapshot, isEmpty: writes.length === 0 && deletes.length === 0 };
+    }
+
+    /**
+     * @description What a commit compares to tell a row changed: its payload
+     * and placement.
+     * @param {Object} row - { payloadJson, parentId, orderKey }
+     * @returns {String}
+     * @category Committing
+     */
+    signatureOf (row) {
+        return row.payloadJson + "\u0000" + (row.parentId || null) + "\u0000" + (row.orderKey || null);
     }
 
     writeColumns (row) {
@@ -325,14 +336,22 @@
     }
 
     /**
-     * @description The cloud projection is known to hold what the pool
-     * projects now (a host reopening a session it last committed): the next
-     * commit sends only what changes from here.
+     * @description Starts from what the cloud projection actually holds (an
+     * opened pool: { root, records, version }), not from what the pool
+     * projects now: a host that stopped without committing its last changes
+     * (a crash) left rows the truth no longer has — a response it was
+     * streaming, say — and only a snapshot of the cloud's rows sends their
+     * deletes. Rows whose payload matches are not re-sent.
+     * @param {Object} opened
      * @category Committing
      */
-    markInSync (version) {
-        this.setVersion(version);
-        this.setLastSnapshot(this.changes().snapshot);
+    markInSyncWith (opened) {
+        const snapshot = new Map();
+        [opened.root].concat(opened.records || []).filter(row => row && !row.isDeleted).forEach((row) => {
+            snapshot.set(row.objectId, this.signatureOf(row));
+        });
+        this.setVersion(opened.version);
+        this.setLastSnapshot(snapshot);
         return this;
     }
 
