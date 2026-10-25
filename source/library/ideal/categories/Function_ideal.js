@@ -633,11 +633,12 @@ Function.prototype.callsOnNarrationTool = function () {
 // AI tool-call metadata above. A method may carry both.
 
 // callableBy — which roles may invoke this method as a message. Checked by the
-// receiver's dispatcher to authorize the sender.
+// receiver's dispatcher to authorize the sender. "owner": the member who owns
+// a document hosted by a process of its own (its host is not a member).
 
 Function.prototype.setCallableBy = function (roles) {
     assert(Type.isArray(roles), "callableBy must be an array of role strings");
-    const validRoles = ["host", "owningClient", "anyClient", "ai"];
+    const validRoles = ["host", "owningClient", "anyClient", "owner", "ai"];
     roles.forEach(role => assert(validRoles.includes(role), "Invalid callableBy role: " + role));
     this.setMetaProperty("callableBy", roles);
     return this;

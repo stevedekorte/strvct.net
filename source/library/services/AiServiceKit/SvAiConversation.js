@@ -748,9 +748,21 @@
     deferTurnRequestFrom (aMsg) {
         const prior = this.deferredTurnRequestMessage();
         console.warn(this.logPrefix(), "requestResponse while a response is streaming or a blocking tool call is open — deferring the turn for "
-            + aMsg.svType() + (prior ? " (replacing a prior deferred trigger — one turn covers both)" : ""));
+            + aMsg.svType() + (prior ? " (replacing a prior deferred trigger — one turn covers both)" : "") + " — waiting on " + this.turnWaitDescription());
         this.setDeferredTurnRequestMessage(aMsg);
         return this;
+    }
+
+    /**
+   * @description What a deferred turn waits on: the responses still open and
+   * the blocking tool calls, for the log.
+   * @returns {String}
+   * @category Turn Serialization
+   */
+    turnWaitDescription () {
+        const responses = this.activeResponses().map(m => m.svTypeId() + (m.messageId ? " " + m.messageId() : ""));
+        const tools = this.assistantToolKit().waitingOnDescription();
+        return [responses.length ? "responses: " + responses.join(", ") : null, tools ? "tools: " + tools : null].filter(Boolean).join("; ") || "nothing (it fires at the next settle)";
     }
 
     /**

@@ -240,6 +240,27 @@
         return this.callFunction("accept-invite", { token });
     }
 
+    // ---------------------------------------------------------------- hosted documents
+
+    /**
+     * A document hosted by a process of its own (a server-hosted session):
+     * its principal, its scope (the caller a member and its owner) and its
+     * bus record. Answers { sessionId, principalUid }.
+     */
+    async createHostedSession ({ title }) {
+        return this.callFunction("create-hosted-session", { title });
+    }
+
+    /** The document's owner removes another member (their membership, bus access and liveness). */
+    async removeMember ({ scopeRootId, memberUid }) {
+        return this.callFunction("remove-member", { scopeRootId, memberUid });
+    }
+
+    /** The hosting principal names the pool holding the document's state, once. */
+    async attachHostedPool ({ sessionId, poolId }) {
+        return this.callFunction("attach-hosted-pool", { sessionId, poolId });
+    }
+
     // ---------------------------------------------------------------- user lifecycle
 
     async ensureUserHome () {

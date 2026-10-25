@@ -30,6 +30,18 @@
 
     /**
      * @static
+     * @description Whether this platform has Web Audio at all. A headless
+     * process (Node) has none: its sounds hold their bytes and are never
+     * decoded or played (a server host generates speech for other devices).
+     * @returns {Boolean}
+     * @category Platform
+     */
+    static hasAudio () {
+        return typeof AudioContext !== "undefined" || (typeof window !== "undefined" && !!window.AudioContext);
+    }
+
+    /**
+     * @static
      * @description Handles the first user event
      * @param {Object} anEventListener - The event listener object
      * @category Event Handling

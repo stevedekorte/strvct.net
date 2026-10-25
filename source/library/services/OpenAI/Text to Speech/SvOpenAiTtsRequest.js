@@ -344,7 +344,7 @@
             }
 
             // Get the audio blob from the response
-            const audioBlob = await this.audioBlobFromResponse(xhrRequest.xhr().response);
+            const audioBlob = await this.audioBlobFromResponse(xhrRequest.responseBlob());
 
             if (!audioBlob) {
                 throw new Error("No response blob received from TTS API");

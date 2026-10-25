@@ -107,8 +107,10 @@
     }
 
     /**
-     * @description A clip once its audio has arrived and decoded: null when
-     * it never did (the request failed, or narration stopped).
+     * @description A clip once its audio has arrived (and decoded, where
+     * this device has audio): null when it never did (the request failed,
+     * or narration stopped). A device without audio cannot know the clip's
+     * length — 0 — and a listener times the sentences by its own decode.
      * @param {SvWaSound} sound
      * @param {Array<Object>} sentences
      * @returns {Promise<Object|null>} { bytes, durationMs, sentences: [{ index, text, startMs }] }
@@ -117,7 +119,7 @@
     async asyncClipFromSound (sound, sentences) {
         await sound.fetchPromise();
         await sound.promiseToDecode();
-        if (!sound.hasData() || !sound.hasDecoded()) {
+        if (!sound.hasData() || (SvWaContext.hasAudio() && !sound.hasDecoded())) {
             return null;
         }
         const durationMs = Math.round(1000 * sound.duration());

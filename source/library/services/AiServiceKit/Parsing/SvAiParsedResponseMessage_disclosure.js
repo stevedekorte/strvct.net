@@ -69,7 +69,19 @@
     wantsDisclosure () {
         const conv = this.conversation();
         const wanted = !!(conv && typeof conv.wantsProgressiveDisclosure === "function" && conv.wantsProgressiveDisclosure());
-        return wanted && this.shouldVoiceNarrate();
+        return wanted && this.shouldVoiceNarrate() && this.narrationPlaysHere();
+    }
+
+    /**
+     * @description Whether this device hears the narration it generates
+     * (duck-typed controller `playsHere()`; true when it doesn't say). A
+     * device speaking only for others shows text as it arrives.
+     * @returns {Boolean}
+     * @category Disclosure
+     */
+    narrationPlaysHere () {
+        const controller = this.narrationController();
+        return !controller || typeof controller.playsHere !== "function" || controller.playsHere();
     }
 
     /**

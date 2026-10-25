@@ -553,6 +553,21 @@
     }
 
     /**
+   * @description The response body as a Blob, for a "blob" response type. A
+   * headless XHR (Node's xhr2) does not make Blobs and answers with the
+   * bytes; they are wrapped here, so callers read a Blob either way.
+   * @returns {Blob|null}
+   * @category Response
+   */
+    responseBlob () {
+        const response = this.xhr() ? this.xhr().response : null;
+        if (!response || response instanceof Blob) {
+            return response || null;
+        }
+        return new Blob([response]);
+    }
+
+    /**
    * Returns the subtitle for the request
    * @returns {string}
    */

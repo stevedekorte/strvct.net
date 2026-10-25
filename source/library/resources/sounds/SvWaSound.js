@@ -478,6 +478,10 @@
                 return;
             }
 
+            if (!SvWaContext.hasAudio()) {
+                return; // no Web Audio here (headless): the bytes are all there is, and all a listener elsewhere needs
+            }
+
             assert(this.data().byteLength);
             const arrayBufferCopy = this.data().slice(0);
             const decodedBuffer = await SvWaContext.shared().promiseDecodeArrayBuffer(arrayBufferCopy);

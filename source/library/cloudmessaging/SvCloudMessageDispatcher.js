@@ -30,11 +30,11 @@
      * also returned.
      * @param {SvJsonIdNode} contextRoot - Root to resolve targetJsonId against (e.g. the session for state, the aiChat for chat).
      * @param {SvCloudMessage} message - The message to dispatch.
-     * @param {String} callerRole - The sender's role: "host" | "owningClient" | "anyClient" | "ai".
+     * @param {String|Array<String>} callerRoles - The sender's role, or every role it holds: "host" | "owningClient" | "anyClient" | "owner" | "ai". A method any of them may call is invoked.
      * @returns {Promise<SvCloudMessage>} The message with its outcome set.
      * @category Dispatch
      */
-    static async dispatch (contextRoot, message, callerRole) {
+    static async dispatch (contextRoot, message, callerRoles) {
         assert(contextRoot, "dispatch requires a contextRoot");
         assert(message, "dispatch requires a message");
 
@@ -48,7 +48,7 @@
             return message.setRejected("unknown-method");
         }
 
-        if (!method.callableBy().includes(callerRole)) {
+        if (!this.mayCall(method, callerRoles)) {
             return message.setRejected("not-permitted");
         }
 
@@ -65,6 +65,18 @@
         }
 
         return message;
+    }
+
+    /**
+     * @description Whether a sender holding these roles may call the method.
+     * @param {Function} method
+     * @param {String|Array<String>} callerRoles
+     * @returns {Boolean}
+     * @category Dispatch
+     */
+    static mayCall (method, callerRoles) {
+        const roles = Array.isArray(callerRoles) ? callerRoles : [callerRoles];
+        return roles.some(role => method.callableBy().includes(role));
     }
 
 }.initThisClass());

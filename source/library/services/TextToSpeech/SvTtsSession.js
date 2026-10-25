@@ -433,12 +433,46 @@
      * @category Requests
      */
     generate (voiceSpec = null) {
+        const sound = this.requestSound(voiceSpec);
+        this.queueSound(sound);
+        this.processRequestQueue();
+        return sound;
+    }
+
+    /**
+     * @description Speaks the prompt for other devices only: requests it,
+     * in order with the rest, without playing it here (a host with no
+     * listener of its own — a server-hosted session's worker).
+     * @param {null|string|Object} voiceSpec
+     * @returns {SvWaSound} the sound, filled when its audio arrives
+     * @category Requests
+     */
+    generateUnplayed (voiceSpec = null) {
+        const sound = this.requestSound(voiceSpec);
+        this.processRequestQueue();
+        this.endWhenFetched(sound);
+        return sound;
+    }
+
+    /**
+     * @description A sound spoken only for others is finished here once its
+     * audio has arrived (or failed to): whoever queued it hears it end, as
+     * after playing, and lets go of it. A turn after the fetch, so the
+     * caller has had the sound back to listen to.
+     * @param {SvWaSound} sound
+     * @category Requests
+     */
+    endWhenFetched (sound) {
+        const fetched = sound.fetchPromise() || Promise.resolve();
+        fetched.catch(() => {}).then(() => setTimeout(() => sound.post("onSoundEnded"), 0));
+        return this;
+    }
+
+    requestSound (voiceSpec) {
         const request = this.newRequestForVoiceSpec(voiceSpec);
         this.ttsRequestQueue().push(request);
         const sound = request.sound();
         sound.setTranscript(this.prompt());
-        this.queueSound(sound);
-        this.processRequestQueue();
         return sound;
     }
 
