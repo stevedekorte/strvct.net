@@ -90,6 +90,17 @@ function defineClasses () {
         }
     }).initThisClass();
 
+    (class TestPfRichDetails extends SvGlobals.get("TestPfDetails") {
+        initPrototypeSlots () {
+            {
+                const slot = this.newSlot("flourish", "");
+                slot.setSlotType("String");
+                slot.setIsInJsonSchema(true);
+                slot.setShouldStoreSlot(true);
+            }
+        }
+    }).initThisClass();
+
     (class TestPfDocs extends SvJsonArrayNode {
         initPrototype () {
             this.setSubnodeClasses([SvGlobals.get("TestPfItem")]);
@@ -253,6 +264,10 @@ async function main () {
     expectRefused(root, [{ op: "add", path: "/items/-", value: { name: "x", faction: "party" } }], 0, "unknown field 'faction' in a TestPfItem", "an element with an invented field");
     expectRefused(root, [{ op: "replace", path: "/items", value: [{ name: "x", initiative: 12 }] }], 0, "unknown field 'initiative'", "a replaced array whose elements carry an invented field");
     expectRefused(root, [{ op: "replace", path: "/details", value: { heading: "h", subheading: "s" } }], 0, "unknown field 'subheading' in a TestPfDetails", "a group slot written with an invented field");
+    expectRefused(root, [{ op: "replace", path: "/details", value: { heading: "h", flourish: "s" } }], 0, "'flourish' is a field of TestPfRichDetails — name the class with \"_type\": \"TestPfRichDetails\"", "a subclass's field without a _type names the subclass to use");
+    root = newRoot();
+    r = refusal(root, [{ op: "replace", path: "/details", value: { _type: "TestPfRichDetails", heading: "h", flourish: "s" } }]);
+    check(r === null && root.details().svType() === "TestPfRichDetails" && root.details().flourish() === "s", "…and with the _type it applies as that subclass" + (r ? " — refused: " + JSON.stringify(r) : " (got " + root.details().svType() + ")"));
     root = newRoot();
     r = refusal(root, [{ op: "replace", path: "/details", value: { heading: "h", extra: { anything: { goes: 1 } } } }]);
     check(r === null && root.details().heading() === "h", "a plain JSON-object slot's contents are not field-checked");

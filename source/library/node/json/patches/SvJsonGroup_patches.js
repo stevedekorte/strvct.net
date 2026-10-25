@@ -395,9 +395,24 @@
     unknownKeyInField (value, key, valueClass) {
         const slot = valueClass.prototype.getSlot(key);
         if (!slot) {
-            return "unknown field '" + key + "' in a " + valueClass.svType() + " (its fields: [" + valueClass.jsonSchemaSlots().map(sl => sl.name()).join(", ") + "]) — never invent field names";
+            return "unknown field '" + key + "' in a " + valueClass.svType() + " (its fields: [" + valueClass.jsonSchemaSlots().map(sl => sl.name()).join(", ") + "])" + this.subclassHintFor(value, key, valueClass) + " — never invent field names";
         }
         return this.unknownKeyIn(value[key], this.preflightClassOfSlot(slot));
+    }
+
+    /**
+     * @description When a value without a `_type` uses a field that only a
+     * subclass of the declared class has, the `_type` that would make it
+     * valid: the writer meant the subclass and left out what names it.
+     * @returns {String} a clause to append to the failure, or ""
+     * @category Preflight
+     */
+    subclassHintFor (value, key, valueClass) {
+        if (Type.isString(value._type)) {
+            return "";
+        }
+        const names = Array.from(valueClass.allSubclasses()).filter(c => c.prototype.getSlot(key)).map(c => c.svType());
+        return names.length === 0 ? "" : "; '" + key + "' is a field of " + names.join(" or ") + " — name the class with \"_type\": \"" + names[0] + "\" in the value";
     }
 
     preflightElementTypeNames (array) {

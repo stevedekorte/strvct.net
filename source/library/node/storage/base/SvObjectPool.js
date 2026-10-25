@@ -1667,7 +1667,7 @@
             // from the stored record until the next genuine mutation. Defer
             // the fresh state to the next commit instead (tripwire-logged;
             // see deferDirtyObjectDuringStore).
-            this.deferDirtyObjectDuringStore(anObject, new Error().stack);
+            this.deferDirtyObjectDuringStore(anObject, this.deepStack());
             return this;
         }
 
@@ -1690,10 +1690,7 @@
                 // the didMutate→didUpdateSlot→setter plumbing alone eats the
                 // whole default budget, so the report truncated exactly at
                 // the frame that mattered.
-                const savedLimit = Error.stackTraceLimit;
-                Error.stackTraceLimit = 60;
-                this.midStoreDirtyStacks().set(puuid, new Error().stack);
-                Error.stackTraceLimit = savedLimit;
+                this.midStoreDirtyStacks().set(puuid, this.deepStack());
             }
             this.dirtyObjects().set(puuid, anObject);
             this.scheduleStore();
@@ -1712,6 +1709,20 @@
     // fresh state. The log is the bug report — mutating during a store pass
     // is still a defect to fix at the source; this just stops it from being
     // a data-loss crash.
+
+    /**
+     * @description The current stack, past V8's default 10 frames: the
+     * didMutate→didUpdateSlot→setter plumbing alone fills those, so a report
+     * truncated exactly at the frame that mattered.
+     * @returns {String}
+     */
+    deepStack () {
+        const savedLimit = Error.stackTraceLimit;
+        Error.stackTraceLimit = 60;
+        const stack = new Error().stack;
+        Error.stackTraceLimit = savedLimit;
+        return stack;
+    }
 
     midStoreDirtyStacks () {
         if (!this._midStoreDirtyStacks) {
@@ -1859,6 +1870,15 @@
      * @returns {Number}
      */
     storeDirtyObjects () { // PRIVATE
+        SvObjectPool.beginStorePass();
+        try {
+            return this.storeDirtyObjectsInPass();
+        } finally {
+            SvObjectPool.endStorePass(this);
+        }
+    }
+
+    storeDirtyObjectsInPass () { // PRIVATE
         // store the dirty objects, if they contain references objects unknown to pool,
         // they'll be added as active + dirty objects which will be stored on next loop.
         // We continue until there are no dirty objects left.
@@ -1929,8 +1949,7 @@
             this.scheduleStore();
         }
 
-        this.announceContentChanges();
-        return totalStoreCount;
+        return totalStoreCount; // its content changes are announced when the outermost pass ends (endStorePass)
     }
 
     // --- reading ---
@@ -2941,6 +2960,42 @@
             return false;
         }
         return SvObjectPool.cloudPayloadFor(oldRow.payloadJson) !== SvObjectPool.cloudPayloadFor(newRow.payloadJson);
+    }
+
+    /**
+     * @description A store pass is starting. Passes nest: a folder whose
+     * documents are pools stores a new document's pool inside its own pass
+     * (ensureChildPoolForRoot).
+     * @category Content Changes
+     */
+    static beginStorePass () {
+        this._storePassDepth = (this._storePassDepth || 0) + 1;
+    }
+
+    /**
+     * @description A pool's store pass ended. Its content changes wait for the
+     * outermost pass: the announcement climbs to ancestors in other pools (a
+     * document tells its folder), and an outer pass that already stored one
+     * would see the answer — a folder's timestamp — as a mutation mid-pass.
+     * @param {SvObjectPool} pool
+     * @category Content Changes
+     */
+    static endStorePass (pool) {
+        this._storePassDepth--;
+        this.poolsAwaitingAnnouncement().add(pool);
+        if (this._storePassDepth > 0) {
+            return;
+        }
+        const pools = Array.from(this.poolsAwaitingAnnouncement());
+        this.poolsAwaitingAnnouncement().clear();
+        pools.forEach(p => p.announceContentChanges());
+    }
+
+    static poolsAwaitingAnnouncement () {
+        if (!this._poolsAwaitingAnnouncement) {
+            this._poolsAwaitingAnnouncement = new Set();
+        }
+        return this._poolsAwaitingAnnouncement;
     }
 
     /**
