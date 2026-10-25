@@ -256,6 +256,11 @@
         return this.callFunction("remove-member", { scopeRootId, memberUid });
     }
 
+    /** Wakes a process-hosted document's host if it is not live: answers { state: "live" | "starting" | "closed" }. */
+    async wakeTable (sessionId) {
+        return this.callFunction("wake-table", { sessionId });
+    }
+
     /** The hosting principal names the pool holding the document's state, once. */
     async attachHostedPool ({ sessionId, poolId }) {
         return this.callFunction("attach-hosted-pool", { sessionId, poolId });
