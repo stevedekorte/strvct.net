@@ -53,6 +53,11 @@
             slot.setSlotType("Object");
             slot.setAllowsNullValue(true);
         }
+        {
+            const slot = this.newSlot("playingClip", null); // { sound, sentences, durationMs, startedAt }: the clip being heard now
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     // TODO: make a generic protocol for voice narration, without session and settings dependencies
@@ -141,6 +146,7 @@
         this.clearSentenceHighlightTimers();
         this.unhighlightSentence(); // a stopped sound never ends: the sentence it was on is no longer spoken
         this.revealAll(); // anything that stops narration shows the rest
+        this.shareNarrationEnd(); // and other devices hear no more clips are coming
         return this;
     }
 
@@ -298,6 +304,7 @@
         const sound = this.voiceNarrateText(transcript, speakerId);
         if (sound) {
             this.soundSentencesMap().set(sound, sentences);
+            this.shareNarrationClip(sound, sentences, speakerId); // other devices play it too (_sharedNarration.js)
         }
         this.noteNarrationQueued();
     }
@@ -369,8 +376,9 @@
             console.warn(this.svTypeId() + ".onSoundStarted: no sentences for the sound — highlighting its whole transcript [" + transcript.clipWithEllipsis(40) + "]");
             sentences = [{ text: transcript, index: null }];
         }
+        this.notePlayingClip(sound, sentences);
         this.highlightSentence(sentences[0]);
-        this.scheduleSentenceHighlights(sentences, 1000 * sound.duration() / (sound.playbackRate() || 1));
+        this.scheduleSentenceHighlights(sentences, this.playingClip().durationMs);
     }
 
     /**
@@ -379,17 +387,50 @@
      * evenly per character.
      * @param {Array<Object>} sentences - [{ text, index }]
      * @param {Number} durationMs - the sound's playing time
+     * @param {Number} elapsedMs - how far into the sound it already is (a hand-over mid-clip)
      * @category Voice Narration
      */
-    scheduleSentenceHighlights (sentences, durationMs) {
+    scheduleSentenceHighlights (sentences, durationMs, elapsedMs = 0) {
+        this.sentencesWithStarts(sentences, durationMs).forEach((timed, i) => {
+            if (i > 0 && timed.startMs > elapsedMs) {
+                this.addTimeout(() => this.highlightSentence(sentences[i]), timed.startMs - elapsedMs, "sentenceHighlight" + i);
+            }
+        });
+    }
+
+    /**
+     * @description Each sentence's start in its clip: its share of the
+     * clip's characters (Plans/Progressive Disclosure §5) — the times the
+     * highlight follows.
+     * @param {Array<Object>} sentences - [{ text, index }]
+     * @param {Number} durationMs
+     * @returns {Array<Object>} [{ index, text, startMs }]
+     * @category Voice Narration
+     */
+    sentencesWithStarts (sentences, durationMs) {
         const total = sentences.reduce((sum, s) => sum + s.text.length, 0) || 1;
         let before = 0;
-        sentences.forEach((sentence, i) => {
-            if (i > 0) {
-                this.addTimeout(() => this.highlightSentence(sentence), durationMs * before / total, "sentenceHighlight" + i);
-            }
-            before += sentence.text.length;
+        return sentences.map(s => {
+            const startMs = Math.round(durationMs * before / total);
+            before += s.text.length;
+            return { index: s.index, text: s.text, startMs: startMs };
         });
+    }
+
+    // --- the clip being heard ---
+
+    notePlayingClip (sound, sentences) {
+        const durationMs = 1000 * sound.duration() / (sound.playbackRate() || 1);
+        this.setPlayingClip({ sound: sound, sentences: sentences, durationMs: durationMs, startedAt: Date.now() });
+        return this;
+    }
+
+    clearPlayingClip (sound) {
+        const clip = this.playingClip();
+        if (clip && clip.sound === sound) {
+            this.setPlayingClip(null);
+        }
+        return this;
     }
 
     /**
@@ -429,6 +470,7 @@
         const sentences = this.soundSentencesMap().get(sound) || [];
         sentences.forEach((text, i) => this.clearTimeoutNamed("sentenceHighlight" + i)); // a sound cut short
         this.soundSentencesMap().delete(sound);
+        this.clearPlayingClip(sound);
         this.unhighlightSentence();
         this.finishDisclosureIfNarrationDone();
     }

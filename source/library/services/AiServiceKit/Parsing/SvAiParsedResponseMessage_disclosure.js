@@ -31,6 +31,10 @@
             slot.setSlotType("Number");
             slot.setSyncsToView(true);
         }
+        {
+            const slot = this.newSlot("disclosureProgressAt", 0); // when disclosure last started or advanced (ms)
+            slot.setSlotType("Number");
+        }
     }
 
     /**
@@ -43,6 +47,17 @@
      */
     disclosureStallMs () {
         return 25000;
+    }
+
+    /**
+     * @description The longest disclosure keeps waiting while the speaker is
+     * busy with other speech (an earlier response's clips queued ahead of
+     * this one's): past it, a sound that never ends cannot hide the text.
+     * @returns {Number} milliseconds
+     * @category Disclosure
+     */
+    disclosureMaxWaitMs () {
+        return 180000;
     }
 
     /**
@@ -69,6 +84,7 @@
         }
         this.setDisclosedThrough(-1);
         this.setIsDisclosing(true);
+        this.setDisclosureProgressAt(Date.now());
         this.tellConversationDisclosureChanged();
         return this;
     }
@@ -87,6 +103,7 @@
         if (index > this.disclosedThrough()) {
             this.setDisclosedThrough(index);
         }
+        this.setDisclosureProgressAt(Date.now());
         this.armDisclosureStallTimer();
         return this;
     }
@@ -104,8 +121,41 @@
     }
 
     armDisclosureStallTimer () {
-        this.addTimeout(() => this.revealAll(), this.disclosureStallMs(), "disclosureStall");
+        this.addTimeout(() => this.onDisclosureStall(), this.disclosureStallMs(), "disclosureStall");
         return this;
+    }
+
+    /**
+     * @description Nothing has advanced for a while: shows everything,
+     * unless this response's speech is still on its way (and not for too
+     * long).
+     * @category Disclosure
+     */
+    onDisclosureStall () {
+        if (this.isSpeechStillComing()) {
+            this.armDisclosureStallTimer();
+            return this;
+        }
+        this.revealAll();
+        return this;
+    }
+
+    /**
+     * @description Whether this response's sentences are still on their way,
+     * within disclosureMaxWaitMs of the last progress: queued behind other
+     * speech (the speaker is busy — duck-typed `isSpeaking()` on the
+     * narration controller), or clips another device has yet to send.
+     * @returns {Boolean}
+     * @category Disclosure
+     */
+    isSpeechStillComing () {
+        const recent = Date.now() - this.disclosureProgressAt() < this.disclosureMaxWaitMs();
+        return recent && this.hasNarrationPending() && (this.isSpeakerBusy() || this.expectsSharedClips());
+    }
+
+    isSpeakerBusy () {
+        const controller = this.narrationController();
+        return !!(controller && typeof controller.isSpeaking === "function" && controller.isSpeaking());
     }
 
     /**
@@ -124,14 +174,15 @@
 
     /**
      * @description Whether sentences of this response are still waiting to
-     * be spoken: a group not yet sent, or sounds queued or playing.
+     * be spoken: a group not yet sent, sounds queued or playing, or clips of
+     * another device's narration still to come (_sharedNarration.js).
      * @returns {Boolean}
      * @category Disclosure
      */
     hasNarrationPending () {
         const queued = this.queuedSentenceGroups();
         const sounds = this.soundSentences();
-        return !!this.narrationGroup() || (!!queued && queued.length > 0) || (!!sounds && sounds.size > 0);
+        return !!this.narrationGroup() || (!!queued && queued.length > 0) || (!!sounds && sounds.size > 0) || this.expectsSharedClips();
     }
 
     /**

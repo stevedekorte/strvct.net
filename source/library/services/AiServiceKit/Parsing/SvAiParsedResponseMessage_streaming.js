@@ -143,6 +143,7 @@
             }
             this.shutdownSentenceReader();
             this.flushNarrationGroup(); // the last sentences: nothing more is coming
+            this.shareNarrationEnd(); // after its last clip, other devices hear no more are coming
         } catch (e) {
             console.error(this.logPrefix ? this.logPrefix() : "[SvAiParsedResponseMessage]",
                 "onStreamEnd finalization threw — completing the message anyway so input doesn't wedge:",
