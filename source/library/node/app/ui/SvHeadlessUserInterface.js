@@ -9,6 +9,18 @@
 
 (class SvHeadlessUserInterface extends SvUserInterface {
 
+    /**
+     * @description Class slot exitsOnTerminateSignal (default true): whether
+     * a SIGTERM/SIGINT exits the process once the app is told. A process
+     * that embeds the app and owns its shutdown — it saves, says goodbye,
+     * then exits itself — sets it false; otherwise the exit here cuts its
+     * shutdown off.
+     * @category Lifecycle
+     */
+    static initClass () {
+        this.newClassSlot("exitsOnTerminateSignal", true);
+    }
+
 
     init () {
         super.init();
@@ -35,8 +47,9 @@
      * @description Headless analogue of the browser lifecycle listeners:
      * translates process termination signals into the app's environment-
      * agnostic lifecycle call (SvApp.onAppWillTerminate), so a model's cleanup
-     * runs on shutdown the same way it would on a browser unload. Foundation —
-     * extend with suspend/connectivity signals as needed.
+     * runs on shutdown the same way it would on a browser unload, then exits
+     * unless the embedding process owns its shutdown (exitsOnTerminateSignal).
+     * Foundation — extend with suspend/connectivity signals as needed.
      * @category Lifecycle
      */
     setupLifecycleSignals () {
@@ -47,7 +60,9 @@
         ["SIGTERM", "SIGINT"].forEach((sig) => {
             process.on(sig, () => {
                 this.app().onAppWillTerminate();
-                process.exit(0);
+                if (SvHeadlessUserInterface.exitsOnTerminateSignal()) {
+                    process.exit(0);
+                }
             });
         });
         return this;
