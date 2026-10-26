@@ -80,11 +80,11 @@
                 align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
                 width: min(720px, calc(100vw - 16px)); box-sizing: border-box; margin-top: 8px;
                 padding: 10px 14px 10px 18px;
-                background: var(--sv-surface-panel, var(--sv-background, #f4f1e8));
-                color: var(--sv-text, #2b2620);
-                border: 1px solid var(--sv-hairline, rgba(0,0,0,0.2));
+                background: var(--sv-surface-panel);
+                color: var(--sv-text);
+                border: 1px solid var(--sv-hairline);
                 box-shadow: 0 6px 24px rgba(0,0,0,0.12);
-                font-family: var(--sv-face-body, inherit); font-size: 16px; line-height: 1.35;
+                font-family: var(--sv-face-body); font-size: 16px; line-height: 1.35;
             }
             .SvNoticeBar .SvNoticeMessage { flex: 1 1 260px; min-width: 0; }
             @media (max-width: 520px) {

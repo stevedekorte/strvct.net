@@ -267,8 +267,8 @@
                 padding-right: 28px;
             }
             .SvInlineDisplay > .TileContentView > .SvInlineSectionHead > .SvInlineSectionHeading {
-                font-family: var(--sv-inline-display-face, var(--sv-face-body, inherit));
-                font-size: var(--sv-inline-display-size, 52px);
+                font-family: var(--sv-inline-display-face);
+                font-size: var(--sv-inline-display-size);
                 line-height: 1;
                 letter-spacing: normal;
                 text-transform: none;
@@ -278,8 +278,8 @@
                 padding-bottom: 0 !important; /* ...and half an em under 52px type parts it from its tagline */
             }
             .SvInlineDisplay > .TileContentView > .SvInlineSectionHead > .SvInlineSectionSubheading {
-                font-size: var(--sv-inline-display-subtitle-size, 19px);
-                color: var(--sv-inline-display-subtitle-color, var(--sv-text)); /* a theme may give the tagline its accent */
+                font-size: var(--sv-inline-display-subtitle-size);
+                color: var(--sv-inline-display-subtitle-color); /* a theme may give the tagline its accent */
                 padding: 0 !important; /* close under the title, a line with it */
                 margin: 2px 0 10px 0;
             }
@@ -288,7 +288,7 @@
                 white-space: normal;
                 text-transform: none;
                 letter-spacing: normal;
-                font-size: var(--sv-inline-display-note-size, 20px);
+                font-size: var(--sv-inline-display-note-size);
                 color: var(--sv-text);
                 padding-left: 0 !important;
             }
@@ -350,7 +350,7 @@
                 text-overflow: clip !important;
                 text-align: left !important;
                 width: 100% !important;
-                font-size: var(--sv-inline-lede-size, 17px) !important;
+                font-size: var(--sv-inline-lede-size) !important;
                 line-height: 1.55;
                 color: var(--sv-text) !important;
             }
@@ -394,7 +394,7 @@
             .SvInlineNested > [data-tile-layout="stat"].SvTileSpans { grid-column: 1 / -1; }
             [data-tile-layout="stat"].SvTileSpans:not([data-tile-meter]) .SvTileNoteView {
                 white-space: normal !important;
-                font-size: var(--sv-inline-stat-line-size, 18px) !important;
+                font-size: var(--sv-inline-stat-line-size) !important;
             }
             /* a stat's meter (nodeTileMeterFraction): a thin bar under its value */
             [data-tile-meter] > .TileContentView::after {
@@ -403,7 +403,7 @@
                 align-self: stretch;
                 height: 2px;
                 margin: 4px 0 2px;
-                background: linear-gradient(to right, var(--sv-text) var(--sv-tile-meter, 0%), var(--sv-hairline) var(--sv-tile-meter, 0%));
+                background: linear-gradient(to right, var(--sv-text) var(--sv-tile-meter), var(--sv-hairline) var(--sv-tile-meter));
             }
             [data-tile-layout="stat"] > .TileContentView {
                 flex-direction: column !important;
@@ -425,7 +425,7 @@
             }
             [data-tile-layout="stat"] .SvTileNoteView {
                 order: 2;
-                font-size: var(--sv-inline-stat-size, 24px) !important;
+                font-size: var(--sv-inline-stat-size) !important;
                 white-space: nowrap !important;
                 color: var(--sv-text) !important;
                 text-align: left !important;
@@ -435,7 +435,7 @@
                 order: 4;
                 display: block !important;
                 font-style: italic;
-                font-size: var(--sv-inline-stat-note-size, 14px) !important;
+                font-size: var(--sv-inline-stat-note-size) !important;
                 line-height: 1.25;
                 text-align: left !important;
                 width: auto !important;

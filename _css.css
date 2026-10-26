@@ -173,13 +173,7 @@
     /* INLINE DOCUMENTS (SvTilesView_inline, SvInlineSectionTile): a node's
        next levels shown in place as sections in columns. */
     --sv-inline-document-padding: 24px 24px 40px;           /* around the document */
-    --sv-inline-document-gutter: 24px;
-    /* the Boolean switch style (SvBooleanView, booleanStyle "switch") */
-    --sv-switch-on: rgba(255, 255, 255, 0.5);  /* track, on: white at half (Steve, 2026-10-20) */
-    --sv-switch-off: rgba(255, 255, 255, 0.16); /* track, off */
-    --sv-switch-edge: rgba(255, 255, 255, 0.22); /* track edge, off */
-    --sv-switch-knob: #f4f4f4;
-    --sv-switch-shadow: rgba(0, 0, 0, 0.35);                      /* the least side margin when a reading measure centers it */
+    --sv-inline-document-gutter: 24px;                      /* the least side margin when a reading measure centers it */
     --sv-inline-column-gap: 48px;                           /* between columns */
     --sv-inline-section-gap: 32px;                          /* below each section */
     --sv-inline-heading-color: var(--sv-text);              /* a section's heading */
@@ -189,6 +183,31 @@
     --sv-inline-group-heading-color: var(--sv-text-muted);  /* a group's heading, inside a section */
     --sv-inline-row-rule: var(--sv-hairline);               /* between rows of a section */
     --sv-inline-disclosure-color: var(--sv-text-muted);     /* the diamond before a row that opens */
+    --sv-inline-display-face: var(--sv-face-body);          /* a display section's title (a character's name) */
+    --sv-inline-display-size: 52px;
+    --sv-inline-display-subtitle-size: 19px;                /* the tagline under it */
+    --sv-inline-display-subtitle-color: var(--sv-text);     /* a theme may give the tagline its accent */
+    --sv-inline-display-note-size: 20px;
+    --sv-inline-lede-size: 17px;                            /* a section's lede paragraph */
+    --sv-inline-stat-line-size: 18px;                       /* a stat strip's line */
+    --sv-inline-stat-size: 24px;                            /* a stat's value */
+    --sv-inline-stat-note-size: 14px;                       /* a stat's note */
+
+    /* A content column's least side margin when a reading measure centers it
+       (SvNavView.syncContentMaxWidth); an inline document sets its own. */
+    --sv-content-gutter: 0px;
+
+    /* Per-tile values a tile sets on itself from its node (SvTile); these
+       are the defaults when it sets none. */
+    --sv-tile-meter: 0%;                                    /* nodeTileMeterFraction, as a percentage */
+    --sv-tile-muted-opacity: 0.45;                          /* nodeTileEmphasis "muted" */
+
+    /* the Boolean switch style (SvBooleanView, booleanStyle "switch") */
+    --sv-switch-on: rgba(255, 255, 255, 0.5);  /* track, on: white at half (Steve, 2026-10-20) */
+    --sv-switch-off: rgba(255, 255, 255, 0.16); /* track, off */
+    --sv-switch-edge: rgba(255, 255, 255, 0.22); /* track edge, off */
+    --sv-switch-knob: #f4f4f4;
+    --sv-switch-shadow: rgba(0, 0, 0, 0.35);
 }
 
 .SvEdgeHandlePillView .SvEdgeHandleTick {

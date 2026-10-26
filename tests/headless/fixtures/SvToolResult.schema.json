@@ -9,16 +9,19 @@
         "callId": {
           "default": "",
           "description": "A unique identifier included in the tool call to which this is a response.",
+          "maxLength": 16384,
           "type": "string"
         },
         "error": {
           "default": null,
           "description": "An error message if the call failed.",
+          "maxLength": 16384,
           "type": "string"
         },
         "reminder": {
           "default": null,
           "description": "An advisory action reminder attached to this result (not an error or warning about the call itself) — act on it now if it applies, otherwise continue normally.",
+          "maxLength": 16384,
           "type": "string"
         },
         "result": {
@@ -34,16 +37,19 @@
             "failure",
             null
           ],
+          "maxLength": 16384,
           "type": "string"
         },
         "toolName": {
           "default": "",
           "description": "The name of the tool that made the call.",
+          "maxLength": 16384,
           "type": "string"
         },
         "warning": {
           "default": null,
-          "description": "A warning about the call that did not cause it to fail — e.g. a duplicate copy of the call was found inside a <think> block and ignored. Correct the described issue in future calls.",
+          "description": "A warning about the call that did not cause it to fail — e.g. a duplicate copy of the call was found inside an ignored block such as <scene-description>. Correct the described issue in future calls.",
+          "maxLength": 16384,
           "type": "string"
         }
       },

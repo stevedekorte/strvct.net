@@ -9,6 +9,7 @@
         "callId": {
           "default": null,
           "description": "A unique identifier for the call. The response will be tagged with this id.",
+          "maxLength": 16384,
           "pattern": "^call_\\d+$",
           "type": "string"
         },
@@ -21,6 +22,7 @@
         "toolName": {
           "default": null,
           "description": "The name of the tool to call.",
+          "maxLength": 16384,
           "type": "string"
         },
         "toolNote": {
