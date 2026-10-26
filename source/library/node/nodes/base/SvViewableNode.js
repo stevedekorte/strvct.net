@@ -528,7 +528,10 @@
      * that spans columns (nodeSpansInlineColumns) takes a whole line), "lede" (the subtitle
      * as a paragraph, no title), "quote" (the subtitle in italic beside a
      * rule), "figure" (an image, whole, in a thin frame)
-     * or "kicker" (the title as a small-caps line). Roles, not looks:
+     * or "kicker" (the title as a small-caps line). Anywhere, not only
+     * in an inline document: "status" (a large title beside a filled
+     * diamond mark, the subtitle in italic beneath) and "pendingStatus" (the
+     * same, the mark dashed and breathing — something under way). Roles, not looks:
      * the theme sets the sizes.
      * @returns {String|null}
      * @category Layout

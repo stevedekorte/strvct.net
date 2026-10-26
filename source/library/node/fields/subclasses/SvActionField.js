@@ -82,6 +82,23 @@
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
         }
+
+        // button title
+        {
+            const slot = this.newSlot("buttonTitle", null);
+            slot.setDescription("A short label for the button itself (\"Copy Link\"). When set, the action shows as a row: its title and subtitle on the left, a compact button on the right.");
+            slot.setShouldStoreSlot(false); // set by the target's actionInfo on every sync
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("String");
+        }
+
+        // is destructive
+        {
+            const slot = this.newSlot("isDestructive", false);
+            slot.setDescription("If true, the action cannot be undone (delete, end): a row's button shows in the theme's danger color.");
+            slot.setShouldStoreSlot(false); // set by the target's actionInfo on every sync
+            slot.setSlotType("Boolean");
+        }
     }
 
     /**
@@ -106,6 +123,18 @@
     setTitle (s) {
         super.setTitle(s);
         return this;
+    }
+
+    /**
+     * @description How the action shows: "row" when it names a short label
+     * for its button (buttonTitle) — its title and subtitle on the left, the
+     * button on the right — else "button", one button holding the title and
+     * subtitle.
+     * @returns {String} "row" | "button"
+     * @category Presentation
+     */
+    nodeActionStyle () {
+        return this.buttonTitle() ? "row" : "button";
     }
 
     /**
@@ -302,6 +331,27 @@
             }
         }
 
+        this.setRowInfo(infoDict);
+        return this;
+    }
+
+    /**
+     * @description The action info's row presentation: buttonTitle (a short
+     * label for the button; null keeps the single-button look) and
+     * isDestructive.
+     * @param {Object} infoDict
+     * @returns {SvActionField}
+     * @category Configuration
+     */
+    setRowInfo (infoDict) {
+        if (infoDict.buttonTitle !== undefined) {
+            assert(Type.isString(infoDict.buttonTitle) || Type.isNull(infoDict.buttonTitle), "buttonTitle must be a string or null");
+            this.setButtonTitle(infoDict.buttonTitle);
+        }
+        if (infoDict.isDestructive !== undefined) {
+            assert(Type.isBoolean(infoDict.isDestructive), "isDestructive must be a boolean");
+            this.setIsDestructive(infoDict.isDestructive);
+        }
         return this;
     }
 

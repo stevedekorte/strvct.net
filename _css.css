@@ -202,12 +202,96 @@
     --sv-tile-meter: 0%;                                    /* nodeTileMeterFraction, as a percentage */
     --sv-tile-muted-opacity: 0.45;                          /* nodeTileEmphasis "muted" */
 
+    /* ACTION ROWS (SvActionFieldTile, nodeActionStyle "row"): an action's
+       title and subtitle on the left, a compact outlined button on the right. */
+    --sv-action-row-rule: var(--sv-hairline);                     /* the line under each row */
+    --sv-action-row-padding: 10px 0 10px 0.5em;                    /* around a row's title and subtitle */
+    --sv-action-row-title-size: inherit;
+    --sv-action-row-subtitle-color: var(--sv-text-muted);
+    --sv-action-row-subtitle-style: italic;
+    --sv-action-button-color: var(--sv-text);                     /* its label and outline */
+    --sv-action-button-hover-text: var(--sv-surface);             /* its label on the filled hover */
+    --sv-action-button-danger: var(--sv-system-error);            /* a destructive action's label and outline */
+    --sv-action-button-disabled: var(--sv-text-dim);
+    --sv-action-button-min-width: 9em;
+    --sv-action-button-font-size: 0.72em;
+    --sv-action-button-tracking: 0.2em;
+
+    /* STATUS TILES (nodeTileLayout "status" / "pendingStatus"): a large title
+       beside a diamond mark that breathes while pending and fills once settled. */
+    --sv-status-title-size: 1.5em;
+    --sv-status-mark-color: var(--sv-text);
+    --sv-status-pending-color: var(--sv-attention);
+    --sv-status-rule: var(--sv-text);                             /* the lines above and below it */
+
     /* the Boolean switch style (SvBooleanView, booleanStyle "switch") */
     --sv-switch-on: rgba(255, 255, 255, 0.5);  /* track, on: white at half (Steve, 2026-10-20) */
     --sv-switch-off: rgba(255, 255, 255, 0.16); /* track, off */
     --sv-switch-edge: rgba(255, 255, 255, 0.22); /* track edge, off */
     --sv-switch-knob: #f4f4f4;
     --sv-switch-shadow: rgba(0, 0, 0, 0.35);
+}
+
+/* Status tiles (nodeTileLayout "status" | "pendingStatus"). The mark is
+   decoration (a ::before with no text), so it is generated content. */
+[data-tile-layout="status"] > .TileContentView,
+[data-tile-layout="pendingStatus"] > .TileContentView {
+    border-top: 1px solid var(--sv-status-rule);
+    border-bottom: 1px solid var(--sv-status-rule);
+    margin-bottom: 0.75em;
+}
+
+[data-tile-layout="status"] .SvTileTitleView,
+[data-tile-layout="pendingStatus"] .SvTileTitleView {
+    font-size: var(--sv-status-title-size) !important; /* over the tile's inline size */
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+}
+
+[data-tile-layout="status"] .SvTileTitleView::before,
+[data-tile-layout="pendingStatus"] .SvTileTitleView::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 0.6em;
+    height: 0.6em;
+    box-sizing: border-box;
+    transform: rotate(45deg);
+    border: 1px solid var(--sv-status-mark-color);
+}
+
+[data-tile-layout="status"] .SvTileTitleView::before {
+    background-color: var(--sv-status-mark-color);
+    animation: sv-status-settle 600ms ease-out;
+}
+
+[data-tile-layout="pendingStatus"] .SvTileTitleView::before {
+    border-style: dashed;
+    border-color: var(--sv-status-pending-color);
+    animation: sv-status-breathe 1.4s ease-in-out infinite;
+}
+
+[data-tile-layout="status"] .SvTileSubtitleView,
+[data-tile-layout="pendingStatus"] .SvTileSubtitleView {
+    font-style: italic;
+    color: var(--sv-text-muted);
+}
+
+@keyframes sv-status-breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+}
+
+@keyframes sv-status-settle {
+    from { transform: rotate(45deg) scale(0.6); opacity: 0; }
+    to { transform: rotate(45deg) scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-tile-layout="status"] .SvTileTitleView::before,
+    [data-tile-layout="pendingStatus"] .SvTileTitleView::before {
+        animation: none;
+    }
 }
 
 .SvEdgeHandlePillView .SvEdgeHandleTick {

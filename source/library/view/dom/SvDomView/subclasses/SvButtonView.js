@@ -312,7 +312,7 @@
      * @category Event Handling
      */
     onTapCancelled (/*aGesture*/) {
-        this.setBackgroundColor("transparent");
+        this.setBackgroundColor(null); // back to the stylesheet's (a row button fills on hover)
     }
 
     /**
@@ -322,7 +322,7 @@
      * @category Event Handling
      */
     onTapComplete (/*aGesture*/) {
-        this.setBackgroundColor("transparent");
+        this.setBackgroundColor(null); // back to the stylesheet's (a row button fills on hover)
         this.sendActionToTarget();
         //SvSimpleSynth.clone().playButtonTap();
         return false;

@@ -23,6 +23,23 @@
             const slot = this.newSlot("buttonView", null);
             slot.setSlotType("SvButtonView");
         }
+        /**
+         * @member {SvFlexDomView} rowTextView - The row style's left side: the
+         * action's title over its subtitle (hidden in the button style).
+         * @category UI
+         */
+        {
+            const slot = this.newSlot("rowTextView", null);
+            slot.setSlotType("SvFlexDomView");
+        }
+        {
+            const slot = this.newSlot("rowTitleView", null);
+            slot.setSlotType("SvTextView");
+        }
+        {
+            const slot = this.newSlot("rowSubtitleView", null);
+            slot.setSlotType("SvTextView");
+        }
     }
 
     /**
@@ -50,12 +67,34 @@
         this.setMaxWidth("100%");
         */
 
+        this.setupRowTextView();
         this.addContentSubview(this.buttonView());
         //this.setMinHeightPx(64);
 
         // Accessibility: action tiles are buttons
         this.setAriaRole("button");
 
+        return this;
+    }
+
+    /**
+     * @description The row style's title and subtitle, before the button.
+     * Hidden until a node asks for the row style (nodeActionStyle); its look
+     * is the theme's (field_tiles/_css.css, --sv-action-row-*).
+     * @returns {SvActionFieldTile}
+     * @category UI
+     */
+    setupRowTextView () {
+        const v = SvFlexDomView.clone().setElementClassName("SvActionRowText");
+        v.setDisplay("flex");
+        v.setFlexDirection("column");
+        v.setFlexGrow(1);
+        v.setMinWidth("0px");
+        this.setRowTitleView(v.addSubview(SvTextView.clone().setElementClassName("SvActionRowTitle")));
+        this.setRowSubtitleView(v.addSubview(SvTextView.clone().setElementClassName("SvActionRowSubtitle")));
+        v.setIsDisplayHidden(true);
+        this.setRowTextView(v);
+        this.addContentSubview(v);
         return this;
     }
 
@@ -87,17 +126,18 @@
 
         const node = this.node();
         const bv = this.buttonView();
-        bv.setTitle(node.translatedValueOfSlotNamed("title"));
-        bv.setSubtitle(node.translatedValueOfSlotNamed("subtitle"));
-        bv.setIsEditable(node.nodeCanEditTitle());
+        if (this.isRowStyle()) {
+            this.syncRowFromNode(node);
+        } else {
+            bv.setTitle(node.translatedValueOfSlotNamed("title"));
+            bv.setSubtitle(node.translatedValueOfSlotNamed("subtitle"));
+        }
+        this.syncStyleAttributes();
+        bv.setIsEditable(node.nodeCanEditTitle() && !this.isRowStyle());
 
         bv.setIsEnabled(node.isEnabled());
 
-        if (node.isEnabled()) {
-            bv.setOpacity(1);
-        } else {
-            bv.setOpacity(0.5);
-        }
+        bv.setOpacity(node.isEnabled() || this.isRowStyle() ? 1 : 0.5); // a row's disabled look is the theme's
 
         const isVisible = this.node().isVisible();
         assert(Type.isBoolean(isVisible));
@@ -113,6 +153,57 @@
         this.setAriaLabel(this.ariaLabel());
         this.setAriaDisabled(this.ariaIsDisabled());
 
+        return this;
+    }
+
+    /**
+     * @description Whether the node asks for the row style: its title and
+     * subtitle on the left, a compact button with its own short label on
+     * the right (SvActionField.nodeActionStyle).
+     * @returns {Boolean}
+     * @category UI
+     */
+    isRowStyle () {
+        const node = this.node();
+        return !!(node && node.nodeActionStyle && node.nodeActionStyle() === "row");
+    }
+
+    /**
+     * @description Fills the row: the title and subtitle on the left, the
+     * button labelled with the node's buttonTitle.
+     * @param {SvActionField} node
+     * @returns {SvActionFieldTile}
+     * @category UI
+     */
+    syncRowFromNode (node) {
+        const subtitle = node.translatedValueOfSlotNamed("subtitle");
+        this.rowTitleView().setValue(node.translatedValueOfSlotNamed("title") || "");
+        this.rowSubtitleView().setValue(subtitle || "");
+        this.rowSubtitleView().setIsDisplayHidden(!subtitle);
+        this.buttonView().setTitle(node.buttonTitle());
+        this.buttonView().setSubtitle(null);
+        return this;
+    }
+
+    /**
+     * @description The style and state the stylesheet reads: data-action-style
+     * ("row" | "button"), and on a row data-destructive and data-disabled.
+     * The button's own inline box (border, width, padding) yields to the
+     * stylesheet in a row.
+     * @returns {SvActionFieldTile}
+     * @category UI
+     */
+    syncStyleAttributes () {
+        const node = this.node();
+        const isRow = this.isRowStyle();
+        this.setAttribute("data-action-style", isRow ? "row" : "button");
+        this.setAttribute("data-destructive", isRow && node.isDestructive() ? "true" : "false");
+        this.setAttribute("data-disabled", node.isEnabled() ? "false" : "true");
+        this.rowTextView().setIsDisplayHidden(!isRow);
+        this.contentView().setJustifyContent(isRow ? "space-between" : "center");
+        const bv = this.buttonView();
+        bv.setBorder(isRow ? null : "1px solid rgba(128, 128, 128, 0.5)");
+        bv.setWidth(isRow ? null : "100%");
         return this;
     }
 
@@ -155,7 +246,9 @@
      * @category Data Synchronization
      */
     syncToNode () {
-        this.node().setTitle(this.buttonView().title());
+        if (!this.isRowStyle()) { // a row's button shows buttonTitle, not the title
+            this.node().setTitle(this.buttonView().title());
+        }
         super.syncToNode();
         return this;
     }
@@ -181,6 +274,9 @@
      * @category Accessibility
      */
     ariaLabel () {
+        if (this.isRowStyle()) {
+            return this.rowTitleView().value() || "";
+        }
         return this.buttonView().title() || "";
     }
 

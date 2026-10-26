@@ -118,3 +118,64 @@ SvFieldValueView br {
 [data-disclosure="on"] [data-pd-hidden] {
     display: none !important;
 }
+
+/* --- Action rows (SvActionFieldTile, nodeActionStyle "row") ---
+   The action's title and subtitle on the left, a compact outlined button
+   with its own short label on the right; the button fills on hover. Every
+   value is a token (strvct _css.css, --sv-action-*), so a theme restyles
+   the row without a view class. */
+
+[data-action-style="row"] > .TileContentView {
+    column-gap: 1.25em; /* its padding is inline (SvActionFieldTile.setupTileContentView); the row's is the text's */
+    border-bottom: 1px solid var(--sv-action-row-rule);
+}
+
+[data-action-style="row"] .SvActionRowText {
+    padding: var(--sv-action-row-padding);
+}
+
+[data-action-style="row"] .SvActionRowTitle {
+    font-size: var(--sv-action-row-title-size);
+    text-align: left;
+}
+
+[data-action-style="row"] .SvActionRowSubtitle {
+    color: var(--sv-action-row-subtitle-color);
+    font-style: var(--sv-action-row-subtitle-style);
+    font-size: 0.85em;
+    text-align: left;
+}
+
+[data-action-style="row"] .SvActionFieldView {
+    flex: 0 0 auto;
+    min-width: var(--sv-action-button-min-width);
+    border: 1px solid var(--sv-action-button-color);
+    color: var(--sv-action-button-color);
+    font-size: var(--sv-action-button-font-size);
+    letter-spacing: var(--sv-action-button-tracking);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+[data-action-style="row"][data-disabled="false"] .SvActionFieldView:hover {
+    background-color: var(--sv-action-button-color);
+    color: var(--sv-action-button-hover-text);
+}
+
+[data-action-style="row"][data-destructive="true"] .SvActionFieldView {
+    border-color: var(--sv-action-button-danger);
+    color: var(--sv-action-button-danger);
+}
+
+[data-action-style="row"][data-destructive="true"][data-disabled="false"] .SvActionFieldView:hover {
+    background-color: var(--sv-action-button-danger);
+    color: var(--sv-action-button-hover-text);
+}
+
+[data-action-style="row"][data-disabled="true"] .SvActionFieldView {
+    border-style: dotted;
+    border-color: var(--sv-action-button-disabled);
+    color: var(--sv-action-button-disabled);
+    cursor: default;
+}
