@@ -205,7 +205,7 @@
     /* ACTION ROWS (SvActionFieldTile, nodeActionStyle "row"): an action's
        title and subtitle on the left, a compact outlined button on the right. */
     --sv-action-row-rule: var(--sv-hairline);                     /* the line under each row */
-    --sv-action-row-padding: 10px 0 10px 0.5em;                    /* around a row's title and subtitle */
+    --sv-action-row-padding: 10px 0;                               /* above and below a row's title and subtitle */
     --sv-action-row-title-size: inherit;
     --sv-action-row-subtitle-color: var(--sv-text-muted);
     --sv-action-row-subtitle-style: italic;
@@ -244,15 +244,14 @@
 [data-tile-layout="status"] .SvTileTitleView,
 [data-tile-layout="pendingStatus"] .SvTileTitleView {
     font-size: var(--sv-status-title-size) !important; /* over the tile's inline size */
-    display: flex;
-    align-items: center;
-    gap: 0.8em;
 }
 
 [data-tile-layout="status"] .SvTileTitleView::before,
 [data-tile-layout="pendingStatus"] .SvTileTitleView::before {
     content: "";
-    flex: 0 0 auto;
+    display: inline-block; /* the title is inline: a box needs this to take its size */
+    vertical-align: 0.12em;
+    margin: 0 0.75em 0 0.15em;
     width: 0.6em;
     height: 0.6em;
     box-sizing: border-box;
