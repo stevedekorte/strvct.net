@@ -408,9 +408,13 @@
     }
 
     /**
-     * True when a lazy stored slot still holds its unmaterialized stub —
-     * i.e. the stored value exists but has not been loaded yet. Classes use
-     * this in finalInit to skip work that didMaterializeSlot will do later.
+     * True when a lazy slot still holds its unmaterialized stub — a stored
+     * record not yet loaded (SvStoreRef) or JSON not yet deserialized
+     * (SvLazyJsonRef): either way its getter would build the value. Classes
+     * use this in finalInit to skip work that didMaterializeSlot will do
+     * later, and "if loaded" readers use it to stay reads. Recognizing only
+     * store refs let a display read during a store pass materialize lazy
+     * JSON and mutate an object already stored that pass (2026-10-25).
      * @param {string} slotName - The slot name.
      * @returns {boolean}
      * @category Slot Hooks
@@ -421,7 +425,9 @@
             return false;
         }
         const raw = slot.onInstanceRawGetValue(this);
-        return (typeof(SvStoreRef) !== "undefined") && (raw instanceof SvStoreRef);
+        const isStoreRef = (typeof(SvStoreRef) !== "undefined") && (raw instanceof SvStoreRef);
+        const isJsonRef = (typeof(SvLazyJsonRef) !== "undefined") && (raw instanceof SvLazyJsonRef);
+        return isStoreRef || isJsonRef;
     }
 
     /**
