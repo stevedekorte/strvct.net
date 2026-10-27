@@ -156,6 +156,17 @@
         }
 
         /**
+     * @member {Number} sentAt - Date.now() when the attempt was sent: a
+     * timeout says how long it really waited, not only the period set.
+     */
+        {
+            const slot = this.newSlot("sentAt", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(false);
+        }
+
+        /**
      * @member {Number} lastProgressTime - Date.now() of the attempt's start or
      * its latest received bytes; read by the stall watch.
      */
@@ -849,6 +860,7 @@
         // For GET and HEAD requests, don't send a body (even if it's undefined/null)
         // This prevents Firebase from returning 400 errors
         const methodsWithoutBody = ["GET", "HEAD", "DELETE"];
+        this.setSentAt(Date.now());
         if (methodsWithoutBody.includes(options.method.toUpperCase())) {
             xhr.send();
         } else {
@@ -1427,7 +1439,23 @@
             return "Request timed out: the reply stopped arriving for " + stallSeconds + " seconds" + suffix;
         }
         const seconds = Math.round(this.timeoutPeriodInMs() / 1000);
-        return "Request timed out after " + seconds + " seconds" + suffix;
+        return "Request timed out after " + seconds + " seconds" + this.waitedDescription() + suffix;
+    }
+
+    /**
+     * @description How long the attempt had been out, when that differs from
+     * the period set: a timeout that fires early (seen on a busy table
+     * worker, 2026-10-27) says so.
+     * @returns {String} "" or " (sent 7.1 s ago)"
+     * @category Timeout
+     */
+    waitedDescription () {
+        if (!this.sentAt()) {
+            return "";
+        }
+        const waitedMs = Date.now() - this.sentAt();
+        const isAsSet = Math.abs(waitedMs - this.timeoutPeriodInMs()) < 1000;
+        return isAsSet ? "" : " (sent " + (waitedMs / 1000).toFixed(1) + " s ago)";
     }
 
     timeoutCause () {

@@ -50,6 +50,17 @@
             slot.setDescription("the backend's { backing, maxOpsPerCommit, maxBytesPerCommit }, once asked; null until then");
         }
         {
+            const slot = this.newSlot("commitLimitsPromise", null);
+            slot.setSlotType("Promise");
+            slot.setAllowsNullValue(true);
+            slot.setDescription("the in-flight records-limits ask, shared by every commit that wants it");
+        }
+        {
+            const slot = this.newSlot("commitLimitsWaitMs", 1500);
+            slot.setSlotType("Number");
+            slot.setDescription("the longest a commit waits for the limits before going on with the defaults (the ask carries on)");
+        }
+        {
             const slot = this.newSlot("hasWarnedOfCommitLimits", false);
             slot.setSlotType("Boolean");
             slot.setDescription("whether a failed records-limits ask was reported (once per store)");
@@ -78,16 +89,39 @@
     }
 
     /**
-     * @description Asks the backend once how large a commit it serves whole
+     * @description Asks the backend how large a commit it serves whole
      * (Firestore stages above 450 operations; Spanner takes thousands). Until
      * it answers, or if it cannot, the smaller limits hold — staging is the
-     * safe default on Firestore.
+     * safe default on Firestore. One ask at a time, shared by every commit,
+     * and a commit waits for it at most commitLimitsWaitMs: a table worker's
+     * first save once sat seven seconds behind asks that never returned
+     * (Plans/Session Startup).
      * @category Write
      */
     async asyncEnsureCommitLimits () {
         if (this.commitLimits()) {
             return;
         }
+        let timer = null;
+        const wait = new Promise((resolve) => { timer = setTimeout(resolve, this.commitLimitsWaitMs()); });
+        await Promise.race([this.asyncAskCommitLimitsOnce(), wait]);
+        clearTimeout(timer);
+    }
+
+    /**
+     * @description The one in-flight records-limits ask; a failed one is
+     * reported once, and the next commit asks again.
+     * @returns {Promise}
+     * @category Write
+     */
+    asyncAskCommitLimitsOnce () {
+        if (!this.commitLimitsPromise()) {
+            this.setCommitLimitsPromise(this.asyncAskCommitLimits().finally(() => this.setCommitLimitsPromise(null)));
+        }
+        return this.commitLimitsPromise();
+    }
+
+    async asyncAskCommitLimits () {
         try {
             const limits = await this.call("records-limits", {});
             if (limits && Number.isInteger(limits.maxOpsPerCommit)) {

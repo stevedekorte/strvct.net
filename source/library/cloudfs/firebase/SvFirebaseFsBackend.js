@@ -178,6 +178,31 @@
         return snap.exists() ? snap.val() : null;
     }
 
+    /**
+     * Waits for a value on the session record: resolves with it as soon as
+     * /sessions/{sessionId}/{key} exists (pushed — no polling), or with
+     * null after timeoutMs or on a read error.
+     */
+    asyncWaitForSessionValue (sessionId, key, timeoutMs) {
+        const ref = firebase.database().ref("sessions/" + sessionId + "/" + key);
+        return new Promise((resolve) => {
+            let isDone = false;
+            let timer = null;
+            const finish = (value) => {
+                if (isDone) return;
+                isDone = true;
+                clearTimeout(timer);
+                ref.off("value", onValue);
+                resolve(value);
+            };
+            const onValue = (snap) => {
+                if (snap.exists()) finish(snap.val());
+            };
+            timer = setTimeout(() => finish(null), timeoutMs);
+            ref.on("value", onValue, () => finish(null));
+        });
+    }
+
     _seqKey (seq) {
         return String(seq).padStart(12, "0");
     }

@@ -199,6 +199,20 @@ async function main () {
     check(whole.status === "committed" && JSON.stringify(calls) === JSON.stringify(["records-limits", "records-commit"]), "the 520-record change in one commit, the limits asked once: " + calls.join(" "));
     check(bigCloud.maxOpsPerCommit() === 6000, "the store keeps the backend's limit");
 
+    console.log("\nA limits ask that never answers holds no commit back for long, and commits share one ask");
+    const stuckCloud = SvCloudRecordStore.clone().setBackend(fakeBackendOver(SvMemoryRecordStore.clone())).setCommitLimitsWaitMs(50);
+    let limitAsks = 0;
+    const stuckInner = stuckCloud.backend().callFunction;
+    stuckCloud.backend().callFunction = async (n, a) => {
+        if (n === "records-limits") { limitAsks++; return new Promise(() => {}); } // hangs, as on a busy table worker (2026-10-27)
+        return stuckInner(n, a);
+    };
+    const startedAt = Date.now();
+    await Promise.all([stuckCloud.asyncEnsureCommitLimits(), stuckCloud.asyncEnsureCommitLimits(), stuckCloud.asyncEnsureCommitLimits()]);
+    const waited = Date.now() - startedAt;
+    check(waited < 500 && stuckCloud.maxOpsPerCommit() === 450, "three commits wait out the limit's short wait (" + waited + " ms), then go on with the defaults");
+    check(limitAsks === 1, "…sharing one ask (" + limitAsks + ")");
+
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);
 }

@@ -61,6 +61,19 @@
     }
 
     /**
+     * @description The longest disclosure waits for another device's next
+     * clip while nothing plays here. The first clip of a turn can be most of
+     * a minute away (the model's reply, then its speech), but one that never
+     * comes (lost, or the host gone) must not hide the text — or what
+     * follows it — for the three minutes a busy speaker may take.
+     * @returns {Number} milliseconds
+     * @category Disclosure
+     */
+    sharedClipMaxWaitMs () {
+        return 60000;
+    }
+
+    /**
      * @description Whether this response should be disclosed as it is
      * spoken: this device narrates it, and its conversation wants it.
      * @returns {Boolean}
@@ -153,16 +166,23 @@
     }
 
     /**
-     * @description Whether this response's sentences are still on their way,
-     * within disclosureMaxWaitMs of the last progress: queued behind other
-     * speech (the speaker is busy — duck-typed `isSpeaking()` on the
-     * narration controller), or clips another device has yet to send.
+     * @description Whether this response's sentences are still on their way:
+     * queued behind other speech (the speaker is busy — duck-typed
+     * `isSpeaking()` on the narration controller), within
+     * disclosureMaxWaitMs of the last progress; or, with the speaker idle,
+     * clips another device has yet to send, within sharedClipMaxWaitMs.
      * @returns {Boolean}
      * @category Disclosure
      */
     isSpeechStillComing () {
-        const recent = Date.now() - this.disclosureProgressAt() < this.disclosureMaxWaitMs();
-        return recent && this.hasNarrationPending() && (this.isSpeakerBusy() || this.expectsSharedClips());
+        if (!this.hasNarrationPending()) {
+            return false;
+        }
+        const sinceProgress = Date.now() - this.disclosureProgressAt();
+        if (this.isSpeakerBusy()) {
+            return sinceProgress < this.disclosureMaxWaitMs();
+        }
+        return this.expectsSharedClips() && sinceProgress < this.sharedClipMaxWaitMs();
     }
 
     isSpeakerBusy () {
