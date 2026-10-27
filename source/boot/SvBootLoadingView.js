@@ -276,6 +276,34 @@ class SvBootLoadingView extends Object {
     }
 
     /**
+   * @method showStopMessage
+   * @category UI Update
+   * @description Ends the loading display with a message for the reader, in
+   * place of the progress bar: for a boot that cannot continue in this
+   * browser. The box grows to fit the message.
+   * @param {string} title - The headline.
+   * @param {string} detail - What the reader can do about it.
+   */
+    showStopMessage (title, detail) {
+        this.createElementIfAbsent();
+        this.setTitle(title);
+        if (!this.isAvailable()) {
+            return this;
+        }
+        const style = this.element().style;
+        style.height = "fit-content";
+        style.width = "min(90vw, 26em)";
+        const track = document.getElementById("loadingViewBarTrack");
+        if (track) {
+            track.style.display = "none";
+        }
+        const subtitle = this.subtitleElement();
+        subtitle.style.opacity = "0.85";
+        subtitle.innerText = detail;
+        return this;
+    }
+
+    /**
    * @method setBarRatio
    * @category UI Update
    * @param {number} r - The ratio to set (between 0 and 1).

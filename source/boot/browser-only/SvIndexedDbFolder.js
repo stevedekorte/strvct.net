@@ -86,11 +86,21 @@
     }
 
     /**
+     * Checks if this browser offers IndexedDB at all. Some don't: Safari in
+     * Lockdown Mode, and browsers with site storage turned off, leave the
+     * global undefined (SvBootLoader checks this before booting).
+     * @returns {boolean} - True if IndexedDB is available, false otherwise.
+     */
+    static hasIndexedDB () {
+        return Boolean(SvGlobals.get("indexedDB"));
+    }
+
+    /**
      * Checks if IndexedDB is available.
      * @returns {boolean} - True if IndexedDB is available, false otherwise.
      */
     hasIndexedDB () {
-        return this.indexedDB() !== undefined;
+        return this.constructor.hasIndexedDB();
     }
 
     /**

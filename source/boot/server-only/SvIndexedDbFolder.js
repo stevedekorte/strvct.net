@@ -89,6 +89,14 @@ async function releaseSharedLevelDb (dbPath) {
     }
 
     /**
+     * IndexedDB is always available here (simulated via LevelDB).
+     * @returns {boolean} - True.
+     */
+    static hasIndexedDB () {
+        return true;
+    }
+
+    /**
      * Override to indicate IndexedDB availability (simulated via LevelDB).
      * @returns {boolean} - True if LevelDB can be loaded.
      */
