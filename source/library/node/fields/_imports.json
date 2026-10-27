@@ -1,6 +1,7 @@
 [
     "SvFieldSetNode.js",
     "SvField.js",
+    "SvField_htmlLinks.js",
     "SvJsonNullField.js",
     "image/_imports.json",
     "video/_imports.json",
