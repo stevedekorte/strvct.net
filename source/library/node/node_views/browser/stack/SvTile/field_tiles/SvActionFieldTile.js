@@ -101,10 +101,10 @@
     setupTileContentView () {
         super.setupTileContentView();
         const cv = this.contentView();
-        cv.setPaddingLeft("0.5em").setPaddingRight("0.5em");
+        cv.setPaddingLeft("var(--sv-action-row-inset)").setPaddingRight("var(--sv-action-row-inset)"); // a status tile insets its note the same, so the columns line up
         cv.setPaddingTop("0.5em").setPaddingBottom("0.5em");
-        assert(cv.paddingLeft() === "0.5em");
-        assert(cv.paddingRight() === "0.5em");
+        assert(cv.paddingLeft() === "var(--sv-action-row-inset)");
+        assert(cv.paddingRight() === "var(--sv-action-row-inset)");
         assert(cv.paddingTop() === "0.5em");
         assert(cv.paddingBottom() === "0.5em");
         // Neutered setters must still return the receiver — callers chain them

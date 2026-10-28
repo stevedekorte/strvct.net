@@ -205,6 +205,7 @@
     /* ACTION ROWS (SvActionFieldTile, nodeActionStyle "row"): an action's
        title and subtitle on the left, a compact outlined button on the right. */
     --sv-action-row-rule: var(--sv-hairline);                     /* the line under each row */
+    --sv-action-row-inset: 0.5em;                                  /* each side of a row's content; a status tile's note keeps the same right inset */
     --sv-action-row-padding: 10px 0;                               /* above and below a row's title and subtitle */
     --sv-action-row-title-size: inherit;
     --sv-action-row-subtitle-color: var(--sv-text-muted);
@@ -213,16 +214,17 @@
     --sv-action-button-hover-text: var(--sv-surface);             /* its label on the filled hover */
     --sv-action-button-danger: var(--sv-system-error);            /* a destructive action's label and outline */
     --sv-action-button-disabled: var(--sv-text-dim);
-    --sv-action-button-min-width: 9em;
+    --sv-action-button-width: 160px;                              /* one width for every row's button, so a column of rows lines up */
+    --sv-action-button-height: 44px;                              /* a comfortable touch target */
     --sv-action-button-font-size: 0.72em;
     --sv-action-button-tracking: 0.2em;
 
-    /* STATUS TILES (nodeTileLayout "status" / "pendingStatus"): a large title
-       beside a diamond mark that breathes while pending and fills once settled. */
-    --sv-status-title-size: 1.5em;
+    /* STATUS TILES (nodeTileLayout "status" / "pendingStatus"): a row like an
+       action row — its title and subtitle on the left — whose note ("Connected",
+       "Joining") sits in the button column behind a diamond mark that breathes
+       while pending and fills once settled. */
     --sv-status-mark-color: var(--sv-text);
     --sv-status-pending-color: var(--sv-attention);
-    --sv-status-rule: var(--sv-text);                             /* the lines above and below it */
 
     /* the Boolean switch style (SvBooleanView, booleanStyle "switch") */
     --sv-switch-on: rgba(255, 255, 255, 0.5);  /* track, on: white at half (Steve, 2026-10-20) */
@@ -232,48 +234,70 @@
     --sv-switch-shadow: rgba(0, 0, 0, 0.35);
 }
 
-/* Status tiles (nodeTileLayout "status" | "pendingStatus"). The mark is
-   decoration (a ::before with no text), so it is generated content. */
+/* Status tiles (nodeTileLayout "status" | "pendingStatus"): an action row's
+   shape. The note is the state's word, in the button column at the buttons'
+   width; its mark is decoration (a ::before with no text). */
 [data-tile-layout="status"] > .TileContentView,
 [data-tile-layout="pendingStatus"] > .TileContentView {
-    border-top: 1px solid var(--sv-status-rule);
-    border-bottom: 1px solid var(--sv-status-rule);
-    margin-bottom: 0.75em;
+    border-bottom: 1px solid var(--sv-action-row-rule);
+    padding-right: var(--sv-action-row-inset) !important; /* the action rows' inset, so the note sits in their button column */
 }
 
 [data-tile-layout="status"] .SvTileTitleView,
 [data-tile-layout="pendingStatus"] .SvTileTitleView {
-    font-size: var(--sv-status-title-size) !important; /* over the tile's inline size */
-}
-
-[data-tile-layout="status"] .SvTileTitleView::before,
-[data-tile-layout="pendingStatus"] .SvTileTitleView::before {
-    content: "";
-    display: inline-block; /* the title is inline: a box needs this to take its size */
-    vertical-align: 0.12em;
-    margin: 0 0.75em 0 0.15em;
-    width: 0.6em;
-    height: 0.6em;
-    box-sizing: border-box;
-    transform: rotate(45deg);
-    border: 1px solid var(--sv-status-mark-color);
-}
-
-[data-tile-layout="status"] .SvTileTitleView::before {
-    background-color: var(--sv-status-mark-color);
-    animation: sv-status-settle 600ms ease-out;
-}
-
-[data-tile-layout="pendingStatus"] .SvTileTitleView::before {
-    border-style: dashed;
-    border-color: var(--sv-status-pending-color);
-    animation: sv-status-breathe 1.4s ease-in-out infinite;
+    font-size: var(--sv-action-row-title-size) !important; /* over the tile's inline size */
 }
 
 [data-tile-layout="status"] .SvTileSubtitleView,
 [data-tile-layout="pendingStatus"] .SvTileSubtitleView {
-    font-style: italic;
-    color: var(--sv-text-muted);
+    font-style: var(--sv-action-row-subtitle-style);
+    color: var(--sv-action-row-subtitle-color) !important; /* over the tile's inline subtitle color, as the rows below */
+    font-size: 0.85em !important;
+    opacity: 1 !important;
+}
+
+[data-tile-layout="status"] .SvTileNoteView,
+[data-tile-layout="pendingStatus"] .SvTileNoteView {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8em;
+    width: var(--sv-action-button-width) !important; /* over the note's inline fit-content */
+    height: var(--sv-action-button-height) !important; /* a button's box, so the word centres where a label would */
+    overflow: visible !important; /* the rotated mark reaches past the text's line box */
+    font-size: var(--sv-action-button-font-size) !important;
+    letter-spacing: var(--sv-action-button-tracking);
+    text-transform: uppercase;
+    opacity: 1 !important;
+    color: var(--sv-status-mark-color) !important;
+}
+
+[data-tile-layout="pendingStatus"] .SvTileNoteView {
+    color: var(--sv-status-pending-color) !important;
+}
+
+[data-tile-layout="status"] .SvTileNoteView::before,
+[data-tile-layout="pendingStatus"] .SvTileNoteView::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 0.65em;
+    height: 0.65em;
+    box-sizing: border-box;
+    transform: rotate(45deg);
+    border: 1px solid var(--sv-status-mark-color);
+    position: relative;
+    top: 0.3em; /* level with the capitals' middle, which sits low in their line box */
+}
+
+[data-tile-layout="status"] .SvTileNoteView::before {
+    background-color: var(--sv-status-mark-color);
+    animation: sv-status-settle 600ms ease-out;
+}
+
+[data-tile-layout="pendingStatus"] .SvTileNoteView::before {
+    border-style: dashed;
+    border-color: var(--sv-status-pending-color);
+    animation: sv-status-breathe 1.4s ease-in-out infinite;
 }
 
 @keyframes sv-status-breathe {
@@ -287,8 +311,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    [data-tile-layout="status"] .SvTileTitleView::before,
-    [data-tile-layout="pendingStatus"] .SvTileTitleView::before {
+    [data-tile-layout="status"] .SvTileNoteView::before,
+    [data-tile-layout="pendingStatus"] .SvTileNoteView::before {
         animation: none;
     }
 }

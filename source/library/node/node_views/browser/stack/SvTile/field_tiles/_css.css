@@ -148,7 +148,8 @@ SvFieldValueView br {
 
 [data-action-style="row"] .SvActionFieldView {
     flex: 0 0 auto;
-    min-width: var(--sv-action-button-min-width);
+    width: var(--sv-action-button-width) !important; /* one width for every row, over the button's inline width */
+    min-height: var(--sv-action-button-height) !important;
     border: 1px solid var(--sv-action-button-color);
     color: var(--sv-action-button-color);
     font-size: var(--sv-action-button-font-size);
