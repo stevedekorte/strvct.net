@@ -8440,7 +8440,7 @@ Also available as a [PDF](compiled/Closing_the_Usability_Gap_in_Naked_Objects.pd
 
 The **Naked Objects** architectural pattern proposes that complete user interfaces can be derived automatically from domain models. Instead of manually maintaining separate models, component trees, form layouts, validators, persistence mappings, localization files, and AI tool specs, developers declare their domain logic once and allow the runtime engine to project it into every required form.
 
-While early Naked Objects systems successfully demonstrated this derivation, they relied on a rigid, primitive grammar—rendering objects as forms and collections as tables. This created a severe "usability gap" that restricted Naked Objects to internal tools and administrative backends.
+While early Naked Objects systems successfully demonstrated this derivation, they relied on a narrow grammar—rendering objects as forms and collections as tables. This created a severe "usability gap" that restricted Naked Objects to internal tools and administrative backends.
 
 This paper presents a modern, flexible interaction grammar that closes this usability gap without requiring hand-authored UI component trees. We treat every screen as a **lens** over the model's object graph, and show that most interactions in structured-information software reduce to two core operations on that lens:
 1. **Moving the lens** — traversing relationships across the object graph via recursive, orientation-flexible master-detail views (Miller columns).
@@ -8480,7 +8480,7 @@ Annotated Model ─┼──► Exchange Projection (JSON Import, Export & Patch
 
 **Naked Objects**, introduced by Pawson and Matthews in 2002 [1], proposed a radical alternative: expose domain objects directly to users and generate the entire interface automatically. Because there is no separate UI code, consistency is guaranteed—the interface always perfectly reflects the live state of the domain.
 
-Despite its obvious maintenance benefits, early Naked Objects implementations (such as Apache Isis/Causeway) struggled with widespread adoption. They derived every object into a form and every collection into a table. While functionally complete, these interfaces felt clunky and rigid. They lacked spatial context, viewport adaptability, depth indicators, and visual continuity.
+Despite its obvious maintenance benefits, early Naked Objects implementations (such as Apache Isis/Causeway) struggled with widespread adoption. They derived every object into a form and every collection into a table. While functionally complete, these interfaces felt rigid. They lacked spatial context, viewport adaptability, depth indicators, and visual continuity.
 
 This paper shows how to close that usability gap. We contend that the design space for information management software is remarkably narrow and structured. By replacing generic forms and tables with a richer grammar—**recursive relationship traversal** and **semantic collection arrangement**—frameworks can derive modern, beautiful, and responsive interfaces directly from annotated models.
 
@@ -8493,9 +8493,8 @@ The key step is a change of picture. Rather than thinking of an application as a
 To understand why classic Naked Objects stalled, we must examine the specific usability limitations of early form-and-table systems:
 
 1. **Lack of Spatial Hierarchy:** Generic forms flatten relationships into lists of text boxes and dropdowns. Users cannot visually perceive ownership, containment, or structural depth.
-2. **Poor Viewport Adaptability:** Form-based tools are typically designed for fixed desktop resolutions. Adapting them to mobile screens requires ad-hoc, per-screen responsive hacks.
-3. **Loss of Context During Navigation:** Drilling into a child object in a form interface usually replaces the screen or pops up a modal window, disorienting the user.
-4. **Disjointed Mental Models:** Without spatial continuity, users treat each screen as a disconnected island rather than exploring a unified object graph.
+2. **Limited Viewport Adaptability:** Form-based tools are typically designed for fixed desktop resolutions. Adapting them to mobile screens requires ad-hoc, per-screen responsive hacks.
+3. **Loss of Context During Navigation:** Drilling into a child object in a form interface usually replaces the screen or pops up a modal window. Each screen becomes a disconnected island, and users never form a picture of the object graph as a whole.
 
 Component frameworks (React, Vue) address this problem by giving developers total visual freedom, but at the cost of authoring every screen by hand. Our goal is to achieve the visual quality and spatial legibility of hand-crafted apps while keeping the zero-UI-maintenance benefits of Naked Objects.
 
@@ -8521,12 +8520,16 @@ Layering and inlining are not modes of the whole interface but choices made edge
 
 At second order, a lens decides **arrangement**: how siblings within a layer or an inlined run are laid out—their orientation, whether their properties align across siblings into a table, or whether a value maps to position, as on a timeline (§4.1).
 
-This framing reduces an apparently unbounded space of screens to something tractable. Any screen is a path through the graph, plus a placement for each visible edge and an arrangement for each visible collection. That is a small, regular decision space—small enough for the framework to own entirely, with the model supplying hints only where a default choice is wrong.
+This framing reduces an apparently unbounded space of screens to something tractable. Any screen is a path through the graph, plus a placement for each visible edge and an arrangement for each visible collection. That is a small, regular decision space—small enough for the framework to own its mechanics (the path, collapse, layering, inlining, and responsive switching) while the developer states intent through hints on the model: which edges inline, which layer, how collections arrange. The decisions are the developer's; their implementation is the framework's.
 
 It also explains behaviors that would otherwise have to be built screen by screen:
 - **Navigation** is moving the lens. Traversing a relationship changes the path, not the model.
-- **Responsive collapse** is the lens switching edges from inlined to layered as space runs out. Miller columns that collapse into a push stack are still layered—in depth rather than side by side. Side-by-side panes that degrade to tabs are the same edge moving from inlined to layered.
+- **Responsive collapse** is the lens switching edges from inlined to layered as space runs out, within the bounds the hints allow. Miller columns that collapse into a push stack are still layered—in depth rather than side by side. Side-by-side panes that degrade to tabs are the same edge moving from inlined to layered.
 - **Links** are followed by layering. Inlining a link would draw its target inside the referrer, and a cycle of links would expand forever; layering keeps every lens finite and makes the crossing visible.
+
+None of these decisions is new to the literature. Furnas's fisheye views [8] formalize visibility as a degree-of-interest function over a tree; overview+detail and focus+context interfaces [9] separate or blend levels of detail much as layering and inlining do; and tree visualization distinguishes children drawn *within* their parents (inclusion) from children drawn *beside* them (adjacency) [10]. Inlining a linked target is what Nelson called transclusion [11]. Systems such as Furnas's, APT [12], and SUPPLE [5] go further and compute the presentation—by interest score, by search, or by optimization. Strvct deliberately does not. It owns the mechanism and supplies the defaults; the developer states intent through hints, much as a projectional editor lets a language designer declare the notation through which a model is edited [13].
+
+Our use of *lens* differs from the Magic Lenses of HCI [14], which filter a local region of the screen. It is closer to the lenses of bidirectional programming [15]: editable views whose changes flow back to their source, as edits in a Strvct view flow back to the model.
 
 The UI projection is not the only one. The same graph is projected into records in object pools (the **storage projection**), into JSON for import, export, and patching (the **exchange projection**), and into a schema-and-patch tool interface for AI agents (the **agent projection**, §7.1). Each is a different reading of the same annotated model; none is authored separately.
 
@@ -8828,13 +8831,13 @@ While Strvct successfully demonstrates the power of modern Naked Objects, severa
 2. **Ecosystem Isolation:** To support content-addressable bundling and zero-build client loading, Strvct uses a custom resource loader rather than standard npm/Webpack/Vite tooling.
 3. **Aligned Grid Arrangements (Tables & Spreadsheets):** While inline document flow and anchored tabs are production-proven, cross-sibling column alignment (making row tiles align into full spreadsheets) is currently a proposed framework extension.
 4. **Extreme Collection Scaling:** Lazy view instantiation keeps rendering lightweight, but virtualized viewport scrolling for mega-collections ($10^5+$ items) remains an active area of optimization.
-5. **User-Chosen Lenses:** Because placement and arrangement are per-edge hints rather than authored screens, users could in principle reshape their own lenses—inlining a section they always want open, or layering one they rarely need. This is possible today through the live inspectors (§7.5), but not every hint is persisted; a supported, persistent user-facing control is future work.
+5. **User-Chosen Lenses:** Because placement and arrangement are per-edge hints rather than authored screens, users could in principle reshape their own lenses—inlining a section they always want open, or layering one they rarely need. This is possible today through the live inspectors (§7.5), but not every hint is persisted; a supported, persistent user-facing control is future work. Engelbart's NLS gave users *viewspecs*—how many levels to show, how many lines per item—for much the same purpose [16].
 
 ---
 
 ## 11. Conclusion
 
-For twenty-five years, the Naked Objects pattern offered an enticing promise: write the domain model, and the application will follow. Early implementations stalled not because derivation was impossible, but because forms and tables were too primitive to deliver modern user experiences.
+For twenty-five years, the Naked Objects pattern offered an enticing promise: write the domain model, and the application will follow. Early implementations stalled not because derivation was impossible, but because forms and tables were not general or flexible enough to deliver modern user experiences.
 
 Strvct solves this by establishing a complete, flexible interaction grammar based on **recursive relationship traversal** and **semantic collection arrangement**. By eliminating manual UI component authoring, developers eliminate view-layer maintenance, reduce synchronization bugs, and gain native AI operability, instant headless testing, transparent persistence, and universal accessibility.
 
@@ -8857,6 +8860,24 @@ As AI agents become routine co-processors of software state, the cost of maintai
 [6] Jackson, D. (2021). *The Essence of Software: Why Concepts Matter for Great Design.* Princeton University Press.
 
 [7] Meng, E., & Jackson, D. (2025). What You See Is What It Does: A Structural Pattern for Legible Software. *Onward! 2025.*
+
+[8] Furnas, G. W. (1986). Generalized Fisheye Views. *CHI '86*, 16–23.
+
+[9] Cockburn, A., Karlson, A., & Bederson, B. B. (2008). A Review of Overview+Detail, Zooming, and Focus+Context Interfaces. *ACM Computing Surveys*, 41(1).
+
+[10] Schulz, H.-J., Hadlak, S., & Schumann, H. (2011). The Design Space of Implicit Hierarchy Visualization: A Survey. *IEEE Transactions on Visualization and Computer Graphics*, 17(4), 393–411.
+
+[11] Nelson, T. H. (1981). *Literary Machines.* Mindful Press.
+
+[12] Mackinlay, J. (1986). Automating the Design of Graphical Presentations of Relational Information. *ACM Transactions on Graphics*, 5(2), 110–141.
+
+[13] Voelter, M., Siegmund, J., Berger, T., & Kolb, B. (2014). Towards User-Friendly Projectional Editors. *SLE 2014*, 41–61.
+
+[14] Bier, E. A., Stone, M. C., Pier, K., Buxton, W., & DeRose, T. D. (1993). Toolglass and Magic Lenses: The See-Through Interface. *SIGGRAPH '93.*
+
+[15] Foster, J. N., Greenwald, M. B., Moore, J. T., Pierce, B. C., & Schmitt, A. (2007). Combinators for Bidirectional Tree Transformations: A Linguistic Approach to the View-Update Problem. *ACM Transactions on Programming Languages and Systems*, 29(3).
+
+[16] Engelbart, D. C., & English, W. K. (1968). A Research Center for Augmenting Human Intellect. *AFIPS Fall Joint Computer Conference.*
 
 
 ---

@@ -38,45 +38,7 @@
     "_css.css",
     "strvct/_imports.json",
     "app/_imports.json"
-]</code></pre><h3 id="import-rules">Import Rules:</h3><ul><li>Paths are relative to the directory containing the <code>_imports.json</code> file.</li><li>Direct file paths (e.g., <code>"Character.js"</code>, <code>"_css.css"</code>) are included in order.</li><li>Nested <code>_imports.json</code> paths (e.g., <code>"app/_imports.json"</code>) are resolved recursively.</li></ul></div></div><h2 id="the-build-pipeline-content-addressable-memory">The Build Pipeline (Content-Addressable Memory)</h2><div class="section"><div class="section-body"><p>Strvct uses a <strong>Content-Addressable Memory (CAM)</strong> build system. The build process scans the root <code>_imports.json</code> tree and generates runtime resource bundles in the <code>build/</code> directory.</p><svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  </style>
-  <defs>
-    <marker id="ags" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
-
-  <rect class="box" x="25" y="20" width="240" height="50"/>
-  <text x="40" y="40" class="b">_imports.json Tree</text>
-  <text x="40" y="58" class="dim">Root &amp; nested source imports</text>
-
-  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#ags)"/>
-
-  <rect class="fill" x="290" y="20" width="240" height="50"/>
-  <text x="305" y="40" class="b">ImportsIndexer</text>
-  <text x="305" y="58" class="dim">Scans paths &amp; SHA-256 hashes</text>
-
-  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#ags)"/>
-
-  <rect class="fill" x="555" y="20" width="240" height="50"/>
-  <text x="570" y="40" class="b">build/ Catalog</text>
-  <text x="570" y="58" class="dim">_index.json &amp; _cam.json.zip</text>
-
-  <line class="flow" x1="675" y1="70" x2="675" y2="85"/>
-  <line class="flow" x1="410" y1="85" x2="675" y2="85"/>
-  <line class="flow" x1="410" y1="85" x2="410" y2="100" marker-end="url(#ags)"/>
-
-  <rect class="box" x="290" y="100" width="240" height="50"/>
-  <text x="305" y="120" class="b">Browser Runtime</text>
-  <text x="305" y="138" class="dim">SvResourceManager &amp; HashCache</text>
-</svg><h3 id="running-the-build-command">Running the Build Command:</h3><p>To run the source code indexer manually:</p><pre><code>node ./strvct/source/boot/index-builder/ImportsIndexer.js</code></pre><p>To index non-code media resources (icons, audio):</p><pre><code>node ./strvct/source/boot/index-builder/SvResourceIndexer.js ./resources/icons ./resources/sounds</code></pre><p>If your project includes a <code>justfile</code>, you can run:</p><pre><code>just build</code></pre></div></div><h2 id="running-locally">Running Locally</h2><div class="section"><div class="section-body"><p>Strvct includes a lightweight local HTTP/HTTPS web server (<code>CliWebServer.js</code>).</p><p>Start the development server:</p><pre><code>node ./strvct/webserver/CliWebServer.js --port 8000 --secure false</code></pre><h3 id="command-flags">Command Flags:</h3><ul><li><code>--port &lt;number&gt;</code>: Sets the local server port (default: <code>8000</code>).</li><li><code>--secure &lt;true|false&gt;</code>: Enables HTTPS with self-signed certificates or HTTP mode.</li><li><code>--config &lt;path&gt;</code>: Optional server configuration file path.</li></ul><p>Open <code>http://localhost:8000</code> in your browser to load the application.</p></div></div><h2 id="chrome-devtools-debugging">Chrome DevTools & Debugging</h2><div class="section"><div class="section-body"><p>Because Strvct evaluates source files dynamically via the CAM loader, it appends <code>sourceURL</code> annotations to evaluated scripts. This enables full native browser debugging in Chrome DevTools or Cursor/VSCode:</p><ul><li><strong>Breakpoints:</strong> Set breakpoints directly in your source JavaScript files in Chrome DevTools Sources tab.</li><li><strong>Call Stacks:</strong> Complete stack traces map directly back to original file paths and line numbers.</li></ul><h3 id="cursor-vscode-launchjson-configuration">Cursor / VSCode <code>launch.json</code> Configuration:</h3><pre><code>{
+]</code></pre><h3 id="import-rules">Import Rules:</h3><ul><li>Paths are relative to the directory containing the <code>_imports.json</code> file.</li><li>Direct file paths (e.g., <code>"Character.js"</code>, <code>"_css.css"</code>) are included in order.</li><li>Nested <code>_imports.json</code> paths (e.g., <code>"app/_imports.json"</code>) are resolved recursively.</li></ul></div></div><h2 id="the-build-pipeline-content-addressable-memory">The Build Pipeline (Content-Addressable Memory)</h2><div class="section"><div class="section-body"><p>Strvct uses a <strong>Content-Addressable Memory (CAM)</strong> build system. The build process scans the root <code>_imports.json</code> tree and generates runtime resource bundles in the <code>build/</code> directory.</p><p><svg viewBox="0 0 820 170" width="820" xmlns="http://www.w3.org/2000/svg">   <style>     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }     .b { font-weight: 600; }     .dim { fill: #666; }     .box { fill: none; stroke: #111; stroke-width: 1; }     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }     .flow { stroke: #111; stroke-width: 1; fill: none; }   </style>   <defs>     <marker id="ags" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>     </marker>   </defs></p><p><rect class="box" x="25" y="20" width="240" height="50"/>   <text x="40" y="40" class="b">_imports.json Tree</text>   <text x="40" y="58" class="dim">Root &amp; nested source imports</text></p><p><line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#ags)"/></p><p><rect class="fill" x="290" y="20" width="240" height="50"/>   <text x="305" y="40" class="b">ImportsIndexer</text>   <text x="305" y="58" class="dim">Scans paths &amp; SHA-256 hashes</text></p><p><line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#ags)"/></p><p><rect class="fill" x="555" y="20" width="240" height="50"/>   <text x="570" y="40" class="b">build/ Catalog</text>   <text x="570" y="58" class="dim">_index.json &amp; _cam.json.zip</text></p><p><line class="flow" x1="675" y1="70" x2="675" y2="85"/>   <line class="flow" x1="410" y1="85" x2="675" y2="85"/>   <line class="flow" x1="410" y1="85" x2="410" y2="100" marker-end="url(#ags)"/></p><p><rect class="box" x="290" y="100" width="240" height="50"/>   <text x="305" y="120" class="b">Browser Runtime</text>   <text x="305" y="138" class="dim">SvResourceManager &amp; HashCache</text> </svg></p><h3 id="running-the-build-command">Running the Build Command:</h3><p>To run the source code indexer manually:</p><pre><code>node ./strvct/source/boot/index-builder/ImportsIndexer.js</code></pre><p>To index non-code media resources (icons, audio):</p><pre><code>node ./strvct/source/boot/index-builder/SvResourceIndexer.js ./resources/icons ./resources/sounds</code></pre><p>If your project includes a <code>justfile</code>, you can run:</p><pre><code>just build</code></pre></div></div><h2 id="running-locally">Running Locally</h2><div class="section"><div class="section-body"><p>Strvct includes a lightweight local HTTP/HTTPS web server (<code>CliWebServer.js</code>).</p><p>Start the development server:</p><pre><code>node ./strvct/webserver/CliWebServer.js --port 8000 --secure false</code></pre><h3 id="command-flags">Command Flags:</h3><ul><li><code>--port &lt;number&gt;</code>: Sets the local server port (default: <code>8000</code>).</li><li><code>--secure &lt;true|false&gt;</code>: Enables HTTPS with self-signed certificates or HTTP mode.</li><li><code>--config &lt;path&gt;</code>: Optional server configuration file path.</li></ul><p>Open <code>http://localhost:8000</code> in your browser to load the application.</p></div></div><h2 id="chrome-devtools-debugging">Chrome DevTools & Debugging</h2><div class="section"><div class="section-body"><p>Because Strvct evaluates source files dynamically via the CAM loader, it appends <code>sourceURL</code> annotations to evaluated scripts. This enables full native browser debugging in Chrome DevTools or Cursor/VSCode:</p><ul><li><strong>Breakpoints:</strong> Set breakpoints directly in your source JavaScript files in Chrome DevTools Sources tab.</li><li><strong>Call Stacks:</strong> Complete stack traces map directly back to original file paths and line numbers.</li></ul><h3 id="cursor-vscode-launchjson-configuration">Cursor / VSCode <code>launch.json</code> Configuration:</h3><pre><code>{
     "version": "0.2.0",
     "configurations": [
         {

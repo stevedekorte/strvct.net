@@ -23,67 +23,7 @@
   <meta name="description" content="The core domain object abstraction, object graph hierarchy, and subnode management in Strvct.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Nodes</h1><a class="back-link" href="../index.html">&larr; Documentation</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>The core domain object abstraction, object graph hierarchy, and subnode management in Strvct.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#the-node-inheritance-chain">The Node Inheritance Chain</a></li><li><a href="#subnode-operations">Subnode Operations</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Nodes (<code>SvNode</code>) are the fundamental domain abstraction in Strvct. Every piece of application state&mdash;a document, a user profile, a RPG character sheet, a project folder, or a settings item&mdash;is represented as an object inheriting from <code>SvNode</code>.</p><p>Nodes form a <strong>hierarchical object graph</strong>: every node holds an ordered array of child <code>subnodes</code> and a reference to its <code>parentNode</code>. The framework automatically derives the complete user interface from this object graph without hand-authored UI components.</p><svg viewBox="0 0 820 400" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  </style>
-  <defs>
-    <marker id="and" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
-
-  <!-- 3 Rows of 2 Uniform Boxes (w: 345, h: 50) -->
-  <!-- Row 1 -->
-  <rect class="fill" x="40" y="20" width="345" height="50"/>
-  <text x="55" y="38" class="b">SvNode</text>
-  <text x="55" y="56" class="dim">Subnode tree &amp; parent relationships</text>
-
-  <line class="flow" x1="385" y1="45" x2="435" y2="45" marker-end="url(#and)"/>
-
-  <rect class="fill" x="435" y="20" width="345" height="50"/>
-  <text x="450" y="38" class="b">SvTitledNode</text>
-  <text x="450" y="56" class="dim">Title, subtitle, &amp; path labels</text>
-
-  <!-- Flow to Row 2 -->
-  <line class="flow" x1="607" y1="70" x2="607" y2="85"/>
-  <line class="flow" x1="212" y1="85" x2="607" y2="85"/>
-  <line class="flow" x1="212" y1="85" x2="212" y2="100" marker-end="url(#and)"/>
-
-  <!-- Row 2 -->
-  <rect class="fill" x="40" y="100" width="345" height="50"/>
-  <text x="55" y="118" class="b">SvInspectableNode</text>
-  <text x="55" y="136" class="dim">Property Inspector field generation</text>
-
-  <line class="flow" x1="385" y1="125" x2="435" y2="125" marker-end="url(#and)"/>
-
-  <rect class="fill" x="435" y="100" width="345" height="50"/>
-  <text x="450" y="118" class="b">SvViewableNode</text>
-  <text x="450" y="136" class="dim">View class resolution &amp; tile layout</text>
-
-  <!-- Flow to Row 3 -->
-  <line class="flow" x1="607" y1="150" x2="607" y2="165"/>
-  <line class="flow" x1="212" y1="165" x2="607" y2="165"/>
-  <line class="flow" x1="212" y1="165" x2="212" y2="180" marker-end="url(#and)"/>
-
-  <!-- Row 3 -->
-  <rect class="fill" x="40" y="180" width="345" height="50"/>
-  <text x="55" y="198" class="b">SvStorableNode</text>
-  <text x="55" y="216" class="dim">Persistence &amp; dirty tracking</text>
-
-  <line class="flow" x1="385" y1="205" x2="435" y2="205" marker-end="url(#and)"/>
-
-  <rect class="fill" x="435" y="180" width="345" height="50"/>
-  <text x="450" y="198" class="b">SvSummaryNode</text>
-  <text x="450" y="216" class="dim">Base class for application domain models</text>
-
-  <text x="410" y="260" text-anchor="middle" class="dim">Each node class level adds an isolated capability. Application domain models typically extend SvSummaryNode or SvStorableNode.</text>
-</svg></div></div><h2 id="the-node-inheritance-chain">The Node Inheritance Chain</h2><div class="section"><div class="section-body"><table><thead><tr><th>Class Name</th><th>Key Capability Added</th><th>Usage</th></tr></thead><tbody><tr><td><code>SvNode</code></td><td>Subnode management, parent/owner references</td><td>Root base class</td></tr><tr><td><code>SvTitledNode</code></td><td>Title, subtitle, note, ARIA accessibility, navigation path</td><td>Labeled nodes</td></tr><tr><td><code>SvTranslatableNode</code></td><td>Per-node translation string cache for i18n</td><td>Internationalization</td></tr><tr><td><code>SvInspectableNode</code></td><td>Property Inspector field generation from slot metadata</td><td>Live debugging</td></tr><tr><td><code>SvViewableNode</code></td><td>View class selection, layout orientation, tile settings</td><td>Visual UI presentation</td></tr><tr><td><code>SvStyledNode</code></td><td>Theme class name resolution</td><td>Programmatic styling</td></tr><tr><td><code>SvStorableNode</code></td><td>Persistence dirty tracking &amp; IndexedDB serialization</td><td>Persistent models</td></tr><tr><td><code>SvSummaryNode</code></td><td>Configurable summary tile formatting</td><td>Standard app model base</td></tr></tbody></table></div></div><h2 id="subnode-operations">Subnode Operations</h2><div class="section"><div class="section-body"><p>The primary structural relationship in Strvct is the parent-child node tree managed via <code>subnodes()</code>:</p><pre><code>// Adding subnodes
+  <div class="page loaded"><div class="header"><div><h1>Nodes</h1><a class="back-link" href="../index.html">&larr; Documentation</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>The core domain object abstraction, object graph hierarchy, and subnode management in Strvct.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#the-node-inheritance-chain">The Node Inheritance Chain</a></li><li><a href="#subnode-operations">Subnode Operations</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Nodes (<code>SvNode</code>) are the fundamental domain abstraction in Strvct. Every piece of application state&mdash;a document, a user profile, a RPG character sheet, a project folder, or a settings item&mdash;is represented as an object inheriting from <code>SvNode</code>.</p><p>Nodes form a <strong>hierarchical object graph</strong>: every node holds an ordered array of child <code>subnodes</code> and a reference to its <code>parentNode</code>. The framework automatically derives the complete user interface from this object graph without hand-authored UI components.</p><p><svg viewBox="0 0 820 400" width="820" xmlns="http://www.w3.org/2000/svg">   <style>     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }     .b { font-weight: 600; }     .dim { fill: #666; }     .box { fill: none; stroke: #111; stroke-width: 1; }     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }     .flow { stroke: #111; stroke-width: 1; fill: none; }   </style>   <defs>     <marker id="and" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>     </marker>   </defs></p><p><!-- 3 Rows of 2 Uniform Boxes (w: 345, h: 50) -->   <!-- Row 1 -->   <rect class="fill" x="40" y="20" width="345" height="50"/>   <text x="55" y="38" class="b">SvNode</text>   <text x="55" y="56" class="dim">Subnode tree &amp; parent relationships</text></p><p><line class="flow" x1="385" y1="45" x2="435" y2="45" marker-end="url(#and)"/></p><p><rect class="fill" x="435" y="20" width="345" height="50"/>   <text x="450" y="38" class="b">SvTitledNode</text>   <text x="450" y="56" class="dim">Title, subtitle, &amp; path labels</text></p><p><!-- Flow to Row 2 -->   <line class="flow" x1="607" y1="70" x2="607" y2="85"/>   <line class="flow" x1="212" y1="85" x2="607" y2="85"/>   <line class="flow" x1="212" y1="85" x2="212" y2="100" marker-end="url(#and)"/></p><p><!-- Row 2 -->   <rect class="fill" x="40" y="100" width="345" height="50"/>   <text x="55" y="118" class="b">SvInspectableNode</text>   <text x="55" y="136" class="dim">Property Inspector field generation</text></p><p><line class="flow" x1="385" y1="125" x2="435" y2="125" marker-end="url(#and)"/></p><p><rect class="fill" x="435" y="100" width="345" height="50"/>   <text x="450" y="118" class="b">SvViewableNode</text>   <text x="450" y="136" class="dim">View class resolution &amp; tile layout</text></p><p><!-- Flow to Row 3 -->   <line class="flow" x1="607" y1="150" x2="607" y2="165"/>   <line class="flow" x1="212" y1="165" x2="607" y2="165"/>   <line class="flow" x1="212" y1="165" x2="212" y2="180" marker-end="url(#and)"/></p><p><!-- Row 3 -->   <rect class="fill" x="40" y="180" width="345" height="50"/>   <text x="55" y="198" class="b">SvStorableNode</text>   <text x="55" y="216" class="dim">Persistence &amp; dirty tracking</text></p><p><line class="flow" x1="385" y1="205" x2="435" y2="205" marker-end="url(#and)"/></p><p><rect class="fill" x="435" y="180" width="345" height="50"/>   <text x="450" y="198" class="b">SvSummaryNode</text>   <text x="450" y="216" class="dim">Base class for application domain models</text></p><p><text x="410" y="260" text-anchor="middle" class="dim">Each node class level adds an isolated capability. Application domain models typically extend SvSummaryNode or SvStorableNode.</text> </svg></p></div></div><h2 id="the-node-inheritance-chain">The Node Inheritance Chain</h2><div class="section"><div class="section-body"><table><thead><tr><th>Class Name</th><th>Key Capability Added</th><th>Usage</th></tr></thead><tbody><tr><td><code>SvNode</code></td><td>Subnode management, parent/owner references</td><td>Root base class</td></tr><tr><td><code>SvTitledNode</code></td><td>Title, subtitle, note, ARIA accessibility, navigation path</td><td>Labeled nodes</td></tr><tr><td><code>SvTranslatableNode</code></td><td>Per-node translation string cache for i18n</td><td>Internationalization</td></tr><tr><td><code>SvInspectableNode</code></td><td>Property Inspector field generation from slot metadata</td><td>Live debugging</td></tr><tr><td><code>SvViewableNode</code></td><td>View class selection, layout orientation, tile settings</td><td>Visual UI presentation</td></tr><tr><td><code>SvStyledNode</code></td><td>Theme class name resolution</td><td>Programmatic styling</td></tr><tr><td><code>SvStorableNode</code></td><td>Persistence dirty tracking &amp; IndexedDB serialization</td><td>Persistent models</td></tr><tr><td><code>SvSummaryNode</code></td><td>Configurable summary tile formatting</td><td>Standard app model base</td></tr></tbody></table></div></div><h2 id="subnode-operations">Subnode Operations</h2><div class="section"><div class="section-body"><p>The primary structural relationship in Strvct is the parent-child node tree managed via <code>subnodes()</code>:</p><pre><code>// Adding subnodes
 parentNode.addSubnode(childNode);
 parentNode.addSubnodeAt(childNode, 0);
 

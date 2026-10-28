@@ -23,39 +23,7 @@
   <meta name="description" content="Running STRVCT applications natively in Node.js without DOM or browser dependencies.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Headless Execution</h1><a class="back-link" href="../index.html">&larr; Lifecycle</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Running STRVCT applications natively in Node.js without DOM or browser dependencies.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#environment-detection-svplatform">Environment Detection (`SvPlatform`)</a></li><li><a href="#directory-filtering-conventions-browser-only-server-only">Directory Filtering Conventions (`browser-only` & `server-only`)</a></li><li><a href="#browser-api-shims-for-nodejs-server-only">Browser API Shims for Node.js (`server-only`)</a></li><li><a href="#storage-engine-parity">Storage Engine Parity</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>STRVCT's domain model layer, persistence engine, and boot sequence execute natively in Node.js. The same application domain classes that run in the browser run headlessly under Node.js&mdash;with identical storage behavior, slot metadata annotations, and object lifecycles&mdash;just without DOM or view classes.</p><p>This enables ultra-fast unit/integration testing, server-side processing, batch simulations, and CLI tools.</p><svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  </style>
-  <defs>
-    <marker id="ahe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
-
-  <rect class="box" x="25" y="20" width="240" height="50"/>
-  <text x="40" y="40" class="b">Shared Domain Model</text>
-  <text x="40" y="58" class="dim">SvStorableNode subclasses</text>
-
-  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#ahe)"/>
-
-  <rect class="fill" x="290" y="20" width="240" height="50"/>
-  <text x="305" y="40" class="b">Environment Filtering</text>
-  <text x="305" y="58" class="dim">server-only / browser-only</text>
-
-  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#ahe)"/>
-
-  <rect class="fill" x="555" y="20" width="240" height="50"/>
-  <text x="570" y="40" class="b">LevelDB Storage Backend</text>
-  <text x="570" y="58" class="dim">classic-level via SvIndexedDbFolder</text>
-
-  <text x="410" y="110" text-anchor="middle" class="dim">Model code holds zero DOM references; views observe the model, but the model is completely unaware of views.</text>
-</svg></div></div><h2 id="environment-detection-svplatform">Environment Detection (`SvPlatform`)</h2><div class="section"><div class="section-body"><pre><code>// Environment checks
+  <div class="page loaded"><div class="header"><div><h1>Headless Execution</h1><a class="back-link" href="../index.html">&larr; Lifecycle</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Running STRVCT applications natively in Node.js without DOM or browser dependencies.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#environment-detection-svplatform">Environment Detection (`SvPlatform`)</a></li><li><a href="#directory-filtering-conventions-browser-only-server-only">Directory Filtering Conventions (`browser-only` & `server-only`)</a></li><li><a href="#browser-api-shims-for-nodejs-server-only">Browser API Shims for Node.js (`server-only`)</a></li><li><a href="#storage-engine-parity">Storage Engine Parity</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>STRVCT's domain model layer, persistence engine, and boot sequence execute natively in Node.js. The same application domain classes that run in the browser run headlessly under Node.js&mdash;with identical storage behavior, slot metadata annotations, and object lifecycles&mdash;just without DOM or view classes.</p><p>This enables ultra-fast unit/integration testing, server-side processing, batch simulations, and CLI tools.</p><p><svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">   <style>     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }     .b { font-weight: 600; }     .dim { fill: #666; }     .box { fill: none; stroke: #111; stroke-width: 1; }     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }     .flow { stroke: #111; stroke-width: 1; fill: none; }   </style>   <defs>     <marker id="ahe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>     </marker>   </defs></p><p><rect class="box" x="25" y="20" width="240" height="50"/>   <text x="40" y="40" class="b">Shared Domain Model</text>   <text x="40" y="58" class="dim">SvStorableNode subclasses</text></p><p><line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#ahe)"/></p><p><rect class="fill" x="290" y="20" width="240" height="50"/>   <text x="305" y="40" class="b">Environment Filtering</text>   <text x="305" y="58" class="dim">server-only / browser-only</text></p><p><line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#ahe)"/></p><p><rect class="fill" x="555" y="20" width="240" height="50"/>   <text x="570" y="40" class="b">LevelDB Storage Backend</text>   <text x="570" y="58" class="dim">classic-level via SvIndexedDbFolder</text></p><p><text x="410" y="110" text-anchor="middle" class="dim">Model code holds zero DOM references; views observe the model, but the model is completely unaware of views.</text> </svg></p></div></div><h2 id="environment-detection-svplatform">Environment Detection (`SvPlatform`)</h2><div class="section"><div class="section-body"><pre><code>// Environment checks
 if (SvPlatform.isNodePlatform()) {
     // Node.js specific code
 } else if (SvPlatform.isBrowserPlatform()) {

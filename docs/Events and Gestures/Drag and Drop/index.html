@@ -23,50 +23,7 @@
   <meta name="description" content="Browser drag-and-drop support for views and nodes, covering drop targets, drag sources, and MIME-type dispatch.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Drag and Drop</h1><a class="back-link" href="../index.html">&larr; Events and Gestures</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Browser drag-and-drop support for views and nodes, covering drop targets, drag sources, and MIME-type dispatch.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#key-framework-classes">Key Framework Classes</a></li><li><a href="#drop-targets-api">Drop Targets API</a></li><li><a href="#drag-sources-api">Drag Sources API</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>The browser's native HTML5 drag-and-drop API is low-level and inconsistent&mdash;you must manually parse <code>DataTransfer</code> objects, handle files versus text strings differently, prevent default browser navigation on dropped files, and manage empty-space drops that bypass child elements.</p><p>STRVCT wraps this into a clean, declarative protocol:</p><ul><li><strong>Drop Targets:</strong> Views register to accept dropped content (<code>setIsRegisteredForBrowserDrop(true)</code>). Dropped data arrives pre-parsed, typed by MIME, and dispatched directly to a handler method named by convention.</li><li><strong>Drag Sources:</strong> Views register as draggable sources (<code>setIsRegisteredForBrowserDrag(true)</code>), populating <code>DataTransfer</code> payloads when a drag initiates.</li></ul><svg viewBox="0 0 820 500" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  </style>
-  <defs>
-    <marker id="add" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
-
-  <rect class="fill" x="220" y="20" width="380" height="52"/>
-  <text x="235" y="40" class="b">1. Browser DOM Drop Event</text>
-  <text x="235" y="58" class="dim">DataTransfer with files, text, HTML, or JSON</text>
-
-  <line class="flow" x1="410" y1="72" x2="410" y2="115" marker-end="url(#add)"/>
-
-  <rect class="fill" x="220" y="115" width="380" height="70"/>
-  <text x="235" y="135" class="b">2. SvDropListener Target Check</text>
-  <text x="235" y="153" class="dim">dragenter / dragover / dragleave / drop;</text>
-  <text x="235" y="171" class="dim">Checks view.acceptsDrop(event)</text>
-
-  <line class="flow" x1="410" y1="185" x2="410" y2="235" marker-end="url(#add)"/>
-
-  <rect class="fill" x="220" y="235" width="380" height="106"/>
-  <text x="235" y="255" class="b">3. MIME-Type Convention Dispatch</text>
-  <text x="235" y="273" class="dim">text/plain  →  onBrowserDropTextPlain(dataChunk)</text>
-  <text x="235" y="291" class="dim">text/html   →  onBrowserDropTextHtml(dataChunk)</text>
-  <text x="235" y="309" class="dim">image/png   →  onBrowserDropImagePng(dataChunk)</text>
-  <text x="235" y="327" class="dim">app/json    →  onBrowserDropApplicationJson(chunk)</text>
-
-  <line class="flow" x1="410" y1="341" x2="410" y2="385" marker-end="url(#add)"/>
-
-  <rect class="fill" x="220" y="385" width="380" height="70"/>
-  <text x="235" y="405" class="b">4. View or Model Node Handler Runs</text>
-  <text x="235" y="423" class="dim">Application processes typed data chunk;</text>
-  <text x="235" y="441" class="dim">unhandled MIME types are silently ignored</text>
-
-  <text x="410" y="490" text-anchor="middle" class="dim">Register drop support via setIsRegisteredForBrowserDrop(true) and implement one handler method per accepted MIME type.</text>
-</svg></div></div><h2 id="key-framework-classes">Key Framework Classes</h2><div class="section"><div class="section-body"><table><thead><tr><th>File / Class Name</th><th>Purpose &amp; Responsibilities</th></tr></thead><tbody><tr><td><code>SvDomView_browserDragAndDrop.js</code></td><td>Category on <code>SvDomView</code> implementing drop/drag target APIs.</td></tr><tr><td><code>SvDropListener.js</code></td><td>Manages element drop event listeners (<code>dragenter</code>, <code>dragover</code>, <code>dragleave</code>, <code>drop</code>).</td></tr><tr><td><code>SvDragListener.js</code></td><td>Manages element drag source event listeners (<code>dragstart</code>, <code>dragend</code>).</td></tr><tr><td><code>SvDocumentBody.js</code></td><td>Global drop prevention on <code>document.body</code> to stop browser file navigation.</td></tr></tbody></table></div></div><h2 id="drop-targets-api">Drop Targets API</h2><div class="section"><div class="section-body"><h3 id="1-registering-a-view-for-drops">1. Registering a View for Drops</h3><pre><code>init () {
+  <div class="page loaded"><div class="header"><div><h1>Drag and Drop</h1><a class="back-link" href="../index.html">&larr; Events and Gestures</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Browser drag-and-drop support for views and nodes, covering drop targets, drag sources, and MIME-type dispatch.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#key-framework-classes">Key Framework Classes</a></li><li><a href="#drop-targets-api">Drop Targets API</a></li><li><a href="#drag-sources-api">Drag Sources API</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>The browser's native HTML5 drag-and-drop API is low-level and inconsistent&mdash;you must manually parse <code>DataTransfer</code> objects, handle files versus text strings differently, prevent default browser navigation on dropped files, and manage empty-space drops that bypass child elements.</p><p>STRVCT wraps this into a clean, declarative protocol:</p><ul><li><strong>Drop Targets:</strong> Views register to accept dropped content (<code>setIsRegisteredForBrowserDrop(true)</code>). Dropped data arrives pre-parsed, typed by MIME, and dispatched directly to a handler method named by convention.</li><li><strong>Drag Sources:</strong> Views register as draggable sources (<code>setIsRegisteredForBrowserDrag(true)</code>), populating <code>DataTransfer</code> payloads when a drag initiates.</li></ul><p><svg viewBox="0 0 820 500" width="820" xmlns="http://www.w3.org/2000/svg">   <style>     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }     .b { font-weight: 600; }     .dim { fill: #666; }     .box { fill: none; stroke: #111; stroke-width: 1; }     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }     .flow { stroke: #111; stroke-width: 1; fill: none; }   </style>   <defs>     <marker id="add" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>     </marker>   </defs></p><p><rect class="fill" x="220" y="20" width="380" height="52"/>   <text x="235" y="40" class="b">1. Browser DOM Drop Event</text>   <text x="235" y="58" class="dim">DataTransfer with files, text, HTML, or JSON</text></p><p><line class="flow" x1="410" y1="72" x2="410" y2="115" marker-end="url(#add)"/></p><p><rect class="fill" x="220" y="115" width="380" height="70"/>   <text x="235" y="135" class="b">2. SvDropListener Target Check</text>   <text x="235" y="153" class="dim">dragenter / dragover / dragleave / drop;</text>   <text x="235" y="171" class="dim">Checks view.acceptsDrop(event)</text></p><p><line class="flow" x1="410" y1="185" x2="410" y2="235" marker-end="url(#add)"/></p><p><rect class="fill" x="220" y="235" width="380" height="106"/>   <text x="235" y="255" class="b">3. MIME-Type Convention Dispatch</text>   <text x="235" y="273" class="dim">text/plain  →  onBrowserDropTextPlain(dataChunk)</text>   <text x="235" y="291" class="dim">text/html   →  onBrowserDropTextHtml(dataChunk)</text>   <text x="235" y="309" class="dim">image/png   →  onBrowserDropImagePng(dataChunk)</text>   <text x="235" y="327" class="dim">app/json    →  onBrowserDropApplicationJson(chunk)</text></p><p><line class="flow" x1="410" y1="341" x2="410" y2="385" marker-end="url(#add)"/></p><p><rect class="fill" x="220" y="385" width="380" height="70"/>   <text x="235" y="405" class="b">4. View or Model Node Handler Runs</text>   <text x="235" y="423" class="dim">Application processes typed data chunk;</text>   <text x="235" y="441" class="dim">unhandled MIME types are silently ignored</text></p><p><text x="410" y="490" text-anchor="middle" class="dim">Register drop support via setIsRegisteredForBrowserDrop(true) and implement one handler method per accepted MIME type.</text> </svg></p></div></div><h2 id="key-framework-classes">Key Framework Classes</h2><div class="section"><div class="section-body"><table><thead><tr><th>File / Class Name</th><th>Purpose &amp; Responsibilities</th></tr></thead><tbody><tr><td><code>SvDomView_browserDragAndDrop.js</code></td><td>Category on <code>SvDomView</code> implementing drop/drag target APIs.</td></tr><tr><td><code>SvDropListener.js</code></td><td>Manages element drop event listeners (<code>dragenter</code>, <code>dragover</code>, <code>dragleave</code>, <code>drop</code>).</td></tr><tr><td><code>SvDragListener.js</code></td><td>Manages element drag source event listeners (<code>dragstart</code>, <code>dragend</code>).</td></tr><tr><td><code>SvDocumentBody.js</code></td><td>Global drop prevention on <code>document.body</code> to stop browser file navigation.</td></tr></tbody></table></div></div><h2 id="drop-targets-api">Drop Targets API</h2><div class="section"><div class="section-body"><h3 id="1-registering-a-view-for-drops">1. Registering a View for Drops</h3><pre><code>init () {
     super.init();
     this.setIsRegisteredForBrowserDrop(true); // Attaches SvDropListener
     return this;

@@ -23,71 +23,7 @@
   <meta name="description" content="IndexedDB-backed persistence for domain object graphs using dirty tracking, the local record store (SvLocalRecordStore), and atomic event-loop commits.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Local Object Pools</h1><a class="back-link" href="../index.html">&larr; Persistence</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>IndexedDB-backed persistence for domain object graphs using dirty tracking, the local record store (<code>SvLocalRecordStore</code>), and atomic event-loop commits.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#opting-into-persistence">Opting Into Persistence</a></li><li><a href="#inheritance-chain">Inheritance Chain</a></li><li><a href="#persistent-unique-ids-puuid">Persistent Unique IDs (`puuid`)</a></li><li><a href="#record-serialization-local-only-slots">Record Serialization & Local-Only Slots</a></li><li><a href="#mutation-tracking-batched-commits">Mutation Tracking & Batched Commits</a></li><li><a href="#svpersistentatomicmap-multi-backend-abstraction">`SvPersistentAtomicMap` & Multi-Backend Abstraction</a></li><li><a href="#opening-pools-class-migrations-classrenamesjson">Opening Pools & Class Migrations (`ClassRenames.json`)</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Strvct's persistence engine is <strong>local-first</strong>: application state is stored directly in the browser's IndexedDB (or LevelDB under Node.js). Rather than requiring developers to write explicit SQL/ORM queries or API save calls, the framework monitors slot mutations automatically, serializes dirty domain objects into <strong>Record Rows</strong> (<code>SvRecordRow</code>), and commits them to IndexedDB at the end of each browser event loop.</p><svg viewBox="0 0 820 480" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-    .edge { stroke: #888; stroke-width: 1; fill: none; }
-  </style>
-  <defs>
-    <marker id="alp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
-
-  <!-- Node Graph Sketch Box -->
-  <rect class="box" x="190" y="20" width="440" height="90"/>
-  <text x="205" y="40" class="b">Domain Node Graph (SvNode)</text>
-  <circle cx="250" cy="65" r="7" class="fill"/>
-  <circle cx="320" cy="85" r="7" class="fill"/>
-  <circle cx="390" cy="60" r="7" class="fill"/>
-  <circle cx="410" cy="90" r="9" class="fill" stroke-width="2"/>
-  <circle cx="480" cy="75" r="7" class="fill"/>
-  <circle cx="560" cy="60" r="7" class="fill"/>
-  <line class="edge" x1="250" y1="65" x2="320" y2="85"/>
-  <line class="edge" x1="250" y1="65" x2="390" y2="60"/>
-  <line class="edge" x1="320" y1="85" x2="410" y2="90"/>
-  <line class="edge" x1="410" y1="90" x2="480" y2="75"/>
-  <line class="edge" x1="480" y1="75" x2="560" y2="60"/>
-
-  <line class="flow" x1="410" y1="110" x2="410" y2="135" marker-end="url(#alp)"/>
-
-  <!-- Layer 1: SvStorableNode -->
-  <rect class="fill" x="190" y="135" width="440" height="50"/>
-  <text x="205" y="155" class="b">SvStorableNode</text>
-  <text x="205" y="173" class="dim">Slot setters trigger didUpdateSlot &amp; mark object dirty</text>
-
-  <line class="flow" x1="410" y1="185" x2="410" y2="210" marker-end="url(#alp)"/>
-
-  <!-- Layer 2: SvObjectPool -->
-  <rect class="fill" x="190" y="210" width="440" height="50"/>
-  <text x="205" y="230" class="b">SvObjectPool</text>
-  <text x="205" y="248" class="dim">In-memory dirty cache; serializes dirty nodes to SvRecordRow</text>
-
-  <line class="flow" x1="410" y1="260" x2="410" y2="285" marker-end="url(#alp)"/>
-
-  <!-- Layer 3: SvLocalRecordStore -->
-  <rect class="fill" x="190" y="285" width="440" height="50"/>
-  <text x="205" y="305" class="b">SvLocalRecordStore</text>
-  <text x="205" y="323" class="dim">Row database holding all pool records (objectId == poolId)</text>
-
-  <line class="flow" x1="410" y1="335" x2="410" y2="360" marker-end="url(#alp)"/>
-
-  <!-- Layer 4: SvPersistentAtomicMap -->
-  <rect class="fill" x="190" y="360" width="440" height="50"/>
-  <text x="205" y="380" class="b">SvPersistentAtomicMap &amp; SvIndexedDbFolder</text>
-  <text x="205" y="398" class="dim">Synchronous Map cache; batched writes on commit</text>
-
-  <line class="flow" x1="410" y1="410" x2="410" y2="435" marker-end="url(#alp)"/>
-
-  <!-- Storage Engine -->
-  <rect class="box" x="190" y="435" width="440" height="35"/>
-  <text x="205" y="457" class="b">IndexedDB (Browser) / LevelDB (Node.js Headless)</text>
-</svg></div></div><h2 id="opting-into-persistence">Opting Into Persistence</h2><div class="section"><div class="section-body"><p>Domain classes opt into local persistence by extending <code>SvStorableNode</code> and configuring storage flags:</p><pre><code>(class Task extends SvStorableNode {
+  <div class="page loaded"><div class="header"><div><h1>Local Object Pools</h1><a class="back-link" href="../index.html">&larr; Persistence</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>IndexedDB-backed persistence for domain object graphs using dirty tracking, the local record store (<code>SvLocalRecordStore</code>), and atomic event-loop commits.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#opting-into-persistence">Opting Into Persistence</a></li><li><a href="#inheritance-chain">Inheritance Chain</a></li><li><a href="#persistent-unique-ids-puuid">Persistent Unique IDs (`puuid`)</a></li><li><a href="#record-serialization-local-only-slots">Record Serialization & Local-Only Slots</a></li><li><a href="#mutation-tracking-batched-commits">Mutation Tracking & Batched Commits</a></li><li><a href="#svpersistentatomicmap-multi-backend-abstraction">`SvPersistentAtomicMap` & Multi-Backend Abstraction</a></li><li><a href="#opening-pools-class-migrations-classrenamesjson">Opening Pools & Class Migrations (`ClassRenames.json`)</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Strvct's persistence engine is <strong>local-first</strong>: application state is stored directly in the browser's IndexedDB (or LevelDB under Node.js). Rather than requiring developers to write explicit SQL/ORM queries or API save calls, the framework monitors slot mutations automatically, serializes dirty domain objects into <strong>Record Rows</strong> (<code>SvRecordRow</code>), and commits them to IndexedDB at the end of each browser event loop.</p><p><svg viewBox="0 0 820 480" width="820" xmlns="http://www.w3.org/2000/svg">   <style>     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }     .b { font-weight: 600; }     .dim { fill: #666; }     .box { fill: none; stroke: #111; stroke-width: 1; }     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }     .flow { stroke: #111; stroke-width: 1; fill: none; }     .edge { stroke: #888; stroke-width: 1; fill: none; }   </style>   <defs>     <marker id="alp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>     </marker>   </defs></p><p><!-- Node Graph Sketch Box -->   <rect class="box" x="190" y="20" width="440" height="90"/>   <text x="205" y="40" class="b">Domain Node Graph (SvNode)</text>   <circle cx="250" cy="65" r="7" class="fill"/>   <circle cx="320" cy="85" r="7" class="fill"/>   <circle cx="390" cy="60" r="7" class="fill"/>   <circle cx="410" cy="90" r="9" class="fill" stroke-width="2"/>   <circle cx="480" cy="75" r="7" class="fill"/>   <circle cx="560" cy="60" r="7" class="fill"/>   <line class="edge" x1="250" y1="65" x2="320" y2="85"/>   <line class="edge" x1="250" y1="65" x2="390" y2="60"/>   <line class="edge" x1="320" y1="85" x2="410" y2="90"/>   <line class="edge" x1="410" y1="90" x2="480" y2="75"/>   <line class="edge" x1="480" y1="75" x2="560" y2="60"/></p><p><line class="flow" x1="410" y1="110" x2="410" y2="135" marker-end="url(#alp)"/></p><p><!-- Layer 1: SvStorableNode -->   <rect class="fill" x="190" y="135" width="440" height="50"/>   <text x="205" y="155" class="b">SvStorableNode</text>   <text x="205" y="173" class="dim">Slot setters trigger didUpdateSlot &amp; mark object dirty</text></p><p><line class="flow" x1="410" y1="185" x2="410" y2="210" marker-end="url(#alp)"/></p><p><!-- Layer 2: SvObjectPool -->   <rect class="fill" x="190" y="210" width="440" height="50"/>   <text x="205" y="230" class="b">SvObjectPool</text>   <text x="205" y="248" class="dim">In-memory dirty cache; serializes dirty nodes to SvRecordRow</text></p><p><line class="flow" x1="410" y1="260" x2="410" y2="285" marker-end="url(#alp)"/></p><p><!-- Layer 3: SvLocalRecordStore -->   <rect class="fill" x="190" y="285" width="440" height="50"/>   <text x="205" y="305" class="b">SvLocalRecordStore</text>   <text x="205" y="323" class="dim">Row database holding all pool records (objectId == poolId)</text></p><p><line class="flow" x1="410" y1="335" x2="410" y2="360" marker-end="url(#alp)"/></p><p><!-- Layer 4: SvPersistentAtomicMap -->   <rect class="fill" x="190" y="360" width="440" height="50"/>   <text x="205" y="380" class="b">SvPersistentAtomicMap &amp; SvIndexedDbFolder</text>   <text x="205" y="398" class="dim">Synchronous Map cache; batched writes on commit</text></p><p><line class="flow" x1="410" y1="410" x2="410" y2="435" marker-end="url(#alp)"/></p><p><!-- Storage Engine -->   <rect class="box" x="190" y="435" width="440" height="35"/>   <text x="205" y="457" class="b">IndexedDB (Browser) / LevelDB (Node.js Headless)</text> </svg></p></div></div><h2 id="opting-into-persistence">Opting Into Persistence</h2><div class="section"><div class="section-body"><p>Domain classes opt into local persistence by extending <code>SvStorableNode</code> and configuring storage flags:</p><pre><code>(class Task extends SvStorableNode {
 
     initPrototypeSlots () {
         {

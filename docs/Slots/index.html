@@ -23,49 +23,7 @@
   <meta name="description" content="The property system: declaration, slot annotations, runtime type checks, lifecycle hooks, and metadata consumers.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Slots</h1><a class="back-link" href="../index.html">&larr; Documentation</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>The property system: declaration, slot annotations, runtime type checks, lifecycle hooks, and metadata consumers.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#declaration-syntax-slot-maps">Declaration Syntax & Slot Maps</a></li><li><a href="#complete-annotation-setters-table">Complete Annotation Setters Table</a></li><li><a href="#slot-constructor-variants">Slot Constructor Variants</a></li><li><a href="#slot-change-getter-hooks">Slot Change & Getter Hooks</a></li><li><a href="#runtime-type-checking">Runtime Type Checking</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Slots are Strvct's property system. In traditional JavaScript objects, instance fields are simple key-value pairs without metadata. In Strvct, declaring a property as a <strong>slot</strong> transforms it into a rich metadata carrier that each framework layer reads independently.</p><svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  </style>
-  <defs>
-    <marker id="asl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
-
-  <!-- Row 1: Centered Slot Metadata Box (w: 240, h: 50) -->
-  <rect class="fill" x="290" y="20" width="240" height="50"/>
-  <text x="305" y="40" class="b">Slot Declaration</text>
-  <text x="305" y="58" class="dim">newSlot("name", "Thorin")</text>
-
-  <!-- Flow to Bottom Row (3 Columns) -->
-  <line class="flow" x1="410" y1="70" x2="410" y2="95"/>
-  <line class="flow" x1="145" y1="95" x2="675" y2="95"/>
-
-  <line class="flow" x1="145" y1="95" x2="145" y2="110" marker-end="url(#asl)"/>
-  <line class="flow" x1="410" y1="95" x2="410" y2="110" marker-end="url(#asl)"/>
-  <line class="flow" x1="675" y1="95" x2="675" y2="110" marker-end="url(#asl)"/>
-
-  <!-- Row 2: 3 Uniform Boxes (w: 240, h: 50) -->
-  <rect class="box" x="25" y="110" width="240" height="50"/>
-  <text x="40" y="130" class="b">UI Layer</text>
-  <text x="40" y="148" class="dim">Auto-generates Property Tiles</text>
-
-  <rect class="box" x="290" y="110" width="240" height="50"/>
-  <text x="305" y="130" class="b">Storage Layer</text>
-  <text x="305" y="148" class="dim">Serializes shouldStoreSlot</text>
-
-  <rect class="box" x="555" y="110" width="240" height="50"/>
-  <text x="570" y="130" class="b">AI Agent Surface</text>
-  <text x="570" y="148" class="dim">Generates JSON tool schemas</text>
-
-  <text x="410" y="195" text-anchor="middle" class="dim">Slots decouple business logic from UI, persistence, and AI tools; declare metadata once, every layer benefits automatically.</text>
-</svg></div></div><h2 id="declaration-syntax-slot-maps">Declaration Syntax & Slot Maps</h2><div class="section"><div class="section-body"><p>Slots are declared inside <code>initPrototypeSlots()</code> during class registration. Declaring a slot installs a private variable (<code>_slotName</code>), an auto-generated getter (<code>slotName()</code>), and an auto-generated setter (<code>setSlotName(value)</code>) on the class prototype.</p><p>Each class prototype maintains two slot maps:</p><ul><li><strong><code>slotsMap()</code></strong>: Map of slots defined directly on this specific class.</li><li><strong><code>allSlotsMap()</code></strong>: Map of all slots from this class and every ancestor class, accumulated down the prototype chain.</li></ul><pre><code>(class Character extends SvStorableNode {
+  <div class="page loaded"><div class="header"><div><h1>Slots</h1><a class="back-link" href="../index.html">&larr; Documentation</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>The property system: declaration, slot annotations, runtime type checks, lifecycle hooks, and metadata consumers.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#declaration-syntax-slot-maps">Declaration Syntax & Slot Maps</a></li><li><a href="#complete-annotation-setters-table">Complete Annotation Setters Table</a></li><li><a href="#slot-constructor-variants">Slot Constructor Variants</a></li><li><a href="#slot-change-getter-hooks">Slot Change & Getter Hooks</a></li><li><a href="#runtime-type-checking">Runtime Type Checking</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Slots are Strvct's property system. In traditional JavaScript objects, instance fields are simple key-value pairs without metadata. In Strvct, declaring a property as a <strong>slot</strong> transforms it into a rich metadata carrier that each framework layer reads independently.</p><p><svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">   <style>     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }     .b { font-weight: 600; }     .dim { fill: #666; }     .box { fill: none; stroke: #111; stroke-width: 1; }     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }     .flow { stroke: #111; stroke-width: 1; fill: none; }   </style>   <defs>     <marker id="asl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>     </marker>   </defs></p><p><!-- Row 1: Centered Slot Metadata Box (w: 240, h: 50) -->   <rect class="fill" x="290" y="20" width="240" height="50"/>   <text x="305" y="40" class="b">Slot Declaration</text>   <text x="305" y="58" class="dim">newSlot("name", "Thorin")</text></p><p><!-- Flow to Bottom Row (3 Columns) -->   <line class="flow" x1="410" y1="70" x2="410" y2="95"/>   <line class="flow" x1="145" y1="95" x2="675" y2="95"/></p><p><line class="flow" x1="145" y1="95" x2="145" y2="110" marker-end="url(#asl)"/>   <line class="flow" x1="410" y1="95" x2="410" y2="110" marker-end="url(#asl)"/>   <line class="flow" x1="675" y1="95" x2="675" y2="110" marker-end="url(#asl)"/></p><p><!-- Row 2: 3 Uniform Boxes (w: 240, h: 50) -->   <rect class="box" x="25" y="110" width="240" height="50"/>   <text x="40" y="130" class="b">UI Layer</text>   <text x="40" y="148" class="dim">Auto-generates Property Tiles</text></p><p><rect class="box" x="290" y="110" width="240" height="50"/>   <text x="305" y="130" class="b">Storage Layer</text>   <text x="305" y="148" class="dim">Serializes shouldStoreSlot</text></p><p><rect class="box" x="555" y="110" width="240" height="50"/>   <text x="570" y="130" class="b">AI Agent Surface</text>   <text x="570" y="148" class="dim">Generates JSON tool schemas</text></p><p><text x="410" y="195" text-anchor="middle" class="dim">Slots decouple business logic from UI, persistence, and AI tools; declare metadata once, every layer benefits automatically.</text> </svg></p></div></div><h2 id="declaration-syntax-slot-maps">Declaration Syntax & Slot Maps</h2><div class="section"><div class="section-body"><p>Slots are declared inside <code>initPrototypeSlots()</code> during class registration. Declaring a slot installs a private variable (<code>_slotName</code>), an auto-generated getter (<code>slotName()</code>), and an auto-generated setter (<code>setSlotName(value)</code>) on the class prototype.</p><p>Each class prototype maintains two slot maps:</p><ul><li><strong><code>slotsMap()</code></strong>: Map of slots defined directly on this specific class.</li><li><strong><code>allSlotsMap()</code></strong>: Map of all slots from this class and every ancestor class, accumulated down the prototype chain.</li></ul><pre><code>(class Character extends SvStorableNode {
 
     initPrototypeSlots () {
         {

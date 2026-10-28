@@ -10,51 +10,7 @@
   <meta name="description" content="Higher-level state machines that interpret sequences of events as meaningful gestures.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Gesture Recognizers</h1><a class="back-link" href="../index.html">&larr; Events and Gestures</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Higher-level state machines that interpret sequences of events as meaningful gestures.</p></div><nav class="toc"><ul><li><a href="#unified-input-architecture">Unified Input Architecture</a></li><li><a href="#how-gestures-work">How Gestures Work</a></li><li><a href="#complete-gesture-recognizers-suite">Complete Gesture Recognizers Suite</a></li><li><a href="#adding-gestures-convenience-api">Adding Gestures & Convenience API</a></li><li><a href="#global-arbitration-svgesturemanager">Global Arbitration (`SvGestureManager`)</a></li><li><a href="#cleanup-teardown-memory-safety">Cleanup, Teardown & Memory Safety</a></li><li><a href="#multi-touch-desktop-emulation">Multi-Touch Desktop Emulation</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="unified-input-architecture">Unified Input Architecture</h2><div class="section"><div class="section-body"><p>The browser provides two separate event families for pointing&mdash;mouse events on desktop and touch events on mobile&mdash;with different semantics, coordinate systems, and lifecycle patterns. Without an abstraction layer, every interactive view needs parallel code paths for both input types, plus logic to prevent ghost clicks and handle edge cases where both fire simultaneously.</p><p>Gesture recognizers eliminate this complexity:</p><ul><li>They consume raw mouse and touch events internally and present a single, input-agnostic interface to the view.</li><li>A <code>SvPanGestureRecognizer</code> works identically whether driven by a mouse drag or a finger swipe&mdash;the view implements <code>onPanBegin</code> once and it works on every device.</li><li>New interaction features are automatically cross-platform from the first line of code, with no per-device testing or branching required.</li></ul><p>Mouse input naturally supports single-finger gestures (tap, pan, long-press, slide). Multi-finger gestures (pinch, rotation) require touch input or desktop Shift-click multi-touch emulation.</p><svg viewBox="0 0 820 520" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  </style>
-  <defs>
-    <marker id="agr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
-
-  <rect class="fill" x="220" y="20" width="380" height="52"/>
-  <text x="235" y="40" class="b">1. Raw Mouse / Touch Input Stream</text>
-  <text x="235" y="58" class="dim">Unified input abstraction</text>
-
-  <line class="flow" x1="410" y1="72" x2="410" y2="110" marker-end="url(#agr)"/>
-
-  <rect class="fill" x="220" y="110" width="380" height="70"/>
-  <text x="235" y="130" class="b">2. SvGestureRecognizer State Machine</text>
-  <text x="235" y="148" class="dim">Tracks finger count, timing, movement, hold;</text>
-  <text x="235" y="166" class="dim">Tap, Pan, Pinch, Rotation, LongPress, Slide</text>
-
-  <line class="flow" x1="410" y1="180" x2="410" y2="225" marker-end="url(#agr)"/>
-
-  <rect class="fill" x="220" y="225" width="380" height="70"/>
-  <text x="235" y="245" class="b">3. SvGestureManager Singleton Arbitration</text>
-  <text x="235" y="263" class="dim">Arbitrates competing gestures;</text>
-  <text x="235" y="281" class="dim">Cancels conflicts across view hierarchy</text>
-
-  <line class="flow" x1="410" y1="295" x2="410" y2="340" marker-end="url(#agr)"/>
-
-  <rect class="fill" x="220" y="340" width="380" height="88"/>
-  <text x="235" y="360" class="b">4. Delegate Phase Messages Sent to View</text>
-  <text x="235" y="378" class="dim">onGestureBegin → onGestureMove → onGestureComplete</text>
-  <text x="235" y="396" class="dim">(or onGestureCancelled if interrupted)</text>
-
-  <line class="flow" x1="410" y1="428" x2="410" y2="475" marker-end="url(#agr)"/>
-
-  <rect class="fill" x="220" y="475" width="380" height="34"/>
-  <text x="235" y="495" class="b">5. Application Handler Executes</text>
-</svg></div></div><h2 id="how-gestures-work">How Gestures Work</h2><div class="section"><div class="section-body"><p>A gesture recognizer is a state machine attached to a view via <code>addGestureRecognizer()</code>. When gesture conditions are met, the recognizer sends delegate messages to the view:</p><pre><code>acceptsGestureType(gesture)     — Optional: can the view accept this gesture?
+  <div class="page loaded"><div class="header"><div><h1>Gesture Recognizers</h1><a class="back-link" href="../index.html">&larr; Events and Gestures</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Higher-level state machines that interpret sequences of events as meaningful gestures.</p></div><nav class="toc"><ul><li><a href="#unified-input-architecture">Unified Input Architecture</a></li><li><a href="#how-gestures-work">How Gestures Work</a></li><li><a href="#complete-gesture-recognizers-suite">Complete Gesture Recognizers Suite</a></li><li><a href="#adding-gestures-convenience-api">Adding Gestures & Convenience API</a></li><li><a href="#global-arbitration-svgesturemanager">Global Arbitration (`SvGestureManager`)</a></li><li><a href="#cleanup-teardown-memory-safety">Cleanup, Teardown & Memory Safety</a></li><li><a href="#multi-touch-desktop-emulation">Multi-Touch Desktop Emulation</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="unified-input-architecture">Unified Input Architecture</h2><div class="section"><div class="section-body"><p>The browser provides two separate event families for pointing&mdash;mouse events on desktop and touch events on mobile&mdash;with different semantics, coordinate systems, and lifecycle patterns. Without an abstraction layer, every interactive view needs parallel code paths for both input types, plus logic to prevent ghost clicks and handle edge cases where both fire simultaneously.</p><p>Gesture recognizers eliminate this complexity:</p><ul><li>They consume raw mouse and touch events internally and present a single, input-agnostic interface to the view.</li><li>A <code>SvPanGestureRecognizer</code> works identically whether driven by a mouse drag or a finger swipe&mdash;the view implements <code>onPanBegin</code> once and it works on every device.</li><li>New interaction features are automatically cross-platform from the first line of code, with no per-device testing or branching required.</li></ul><p>Mouse input naturally supports single-finger gestures (tap, pan, long-press, slide). Multi-finger gestures (pinch, rotation) require touch input or desktop Shift-click multi-touch emulation.</p><p><svg viewBox="0 0 820 520" width="820" xmlns="http://www.w3.org/2000/svg">   <style>     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }     .b { font-weight: 600; }     .dim { fill: #666; }     .box { fill: none; stroke: #111; stroke-width: 1; }     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }     .flow { stroke: #111; stroke-width: 1; fill: none; }   </style>   <defs>     <marker id="agr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>     </marker>   </defs></p><p><rect class="fill" x="220" y="20" width="380" height="52"/>   <text x="235" y="40" class="b">1. Raw Mouse / Touch Input Stream</text>   <text x="235" y="58" class="dim">Unified input abstraction</text></p><p><line class="flow" x1="410" y1="72" x2="410" y2="110" marker-end="url(#agr)"/></p><p><rect class="fill" x="220" y="110" width="380" height="70"/>   <text x="235" y="130" class="b">2. SvGestureRecognizer State Machine</text>   <text x="235" y="148" class="dim">Tracks finger count, timing, movement, hold;</text>   <text x="235" y="166" class="dim">Tap, Pan, Pinch, Rotation, LongPress, Slide</text></p><p><line class="flow" x1="410" y1="180" x2="410" y2="225" marker-end="url(#agr)"/></p><p><rect class="fill" x="220" y="225" width="380" height="70"/>   <text x="235" y="245" class="b">3. SvGestureManager Singleton Arbitration</text>   <text x="235" y="263" class="dim">Arbitrates competing gestures;</text>   <text x="235" y="281" class="dim">Cancels conflicts across view hierarchy</text></p><p><line class="flow" x1="410" y1="295" x2="410" y2="340" marker-end="url(#agr)"/></p><p><rect class="fill" x="220" y="340" width="380" height="88"/>   <text x="235" y="360" class="b">4. Delegate Phase Messages Sent to View</text>   <text x="235" y="378" class="dim">onGestureBegin → onGestureMove → onGestureComplete</text>   <text x="235" y="396" class="dim">(or onGestureCancelled if interrupted)</text></p><p><line class="flow" x1="410" y1="428" x2="410" y2="475" marker-end="url(#agr)"/></p><p><rect class="fill" x="220" y="475" width="380" height="34"/>   <text x="235" y="495" class="b">5. Application Handler Executes</text> </svg></p></div></div><h2 id="how-gestures-work">How Gestures Work</h2><div class="section"><div class="section-body"><p>A gesture recognizer is a state machine attached to a view via <code>addGestureRecognizer()</code>. When gesture conditions are met, the recognizer sends delegate messages to the view:</p><pre><code>acceptsGestureType(gesture)     — Optional: can the view accept this gesture?
 onGestureTypeBegin(gesture)     — Gesture recognized and started
 onGestureTypeMove(gesture)      — Gesture in progress
 onGestureTypeComplete(gesture)  — Gesture completed successfully

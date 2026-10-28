@@ -23,39 +23,7 @@
   <meta name="description" content="Promise extensions, serial and parallel async array iteration, and error context rethrowing with Error.rethrow().">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Async Patterns</h1><a class="back-link" href="../index.html">&larr; Programming Idioms</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Promise extensions, serial and parallel async array iteration, and error context rethrowing with <code>Error.rethrow()</code>.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#async-array-iteration-arraypromisesjs">Async Array Iteration (`Array_promises.js`)</a></li><li><a href="#promise-extensions-promiseidealjs">Promise Extensions (`Promise_ideal.js`)</a></li><li><a href="#chained-error-context-errorrethrow">Chained Error Context (`Error.rethrow()`)</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>STRVCT extends native JavaScript <code>Promise</code> and <code>Array</code> prototypes via categories (<code>Promise_ideal.js</code>, <code>Array_promises.js</code>) to provide clean, chainable asynchronous primitives without importing external async utility libraries.</p><svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  </style>
-  <defs>
-    <marker id="aap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
-
-  <rect class="box" x="25" y="20" width="240" height="50"/>
-  <text x="40" y="40" class="b">Array_promises Extensions</text>
-  <text x="40" y="58" class="dim">promiseSerialForEach / Map</text>
-
-  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#aap)"/>
-
-  <rect class="fill" x="290" y="20" width="240" height="50"/>
-  <text x="305" y="40" class="b">Promise_ideal Extensions</text>
-  <text x="305" y="58" class="dim">status, timeouts, &amp; clone()</text>
-
-  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#aap)"/>
-
-  <rect class="fill" x="555" y="20" width="240" height="50"/>
-  <text x="570" y="40" class="b">Error.rethrow() Context</text>
-  <text x="570" y="58" class="dim">Chained error stack traces</text>
-
-  <text x="410" y="110" text-anchor="middle" class="dim">Asynchronous array operations execute cleanly in serial sequence or bounded parallel batches without raw promise boilerplate.</text>
-</svg></div></div><h2 id="async-array-iteration-arraypromisesjs">Async Array Iteration (`Array_promises.js`)</h2><div class="section"><div class="section-body"><p>STRVCT adds asynchronous iteration methods directly to <code>Array.prototype</code>:</p><h3 id="1-serial-execution-promiseserialforeach-promiseserialmap">1. Serial Execution (<code>promiseSerialForEach</code> / <code>promiseSerialMap</code>)</h3><p>Executes an async callback for each element in strict sequential order, awaiting each element before starting the next:</p><pre><code>// Executes sequentially
+  <div class="page loaded"><div class="header"><div><h1>Async Patterns</h1><a class="back-link" href="../index.html">&larr; Programming Idioms</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Promise extensions, serial and parallel async array iteration, and error context rethrowing with <code>Error.rethrow()</code>.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#async-array-iteration-arraypromisesjs">Async Array Iteration (`Array_promises.js`)</a></li><li><a href="#promise-extensions-promiseidealjs">Promise Extensions (`Promise_ideal.js`)</a></li><li><a href="#chained-error-context-errorrethrow">Chained Error Context (`Error.rethrow()`)</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>STRVCT extends native JavaScript <code>Promise</code> and <code>Array</code> prototypes via categories (<code>Promise_ideal.js</code>, <code>Array_promises.js</code>) to provide clean, chainable asynchronous primitives without importing external async utility libraries.</p><p><svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">   <style>     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }     .b { font-weight: 600; }     .dim { fill: #666; }     .box { fill: none; stroke: #111; stroke-width: 1; }     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }     .flow { stroke: #111; stroke-width: 1; fill: none; }   </style>   <defs>     <marker id="aap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>     </marker>   </defs></p><p><rect class="box" x="25" y="20" width="240" height="50"/>   <text x="40" y="40" class="b">Array_promises Extensions</text>   <text x="40" y="58" class="dim">promiseSerialForEach / Map</text></p><p><line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#aap)"/></p><p><rect class="fill" x="290" y="20" width="240" height="50"/>   <text x="305" y="40" class="b">Promise_ideal Extensions</text>   <text x="305" y="58" class="dim">status, timeouts, &amp; clone()</text></p><p><line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#aap)"/></p><p><rect class="fill" x="555" y="20" width="240" height="50"/>   <text x="570" y="40" class="b">Error.rethrow() Context</text>   <text x="570" y="58" class="dim">Chained error stack traces</text></p><p><text x="410" y="110" text-anchor="middle" class="dim">Asynchronous array operations execute cleanly in serial sequence or bounded parallel batches without raw promise boilerplate.</text> </svg></p></div></div><h2 id="async-array-iteration-arraypromisesjs">Async Array Iteration (`Array_promises.js`)</h2><div class="section"><div class="section-body"><p>STRVCT adds asynchronous iteration methods directly to <code>Array.prototype</code>:</p><h3 id="1-serial-execution-promiseserialforeach-promiseserialmap">1. Serial Execution (<code>promiseSerialForEach</code> / <code>promiseSerialMap</code>)</h3><p>Executes an async callback for each element in strict sequential order, awaiting each element before starting the next:</p><pre><code>// Executes sequentially
 await items.promiseSerialForEach(async (item) =&gt; {
     await processItem(item);
 });

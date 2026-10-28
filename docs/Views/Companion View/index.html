@@ -11,51 +11,7 @@
   <meta name="description" content="A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Companion View</h1><a class="back-link" href="../index.html">&larr; Views</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#model-view-boundary-protocol-nodecompanionnode">Model-View Boundary Protocol (`nodeCompanionNode`)</a></li><li><a href="#the-three-display-states">The Three Display States</a></li><li><a href="#space-arbitration-keyboard-shortcuts">Space Arbitration & Keyboard Shortcuts</a></li><li><a href="#view-class-structure">View Class Structure</a></li><li><a href="#theming-css-variables">Theming & CSS Variables</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>A <strong>companion</strong> is a secondary region the view layer displays alongside a node's primary master-detail navigation: a chat panel beside a gaming session, a property inspector beside a document editor, or a reference pane beside a campaign tree.</p><p>Unlike popovers or modal drawers, a docked companion lives in normal layout flow: it reserves real layout space, causing adjacent navigation columns to compact smoothly without obscuring content.</p><svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  </style>
-  <defs>
-    <marker id="acm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
-
-  <rect class="box" x="25" y="20" width="770" height="240"/>
-  <text x="40" y="42" class="b">SvStackView / SvDetailView Layout Container</text>
-
-  <!-- Left: Navigation Stack -->
-  <rect class="box" x="40" y="60" width="460" height="180"/>
-  <text x="55" y="80" class="b">Primary Navigation Subchain (SvStackView)</text>
-
-  <rect class="fill" x="55" y="95" width="200" height="130"/>
-  <text x="70" y="115" class="b">SvNavView (Master)</text>
-  <text x="70" y="135" class="dim">• Column 1 Tiles</text>
-  <text x="70" y="155" class="dim">• Column 2 Tiles</text>
-
-  <rect class="fill" x="270" y="95" width="215" height="130"/>
-  <text x="285" y="115" class="b">SvNavView (Detail)</text>
-  <text x="285" y="135" class="dim">• Selected Node Tiles</text>
-
-  <!-- Inset Handle -->
-  <line class="flow" x1="510" y1="60" x2="510" y2="240"/>
-  <rect class="fill" x="502" y="130" width="16" height="40"/>
-  <text x="506" y="155" class="b">⋮</text>
-
-  <!-- Right: Docked Companion -->
-  <rect class="fill" x="525" y="60" width="250" height="180"/>
-  <text x="540" y="80" class="b">SvCompanionView</text>
-  <text x="540" y="100" class="dim">node = nodeCompanionNode()</text>
-  <rect class="box" x="540" y="115" width="220" height="110"/>
-  <text x="555" y="135" class="b">Embedded SvBrowserView</text>
-  <text x="555" y="155" class="dim">Isolated Navigation Context</text>
-  <text x="555" y="175" class="dim">(handlesGlobalNav = false)</text>
-</svg></div></div><h2 id="model-view-boundary-protocol-nodecompanionnode">Model-View Boundary Protocol (`nodeCompanionNode`)</h2><div class="section"><div class="section-body"><p>A domain node opts into displaying a companion by answering the optional protocol method:</p><pre><code>nodeCompanionNode () {
+  <div class="page loaded"><div class="header"><div><h1>Companion View</h1><a class="back-link" href="../index.html">&larr; Views</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#model-view-boundary-protocol-nodecompanionnode">Model-View Boundary Protocol (`nodeCompanionNode`)</a></li><li><a href="#the-three-display-states">The Three Display States</a></li><li><a href="#space-arbitration-keyboard-shortcuts">Space Arbitration & Keyboard Shortcuts</a></li><li><a href="#view-class-structure">View Class Structure</a></li><li><a href="#theming-css-variables">Theming & CSS Variables</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>A <strong>companion</strong> is a secondary region the view layer displays alongside a node's primary master-detail navigation: a chat panel beside a gaming session, a property inspector beside a document editor, or a reference pane beside a campaign tree.</p><p>Unlike popovers or modal drawers, a docked companion lives in normal layout flow: it reserves real layout space, causing adjacent navigation columns to compact smoothly without obscuring content.</p><p><svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">   <style>     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }     .b { font-weight: 600; }     .dim { fill: #666; }     .box { fill: none; stroke: #111; stroke-width: 1; }     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }     .flow { stroke: #111; stroke-width: 1; fill: none; }   </style>   <defs>     <marker id="acm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>     </marker>   </defs></p><p><rect class="box" x="25" y="20" width="770" height="240"/>   <text x="40" y="42" class="b">SvStackView / SvDetailView Layout Container</text></p><p><!-- Left: Navigation Stack -->   <rect class="box" x="40" y="60" width="460" height="180"/>   <text x="55" y="80" class="b">Primary Navigation Subchain (SvStackView)</text></p><p><rect class="fill" x="55" y="95" width="200" height="130"/>   <text x="70" y="115" class="b">SvNavView (Master)</text>   <text x="70" y="135" class="dim">• Column 1 Tiles</text>   <text x="70" y="155" class="dim">• Column 2 Tiles</text></p><p><rect class="fill" x="270" y="95" width="215" height="130"/>   <text x="285" y="115" class="b">SvNavView (Detail)</text>   <text x="285" y="135" class="dim">• Selected Node Tiles</text></p><p><!-- Inset Handle -->   <line class="flow" x1="510" y1="60" x2="510" y2="240"/>   <rect class="fill" x="502" y="130" width="16" height="40"/>   <text x="506" y="155" class="b">⋮</text></p><p><!-- Right: Docked Companion -->   <rect class="fill" x="525" y="60" width="250" height="180"/>   <text x="540" y="80" class="b">SvCompanionView</text>   <text x="540" y="100" class="dim">node = nodeCompanionNode()</text>   <rect class="box" x="540" y="115" width="220" height="110"/>   <text x="555" y="135" class="b">Embedded SvBrowserView</text>   <text x="555" y="155" class="dim">Isolated Navigation Context</text>   <text x="555" y="175" class="dim">(handlesGlobalNav = false)</text> </svg></p></div></div><h2 id="model-view-boundary-protocol-nodecompanionnode">Model-View Boundary Protocol (`nodeCompanionNode`)</h2><div class="section"><div class="section-body"><p>A domain node opts into displaying a companion by answering the optional protocol method:</p><pre><code>nodeCompanionNode () {
     return this.someOwnedCompanionNode(); // returns the companion root node, or null for none
 }</code></pre><p>The node specifies <em>which</em> node to show alongside itself, but zero UI details: width, axis, pinning, and collapse state are managed entirely by the view layer. This maintains strict headless testability.</p></div></div><h2 id="the-three-display-states">The Three Display States</h2><div class="section"><div class="section-body"><table><thead><tr><th>State</th><th>Visual Behavior</th><th>Space Allocation</th></tr></thead><tbody><tr><td><strong><code>docked</code></strong></td><td>Panel is expanded alongside or beneath navigation columns.</td><td>Reserves full length (<code>companionReservedWidth()</code>); columns compact to fit.</td></tr><tr><td><strong><code>tab</code></strong></td><td>Panel is collapsed into a zero-width tab handle.</td><td>Panel occupies 0px. Adjacent <code>SvNavView</code> displays expansion handle.</td></tr><tr><td><strong><code>hidden</code></strong></td><td>Panel and handle are both suppressed.</td><td>Viewport is too narrow to offer companion without breaking primary content.</td></tr></tbody></table></div></div><h2 id="space-arbitration-keyboard-shortcuts">Space Arbitration & Keyboard Shortcuts</h2><div class="section"><div class="section-body"><p><code>SvDetailView</code> arbitrates layout space using <code>setAvailableLength()</code>:</p><ul><li><strong>Threshold Check:</strong> If available width falls below <code>tabLength</code>, mode switches to <code>hidden</code>.</li><li><strong>User Pinning:</strong> Clicking the edge handle toggles between <code>docked</code> and <code>tab</code>, persisting the choice as <code>userMode</code>.</li><li><strong>Shortcut:</strong> Pressing <strong>Meta+\\</strong> (Cmd+\\ or Ctrl+\\) toggles the deepest visible companion in the active navigation chain.</li></ul></div></div><h2 id="view-class-structure">View Class Structure</h2><div class="section"><div class="section-body"><pre><code>SvStackView
  └─ SvDetailView                       (owns space arbitration)

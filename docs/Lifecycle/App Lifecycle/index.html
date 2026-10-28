@@ -23,47 +23,7 @@
   <meta name="description" content="SvApp singleton initialization sequence, extension points, runtime environment hooks, user alert routing, and UI readiness promises.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>App Lifecycle</h1><a class="back-link" href="../index.html">&larr; Lifecycle</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p><code>SvApp</code> singleton initialization sequence, extension points, runtime environment hooks, user alert routing, and UI readiness promises.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#extension-point-hook-methods">Extension Point Hook Methods</a></li><li><a href="#waiting-for-initialization-ui-readiness">Waiting for Initialization & UI Readiness</a></li><li><a href="#runtime-environment-event-hooks">Runtime Environment Event Hooks</a></li><li><a href="#model-user-alerts-onrequestuseralert">Model User Alerts (`onRequestUserAlert`)</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p><code>SvApp</code> is the application singleton. It owns the persistent object pool, root model object graph, and top-level user interface (<code>SvUserInterface</code>). Subclasses override a small set of hook methods to initialize application models and user interfaces in a clean, predictable order.</p><svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  </style>
-  <defs>
-    <marker id="alc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
-
-  <rect class="fill" x="25" y="20" width="240" height="50"/>
-  <text x="40" y="40" class="b">1. setupModel()</text>
-  <text x="40" y="58" class="dim">Store open, root object exists</text>
-
-  <line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#alc)"/>
-
-  <rect class="fill" x="290" y="20" width="240" height="50"/>
-  <text x="305" y="40" class="b">2. setupUi()</text>
-  <text x="305" y="58" class="dim">Model ready; UI instantiated</text>
-
-  <line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#alc)"/>
-
-  <rect class="fill" x="555" y="20" width="240" height="50"/>
-  <text x="570" y="40" class="b">3. appDidInit()</text>
-  <text x="570" y="58" class="dim">Posts "appDidInit" note</text>
-
-  <line class="flow" x1="675" y1="70" x2="675" y2="85"/>
-  <line class="flow" x1="410" y1="85" x2="675" y2="85"/>
-  <line class="flow" x1="410" y1="85" x2="410" y2="100" marker-end="url(#alc)"/>
-
-  <rect class="fill" x="290" y="100" width="240" height="50"/>
-  <text x="305" y="120" class="b">4. afterAppUiDidInit()</text>
-  <text x="305" y="138" class="dim">UI visible; processes URL params</text>
-
-  <text x="410" y="185" text-anchor="middle" class="dim">Model initialization is fully separated from UI rendering; app runs identically in browser or headless Node.js.</text>
-</svg></div></div><h2 id="extension-point-hook-methods">Extension Point Hook Methods</h2><div class="section"><div class="section-body"><table><thead><tr><th>Hook Method</th><th>When Executed</th><th>Purpose &amp; Usage</th></tr></thead><tbody><tr><td><code>setupModel()</code></td><td>Object pool store is open; root model exists.</td><td>Initialize application data models; create or fetch top-level subnodes.</td></tr><tr><td><code>setupUi()</code></td><td>Model object graph is ready.</td><td>Customize top-level UI presentation and window settings.</td></tr><tr><td><code>appDidInit()</code></td><td>Everything is wired up and live.</td><td>Post-initialization tasks; posts <code>"appDidInit"</code> notification.</td></tr><tr><td><code>afterAppUiDidInit()</code></td><td>UI elements are mounted and visible.</td><td>Parse URL search parameters via <code>handleSearchParams(params)</code>.</td></tr><tr><td><code>handleSearchParams(params)</code></td><td>Called automatically from <code>afterAppUiDidInit()</code>.</td><td>Process URL query parameters for deep-linking.</td></tr></tbody></table><h3 id="top-level-root-subnode-persistence-rootsubnodewithtitleforproto">Top-Level Root Subnode Persistence (<code>rootSubnodeWithTitleForProto</code>):</h3><p>To instantiate top-level application root nodes safely across reloads:</p><pre><code>setupModel () {
+  <div class="page loaded"><div class="header"><div><h1>App Lifecycle</h1><a class="back-link" href="../index.html">&larr; Lifecycle</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p><code>SvApp</code> singleton initialization sequence, extension points, runtime environment hooks, user alert routing, and UI readiness promises.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#extension-point-hook-methods">Extension Point Hook Methods</a></li><li><a href="#waiting-for-initialization-ui-readiness">Waiting for Initialization & UI Readiness</a></li><li><a href="#runtime-environment-event-hooks">Runtime Environment Event Hooks</a></li><li><a href="#model-user-alerts-onrequestuseralert">Model User Alerts (`onRequestUserAlert`)</a></li><li><a href="#related-guides">Related Guides</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p><code>SvApp</code> is the application singleton. It owns the persistent object pool, root model object graph, and top-level user interface (<code>SvUserInterface</code>). Subclasses override a small set of hook methods to initialize application models and user interfaces in a clean, predictable order.</p><p><svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">   <style>     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }     .b { font-weight: 600; }     .dim { fill: #666; }     .box { fill: none; stroke: #111; stroke-width: 1; }     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }     .flow { stroke: #111; stroke-width: 1; fill: none; }   </style>   <defs>     <marker id="alc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>     </marker>   </defs></p><p><rect class="fill" x="25" y="20" width="240" height="50"/>   <text x="40" y="40" class="b">1. setupModel()</text>   <text x="40" y="58" class="dim">Store open, root object exists</text></p><p><line class="flow" x1="265" y1="45" x2="290" y2="45" marker-end="url(#alc)"/></p><p><rect class="fill" x="290" y="20" width="240" height="50"/>   <text x="305" y="40" class="b">2. setupUi()</text>   <text x="305" y="58" class="dim">Model ready; UI instantiated</text></p><p><line class="flow" x1="530" y1="45" x2="555" y2="45" marker-end="url(#alc)"/></p><p><rect class="fill" x="555" y="20" width="240" height="50"/>   <text x="570" y="40" class="b">3. appDidInit()</text>   <text x="570" y="58" class="dim">Posts "appDidInit" note</text></p><p><line class="flow" x1="675" y1="70" x2="675" y2="85"/>   <line class="flow" x1="410" y1="85" x2="675" y2="85"/>   <line class="flow" x1="410" y1="85" x2="410" y2="100" marker-end="url(#alc)"/></p><p><rect class="fill" x="290" y="100" width="240" height="50"/>   <text x="305" y="120" class="b">4. afterAppUiDidInit()</text>   <text x="305" y="138" class="dim">UI visible; processes URL params</text></p><p><text x="410" y="185" text-anchor="middle" class="dim">Model initialization is fully separated from UI rendering; app runs identically in browser or headless Node.js.</text> </svg></p></div></div><h2 id="extension-point-hook-methods">Extension Point Hook Methods</h2><div class="section"><div class="section-body"><table><thead><tr><th>Hook Method</th><th>When Executed</th><th>Purpose &amp; Usage</th></tr></thead><tbody><tr><td><code>setupModel()</code></td><td>Object pool store is open; root model exists.</td><td>Initialize application data models; create or fetch top-level subnodes.</td></tr><tr><td><code>setupUi()</code></td><td>Model object graph is ready.</td><td>Customize top-level UI presentation and window settings.</td></tr><tr><td><code>appDidInit()</code></td><td>Everything is wired up and live.</td><td>Post-initialization tasks; posts <code>"appDidInit"</code> notification.</td></tr><tr><td><code>afterAppUiDidInit()</code></td><td>UI elements are mounted and visible.</td><td>Parse URL search parameters via <code>handleSearchParams(params)</code>.</td></tr><tr><td><code>handleSearchParams(params)</code></td><td>Called automatically from <code>afterAppUiDidInit()</code>.</td><td>Process URL query parameters for deep-linking.</td></tr></tbody></table><h3 id="top-level-root-subnode-persistence-rootsubnodewithtitleforproto">Top-Level Root Subnode Persistence (<code>rootSubnodeWithTitleForProto</code>):</h3><p>To instantiate top-level application root nodes safely across reloads:</p><pre><code>setupModel () {
     super.setupModel();
     // Creates on first run; reuses from storage on subsequent loads
     this._tasksNode = this.rootSubnodeWithTitleForProto("Tasks", TaskManagerNode);
