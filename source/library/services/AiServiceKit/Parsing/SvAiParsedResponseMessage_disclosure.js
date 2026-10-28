@@ -192,16 +192,29 @@
 
     /**
      * @description Ends disclosure when the narration of this response is
-     * over: the stream has ended and every sentence it queued has been
-     * spoken. Called after the stream ends and after each sound ends.
+     * over (isNarrationOver) and every sentence it queued has been spoken.
+     * Called after the stream ends and after each sound ends.
      * @returns {SvAiParsedResponseMessage}
      * @category Disclosure
      */
     finishDisclosureIfNarrationDone () {
-        if (this.isDisclosing() && this.isComplete() && !this.hasNarrationPending()) {
+        if (this.isDisclosing() && this.isNarrationOver() && !this.hasNarrationPending()) {
             this.revealAll();
         }
         return this;
+    }
+
+    /**
+     * @description Whether no more of this response will be narrated: its
+     * stream ended, or the device narrating it said no more clips are coming
+     * (_sharedNarration.js). The second matters on a device whose copy of the
+     * message came from a save made before the text was done — it may not
+     * read complete for a while, but the voice is finished.
+     * @returns {Boolean}
+     * @category Disclosure
+     */
+    isNarrationOver () {
+        return this.isComplete() || this.hasHeardSharedNarrationEnd();
     }
 
     /**

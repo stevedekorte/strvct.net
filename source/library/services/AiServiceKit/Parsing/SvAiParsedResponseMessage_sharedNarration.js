@@ -46,6 +46,10 @@
             const slot = this.newSlot("expectsSharedClips", false); // another device narrates this message and more of its clips may come
             slot.setSlotType("Boolean");
         }
+        {
+            const slot = this.newSlot("hasHeardSharedNarrationEnd", false); // the narrating device said no more clips are coming
+            slot.setSlotType("Boolean");
+        }
     }
 
     // --- narrating side ---
@@ -207,6 +211,7 @@
      */
     endSharedNarration () {
         this.setExpectsSharedClips(false);
+        this.setHasHeardSharedNarrationEnd(true);
         this.finishDisclosureIfNarrationDone();
         return this;
     }
@@ -228,6 +233,7 @@
         }
         this.adoptNarrationSounds(other);
         this.setExpectsSharedClips(other.expectsSharedClips());
+        this.setHasHeardSharedNarrationEnd(other.hasHeardSharedNarrationEnd());
         this.adoptDisclosureFrom(other);
         this.adoptPlayingClip(other);
         other.releaseNarration();
