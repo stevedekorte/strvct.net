@@ -43,6 +43,10 @@
             slot.setSlotType("Boolean");
         }
         {
+            const slot = this.newSlot("isAnnouncedAsNarrated", false); // the conversation told other devices this response is narrated, so they hold it for the voice
+            slot.setSlotType("Boolean");
+        }
+        {
             const slot = this.newSlot("expectsSharedClips", false); // another device narrates this message and more of its clips may come
             slot.setSlotType("Boolean");
         }
@@ -91,12 +95,16 @@
 
     /**
      * @description After the last clip has been offered — the stream ended,
-     * or narration stopped — tells the conversation no more are coming (once,
-     * and only when it was offered any).
+     * or narration stopped — tells the conversation no more are coming
+     * (once). Sent even when no clip was, if the response was announced as
+     * narrated when it began (isAnnouncedAsNarrated, set by the conversation
+     * as it announces it): the players hold its text — and every response
+     * after it — until they hear this. A response with nothing to speak (a tool call, a no-op)
+     * once never sent it, and held the table's text until the stall timer.
      * @category Shared Narration
      */
     shareNarrationEnd () {
-        if (this.sharedClipCount() === 0 || this.hasSharedNarrationEnd()) {
+        if (this.hasSharedNarrationEnd() || (this.sharedClipCount() === 0 && !this.isAnnouncedAsNarrated())) {
             return this;
         }
         this.setHasSharedNarrationEnd(true);
