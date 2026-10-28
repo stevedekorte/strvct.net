@@ -27,12 +27,12 @@
       "type": "ContentCards",
       "columns": 3,
       "items": [
+        "docs/Naked Objects",
         "docs",
         "docs/Getting Started",
         "docs/Technical Overview",
         "docs/Comparing to React",
         "docs/Implementation Overview",
-        "docs/Naked Objects",
         "docs/Services/AI Services",
         "Timeline",
         "Example App",

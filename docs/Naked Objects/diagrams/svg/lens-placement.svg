@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="700px" height="470px" viewBox="-1 -1 702 472" role="img" aria-labelledby="title desc">
+  <title id="title">One Projection, Three Lenses</title>
+  <desc id="desc">A small model graph drawn four ways. Top left: the full UI projection, a tree where Project holds Tasks and People, Tasks holds Task 1 and Task 2, Task 2 holds Title and Status, and People links to a Person. Top right: a layering lens along the path Project, Tasks, Task 2, with each level in its own column. Bottom left: an inlining lens showing Project as a document, with Tasks, Task 2's fields and People as sections in place; the link to Person is still followed by layering. Bottom right: a mixed lens, where Project inlines its Tasks and People sections in one column and Task 2 is layered into the next.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#000000"/>
+    </marker>
+  </defs>
+
+  <g fill="none" stroke="#000000" stroke-width="1" vector-effect="non-scaling-stroke">
+    <!-- panels -->
+    <rect x="0" y="24" width="340" height="206"/>
+    <rect x="360" y="24" width="340" height="206"/>
+    <rect x="0" y="264" width="340" height="206"/>
+    <rect x="360" y="264" width="340" height="206"/>
+
+    <!-- full projection: tree connectors -->
+    <g transform="translate(70,0)">
+      <path d="M20 55 L20 202 L28 202"/>
+      <path d="M20 72 L28 72"/>
+      <path d="M40 81 L40 124 L48 124"/>
+      <path d="M40 98 L48 98"/>
+      <path d="M60 133 L60 176 L68 176"/>
+      <path d="M60 150 L68 150"/>
+      <line x1="80" y1="202" x2="136" y2="202" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
+    </g>
+
+    <!-- layering lens: three columns -->
+    <rect x="360" y="24" width="113" height="206" stroke-dasharray="3 3"/>
+    <rect x="473" y="24" width="114" height="206" stroke-dasharray="3 3"/>
+    <rect x="587" y="24" width="113" height="206" stroke-dasharray="3 3"/>
+    <line x1="368" y1="52" x2="465" y2="52"/>
+    <line x1="481" y1="52" x2="579" y2="52"/>
+    <line x1="595" y1="52" x2="692" y2="52"/>
+    <rect x="369" y="60" width="95" height="26"/>
+    <rect x="369" y="94" width="95" height="26"/>
+    <rect x="482" y="60" width="96" height="26"/>
+    <rect x="482" y="94" width="96" height="26"/>
+    <rect x="596" y="60" width="95" height="26"/>
+    <rect x="596" y="94" width="95" height="26"/>
+
+    <!-- inlining lens: document sections -->
+    <line x1="10" y1="291" x2="330" y2="291"/>
+    <line x1="16" y1="314" x2="330" y2="314"/>
+    <rect x="22" y="320" width="308" height="18"/>
+    <rect x="30" y="364" width="300" height="18"/>
+    <rect x="30" y="388" width="300" height="18"/>
+    <line x1="16" y1="428" x2="330" y2="428"/>
+    <rect x="22" y="434" width="308" height="18"/>
+
+    <!-- mixed lens: an inlined column, then a layered one -->
+    <line x1="540" y1="264" x2="540" y2="470" stroke-dasharray="3 3"/>
+    <line x1="368" y1="292" x2="532" y2="292"/>
+    <line x1="368" y1="315" x2="532" y2="315"/>
+    <rect x="374" y="321" width="158" height="20"/>
+    <rect x="374" y="347" width="158" height="20"/>
+    <line x1="368" y1="390" x2="532" y2="390"/>
+    <rect x="374" y="396" width="158" height="20"/>
+    <line x1="548" y1="292" x2="692" y2="292"/>
+    <rect x="548" y="300" width="144" height="26"/>
+    <rect x="548" y="334" width="144" height="26"/>
+  </g>
+
+  <g fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+    <text x="170.0" y="14">Full UI Projection</text>
+    <text x="530.0" y="14">Layering Lens</text>
+    <text x="170.0" y="254">Inlining Lens</text>
+    <text x="530.0" y="254">Mixed Lens</text>
+
+    <text x="178.0" y="196" font-size="10px">link</text>
+
+    <text x="416.5" y="45">Project</text>
+    <text x="530.0" y="45">Tasks</text>
+    <text x="643.5" y="45">Task 2</text>
+    <text x="416.5" y="77">Tasks ›</text>
+    <text x="416.5" y="111">People</text>
+    <text x="530.0" y="77">Task 1</text>
+    <text x="530.0" y="111">Task 2 ›</text>
+    <text x="643.5" y="77">Title</text>
+    <text x="643.5" y="111">Status</text>
+
+    <text x="450.0" y="285">Project</text>
+    <text x="620.0" y="285">Task 2</text>
+    <text x="620.0" y="317">Title</text>
+    <text x="620.0" y="351">Status</text>
+  </g>
+
+  <g fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="start">
+    <g transform="translate(70,0)">
+      <text x="12" y="50">Project</text>
+      <text x="32" y="76">Tasks</text>
+      <text x="52" y="102">Task 1</text>
+      <text x="52" y="128">Task 2</text>
+      <text x="72" y="154">Title</text>
+      <text x="72" y="180">Status</text>
+      <text x="32" y="206">People</text>
+      <text x="142" y="206">Person</text>
+    </g>
+
+    <text x="10" y="285">Project</text>
+    <text x="16" y="308">Tasks</text>
+    <text x="30" y="333">Task 1</text>
+    <text x="22" y="358">Task 2</text>
+    <text x="38" y="377">Title</text>
+    <text x="38" y="401">Status</text>
+    <text x="16" y="422">People</text>
+    <text x="30" y="447">Person ›</text>
+
+    <text x="368" y="310">Tasks</text>
+    <text x="382" y="335">Task 1</text>
+    <text x="382" y="361">Task 2 ›</text>
+    <text x="368" y="385">People</text>
+    <text x="382" y="410">Person ›</text>
+  </g>
+</svg>
