@@ -81,6 +81,10 @@
             slot.setSlotType("Map");
         }
         {
+            const slot = this.newSlot("silencedChannels", null); // Set of channel names playing at 0 for now, their levels kept
+            slot.setSlotType("Set");
+        }
+        {
             const slot = this.newSlot("masterGainNode", null); // every channel passes through it to the speakers
             slot.setSlotType("GainNode");
             slot.setAllowsNullValue(true);
@@ -106,6 +110,7 @@
         super.init();
         this.setSetupPromise(Promise.clone());
         this.setChannelLevels(new Map());
+        this.setSilencedChannels(new Set());
         this.setChannelGainNodes(new Map());
     }
 
@@ -125,7 +130,7 @@
         }
         if (!this.channelGainNodes().has(channelName)) {
             const gain = this.audioContext().createGain();
-            gain.gain.value = this.levelForChannel(channelName);
+            gain.gain.value = this.playingLevelForChannel(channelName);
             gain.connect(this.masterNode());
             this.channelGainNodes().set(channelName, gain);
         }
@@ -173,9 +178,45 @@
      */
     setLevelForChannel (channelName, level) {
         this.channelLevels().set(channelName, level);
-        this.applyLevel(this.channelGainNodes().get(channelName), level);
+        this.applyLevel(this.channelGainNodes().get(channelName), this.playingLevelForChannel(channelName));
         this.postNoteNamed("onAudioLevelsChanged");
         return this;
+    }
+
+    /**
+     * @description Silences a channel, or lets it play again, without
+     * changing its level: its sounds keep playing (and keep their timing) at
+     * 0 — for when the same audio is heard another way, such as through a
+     * call. effectiveLevelForChannel still answers the level, for that other
+     * way.
+     * @param {String} channelName
+     * @param {Boolean} isSilenced
+     * @returns {SvWaContext}
+     * @category Levels
+     */
+    setIsChannelSilenced (channelName, isSilenced) {
+        if (isSilenced) {
+            this.silencedChannels().add(channelName);
+        } else {
+            this.silencedChannels().delete(channelName);
+        }
+        this.applyLevel(this.channelGainNodes().get(channelName), this.playingLevelForChannel(channelName));
+        return this;
+    }
+
+    isChannelSilenced (channelName) {
+        return this.silencedChannels().has(channelName);
+    }
+
+    /**
+     * @description The gain a channel's node plays at: its level, or 0 while
+     * silenced.
+     * @param {String} channelName
+     * @returns {Number}
+     * @category Levels
+     */
+    playingLevelForChannel (channelName) {
+        return this.isChannelSilenced(channelName) ? 0 : this.levelForChannel(channelName);
     }
 
     applyLevel (gainNode, level) {
