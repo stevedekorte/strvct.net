@@ -259,8 +259,8 @@
 [data-tile-layout="status"] .SvTileNoteView,
 [data-tile-layout="pendingStatus"] .SvTileNoteView {
     display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
+    align-items: center !important; /* over the note view's inline flex-start */
+    justify-content: center !important; /* the mark and word centred as one, as a button's label */
     gap: 0.8em;
     width: var(--sv-action-button-width) !important; /* over the note's inline fit-content */
     height: var(--sv-action-button-height) !important; /* a button's box, so the word centres where a label would */
@@ -286,7 +286,7 @@
     transform: rotate(45deg);
     border: 1px solid var(--sv-status-mark-color);
     position: relative;
-    top: 0.3em; /* level with the capitals' middle, which sits low in their line box */
+    top: 0.2em; /* level with the capitals' middle, which sits low in their line box */
 }
 
 [data-tile-layout="status"] .SvTileNoteView::before {
