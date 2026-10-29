@@ -68,6 +68,28 @@ if (typeof XMLHttpRequest === "undefined") {
         get onreadystatechange () {
             return this._onreadystatechange;
         }
+
+        /**
+         * @description xhr2 has no "blob" response type: it falls through to
+         * text and decodes the bytes as UTF-8, so every binary download
+         * (Storage blobs, images, audio) arrived corrupted under Node — a
+         * 13,504-byte PNG became 24,189 bytes with a different hash. Parse a
+         * "blob" response as raw bytes and hand back a Blob typed with the
+         * response's Content-Type, as a browser does.
+         *
+         * Overrides xhr2's private parser (hence the underscore), so
+         * strvct/tests/headless/TestXhrBlobResponse.js pins it.
+         */
+        _parseResponse () {
+            if (this.responseType !== "blob") {
+                return super._parseResponse();
+            }
+            this.responseType = "buffer";
+            super._parseResponse();
+            this.responseType = "blob";
+            this.response = new Blob([this.response], { type: this.getResponseHeader("Content-Type") || "" });
+            return undefined;
+        }
     }
 
     // Set global references
