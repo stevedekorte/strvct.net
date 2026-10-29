@@ -288,13 +288,18 @@
     }
 
     /**
-   * @description Updates the node when isRecording is updated.
+   * @description Updates the node when isRecording is updated, and posts
+   * onSpeechToTextRecordingChanged so anything else using the microphone
+   * (a voice call) can step aside while the user dictates.
    * @param {boolean} oldValue - The old value of isRecording.
    * @param {boolean} newValue - The new value of isRecording.
    */
-    didUpdateSlotIsRecording (/*oldValue, newValue*/) {
+    didUpdateSlotIsRecording (oldValue, newValue) {
         if (this.recognition()) {
             this.didUpdateNode();
+        }
+        if (oldValue !== newValue) {
+            this.postNoteNamed("onSpeechToTextRecordingChanged");
         }
     }
 
