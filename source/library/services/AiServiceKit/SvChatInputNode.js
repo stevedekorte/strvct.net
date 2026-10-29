@@ -76,6 +76,20 @@
         }
 
         /**
+     * @member {Array} inputButtons - more icon buttons beside the input, after
+     * the left button: { id, iconName, isOn, title } each. A click reaches the
+     * conversation's onClickChatInputButton(id). Set by the conversation;
+     * never stored.
+     * @category UI
+     */
+        {
+            const slot = this.newSlot("inputButtons", null);
+            slot.setSlotType("Array");
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+        }
+
+        /**
      * @member {Boolean} isCollapsibleRegion - opt-in: whether this input row
      * gets an edge handle (see SvCollapsibleRegionProtocol). Off by default;
      * a conversation that wants a collapsible input enables it in its
@@ -347,6 +361,41 @@
         // the post-send clear.
         this._forceValueViewSync = true;
         this.scheduleSyncToView();
+    }
+
+    /**
+   * Adds or updates an input button (by its id), so the view shows it.
+   * @param {Object} info - { id, iconName, isOn, title }
+   * @returns {SvChatInputNode}
+   * @category UI
+   */
+    setInputButton (info) {
+        const existing = (this.inputButtons() || []).find(b => b.id === info.id);
+        if (existing && JSON.stringify(existing) === JSON.stringify(info)) {
+            return this; // unchanged: no view sync
+        }
+        const others = (this.inputButtons() || []).filter(b => b.id !== info.id);
+        this.setInputButtons(others.concat([Object.assign({}, info)]));
+        return this;
+    }
+
+    removeInputButton (id) {
+        if (!(this.inputButtons() || []).some(b => b.id === id)) {
+            return this;
+        }
+        this.setInputButtons((this.inputButtons() || []).filter(b => b.id !== id));
+        return this;
+    }
+
+    /**
+   * An input button was clicked: tells the conversation which.
+   * @param {String} id
+   * @category Event Handling
+   */
+    onClickInputButton (id) {
+        if (this.conversation() && this.conversation().onClickChatInputButton) {
+            this.conversation().onClickChatInputButton(id);
+        }
     }
 
     /**

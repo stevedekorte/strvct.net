@@ -44,6 +44,15 @@
             const slot = this.newSlot("leftButton", null);
             slot.setSlotType("SvButtonView");
         }
+
+        /**
+         * @member {Map} inputButtonViews - the node's further input buttons, by id (see SvChatInputNode.inputButtons).
+         * @category UI
+         */
+        {
+            const slot = this.newSlot("inputButtonViews", null);
+            slot.setSlotType("Map");
+        }
     }
 
     /**
@@ -65,6 +74,7 @@
 
         this.setupValueViewButton();
         this.setupLeftButton();
+        this.setInputButtonViews(new Map());
         return this;
     }
 
@@ -184,6 +194,57 @@
         if (showLeft !== undefined) {
             this.leftButton().setParentViewIfTrue(this.valueViewContainer(), showLeft);
             this.updateLeftButton();
+        }
+        this.syncInputButtons();
+    }
+
+    /**
+     * Makes the further input buttons match the node's (by id): adds, updates
+     * and removes them, placed after the left button.
+     * @category UI
+     */
+    syncInputButtons () {
+        const infos = this.getFromNodeDelegate("inputButtons") || [];
+        const ids = new Set(infos.map(info => info.id));
+        this.inputButtonViews().forEach((bv, id) => {
+            if (!ids.has(id)) {
+                this.valueViewContainer().removeSubviewIfPresent(bv);
+                this.inputButtonViews().delete(id);
+            }
+        });
+        infos.forEach(info => this.updateInputButton(this.inputButtonViewFor(info.id), info));
+    }
+
+    inputButtonViewFor (id) {
+        let bv = this.inputButtonViews().get(id);
+        if (!bv) {
+            bv = this.newIconButton("onClickInputButtonView");
+            bv.setOrder(-1); // before the text area, after the left button (added earlier)
+            bv.setInfo(id);
+            this.inputButtonViews().set(id, bv);
+            this.valueViewContainer().addSubview(bv);
+        }
+        return bv;
+    }
+
+    updateInputButton (bv, info) {
+        if (info.iconName) {
+            bv.setIconName(info.iconName);
+        }
+        bv.setOpacity(info.isOn ? 1 : 0.3);
+        bv.setAttribute("title", info.title || "");
+        bv.setAttribute("aria-label", info.title || "");
+    }
+
+    /**
+     * An input button was clicked: tells the node which.
+     * @param {SvButtonView} bv
+     * @category Event Handling
+     */
+    onClickInputButtonView (bv) {
+        const node = this.node();
+        if (node && node.onClickInputButton) {
+            node.onClickInputButton(bv.info());
         }
     }
 
