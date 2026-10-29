@@ -21,6 +21,43 @@
             slot.setSlotType("SvNode");
             slot.setAllowsNullValue(true);
         }
+        {
+            const slot = this.newSlot("shownWaiters", null); // Map: message → [promise], resolved when it stops being held
+            slot.setSlotType("Map");
+            slot.setAllowsNullValue(true);
+        }
+    }
+
+    /**
+     * @description Resolves when a message is no longer held behind a
+     * disclosing response (at once if it is not held now) — for what should
+     * happen when the reader reaches it, such as a roll's dice.
+     * @param {SvConversationMessage} message
+     * @returns {Promise}
+     * @category Disclosure
+     */
+    asyncWaitUntilNotHeld (message) {
+        if (!this.isHeldBehindDisclosure(message)) {
+            return Promise.resolve();
+        }
+        if (!this.shownWaiters()) {
+            this.setShownWaiters(new Map());
+        }
+        const promise = Promise.clone();
+        const waiters = this.shownWaiters();
+        waiters.set(message, (waiters.get(message) || []).concat([promise]));
+        return promise;
+    }
+
+    resolveShownWaiters () {
+        const waiters = this.shownWaiters();
+        if (!waiters) {
+            return;
+        }
+        Array.from(waiters.keys()).filter(m => !this.isHeldBehindDisclosure(m)).forEach(m => {
+            waiters.get(m).forEach(promise => promise.callResolveFunc());
+            waiters.delete(m);
+        });
     }
 
     /**
@@ -37,6 +74,7 @@
         } else if (!message.isDisclosing() && current === message) {
             this.setDisclosingMessage(this.messages().find(m => m !== message && m.isDisclosing && m.isDisclosing()) || null);
         }
+        this.resolveShownWaiters();
         this.didUpdateNode();
         return this;
     }
