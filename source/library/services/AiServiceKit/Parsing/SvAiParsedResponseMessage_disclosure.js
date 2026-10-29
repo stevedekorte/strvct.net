@@ -82,7 +82,20 @@
     wantsDisclosure () {
         const conv = this.conversation();
         const wanted = !!(conv && typeof conv.wantsProgressiveDisclosure === "function" && conv.wantsProgressiveDisclosure());
-        return wanted && this.shouldVoiceNarrate() && this.narrationPlaysHere();
+        return wanted && this.shouldVoiceNarrate() && this.narrationPlaysHere() && this.narrationCanPlayNow();
+    }
+
+    /**
+     * @description Whether this device can play sound now (duck-typed
+     * controller `canPlay()`; true when it doesn't say). Not while the
+     * browser holds audio suspended — after the computer sleeps, say — so
+     * text is never held for a voice that cannot be heard.
+     * @returns {Boolean}
+     * @category Disclosure
+     */
+    narrationCanPlayNow () {
+        const controller = this.narrationController();
+        return !controller || typeof controller.canPlay !== "function" || controller.canPlay();
     }
 
     /**
@@ -175,7 +188,7 @@
      * @category Disclosure
      */
     isSpeechStillComing () {
-        if (!this.hasNarrationPending()) {
+        if (!this.hasNarrationPending() || !this.narrationCanPlayNow()) {
             return false;
         }
         const sinceProgress = Date.now() - this.disclosureProgressAt();

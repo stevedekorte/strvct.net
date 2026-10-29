@@ -254,6 +254,20 @@
         return this;
     }
 
+    /**
+     * @description Whether sounds can play now: the context exists and is
+     * running. Not before the page's first gesture, and not while the
+     * browser holds it suspended (after the computer sleeps, say) — a sound
+     * queued then would wait without playing, and whatever waits for it
+     * should not.
+     * @returns {Boolean}
+     * @category Setup
+     */
+    canPlay () {
+        const context = this.audioContext();
+        return !!context && context.state === "running";
+    }
+
     setupIfNeeded () {
         if (!this.isSetup()) {
             this.setAudioContext(new window.AudioContext());
