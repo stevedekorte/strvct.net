@@ -14,6 +14,12 @@ if (typeof XMLHttpRequest === "undefined") {
 
     const NodeXMLHttpRequest = require("xhr2");
 
+    // The "blob" fix below overrides xhr2's private parser; xhr2 is pinned to
+    // 0.2.1 for that reason. Say so loudly if an upgrade removed it.
+    if (typeof NodeXMLHttpRequest.prototype._parseResponse !== "function") {
+        console.error("XMLHttpRequestShim: xhr2 has no _parseResponse() (expected xhr2 0.2.1) — responseType \"blob\" downloads will be CORRUPTED under Node (decoded as text). Re-check the blob override against this xhr2.");
+    }
+
     // Wrapper class to fix event handling compatibility
     // Note: xhr2 properly supports responseType="arraybuffer" so no conversion needed
     class XMLHttpRequest extends NodeXMLHttpRequest {
@@ -67,6 +73,28 @@ if (typeof XMLHttpRequest === "undefined") {
 
         get onreadystatechange () {
             return this._onreadystatechange;
+        }
+
+        /**
+         * @description xhr2 has no "blob" response type: it falls through to
+         * text and decodes the bytes as UTF-8, so every binary download
+         * (Storage blobs, images, audio) arrived corrupted under Node — a
+         * 13,504-byte PNG became 24,189 bytes with a different hash. Parse a
+         * "blob" response as raw bytes and hand back a Blob typed with the
+         * response's Content-Type, as a browser does.
+         *
+         * Overrides xhr2's private parser (hence the underscore), so
+         * strvct/tests/headless/TestXhrBlobResponse.js pins it.
+         */
+        _parseResponse () {
+            if (this.responseType !== "blob") {
+                return super._parseResponse();
+            }
+            this.responseType = "buffer";
+            super._parseResponse();
+            this.responseType = "blob";
+            this.response = new Blob([this.response], { type: this.getResponseHeader("Content-Type") || "" });
+            return undefined;
         }
     }
 

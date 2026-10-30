@@ -1149,9 +1149,12 @@
                 const json = JSON.parse(text);
 
                 // Check for various common error structures
-                // 1. Direct error string: { error: "message" }
+                // 1. Direct error string: { error: "message" }, with any
+                // per-field details (Krea: { error: "Validation failed",
+                // details: [{ field, message }] }) — without them a 422 does
+                // not say which field failed.
                 if (typeof json.error === "string" && json.error) {
-                    return json.error;
+                    return json.error + this.jsonErrorDetailsSuffix(json.details);
                 }
 
                 // 2. Nested error object: { error: { message: "message" } }
@@ -1185,6 +1188,21 @@
             // ignore
         }
         return null;
+    }
+
+    /**
+     * @description Formats an error body's per-field `details` array as
+     * " (field: message; …)", or "" when there are none.
+     * @param {Array<Object>} details - Entries like { field, message }.
+     * @returns {string}
+     * @category Errors
+     */
+    jsonErrorDetailsSuffix (details) {
+        if (!Array.isArray(details) || details.length === 0) {
+            return "";
+        }
+        const parts = details.map(d => (d && d.field ? d.field + ": " : "") + (d && d.message ? d.message : JSON.stringify(d)));
+        return " (" + parts.join("; ") + ")";
     }
 
     /**

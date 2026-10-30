@@ -685,18 +685,36 @@
 
     /**
      * @description Builds the `image_style_references` array from the reference
-     * images, resolving each to a public URL.
+     * images, resolving each to a public URL. A reference that resolves to no
+     * URL is left out: Krea rejects the WHOLE request for one `url: null`
+     * (422 "Validation failed"), and references only enhance the image.
      * @returns {Promise<Array<Object>>}
      * @category Request
      */
     async asyncComposeStyleReferences () {
         const nodes = this.extraImagesNode().subnodes().slice(0, this.referenceImageLimit());
         const strength = this.referenceStrength();
-        return await nodes.promiseParallelMap(async svImageNode => {
+        const references = await nodes.promiseParallelMap(async svImageNode => {
             const url = await svImageNode.asyncPublicUrl();
             this.assertPublicUrl(url, "Reference image");
             return { url: url, strength: strength };
         });
+        return references.filter(reference => this.isUsableReference(reference));
+    }
+
+    /**
+     * @description True when a composed reference has a URL to send; warns
+     * when it does not, so a dropped reference is visible in the host's log.
+     * @param {Object} reference - A composed `{ url, strength }` entry.
+     * @returns {boolean}
+     * @category Request
+     */
+    isUsableReference (reference) {
+        if (reference.url) {
+            return true;
+        }
+        console.warn(this.logPrefix(), "reference image has no public URL — generating without it");
+        return false;
     }
 
     /**
