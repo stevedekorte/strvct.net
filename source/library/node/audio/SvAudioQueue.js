@@ -279,6 +279,9 @@
             await this.awaitReadyWithin(sound, this.notReadyGraceMs());
             if (!sound.isReadyToPlayNow()) {
                 console.warn(this.logPrefix(), "skipping sound not ready at its turn:", this.descriptionForSound(sound));
+                if (typeof sound.post === "function") {
+                    sound.post("onSoundSkipped"); // its delegates may want to know (a report, say)
+                }
                 this.processQueue();
                 return this;
             }

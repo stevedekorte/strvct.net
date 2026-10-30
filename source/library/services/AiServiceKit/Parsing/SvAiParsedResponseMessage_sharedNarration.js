@@ -13,7 +13,9 @@
  * `sharesNarrationClips()`), each clip — its audio bytes, its sentences with
  * their start in the clip, its length — is offered in order, once its audio is
  * ready (`asyncShareNarrationClip(message, clip)`), and after the last one the
- * conversation hears that no more are coming (`asyncShareNarrationEnd`).
+ * conversation hears that no more are coming (`asyncShareNarrationEnd`). A
+ * sound placed in the narration (an effect) is offered in order with the
+ * clips (`shareNarrationSound`).
  *
  * Playing side: `beginSharedNarration()` when the narrating device says the
  * message will be narrated (hidden is the default, as on the narrating
@@ -91,6 +93,25 @@
                 await this.conversation().asyncShareNarrationClip(this, clip);
             }
         });
+    }
+
+    /**
+     * @description Offers a sound placed in this response's narration — an
+     * effect beside its sentence — in order with the clips: the sentences
+     * before it are sent first, and it is offered after the clips before it
+     * (`asyncShareNarrationSound(message, soundInfo)`), so another device
+     * queues it between the same two clips. What the sound is, the
+     * conversation's caller says.
+     * @param {Object} soundInfo - what another device needs to make the sound
+     * @category Shared Narration
+     */
+    shareNarrationSound (soundInfo) {
+        if (!this.sharesNarrationClips()) {
+            return this;
+        }
+        this.flushNarrationGroup();
+        const placed = Object.assign({ afterClipCount: this.sharedClipCount() }, soundInfo);
+        return this.chainClipShare(() => this.conversation().asyncShareNarrationSound(this, placed));
     }
 
     /**
