@@ -14,6 +14,12 @@ if (typeof XMLHttpRequest === "undefined") {
 
     const NodeXMLHttpRequest = require("xhr2");
 
+    // The "blob" fix below overrides xhr2's private parser; xhr2 is pinned to
+    // 0.2.1 for that reason. Say so loudly if an upgrade removed it.
+    if (typeof NodeXMLHttpRequest.prototype._parseResponse !== "function") {
+        console.error("XMLHttpRequestShim: xhr2 has no _parseResponse() (expected xhr2 0.2.1) — responseType \"blob\" downloads will be CORRUPTED under Node (decoded as text). Re-check the blob override against this xhr2.");
+    }
+
     // Wrapper class to fix event handling compatibility
     // Note: xhr2 properly supports responseType="arraybuffer" so no conversion needed
     class XMLHttpRequest extends NodeXMLHttpRequest {
