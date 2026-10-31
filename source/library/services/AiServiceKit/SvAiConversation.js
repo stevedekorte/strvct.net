@@ -1024,38 +1024,64 @@
             if (!Type.isString(title) || title.trim().length === 0) {
                 throw new Error("pushHistory: a non-empty title is required");
             }
-
-            const candidates = [];
-            for (const m of this.messages()) {
-                if (m.role() === "system") {
-                    continue; // the system prompt is not part of any episode
-                }
-                if (m.filedToHistoryBlockId && m.filedToHistoryBlockId()) {
-                    continue; // already filed in an earlier push
-                }
-                if (!m.isVisibleToAi || !m.isVisibleToAi()) {
-                    continue; // private/UI-only (e.g. party chat) — never copy into AI-queryable history
-                }
-                if (!m.isComplete() && !m.hasError()) {
-                    break; // unsettled — stop here so filed blocks stay contiguous
-                }
-                candidates.push(m);
-            }
-
-            if (candidates.length === 0) {
+            if (this.fileSettledMessagesAsEpisode(title, subtitle) === 0) {
                 throw new Error("pushHistory: nothing to file — no settled messages since the last push");
             }
-
-            const block = this.historyOrCreate().newBlockWithTitleAndSubtitle(title, subtitle);
-            candidates.forEach(m => {
-                block.addCopyOfMessage(m);
-                m.setFiledToHistoryBlockId(block.jsonId());
-            });
-            console.log(this.logPrefix(), "pushHistory filed " + candidates.length + " messages as '" + title + "' (" + block.jsonId() + ")");
             toolCall.setCallResult(null);
         } catch (error) {
             toolCall.setCallError(error);
         }
+    }
+
+    /**
+   * @description Files the settled unfiled buffer as one titled history
+   * episode — the work of pushHistory, for a conversation (or an app) that
+   * files on its own, as when the party moves to a new place. Settled means
+   * complete: filing stops at the first message still being written (the
+   * current response), so filed blocks stay contiguous.
+   * @param {String} title
+   * @param {String} [subtitle]
+   * @returns {Number} how many messages were filed (0: nothing to file)
+   * @category History
+   */
+    fileSettledMessagesAsEpisode (title, subtitle = "") {
+        const candidates = this.settledUnfiledMessages();
+        if (candidates.length === 0) {
+            return 0;
+        }
+        const block = this.historyOrCreate().newBlockWithTitleAndSubtitle(title, subtitle);
+        candidates.forEach(m => {
+            block.addCopyOfMessage(m);
+            m.setFiledToHistoryBlockId(block.jsonId());
+        });
+        console.log(this.logPrefix(), "filed " + candidates.length + " messages as '" + title + "' (" + block.jsonId() + ")");
+        return candidates.length;
+    }
+
+    /**
+   * @description The messages a filing would take: AI-visible, not yet
+   * filed, up to the first one still being written.
+   * @returns {Array<SvAiMessage>}
+   * @category History
+   */
+    settledUnfiledMessages () {
+        const candidates = [];
+        for (const m of this.messages()) {
+            if (m.role() === "system") {
+                continue; // the system prompt is not part of any episode
+            }
+            if (m.filedToHistoryBlockId && m.filedToHistoryBlockId()) {
+                continue; // already filed in an earlier push
+            }
+            if (!m.isVisibleToAi || !m.isVisibleToAi()) {
+                continue; // private/UI-only (e.g. party chat) — never copy into AI-queryable history
+            }
+            if (!m.isComplete() && !m.hasError()) {
+                break; // unsettled — stop here so filed blocks stay contiguous
+            }
+            candidates.push(m);
+        }
+        return candidates;
     }
 
     /**
