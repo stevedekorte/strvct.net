@@ -799,11 +799,43 @@ Example Tool call format:
             return this;
         }
         try {
-            result.setResult(refresher());
+            this.setRefreshedResult(refresher());
         } catch (e) {
             console.warn(this.logPrefix(), "result refresh failed for " + this.identifierDescription() + ":", e && e.message);
         }
         return this;
+    }
+
+    setRefreshedResult (resultValue) {
+        const result = this.toolResult();
+        const tooLarge = this.oversizedResultError(resultValue);
+        if (tooLarge) {
+            result.setResult(null);
+            result.setStatus("failure");
+            result.setError(tooLarge.message);
+            return this;
+        }
+        result.setResult(resultValue);
+        return this;
+    }
+
+    /**
+     * @description A result too large to send (over the toolkit's
+     * maxToolResultChars) fails its call instead, telling the AI to ask for
+     * less; null when it fits.
+     * @param {*} resultValue - The result's JSON value.
+     * @returns {Error|null}
+     * @category Results
+     */
+    oversizedResultError (resultValue) {
+        const kit = this.toolCalls() ? this.toolCalls().assistantToolKit() : null;
+        const limit = kit ? kit.maxToolResultChars() : Infinity;
+        const size = (resultValue === undefined) ? 0 : JSON.stringify(resultValue).length;
+        if (size <= limit) {
+            return null;
+        }
+        return new Error("this call's result is " + Math.round(size / 1000) + "k characters, over the " + Math.round(limit / 1000)
+            + "k a single tool result may send, so it was not sent. Ask for less: a narrower selection, a lower level of detail, or fewer items per call.");
     }
 
     /**
@@ -879,6 +911,11 @@ Example Tool call format:
         } catch (e) {
             console.error("Error asserting that resultValue is a JSON type: " + e.message);
             Type.assertIsJsonType(resultValue);
+        }
+
+        const tooLarge = this.oversizedResultError(resultValue);
+        if (tooLarge) {
+            return this.handleCallError(tooLarge);
         }
 
         this.setStatus("completed");

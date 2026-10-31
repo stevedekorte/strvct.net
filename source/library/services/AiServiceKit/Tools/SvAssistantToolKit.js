@@ -499,6 +499,20 @@ The following formats will be used for tool calls and responses:
         return (conv && typeof conv.toolResultsNote === "function") ? conv.toolResultsNote() : null;
     }
 
+    /**
+     * @description The largest result one tool call may send, in characters
+     * of its JSON (~4 per token). A result is re-sent with every request
+     * until its turn is filed away, so one unbounded read — a whole archive
+     * at full detail (633 KB, 2026-10-30) — doubles every later request's
+     * size and cost. A conversation may set its own (maxToolResultChars).
+     * @returns {Number}
+     * @category Sending
+     */
+    maxToolResultChars () {
+        const conv = this.conversation();
+        return (conv && typeof conv.maxToolResultChars === "function") ? conv.maxToolResultChars() : 64000;
+    }
+
     removeAllToolCalls () {
         this.toolCalls().removeAllCalls();
         return this;
