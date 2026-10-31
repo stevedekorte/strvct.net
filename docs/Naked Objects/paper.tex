@@ -98,12 +98,12 @@ Generating fields and collections is only part of generating a useful applicatio
 \item \textbf{Reusable responsive behavior:} Adapt the same navigation structure to different viewport sizes.
 \end{enumerate}
 
-Forms and tables remain useful arrangements; the question is how they compose with other views. Existing model-driven systems also support customization: Apache Causeway, for example, documents UI extensions for maps and calendars~\cite{causeway}. Strvct's focus here is recursive composition of layered and inline views, rather than a claim that prior systems can render only forms and tables. Establishing comparative usability or explaining historical adoption would require separate evidence.
+Forms and tables remain useful arrangements; the question is how they compose with other views. Existing model-driven systems also support customization: Apache Causeway, for example, documents UI extensions for maps and calendars~\cite{causeway}. Strvct's focus here is recursive composition of layered and inline views, rather than a claim that prior systems can render only forms and tables.
 
 \section{The Model as a Graph, the Screen as a Lens}
 \label{sec:lens}
 
-Before describing the grammar itself, it helps to picture what a generated interface is actually showing.
+This section states the conjecture from the Abstract precisely. Before describing the grammar in detail, it helps to picture what a generated interface is actually showing.
 
 Imagine the domain model as a graph: a tree of ownership, with symbolic links for the references that cross it. Now imagine drawing all of it at once---every object, every property, every collection, fully expanded. This drawing is the model's complete \textbf{UI projection}. This is a conceptual projection of the UI-exposed model, not a drawing that the runtime must materialize; internal or hidden properties need not be exposed.
 
@@ -123,7 +123,7 @@ Every screen the user sees is a \textbf{lens} over that drawing. At first order,
 
 Layering and inlining are not modes of the whole interface but choices made edge by edge, and they compose freely. A layered column may hold an inlined document whose link opens another layer; a document section may itself be a set of anchored tabs. The mixed lens in Figure~\ref{fig:lens-placement} inlines \emph{Project}'s sections in one column and layers \emph{Task 2} into the next, and even the pure inlining lens layers its link to \emph{Person}. Because the choice lives on each edge rather than on each screen, it can change without touching the model---set by a developer's hint, or switched by the framework as space changes.
 
-At second order, a lens decides \textbf{arrangement}: how siblings within a layer or an inlined run are laid out---their orientation, whether their properties align across siblings into a table, or whether a value maps to position, as on a timeline (\S\ref{sec:traversal-arrangement}).
+At second order, a lens decides \textbf{arrangement}: how siblings within a layer or an inlined run are laid out---their orientation, whether their properties align across siblings into a table, or whether a value maps to position, as on a timeline (\S\ref{sec:traversal-arrangement}). Visibility, placement, and arrangement are the three decisions of the conjecture.
 
 This framing reduces an apparently unbounded space of screens to something tractable. Within this grammar, a screen is described by a navigation path, placements for visible edges, and arrangements for visible collections. That is a small, regular decision space---small enough for the framework to own its mechanics (the path, collapse, layering, inlining, and responsive switching) while the developer states intent through hints on the model: which edges inline, which layer, how collections arrange. The decisions are the developer's; their implementation is the framework's.
 
@@ -143,9 +143,9 @@ The UI projection is not the only one. The same graph is projected into records 
 \section{A Narrow Design Space for Information Apps}
 \label{sec:narrow}
 
-The working hypothesis is that many structured-information interfaces can be expressed through relationship traversal, property editing, domain actions, and semantic collection arrangements. CRMs, project management tools, email clients, and settings panels provide useful examples. This is a design hypothesis about a substantial class of applications, not a proof that every task fits the grammar.
+The conjecture's scope is structured-information applications: CRMs, project management tools, mail clients, issue trackers, settings panels, and the like. The claim is that their screens can be expressed through relationship traversal, property editing, domain actions, and semantic collection arrangements. Readers can check this against interfaces they use: a mail client is a layered column of mailboxes, a layered column of messages, and an inlined message body; a settings panel is a vertical master-detail with inlined groups; an issue page is an inlined document whose cross-references layer. A modal is a layered edge drawn in front rather than beside; a search result is a derived collection; a dashboard is a set of inlined siblings with quantitative arrangement.
 
-The framework can own interaction mechanics while developers choose which relationships and actions to expose and how to organize them. Task-specific workflows remain part of application design.
+What the grammar does not supply is the task-specific workflow---the triage sequence, the bulk edit, the pipeline report. Those remain application design, stated as domain actions and policies (\S\ref{sec:actions}) rather than as screens; the framework owns the interaction mechanics beneath them.
 
 \subsection{Relationship Traversal vs. Collection Arrangement}
 \label{sec:traversal-arrangement}
@@ -185,7 +185,7 @@ An application can combine generated navigation, properties, and actions with su
 \section{Architecture \& UI Mechanics in Strvct}
 \label{sec:mechanics}
 
-Strvct implements this two-part grammar using client-side JavaScript. Master-detail views are its layering lens (\S\ref{sec:master-detail}); inline layouts are its inlining lens (\S\ref{sec:inline}). The core visual building blocks are \textbf{Tiles}, \textbf{Tile Stacks}, and \textbf{Master-Detail Views}.
+Strvct implements this grammar using client-side JavaScript: traversal (visibility and placement) through master-detail views and inline layouts, and arrangement through the collection views they contain. Master-detail views are its layering lens (\S\ref{sec:master-detail}); inline layouts are its inlining lens (\S\ref{sec:inline}). The core visual building blocks are \textbf{Tiles}, \textbf{Tile Stacks}, and \textbf{Master-Detail Views}.
 
 \subsection{Tiles and Tile Stacks}
 
@@ -417,6 +417,7 @@ If Inventory is large and should remain a navigable summary within that document
 Adding a \texttt{species} slot with the same type, visibility, persistence, and synchronization annotations as \texttt{name} makes it available to the shared field renderer and storage serializer. Labels, constraints, and presentation order still need deliberate choices. This illustrates the maintenance benefit: reuse of the field machinery rather than the elimination of presentation design.
 
 \subsection{Actions and Workflows}
+\label{sec:actions}
 
 Domain behavior must also be exposed deliberately. An action slot names a model method, and an optional \texttt{<methodName>ActionInfo()} method supplies presentation state. For example, these members can be added to \texttt{Character}:
 
@@ -574,7 +575,7 @@ Several limitations and questions remain:
 \item \textbf{Ecosystem Isolation:} To support content-addressable bundling and zero-build client loading, Strvct uses a custom resource loader rather than standard npm/Webpack/Vite tooling.
 \item \textbf{Aligned Grid Arrangements (Tables \& Spreadsheets):} While inline document flow and anchored tabs are production-proven, cross-sibling column alignment (making row tiles align into full spreadsheets) is currently a proposed framework extension.
 \item \textbf{Extreme Collection Scaling:} Lazy view instantiation keeps rendering lightweight, but virtualized viewport scrolling for mega-collections ($10^5$ or more items) remains an active area of optimization.
-\item \textbf{Evaluation and Workflows:} Comparative usability, accessibility, development effort, and complex workflow coverage have not been quantified here. A production deployment is evidence of feasibility, not a controlled evaluation.
+\item \textbf{Evaluation and Workflows:} As stated in \S\ref{sec:intro}, comparative usability, accessibility, and development effort have not been measured, and complex multi-step workflows are stated as domain actions rather than derived from the grammar. The planned follow-up is described in \S\ref{sec:case-study}.
 \item \textbf{User-Chosen Lenses:} Because placement and arrangement are per-edge hints rather than authored screens, users could in principle reshape their own lenses---inlining a section they always want open, or layering one they rarely need. This is possible today through the live inspectors (\S\ref{sec:inspector}), but not every hint is persisted; a supported, persistent user-facing control is future work. Engelbart's NLS gave users \emph{viewspecs}---how many levels to show, how many lines per item---for much the same purpose~\cite{engelbart1968}.
 \end{enumerate}
 
