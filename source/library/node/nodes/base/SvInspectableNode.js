@@ -272,13 +272,27 @@
     }
 
 
+    static initClass () {
+        // Whether nodes make their subnode fields — the inspector rows a view
+        // shows for their slots. A process with no UI turns this off (the app's
+        // table worker): it never shows them, and making them was most of its
+        // time on a node's first load — 14.8 s event-loop stalls on a server
+        // table, and a cold full read of a 1 MB session 5.0 s with them, 1.4 s
+        // without (2026-10-31). Nothing may depend on a field as data.
+        this.newClassSlot("makesSubnodeFields", true);
+    }
+
     /**
-     * @description Adds a subnode field for the given slot.
+     * @description Adds a subnode field for the given slot — unless this
+     * process makes none (SvInspectableNode.makesSubnodeFields).
      * @param {Object} slot - The slot to add a field for.
      * @returns {SvInspectableNode} This instance.
      * @category Field
      */
     addSubnodeFieldForSlot (slot) {
+        if (!SvInspectableNode.makesSubnodeFields()) {
+            return this;
+        }
         const existingField = this.existingSubnodeFieldForSlot(slot);
         if (existingField) {
             if (!this.isSingleton()) {

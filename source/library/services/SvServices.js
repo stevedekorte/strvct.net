@@ -297,8 +297,11 @@
      * @category AI Service
      */
     aiSvServices () {
-        const values = this.subnodeFields().map(sn => sn.value());
-        return values.filter(sn => sn.thisClass().isKindOf(SvAiService));
+        // from the slots themselves, not their inspector fields (a process
+        // with no UI makes none — SvInspectableNode.makesSubnodeFields)
+        const slots = [...this.thisPrototype().allSlotsMap().values()].filter(slot => slot.isSubnodeField());
+        const values = slots.map(slot => slot.onInstanceGetValue(this)).filter(v => v && v.thisClass);
+        return values.filter(v => v.thisClass().isKindOf(SvAiService));
     }
 
     /**
