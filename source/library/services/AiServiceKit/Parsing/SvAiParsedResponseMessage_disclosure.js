@@ -53,11 +53,27 @@
      * @description The longest disclosure keeps waiting while the speaker is
      * busy with other speech (an earlier response's clips queued ahead of
      * this one's): past it, a sound that never ends cannot hide the text.
+     * Was 180 s; text held that long for a voice that never came read as
+     * lost (Plans/Session Startup F2.1, decided 2026-10-31).
      * @returns {Number} milliseconds
      * @category Disclosure
      */
     disclosureMaxWaitMs () {
-        return 180000;
+        return 30000;
+    }
+
+    /**
+     * @description How long the first words wait for their voice: when the
+     * first sentences are ready to be spoken and none has started this long
+     * after, the first sentence shows and the voice catches up, revealing
+     * the rest as it is spoken (Plans/Session Startup F2.1, decided
+     * 2026-10-31). Speech takes seconds to synthesize; the reader need not
+     * wait for it to see the reply begin.
+     * @returns {Number} milliseconds
+     * @category Disclosure
+     */
+    firstWordsHoldMs () {
+        return 2000;
     }
 
     /**
@@ -154,6 +170,26 @@
     noteNarrationQueued () {
         if (this.isDisclosing()) {
             this.armDisclosureStallTimer();
+            this.armFirstWordsTimer();
+        }
+        return this;
+    }
+
+    /**
+     * @description Once, when the first sentences go out for speech: shows
+     * the first sentence if its voice has not started by firstWordsHoldMs.
+     * @category Disclosure
+     */
+    armFirstWordsTimer () {
+        if (this.disclosedThrough() < 0 && !this.hasTimeoutNamed("firstWords")) {
+            this.addTimeout(() => this.showFirstWordsIfSilent(), this.firstWordsHoldMs(), "firstWords");
+        }
+        return this;
+    }
+
+    showFirstWordsIfSilent () {
+        if (this.isDisclosing() && this.disclosedThrough() < 0) {
+            this.advanceDisclosure(0);
         }
         return this;
     }
@@ -250,6 +286,7 @@
      */
     revealAll () {
         this.clearTimeoutNamed("disclosureStall");
+        this.clearTimeoutNamed("firstWords");
         if (!this.isDisclosing()) {
             return this;
         }
