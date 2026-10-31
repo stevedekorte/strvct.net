@@ -14,11 +14,54 @@
 
 (class SvErrorReport extends SvTitledNode {
 
+    static initClass () {
+        this.newClassSlot("lastSends", null); // message → { at, held }: when each message was last sent, and repeats held back since
+        this.newClassSlot("repeatWindowMs", 60 * 1000);
+    }
+
+    /**
+     * @description Sends an error report — but the same message at most once
+     * per repeatWindowMs: a loop that fails and reports on every turn sent one
+     * page's report over a million times in two hours (2026-10-28). Repeats
+     * in the window are held back and counted; the next one sent carries the
+     * count (additional.heldRepeats).
+     * @param {Error|Object} error
+     * @param {Object} [additionalJson]
+     * @returns {Promise<Object>}
+     * @category Error Handling
+     */
     static async asyncSend (error, additionalJson = null) {
+        const held = this.heldRepeatsBeforeSending(error);
+        if (held === null) {
+            return { success: false, held: true };
+        }
         const errorReport = SvErrorReport.clone();
         errorReport.setError(error);
-        errorReport.setAdditionalJson(additionalJson);
+        errorReport.setAdditionalJson(held > 0 ? Object.assign({ heldRepeats: held }, additionalJson) : additionalJson);
         return await errorReport.asyncSend();
+    }
+
+    /**
+     * @description Notes a send of this error's message: null when the same
+     * message went out within repeatWindowMs (hold this one back), else how
+     * many repeats were held back since the last send.
+     * @param {Error|Object} error
+     * @returns {Number|null}
+     * @category Error Handling
+     */
+    static heldRepeatsBeforeSending (error) {
+        if (!this.lastSends()) {
+            this.setLastSends(new Map());
+        }
+        const key = String((error && error.message) || error);
+        const now = Date.now();
+        const last = this.lastSends().get(key);
+        if (last && now - last.at < this.repeatWindowMs()) {
+            last.held++;
+            return null;
+        }
+        this.lastSends().set(key, { at: now, held: 0 });
+        return last ? last.held : 0;
     }
 
     /**
