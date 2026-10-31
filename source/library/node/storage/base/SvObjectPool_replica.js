@@ -149,20 +149,44 @@
      * @category Replica
      */
     reloadLiveObjects (pids) {
-        pids.forEach((pid) => {
-            const obj = this.activeObjectForPid(pid);
-            if (!obj || !obj.reloadFromRecord) {
-                return;
-            }
-            const record = this.recordForPid(pid);
-            if (!record) {
-                const row = this.recordStore().rowForKey(this.poolId(), pid);
-                console.warn(this.logPrefix() + "replica: no record for live " + obj.svType() + " " + pid + " after writing its row (row " + (row ? (row.isDeleted ? "deleted" : "present") : "missing") + ") — skipped");
-                return;
-            }
-            obj.reloadFromRecord(record, this);
-        });
+        pids.forEach((pid) => this.reloadLiveObject(pid));
         return this;
+    }
+
+    /**
+     * @description Reloads one live object from its row, on its own: an
+     * object that fails to reload is reported and skipped, and the others
+     * still reload. Before, the first failure ended the pass — the rows and
+     * the version were already written, so every live object after it stayed
+     * stale while the replica read as current (a client's "applying
+     * poolVersion 27 failed: assert failed", then v28 applied on top, dev
+     * 2026-10-31).
+     * @param {String} pid
+     * @category Replica
+     */
+    reloadLiveObject (pid) {
+        const obj = this.activeObjectForPid(pid);
+        if (!obj || !obj.reloadFromRecord) {
+            return;
+        }
+        const record = this.recordForPid(pid);
+        if (!record) {
+            const row = this.recordStore().rowForKey(this.poolId(), pid);
+            console.warn(this.logPrefix() + "replica: no record for live " + obj.svType() + " " + pid + " after writing its row (row " + (row ? (row.isDeleted ? "deleted" : "present") : "missing") + ") — skipped");
+            return;
+        }
+        try {
+            obj.reloadFromRecord(record, this);
+        } catch (e) {
+            this.reportReloadFailure(obj, pid, e);
+        }
+    }
+
+    reportReloadFailure (obj, pid, error) {
+        console.warn(this.logPrefix() + "replica: reloading live " + obj.svType() + " " + pid + " failed — skipped, the rest reload:", error && error.message, error && error.stack);
+        if (SvGlobals.has("SvErrorReport")) {
+            SvErrorReport.asyncSend(error, { kind: "replica-reload", objectType: obj.svType(), pid: pid, poolId: this.poolId() });
+        }
     }
 
 }.initThisCategory());

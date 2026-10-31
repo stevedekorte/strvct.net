@@ -224,6 +224,32 @@ async function main () {
     check((rTable._listChanges || 0) > changesBefore, "the table heard its subnode list change (views update)");
     check(replica.replicaVersion() === 2, "the replica is at version 2");
 
+    console.log("\nAn object that fails to reload does not stop the others");
+    goblin.setHitPoints(5);
+    table.setLabel("Round 3");
+    const failNotice = noticeOf(await hostCommit());
+    const reports = [];
+    const send = SvErrorReport.asyncSend;
+    SvErrorReport.asyncSend = async (error, info) => { reports.push(info); };
+    let failedOne = null;
+    for (const live of [rGoblin, rTable]) { // whichever reloads first fails; the other must still reload
+        const reload = live.reloadFromRecord;
+        live.reloadFromRecord = function (...args) {
+            if (failedOne === null) { failedOne = this; throw new Error("assert failed - false value"); }
+            return reload.apply(this, args);
+        };
+    }
+    const warn = console.warn; console.warn = () => null;
+    await replica.asyncApplyReplicaChanges(failNotice);
+    console.warn = warn;
+    SvErrorReport.asyncSend = send;
+    delete rGoblin.reloadFromRecord; delete rTable.reloadFromRecord;
+    const other = failedOne === rGoblin ? rTable : rGoblin;
+    const otherUpdated = other === rTable ? rTable.label() === "Round 3" : rGoblin.hitPoints() === 5;
+    check(failedOne !== null && otherUpdated, "the other changed object still reloads (" + (failedOne ? failedOne.svType() + " failed" : "none failed") + ")");
+    check(reports.length === 1 && reports[0].kind === "replica-reload" && reports[0].objectType === failedOne.svType(), "and the failure is reported, naming the object: " + JSON.stringify(reports));
+    replica.reloadLiveObjects([rGoblin.puuid(), rTable.puuid()]); // reload both as they are now, for what follows
+
     console.log("\nA removal applies in place");
     table.removeSubnode(goblin);
     result = await hostCommit();
