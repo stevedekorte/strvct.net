@@ -1342,7 +1342,45 @@
                 assistantResponsesAfter++;
             }
         }
-        return messages;
+        return this.appendNextCallIdNote(messages);
+    }
+
+    /**
+     * @description Tells the AI its next free callId, on the never-stored
+     * trailer of each request. It numbers its calls itself (call_0, call_1, …)
+     * from what it can see, and filing a reply into history hides the ids of
+     * that reply's calls that sent no result (a silent success, an image
+     * still generating): it then reuses one, and that call fails as a
+     * collision (seen on dev: call_28 after a filed generateImage call_28,
+     * 2026-10-30). Nothing is added before the first call.
+     * @param {Array} messages - The request message dicts (post-filter).
+     * @returns {Array} The same array.
+     * @category Tool Calls
+     */
+    appendNextCallIdNote (messages) {
+        const next = this.nextCallIdNumber();
+        return next > 0 ? this.appendEphemeralUserContent(messages, "Next free callId: call_" + next + " (number new tool calls from it).") : messages;
+    }
+
+    /**
+     * @description One more than the highest call_N in any message of the
+     * conversation, filed or not — calls and results alike; 0 when none. The
+     * system prompt is left out: its examples use ids of their own.
+     * @returns {Number}
+     * @category Tool Calls
+     */
+    nextCallIdNumber () {
+        let highest = -1;
+        this.messages().forEach((m) => {
+            const isSystem = m.role && m.role() === "system";
+            const content = (!isSystem && m.content) ? m.content() : null;
+            if (typeof content === "string" && content.includes("call_")) {
+                for (const match of content.matchAll(/"callId"\s*:\s*"call_(\d+)"/g)) {
+                    highest = Math.max(highest, Number(match[1]));
+                }
+            }
+        });
+        return highest + 1;
     }
 
     /**
