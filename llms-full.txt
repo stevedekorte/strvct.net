@@ -8508,9 +8508,9 @@ It also explains behaviors that would otherwise have to be built screen by scree
 - **Responsive collapse** is the lens switching edges from inlined to layered as space runs out, within the bounds the hints allow. Miller columns that collapse into a push stack are still layered—in depth rather than side by side. Side-by-side panes that degrade to tabs are the same edge moving from inlined to layered.
 - **Links** normally open another layer, making a cross-reference explicit. Recursive inlining also needs depth or cycle limits; layering alone does not bound the length of a navigation history.
 
-None of these decisions is new to the literature. Furnas's fisheye views [8] formalize visibility as a degree-of-interest function over a tree; overview+detail and focus+context interfaces [9] separate or blend levels of detail much as layering and inlining do; and tree visualization distinguishes children drawn _within_ their parents (inclusion) from children drawn _beside_ them (adjacency) [10]. Inlining a linked target is what Nelson called transclusion [11]. Systems such as Furnas's, APT [12], and SUPPLE [5] go further and compute the presentation—by interest score, by search, or by optimization. Strvct deliberately does not. It owns the mechanism and supplies the defaults; the developer states intent through hints, much as a projectional editor lets a language designer declare the notation through which a model is edited [13].
+None of these decisions is new to the literature. Furnas's fisheye views [5] formalize visibility as a degree-of-interest function over a tree; overview+detail and focus+context interfaces [6] separate or blend levels of detail much as layering and inlining do; and tree visualization distinguishes children drawn _within_ their parents (inclusion) from children drawn _beside_ them (adjacency) [7]. Inlining a linked target is what Nelson called transclusion [8]. Systems such as Furnas's, APT [9], and SUPPLE [4] go further and compute the presentation—by interest score, by search, or by optimization. Strvct deliberately does not. It owns the mechanism and supplies the defaults; the developer states intent through hints, much as a projectional editor lets a language designer declare the notation through which a model is edited [10].
 
-Our use of _lens_ differs from the Magic Lenses of HCI [14], which filter a local region of the screen. It shares the editable-view intuition of bidirectional programming [15], because edits flow back to the model; this analogy does not assert the formal round-trip laws of a bidirectional lens.
+Our use of _lens_ differs from the Magic Lenses of HCI [11], which filter a local region of the screen. It shares the editable-view intuition of bidirectional programming [12], because edits flow back to the model; this analogy does not assert the formal round-trip laws of a bidirectional lens.
 
 The UI projection is not the only one. The same graph is projected into records in object pools (the **storage projection**), into JSON for import, export, and patching (the **exchange projection**), and into a schema-and-patch tool interface for AI agents (the **agent projection**, §7.1). Each reads the same annotated model, while requiring its own framework implementation and application configuration.
 
@@ -8586,7 +8586,7 @@ A **Master-Detail View** pairs a master tile stack with a detail pane showing th
 
 Key characteristics of Strvct's master-detail engine:
 
-- **Flexible Orientation:** Each level can layout horizontally (like macOS Miller column file browsers) or vertically (like nested accordion lists or settings panels).
+- **Flexible Orientation:** Each level can layout horizontally (like macOS Miller column file browsers [3]) or vertically (like nested accordion lists or settings panels).
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Flexible Master-Detail Orientations</div>
@@ -8866,7 +8866,7 @@ Several limitations and questions remain:
 3. **Aligned Grid Arrangements (Tables & Spreadsheets):** While inline document flow and anchored tabs are production-proven, cross-sibling column alignment (making row tiles align into full spreadsheets) is currently a proposed framework extension.
 4. **Extreme Collection Scaling:** Lazy view instantiation keeps rendering lightweight, but virtualized viewport scrolling for mega-collections (100,000 or more items) remains an active area of optimization.
 5. **Evaluation and Workflows:** As stated in §1, comparative usability, accessibility, and development effort have not been measured, and complex multi-step workflows are stated as domain actions rather than derived from the grammar. The planned follow-up is described in §8.
-6. **User-Chosen Lenses:** Because placement and arrangement are per-edge hints rather than authored screens, users could in principle reshape their own lenses—inlining a section they always want open, or layering one they rarely need. This is possible today through the live inspectors (§7.5), but not every hint is persisted; a supported, persistent user-facing control is future work. Engelbart's NLS gave users _viewspecs_—how many levels to show, how many lines per item—for much the same purpose [16].
+6. **User-Chosen Lenses:** Because placement and arrangement are per-edge hints rather than authored screens, users could in principle reshape their own lenses—inlining a section they always want open, or layering one they rarely need. This is possible today through the live inspectors (§7.5), but not every hint is persisted; a supported, persistent user-facing control is future work. Engelbart's NLS gave users _viewspecs_—how many levels to show, how many lines per item—for much the same purpose [13].
 
 ---
 
@@ -8895,31 +8895,25 @@ The practical promise is reduced duplication: developers maintain domain behavio
 
 [3] Miller Columns. _Wikipedia._ https://en.wikipedia.org/wiki/Miller_columns (NeXTSTEP navigation pattern).
 
-[4] Brambilla, M., & Fraternali, P. (2014). Interaction Flow Modeling Language. _WWW '14._
+[4] Gajos, K., & Weld, D. S. (2004). SUPPLE: Automatically Generating User Interfaces. _IUI '04._
 
-[5] Gajos, K., & Weld, D. S. (2004). SUPPLE: Automatically Generating User Interfaces. _IUI '04._
+[5] Furnas, G. W. (1986). Generalized Fisheye Views. _CHI '86_, 16–23.
 
-[6] Jackson, D. (2021). _The Essence of Software: Why Concepts Matter for Great Design._ Princeton University Press.
+[6] Cockburn, A., Karlson, A., & Bederson, B. B. (2008). A Review of Overview+Detail, Zooming, and Focus+Context Interfaces. _ACM Computing Surveys_, 41(1).
 
-[7] Meng, E., & Jackson, D. (2025). What You See Is What It Does: A Structural Pattern for Legible Software. _Onward! 2025._
+[7] Schulz, H.-J., Hadlak, S., & Schumann, H. (2011). The Design Space of Implicit Hierarchy Visualization: A Survey. _IEEE Transactions on Visualization and Computer Graphics_, 17(4), 393–411.
 
-[8] Furnas, G. W. (1986). Generalized Fisheye Views. _CHI '86_, 16–23.
+[8] Nelson, T. H. (1981). _Literary Machines._ Mindful Press.
 
-[9] Cockburn, A., Karlson, A., & Bederson, B. B. (2008). A Review of Overview+Detail, Zooming, and Focus+Context Interfaces. _ACM Computing Surveys_, 41(1).
+[9] Mackinlay, J. (1986). Automating the Design of Graphical Presentations of Relational Information. _ACM Transactions on Graphics_, 5(2), 110–141.
 
-[10] Schulz, H.-J., Hadlak, S., & Schumann, H. (2011). The Design Space of Implicit Hierarchy Visualization: A Survey. _IEEE Transactions on Visualization and Computer Graphics_, 17(4), 393–411.
+[10] Voelter, M., Siegmund, J., Berger, T., & Kolb, B. (2014). Towards User-Friendly Projectional Editors. _SLE 2014_, 41–61.
 
-[11] Nelson, T. H. (1981). _Literary Machines._ Mindful Press.
+[11] Bier, E. A., Stone, M. C., Pier, K., Buxton, W., & DeRose, T. D. (1993). Toolglass and Magic Lenses: The See-Through Interface. _SIGGRAPH '93._
 
-[12] Mackinlay, J. (1986). Automating the Design of Graphical Presentations of Relational Information. _ACM Transactions on Graphics_, 5(2), 110–141.
+[12] Foster, J. N., Greenwald, M. B., Moore, J. T., Pierce, B. C., & Schmitt, A. (2007). Combinators for Bidirectional Tree Transformations: A Linguistic Approach to the View-Update Problem. _ACM Transactions on Programming Languages and Systems_, 29(3).
 
-[13] Voelter, M., Siegmund, J., Berger, T., & Kolb, B. (2014). Towards User-Friendly Projectional Editors. _SLE 2014_, 41–61.
-
-[14] Bier, E. A., Stone, M. C., Pier, K., Buxton, W., & DeRose, T. D. (1993). Toolglass and Magic Lenses: The See-Through Interface. _SIGGRAPH '93._
-
-[15] Foster, J. N., Greenwald, M. B., Moore, J. T., Pierce, B. C., & Schmitt, A. (2007). Combinators for Bidirectional Tree Transformations: A Linguistic Approach to the View-Update Problem. _ACM Transactions on Programming Languages and Systems_, 29(3).
-
-[16] Engelbart, D. C., & English, W. K. (1968). A Research Center for Augmenting Human Intellect. _AFIPS Fall Joint Computer Conference._
+[13] Engelbart, D. C., & English, W. K. (1968). A Research Center for Augmenting Human Intellect. _AFIPS Fall Joint Computer Conference._
 
 
 ---
