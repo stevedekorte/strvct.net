@@ -123,6 +123,11 @@
             json.version = SvApp.shared().versionsString();
         }
 
+        if (SvPlatform.isNodePlatform()) {
+            json.process = String(process.argv[1] || "node").split("/").pop();
+            json.pid = process.pid;
+        }
+
         if (SvPlatform.isBrowserPlatform()) {
             json.userAgent = navigator.userAgent;
             json.url = window.location.href;
@@ -170,7 +175,7 @@
     async asyncSend () {
         try {
             this.composeBodyJson();
-            await this.justSend();
+            return await this.justSend();
         } catch (error) {
             console.error("Failed to send error report: ", error);
             return { success: false, error: error.message };
@@ -179,8 +184,7 @@
 
     async justSend () {
         if (SvPlatform.isNodePlatform()) {
-            console.warn("Not sure where to send error reports in node");
-            return { success: false, error: "Not sure where to send error reports in node" };
+            return this.writeToProcessLog();
         }
 
         // Get the base URL from the current window location
@@ -202,6 +206,27 @@
         const responseData = await response.json();
         console.log("Error report sent successfully: ", responseData);
         return responseData;
+    }
+
+    /**
+     * @description Under Node there is no page to post from: the report goes
+     * to the process's error output as one line, "[error-report] " and its
+     * JSON, where whatever runs the process collects it (a container's log).
+     * @returns {Object}
+     * @category Error Handling
+     */
+    writeToProcessLog () {
+        console.error(SvErrorReport.processLogMarker() + " " + JSON.stringify(this.bodyJson()));
+        return { success: true, logged: true };
+    }
+
+    /**
+     * @description What starts each report line under Node, for a log reader to find.
+     * @returns {String}
+     * @category Error Handling
+     */
+    static processLogMarker () {
+        return "[error-report]";
     }
 
 }.initThisClass());
