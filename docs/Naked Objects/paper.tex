@@ -14,6 +14,7 @@
 \pagestyle{plain}
 
 \begin{document}
+\sloppy
 
 \title{Closing the Usability Gap in Naked Objects}
 \subtitle{From Domain Models to Complete Applications}
@@ -25,15 +26,9 @@
 \email{steve@dekorte.com}
 
 \begin{abstract}
-The \textbf{Naked Objects} architectural pattern proposes that complete user interfaces can be derived automatically from domain models. Instead of manually maintaining separate models, component trees, form layouts, validators, persistence mappings, localization files, and AI tool specs, developers declare their domain logic once and allow the runtime engine to project it into every required form.
+This paper proposes a conjecture about user interfaces for structured information: that nearly every screen in such an application can be described by three decisions---which part of the object graph is \textbf{visible}, whether each visible child is \textbf{layered} beside its parent or \textbf{inlined} within it, and how sibling collections are \textbf{arranged}. We call a screen described this way a \textbf{lens} over the model. If the conjecture holds, a framework can own the mechanics of those decisions (navigation, collapse, responsive switching, editing, persistence) while the developer states only the policy, as hints on the model.
 
-While early Naked Objects systems successfully demonstrated this derivation, they relied on a narrow grammar---rendering objects as forms and collections as tables. This created a severe ``usability gap'' that restricted Naked Objects to internal tools and administrative backends.
-
-This paper presents a modern, flexible interaction grammar that closes this usability gap without requiring hand-authored UI component trees. We treat every screen as a \textbf{lens} over the model's object graph, and show that most interactions in structured-information software reduce to two core operations on that lens: (1)~\textbf{moving the lens}---traversing relationships across the object graph via recursive, orientation-flexible master-detail views (Miller columns), and (2)~\textbf{shaping the lens}---deciding whether each visible child is layered or inlined, and arranging collections along semantic dimensions (such as linear feeds, inline documents, anchored tabs, and aligned matrices).
-
-We demonstrate \textbf{Strvct}, an open-source client-side framework implementing this model-driven approach. By centralizing the model-to-view pipeline through slot metadata annotations, Strvct delivers architectural capabilities ``for free'': automatic responsive collapse, headless testability, transparent persistence and cloud synchronization, unified accessibility, and a natively AI-operable agent projection with a constant-size tool surface.
-
-In a production case study (\textbf{undreamedof.ai}, an AI tabletop gaming platform with $\sim$90 domain classes), $\sim$98\% of all views are framework-generated. The remaining custom views are inherently graphical media (a 3D dice engine and a battle map), confirming that the boundary of automatic UI generation falls naturally where spatial geometry carries irreducible domain meaning.
+Strvct is an implementation of this idea in the \textbf{Naked Objects} tradition, which derives user interfaces from domain objects and their declared behavior. It adds a compositional interaction grammar---recursive master-detail navigation, inline documents, and responsive anchored tabs---and reuses the same model metadata for persistence, exchange, and agent interfaces. A production application, \textbf{undreamedof.ai}, shows the approach is feasible at scale; the argument for its generality rests on the reader's own experience of the interfaces they already know.
 \end{abstract}
 
 \begin{CCSXML}
@@ -60,67 +55,57 @@ In a production case study (\textbf{undreamedof.ai}, an AI tabletop gaming platf
 \ccsdesc[300]{Human-centered computing~Interactive systems and tools}
 \ccsdesc[300]{Software and its engineering~Model-driven software engineering}
 
-\keywords{naked objects, automatic UI generation, model-driven development, projection, lenses, composable primitives, AI agents, Miller columns}
+\keywords{naked objects, model-driven development, user interface generation, projection, lenses, composable primitives, AI agents, Miller columns}
 
 \maketitle
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{GriffinScreenshot.png}
+\caption{Production example: undreamedof.ai. The diagrams that follow isolate the navigation and layout mechanisms used to compose interfaces like this one.}
+\label{fig:screenshot}
+\end{figure*}
 
 \section{Introduction}
 \label{sec:intro}
 
-Modern software development spends immense effort creating and maintaining user interfaces. In traditional component frameworks (such as React, Vue, or Svelte), every screen is authored as a bespoke artifact. When a data model changes---such as adding a field to a customer profile---the developer must manually update:
-\begin{itemize}
-\item The domain model class
-\item Form UI layouts and input fields
-\item Client-side and server-side validation rules
-\item Persistence schemas and ORM mappings
-\item Navigation graphs and routing states
-\item Localization string dictionaries
-\item Accessibility ARIA attributes
-\item AI agent tool definitions and API endpoints
-\end{itemize}
+A note on what kind of document this is. We do not offer a controlled evaluation or a measured productivity comparison. What follows is a design conjecture, an implementation that makes it concrete, and a deployed application that shows it is feasible. The evidence we ask the reader to weigh is their own: test the three-decision grammar of \S\ref{sec:lens} against the information applications you know---mail clients, settings panels, issue trackers, CRMs---and see whether any screen needs a decision it cannot express. The strongest case against the conjecture would be a common, non-graphical information screen that does; we would like to hear of one. The hedges that remain in later sections mark where implementation lags the conjecture, not uncertainty about the conjecture itself.
 
-This structural duplication creates exponential maintenance costs and frequent synchronization bugs.
+Applications often repeat domain structure across model declarations, input controls, validation, persistence mappings, navigation, and integration schemas. A new property can require coordinated changes in several places. Shared components and schema-driven tools reduce this duplication, but application authors still commonly maintain a separate presentation structure.
 
+\textbf{Naked Objects}, described by Pawson and Matthews~\cite{pawsonbook}, offers another approach: expose domain objects and actions through generated interfaces. Strvct retains that model-first architecture while exploring a richer set of reusable navigation and layout mechanisms.
+
+\begin{scriptsize}
 \begin{verbatim}
-Traditional Component Approach (Manual Propagation):
-Domain Model -> UI Components -> Forms -> Validators -> Persistence -> AI Specs
-
-Model-First Naked Objects Approach (Automatic Projection):
-                 +-> UI Projection (Master-Detail, Tabs, Docs;
-                 |                  Accessible & Localized)
-                 |-> Storage Projection (Local Pools & Cloud Sync)
-Annotated Model -+-> Exchange Projection (JSON Import, Export & Patches)
-                 |-> Agent Projection (Constant-Size AI Tool Surface)
-                 +-> Headless Execution & Fast Testing
+                 +-> UI (Navigation, Fields, Documents & Tabs)
+                 |-> Storage (Local Pools & Cloud Sync)
+Annotated Model -+-> Exchange (JSON Import, Export & Patches)
+                 |-> Agent Interface (Schema & Patch Operations)
+                 +-> Headless Domain Execution
 \end{verbatim}
+\end{scriptsize}
 
-\textbf{Naked Objects}, introduced by Pawson and Matthews in 2002~\cite{pawsonbook}, proposed a radical alternative: expose domain objects directly to users and generate the entire interface automatically. Because there is no separate UI code, consistency is guaranteed---the interface always perfectly reflects the live state of the domain.
+The contribution is a compositional account of those UI mechanisms and an implementation that reuses model metadata across subsystems. The division of labor matters: the framework does not infer layouts, as early Naked Objects systems did; it implements the mechanics, and the developer states intent. Domain design, presentation decisions, and testing the resulting experience remain the developer's work---but as policy, not as separately authored screens.
 
-Despite its obvious maintenance benefits, early Naked Objects implementations (such as Apache Isis/Causeway~\cite{causeway}) struggled with widespread adoption. They derived every object into a form and every collection into a table. While functionally complete, these interfaces felt rigid. They lacked spatial context, viewport adaptability, depth indicators, and visual continuity.
-
-This paper shows how to close that usability gap. We contend that the design space for information management software is remarkably narrow and structured. By replacing generic forms and tables with a richer grammar---\textbf{recursive relationship traversal} and \textbf{semantic collection arrangement}---frameworks can derive modern, beautiful, and responsive interfaces directly from annotated models.
-
-The key step is a change of picture. Rather than thinking of an application as a set of screens, we think of it as one complete projection of the model's object graph, and of each screen as a \textbf{lens} through which part of that projection is seen (\S\ref{sec:lens}).
-
-\section{The Usability Gap in Prior Systems}
+\section{The Usability Problem Addressed Here}
 \label{sec:gap}
 
-To understand why classic Naked Objects stalled, we must examine the specific usability limitations of early form-and-table systems:
+Generating fields and collections is only part of generating a useful application. Users also need to retain context while traversing relationships, see related information together, and navigate on small screens. This paper focuses on three design requirements:
 
 \begin{enumerate}
-\item \textbf{Lack of Spatial Hierarchy:} Generic forms flatten relationships into lists of text boxes and dropdowns. Users cannot visually perceive ownership, containment, or structural depth.
-\item \textbf{Limited Viewport Adaptability:} Form-based tools are typically designed for fixed desktop resolutions. Adapting them to mobile screens requires ad-hoc, per-screen responsive hacks.
-\item \textbf{Loss of Context During Navigation:} Drilling into a child object in a form interface usually replaces the screen or pops up a modal window. Each screen becomes a disconnected island, and users never form a picture of the object graph as a whole.
+\item \textbf{Visible hierarchy:} Distinguish ownership, containment, and cross-references.
+\item \textbf{Context-preserving navigation:} Keep the selected path legible as users move between related objects.
+\item \textbf{Reusable responsive behavior:} Adapt the same navigation structure to different viewport sizes.
 \end{enumerate}
 
-Component frameworks (React, Vue) address this problem by giving developers total visual freedom, but at the cost of authoring every screen by hand. Our goal is to achieve the visual quality and spatial legibility of hand-crafted apps while keeping the zero-UI-maintenance benefits of Naked Objects.
+Forms and tables remain useful arrangements; the question is how they compose with other views. Existing model-driven systems also support customization: Apache Causeway, for example, documents UI extensions for maps and calendars~\cite{causeway}. Strvct's focus here is recursive composition of layered and inline views, rather than a claim that prior systems can render only forms and tables. Establishing comparative usability or explaining historical adoption would require separate evidence.
 
 \section{The Model as a Graph, the Screen as a Lens}
 \label{sec:lens}
 
 Before describing the grammar itself, it helps to picture what a generated interface is actually showing.
 
-Imagine the domain model as a graph: a tree of ownership, with symbolic links for the references that cross it. Now imagine drawing all of it at once---every object, every property, every collection, fully expanded. This drawing is the model's complete \textbf{UI projection}. It is faithful and complete, and for any real application far too large to look at.
+Imagine the domain model as a graph: a tree of ownership, with symbolic links for the references that cross it. Now imagine drawing all of it at once---every object, every property, every collection, fully expanded. This drawing is the model's complete \textbf{UI projection}. This is a conceptual projection of the UI-exposed model, not a drawing that the runtime must materialize; internal or hidden properties need not be exposed.
 
 Every screen the user sees is a \textbf{lens} over that drawing. At first order, a lens makes only two decisions:
 
@@ -140,43 +125,27 @@ Layering and inlining are not modes of the whole interface but choices made edge
 
 At second order, a lens decides \textbf{arrangement}: how siblings within a layer or an inlined run are laid out---their orientation, whether their properties align across siblings into a table, or whether a value maps to position, as on a timeline (\S\ref{sec:traversal-arrangement}).
 
-This framing reduces an apparently unbounded space of screens to something tractable. Any screen is a path through the graph, plus a placement for each visible edge and an arrangement for each visible collection. That is a small, regular decision space---small enough for the framework to own its mechanics (the path, collapse, layering, inlining, and responsive switching) while the developer states intent through hints on the model: which edges inline, which layer, how collections arrange. The decisions are the developer's; their implementation is the framework's.
+This framing reduces an apparently unbounded space of screens to something tractable. Within this grammar, a screen is described by a navigation path, placements for visible edges, and arrangements for visible collections. That is a small, regular decision space---small enough for the framework to own its mechanics (the path, collapse, layering, inlining, and responsive switching) while the developer states intent through hints on the model: which edges inline, which layer, how collections arrange. The decisions are the developer's; their implementation is the framework's.
 
 It also explains behaviors that would otherwise have to be built screen by screen:
 \begin{itemize}
 \item \textbf{Navigation} is moving the lens. Traversing a relationship changes the path, not the model.
 \item \textbf{Responsive collapse} is the lens switching edges from inlined to layered as space runs out, within the bounds the hints allow. Miller columns that collapse into a push stack are still layered---in depth rather than side by side. Side-by-side panes that degrade to tabs are the same edge moving from inlined to layered.
-\item \textbf{Links} are followed by layering. Inlining a link would draw its target inside the referrer, and a cycle of links would expand forever; layering keeps every lens finite and makes the crossing visible.
+\item \textbf{Links} normally open another layer, making a cross-reference explicit. Recursive inlining also needs depth or cycle limits; layering alone does not bound the length of a navigation history.
 \end{itemize}
 
 None of these decisions is new to the literature. Furnas's fisheye views~\cite{furnas1986} formalize visibility as a degree-of-interest function over a tree; overview+detail and focus+context interfaces~\cite{cockburn2008} separate or blend levels of detail much as layering and inlining do; and tree visualization distinguishes children drawn \emph{within} their parents (inclusion) from children drawn \emph{beside} them (adjacency)~\cite{schulz2011}. Inlining a linked target is what Nelson called transclusion~\cite{nelson1981}. Systems such as Furnas's, APT~\cite{mackinlay1986}, and SUPPLE~\cite{supple2004} go further and compute the presentation---by interest score, by search, or by optimization. Strvct deliberately does not. It owns the mechanism and supplies the defaults; the developer states intent through hints, much as a projectional editor lets a language designer declare the notation through which a model is edited~\cite{voelter2014}.
 
-Our use of \emph{lens} differs from the Magic Lenses of HCI~\cite{bier1993}, which filter a local region of the screen. It is closer to the lenses of bidirectional programming~\cite{foster2007}: editable views whose changes flow back to their source, as edits in a Strvct view flow back to the model.
+Our use of \emph{lens} differs from the Magic Lenses of HCI~\cite{bier1993}, which filter a local region of the screen. It shares the editable-view intuition of bidirectional programming~\cite{foster2007}, because edits flow back to the model; this analogy does not assert the formal round-trip laws of a bidirectional lens.
 
-The UI projection is not the only one. The same graph is projected into records in object pools (the \textbf{storage projection}), into JSON for import, export, and patching (the \textbf{exchange projection}), and into a schema-and-patch tool interface for AI agents (the \textbf{agent projection}, \S\ref{sec:ai-operable}). Each is a different reading of the same annotated model; none is authored separately.
+The UI projection is not the only one. The same graph is projected into records in object pools (the \textbf{storage projection}), into JSON for import, export, and patching (the \textbf{exchange projection}), and into a schema-and-patch tool interface for AI agents (the \textbf{agent projection}, \S\ref{sec:ai-operable}). Each reads the same annotated model, while requiring its own framework implementation and application configuration.
 
 \section{A Narrow Design Space for Information Apps}
 \label{sec:narrow}
 
-A common misconception is that auto-generation forces all apps to look like boring administrative dashboards. However, a deeper analysis of consumer and enterprise software reveals a powerful pattern:
+The working hypothesis is that many structured-information interfaces can be expressed through relationship traversal, property editing, domain actions, and semantic collection arrangements. CRMs, project management tools, email clients, and settings panels provide useful examples. This is a design hypothesis about a substantial class of applications, not a proof that every task fits the grammar.
 
-\begin{quote}
-\textbf{Most interactions in structured-information applications consist of traversing relationships among domain objects and arranging collections of those objects along semantic dimensions.}
-\end{quote}
-
-Consider CRMs, project management tools, email clients, social networks, healthcare records, e-commerce stores, and settings panels. Although their visual styling differs, their fundamental operations are identical: users find an object, follow a relationship, inspect or edit details, and organize collections.
-
-\begin{verbatim}
-Typical Domain Graph:
-Workspace
-+-- Projects
-|   +-- Project
-|       +-- Tasks
-|       +-- People
-|       +-- Milestones
-+-- Customers
-+-- Documents
-\end{verbatim}
+The framework can own interaction mechanics while developers choose which relationships and actions to expose and how to organize them. Task-specific workflows remain part of application design.
 
 \subsection{Relationship Traversal vs. Collection Arrangement}
 \label{sec:traversal-arrangement}
@@ -190,38 +159,28 @@ In terms of the lens (\S\ref{sec:lens}), we divide the user interface grammar in
 
 \begin{table*}[t]
 \centering
-\begin{tabular}{p{0.24\textwidth} p{0.40\textwidth} p{0.28\textwidth}}
+\begin{tabular}{p{0.15\textwidth} p{0.22\textwidth} p{0.24\textwidth} p{0.30\textwidth}}
 \hline
-Mechanism & Semantic mapping & Familiar UI Presets \\
+Mechanism & Semantic mapping & Examples & Implementation scope \\
 \hline
-Recursive composition & Parent-child relationships or derived groupings & Navigation tree, grouped list, Kanban board \\
-Cross-sibling alignment & Equivalent property slots aligned across items & Data table, spreadsheet, pivot matrix \\
-Value-to-space mapping & Numeric, temporal, or spatial values mapped to position/extent & Timeline, Gantt chart, calendar, map \\
-Quantitative encoding & Numeric values mapped to visual marks or axes & Line chart, bar plot, heatmap \\
+Recursive composition & Parent-child relationships and presentation subtrees & Master-detail navigation, inline documents, anchored tabs & Implemented; arbitrary presets such as Kanban need their own grouping and interaction policies \\
+Cross-sibling alignment & Equivalent property slots aligned across items & Tables, spreadsheets, pivot matrices & Proposed framework extension \\
+Value-to-space mapping & Temporal or spatial values mapped to position and extent & Timelines, Gantt charts, calendars, maps & Part of the design space; no general generated arrangement established here \\
+Quantitative encoding & Numeric values mapped to marks or axes & Line charts, bar plots, heatmaps & Part of the design space; specialized renderers required unless supplied by the framework \\
 \hline
 \end{tabular}
-\caption{Arrangement mechanisms and the familiar UI forms they yield.}
+\caption{Arrangement mechanisms, the forms they yield, and their implementation scope in Strvct.}
 \label{tab:mechanisms}
 \end{table*}
 
 \subsection{The Boundary of Automatic Generation}
 \label{sec:boundary}
 
-Where does automatic generation end and custom code begin? The boundary is clean and objective:
+Generation covers the arrangements and controls the framework implements. A developer selects those mechanisms through metadata or node methods. A new arrangement or specialized interaction may require a new renderer; once implemented generically, that renderer can potentially serve multiple domain models.
 
-\begin{itemize}
-\item \textbf{Generated UI (Domain Model):} Managing structured data where spatial layout is purely an organizational aid (text, relationships, properties, categories, dates).
-\item \textbf{Custom UI (Specialized Media):} Surfaces where spatial position carries \emph{irreducible domain meaning}.
-\end{itemize}
+Spatial meaning alone does not determine this boundary: both calendars and battle maps encode meaningful positions. The practical distinction is whether an existing renderer supports the required semantics and interactions. Creative canvases, code editors, 3D viewports, medical imaging, and specialized scientific plots often require additional rendering and interaction code.
 
-Examples of surfaces requiring custom UI renderers:
-\begin{itemize}
-\item \textbf{Creative tools:} Canvas drawing, code editors, rich audio/video sequence editors.
-\item \textbf{Graphical visualizations:} 3D game viewports, interactive geographic maps, medical imaging scans.
-\item \textbf{Data plots:} Complex financial or scientific charts.
-\end{itemize}
-
-For a CRM or settings panel, generated UI covers $\sim$100\% of the app. For an IDE or game, generated UI handles the application shell (file trees, properties, settings, inventory), while a specialized custom renderer powers the central canvas.
+An application can combine generated navigation, properties, and actions with such specialized surfaces. The amount of custom work depends on its tasks, not just its domain category.
 
 \section{Architecture \& UI Mechanics in Strvct}
 \label{sec:mechanics}
@@ -239,7 +198,7 @@ The fundamental primitive in Strvct is the \textbf{Tile}:
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.7\columnwidth]{summary-tile.pdf}
-\caption{Summary Tile Primitive.}
+\caption{Summary Tile.}
 \label{fig:summary-tile}
 \end{figure}
 
@@ -250,7 +209,7 @@ The fundamental primitive in Strvct is the \textbf{Tile}:
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.7\columnwidth]{property-tile.pdf}
-\caption{Property Tile Primitive.}
+\caption{Property Tile.}
 \label{fig:property-tile}
 \end{figure}
 
@@ -259,7 +218,7 @@ A \textbf{Tile Stack} is a scrollable, ordered list or grid of tiles. Stacks sup
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.5\columnwidth]{tiles.pdf}
-\caption{Tile Stack Primitive.}
+\caption{Tile Stack.}
 \label{fig:tiles}
 \end{figure}
 
@@ -271,7 +230,7 @@ A \textbf{Master-Detail View} pairs a master tile stack with a detail pane showi
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.85\columnwidth]{master-detail.pdf}
-\caption{Master-Detail Navigation View.}
+\caption{Master-Detail View.}
 \label{fig:master-detail}
 \end{figure}
 
@@ -283,27 +242,31 @@ Key characteristics of Strvct's master-detail engine:
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.85\columnwidth]{orientations.pdf}
-\caption{Master-Detail Orientations.}
+\caption{Flexible Master-Detail Orientations.}
 \label{fig:orientations}
 \end{figure}
 
 \begin{itemize}
-\item \textbf{Automatic Mobile Collapse:} When viewport space is constrained, earlier columns automatically collapse into a mobile push/pop stack equipped with interactive breadcrumbs---the same layers, stacked in depth rather than side by side. Zero per-screen responsive design code is required.
+\item \textbf{Automatic Mobile Collapse:} When viewport space is constrained, earlier columns automatically collapse into a mobile push/pop stack equipped with interactive breadcrumbs---the same layers, stacked in depth rather than side by side. The shared navigation engine handles this collapse; application-specific content still needs responsive verification.
 \end{itemize}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\columnwidth]{expanded.pdf}
-\caption{Expanded Viewport (Desktop Layout).}
+\caption{Expanded Viewport (Desktop).}
 \label{fig:expanded}
 \end{figure}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.6\columnwidth]{collapsed.pdf}
-\caption{Collapsed Viewport (Mobile Layout with Breadcrumbs).}
+\caption{Collapsed Viewport (Mobile with Breadcrumbs).}
 \label{fig:collapsed}
 \end{figure}
+
+\begin{itemize}
+\item \textbf{Compositional Diversity:} Combining vertical, horizontal, and hybrid orientations expresses Miller column browsers, email clients, settings panels, chat rooms, and inspectors within a single uniform primitive.
+\end{itemize}
 
 \begin{figure}[h]
 \centering
@@ -312,14 +275,14 @@ Key characteristics of Strvct's master-detail engine:
 \includegraphics[width=0.3\columnwidth]{horizontal-hierarchical-miller-columns.pdf}%
 \hfill
 \includegraphics[width=0.3\columnwidth]{hybrid-hierarchical-miller-columns.pdf}
-\caption{Miller Column Nesting Patterns: Vertical (left), Horizontal (center), Hybrid (right).}
+\caption{Vertical (left), Horizontal (center), and Hybrid (right) nesting.}
 \label{fig:nesting}
 \end{figure}
 
 \subsection{Advanced Inline Layouts}
 \label{sec:inline}
 
-While column traversal is the default, certain complex screens require rendering child views directly inside parent tiles rather than pushing new columns. These children are inlined rather than layered. Strvct provides three built-in inline placement policies:
+While column traversal is the default, certain complex screens require rendering child views directly inside parent tiles rather than pushing new columns. These children are inlined rather than layered. Strvct provides two inline layout mechanisms and a presentation-delegation hook:
 
 \begin{figure*}[t]
 \centering
@@ -335,14 +298,14 @@ While column traversal is the default, certain complex screens require rendering
 \begin{figure}[h]
 \centering
 \includegraphics[width=\columnwidth]{anchored-tabs-wide.pdf}
-\caption{Anchored Tabs (Wide Desktop Viewport).}
+\caption{Anchored Tabs (Wide Screen).}
 \label{fig:anchored-tabs-wide}
 \end{figure}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.45\columnwidth]{anchored-tabs-narrow.pdf}
-\caption{Anchored Tabs (Narrow Mobile Viewport).}
+\caption{Anchored Tabs (Narrow Screen).}
 \label{fig:anchored-tabs-narrow}
 \end{figure}
 
@@ -354,13 +317,13 @@ While column traversal is the default, certain complex screens require rendering
 \begin{figure}[h]
 \centering
 \includegraphics[width=\columnwidth]{inline-document.pdf}
-\caption{Inline Document Section Flow.}
+\caption{Inline Document Flow.}
 \label{fig:inline-document}
 \end{figure}
 
 \begin{enumerate}
 \setcounter{enumi}{2}
-\item \textbf{Presented Nodes:} Allows an object to delegate its presentation to a derived node (e.g., displaying a structured RPG character sheet instead of raw property slots), providing bespoke reading views without custom component templates.
+\item \textbf{Presented Nodes (Presentation Delegation):} Allows an object to delegate its presentation to a derived node (e.g., displaying a structured RPG character sheet instead of raw property slots), providing bespoke reading views without custom component templates.
 \end{enumerate}
 
 \begin{figure}[h]
@@ -375,39 +338,119 @@ While column traversal is the default, certain complex screens require rendering
 
 Developers define domain models as JavaScript classes inheriting from \texttt{SvStorableNode}. Properties are declared as \textbf{slots} enriched with metadata annotations:
 
+\begin{small}
 \begin{verbatim}
 (class Character extends SvStorableNode {
 
-    initPrototypeSlots () {
-        // Name slot: String property, persisted, synced to view, editable
-        {
-            const slot = this.newSlot("name", "");
-            slot.setSlotType("String");
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setCanEditInspection(true);
-        }
-        // Level slot: Number property
-        {
-            const slot = this.newSlot("level", 1);
-            slot.setSlotType("Number");
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-        }
-        // Inventory relationship: Navigable child object
-        {
-            const slot = this.newSlot("inventory", null);
-            slot.setFinalInitProto(Inventory);
-            slot.setIsSubnodeField(true);
-        }
+  initPrototypeSlots () {
+    // Name slot: String property, persisted,
+    // synced to view, editable
+    {
+      const slot = this.newSlot("name", "");
+      slot.setSlotType("String");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setCanInspect(true);
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(true);
     }
+    // Level slot: Number property
+    {
+      const slot = this.newSlot("level", 1);
+      slot.setSlotType("Number");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setCanInspect(true);
+      slot.setIsSubnodeField(true);
+    }
+    // Inventory relationship: navigable child
+    {
+      const slot = this.newSlot("inventory", null);
+      slot.setSlotType("Inventory");
+      slot.setShouldStoreSlot(true);
+      slot.setFinalInitProto(Inventory);
+      slot.setIsSubnodeField(true);
+    }
+  }
 
-    subtitle () {
-        return "Level " + this.level();
-    }
+  initPrototype () {
+    this.setShouldStore(true);
+  }
+
+  title () {
+    return this.name() || "Unnamed Character";
+  }
+
+  subtitle () {
+    return "Level " + this.level();
+  }
 
 }.initThisClass());
 \end{verbatim}
+\end{small}
+
+\subsection{Worked Example: From a Model to a Lens}
+\label{sec:worked-example}
+
+The \texttt{Character} declaration assumes an application-defined \texttt{Inventory} node class. \texttt{isSubnodeField} exposes each property as a field in the node's contents; \texttt{canInspect} also exposes it in the developer inspector. Neither persistence nor view synchronization alone makes a property visible.
+
+With the default \texttt{nodeChildrenLayout()} value of \texttt{"column"}, selecting a character opens its fields and Inventory relationship in the next pane. Selecting Inventory traverses that relationship. On a narrow viewport, earlier navigation panes collapse and breadcrumbs retain access to the path.
+
+To show the same contents as a document, the class can override an existing presentation hook:
+
+\begin{small}
+\begin{verbatim}
+// Methods inside Character; the stored
+// properties remain the same.
+nodeChildrenLayout () {
+  return "inline";
+}
+
+nodeInlineDepth () {
+  return 1;
+}
+\end{verbatim}
+\end{small}
+
+If Inventory is large and should remain a navigable summary within that document, its class can override \texttt{nodeIsInlined()} to return \texttt{false}. A container that should show its children as responsive anchored tabs instead overrides \texttt{nodeSubnodesAreAnchoredTabs()} to return \texttt{true}. These are node-level policies interpreted by shared views, rather than separately authored screens.
+
+Adding a \texttt{species} slot with the same type, visibility, persistence, and synchronization annotations as \texttt{name} makes it available to the shared field renderer and storage serializer. Labels, constraints, and presentation order still need deliberate choices. This illustrates the maintenance benefit: reuse of the field machinery rather than the elimination of presentation design.
+
+\subsection{Actions and Workflows}
+
+Domain behavior must also be exposed deliberately. An action slot names a model method, and an optional \texttt{<methodName>ActionInfo()} method supplies presentation state. For example, these members can be added to \texttt{Character}:
+
+\begin{small}
+\begin{verbatim}
+// Inside initPrototypeSlots():
+{
+  const slot = this.newSlot("advanceLevelAction",
+                            null);
+  slot.setSlotType("Action");
+  slot.setIsSubnodeField(true);
+  slot.setActionMethodName("advanceLevel");
+}
+
+// Methods on Character:
+advanceLevel () {
+  if (this.level() >= 20) {
+    throw new Error(
+      "Character is already at the maximum level");
+  }
+  this.setLevel(this.level() + 1);
+}
+
+advanceLevelActionInfo () {
+  return {
+    title: "Advance Level",
+    isEnabled: this.level() < 20,
+    isVisible: true
+  };
+}
+\end{verbatim}
+\end{small}
+
+The shared action field reads availability from the model and invokes the method; domain checks remain necessary for callers outside the UI. Slot constraints support field validation, while cross-property rules and failed operations need useful application feedback. Bulk operations and multi-step workflows require explicit domain methods and state; they do not follow automatically from navigation relationships.
 
 \subsection{The Multi-Reader Annotation Architecture}
 
@@ -421,135 +464,130 @@ Slot annotations serve as a decoupling bridge. Each framework subsystem reads sl
 \item \textbf{Localization Engine:} Reads property names and translation contexts to auto-translate labels.
 \end{itemize}
 
+\begin{small}
 \begin{verbatim}
-                  +-> UI Rendering Layer (Property Tiles & Controls)
-                  |-> Persistence Engine (IndexedDB & Cloud Commit)
-Slot Metadata ----+-> Sync Scheduler (Weak Observer Notifications)
-                  |-> AI Agent Infrastructure (Patch Schemas & Verification)
-                  +-> Internationalization Engine (Label Translation)
+              +-> UI Rendering (Property Tiles & Controls)
+              |-> Persistence (IndexedDB & Cloud Commit)
+Slot Metadata +-> Sync Scheduler (Weak Observers)
+              |-> AI Agent Infrastructure (Patch Schemas)
+              +-> Internationalization (Label Translation)
 \end{verbatim}
+\end{small}
 
-\section{Structural Consequences (``Free'' Capabilities)}
+\section{Shared Architectural Capabilities}
 \label{sec:consequences}
 
-Centralizing the model-to-view pipeline through slot annotations yields powerful architectural capabilities that traditional component frameworks must build and maintain manually for every screen:
+Shared metadata lets framework subsystems reuse declarations. These capabilities require framework implementation, application configuration, and testing; their benefit is that much of that work is shared across generated views.
 
 \subsection{Natively AI-Operable Model}
 \label{sec:ai-operable}
 
-Because slot metadata describes every class, Strvct exposes a universal agent projection: a tool surface consisting of just two generic functions:
+The agent projection uses slot metadata for a schema-and-patch interface, described here by two generic operation types:
 \begin{enumerate}
 \item \texttt{schema-fetch}: Retrieves the slot schema for any domain class or object instance.
 \item \texttt{apply-patch}: Applies a JSON patch payload to update properties or mutate child relationships.
 \end{enumerate}
 
-This tool surface remains \textbf{constant in size} regardless of whether the application contains 5 domain classes or 500. When an AI agent generates an invalid field patch, the rejected response includes the slot's schema, allowing the model to self-correct in real time.
+The number of operation types can remain constant as classes are added; schema volume, discovery work, and agent context do not. Invalid patches can return schema information for a correction attempt. A usable deployment must also define the exposed root objects, traversal and access rules, and how domain actions are invoked. A small tool vocabulary alone does not establish task success or low reasoning cost.
 
-\subsection{Headless Execution and Ultra-Fast Testing}
+\subsection{Headless Domain Execution and Testing}
 
-Domain nodes contain zero DOM or browser dependencies. The exact same domain classes run unchanged under Node.js. Unit and integration tests instantiate model graphs, invoke domain methods, and assert against slot states at lightning speed without spinning up headless browser instances (Puppeteer/Playwright).
+Domain classes that keep browser dependencies in the view and service layers can run under Node.js. Tests can instantiate model graphs, invoke methods, and assert slot states without browser automation. This makes domain testing cheaper; layout, focus, gestures, and browser integration still require UI tests.
 
 \subsection{Transparent Persistence and Cloud Sync}
 
 Strvct divides persistence into two unified strategies:
 \begin{itemize}
-\item \textbf{Local Object Pools:} Fast, synchronous IndexedDB storage for domain object state.
+\item \textbf{Local Object Pools:} In-memory access to loaded domain objects, with asynchronous IndexedDB persistence.
 \item \textbf{Content-Addressable Blob Store:} Asynchronous SHA-256 keyed storage for large binary assets (images, audio, files).
 \end{itemize}
 
 Cloud synchronization sends versioned atomic commits containing only the modified slot records. Conflicts are detected deterministically per document pool.
 
-\subsection{Universal Accessibility and Localization}
+\subsection{Shared Accessibility and Localization}
 
-Accessibility and localization are properties of the UI projection rather than projections of their own, and both are handled at the framework primitive level: translation is applied at the model-to-view boundary, as labels leave the model. Because every view is rendered by $\sim$15 shared view classes, ARIA roles, focus management, keyboard navigation, and translation hooks are paid once. Fixing an accessibility or translation bug in a primitive tile fixes it across every screen in the entire application.
+Accessibility and localization are properties of the UI projection rather than projections of their own, and both are handled at the framework primitive level: translation is applied at the model-to-view boundary, as labels leave the model. Shared view primitives centralize ARIA roles, focus management, keyboard navigation, and translation hooks. Fixes in a primitive can benefit every view that uses it. Application-specific labels, reading order, custom renderers, assistive-technology behavior, and translation quality still need validation.
 
 \subsection{Live Inspector \& Developer Mode}
 \label{sec:inspector}
 
 Every tile supports modifier-clicking (Option + Click) to reveal a live Property Inspector displaying all declared slots, storage flags, and validation states. Developers can toggle Developer Mode to inspect hidden internal subnodes without writing custom debugging views.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{GriffinScreenshot.png}
-\caption{undreamedof.ai built with Strvct.}
-\label{fig:screenshot}
-\end{figure*}
-
-\section{Empirical Case Study: undreamedof.ai}
+\section{A Deployed Application: undreamedof.ai}
 \label{sec:case-study}
 
 Strvct was used to build \textbf{undreamedof.ai}, a commercial AI-powered virtual tabletop application for tabletop roleplaying games (D\&D 5e).
 
 \begin{table}[h]
 \centering
-\begin{tabular}{lrr}
+\begin{tabular}{lrl}
 \hline
-Subsystem & Domain classes & Custom views \\
+Subsystem & Classes (est.) & Custom views \\
 \hline
-Character system & $\sim$30 & 0 \\
-Campaign hierarchy & $\sim$20 & 1 (Map Viewer) \\
-Session \& Gameplay & $\sim$25 & 1 (3D Dice Engine) \\
-AI Integration \& Tools & $\sim$15 & 0 \\
+Character system & $\sim$30 & None reported \\
+Campaign hierarchy & $\sim$20 & Map viewer \\
+Session \& gameplay & $\sim$25 & 3D dice engine \\
+AI integration \& tools & $\sim$15 & None reported \\
 \hline
 \textbf{Total} & \textbf{$\sim$90} & \textbf{2} \\
 \hline
 \end{tabular}
-\caption{undreamedof.ai breakdown by subsystem.}
+\caption{Reported application inventory of undreamedof.ai.}
 \label{tab:breakdown}
 \end{table}
 
-Over 98\% of all application screens---character sheets, inventory managers, spellbooks, campaign trees, settings panels, chat logs, and admin inspectors---are derived automatically by Strvct.
+The application uses framework views for character sheets, inventory managers, spellbooks, campaign trees, settings, chat logs, and inspectors. Its reported specialized surfaces are a 3D WebGL dice roller and an interactive tactical battle map.
 
-The only two custom views in the entire application are:
-\begin{enumerate}
-\item A \textbf{3D WebGL Dice Roller}
-\item An \textbf{Interactive Tactical Battle Map}
-\end{enumerate}
-
-Both represent specialized graphical media where spatial geometry carries irreducible domain meaning (\S\ref{sec:boundary}). Their presence confirms that Strvct's boundary between auto-generated and custom UI falls exactly where predicted.
+These are author-reported estimates, not a dated source audit, and class counts are not screen counts; the inventory is offered as an existence proof that the grammar covers a substantial application, not as a coverage ratio. The more informative evidence would be a worked example of one screen whose presentation hint grew into a presented node or a new renderer under product pressure, so a reader can see what ``policy-sized'' looks like in practice; that is planned for a future revision, along with a reproducible comparison of representative tasks on completion rate, time, navigation errors, and mobile usability.
 
 \section{Comparison with Related Paradigms}
 \label{sec:related}
 
 \begin{table*}[t]
 \centering
-\begin{tabular}{p{0.18\textwidth} p{0.25\textwidth} p{0.25\textwidth} p{0.24\textwidth}}
+\small
+\begin{tabular}{p{0.15\textwidth} p{0.25\textwidth} p{0.25\textwidth} p{0.27\textwidth}}
 \hline
-Dimension & Traditional Component Frameworks & Low-Code / Visual Builders & Strvct (Modern Naked Objects) \\
+Dimension & Component Frameworks & Low-Code / Visual Builders & Strvct \\
 \hline
-Primary Artifact & Authored Component Trees & Visual Layout Diagrams & Annotated Domain Model \\
-UI Derivation & Manual per screen & Manual per screen & 100\% Derived automatically \\
-Model/UI Coupling & High (manual props \& state) & High (visual bindings) & Zero (model has no UI code) \\
-Maintenance Cost & Scales with screen count & Scales with screen count & Near constant (model-driven) \\
-AI Agent Interop & Per-screen tool specs & Custom API connectors & Native constant-size tool surface \\
-Offline \& Cloud Sync & Complex manual sync logic & Server-dependent & Built-in local pools \& versioned commits \\
+Primary presentation artifact & Components and application composition & Visual layouts and bindings & Annotated nodes and presentation policies \\
+Reuse mechanism & Shared components, libraries, schema-driven tools & Platform widgets, templates, connectors & Shared views interpreting node and slot metadata \\
+Presentation decisions & Usually expressed in components & Usually expressed in visual configuration & Expressed in model metadata, node methods, and presentation nodes \\
+Maintenance tradeoff & App authors maintain composition and integration & App authors maintain layouts and platform configuration & Shared mechanics reduce repeated view code; metadata and domain complexity still grow \\
+Agent integration & Application- or library-defined APIs and tools & Platform- or application-defined connectors & Schema-and-patch operations derived from exposed metadata \\
+Persistence & Chosen and integrated by the application & Platform-dependent & Framework object pools and cloud synchronization \\
 \hline
 \end{tabular}
-\caption{Comparison of UI Development Paradigms.}
+\caption{Architectural defaults of UI development paradigms.}
 \label{tab:comparison}
 \end{table*}
+
+These categories overlap: component applications can derive forms from schemas, and low-code platforms can infer interfaces from data. Strvct's distinguishing commitment is to use the annotated object graph as the primary source for navigation, editing, and several non-UI subsystems. Table~\ref{tab:comparison} describes architectural defaults, not measured productivity differences.
 
 \section{Limitations \& Future Work}
 \label{sec:limitations}
 
-While Strvct successfully demonstrates the power of modern Naked Objects, several open challenges and limitations remain:
+Several limitations and questions remain:
 
 \begin{enumerate}
-\item \textbf{Inherently Graphical Media:} Applications centered on canvas editing, CAD, video sequencing, or 3D gaming will always require custom view renderers.
+\item \textbf{Renderer Coverage:} Canvas editing, CAD, video sequencing, and 3D gaming typically need specialized renderers and interaction policies. The generation boundary depends on the controls and arrangements available in the framework (\S\ref{sec:boundary}).
 \item \textbf{Ecosystem Isolation:} To support content-addressable bundling and zero-build client loading, Strvct uses a custom resource loader rather than standard npm/Webpack/Vite tooling.
 \item \textbf{Aligned Grid Arrangements (Tables \& Spreadsheets):} While inline document flow and anchored tabs are production-proven, cross-sibling column alignment (making row tiles align into full spreadsheets) is currently a proposed framework extension.
-\item \textbf{Extreme Collection Scaling:} Lazy view instantiation keeps rendering lightweight, but virtualized viewport scrolling for mega-collections ($10^5+$ items) remains an active area of optimization.
+\item \textbf{Extreme Collection Scaling:} Lazy view instantiation keeps rendering lightweight, but virtualized viewport scrolling for mega-collections ($10^5$ or more items) remains an active area of optimization.
+\item \textbf{Evaluation and Workflows:} Comparative usability, accessibility, development effort, and complex workflow coverage have not been quantified here. A production deployment is evidence of feasibility, not a controlled evaluation.
 \item \textbf{User-Chosen Lenses:} Because placement and arrangement are per-edge hints rather than authored screens, users could in principle reshape their own lenses---inlining a section they always want open, or layering one they rarely need. This is possible today through the live inspectors (\S\ref{sec:inspector}), but not every hint is persisted; a supported, persistent user-facing control is future work. Engelbart's NLS gave users \emph{viewspecs}---how many levels to show, how many lines per item---for much the same purpose~\cite{engelbart1968}.
 \end{enumerate}
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-For twenty-five years, the Naked Objects pattern offered an enticing promise: write the domain model, and the application will follow. Early implementations stalled not because derivation was impossible, but because forms and tables were not general or flexible enough to deliver modern user experiences.
+Strvct demonstrates a model-first approach in which shared views interpret an annotated object graph. Its implemented navigation grammar combines recursive master-detail panes, inline documents, responsive anchored tabs, and presentation delegation. The lens model explains how these mechanisms can compose without a separately authored component tree for every screen.
 
-Strvct solves this by establishing a complete, flexible interaction grammar based on \textbf{recursive relationship traversal} and \textbf{semantic collection arrangement}. By eliminating manual UI component authoring, developers eliminate view-layer maintenance, reduce synchronization bugs, and gain native AI operability, instant headless testing, transparent persistence, and universal accessibility.
+The deployed application shows the grammar covers a substantial product; quantitative coverage, development cost, and comparative usability remain open, and the conjecture itself is offered for the reader to test against the interfaces they know. Tables with cross-sibling alignment and other semantic arrangements remain extensions rather than established capabilities of this implementation.
 
-As AI agents become routine co-processors of software state, the cost of maintaining separate models, UI components, and tool specs will become unsustainable. Model-first derived architectures offer a durable, elegant alternative: software where the user interface is a live, faithful projection of the domain model.
+The practical promise is reduced duplication: developers maintain domain behavior and presentation intent, while the framework shares the machinery for rendering, synchronization, storage, and agent access.
+
+\nocite{ifml,jackson2021,mengjackson2025}
 
 \bibliography{references}
 

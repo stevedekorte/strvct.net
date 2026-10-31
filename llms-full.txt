@@ -8436,13 +8436,11 @@ From Domain Models to Complete Applications
 
 ## Abstract
 
+This document proposes a conjecture about user interfaces for structured information: that nearly every screen in such an application can be described by three decisions—which part of the object graph is **visible**, whether each visible child is **layered** beside its parent or **inlined** within it, and how sibling collections are **arranged**. We call a screen described this way a **lens** over the model. If the conjecture holds, a framework can own the mechanics of those decisions (navigation, collapse, responsive switching, editing, persistence) while the developer states only the policy, as hints on the model.
+
+Strvct is an implementation of this idea in the **Naked Objects** tradition, which derives user interfaces from domain objects and their declared behavior. It adds a compositional interaction grammar—recursive master-detail navigation, inline documents, and responsive anchored tabs—and reuses the same model metadata for persistence, exchange, and agent interfaces. A production application, **undreamedof.ai**, shows the approach is feasible at scale; the argument for its generality rests on the reader's own experience of the interfaces they already know.
+
 A [PDF of the earlier revision](compiled/Closing_the_Usability_Gap_in_Naked_Objects.pdf) is also available; it has not yet been updated to match this page.
-
-The **Naked Objects** architectural pattern derives user interfaces from domain objects and their declared behavior. Strvct extends this approach with a compositional interaction grammar: recursive master-detail navigation, inline documents, and responsive anchored tabs. Developers declare domain state, behavior, and presentation intent; shared framework views implement the interaction mechanics.
-
-The organizing idea is the **lens**: a screen exposes part of an object graph by choosing what is visible, whether children appear within their parent or in another pane, and how collections are arranged. This paper explains that design space, distinguishes implemented layouts from proposed extensions, and describes the metadata shared by UI, persistence, and agent interfaces.
-
-A production application, **undreamedof.ai**, illustrates the approach across character management, campaigns, gameplay, and AI integration. Its reported inventory contains approximately 90 domain classes and two specialized custom views. These estimates illustrate broad reuse of framework views; they are not a measured percentage of generated screens or a comparative usability evaluation.
 
 <a href="figures/GriffinScreenshot.png" target="_blank"><img class="colvmn-zoomable-image" src="figures/GriffinScreenshot.png" alt="undreamedof.ai application built with Strvct" style="width: 100%; height: auto;"></a>
 
@@ -8452,6 +8450,8 @@ A production application, **undreamedof.ai**, illustrates the approach across ch
 ---
 
 ## 1. Introduction
+
+A note on what kind of document this is. We do not offer a controlled evaluation or a measured productivity comparison. What follows is a design conjecture, an implementation that makes it concrete, and a deployed application that shows it is feasible. The evidence we ask the reader to weigh is their own: test the three-decision grammar of §3 against the information applications you know—mail clients, settings panels, issue trackers, CRMs—and see whether any screen needs a decision it cannot express. The strongest case against the conjecture would be a common, non-graphical information screen that does; we would like to hear of one. The hedges that remain in later sections mark where implementation lags the conjecture, not uncertainty about the conjecture itself.
 
 Applications often repeat domain structure across model declarations, input controls, validation, persistence mappings, navigation, and integration schemas. A new property can require coordinated changes in several places. Shared components and schema-driven tools reduce this duplication, but application authors still commonly maintain a separate presentation structure.
 
@@ -8465,7 +8465,7 @@ Annotated Model ─┼──► Exchange (JSON Import, Export & Patches)
                  └──► Headless Domain Execution
 ```
 
-The contribution is a compositional account of those UI mechanisms and an implementation that reuses model metadata across subsystems. It does not remove domain design, presentation decisions, or the need to test the resulting experience.
+The contribution is a compositional account of those UI mechanisms and an implementation that reuses model metadata across subsystems. The division of labor matters: the framework does not infer layouts, as early Naked Objects systems did; it implements the mechanics, and the developer states intent. Domain design, presentation decisions, and testing the resulting experience remain the developer's work—but as policy, not as separately authored screens.
 
 
 ---
@@ -8818,7 +8818,7 @@ Every tile supports modifier-clicking (Option + Click) to reveal a live Property
 
 ---
 
-## 8. Empirical Case Study: undreamedof.ai
+## 8. A Deployed Application: undreamedof.ai
 
 Strvct was used to build **undreamedof.ai**, a commercial AI-powered virtual tabletop application for tabletop roleplaying games (D&D 5e). 
 
@@ -8834,9 +8834,7 @@ Strvct was used to build **undreamedof.ai**, a commercial AI-powered virtual tab
 
 The application uses framework views for character sheets, inventory managers, spellbooks, campaign trees, settings, chat logs, and inspectors. Its reported specialized surfaces are a 3D WebGL dice roller and an interactive tactical battle map.
 
-**Measurement limits:** These are author-reported estimates retained from the case-study description, not a dated source audit. The inventory does not count screens, runtime view instances, presentation-node code, or customization effort. Dividing two custom view classes by approximately 90 domain classes would mix units, so this paper does not report that ratio as a generated-screen percentage.
-
-The case study demonstrates use across several subsystems and is consistent with the proposed reuse boundary. It does not establish that all non-graphical tasks fit the grammar or that users perform better than with another interface. A reproducible follow-up should identify a source revision, classify application-specific presentation code, define the counting unit, and compare representative tasks on completion rate, time, navigation errors, and mobile usability.
+These are author-reported estimates, not a dated source audit, and class counts are not screen counts; the inventory is offered as an existence proof that the grammar covers a substantial application, not as a coverage ratio. The more informative evidence would be a worked example of one screen whose presentation hint grew into a presented node or a new renderer under product pressure, so a reader can see what "policy-sized" looks like in practice; that is planned for a future revision, along with a reproducible comparison of representative tasks on completion rate, time, navigation errors, and mobile usability.
 
 
 ---
@@ -8874,7 +8872,7 @@ Several limitations and questions remain:
 
 Strvct demonstrates a model-first approach in which shared views interpret an annotated object graph. Its implemented navigation grammar combines recursive master-detail panes, inline documents, responsive anchored tabs, and presentation delegation. The lens model explains how these mechanisms can compose without a separately authored component tree for every screen.
 
-The production case study illustrates reuse across a substantial application, while leaving quantitative coverage, development cost, and comparative usability open for evaluation. Tables with cross-sibling alignment and other semantic arrangements remain extensions rather than established capabilities of this implementation.
+The deployed application shows the grammar covers a substantial product; quantitative coverage, development cost, and comparative usability remain open, and the conjecture itself is offered for the reader to test against the interfaces they know. Tables with cross-sibling alignment and other semantic arrangements remain extensions rather than established capabilities of this implementation.
 
 The practical promise is reduced duplication: developers maintain domain behavior and presentation intent, while the framework shares the machinery for rendering, synchronization, storage, and agent access.
 
