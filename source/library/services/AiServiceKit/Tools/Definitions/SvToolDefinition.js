@@ -282,15 +282,17 @@
         //const metadata = this.toolMethod().asToolMetadata(refSet);
         //return metadata;
 
+        // What is particular to this tool, once. The call and result envelopes
+        // (callId, toolName, status, error, …) are the same for every tool,
+        // so the prompt states them once (SvToolDefinitions.toolSpecPrompt)
+        // rather than per tool — repeated, they were a third of the tool list.
         const schema = {
             "toolName": method.assistantToolName(),
             "description": method.description(),
-            "toolCallSchema": SvToolCall.toolCallJsonSchemaForToolDefinition(this, refSet),
-            "toolCallResultSchema": SvToolResult.toolCallResultJsonSchemaForToolDefinition(this, refSet),
-            "behaviorNotes": {
-                "isSilentSuccess": method.isSilentSuccess(),
-                "isSilentError": method.isSilentError()
-            }
+            "parameters": method.paramsSchema(refSet),
+            "returns": method.returnsJsonSchema(refSet),
+            "isSilentSuccess": method.isSilentSuccess(),
+            "isSilentError": method.isSilentError()
         };
         //console.log(this.logPrefix(), "schema: ", JSON.stringify(schema, null, 2));
         return schema;

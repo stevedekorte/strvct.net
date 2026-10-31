@@ -97,18 +97,21 @@
 
 Notes: The tool definitions below describe the available tools and their behaviors. Each definition includes:
  - "parameters": The schema for what you should send in your tool call (this is what goes in your tool call's "parameters" field)
- - "returns": A JSON Schema describing what the tool sends back (for your reference only)
+ - "returns": A JSON Schema describing what the tool sends back in its result's "result" field (for your reference only)
  - "isSilentSuccess": Whether the tool sends a result on success (for your reference only)
  - "isSilentError": Whether the tool sends a result on error (for your reference only)
 
 **Important**: When making a tool call, you only use the "parameters" schema. The other properties (returns, isSilentSuccess, etc.) are documentation to help you understand the tool's behavior - they are NOT part of your actual tool call.
 
+Every tool's call and result have the same envelope:
+ - call: { "callId": "call_N", "toolName": <the tool's name>, "parameters": <its "parameters"> }
+ - result: { "callId": <the call's id>, "toolName": <the tool's name>, "status": "success" | "failure", "result": <its "returns">, "error": <a message, on failure>, "warning": <a note about the call, if any>, "reminder": <an advisory action to take now if it applies, if any> }
+
 ### List of Tools
 
-The following tools are available for you to use:
+The following tools are available for you to use (compact JSON):
 `);
-        parts.push("<tools>\n" + JSON.stableStringifyWithStdOptions(this.toolSpecsJson(), null, 2) + "\n</tools>"); // includes tools and type definitions
-        //parts.push("<tools>\n" + JSON.stableStringify(this.toolSpecsJson()) + "\n</tools>"); // includes tools and type definitions
+        parts.push("<tools>\n" + JSON.stableStringify(this.toolSpecsJson()) + "\n</tools>"); // compact: indentation was a quarter of the list's size
 
 
         parts.push(`
