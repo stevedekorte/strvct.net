@@ -76,6 +76,46 @@ if (typeof XMLHttpRequest === "undefined") {
         }
 
         /**
+         * @description xhr2 cannot send a Blob ("Unsupported send() data
+         * [object Blob]", thrown from inside the caller's timer, so uncaught):
+         * it takes strings, ArrayBuffers and typed arrays only. Node has a
+         * global Blob, so libraries build Blob bodies under Node as they do in
+         * a browser — the Firebase Storage SDK assembles its upload body as
+         * one — and a server-hosted table crashed seating a character whose
+         * portrait it uploaded (2026-10-31). Send the Blob's bytes instead,
+         * once read; a Blob's type becomes the Content-Type if none was set.
+         * strvct/tests/headless/TestXhrBlobUpload.js pins it.
+         * @param {*} body
+         */
+        send (body) {
+            if (typeof Blob === "undefined" || !(body instanceof Blob)) {
+                return super.send(body);
+            }
+            body.arrayBuffer().then((bytes) => {
+                if (body.type && !this.hasContentTypeHeader()) {
+                    this.setRequestHeader("Content-Type", body.type);
+                }
+                super.send(new Uint8Array(bytes));
+            }, (error) => {
+                console.error("XMLHttpRequestShim: could not read the Blob to send:", error);
+                if (this._onerror) {
+                    this._onerror({ type: "error", target: this });
+                }
+            });
+            return undefined;
+        }
+
+        /**
+         * @description Whether this request already names its Content-Type
+         * (a header set by setRequestHeader, in any letter case).
+         * @returns {Boolean}
+         */
+        hasContentTypeHeader () {
+            const headers = this._headers || {};
+            return Object.keys(headers).some((name) => name.toLowerCase() === "content-type");
+        }
+
+        /**
          * @description xhr2 has no "blob" response type: it falls through to
          * text and decodes the bytes as UTF-8, so every binary download
          * (Storage blobs, images, audio) arrived corrupted under Node — a
