@@ -90,6 +90,41 @@
         }
 
         /**
+     * @member {Boolean} staysInContext - Pinned: filing passes this message
+     * by, so it stays in the AI-visible history, in place and byte-for-byte,
+     * while the messages around it are filed (an instruction the AI needs for
+     * as long as an activity lasts, such as a skill). Unpinned, the next
+     * filing takes it as usual. Not in the json schema (see filedToHistoryBlockId).
+     * @category History
+     */
+        {
+            const slot = this.newSlot("staysInContext", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setInspectorPath(this.svType());
+            slot.setIsInJsonSchema(false);
+            slot.setIsInCloudJson(true);
+        }
+
+        /**
+     * @member {Boolean} holdsEpisodeOpen - While set, the episode in progress
+     * is not filed automatically (fileSettledMessagesAsEpisodeUnlessHeldOpen):
+     * an activity that runs across scene changes — a chase, a fight that moves
+     * — stays one episode. A filing the AI asks for (pushHistory) still files.
+     * @category History
+     */
+        {
+            const slot = this.newSlot("holdsEpisodeOpen", false);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setInspectorPath(this.svType());
+            slot.setIsInJsonSchema(false);
+            slot.setIsInCloudJson(true);
+        }
+
+        /**
      * @member {Action} requestResponseAction - Action for requesting a response.
      * @category Actions
      */

@@ -1059,22 +1059,42 @@
     }
 
     /**
-   * @description The messages a filing would take: AI-visible, not yet
-   * filed, up to the first one still being written.
+   * @description Automatic filing (an app filing on its own, as on a scene
+   * change): files the settled buffer unless a message holds the episode
+   * open (holdsEpisodeOpen) — an activity still under way across the change.
+   * @param {String} title
+   * @param {String} [subtitle]
+   * @returns {Number} how many messages were filed (0: nothing, or held open)
+   * @category History
+   */
+    fileSettledMessagesAsEpisodeUnlessHeldOpen (title, subtitle = "") {
+        if (this.isEpisodeHeldOpen()) {
+            console.log(this.logPrefix(), "not filing '" + title + "': the episode is held open");
+            return 0;
+        }
+        return this.fileSettledMessagesAsEpisode(title, subtitle);
+    }
+
+    /**
+   * @description Whether a message holds the episode in progress open.
+   * @returns {Boolean}
+   * @category History
+   */
+    isEpisodeHeldOpen () {
+        return this.messages().some(m => m.holdsEpisodeOpen && m.holdsEpisodeOpen());
+    }
+
+    /**
+   * @description The messages a filing would take: those awaiting filing, up
+   * to the first one still being written.
    * @returns {Array<SvAiMessage>}
    * @category History
    */
     settledUnfiledMessages () {
         const candidates = [];
         for (const m of this.messages()) {
-            if (m.role() === "system") {
-                continue; // the system prompt is not part of any episode
-            }
-            if (m.filedToHistoryBlockId && m.filedToHistoryBlockId()) {
-                continue; // already filed in an earlier push
-            }
-            if (!m.isVisibleToAi || !m.isVisibleToAi()) {
-                continue; // private/UI-only (e.g. party chat) — never copy into AI-queryable history
+            if (!this.isAwaitingFiling(m)) {
+                continue;
             }
             if (!m.isComplete() && !m.hasError()) {
                 break; // unsettled — stop here so filed blocks stay contiguous
@@ -1082,6 +1102,28 @@
             candidates.push(m);
         }
         return candidates;
+    }
+
+    /**
+   * @description Whether filing would take a message once it settles: part
+   * of the AI's story, not filed yet, and not pinned in context. Pinned
+   * messages (staysInContext) stay where they are, unchanged, so every
+   * request's prefix up to them stays the same (prompt caching holds).
+   * @param {SvAiMessage} m
+   * @returns {Boolean}
+   * @category History
+   */
+    isAwaitingFiling (m) {
+        if (m.role() === "system") {
+            return false; // the system prompt is not part of any episode
+        }
+        if (m.filedToHistoryBlockId && m.filedToHistoryBlockId()) {
+            return false; // already filed in an earlier push
+        }
+        if (!m.isVisibleToAi || !m.isVisibleToAi()) {
+            return false; // private/UI-only (e.g. party chat) — never copy into AI-queryable history
+        }
+        return !(m.staysInContext && m.staysInContext());
     }
 
     /**
@@ -1194,19 +1236,14 @@
     }
 
     /**
-   * @description Count of AI-visible, settled, non-system messages not yet
-   * filed to a history block — the unfiled backlog that filing reminders
+   * @description Count of settled messages awaiting filing (pinned ones are
+   * not: they stay in context) — the unfiled backlog that filing reminders
    * key on.
    * @returns {Number}
    * @category History
    */
     unfiledSettledMessageCount () {
-        return this.messages().filter(m =>
-            m.role() !== "system"
-            && (m.isVisibleToAi ? m.isVisibleToAi() : true)
-            && (m.isComplete() || m.hasError())
-            && !(m.filedToHistoryBlockId && m.filedToHistoryBlockId())
-        ).length;
+        return this.messages().filter(m => this.isAwaitingFiling(m) && (m.isComplete() || m.hasError())).length;
     }
 
     /**

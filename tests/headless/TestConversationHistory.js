@@ -211,6 +211,56 @@ function testHistory () {
     check(reminder.includes(String(conv.unfiledSettledMessageCount())), "reminder carries the backlog count");
 }
 
+function testPinnedAndHeldOpen () {
+    const conv = newConversation();
+    addMessage(conv, "system", "system", "You are the GM.");
+    const a1 = addMessage(conv, "user", "Aria", "We enter the arena.");
+    const skill = addMessage(conv, "user", "engine", "<skill>combat rules</skill>");
+    skill.setStaysInContext(true);
+    const a2 = addMessage(conv, "assistant", "GM", "The gladiator charges.");
+
+    console.log("\nPinned messages stay in context through filing");
+    check(conv.unfiledSettledMessageCount() === 2, "backlog leaves the pinned message out");
+    check(conv.fileSettledMessagesAsEpisode("The Arena", "") === 2, "filing takes the messages around the pinned one");
+    const block1 = conv.history().blocks()[0];
+    check(a1.filedToHistoryBlockId() === block1.jsonId() && a2.filedToHistoryBlockId() === block1.jsonId(), "the messages around it are filed");
+    check(skill.filedToHistoryBlockId() === null, "the pinned message is not filed");
+    check(!block1.messages().subnodes().some(c => c.content() === skill.content()), "the pinned message is not copied into the block");
+
+    const b1 = addMessage(conv, "user", "Aria", "We chase him into the tunnels.");
+    conv.fileSettledMessagesAsEpisode("The Tunnels", "");
+    const visible = () => conv.messages().filter(m => m.isVisibleToAi());
+    const before = conv.composeJsonHistory(visible());
+    const pinnedDict = before.find(m => m.content === skill.content());
+    check(!!pinnedDict, "the pinned message is sent after its episode is superseded");
+    check(before.indexOf(pinnedDict) === 2, "in its place: after the superseded block's marker");
+    const collapsed = conv.composeJsonHistory(visible(), { collapseNewestBlock: true });
+    check(collapsed.some(m => m.content === skill.content()), "it survives the context-pressure collapse");
+    check(!collapsed.some(m => m.content === b1.content()), "while its neighbours collapse");
+
+    console.log("\nUnpinned, the next filing takes it");
+    skill.setStaysInContext(false);
+    addMessage(conv, "assistant", "GM", "The fight is over.");
+    check(conv.fileSettledMessagesAsEpisode("Aftermath", "") === 2, "filing takes the unpinned message and the new one");
+    check(skill.filedToHistoryBlockId() === conv.history().newestBlock().jsonId(), "the unpinned message is filed");
+
+    console.log("\nA message can hold the episode open");
+    const hold = addMessage(conv, "user", "engine", "<skill>chase rules</skill>");
+    hold.setStaysInContext(true);
+    hold.setHoldsEpisodeOpen(true);
+    addMessage(conv, "user", "Aria", "We run for the gate.");
+    check(conv.isEpisodeHeldOpen(), "held open while a message says so");
+    const blockCount = conv.history().blocks().length;
+    check(conv.fileSettledMessagesAsEpisodeUnlessHeldOpen("The Gate", "") === 0, "automatic filing waits");
+    check(conv.history().blocks().length === blockCount, "no block was made");
+    const push = newToolCall({ title: "The Gate" });
+    conv.pushHistory(push);
+    check(push.error === null && conv.history().blocks().length === blockCount + 1, "pushHistory still files when the AI asks");
+    hold.setHoldsEpisodeOpen(false);
+    addMessage(conv, "user", "Aria", "We are through.");
+    check(conv.fileSettledMessagesAsEpisodeUnlessHeldOpen("Beyond the Gate", "") === 1, "released, automatic filing files again");
+}
+
 function toolResultDict (toolName, result) {
     const payload = { callId: "c-" + Math.floor(result.length * 7 + toolName.length), toolName, result, status: "success" };
     return { role: "user", content: "<tool-call-result>\n" + JSON.stringify(payload, null, 2) + "\n</tool-call-result>" };
@@ -434,6 +484,7 @@ async function main () {
     console.log("Booted.\n");
 
     testHistory();
+    testPinnedAndHeldOpen();
     testResultRetention();
     testOutcomeOnly();
     testRetentionBoundaryCrossing();
