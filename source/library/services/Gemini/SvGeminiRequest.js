@@ -92,12 +92,14 @@
     }
 
     /**
-   * @description Returns the API URL for the request.
+   * @description Returns the API URL for the request: the endpoint of the
+   * model the request was made for (its chatModel).
    * @returns {Promise<string>} The API URL.
    * @category API Communication
    */
     async getApiUrl () {
-        return await SvGeminiService.shared().getChatEndpointWithKey();
+        const model = this.chatModel();
+        return await SvGeminiService.shared().getChatEndpointWithKey(model ? model.modelName() : undefined);
     }
 
     /**

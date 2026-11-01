@@ -213,12 +213,19 @@
     }
 
     /**
-   * @description Returns the chat endpoint URL with API key.
-   * @category API Communication
-   */
-    async getChatEndpointWithKey () {
+     * @description The streaming chat endpoint for a model, with the API key
+     * when it is a real Gemini key (proxy auth sends none). Gemini names the
+     * model in the URL, not the body, so this decides which model answers:
+     * until 2026-11-01 it always named the service's first model (Gemini 4
+     * Argon), whatever model the request was made for — every Gemini chat
+     * request, test runs' "Flash" GMs included, ran on Argon.
+     * @param {String} [modelName] - the request's model; the service's default when omitted
+     * @returns {Promise<String>}
+     * @category API Communication
+     */
+    async getChatEndpointWithKey (modelName = this.defaultChatModel().modelName()) {
         let url = this.endPointUrlFormat();
-        url = url.replaceAll("{model id}", this.defaultChatModel().modelName());
+        url = url.replaceAll("{model id}", modelName);
         url = url.replaceAll("{generate response method}", "streamGenerateContent");
 
         // Only include API key in URL if it's an actual Gemini API key (not a Firebase token)

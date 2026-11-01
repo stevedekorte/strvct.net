@@ -61,5 +61,15 @@ async function boot () { const b = (p) => import(pathToFileURL(path.join(strvctR
     shared.setSystemInstructionIsRefused(false);
     request.setBodyJson({ messages: [{ role: "system", content: "Short." }, { role: "user", content: "Hi." }] }); shared.prepareToSendRequest(request);
     check(!request.isRefusedSystemInstruction(), "a 400 to a short system_instruction is not read as a refusal");
+    // The endpoint names the REQUEST's model. Gemini takes the model from
+    // the URL, and until 2026-11-01 the URL always named the service's first
+    // model (Gemini 4 Argon): test runs' "Flash" GMs ran on Argon.
+    shared.apiKeyOrUserAuthToken = async () => "eyJproxy-token";
+    for (const name of ["gemini-3.8-flash", "gemini-4-argon"]) {
+        const model = shared.models().subnodes().find(m => m.modelName() === name);
+        const modelRequest = model.newChatRequest();
+        const url = await modelRequest.getApiUrl();
+        check(url.includes("/models/" + name + ":streamGenerateContent"), "a " + name + " request goes to " + name + "'s endpoint");
+    }
     console.log("\n" + pass + " passed, " + fail + " failed"); process.exit(fail === 0 ? 0 : 1);
 })().catch(e => { console.error("Test run failed:", e); process.exit(1); });
