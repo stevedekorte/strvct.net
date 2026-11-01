@@ -1330,6 +1330,16 @@
    * Stripping replaces json.result with the tool's setResultRetentionNote (or
    * a generic note); the CALL stays visible in the assistant text, so what
    * happened is never lost — only the payload.
+   *
+   * "keep-newest-only" and "recent-responses:N" age results out in BATCHES
+   * (resultRetentionBatchSize): they judge only the settled part of the
+   * history — up to the last whole batch of assistant responses — as if it
+   * ended there, and leave everything after it as stored. A result is
+   * stripped at a batch boundary, so the history is rewritten once per batch
+   * instead of every few responses. Each rewrite costs the prompt cache from
+   * the stripped message on, and a stripped result saves only its CACHED
+   * price per later request, so stripping often cost more than it saved
+   * (Gemini probes, 2026-11-01).
    * @param {Array} messages - The messages to filter.
    * @returns {Array} The filtered messages.
    * @category Session State
@@ -1348,9 +1358,14 @@
             // no chat model wired (headless fixture) — the generic name is right
         }
         const seenNewestOfTool = new Set();
+        const responseCount = messages.filter((m, index) => index >= 1 && m.role === assistantRoleName).length;
+        const openResponseCount = responseCount % this.resultRetentionBatchSize(); // responses after the last whole batch
         let assistantResponsesAfter = 0; // assistant messages strictly after the message being filtered
         for (let index = messages.length - 1; index >= 1; index--) { // skip index 0 (may be a system message)
             const m = messages[index];
+            const isAssistant = m.role === assistantRoleName;
+            const isOpen = assistantResponsesAfter + (isAssistant ? 1 : 0) <= openResponseCount; // after the last whole batch
+            const settledResponsesAfter = assistantResponsesAfter - openResponseCount;
             m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
                 let resultJson;
                 try {
@@ -1377,6 +1392,8 @@
                     // this tag's outbound bytes never change between requests.
                     // The .error/.reminder fields below survive: only .result
                     // is replaced.
+                } else if (isOpen) {
+                    return content; // after the last whole batch: aged out at the next boundary
                 } else if (policy === "keep-newest-only") {
                     if (!seenNewestOfTool.has(toolName)) {
                         seenNewestOfTool.add(toolName); // newest survives, whatever its age
@@ -1388,7 +1405,7 @@
                         console.warn(this.logPrefix(), "invalid recent-responses retention policy '" + policy + "' on tool '" + toolName + "' — keeping result");
                         return content;
                     }
-                    if (assistantResponsesAfter < windowSize) {
+                    if (settledResponsesAfter < windowSize) {
                         return content; // the model hasn't had N responses to act on it yet
                     }
                 } else {
@@ -1401,11 +1418,22 @@
                 resultJson.result = note;
                 return JSON.stableStringifyWithStdOptions(resultJson, null, 2);
             });
-            if (m.role === assistantRoleName) {
+            if (isAssistant) {
                 assistantResponsesAfter++;
             }
         }
         return this.appendNextCallIdNote(messages);
+    }
+
+    /**
+     * @description How many assistant responses make one batch of result
+     * aging (see onFilterJsonHistory): a result past its retention window is
+     * stripped when a batch completes, not on the next response.
+     * @returns {Number}
+     * @category Session State
+     */
+    resultRetentionBatchSize () {
+        return 10;
     }
 
     /**

@@ -320,4 +320,65 @@
         return new Set(["MALFORMED_RESPONSE", "OTHER"]);
     }
 
+    /**
+     * @description A 400 to a request whose system_instruction is very large
+     * is Gemini refusing its length, as it did from 2026-09-14 (see
+     * SvGeminiService.largeSystemInstructionChars). Send the request again
+     * with the system text opening the contents, and have the service lay
+     * out later requests that way too. Any other failure takes the usual
+     * path.
+     * @param {Error} e
+     * @category Error Handling
+     */
+    classifyRecovery (e) {
+        if (this.isRefusedSystemInstruction()) {
+            this.resendWithSystemTextInContents(e);
+            return;
+        }
+        super.classifyRecovery(e);
+    }
+
+    /**
+     * @description Whether this failure is a 400 to a system_instruction
+     * above the size Gemini once refused.
+     * @returns {Boolean}
+     * @category Error Handling
+     */
+    isRefusedSystemInstruction () {
+        const xhrRequest = this.currentXhrRequest();
+        if (!xhrRequest || xhrRequest.statusCode() !== 400) {
+            return false;
+        }
+        return this.systemInstructionText().length > SvGeminiService.shared().largeSystemInstructionChars();
+    }
+
+    /**
+     * @description The prepared body's system_instruction text ("" when it has none).
+     * @returns {String}
+     * @category Error Handling
+     */
+    systemInstructionText () {
+        const instruction = this.bodyJson().system_instruction;
+        return instruction ? instruction.parts.map(part => part.text || "").join("") : "";
+    }
+
+    /**
+     * @description Moves the system_instruction text to the front of the
+     * first user turn (the layout Gemini accepts at any length) and sends
+     * the request again.
+     * @param {Error} e
+     * @category Error Handling
+     */
+    resendWithSystemTextInContents (e) {
+        SvGeminiService.shared().setSystemInstructionIsRefused(true);
+        const body = this.bodyJson();
+        const firstPart = body.contents[0].parts[0];
+        firstPart.text = this.systemInstructionText() + "\n\n" + firstPart.text;
+        delete body.system_instruction;
+        console.warn(this.logPrefix(), "Gemini refused a " + firstPart.text.length + "-char system_instruction; resending it as the first turn");
+        e.message = "Resending the request with the system prompt as the first turn";
+        e.svIsRetrying = true;
+        this.retryWithDelay(0);
+    }
+
 }).initThisClass();

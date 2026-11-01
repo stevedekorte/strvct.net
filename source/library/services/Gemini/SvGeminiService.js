@@ -134,7 +134,19 @@
    * @category Initialization
    */
     initPrototypeSlots () {
-    /**
+        /**
+         * @member {Boolean} systemInstructionIsRefused - Gemini answered 400 to a
+         * large system_instruction this run, so system messages open the
+         * contents instead (see largeSystemInstructionChars). Not stored: a
+         * new run tries system_instruction again.
+         * @category Request Preparation
+         */
+        {
+            const slot = this.newSlot("systemInstructionIsRefused", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
      * @member {String} projectId
      * @category Configuration
      */
@@ -407,38 +419,57 @@
    * @category API Communication
    */
     /**
-     * @description The largest system prompt Gemini's `system_instruction`
-     * accepts. On 2026-09-14 Gemini began answering 400 INVALID_ARGUMENT to
-     * any request whose system_instruction exceeded roughly 350–375k chars
-     * (the same bytes had been accepted hours earlier); the same text as the
-     * first user turn is accepted at any length. 300k leaves margin.
-     * @returns {Number} characters
-     * @category Request Preparation
-     */
-    systemInstructionMaxChars () {
-        return 300000;
-    }
-
-    /**
      * @description Moves the conversation's system message into the Gemini
-     * body: as `system_instruction` when it fits, otherwise as the opening
-     * user turn (the model treats both as the standing brief). Either way the
-     * first user turn ends with the kickoff line so the model begins.
+     * body. Its stable part — up to the message's `stablePrefixLength`
+     * (SvAiMessage.markStablePrefix), or all of it — goes in
+     * `system_instruction`; the part after it and the kickoff line open the
+     * contents. Gemini's implicit cache checkpoints system_instruction on its
+     * own, so later edits to the history keep the prompt cached. Laid out as
+     * the opening user turn, any edit anywhere cost the whole cache: a
+     * world's conventions filling the tail, or an old tool result replaced
+     * (probes, 2026-11-01). Once Gemini has refused a system_instruction
+     * (systemInstructionIsRefused), the whole message opens the contents.
      * @param {Object} geminiBody
      * @param {Object} firstMessage - the system message, rewritten in place to a user turn
      * @category Request Preparation
      */
     placeSystemMessage (geminiBody, firstMessage) {
-        const kickoff = "Please begin the conversation now.";
         const text = firstMessage.content;
         firstMessage.role = this.userRoleName();
-        if (text.length <= this.systemInstructionMaxChars()) {
-            geminiBody.system_instruction = { parts: [{ text: text }] };
-            firstMessage.content = kickoff;
-        } else {
-            firstMessage.content = text + "\n\n" + kickoff;
+        if (this.systemInstructionIsRefused()) {
+            firstMessage.content = this.withKickoffLine(text);
+            return this;
         }
+        const at = Type.isNumber(firstMessage.stablePrefixLength) ? firstMessage.stablePrefixLength : text.length;
+        geminiBody.system_instruction = { parts: [{ text: text.slice(0, at) }] };
+        firstMessage.content = this.withKickoffLine(text.slice(at).trim());
         return this;
+    }
+
+    /**
+     * @description The text, then the line that has the model begin.
+     * @param {String} text - may be empty
+     * @returns {String}
+     * @category Request Preparation
+     */
+    withKickoffLine (text) {
+        const kickoff = "Please begin the conversation now.";
+        return text.length > 0 ? text + "\n\n" + kickoff : kickoff;
+    }
+
+    /**
+     * @description The system_instruction size above which a 400 is read as
+     * Gemini refusing its length. On 2026-09-14 Gemini answered 400
+     * INVALID_ARGUMENT to any system_instruction over roughly 350–375k chars
+     * and took the same text as the first user turn; by 2026-11-01 it
+     * accepted 500k on gemini-3.8-flash and gemini-4-argon alike.
+     * SvGeminiRequest.classifyRecovery resends such a request laid out the
+     * old way.
+     * @returns {Number} characters
+     * @category Request Preparation
+     */
+    largeSystemInstructionChars () {
+        return 300000;
     }
 
     /**

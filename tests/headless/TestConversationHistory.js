@@ -271,6 +271,7 @@ function testResultRetention () {
     const conv = newConversation();
     conv.prepareForFirstAccess(); // registers conversation tools (pushHistory) in toolDefinitions
 
+    conv.resultRetentionBatchSize = () => 1; // age per response here; batching has its own test
     const method = conv.pushHistory;
     const priorPolicy = method.resultRetentionPolicy();
     check(priorPolicy === "keep", "default policy is keep");
@@ -294,7 +295,8 @@ function testResultRetention () {
         toolResultDict("pushHistory", "OLD"),
         { role: "user", content: "filler 1" },
         toolResultDict("pushHistory", "NEW"),
-        { role: "user", content: "filler 2" }
+        { role: "user", content: "filler 2" },
+        { role: "assistant", content: "noted" }
     ];
     conv.onFilterJsonHistory(messages);
     check(!messages[1].content.includes("OLD") && messages[1].content.includes("superseded — call again"),
@@ -339,6 +341,35 @@ function testResultRetention () {
     check(messages[1].content.includes("PRECIOUS"), "unregistered tool results untouched (default keep)");
 
     method.setResultRetentionPolicy("keep"); // restore for any later checks
+}
+
+function testResultRetentionBatches () {
+    console.log("\nResult aging in batches: sent history is rewritten only when a batch of responses completes");
+    const conv = newConversation();
+    conv.prepareForFirstAccess();
+    conv.resultRetentionBatchSize = () => 3;
+    const method = conv.pushHistory;
+    method.setResultRetentionPolicy("recent-responses:1");
+    const stored = [{ role: "system", content: "sys" }];
+    let previous = null;
+    const rewrites = [];
+    for (let turn = 1; turn <= 9; turn++) {
+        stored.push(toolResultDict("pushHistory", "PAYLOAD-" + turn), { role: "assistant", content: "reply " + turn });
+        const sent = stored.map(m => Object.assign({}, m));
+        conv.onFilterJsonHistory(sent);
+        if (previous && previous.some((m, i) => m.content !== sent[i].content)) {
+            rewrites.push(turn);
+        }
+        previous = sent;
+    }
+    check(JSON.stringify(rewrites) === "[3,6,9]", "sent messages change only at batch boundaries (turns " + rewrites.join(",") + ")");
+    check(!previous[1].content.includes("PAYLOAD-1") && !previous[15].content.includes("PAYLOAD-8"), "at a boundary every result past its window is stripped");
+    const filtered = () => { const sent = stored.map(m => Object.assign({}, m)); conv.onFilterJsonHistory(sent); return sent; };
+    stored.push(toolResultDict("pushHistory", "PAYLOAD-10"));
+    check(filtered()[19].content.includes("PAYLOAD-10"), "a result with no response after it survives a boundary");
+    stored.push({ role: "assistant", content: "reply 10" });
+    check(filtered()[19].content.includes("PAYLOAD-10"), "between boundaries a result past its window waits for the next one");
+    method.setResultRetentionPolicy("keep");
 }
 
 function testOutcomeOnly () {
@@ -411,6 +442,7 @@ function testRetentionBoundaryCrossing () {
     console.log("\nCrossing another tool's retention boundary leaves outcome-only bytes stable (and does rewrite that tool's)");
     const conv = newConversation();
     conv.prepareForFirstAccess();
+    conv.resultRetentionBatchSize = () => 1; // the boundary on the next response
     conv.pushHistory.setResultRetentionPolicy("outcome-only");
     conv.pushHistory.setResultRetentionNote("outcome recorded");
 
@@ -486,6 +518,7 @@ async function main () {
     testHistory();
     testPinnedAndHeldOpen();
     testResultRetention();
+    testResultRetentionBatches();
     testOutcomeOnly();
     testRetentionBoundaryCrossing();
     testConversationEphemeralAppend();

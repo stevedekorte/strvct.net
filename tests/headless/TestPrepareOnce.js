@@ -31,14 +31,35 @@ async function boot () { const b = (p) => import(pathToFileURL(path.join(strvctR
     check(JSON.stringify(request.bodyJson()) === once, "…and leaves the body byte-identical");
     request.setBodyJson({ temperature: 0.7, top_p: 0.9, messages: [{ role: "user", content: "again" }] });
     check(request.hasPreparedBody() === false, "installing a new body clears the prepared flag");
-    // Oversized system prompt: Gemini caps system_instruction (400 INVALID_ARGUMENT
-    // above ~350k chars since 2026-09-14) but takes the same text as the first user turn.
-    const big = "x".repeat(service.systemInstructionMaxChars() + 1);
-    request.setBodyJson({ temperature: 0.7, top_p: 0.9, messages: [{ role: "system", content: big }, { role: "user", content: "Hello." }] });
-    service.prepareToSendRequest(request);
-    const body = request.bodyJson();
-    check(body.system_instruction === undefined, "an oversized system prompt is not sent as system_instruction");
-    check(body.contents[0].role === "user" && body.contents[0].parts[0].text.startsWith(big) && /Please begin the conversation now\.$/.test(body.contents[0].parts[0].text), "…it opens the first user turn, ending with the kickoff line");
+    // Prompt placement (2026-11-01): Gemini's implicit cache keeps a
+    // system_instruction cached through history edits, but the same prompt as
+    // the opening user turn was a full miss on any edit. So the stable part
+    // (before <stable-prefix-end/>) is the system_instruction, at any length,
+    // and the per-world tail opens the contents with the kickoff line.
+    const shared = SvGlobals.get("SvGeminiService").shared();
+    const stable = "S".repeat(400000);
+    const prepare = (messages) => { request.setBodyJson({ messages: messages }); shared.prepareToSendRequest(request); return request.bodyJson(); };
+    let body = prepare([{ role: "system", content: stable + "\n\nWorld: grim.", stablePrefixLength: stable.length }, { role: "user", content: "Hello." }]);
+    check(body.system_instruction && body.system_instruction.parts[0].text === stable, "the stable part (400k chars) is the system_instruction");
+    check(body.contents[0].role === "user" && body.contents[0].parts[0].text === "World: grim.\n\nPlease begin the conversation now.", "the tail opens the contents, then the kickoff line");
     check(body.contents[1].parts[0].text === "Hello.", "the real first user message follows it");
+    body = prepare([{ role: "system", content: "You are the GM." }, { role: "user", content: "Hello." }]);
+    check(body.system_instruction.parts[0].text === "You are the GM." && body.contents[0].parts[0].text === "Please begin the conversation now.", "with no stable boundary the whole prompt is the system_instruction");
+    // If Gemini refuses a large system_instruction again (400, as on
+    // 2026-09-14), the request is resent with the text opening the contents,
+    // and later requests are laid out that way.
+    body = prepare([{ role: "system", content: stable + "\n\nWorld: grim.", stablePrefixLength: stable.length }, { role: "user", content: "Hello." }]);
+    let resent = false; request.retryWithDelay = () => { resent = true; };
+    request.currentXhrRequest = () => ({ statusCode: () => 400 });
+    check(request.isRefusedSystemInstruction(), "a 400 to a 400k system_instruction reads as a refusal");
+    const err = new Error("400"); request.classifyRecovery(err);
+    body = request.bodyJson();
+    check(resent && err.svIsRetrying, "…the request is sent again");
+    check(body.system_instruction === undefined && body.contents[0].parts[0].text === stable + "\n\nWorld: grim.\n\nPlease begin the conversation now.", "…with the system text opening the first turn");
+    body = prepare([{ role: "system", content: stable + "\n\nWorld: grim.", stablePrefixLength: stable.length }, { role: "user", content: "Hello." }]);
+    check(body.system_instruction === undefined && body.contents[0].parts[0].text.startsWith(stable), "…and later requests open the contents with it");
+    shared.setSystemInstructionIsRefused(false);
+    request.setBodyJson({ messages: [{ role: "system", content: "Short." }, { role: "user", content: "Hi." }] }); shared.prepareToSendRequest(request);
+    check(!request.isRefusedSystemInstruction(), "a 400 to a short system_instruction is not read as a refusal");
     console.log("\n" + pass + " passed, " + fail + " failed"); process.exit(fail === 0 ? 0 : 1);
 })().catch(e => { console.error("Test run failed:", e); process.exit(1); });

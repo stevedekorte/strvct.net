@@ -245,10 +245,11 @@
     /**
      * A document hosted by a process of its own (a server-hosted session):
      * its principal, its scope (the caller a member and its owner) and its
-     * bus record. Answers { sessionId, principalUid }.
+     * bus record. usesTestModels: the process runs its AI on the cheaper
+     * models automated runs use. Answers { sessionId, principalUid }.
      */
-    async createHostedSession ({ title }) {
-        return this.callFunction("create-hosted-session", { title });
+    async createHostedSession ({ title, usesTestModels = false }) {
+        return this.callFunction("create-hosted-session", { title, usesTestModels });
     }
 
     /** The document's owner removes another member (their membership, bus access and liveness). */
