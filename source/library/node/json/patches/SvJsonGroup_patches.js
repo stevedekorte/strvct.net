@@ -78,6 +78,7 @@
         try {
             for (let i = 0; i < patches.length; i++) {
                 failedIndex = i;
+                this.checkValueAtApplyTime(patches[i]);
                 this.applyPatch(patches[i], this); // Pass this as the root node
             }
             return this;
@@ -99,6 +100,30 @@
                 throw enhancedError;
             }
             throw error;
+        }
+    }
+
+    /**
+     * @description The preflight's value check (preflightJsonTypes: unknown
+     * fields, unknown _type, bare elements), run again as an operation is
+     * applied, against the tree the earlier operations made. The preflight
+     * defers a target an earlier operation of the batch creates or reshapes,
+     * and deserializing only warns at an unknown field — so a value written
+     * there went unchecked: a companion moved into the party, then given a
+     * controller without its "_type", lost its persona to a plain controller
+     * while the patch reported success (2026-11-01).
+     * @param {Object} operation
+     * @category Preflight
+     */
+    checkValueAtApplyTime (operation) {
+        if (operation.op !== "add" && operation.op !== "replace") {
+            return;
+        }
+        const segments = this.parsePathSegments(operation.path);
+        const container = this.preflightNavigate(segments.slice(0, -1), new Set(), new Set());
+        const failure = container.failure ? null : this.preflightJsonTypes(operation, container, segments[segments.length - 1]);
+        if (failure) {
+            throw new SvJsonPatchError(failure, operation, segments, segments[segments.length - 1], container.node || null);
         }
     }
 
@@ -1176,9 +1201,32 @@
         if (currentNode && currentNode.setJson) {
             currentNode.setJson(value);
         } else {
-            slot.onInstanceSetValue(this, nodeClass.clone().setJson(value));
+            slot.onInstanceSetValue(this, this.jsonValueClass(declared, nodeClass, slot).clone().setJson(value));
         }
         return this;
+    }
+
+    /**
+     * @description The class a whole-object value written into an EMPTY slot
+     * becomes: the one its `_type` names, when that is a kind of the slot's
+     * class, else the slot's class. Building the slot's class regardless made
+     * {"_type":"UoAiController","personaPrompt":…} on a companion with no
+     * controller yet a plain controller, its persona dropped with a warning
+     * (2026-11-01).
+     * @param {Function|null} declared - the class `_type` names, or null
+     * @param {Function} nodeClass - the slot's class
+     * @param {Slot} slot
+     * @returns {Function}
+     * @category JSON Patch
+     */
+    jsonValueClass (declared, nodeClass, slot) {
+        if (!declared || declared === nodeClass) {
+            return nodeClass;
+        }
+        if (!declared.isKindOf(nodeClass)) {
+            throw new Error("_type '" + declared.svType() + "' is not a kind of " + nodeClass.svType() + ", the class of slot '" + slot.name() + "'");
+        }
+        return declared;
     }
 
     /**

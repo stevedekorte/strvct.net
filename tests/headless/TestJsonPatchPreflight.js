@@ -63,6 +63,14 @@ function defineClasses () {
                 slot.setIsInJsonSchema(true);
                 slot.setShouldStoreSlot(true);
             }
+            {
+                // a nullable group slot inside an element: a target an earlier operation can create
+                const slot = this.newSlot("details", null);
+                slot.setAllowsNullValue(true);
+                slot.setIsInJsonSchema(true);
+                slot.setShouldStoreSlot(true);
+                slot.setSlotType("TestPfDetails");
+            }
         }
     }).initThisClass();
 
@@ -274,6 +282,25 @@ async function main () {
     root = newRoot();
     r = refusal(root, [{ op: "add", path: "/items/-", value: { _type: "TestPfItem", name: "real" } }]);
     check(r === null && root.items().subnodes().at(3).name() === "real", "an element naming a real class still applies");
+
+    console.log("\nA value the preflight defers is checked as it is applied");
+    root = newRoot();
+    // /items/3 exists only once op 0 has run, so the preflight cannot judge op 1's value
+    r = refusal(root, [{ op: "add", path: "/items/-", value: { name: "d" } }, { op: "replace", path: "/items/3/details", value: { heading: "h", flourish: "s" } }]);
+    check(r && !r.refusedBeforeApply && r.failedOpIndex === 1 && String(r.error || "").includes("name the class with \"_type\": \"TestPfRichDetails\""), "a subclass's field without a _type, in an element the batch adds, is refused at apply time" + (r ? "" : " — it applied") + " (" + JSON.stringify(r && r.error).slice(0, 160) + ")");
+    check(r && String(r.stateNote).includes("NOT atomic"), "…reporting what stayed applied");
+    root = newRoot();
+    r = refusal(root, [{ op: "add", path: "/items/-", value: { name: "d" } }, { op: "replace", path: "/items/3/details", value: { _type: "TestPfRichDetails", heading: "h", flourish: "s" } }]);
+    const added = root.items().subnodes().at(3);
+    check(r === null && added && added.details() && added.details().svType() === "TestPfRichDetails", "…and with the _type it applies as that subclass" + (r ? " — refused: " + JSON.stringify(r) : ""));
+
+    root = newRoot();
+    r = refusal(root, [{ op: "replace", path: "/items/0/details", value: { _type: "TestPfRichDetails", heading: "h", flourish: "s" } }]);
+    const filled = root.items().subnodes().at(0).details();
+    check(r === null && filled && filled.svType() === "TestPfRichDetails" && filled.flourish() === "s", "an EMPTY group slot written with a _type becomes that class (got " + (filled && filled.svType()) + ")");
+    root = newRoot();
+    r = refusal(root, [{ op: "replace", path: "/items/0/details", value: { _type: "TestPfItem", name: "x" } }]);
+    check(r && /not a kind of TestPfDetails/.test(String(r.error || r.message || JSON.stringify(r))), "…and a _type that is not a kind of the slot's class is refused");
 
     console.log("\nA valid batch applies exactly as before");
     root = newRoot();
