@@ -401,6 +401,11 @@
             return null;
         }
         this.conversation().assertNoUncompletedBlockingToolCalls();
+        // queued nextTurn runtime event reports ride a user turn: they go out
+        // as an invisible message after this one, which requests the reply
+        if (this.isUserMessage() && this.conversation().assistantToolKit().sendRuntimeEventReportsWithUserTurn()) {
+            return null;
+        }
 
 
         const response = this.conversation().newMessageOfClass(this.responseMsgClass());

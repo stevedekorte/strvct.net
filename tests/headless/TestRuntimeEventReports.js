@@ -146,6 +146,32 @@ async function testDrain () {
     check(conv.messages().length === messageCount, "empty drain sends nothing");
 }
 
+async function testRidesUserTurn () {
+    console.log("\nnextTurn rides the next user chat turn");
+    const conv = newConversation();
+    const kit = conv.assistantToolKit();
+
+    check(kit.sendRuntimeEventReportsWithUserTurn() === false, "nothing queued: a user turn goes out as it is");
+
+    kit.addRuntimeEventReport(kit.newRuntimeEventReport().setType("sceneImageShown").setInfo({ caption: "the bluff above Saltmere" }));
+    // a player's line, with the real requestResponse (not the fixture's stub)
+    const playerMsg = SvGlobals.get("SvAiConversation").prototype.newUserMessage.call(conv);
+    playerMsg.setContent("What stands out most?");
+    const returned = playerMsg.requestResponse();
+    await new Promise((r) => setTimeout(r, 50)); // completion schedules the reply
+    const sent = invisibleMessages(conv);
+    check(returned === null, "the player's message hands its turn to the reports' message");
+    check(sent.length === 1 && sent[0].speakerName() === "Runtime Events", "the queued report went out as one invisible message");
+    check(sent.length === 1 && sent[0].content().includes("the bluff above Saltmere"), "the message carries the report");
+    check(conv.messages().indexOf(sent[0]) > conv.messages().indexOf(playerMsg), "the reports follow the player's line");
+    check(conv.requestedResponses.length === 1 && conv.requestedResponses[0] === sent[0], "one turn is requested, by the reports' message");
+    check(kit.runtimeEventReports().pendingReports().length === 0, "the queue is empty");
+
+    const mirror = newConversation();
+    mirror.shouldProcessToolCalls = () => false;
+    check(mirror.assistantToolKit().sendRuntimeEventReportsWithUserTurn() === false, "a mirror conversation never sends reports with a user turn");
+}
+
 async function testLoopGuard () {
     console.log("\nloop guard");
     const conv = newConversation();
@@ -225,6 +251,7 @@ async function testCaptureSites () {
 
     await testFactoryAndQueue();
     await testDrain();
+    await testRidesUserTurn();
     await testLoopGuard();
     await testMirrorGate();
     await testCaptureSites();

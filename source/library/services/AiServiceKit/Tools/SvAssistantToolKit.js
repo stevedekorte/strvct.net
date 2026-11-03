@@ -377,6 +377,36 @@ The following formats will be used for tool calls and responses:
         });
     }
 
+    /**
+     * @description Empties the queue into `<runtime-event>` blocks for a
+     * message about to go out, and counts the send for the loop guard.
+     * @returns {Array<String>}
+     * @category Runtime Events
+     */
+    drainRuntimeEventBlocks () {
+        const drainedReports = this.runtimeEventReports().pendingReports();
+        this.runtimeEventReports().removeReports(drainedReports);
+        this.updateRuntimeEventGuard(drainedReports);
+        return drainedReports.map(r => r.composeRuntimeEventBlock());
+    }
+
+    /**
+     * @description The "ride the next user chat turn" leg of nextTurn: when
+     * a user message is about to request a reply and reports are queued,
+     * they go out as one invisible message after it. That message's
+     * completion requests the reply, so the turn's request carries the
+     * user's line and the reports together.
+     * @returns {Boolean} true when a reports message went out and now drives the turn
+     * @category Runtime Events
+     */
+    sendRuntimeEventReportsWithUserTurn () {
+        if (!this._shouldProcessToolCalls() || this.runtimeEventReports().pendingReports().length === 0) {
+            return false;
+        }
+        this.newCallResponseMessage("Runtime Events", this.drainRuntimeEventBlocks().join("\n\n"));
+        return true;
+    }
+
     // --- sending ---
 
     async sendCompletedToolCallResponses () {
@@ -401,10 +431,7 @@ The following formats will be used for tool calls and responses:
             if (callsNeedingResponse.length > 0) {
                 parts.push(this.composeResponseForToolCalls(completedCalls));
             }
-            const drainedReports = this.runtimeEventReports().pendingReports();
-            drainedReports.forEach(r => parts.push(r.composeRuntimeEventBlock()));
-            this.runtimeEventReports().removeReports(drainedReports);
-            this.updateRuntimeEventGuard(drainedReports);
+            parts.push(...this.drainRuntimeEventBlocks());
             const speakerName = callsNeedingResponse.length > 0 ? "Tool Call Results" : "Runtime Events";
             this.newCallResponseMessage(speakerName, parts.join("\n\n"));
         }
