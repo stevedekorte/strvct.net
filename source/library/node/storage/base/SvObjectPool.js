@@ -2096,6 +2096,36 @@
     }
 
     /**
+     * @description A record whose class can't be loaded (renamed or removed
+     * with no conversion for this pool) loads as null, so its parent's list in
+     * memory is short by it. Nothing is lost until that list is next edited:
+     * the rewrite drops the entry, collection deletes it and its subtree, and
+     * the next cloud commit deletes them at the current version (shown
+     * headlessly 2026-11-04; Cleanup § 4). Sent as an error report, once per
+     * class name per process, to learn whether any stored data is in this
+     * state before deciding on a fix.
+     * @param {String} className
+     * @category Loading
+     */
+    reportMissingClass (className) {
+        const message = "missing class '" + className + "' - loading its record as null (pool " + this.poolId() + ")";
+        console.warn(this.logPrefix() + message);
+        if (SvObjectPool.isFirstMissingClassReport(className) && SvGlobals.has("SvErrorReport")) {
+            SvErrorReport.asyncSend(new Error(message), { kind: "missing-class", className: className, poolId: this.poolId(), rootType: this.rootObject() ? this.rootObject().svType() : null });
+        }
+        return this;
+    }
+
+    static isFirstMissingClassReport (className) {
+        if (!this._reportedMissingClassNames) {
+            this._reportedMissingClassNames = new Set();
+        }
+        const isFirst = !this._reportedMissingClassNames.has(className);
+        this._reportedMissingClassNames.add(className);
+        return isFirst;
+    }
+
+    /**
      * @description get the object for the given record
      * @param {Object} aRecord - the record to get the object for
      * @returns {Object}
@@ -2110,10 +2140,7 @@
         const aClass = this.loadClassFor(this.classForName(className));
 
         if (!aClass) {
-            const error = "missing class '" + className + "' - returning null";
-            console.warn(error);
-            //throw new Error(error);
-
+            this.reportMissingClass(className);
             return null;
         }
         assert(!Type.isNullOrUndefined(aRecord.id));
