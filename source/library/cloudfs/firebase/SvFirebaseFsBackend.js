@@ -44,6 +44,17 @@
             const slot = this.newSlot("blobPathPrefix", "blobs/");
             slot.setSlotType("String");
         }
+        {
+            // The live nodes this backend has announced and not cleared, by
+            // "sessionId/uid" → payload: written again after every reconnect.
+            const slot = this.newSlot("announcedLiveNodes", null);
+            slot.setSlotType("Map");
+        }
+        {
+            // Whether the .info/connected watch that re-announces them is installed.
+            const slot = this.newSlot("isWatchingConnection", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     initPrototype () {
@@ -324,8 +335,23 @@
      * (displayName, characterId, characterJson, isConnected).
      */
     async setLiveNode (sessionId, uid, data) {
-        const ref = this._liveRef(sessionId).child(uid);
         const payload = Object.assign({}, data || {});
+        this.liveNodesToAnnounce().set(sessionId + "/" + uid, { sessionId, uid, payload });
+        this.watchConnectionOnce();
+        await this.writeLiveNode(sessionId, uid, payload);
+    }
+
+    /**
+     * @description Writes one live node and arms its onDisconnect removal.
+     * @param {String} sessionId
+     * @param {String} uid
+     * @param {Object} data
+     * @returns {Promise}
+     * @category Liveness
+     */
+    async writeLiveNode (sessionId, uid, data) {
+        const ref = this._liveRef(sessionId).child(uid);
+        const payload = Object.assign({}, data);
         payload.connectedAt = firebase.database.ServerValue.TIMESTAMP;
         // The onDisconnect arm is its OWN server round-trip with its own
         // promise — a rejection here (PERMISSION_DENIED after the session's
@@ -342,11 +368,63 @@
      * onDisconnect so it doesn't fire spuriously after.
      */
     async clearLiveNode (sessionId, uid) {
+        this.liveNodesToAnnounce().delete(sessionId + "/" + uid);
         const ref = this._liveRef(sessionId).child(uid);
         // Same unhandled-rejection hazard as the arm in setLiveNode.
         ref.onDisconnect().cancel().catch((e) =>
             console.warn("[SvFirebaseFsBackend] onDisconnect cancel failed (scope deleted?):", e && e.message));
         await ref.remove();
+    }
+
+    /**
+     * @description The live nodes to write again after a reconnect.
+     * @returns {Map}
+     * @category Liveness
+     */
+    liveNodesToAnnounce () {
+        if (!this.announcedLiveNodes()) {
+            this.setAnnouncedLiveNodes(new Map());
+        }
+        return this.announcedLiveNodes();
+    }
+
+    /**
+     * @description RTDB runs onDisconnect on the server when a connection
+     * drops, removing the live node, and a reconnect does not put it back:
+     * without this, one network blip left a member absent for good — a table
+     * worker read as "The host is offline" by every player while it ran on.
+     * So on every reconnect each announced node is written again, and its
+     * onDisconnect re-armed (Firebase's documented presence pattern).
+     * @category Liveness
+     */
+    watchConnectionOnce () {
+        if (this.isWatchingConnection()) {
+            return;
+        }
+        this.setIsWatchingConnection(true);
+        let wasConnected = null;
+        firebase.database().ref(".info/connected").on("value", (snap) => {
+            const isConnected = snap.val() === true;
+            if (isConnected && wasConnected === false) {
+                this.reannounceLiveNodes();
+            } else if (!isConnected && wasConnected === true) {
+                console.warn("[SvFirebaseFsBackend] realtime database disconnected — " + this.liveNodesToAnnounce().size + " live node(s) to re-announce on reconnect");
+            }
+            wasConnected = isConnected;
+        });
+    }
+
+    /**
+     * @description Writes every announced live node again (after a reconnect).
+     * @category Liveness
+     */
+    reannounceLiveNodes () {
+        const nodes = Array.from(this.liveNodesToAnnounce().values());
+        console.warn("[SvFirebaseFsBackend] realtime database reconnected — re-announcing " + nodes.length + " live node(s)");
+        nodes.forEach((n) => {
+            this.writeLiveNode(n.sessionId, n.uid, n.payload).catch((e) =>
+                console.warn("[SvFirebaseFsBackend] live node re-announce failed:", e && e.message));
+        });
     }
 
     /**
