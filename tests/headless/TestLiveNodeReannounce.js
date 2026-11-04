@@ -72,6 +72,7 @@ async function main () {
         db.setConnected(true); // the first connection
         await new Promise(r => setTimeout(r, 0));
         const firstSets = db.sets.length;
+        check(firstSets === 1, "the first connection is not taken for a reconnect: one write, not two (" + firstSets + ")");
         check(db.sets.some(s => s.path === "live/session1/uidA" && s.value.isHost === true), "its live node is written");
         check(db.arms.includes("live/session1/uidA"), "with its onDisconnect removal armed");
 

@@ -402,12 +402,14 @@
             return;
         }
         this.setIsWatchingConnection(true);
-        let wasConnected = null;
+        let hasDropped = false; // the first connection is not a reconnect: the announce itself wrote the nodes
+        let wasConnected = false;
         firebase.database().ref(".info/connected").on("value", (snap) => {
             const isConnected = snap.val() === true;
-            if (isConnected && wasConnected === false) {
+            if (isConnected && !wasConnected && hasDropped) {
                 this.reannounceLiveNodes();
-            } else if (!isConnected && wasConnected === true) {
+            } else if (!isConnected && wasConnected) {
+                hasDropped = true;
                 console.warn("[SvFirebaseFsBackend] realtime database disconnected — " + this.liveNodesToAnnounce().size + " live node(s) to re-announce on reconnect");
             }
             wasConnected = isConnected;
