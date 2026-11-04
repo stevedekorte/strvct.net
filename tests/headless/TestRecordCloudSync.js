@@ -182,7 +182,7 @@ async function main () {
         await imported.commitStoreDirtyObjects();
         await imported.promiseCollect();
         small = await imported.asyncCommitToCloud(cloud);
-        smallTrips = tripLines.filter(l => l.includes("TRIPWIRE")).length;
+        smallTrips = tripLines.filter(l => /^\[SvObjectPool\] TRIPWIRE/.test(l)).length;
         kids.slice(1).forEach(k => doc.removeSubnode(k));
         await imported.commitStoreDirtyObjects();
         await imported.promiseCollect();
@@ -190,7 +190,7 @@ async function main () {
     } finally {
         console.error = origError;
     }
-    const trips = tripLines.filter(l => l.includes("TRIPWIRE"));
+    const trips = tripLines.filter(l => /^\[SvObjectPool\] TRIPWIRE/.test(l)); // the pool's own line (a failed error-report send in this offline test logs too)
     check(small.status === "committed" && smallTrips === 0, "deleting one record of eight does not trip");
     check(trips.length === 1 && /deletes 14 of the 16 records/.test(trips[0]), "deleting the other seven (14 of 16 records: each node and its subnode array) trips, saying how many (" + (trips[0] || "none").split("\n")[0] + ")");
     check(blank.status === "committed", "report only: the commit is still sent");

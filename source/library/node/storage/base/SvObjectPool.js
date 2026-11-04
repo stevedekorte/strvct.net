@@ -794,7 +794,12 @@
         const deleteCount = changed.deletes.length;
         const trips = deleteCount >= 5 && deleteCount * 2 >= syncedCount;
         if (trips) {
-            console.error(this.logPrefix() + "TRIPWIRE: commit deletes " + deleteCount + " of the " + syncedCount + " records the cloud holds (writes " + Object.keys(changed.writes).length + ") — a wrongly loaded document saved over the real one? Pool " + this.poolId() + ", root " + (this.rootObject() ? this.rootObject().svTypeId() : "?") + "\n" + new Error().stack);
+            const error = new Error("TRIPWIRE: commit deletes " + deleteCount + " of the " + syncedCount + " records the cloud holds (writes " + Object.keys(changed.writes).length + ") — a wrongly loaded document saved over the real one?");
+            const rootType = this.rootObject() ? this.rootObject().svType() : null;
+            console.error(this.logPrefix() + error.message + " Pool " + this.poolId() + ", root " + rootType + "\n" + error.stack);
+            if (SvGlobals.has("SvErrorReport")) {
+                SvErrorReport.asyncSend(error, { kind: "blank-commit", rootType: rootType, poolId: this.poolId(), deletes: deleteCount, synced: syncedCount });
+            }
         }
         return trips;
     }
