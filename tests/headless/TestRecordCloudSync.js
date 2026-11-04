@@ -166,6 +166,34 @@ async function main () {
     const back = await store3.asyncImportOpenedPool(openedScoped, pool.poolId());
     check(back.poolId() === pool.poolId() && back.rootObject() && back.rootObject().label() === "v5", "importing it back maps the rows to the local pool id");
     check(store3.rowForKey(pool.poolId(), pool.poolId()) && !store3.rowForKey(scoped, pool.poolId()), "no row is stored under the scoped id locally");
+
+    console.log("\nThe save-side tripwire reports a commit that deletes most of the document (Cleanup § 4)");
+    const doc = imported.rootObject();
+    const kids = [];
+    for (let i = 0; i < 8; i++) { const k = TestCloudDoc.clone(); k.setLabel("kid " + i); doc.addSubnode(k); kids.push(k); }
+    await imported.commitStoreDirtyObjects();
+    check((await imported.asyncCommitToCloud(cloud)).status === "committed", "eight records committed");
+    const tripLines = [];
+    const origError = console.error;
+    console.error = (...args) => { tripLines.push(args.join(" ")); };
+    let small = null, smallTrips = 0, blank = null;
+    try {
+        doc.removeSubnode(kids[0]);
+        await imported.commitStoreDirtyObjects();
+        await imported.promiseCollect();
+        small = await imported.asyncCommitToCloud(cloud);
+        smallTrips = tripLines.filter(l => l.includes("TRIPWIRE")).length;
+        kids.slice(1).forEach(k => doc.removeSubnode(k));
+        await imported.commitStoreDirtyObjects();
+        await imported.promiseCollect();
+        blank = await imported.asyncCommitToCloud(cloud);
+    } finally {
+        console.error = origError;
+    }
+    const trips = tripLines.filter(l => l.includes("TRIPWIRE"));
+    check(small.status === "committed" && smallTrips === 0, "deleting one record of eight does not trip");
+    check(trips.length === 1 && /deletes 14 of the 16 records/.test(trips[0]), "deleting the other seven (14 of 16 records: each node and its subnode array) trips, saying how many (" + (trips[0] || "none").split("\n")[0] + ")");
+    check(blank.status === "committed", "report only: the commit is still sent");
     await pool.promiseClose();
 }
 

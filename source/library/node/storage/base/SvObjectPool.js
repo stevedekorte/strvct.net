@@ -741,6 +741,7 @@
         const rootRow = this.rowForPid(this.poolId());
         assert(rootRow, "the pool has no root row to commit");
         const changed = this.cloudChanges();
+        this.reportIfCommitLooksBlank(changed);
         const projection = options.projection || null;
         const projected = projection ? projection.changes() : null;
         if (changed.isEmpty) {
@@ -775,6 +776,38 @@
             return Object.assign({ commit: commit }, result); // what was refused, for the caller to tell whether reloading loses it
         }
         return result;
+    }
+
+    /**
+     * @description Save-side tripwire (Cleanup § 4), report only: a commit that
+     * deletes at least half the records the cloud holds (and at least 5) looks
+     * like a wrongly loaded, default-initialized document saved over the real
+     * one, the class of bug that has destroyed data. A delete tombstones the
+     * record's payload, so the error is logged (and reported) before it goes.
+     * The commit is still sent; whether to refuse is decided from these reports.
+     * @param {Object} changed - cloudChanges()
+     * @returns {Boolean} whether it tripped
+     * @category Cloud Mirror
+     */
+    reportIfCommitLooksBlank (changed) {
+        const syncedCount = this.syncedRecordCount();
+        const deleteCount = changed.deletes.length;
+        const trips = deleteCount >= 5 && deleteCount * 2 >= syncedCount;
+        if (trips) {
+            console.error(this.logPrefix() + "TRIPWIRE: commit deletes " + deleteCount + " of the " + syncedCount + " records the cloud holds (writes " + Object.keys(changed.writes).length + ") — a wrongly loaded document saved over the real one? Pool " + this.poolId() + ", root " + (this.rootObject() ? this.rootObject().svTypeId() : "?") + "\n" + new Error().stack);
+        }
+        return trips;
+    }
+
+    /**
+     * @description How many records the last synced snapshot holds (the cloud's
+     * copy as this pool last saw it), not counting its bookkeeping entries.
+     * @returns {Number}
+     * @category Cloud Mirror
+     */
+    syncedRecordCount () {
+        const snapshot = this.lastSyncedSnapshot() || {};
+        return Object.keys(snapshot).filter(pid => pid !== this.rootKey() && pid !== this.placementsKey()).length;
     }
 
     cloudCommitFor (changed, rootRow, options) {
