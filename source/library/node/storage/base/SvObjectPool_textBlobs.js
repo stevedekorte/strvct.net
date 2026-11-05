@@ -14,71 +14,180 @@
  */
 (class SvObjectPool_textBlobs extends SvObjectPool {
 
+    initPrototypeSlots_textBlobs () {
+        {
+            /**
+             * @member {WeakMap} unresolvedTextHashes - object → Map(slot name → hash)
+             * of spilled text that was missing when the object loaded
+             * @category Text Blobs
+             */
+            const slot = this.newSlot("unresolvedTextHashes", null);
+            slot.setSlotType("WeakMap");
+            slot.setAllowsNullValue(true);
+            slot.setDescription("object → Map(slot name → hash) of spilled text missing at load: while the slot still reads \"\", a save writes the hash back rather than the blank");
+        }
+    }
+
     // --- BlobString: spilled text (Plans/Record Store §5) ---
 
     /**
-     * @description Names a spilled string's blob and stores the bytes: the record
-     * keeps { "#": hash }. The hash is computed synchronously (the store pass is
-     * synchronous); the blob store computes the same digest of the same bytes.
+     * @description The record entry for a BlobString slot's value, or null when
+     * the value stays inline: the kept hash of text that was missing at load
+     * (the slot still reads ""), or the hash of a value over the spill length.
+     * @param {Object} anObject
+     * @param {String} slotName
+     * @param {*} value - the slot's current value
+     * @returns {Object|null} { "#": hash } or null
      * @category Text Blobs
      */
-    hashForSpilledText (text) {
-        const hash = text.hexSha256Sync();
-        const store = this.recordStore();
-        if (!store.textBlobs().has(hash)) {
-            store.textBlobs().set(hash, text);
-            if (this.blobPool().isOpen()) {
-                this.blobPool().asyncStoreBlob(new Blob([text], { type: "text/plain" })).catch((e) => {
-                    console.warn(this.logPrefix() + "could not store text blob " + hash.slice(0, 8) + ": " + (e && e.message));
-                });
-            }
+    spilledEntryFor (anObject, slotName, value) {
+        const kept = this.keptTextHashFor(anObject, slotName, value);
+        if (kept) {
+            return { "#": kept };
         }
-        return hash;
+        if (Type.isString(value) && value.length > Slot.blobStringSpillLength()) {
+            return { "#": this.hashForSpilledText(value) };
+        }
+        return null;
     }
 
     /**
-     * @description The text behind a { "#": hash } entry, from the store's text
-     * blob cache filled at open (asyncPrefetchTextBlobs); a blob that never
-     * arrived reads as an empty string (logged once).
+     * @description Names a spilled string's blob and stores the bytes: the record
+     * keeps { "#": hash }. Text this store already knows (loaded, or saved
+     * before) is named from the cache; only new text is hashed, synchronously
+     * (the store pass is synchronous) — the blob store computes the same digest
+     * of the same bytes.
+     * @param {String} text
+     * @returns {String} hash
      * @category Text Blobs
      */
-    textForSpilledHash (hash) {
-        const text = this.recordStore().textBlobs().get(hash);
-        if (text === undefined) {
-            if (this.shouldReportMissingPid(hash)) {
-                console.warn(this.logPrefix() + "spilled text blob " + hash.slice(0, 8) + " is not available — reading it as empty");
-            }
-            return "";
+    hashForSpilledText (text) {
+        const known = this.recordStore().textHashes().get(text);
+        if (known) {
+            return known;
         }
-        return text;
+        const hash = text.hexSha256Sync();
+        this.recordStore().cacheTextBlob(hash, text);
+        this.storeTextBlob(hash, text);
+        return hash;
+    }
+
+    storeTextBlob (hash, text) {
+        if (this.blobPool().isOpen()) {
+            this.blobPool().asyncStoreBlob(new Blob([text], { type: "text/plain" })).catch((e) => {
+                console.warn(this.logPrefix() + "could not store text blob " + hash.slice(0, 8) + ": " + (e && e.message));
+            });
+        }
+    }
+
+    /**
+     * @description The text behind an object's { "#": hash } entry, from the
+     * store's text blob cache filled at open (asyncPrefetchTextBlobsForRows).
+     * A blob that never arrived reads as "", is reported, and its hash is kept
+     * so a save of the object writes it back instead of the blank.
+     * @param {Object} anObject
+     * @param {String} slotName
+     * @param {String} hash
+     * @returns {String}
+     * @category Text Blobs
+     */
+    spilledTextFor (anObject, slotName, hash) {
+        const text = this.recordStore().textBlobs().get(hash);
+        if (text !== undefined) {
+            return text;
+        }
+        this.keepTextHash(anObject, slotName, hash);
+        this.reportMissingTextBlob(anObject, slotName, hash);
+        return "";
+    }
+
+    keepTextHash (anObject, slotName, hash) {
+        if (!this.unresolvedTextHashes()) {
+            this.setUnresolvedTextHashes(new WeakMap());
+        }
+        const map = this.unresolvedTextHashes();
+        if (!map.has(anObject)) {
+            map.set(anObject, new Map());
+        }
+        map.get(anObject).set(slotName, hash);
+    }
+
+    /**
+     * @description The hash kept for a slot whose text was missing at load,
+     * while the slot still reads "". Any other value is a real edit: the kept
+     * hash is dropped and the value is stored as itself. (Setting "" on purpose
+     * is indistinguishable from never touching it; the hash is kept then too.)
+     * @category Text Blobs
+     */
+    keptTextHashFor (anObject, slotName, value) {
+        const map = this.unresolvedTextHashes() ? this.unresolvedTextHashes().get(anObject) : undefined;
+        const hash = map ? map.get(slotName) : undefined;
+        if (!hash) {
+            return null;
+        }
+        if (value === "") {
+            return hash;
+        }
+        map.delete(slotName);
+        return null;
+    }
+
+    reportMissingTextBlob (anObject, slotName, hash) {
+        if (!this.shouldReportMissingPid(hash)) {
+            return;
+        }
+        const message = "spilled text blob " + hash.slice(0, 8) + " for " + anObject.svType() + "." + slotName + " is not available: it reads as empty, and saves keep its hash";
+        console.warn(this.logPrefix() + message);
+        if (SvGlobals.has("SvErrorReport")) {
+            SvErrorReport.asyncSend(new Error(message), { kind: "missing-text-blob", hash: hash, slotName: slotName, type: anObject.svType(), poolId: this.poolId() });
+        }
     }
 
     /**
      * @description Loads every text blob the given rows refer to into the store's
      * cache before any record is materialized — spilled text is fetched with its
-     * record, never on access. Blobs missing locally are asked of the missing-
-     * text-blob fetcher (the app's cloud blob path) when one is installed.
+     * record, never on access. Missing blobs are fetched several at a time.
      * @param {Array} rows
      * @category Text Blobs
      */
     async asyncPrefetchTextBlobsForRows (rows) {
-        const store = this.recordStore();
+        const queue = Array.from(this.uncachedTextHashesIn(rows));
+        const fetchNext = async () => {
+            while (queue.length > 0) {
+                const hash = queue.shift();
+                const text = await this.asyncFetchTextBlob(hash);
+                if (Type.isString(text)) {
+                    this.recordStore().cacheTextBlob(hash, text);
+                }
+            }
+        };
+        const workerCount = Math.min(SvObjectPool.textBlobFetchConcurrency(), queue.length);
+        await Promise.all(Array.from({ length: workerCount }, fetchNext));
+        return this;
+    }
+
+    static textBlobFetchConcurrency () {
+        return 6;
+    }
+
+    /**
+     * @description The { "#": hash } references in the rows' payloads that the
+     * store's text cache does not hold yet.
+     * @param {Array} rows
+     * @returns {Set<String>}
+     * @category Text Blobs
+     */
+    uncachedTextHashesIn (rows) {
+        const textBlobs = this.recordStore().textBlobs();
         const hashes = new Set();
         const pattern = /"#":"([0-9a-f]{64})"/g;
         rows.forEach((row) => {
             if (!row.payloadJson) { return; }
-            let match;
-            while ((match = pattern.exec(row.payloadJson)) !== null) {
-                if (!store.textBlobs().has(match[1])) { hashes.add(match[1]); }
+            for (const match of row.payloadJson.matchAll(pattern)) {
+                if (!textBlobs.has(match[1])) { hashes.add(match[1]); }
             }
         });
-        for (const hash of hashes) {
-            const text = await this.asyncFetchTextBlob(hash);
-            if (Type.isString(text)) {
-                store.textBlobs().set(hash, text);
-            }
-        }
-        return this;
+        return hashes;
     }
 
     async asyncFetchTextBlob (hash) {

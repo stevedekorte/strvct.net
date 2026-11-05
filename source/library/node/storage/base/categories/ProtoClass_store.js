@@ -116,8 +116,9 @@
                     }
                 }
                 const v = slot.onInstanceGetValue(this);
-                if (slot.isBlobString() && Type.isString(v) && v.length > Slot.blobStringSpillLength()) {
-                    aRecord.entries.push([slotName, { "#": aStore.hashForSpilledText(v) }]); // Record Store §5: the record holds a ref to a text blob
+                const spilled = slot.isBlobString() ? aStore.spilledEntryFor(this, slotName, v) : null;
+                if (spilled) {
+                    aRecord.entries.push([slotName, spilled]); // Record Store §5: the record holds a ref to a text blob
                     return;
                 }
                 if (Type.isPromise(v)) {
@@ -211,7 +212,7 @@
                         const storeRef = SvStoreRef.clone().setPid(pid).setStore(aStore);
                         slot.onInstanceRawSetValue(this, storeRef);
                     } else if (slot.isBlobString() && !Type.isNull(v) && v["#"] !== undefined) {
-                        slot.onInstanceSetValue(this, aStore.textForSpilledHash(v["#"])); // prefetched with the pool's rows
+                        slot.onInstanceSetValue(this, aStore.spilledTextFor(this, slot.name(), v["#"])); // prefetched with the pool's rows
                     } else if (slot.slotType() === "JSON Object") {
                         if (Type.isString(v)) {
                             // properly serialized JSON object

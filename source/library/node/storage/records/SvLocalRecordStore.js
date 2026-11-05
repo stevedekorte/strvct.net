@@ -54,6 +54,11 @@
             slot.setDescription("hash → text of every spilled BlobString the open pools refer to (filled at open, before materialization)");
         }
         {
+            const slot = this.newSlot("textHashes", null);
+            slot.setSlotType("Map");
+            slot.setDescription("text → hash, the reverse of textBlobs: a save names a spilled string it already knows without hashing it again");
+        }
+        {
             const slot = this.newSlot("homePool", null);
             slot.setSlotType("SvObjectPool");
             slot.setAllowsNullValue(true);
@@ -81,6 +86,20 @@
         this.setKvMap(SvPersistentAtomicMap.clone());
         this.setPools(new Map());
         this.setTextBlobs(new Map());
+        this.setTextHashes(new Map());
+        return this;
+    }
+
+    /**
+     * @description Caches a spilled string under its hash, both ways (the
+     * same string in both maps, so the reverse costs no copy).
+     * @param {String} hash
+     * @param {String} text
+     * @category Text Blobs
+     */
+    cacheTextBlob (hash, text) {
+        this.textBlobs().set(hash, text);
+        this.textHashes().set(text, hash);
         return this;
     }
 
