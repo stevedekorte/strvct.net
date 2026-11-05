@@ -44,6 +44,7 @@
     --sv-surface-notice: rgba(200, 160, 60, 0.10);   /* wants attention */
     --sv-surface-danger: rgba(200, 70, 70, 0.12);    /* something is wrong */
     --sv-surface-theatre: #0d0c0b;    /* a media field: dark in every theme */
+    --sv-surface-scrim: rgba(0, 0, 0, 0.88);   /* dims the page behind a full-window view (a zoomed image): dark in every theme */
 
     /* VIEW-NAMESPACED tokens, defined here for the first time. These were
        referenced by their views with an inline rgba() fallback and defined

@@ -34,7 +34,7 @@
         this.setPosition("fixed");
         this.setTop("0px").setLeft("0px").setRight("0px").setBottom("0px");
         this.setZIndex(10000);
-        this.setCssProperty("background-color", "var(--sv-surface-scrim, rgba(0, 0, 0, 0.88))");
+        this.setCssProperty("background-color", "var(--sv-surface-scrim)");
         this.setCssProperty("background-repeat", "no-repeat");
         this.setCssProperty("background-position", "center");
         this.setCssProperty("background-size", "contain");
