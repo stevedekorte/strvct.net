@@ -1,5 +1,12 @@
 [
     "SvNode.js",
+    "SvNode_windowedCollections.js",
+    "SvNode_subnodes.js",
+    "SvNode_updates.js",
+    "SvNode_notifications.js",
+    "SvNode_subnodeQueries.js",
+    "SvNode_editability.js",
+    "SvNode_json.js",
     "SvNode_inheritedResources.js",
     "SvNode_uiTheme.js",
     "SvTitledNode.js",
