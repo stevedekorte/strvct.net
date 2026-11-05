@@ -931,19 +931,8 @@ class Type extends Object {
         }
     }
 
-    static isJsonType (value /*, seenSet = new Set()*/) {
-        if (Type.isPrimitiveJsonType(value)) {
-            return true;
-        }
-        try {
-            JSON.stringify(value);
-            return true;
-        } catch (e) {
-            if (e.message) {
-                return false; // just to avoid linter complaining about unused error variable
-            }
-            return false;
-        }
+    static isJsonType (value) {
+        return Type.isDeepJsonType(value);
     }
 
     /**
@@ -1047,20 +1036,65 @@ class Type extends Object {
      * @returns {boolean} True if the value is a deep JSON-compatible type, false otherwise.
      */
     static isDeepJsonType (value) {
-        /*
-        const errorMessage = Type.errorWithJsonType(value);
-        return errorMessage === null;
-        */
+        // It used to ask whether JSON.stringify threw — but stringify returns
+        // undefined for a function without throwing, and quietly turns a Map
+        // or a class instance into "{}", so those passed as JSON (Plans/
+        // Cleanup § 2); and it serialized the whole value to answer, which on
+        // a GM request body cost most of a second. Now a walk that classifies:
+        // null, strings, numbers, booleans, arrays and plain objects (or ones
+        // that serialize themselves with toJSON, such as Date), with no cycles.
+        // undefined is not JSON at the top; inside, JSON drops it from an
+        // object and writes null in an array, so it is allowed there, as
+        // non-finite numbers are (written as null).
+        return value !== undefined && Type.isDeepJsonValue(value, new Set());
+    }
 
-        try {
-            JSON.stringify(value);
-        } catch (e) {
-            if (e) {
-                // just to avoid linter complaints about e not being used
-            }
+    /**
+     * @description One step of isDeepJsonType's walk.
+     * @category Type Checking / JSON
+     * @param {*} value
+     * @param {Set} ancestors - the containers above this value (a repeat is a cycle)
+     * @returns {boolean}
+     */
+    static isDeepJsonValue (value, ancestors) {
+        if (value === null || value === undefined) {
+            return true;
+        }
+        const t = typeof value;
+        if (t === "string" || t === "number" || t === "boolean") {
+            return true;
+        }
+        if (t !== "object" || ancestors.has(value)) {
+            return false; // a function, symbol or bigint; or a cycle
+        }
+        if (typeof value.toJSON === "function") {
+            return true; // serializes itself (Date)
+        }
+        const isArray = Array.isArray(value);
+        if (!isArray && !Type.isPlainObject(value)) {
+            return false; // a class instance, Map, Set…
+        }
+        ancestors.add(value);
+        const isJson = isArray
+            ? value.every(v => Type.isDeepJsonValue(v, ancestors))
+            : Object.keys(value).every(k => Type.isDeepJsonValue(value[k], ancestors));
+        ancestors.delete(value);
+        return isJson;
+    }
+
+    /**
+     * @description Whether a value is a plain object: made by a literal,
+     * new Object() or Object.create(null), not by a class.
+     * @category Type Checking / JSON
+     * @param {*} value
+     * @returns {boolean}
+     */
+    static isPlainObject (value) {
+        if (value === null || typeof value !== "object") {
             return false;
         }
-        return true;
+        const proto = Object.getPrototypeOf(value);
+        return proto === Object.prototype || proto === null;
     }
 
     /**

@@ -989,12 +989,15 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 // that test and then blow up in deepCopyForValue — which made
                 // overrideSlot fail on any slot with a finalInitProto.
             } else {
-                if (Type.isDeepJsonType(value)) {
+                // what deepCopyForValue can copy: JSON, and objects with a
+                // deepCopy() (a slot's own Sets and Maps, e.g.
+                // validDuplicateOps) — not "is JSON", which they are not
+                if (Type.isDeepJsonType(value) || (value !== null && typeof value === "object" && typeof value.deepCopy === "function")) {
                     value = Type.deepCopyForValue(value);
                 } else {
                     // we'll use the value - but this may be dangerous!
                     if (!Type.isUndefined(value)) {
-                        throw new Error("copyFrom received a value that is not a class or undefined: " + Type.typeDescription(value));
+                        throw new Error("copyFrom received a value that is not a class or undefined: slot property '" + slotName + "' of " + this.name() + " is " + Type.typeDescription(value) + " (" + (value && value.constructor ? value.constructor.name : typeof value) + ")");
                     }
                 }
             }
