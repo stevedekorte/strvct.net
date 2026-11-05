@@ -369,6 +369,18 @@
     }
 
     /**
+     * @description Whether a tap on this node's image (an image well) opens it
+     * fitted to the window, in a temporary view a second tap closes
+     * (SvImageZoomView). Opt-in, in the nodeShowsScrollbar idiom: a method
+     * returning a value, never a stored slot.
+     * @returns {Boolean}
+     * @category Layout
+     */
+    nodeImageZoomsOnTap () {
+        return false;
+    }
+
+    /**
      * @description Whether this node presents its subnodes as anchored tabs
      * (Plans/Anchor Tabs): one row of tabs where every open tab heads its own
      * pane, side by side, and the available width decides how many are open

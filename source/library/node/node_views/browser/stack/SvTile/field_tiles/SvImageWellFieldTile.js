@@ -184,6 +184,7 @@
 
         // handle other details (nodeValueIsEditable folds in the editability cascade)
         this.imageWellView().setIsEditable(this.nodeValueIsEditable());
+        this.imageWellView().setZoomsOnTap(!!(field.nodeImageZoomsOnTap && field.nodeImageZoomsOnTap()));
 
         if (this.nodeIsProgressive()) {
             this.syncProgressiveFromNode();

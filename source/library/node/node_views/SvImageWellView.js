@@ -110,6 +110,15 @@
             const slot = this.newSlot("isEditable", true);
             slot.setSlotType("Boolean");
         }
+        /**
+         * @member {Boolean} zoomsOnTap - a tap opens the image fitted to the
+         * window (SvImageZoomView); set from the node's nodeImageZoomsOnTap.
+         * @category Zoom
+         */
+        {
+            const slot = this.newSlot("zoomsOnTap", false);
+            slot.setSlotType("Boolean");
+        }
 
         // --- Progressive-mode presentation slots (settable, sensible defaults) ---
 
@@ -447,6 +456,32 @@
             }
         }
         return false;
+    }
+
+    /**
+     * @description Installs the tap gesture the first time zooming is asked for.
+     * @category Zoom
+     */
+    didUpdateSlotZoomsOnTap (oldValue, newValue) {
+        if (newValue && !this.hasZoomTapGesture()) {
+            this.addDefaultTapGesture();
+        }
+        this.setCssProperty("cursor", newValue ? "zoom-in" : "");
+    }
+
+    hasZoomTapGesture () {
+        return this.gestureRecognizers().some(g => g.isKindOf(SvTapGestureRecognizer));
+    }
+
+    /**
+     * @description A tap opens the image fitted to the window, when zooming is on.
+     * @category Zoom
+     */
+    onTapComplete (/*aGesture*/) {
+        const url = this.imageDataUrl() || this.previewDataUrl();
+        if (this.zoomsOnTap() && url) {
+            SvImageZoomView.clone().setImageUrl(url).openInWindow();
+        }
     }
 
     /**

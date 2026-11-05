@@ -6,6 +6,7 @@
     "SvDragBarView.js",
     "SvDragView.js",
     "SvPanelView.js",
+    "SvImageZoomView.js",
     "SvScrimView.js",
     "SvOverlayBannerView.js",
     "SvgIconCache.js",
