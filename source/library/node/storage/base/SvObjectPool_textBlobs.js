@@ -166,6 +166,26 @@
         return this;
     }
 
+    /**
+     * @description True when text fetched from the cloud is the text its hash names. Wrong
+     * bytes (an error page served as 200, a truncated body) are treated as a
+     * missing blob — reported, and its hash kept — rather than shown as the text.
+     * @param {String|null} text
+     * @param {String} hash
+     * @returns {Boolean}
+     * @category Text Blobs
+     */
+    isTextForHash (text, hash) {
+        if (!Type.isString(text)) {
+            return false;
+        }
+        if (text.hexSha256Sync() === hash) {
+            return true;
+        }
+        console.warn(this.logPrefix() + "text blob " + hash.slice(0, 8) + " came back with other content (" + text.length + " characters): treated as missing");
+        return false;
+    }
+
     static textBlobFetchConcurrency () {
         return 6;
     }
@@ -190,24 +210,38 @@
         return hashes;
     }
 
+    /**
+     * @description A spilled string's text: from the local blob store, else
+     * from the cloud through the missing-text-blob fetcher — checked against its
+     * hash before it is used or stored locally. Null when neither has it.
+     * @param {String} hash
+     * @returns {Promise<String|null>}
+     * @category Text Blobs
+     */
     async asyncFetchTextBlob (hash) {
         try {
-            if (this.blobPool().isOpen()) {
-                const blob = await this.blobPool().asyncGetBlob(hash);
-                if (blob) { return await blob.text(); }
+            const local = await this.asyncLocalTextBlob(hash);
+            if (local !== null) {
+                return local;
             }
             const fetcher = SvObjectPool.missingTextBlobFetcher();
-            if (fetcher) {
-                const text = await fetcher(hash);
-                if (Type.isString(text) && this.blobPool().isOpen()) {
-                    this.blobPool().asyncStoreBlob(new Blob([text], { type: "text/plain" })).catch(() => {});
-                }
+            const text = fetcher ? await fetcher(hash) : null;
+            if (this.isTextForHash(text, hash)) {
+                this.storeTextBlob(hash, text);
                 return text;
             }
         } catch (e) {
             console.warn(this.logPrefix() + "text blob " + hash.slice(0, 8) + " fetch failed: " + (e && e.message));
         }
         return null;
+    }
+
+    async asyncLocalTextBlob (hash) {
+        if (!this.blobPool().isOpen()) {
+            return null;
+        }
+        const blob = await this.blobPool().asyncGetBlob(hash); // content-addressed: stored under its own digest
+        return blob ? await blob.text() : null;
     }
 
     static setMissingTextBlobFetcher (fn) {

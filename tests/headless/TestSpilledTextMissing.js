@@ -165,6 +165,27 @@ async function main () {
     const root3 = pool.rootOrIfAbsentFromClosure(() => { throw new Error("root should exist"); });
     check(root3.subnodes().map(d => d.body()).join("|") === bodies.join("|"), "every fetched body reads back");
     check(maxInFlight > 1, "the five fetches overlapped (at most " + maxInFlight + " at once)");
+
+    console.log("\nFetched text that does not match its hash");
+    const wrongDoc = root3.subnodes().first();
+    const wrongHash = bodies[0].hexSha256Sync();
+    await settle(300);
+    await pool.blobPool().asyncRemoveBlob(wrongHash);
+    SvObjectPool.setMissingTextBlobFetcher(async () => "<html>an error page served as 200</html>");
+    reports.length = 0;
+    const warn2 = console.warn;
+    console.warn = () => {};
+    try {
+        pool = await reopen(pool, store);
+    } finally { console.warn = warn2; }
+    const root4 = pool.rootOrIfAbsentFromClosure(() => { throw new Error("root should exist"); });
+    const doc4 = root4.subnodes().find(d => d.puuid() === wrongDoc.puuid());
+    check(doc4 && doc4.body() === "", "the wrong content is not shown as the text");
+    check(reports.some(r => r.info && r.info.kind === "missing-text-blob" && r.info.hash === wrongHash), "…it is reported as a missing blob");
+    doc4.setLabel("edited");
+    await pool.commitStoreDirtyObjects();
+    check(bodyEntryOf(pool, doc4)["#"] === wrongHash, "…and a save keeps the real hash");
+
     SvObjectPool.setMissingTextBlobFetcher(null);
     await settle(300); // fetched text is written to the blob store in the background
     await pool.promiseClose();
