@@ -46,44 +46,6 @@
             slot.setShouldStoreSlot(true);
         }
 
-        /*
-    {
-      const slot = this.newSlot("parameters", {}); // only defined for json schema - pass through to method info
-      slot.setDescription("Parameters for the tool call.");
-      slot.setSlotType("JSON Object");
-      slot.setAllowsNullValue(false);
-      slot.setIsInJsonSchema(true);
-      slot.setIsRequired(true);
-    }
-
-    {
-      const slot = this.newSlot("returns", {}); // only defined for json schema - pass through to method info
-      slot.setDescription("Returns for the function to call.");
-      slot.setSlotType("JSON Object");
-      slot.setAllowsNullValue(false);
-      slot.setIsInJsonSchema(true);
-      slot.setIsRequired(true);
-    }
-
-    {
-      const slot = this.newSlot("isSilentError", false); // only used for json schema
-      slot.setDescription("Silent error for the function to call.");
-      slot.setSlotType("Boolean");
-      slot.setAllowsNullValue(false);
-      slot.setIsInJsonSchema(true);
-      slot.setIsRequired(false);
-    }
-
-    {
-      const slot = this.newSlot("isSilentSuccess", false); // only used for json schema
-      slot.setDescription("Silent success for the function to call.");
-      slot.setSlotType("Boolean");
-      slot.setAllowsNullValue(false);
-      slot.setIsInJsonSchema(true);
-      slot.setIsRequired(false);
-    }
-      */
-
         // --- end json schema ----
 
         {
@@ -194,32 +156,6 @@
 
     // --- begin pass through to method info ---
 
-    /*
-  isSilentError () {
-    const method = this.toolMethod();
-    if (!method) {
-      return null;
-    }
-    return method.isSilentError();
-  }
-
-  isSilentSuccess () {
-    const method = this.toolMethod();
-    if (!method) {
-      return null;
-    }
-    return method.isSilentSuccess();
-  }
-
-  returns () {
-    const method = this.toolMethod();
-    if (!method) {
-      return null;
-    }
-    return method.returns();
-  }
- */
-
     // --- end pass through to method info ---
 
     // Live pass-throughs to method-level tool metadata (the block above is
@@ -239,36 +175,6 @@
         const method = this.toolMethod();
         return method ? method.resultRetentionNote() : null;
     }
-
-    /*
-  toolJsonDescription (refSet = new Set()) { // tool definition info
-    this.assertMethodExists();
-
-    // Validate using the complete schema with definitions
-    this.assertMethodHasValidJsonSchema();
-
-    const method = this.toolMethod();
-    // Return just the tool metadata (without definitions) for the prompt
-    // The definitions will be provided elsewhere in the shared context
-    //const metadata = this.toolMethod().asToolMetadata(refSet);
-    //return metadata;
-
-    const schema = {
-        "$id": method.assistantToolName() + "_SvToolDefinition",
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "toolName": method.assistantToolName(),
-        "description": method.description(),
-        "toolCallSchema": SvToolCall.toolCallJsonSchemaForToolDefinition(this, refSet),
-        "toolCallResultSchema": SvToolResult.toolCallResultJsonSchemaForToolDefinition(this, refSet),
-        "behaviorNotes": {
-          "isSilentSuccess": method.isSilentSuccess(),
-          "isSilentError": method.isSilentError()
-        }
-    };
-    console.log(this.logPrefix(), "schema: ", JSON.stringify(schema, null, 2));
-    return schema;
-  }
-    */
 
     toolJsonDescription (refSet = new Set()) { // tool definition info
         this.assertMethodExists();

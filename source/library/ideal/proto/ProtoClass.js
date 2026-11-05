@@ -234,19 +234,6 @@
         return this.ancestorClasses().map(c => c.svType());
     }
 
-    /*
-    static ancestorClassesIncludingSelf (results = []) {
-        results.push(this)
-
-        const parent = this.parentClass()
-        if (parent && parent.ancestorClasses) {
-            //assert(!results.contains(parent))
-            parent.ancestorClassesIncludingSelf(results)
-        }
-        return results
-    }
-    */
-
     /**
      * Checks if this class is a subclass of the given class.
      * @param {Class} aClass - The class to check against.
@@ -535,24 +522,6 @@
         return matchingSlot;
     }
 
-    /*
-    allSlotsRawValueMap () { // what about action slots?
-        const map = new Map();
-        this.forEachSlotKV((slotName, slot) => map.set(slot.name(), slot.onInstanceRawGetValue(this)))
-        return map;
-    }
-
-    isEqual (anObject) {
-        // Should this test Type equality?
-        if (this.svType() !== obj2.svType()) {
-            return false;
-        }
-        const sm1 = this.allSlotsRawValueMap();
-        const sm2 = anObject.allSlotsRawValueMap();
-        return sm1.isEqual(sm2);
-    }
-    */
-
     // -------------------------------------
 
     /**
@@ -805,23 +774,6 @@
         return this.baseGetSlotValue(aSlot);
     }
 
-    /*
-    onUndefinedGetSlot (aSlot) {
-        // get undefined hook
-        // e.g.: slot "subnodes" -> onUndefinedGetSubnodes();
-
-        if (aSlot.isLazy()) {
-            aSlot.onInstanceLoadRef(this);
-        }
-
-        const undefHook = aSlot.methodForUndefinedGet();
-        const m = this[undefHook];
-        if (m) {
-            m.apply(this);
-        }
-    }
-    */
-
     /**
      * Handles the will get slot event.
      * @category Slot Hooks
@@ -914,18 +866,6 @@
      * @category Initialization
      */
     finalInitSlots () {
-        /*
-        const keys = this.thisPrototype().allSlotsMap().keysArray();
-        keys.forEach((slotName) => {
-            const slot = this.thisPrototype().allSlotsMap().get(slotName);
-            if (keys.includes("sessions") && keys.includes("subnodes")) {
-                if (["sessions", "subnodes"].includes(slotName)) {
-                    throw new Error("finalInitSlots received sessions and subnodes");
-                }
-            }
-            slot.onInstanceFinalInitSlot(this);
-        });
-        */
         this.thisPrototype().allSlotsMap().forEach(slot => {
             slot.onInstanceFinalInitSlot(this);
         });

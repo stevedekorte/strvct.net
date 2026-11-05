@@ -194,28 +194,6 @@
 
     // --- shift arrow keys ---
 
-    /*
-    activateSelectedTile () {
-        const tile = this.selectedTile()
-        if (tile && tile.activate) {
-            tile.activate()
-        }
-        return this
-    }
-
-    onShiftUpArrowKeyDown (event) {
-        const result = this.onUpArrowKeyDown(event)
-        this.activateSelectedTile()
-        return result
-    }
-
-    onShiftDownArrowKeyDown (event) {
-        const result =  this.onDownArrowKeyDown(event)
-        this.activateSelectedTile()
-        return result
-    }
-    */
-
     // --- Alternate arrow keys ---
 
     /**

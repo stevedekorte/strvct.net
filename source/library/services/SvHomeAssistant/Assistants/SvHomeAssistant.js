@@ -605,32 +605,6 @@
    * @description Finish the scan process.
    */
     finsihScan () {
-        /*
-      this.devices().forEach(device => {
-          // Find entities that belong to this device in the states
-          const deviceEntityIds = this.states().filter(state => state.device_id === device.id).map(state => state.entity_id);
-          const deviceEntities = this.entities().filter(entity => deviceEntityIds.includes(entity.entity_id));
-
-          const entityStates = deviceEntities.map(entity => `${entity.entity_id.split('.')[1]}: ${entity.state}`).join(', ');
-
-          const node = SvHomeAssistantDevice.clone();
-          node.setJsonDict(device);
-          node.setEntitiesJson(deviceEntities);
-
-          node.setTitle(device.name);
-          //node.setSubtitle(entityStates);
-          this.devicesNode().addSubnode(node);
-
-          deviceEntities.forEach(deviceEntity => {
-            const sn = SvHomeAssistantEntity.clone();
-            //sn.setTitle(deviceEntity.entity_id.before("."));
-            sn.setTitle(deviceEntity.entity_id);
-            sn.setSubtitle(deviceEntity.state);
-            sn.setSummaryFormat("{key} {value}");
-            node.addSubnode(sn);
-          });
-      });
-      */
 
 
         //console.log("SHOW: ", s);
@@ -650,24 +624,6 @@
             isVisible: true
         };
     }
-
-    /*
-  areaWithId (id) {
-    return this.areasNode().subnodeWithId(id);
-  }
-
-  deviceWithId (id) {
-    return this.devicesNode().subnodeWithId(id);
-  }
-
-  entityWithId (id) {
-    return this.entitiesNode().subnodeWithId(id);
-  }
-
-  stateWithId (id) {
-    return this.statesNode().subnodeWithId(id);
-  }
-  */
 
 }).initThisClass();
 

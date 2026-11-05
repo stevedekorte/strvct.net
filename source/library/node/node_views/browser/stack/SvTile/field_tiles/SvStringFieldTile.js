@@ -10,19 +10,6 @@
 
 (class SvStringFieldTile extends SvFieldTile {
 
-    /*
-    initPrototypeSlots () {
-            }
-
-    initPrototype () {
-    }
-
-    init () {
-        super.init()
-        return this
-    }
-    */
-
     /**
      * Creates and configures a value view for the string field tile.
      * @returns {TextField} The configured TextField instance.

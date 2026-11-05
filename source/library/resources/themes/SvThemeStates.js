@@ -131,27 +131,4 @@
         return this;
     }
 
-    /*
-  setupColumnsDefault () {
-    const columns = SvThemeFolder.clone().setTitle("columns");
-    this.addSubnode(columns);
-
-    const colors = [
-      [60, 60, 60],
-      [48, 48, 48],
-      [32, 32, 32],
-      [26, 26, 26],
-      [16, 16, 16],
-    ];
-
-    colors.forEach((c) => {
-      const cssColorString = "rgb(" + c.join(",") + ")";
-      const field = SvStringField.clone()
-        .setKey("backgroundColor")
-        .setValue(cssColorString);
-      columns.addSubnode(field);
-    });
-  }
-  */
-
 }.initThisClass());

@@ -38,17 +38,6 @@
             slot.setSlotType("String");
             slot.setAllowsNullValue(true);
         }
-        /*
-        {
-            const slot = this.newSlot("pushedAttributes", undefined);
-            slot.setSlotType("Array");
-
-        }
-        {
-            const slot = this.newSlot("pushedSlotValues", undefined);
-            slot.setSlotType("Array");
-        }
-        */
         {
             const slot = this.newSlot("cachedSize", null);
             slot.setSlotType("SvPoint");
@@ -65,43 +54,6 @@
 
     // --- push/pop slot values ---
     // useful for pushing a css attribute using it's normal getter/setter methods
-
-    /*
-    pushedSlotValues () {
-        if (Type.isUndefined(this._pushedSlotValues)) {
-            this._pushedSlotValues = new Map()
-        }
-        return this._pushedSlotValues
-    }
-
-    pushedSlotValuesAt (slotName) {
-        const p = this.pushedSlotValues()
-        if (!p.has(slotName)) {
-            p.set(slotName, [])
-        }
-        return p.get(slotName)
-    }
-
-    pushSlotValue (slotName, newValue) {
-        const stack = this.pushedSlotValuesAt(slotName)
-        const oldValue = this[slotName].apply(this)
-        stack.push(oldValue)
-        const setterName = "set" + slotName.capitalized()
-        this[setterName].call(this, newValue)
-        return this
-    }
-
-    popSlotValue (slotName) {
-        const a = this.pushedSlotValuesAt(slotName)
-        if (a.length === 0) {
-            throw new Error("attempt to pop empty slot value stack")
-        }
-        const oldValue = a.pop()
-        const setterName = "set" + slotName.capitalized()
-        this[setterName].call(this, oldValue)
-        return this
-    }
-    */
 
     /*
     // --- push and pop attribute stacks ---
@@ -459,37 +411,6 @@
                 style.setProperty(key, newValue);
                 this.didDomWrite(key);
 
-                /*
-                if (doesSanityCheck) {
-                    // sanity check the result
-                    // but ignore these keys as they have equivalent functional values
-                    // that can have different string values
-                    const ignoredKeys = {
-                        "background-position": true,
-                        "transition": true,
-                        "color": true ,
-                        "background-color": true,
-                        "box-shadow": true,
-                        "border-bottom": true,
-                        "transform-origin": true,
-                        "outline": true,
-                        "border": true,
-                        "border-color": true
-                    }
-
-                    if (!(key in ignoredKeys)) {
-                        //const resultValue = style[key];
-                        const resultValue = style.getPropertyValue(key);
-                        if (resultValue != newValue) {
-                            let msg = "SvDomView: style['" + key + "'] not set to expected value\n";
-                            msg += "     set: <" + typeof(newValue) + "> '" + newValue + "'\n";
-                            msg += "     got: <" + typeof(resultValue) + "> '" + resultValue + "'\n";
-                            console.warn(msg);
-                            //throw new Error(msg);
-                        }
-                    }
-                }
-                */
             }
 
             if (didChangeCallbackFunc) {
@@ -1205,28 +1126,6 @@
 
     // hide/unhide transition
 
-    /*
-    hideTransition () {
-        if (!Type.isNull(this.transition())) {
-            this.setHiddenTransitionValue(this.transition())
-            this.setTransition(null)
-            this.subviews().forEach(sv => sv.hideTransition())
-        }
-        return this
-    }
-
-    unhideTransition () {
-        if (Type.isNull(this.transition())) {
-            if (this.hiddenTransitionValue()) {
-                this.setTransition(this.hiddenTransitionValue())
-                this.setHiddenTransitionValue(null)
-                this.subviews().forEach(sv => sv.unhideTransition())
-            }
-        }
-        return this
-    }
-    */
-
     // transitions
 
     transitions () {
@@ -1895,29 +1794,6 @@
 
     // hide height
 
-    /*
-    hideHeight () {
-		if (Type.isUndefined(this.hiddenMinHeight())) {
-            this.setHiddenMinHeight(this.minHeight())
-            this.setHiddenMaxHeight(this.maxHeight())
-            this.setMinAndMaxHeight("0em")
-        }
-		return this
-	}
-
-	unhideHeight () {
-		if (!Type.isUndefined(this.hiddenMinHeight())) {
-			this.setMinHeight(this.hiddenMaxHeight())
-			this.setHiddenMinHeight(undefined)
-
-			this.setMaxHeight(this.hiddenMaxHeight())
-			this.setHiddenMaxHeight(undefined)
-		}
-
-		return this
-	}
-    */
-
     // helper for hide/show display
 
     setIsDisplayHidden (aBool) {
@@ -2400,22 +2276,6 @@
 
     // --- lock/unlock size ---
 
-    /*
-    lockSize () {
-        const h = this.computedHeight()
-        const w = this.computedWidth()
-        this.setMinAndMaxWidth(w)
-        this.setMinAndMaxHeight(h)
-        return this
-    }
-
-    unlockSize () {
-        this.setMinAndMaxWidth(null)
-        this.setMinAndMaxHeight(null)
-        return this
-    }
-    */
-
     // ----
 
     displayIsFlex () {
@@ -2425,60 +2285,7 @@
 
     // fixed width
 
-    /*
-    setFixedWidthPx (v) {
-        assert(Type.isNumber(v))
-        if (this.displayIsFlex()) {
-            this.setFlexGrow(0)
-            this.setFlexShrink(0)
-            this.setFlexBasis(v + "px")
-        } else {
-            this.setMinAndMaxWidth(v)
-        }
-        return this
-    }
-
-    fixedWidthPx () {
-        if (this.displayIsFlex()) {
-            const w = this.getPxCssProperty("flex-basis")
-            assert(Type.isNumber(w))
-            return w
-        } else {
-            const w1 = this.getPxCssProperty("min-width")
-            const w2 = this.getPxCssProperty("max-width")
-            assert(Type.isNumber(w1) && w1 === w2)
-            return w1
-        }
-    }
-    */
-
     // fixed height
-    /*
-    setFixedHeightPx (v) {
-        assert(Type.isNumber(v))
-        if (this.displayIsFlex()) {
-            this.setFlexGrow(0)
-            this.setFlexShrink(0)
-            this.setFlexBasis(v + "px")
-        } else {
-            this.setMinAndMaxWidth(v)
-        }
-        return this
-    }
-
-    fixedHeightPx () {
-        if (this.displayIsFlex()) {
-            const w = this.getPxCssProperty("flex-basis")
-            assert(Type.isNumber(w))
-            return w
-        } else {
-            const w1 = this.getPxCssProperty("min-width")
-            const w2 = this.getPxCssProperty("max-width")
-            assert(Type.isNumber(w1) && w1 === w2)
-            return w1
-        }
-    }
-    */
 
     // ----
 

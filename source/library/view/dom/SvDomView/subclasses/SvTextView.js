@@ -400,21 +400,6 @@
 
     // editing control
 
-    /*
-    setIsEditable (aBool) {
-        if (this._isEditable !== aBool) {
-            this._isEditable = aBool;
-            this.syncEditingControl();
-        }
-        return this;
-    }
-
-
-    isEditable () {
-        return this._isEditable;
-    }
-    */
-
     /**
      * @description Did update slot does input.
      * @returns {void}
@@ -1374,42 +1359,10 @@
      */
     formatValue () {
         this.setTextContent(this.textContent()); // removes formatting?
-        /*
-	    const oldValue = this.innerHtml();
-	    let newValue = this.innerText(); // removes returns
-
-        if (this.doesTrim()) {
-            newValue = newValue.trim();
-        }
-
-        if (true) {
-            //newValue.replaceAll("\n", "<br>");
-        }
-
-        if (newValue !== oldValue) {
-            this.logDebug("formatValue newValue !== oldValue");
-            this.logDebug(" newValue: [" + newValue + "]");
-            this.setInnerHtml(newValue);
-            this.didEdit();
-        }
-        */
 	    //console.trace(this.svType() + " formatValue '" + oldValue + "' -> '" + this.innerHtml() + "'")
         //this.logDebug(" after formatValue: '" + this.innerHtml() + "'");
         return this;
     }
-
-    /*
-    setInput (s) {
-        const n = this.node();
-        if (n) {
-            const m = n.nodeInputFieldMethod();
-            if (m) {
-                n[m].apply(n, [s]);
-            }
-        }
-        return this;
-    }
-    */
 
     /**
      * @description Set theme class name.

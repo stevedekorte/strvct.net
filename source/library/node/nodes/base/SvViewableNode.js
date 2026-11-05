@@ -265,19 +265,6 @@
             slot.setSyncsToView(true);
         }
 
-        /*
-        {
-            const slot = this.newSlot("nodeFillsWindow", false);
-            slot.setSlotType("Boolean");
-            slot.setLabel("fills window");
-            slot.setCanEditInspection(true);
-            slot.setCanInspect(true);
-            slot.setShouldStoreSlot(true);
-            slot.setInspectorPath("Node/Viewable/Children Layout");
-            slot.setSyncsToView(true);
-        }
-            */
-
         /**
          * @member {boolean} nodeCanEditTileHeight
          * @category Layout

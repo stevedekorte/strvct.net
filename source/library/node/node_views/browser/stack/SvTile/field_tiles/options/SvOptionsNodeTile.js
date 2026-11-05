@@ -17,19 +17,6 @@
 
 (class SvOptionsNodeTile extends SvTitledTile {
 
-    /*
-    initPrototypeSlots () {
-    }
-
-    initPrototype () {
-    }
-
-    init () {
-        super.init()
-        return this
-    }
-    */
-
     /**
      * @description Synchronizes the tile with its associated node
      * @returns {SvOptionsNodeTile} Returns this instance for method chaining

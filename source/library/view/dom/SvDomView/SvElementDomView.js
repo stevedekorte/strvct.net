@@ -16,36 +16,6 @@
  */
 (class SvElementDomView extends ProtoClass {
 
-    /*
-    static initClass () {
-        this.newClassSlot("viewsWithoutParents", new Set()) // track these so we can retire them, but not during drag & drop
-        this.newClassSlot("isPausingRetires", false) // when true, retireQueue is paused
-    }
-
-    static pauseRetires () {
-        this.setIsPausingRetires(true)
-    }
-
-    static unpauseRetires () {
-        this.setIsPausingRetires(false)
-    }
-
-    static retireParentlessViews () {
-        const parentless = this.viewsWithoutParents()
-
-        while (parentless.size) { // do this effective "pop" loop, so it's ok to delete items inside a prepareToRetire
-            if (this.isPausingRetires()) {
-                console.log("retireParentlessViews  isPausingRetires")
-                return
-            }
-
-            const view = parentless.pop();
-            view.prepareToRetire()
-            parentless.delete(view)
-        }
-    }
-    */
-
     /**
      * @static
      * @returns {SvDocumentBody} The shared instance of SvDocumentBody
@@ -149,23 +119,6 @@
     externalFullActiveEventListenerCount () {
         return SvEventListener.activeListenersForOwner(this).length;
     }
-
-    /*
-    assertEventListenerCountsMatch () {
-        let internal = this.fullActiveEventListenerCount()
-        if (isNaN(internal)) {
-            this.fullActiveEventListenerCount()
-        }
-        let external = this.externalFullActiveEventListenerCount()
-        if (internal !== external) {
-            console.log(this.svTypeId() + " internal: " + internal + " ", this.allEventListeners().filter(v => v.isListening()).map(v => v.fullMethodName()) )
-            console.log(this.svTypeId() + " external: " + external + " ", SvEventListener.activeListenersForOwner(this).map(v => v.fullMethodName()))
-            this.fullActiveEventListenerCount();
-            SvEventListener.activeListenersForOwner(this);
-        }
-        //assert(internal === external)
-    }
-    */
 
     /**
      * @description Prepares the view for retirement

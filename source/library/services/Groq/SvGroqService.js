@@ -140,25 +140,6 @@
         messages = messages.filter((message) => { return message.content.length > 0; });
 
         // merge messages in order to ensure messages alternate between user and assistant roles
-        /*
-    const newMessages = [];
-    let lastRole = null;
-    let mergedMessageCount = 0;
-    messages.forEach((message) => {
-      if (message.role === "system") {
-        message.role = this.userRoleName(); //  need to do this now that we're using the system property
-      }
-      if (message.role === lastRole) {
-        const lastMessage = newMessages.last();
-        //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n"
-        lastMessage.content = lastMessage.content + "\n" + message.content;
-      } else {
-        newMessages.push(message);
-      }
-      lastRole = message.role;
-      mergedMessageCount += 1;
-    });
-   */
         bodyJson.messages = messages; // newMessages not needed
         aRequest.setBodyJson(bodyJson);
 

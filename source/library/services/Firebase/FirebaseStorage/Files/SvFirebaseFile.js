@@ -64,20 +64,6 @@
         }
 
         // Content type (MIME type)
-        /*
-        {
-            const validValues = this.contentCategoryValidValues();
-            const slot = this.newSlot("contentCategory", validValues.first());
-            slot.setAllowsNullValue(true);
-            slot.setLabel("Content Category");
-            slot.setSlotType("String");
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setIsSubnodeField(true);
-            slot.setCanEditInspection(true);
-            slot.setValidValues(validValues);
-        }
-        */
 
         // contentType
         {

@@ -1880,22 +1880,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             //if (oldValue === null) {
 
                 /*
-                let newValue;
-                if (this.isSubnode()) { // see if it's already a subnode
-                    const oldSubnode = anInstance.firstSubnodeOfType(finalInitProto);
-                    if (oldSubnode) {
-                        newValue = oldSubnode;
-                    } else {
-                        const newSubnode = finalInitProto.clone();
-                        this.addSubnode(newSubnode);
-                        newValue = newSubnode;
-                    }
-                } else {
-                    newValue = finalInitProto.clone();
-                }
-                */
-
-                /*
                 if (typeof(finalInitProto) === "string") {
                     const finalInitClass = SvGlobals.globals()[finalInitProto];
                     assert(finalInitClass, "missing finalInitProto class '" + finalInitProto + "'");
@@ -1916,19 +1900,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 }
                 this.noteInstanceCreatedDefault(anInstance, newValue);
 
-                /*
-                if (this.shouldFinalInitAsSubnode()) {
-                    anInstance.addSubnode(newValue);
-
-                    const title = this.finalInitTitle();
-                    if (title) {
-                        newValue.setTitle(title);
-                        anInstance.subnodeWithTitleIfAbsentInsertProto(title, finalInitProto);
-                    } else {
-                        anInstance.addSubnode(newValue);
-                    }
-                }
-                */
             }
         }
 
@@ -1953,43 +1924,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     onInstanceInitSlot (anInstance) {
         //assert(Reflect.has(anInstance, this.privateName())) // make sure slot is defined - this is true even if it's value is undefined
         //let defaultValue = anInstance[this._privateName];
-
-        /*
-        const op = this.initOp();
-        assert(this.validInitOps().contains(op)); // TODO: put on setter instead
-
-        const opMethods = {
-            "null" : () => {
-                this.onInstanceSetValue(anInstance, null);
-            },
-
-            "lazy" : () => {
-                const obj = this.initProto().clone();
-                anInstance[this.privateName()] = obj;
-            },
-
-            "proto" : () => {
-                const obj = this.initProto().clone();
-                this.onInstanceSetValue(anInstance, obj);
-            },
-
-            "nop" : () => {
-            },
-
-            "copyValue" : () => {
-                this.onInstanceSetValue(anInstance, defaultValue);
-            },
-
-            "duplicate" : () => {
-                if (defaultValue) {
-                    const obj = defaultValue.duplicate();
-                    this.onInstanceSetValue(anInstance, obj);
-                }
-            },
-        }
-
-        opMethods[op].apply(this);
-        */
 
         const initProto = this._initProto;
 
@@ -2318,34 +2252,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             return true;
         }
 
-        /*
-
-        if (this.slotType() === "String") {
-            if (Type.isString(v)) {
-                return true;
-            }
-        }
-
-        if (this.slotType() === "Number") {
-            if (Type.isNumber(v)) {
-                return true;
-            }
-        }
-
-        if (this.slotType() === "Boolean") {
-            if (Type.isBoolean(v)) {
-                return true;
-            }
-        }
-
-
-        if (this.slotType() === "Array") {
-            if (Type.isArray(v)) {
-                return true;
-            }
-        }
-        */
-
         return false;
     }
 
@@ -2387,17 +2293,3 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
 
 // --- slot methods on Function -------------------------------------------------
-
-/*
-Object.defineSlots(Function.prototype, {
-    slot: function () {
-        return this._slot
-    },
-
-    setSlot: function (aSlot) {
-        this._slot = aSlot
-        return this
-    },
-
-})
-*/

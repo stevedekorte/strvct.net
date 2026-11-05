@@ -135,18 +135,6 @@
         this.setNodeCanInspect(true);
     }
 
-    /*
-    didUpdateSlotLinkedNode (oldValue, newValue) {
-        assert(Type.isNull(newValue) || Type.isObject(newValue));
-
-        if (Type.isObject(newValue)) {
-            const isNode = newValue.thisClass().isKindOf(SvNode);
-            assert(isNode);
-        }
-        return this;
-    }
-    */
-
     /**
      * @description Handles the event when a node is dropped onto this node
      * @param {SvNode} aNode - The node that was dropped

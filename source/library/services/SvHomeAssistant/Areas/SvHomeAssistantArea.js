@@ -88,20 +88,4 @@
         return null;
     }
 
-    /*
-    updateSubtitle () {
-        const s = [
-            this.subnodeCount() + " devices"
-        ].join("\n");
-        this.setSubtitle(s);
-        return this;
-    }
-
-    addDevice (device) {
-        device.removeFromParentNode();
-        this.devicesNode().addSubnode(device);
-        return this;
-    }
-    */
-
 }).initThisClass();

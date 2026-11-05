@@ -773,20 +773,6 @@
         return this.slotsWhoseValuesAreOwned().map(slot => slot.onInstanceGetValue(this));
     }
 
-    /*
-      recursivelySendToOwnedNodes (methodName) {
-        // for things like shutdown methods, we want to send them to all owned nodes
-        // both to subnodes and slot values owned by each node
-
-        // note: we probably want to send these from the bottom up
-        this.subnodes().forEach(sn => {
-          this.sendMessageToOwnedSlotValues(methodName);
-          sn.performIfResponding(methodName);
-        });
-        this.performIfResponding(methodName);
-      }
-      */
-
     /**
      * @description Optional protocol: the node that roots this node's companion
      * panel — a persistent panel shown alongside (or, in vertical orientations,

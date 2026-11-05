@@ -28,21 +28,6 @@
         */
     }
 
-    /*
-    onEnterKeyDown (event) {
-        this.logDebug(" onEnterKeyDown")
-        if (this.unfocusOnEnterKey() && this.isFocused()) {
-            this.logDebug(" releasing focus")
-            // this.releaseFocus() // TODO: implement something to pass focus up view chain to whoever wants it
-            //this.element().parentElement.focus()
-            if (this.parentView()) {
-                this.parentView().focus()
-            }
-        }
-        return this
-    }
-    */
-
     // --- set caret ----
 
     /**
@@ -167,58 +152,6 @@
         selection.addRange(range);
         return this;
     }
-
-    /*
-    insertTextAtCursorSimple (text) {
-        const el = this.element();
-        // First, ensure that all text is consolidated into a single node
-        el.textContent = el.textContent;
-
-        var sel, range;
-        if (window.getSelection) {
-            sel = window.getSelection();
-            if (sel.getRangeAt && sel.rangeCount) {
-                range = sel.getRangeAt(0);
-
-                range.deleteContents();
-
-                var textNode = document.createTextNode(text);
-                range.insertNode(textNode);
-
-                // Move the caret to the end of the newly inserted text node
-                range = document.createRange();
-                range.selectNodeContents(textNode);
-                range.collapse(false);
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-        } else if (document.selection && document.selection.createRange) {
-            // For older versions of IE
-            document.selection.createRange().text = text;
-        }
-    }
-    */
-
-
-    /*
-    insertTextAtCursor (text) {
-        const savedSelection = this.getSelectionRange()
-
-        if (window.getSelection) {
-            const sel = window.getSelection();
-            if (sel.getRangeAt && sel.rangeCount) {
-                const range = sel.getRangeAt(0);
-                range.deleteContents();
-                range.insertNode( document.createTextNode(text) );
-            }
-        } else if (document.selection && document.selection.createRange) {
-            document.selection.createRange().text = text;
-        }
-        savedSelection.collapse()
-        this.setSelectionRange(savedSelection)
-        return this
-    }
-    */
 
 
     // --- paste from clipboardListener ---

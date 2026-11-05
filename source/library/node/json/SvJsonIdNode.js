@@ -427,19 +427,6 @@
 
     // --- serialization ---
 
-    /*
-    serializeToJson (filterName, pathComponents = []) {
-        throw new Error("serializeToJson should be implemented by subclasses");
-    }
-
-
-    // --- deserializion ---
-
-    cloneDeserializeFromJson (json, filterName, pathComponents = []) {
-        throw new Error("cloneDeserializeFromJson not implemented for " + this.svType() + " at path: " + pathComponents.join("/"));
-    }
-    */
-
     deserializeFromJson (json, filterName, pathComponents = []) {
         throw new Error("deserializeFromJson not implemented for " + this.svType() + " at path: " + pathComponents.join("/"));
     }

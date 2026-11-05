@@ -376,18 +376,6 @@
         return this.isEditable();
     }
 
-    /*
-    onBrowserDrop (event) {
-        return super.onBrowserDrop(event);
-    }
-
-    onBrowserDragOver (event) {
-        const r =  super.onBrowserDragOver(event);
-        //console.log(this.svDebugId() + " onBrowserDragOver() -> " + r);
-        return r;
-    }
-    */
-
     /**
      * @description Sets the value of the image well (its image data URL).
      * @param {string} aValue - The image data URL.

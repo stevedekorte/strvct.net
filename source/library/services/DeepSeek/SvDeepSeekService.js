@@ -120,54 +120,6 @@
         return super.setModels(aAiChatModels);
     }
 
-    /*
-  prepareToSendRequest (aRequest) {
-    const bodyJson = aRequest.bodyJson();
-    let messages = bodyJson.messages;
-
-    // remove initial system message and place it in the request json
-
-    if (messages.length > 0) {
-      const firstMessage = messages.first();
-      if (firstMessage.role === this.systemRoleName()) {
-        bodyJson.system = firstMessage.content;
-        firstMessage.content = "Please begin the conversation now.";
-        //messages.shift();
-      }
-    }
-
-    // remove messages with empy content
-    messages = messages.filter((message) => { return message.content.length > 0; });
-
-    // merge messages in order to ensure messages alternate between user and assistant roles
-
-    const newMessages = [];
-    let lastRole = null;
-    let mergedMessageCount = 0;
-    messages.forEach((message) => {
-      if (message.role === "system") {
-        message.role = this.userRoleName(); //  need to do this now that we're using the system property
-      }
-      if (message.role === lastRole) {
-        const lastMessage = newMessages.last();
-        //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n"
-        lastMessage.content = lastMessage.content + "\n" + message.content;
-      } else {
-        newMessages.push(message);
-      }
-      lastRole = message.role;
-      mergedMessageCount += 1;
-    });
-
-    bodyJson.messages = newMessages;
-    aRequest.setBodyJson(bodyJson);
-
-    if (mergedMessageCount) {
-      //console.log(this.svType() +".prepareToSendRequest() merged " + mergedMessageCount + " messages");
-    }
-    return this;
-  }
-*/
     // NOTE (Plans/Cache-Safe Standing View): prepareToSendRequest above is
     // commented out — DeepSeek inherits the base no-op, does NOT merge, and
     // tolerates consecutive same-role messages, so it also inherits

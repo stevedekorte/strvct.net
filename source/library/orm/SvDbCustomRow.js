@@ -185,32 +185,6 @@ const SvDbRow = require("./SvDbRow");
     // and call setTable() and setupMethods() on each prototype
     // maybe on initThisClass, SvCustomRow could find the shared SvDatabase and register itself
     // with a method like addCustomRowClass()
-    /*
-
-    myForeignKeyName () { // TODO cache this on the prototype
-        let fk = this.tableName();
-        // now remove the "s" from the end of the table name
-        fk = fk.replace(/s$/, "");
-        // now add _id to the end of the table name
-        fk = fk + "_id";
-        return fk;
-    }
-
-    findChildrenTableNames () {
-        const fk = this.myForeignKeyName();
-        const tables = this.table().database().tables();
-        const childrenTableNames = tables.filter(table => table.foreignKey()?.columnName === fk);
-        return childrenTableNames.map(table => table.tableName());
-    }
-
-    setupMethods () {
-        const childrenTableNames = this.findChildrenTableNames();
-        for (const tableName of childrenTableNames) {
-            this[`get${tableName}`] = async (tx) => await this.getChildrenInTable(tableName, tx);
-            this[`new${tableName}`] = async (tx) => await this.newChildInTable(tableName, tx);
-        }
-    }
-    */
 
 }).initThisClass();
 

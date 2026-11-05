@@ -409,47 +409,4 @@
 
     // ----------- fetching models -------------
 
-    /*
-    async fetchAndSetupModels () {
-        let info;
-
-        try {
-            info = await this.fetchInfo();
-            this.setServiceInfo(info);
-            this.setupFromInfo();
-        } catch (error) {
-            console.log(this.svType() + ".fetchAndSetupInfo() [" + this.fetchInfoUrl() + " error: ", error);
-            return;
-        }
-    }
-
-    fetchModelsUrl () {
-        const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
-        const url = baseUrl + "/app/info/" + this.svType() + ".json";
-        console.log(this.logPrefix() + " fetchInfoUrl: " + url);
-        return url;
-    }
-
-    async fetchInfo () {
-        return fetch(this.fetchInfoUrl())
-            .then(response => response.json())
-            .then(json => {
-                return json;
-            });
-    }
-
-    async asyncFetchAndSetupModels () {
-        const modelsJson = await this.fetchModelsJson();
-        this.setModelsJson(modelsJson);
-    }
-
-    async asyncFetchModelsJson () {
-        return fetch(this.fetchModelsUrl())
-            .then(response => response.json())
-            .then(json => {
-                return json.data;
-            });
-    }
-    */
-
 }.initThisClass());

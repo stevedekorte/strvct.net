@@ -502,57 +502,5 @@
  * @description Test function for SvHtmlStreamReader
  * @category Testing
  */
-/*
-const testSentenceReader = function () {
-
-  console.log(
-    "========================================================================="
-  );
-
-
-  const results = [];
-  const others = [];
-  const htmlResults = [];
-
-  const reader = SvHtmlStreamReader.clone();
-  reader.setDelegate({
-    onSpokenSentence: (text, html) => {
-      results.push(text);
-      htmlResults.push(html);
-    }
-  })
-
-  // Simulate random breaks in the HTML content
-  reader.beginHtmlStream();
-  reader.onStreamHtml('<div class="session-name">The Lost City\'s Hidden Secrets</div>\n\n<span');
-  reader.onStreamHtml('>Welcome, brave souls, to the edge of the <div class=\"location-name\">Sighing Desert</div>.</span>');
-  reader.onStreamHtml('<span data-note="speak">Here, amid the dunes that stretch like slumbering golden serpents beneath the relentless sun, lies the enigma of a vanished civilization.</span>\n\n');
-  reader.endHtmlStream();
-
-  const expectedSentences = [
-    "The Lost City's Hidden Secrets",
-    //"\n\n",
-    "Welcome, brave souls, to the edge of the Sighing Desert.",
-    "Here, amid the dunes that stretch like slumbering golden serpents beneath the relentless sun, lies the enigma of a vanished civilization."
-    //"\n\n"
-  ];
-
-  const passed = JSON.stringify(results) === JSON.stringify(expectedSentences);
-
-  if (passed) {
-    console.log(`Test Passed - Output:` + JSON.stringify(results, null, 2));
-  } else {
-    console.warn(`Test Failed:`);
-    console.warn(`Input: '<div class="session-name">The Lost City's Hidden Secrets</div><span data-note="speak">Welcome, brave souls, to the edge of the <div class=location-name>Sighing Desert</div>.</span><span data-note="speak">Here, amid the dunes that stretch like slumbering golden serpents beneath the relentless sun, lies the enigma of a vanished civilization.</span>'`);
-    console.warn("Expected Output: ", JSON.stringify(expectedSentences, null, 2));
-    console.warn("  Actual Output: ", JSON.stringify(results, null, 2));
-  }
-
-  console.log(
-    "========================================================================="
-  );
-
-}
-*/
 
 //testSentenceReader();

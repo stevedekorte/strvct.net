@@ -326,23 +326,6 @@
 
         // optional server connection defaults for this server
 
-        /*
-    if (dict.isReliable !== undefined) {
-      assert(Type.isBoolean(dict.isReliable))
-      this.setIsReliable(dict.isReliable)
-    }
-
-    if (dict.debug !== undefined) {
-      assert(Type.isBoolean(dict.isReliable))
-      this.setDebug(dict.debug)
-    }
-
-    if (dict.pingInterval !== undefined) {
-      assert(Type.isNumber(dict.isReliable))
-      this.setPingInterval(dict.pingInterval)
-    }
-    */
-
         return this;
     }
 

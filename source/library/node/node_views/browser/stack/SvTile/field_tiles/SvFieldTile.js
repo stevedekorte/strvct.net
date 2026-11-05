@@ -1056,20 +1056,6 @@
         super.updateSubviews();
         this.syncStylesToSubviews();
 
-        /*
-        const node = this.node()
-
-        if (node && node.nodeMinTileHeight()) {
-            if (node.nodeMinTileHeight() === -1) {
-                this.setHeight("auto")
-                this.setPaddingBottom("calc(100% - 20px)")
-
-            } else {
-                this.setHeight(this.pxNumberToString(node.nodeMinTileHeight()))
-            }
-        }
-        */
-
         return this;
     }
 

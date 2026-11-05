@@ -24,17 +24,4 @@
         this.setTitle("images");
     }
 
-    /*
-  status () {
-    if (this.subnodeCount() && this.hasLoadedAllImages()) {
-      return "complete"
-    } else if (this.hasError()) {
-      return "error loading image"
-    } else if (this.isLoading()) {
-      return "loading images..."
-    }
-    return ""
-  }
-    */
-
 }.initThisClass());

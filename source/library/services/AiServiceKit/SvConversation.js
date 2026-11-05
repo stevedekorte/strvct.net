@@ -566,25 +566,6 @@
    * @returns {*} The updated or new message instance.
    * @category Data Manipulation
    */
-    /*
-    updateMessageJson (msgJson) {
-        const oldMsg = this.messageWithId(msgJson.messageId);
-
-        if (oldMsg) {
-            oldMsg.deserializeFromJson(msgJson, "Cloud", []);
-            return oldMsg;
-        } else {
-            const newMsg = this.newMessageFromJson(msgJson);
-            if (newMsg.onNewFromNetwork) {
-                newMsg.scheduleMethod("onNewFromNetwork");
-            }
-            SvSimpleSynth.clone().playReceiveBeep();
-            this.onNewMessageFromUpdate(newMsg);
-            //console.warn(this.svTypeId() + " updateMessageJson no message found with messageId '" + messageId + "'");
-            return newMsg;
-        }
-    }
-    */
 
     /**
    * @description Handles a new message from an update. To be overridden by subclasses.
@@ -626,17 +607,5 @@
     }
 
     // --- enable / disable input ---
-
-    /*
-    disableInput () {
-        this.chatInputNode().disableEnter();
-        return this;
-    }
-
-    enableInput () {
-        this.chatInputNode().enableEnter();
-        return this
-    }
-  */
 
 }.initThisClass());

@@ -289,22 +289,6 @@
 
     // --- observations ----
 
-    /*
-    cleanIfNeeded () {
-        if (this.observations().count() < this.obsHighwaterCount()) {
-            this.cleanObservations()
-            this.setObsHighwaterCount(this.observations().count() * 2)
-        }
-    }
-
-    cleanObservations () {
-        // remove observations whose senders or observers have been collected
-        this.observations().shallowCopy().forEach(obs => {
-            obs.clean()
-        })
-    }
-    */
-
     /**
      * @description checks if the observation is in the observations map
      * @param {SvObservation} obs the observation to check

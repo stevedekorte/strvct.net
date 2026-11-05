@@ -100,38 +100,6 @@
             jsonString: JSON.stableStringify(this) // so we can avoid duplicate writes (if the persistent store checks if the value has changed)
         };
 
-        /*
-        let type = "Object";
-
-        if (Type.isFunction(this.type)) { // if we have a type method, use it to get the type
-            type = this.svType();
-        }
-
-        // Arrays, Maps, and Sets already support recordForStore() ,
-        // but we typically want to handle Object instances (but not subclasses of Object) as JSON when possible.
-        if (type === "Object" && SvJsonObject.objectIsJson(this)) { // Hack to deal with Json
-            const jsonObject = SvJsonObject.instanceForObject(this);
-            return jsonObject.recordForStore(aStore);
-        }
-
-        const entries = [];
-
-        Object.keys(this).forEach((k) => {
-            const hiddenKeys = new Set(["_mutationObservers", "_puuid"]);
-            if (!hiddenKeys.has(k)) {
-                const v = this[k];
-                entries.push([k, aStore.refValue(v)]);
-            }
-        });
-
-        // need to special case objects as they can also be used as JSON dictionaries.
-        // if we have a dictionary, we need to store it as a dictionary, not as an object.
-
-        return {
-            type: type,
-            entries: entries,
-        };
-        */
     }
 
     /**

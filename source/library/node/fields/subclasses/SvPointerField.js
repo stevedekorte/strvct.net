@@ -178,17 +178,6 @@
      */
     summaryValue () {
         return this.proxyGetter("summaryValue", "(no value)");
-        /*
-        const v = this.value();
-        if (v && v.summaryValue) { // need this in case we're pointing to a node that doesn't have a summaryValue method
-            const summaryValue = v.summaryValue();
-            // if summaryValue is a string with multiple lines, add a newline prefix
-            if (Type.isString(summaryValue) && summaryValue.includes("\n")) {
-                return "\n" + summaryValue;
-            }
-            return summaryValue;
-        }
-        */
     }
 
 }.initThisClass());

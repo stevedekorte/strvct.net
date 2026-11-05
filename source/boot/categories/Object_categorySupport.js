@@ -157,25 +157,6 @@
             };
 
             // this breaks on prototypes
-            /*
-            if (typeof (slotValue) === "function") {
-                let objType = null
-                try {
-                    //if (obj.type) {
-                        objType = obj.svType()
-                    //}
-                } catch (e) {
-                    //console.warn("can't get type on ", obj)
-                }
-
-                if (objType) {
-                    slotValue.displayName = objType + "." + slotName
-                    //console.log("slotValue.displayName: ", slotValue.displayName)
-                } else {
-                    slotValue.displayName = slotName
-                }
-            }
-            */
 
             Object.defineProperty(obj, slotName, descriptor);
         }

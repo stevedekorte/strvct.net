@@ -110,21 +110,6 @@ class SvPlatform extends Object {
 
     // DISABLED: We use our own LevelDB implementation via SvIndexedDbFolder
     // The node-indexeddb-lmdb polyfill is not needed and can conflict
-    /*
-  static async asyncSetupNodeIndexedDB () {
-      //console.log('Initializing IndexedDB for Node.js...');
-
-      // Load and initialize the database cache FIRST
-      const dbManager = require('node-indexeddb-lmdb/dbManager');
-      await dbManager.loadCache();
-
-      const { indexedDB, IDBKeyRange } = require('node-indexeddb-lmdb');
-      SvGlobals.set("indexedDB", indexedDB);
-      SvGlobals.set("IDBKeyRange", IDBKeyRange);
-
-      //console.log('IndexedDB and IDBKeyRange are now available');
-  }
-  */
 
     static setupPerformance () {
         // Setup basic performance API if not available

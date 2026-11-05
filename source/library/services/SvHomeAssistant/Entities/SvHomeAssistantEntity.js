@@ -39,19 +39,6 @@
    * @category Initialization
    */
     initPrototypeSlots () {
-    /*
-    {
-      const slot = this.newSlot("scanAction", null);
-      //slot.setInspectorPath("Character");
-      slot.setLabel("Scan");
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Action");
-      slot.setIsSubnodeField(true);
-      slot.setCanInspect(true)
-      slot.setActionMethodName("scan");
-    }
-    */
     }
 
     /**
@@ -177,33 +164,5 @@
         this.setName(name);
         return this;
     }
-
-    /*
-  updateSubtitle () {
-    if (this.statesCount() === 1) {
-      const s = this.statesNode().subnodes().first().state();
-      this.setSubtitle(s);
-    } else {
-      const s = [this.id(), this.statesCount() + " states"].join("\n");
-      this.setSubtitle(s);
-    }
-    return this;
-  }
-
-  addState (state) {
-    state.removeFromParentNode();
-    this.statesNode().addSubnode(state);
-    return this;
-  }
-
-  scanActionInfo () {
-    return {
-        isEnabled: this.hasValidUrl(),
-        //title: this.title(),
-        subtitle: this.hasValidUrl() ? null : "Invalid Host URL",
-        isVisible: true
-    }
-  }
-  */
 
 }).initThisClass();

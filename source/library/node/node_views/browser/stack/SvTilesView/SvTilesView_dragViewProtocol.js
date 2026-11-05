@@ -449,24 +449,6 @@
         return this;
     }
 
-    /*
-    tileIndexForViewportPoint (aPoint) {
-        if (this.tiles().length === 0) {
-            return 0;
-        }
-
-        const tile = this.tiles().detect((tile) => {
-            return tile.frameInDocument().containsPoint(aPoint);
-        })
-
-        if (tile) {
-            return this.tiles().indexOf(tile);
-        }
-
-        return this.tiles().length;
-    }
-    */
-
     // Browser drop from desktop
 
     /**

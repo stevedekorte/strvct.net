@@ -82,33 +82,6 @@
         return this.gamePadsMap().valuesArray();
     }
 
-    /*
-    canListenForConnect () {
-        return ("ongamepadconnected" in window);
-    }
-
-    startListening () {
-        if (this.canListenForConnect()) {
-            this.setGamePadListener(SvGamePadListener.clone().setUseCapture(true).setListenTarget(window).setDelegate(this))
-            this.gamePadListener().setIsListening(true)
-        }
-        return this
-    }
-
-    // listener events
-
-
-    onGamePadConnected (event) {
-        this.poll()
-        return true
-    }
-
-    onGamePadDisconnected (event) {
-        this.poll()
-        return true
-    }
-    */
-
     /**
      * @description Starts polling if the SvGamePad API is supported.
      * @category Polling

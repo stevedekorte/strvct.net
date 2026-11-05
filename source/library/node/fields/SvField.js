@@ -188,19 +188,6 @@
             slot.setSyncsToView(true);
         }
 
-        /*
-        {
-            const slot = this.newSlot("valueAllowsNull", true);
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setDuplicateOp("duplicate");
-            slot.setCanInspect(true);
-            slot.setSlotType("Boolean");
-            slot.setLabel("editable");
-            slot.setInspectorPath("Node/Field/Value");
-        }
-        */
-
         /**
          * @member {boolean} valueCanHitEnter - Whether the value can hit enter.
          */
@@ -355,18 +342,6 @@
     title () {
         return this.key();
     }
-
-    /*
-    target () {
-        assert(!Type.isNull(this._target))
-
-        if (this._target) {
-            return this._target
-        }
-
-        return this.parentNode() // we can't do this because we want to support free floating Fields
-    }
-    */
 
     /*
     setKey (newValue) {

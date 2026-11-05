@@ -91,23 +91,6 @@ class SvResourcesFolder extends Object {
         });
     }
 
-    /*
-    allSubfolders () {
-        const subfolders = this.subfolders()
-        let all = []
-        subfolders.forEach(subfolder => {
-            all.concat(subfolder.allSubfolders())
-        })
-        return all
-    }
-
-    selfAndAllSubfolders () {
-        const all = this.allSubfolders()
-        all.unshift(this)
-        return all
-    }
-    */
-
     // -- imports specific ---
 
     /**

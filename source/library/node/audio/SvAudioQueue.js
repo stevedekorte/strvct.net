@@ -199,8 +199,7 @@
    * @param {SvWaSound} sound - The SvWaSound.
    */
     queueSvWaSound (sound) {
-    // e.g. sound could be a SvWaSound or YouTube SvMusicTrack
-    // just needs to support the protocol
+    // any sound that supports the protocol (play/stop/addDelegate/removeDelegate)
 
         // verify sound protocol
         assert(sound.play);
@@ -224,7 +223,7 @@
    * @category Information
    * @description A safe display label for any queued sound: the protocol
    * only requires play/stop/addDelegate/removeDelegate — description() is
-   * optional (SvWaSound lacks it; SvMusicTrack has it).
+   * optional (SvWaSound lacks it).
    * @param {Object} sound
    * @returns {String}
    */

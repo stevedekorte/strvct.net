@@ -73,26 +73,6 @@
         return this.alwaysLoadedSlotNames().length > 0;
     }
 
-    /*
-  markAsLoaded () {
-    this.setHasBeenLoaded(true);
-    return this;
-  }
-
-  markAsUnloaded () {
-    this.setHasBeenLoaded(false);
-    return this;
-  }
-
-  isLoaded () {
-    return this.hasBeenLoaded() !== false;
-  }
-
-  isUnloaded () {
-    return this.hasBeenLoaded() === false;
-  }
-  */
-
     shouldIncludeSlot (/*slotName*/) {
         return true;
     /*

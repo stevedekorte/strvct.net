@@ -24,19 +24,6 @@
      */
     recordForStore (/*aStore*/) { // should only be called by Store
         throw new Error("Image_store.recordForStore: not implemented - we use blobs instead of images for storage");
-        /*
-        let src = this.src;
-        if (this.isLoaded()) {
-            src = this.asDataURL();
-        }
-
-        const dict = {
-            type: Type.typeName(this),
-            src: src
-        };
-
-        return dict;
-        */
     }
 
     /**

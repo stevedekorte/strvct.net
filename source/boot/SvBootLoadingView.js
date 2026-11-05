@@ -47,21 +47,6 @@ class SvBootLoadingView extends Object {
         return this._shared;
     }
 
-    /*
-  startInterval () {
-    const fps = 30;
-    this._interval = setInterval(() => {
-      // let's force a DOM render here
-
-    }, 1000/fps);
-  }
-
-  stopInterval () {
-    clearInterval(this._interval);
-    this._interval = null;
-  }
-  */
-
     /**
    * @method isAvailable
    * @category State

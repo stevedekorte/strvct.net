@@ -369,33 +369,3 @@
     }
 
 }.initThisClass());
-
-/*
-const testJsonReader = function () {
-
-  console.log(
-    "========================================================================="
-  );
-
-  const jsonInput = [{ "a": 1 }, [1, 2, 3], { "b": 2 }];
-
-  const reader = SvJsonStreamReader.clone();
-
-  // Simulate random breaks in the HTML content
-  reader.beginJsonStream();
-  const s = JSON.stableStringifyWithStdOptions(jsonInput);
-  reader.onStreamJson(s);
-  reader.endJsonStream();
-  //reader.show();
-
-  console.log("input: ", JSON.stableStringifyWithStdOptions(jsonInput));
-  console.log("output: ", JSON.stableStringifyWithStdOptions(reader.rootContainer()));
-
-  console.log(
-    "========================================================================="
-  );
-
-}
-
-testJsonReader();
-*/

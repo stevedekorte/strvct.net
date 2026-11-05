@@ -553,21 +553,5 @@
         return Math.max(1600, 400 + words * 240);
     }
 
-    /*
-    onSoundStarted (aNote) {
-        const sound = aNote.sender();
-        this.postNoteNamed("onSpeakingText").setInfo(sound.transcript());
-    }
-
-    onSoundEnded (aNote) {
-        const sound = aNote.sender();
-        this.postNoteNamed("onSpokeText").setInfo(sound.transcript());
-    }
-
-    spokenContentOfText (text) {
-        return text.stripHtmlElementsWithTagNames(this.unspeakableTagNames());
-    }
-  */
-
 }).initThisCategory();
 

@@ -232,33 +232,6 @@
 
     // --- resource file ---
 
-    /*
-    fileResource () {
-        return SvFileResources.shared().rootFolder().nodeAtSubpathString(this.path());
-    }
-
-    async asyncLoadFileResource () {
-        this.setTitle(this.path().lastPathComponent().sansExtension());
-
-        const fileResource = this.fileResource();
-        if (!fileResource) {
-          const error = "no index for file resource at path '" + this.path() + "'"
-          this.setError(error);
-          throw new Error(error);
-        }
-        await fileResource.promiseLoad();
-        this.onFileResourceLoaded(fileResource);
-    }
-
-    onFileResourceLoaded (fileResource) {
-        this.setData(fileResource.data());
-        this.postNoteNamed("resourceLoaded");
-        this.setLoadState("loaded");
-        this.didLoad();
-        return this;
-    }
-    */
-
     // --- load states---
 
     isLoading () {

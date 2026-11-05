@@ -408,37 +408,4 @@
         }
     }
 
-    /*
-
-  valueButtonIconName () {
-    return this.isMicOn() ? "Mic On" : "Mic Off";
-  }
-
-  onClickValueButton () {
-    this.setIsMicOn(!this.isMicOn());
-    console.log("this.isMicOn():", this.isMicOn());
-    if (this.isMicOn()) {
-      this.setupSttSessionIfNeeded();
-      this.sttSession().start();
-    } else {
-      if (this.sttSession()) {
-        this.sttSession().stop();
-      }
-    }
-    this.didUpdateNode();
-  }
-  */
-
-    /*
-  disable () {
-    //this.setValueIsEditable(false);
-    return this;
-  }
-
-  enable () {
-    //this.setValueIsEditable(true);
-    return this;
-  }
-  */
-
 }.initThisClass());

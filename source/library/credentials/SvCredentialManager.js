@@ -89,20 +89,4 @@
         throw new Error("No bearer token found for endpoint: " + endpoint);
     }
 
-    /*
-    fetchInfoUrl () {
-        const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
-        const url = baseUrl + "/app/info/" + this.svType() + ".json";
-        return url;
-    }
-
-    async fetchInfo () {
-        return fetch(this.fetchInfoUrl())
-            .then(response => response.json())
-            .then(json => {
-                return json;
-            });
-    }
-    */
-
 }.initThisClass());

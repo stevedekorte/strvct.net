@@ -226,46 +226,6 @@
    * @returns {Promise<void>}
    * @category Actions
    */
-    /*
-  async fetch () {
-    this.setIsLoading(true);
-
-    const url = this.getProxyUrl();
-    this.setStatus("fetching...");
-    //console.log("fetch url " + this.url());
-    console.log(this.svType() + " fetch proxy url: " + url);
-    const urlObject = new URL(url);
-    // now change the port to 8000
-    urlObject.port = "8000";
-    const proxyUrl = urlObject.toString(); // send it to the old proxy server
-
-
-    const apiKey = await SvOpenAiService.shared().apiKeyOrUserAuthToken();
-
-    try {
-
-      const response = await fetch(proxyUrl, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ` + apiKey,
-            'Content-Type': 'application/json'
-        },
-    });
-
-      if (!response.ok) {
-          const error = new Error(`HTTP error! Status: ${response.status}`);
-          throw error;
-      }
-
-      const blob = await response.blob();
-      const dataUrl = await blob.asyncAsDataUrl();
-      this.onLoaded(dataUrl);
-    } catch (error) {
-      this.onError(error);
-      //error.rethrow();
-    }
-  }
-    */
 
     /**
    * @description Shuts down the image fetching process.

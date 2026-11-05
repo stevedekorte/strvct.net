@@ -58,20 +58,6 @@
     */
 
 
-        /*
-    {
-      const slot = this.newSlot("scanAction", null);
-      //slot.setInspectorPath("Character");
-      slot.setLabel("Scan");
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Action");
-      slot.setIsSubnodeField(true);
-      slot.setCanInspect(true)
-      slot.setActionMethodName("scan");
-    }
-    */
-
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
         this.setSummaryFormat("{key} {value}");

@@ -46,19 +46,6 @@
      * @category Keyboard Interaction
      */
 
-    /*
-    onMeta_a_KeyDown (event) {
-        // only select subnodes if this tile can have them,
-        // otherwise, like the column handle this event
-        const c = this.column().nextColumn();
-        if (c) {
-            c.selectAllTiles();
-        }
-        event.stopPropagation();
-        return false;
-    }
-    */
-
     /**
      * @description Handles the D key down event.
      * @param {Event} event - The keyboard event.

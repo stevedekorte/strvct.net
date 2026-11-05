@@ -164,37 +164,6 @@
             slot.setIsSubnodeField(true);
         }
 
-        /*
-        {
-            const slot = this.newSlot("midjourneyService", null)
-            slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(MJService);
-            slot.setIsSubnodeField(true);
-        }
-        */
-
-        /*
-        {
-            const slot = this.newSlot("azureService", null)
-            slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(SvAzureService);
-            slot.setIsSubnodeField(true);
-        }
-        */
-
-        /**
-         * @member {SvYouTubeService} youtubeService
-         * @category Video Service
-         */
-        /*
-        {
-            const slot = this.newSlot("youtubeService", null);
-            slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(SvYouTubeService);
-            slot.setIsSubnodeField(true);
-        }
-        */
-
         /**
          * @member {SvPeerService} peerService
          * @category Networking

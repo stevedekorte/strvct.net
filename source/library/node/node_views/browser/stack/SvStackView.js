@@ -923,21 +923,6 @@
         return navChanged || companionChanged;
     }
 
-    /*
-    firstParentWithDifferentDirection () {
-        const d = this.direction();
-        let current = this
-        while (current) {
-            const p = current.previousStackView();
-            if (p && p.direction() !== d) {
-                break;
-            }
-            current = p;
-        }
-        return current;
-    }
-    */
-
     /**
      * @description Gets the stack view super chain.
      * @returns {Array} The stack view super chain.
@@ -1029,22 +1014,6 @@
         w += this.stackViewSubchain().sum(sv => sv.anchoredClaimWidth ? sv.anchoredClaimWidth() : 0);
         return w;
 
-        /*
-        let w = 0;
-        const views = this.stackViewSubchain();
-        for (let i = 0; i < views.length; i++) { // use loop so we can break
-            const sv = views[i];
-
-            //if (sv.direction() !== this.direction()) {
-            //    break;
-            //}
-
-            if (sv.navView().isVertical()) {
-                w += sv.navView().targetWidth();
-            }
-        }
-        return w;
-        */
     }
 
     /**

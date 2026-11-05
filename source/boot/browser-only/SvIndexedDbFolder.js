@@ -613,25 +613,6 @@
 
         this.logDebug(this.path() + " promiseNewTx");
 
-        /*
-        const lastTx = this.lastTx()
-        if (lastTx) {
-            // technically, it's ok to have multiple unfinished txs,
-            // but AFAIK I don't use them at the moment,
-            // so this is a sanity check for now
-
-            if (!lastTx.isFinished()) {
-                if (!lastTx.isCommitted()) {
-                    console.warn(this.logPrefix(), "last tx was not committed yet!")
-                    console.warn(this.logPrefix(), "last tx:")
-                    lastTx.show()
-                }
-
-                await lastTx.promiseForFinished();
-                return this.privateNewTx();
-            }
-        }
-        */
         return Promise.resolve(this.privateNewTx());
     }
 

@@ -56,34 +56,6 @@
         return this;
     }
 
-    /*
-    didUpdateSlotParentView (oldValue, newValue) {
-        const parentless = this.thisClass().viewsWithoutParents()
-
-        assert(oldValue !== newValue);
-
-        if (newValue) {
-            if (parentless.has(newValue)) {
-                console.log("removing " + this.svTypeId() + " from parentless")
-            }
-            parentless.delete(this)
-        } else if (Type.isNullOrUndefined(oldValue) && !Type.isNullOrUndefined(newValue)) {
-            if (parentless.size === 0) { // is this always correct?
-                this.scheduleMethod("retireParentlessViews")
-            }
-            console.log("adding " + this.svTypeId() + " to parentless")
-            parentless.add(this)
-        }
-
-        return this
-    }
-
-    retireParentlessViews () {
-        this.thisClass().retireParentlessViews()
-    }
-
-    */
-
     // --- subviews ---
 
     /**
@@ -714,48 +686,6 @@
         this.setPosition("absolute");
         this.setTopPx(0).setLeftPx(0).setRightPx(0).setBottomPx(0);
     }
-
-    /*
-    verticallyCenterFromTopNow () {
-        if (this.parentView() === null) {
-            console.warn("verticallyCenterFromTopNow called on view with no superview")
-            return this
-        }
-
-        this.setPosition("absolute")
-        this.setDisplay("inline-block")
-
-        // timeout used to make sure div is placed and laid out first
-        // TODO: consider ordering issue
-        this.addWeakTimeout(() => {
-            let sh = this.parentView().clientHeight()
-            let h = this.clientHeight()
-            this.setTopPx(sh/2 - h/2)
-        }, 1)
-
-        return this
-    }
-
-    horiontallyCenterFromLeftNow () {
-        if (this.parentView() === null) {
-            console.warn("horiontallyCenterFromLeftNow called on view with no superview")
-            return this
-        }
-
-        this.setPosition("absolute")
-        this.setDisplay("inline-block")
-
-        // timeout used to make sure div is placed and laid out first
-        // TODO: consider ordering issue
-        this.addWeakTimeout(() => {
-            let sw = this.parentView().clientWidth()
-            let w = this.clientWidth()
-            this.setTopPx(sw/2 - w/2)
-        }, 1)
-
-        return this
-    }
-    */
 
     /**
      * @description Finds the root view.

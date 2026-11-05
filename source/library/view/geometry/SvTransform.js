@@ -96,23 +96,4 @@
         return this;
     }
 
-    /*
-    add (aTransform) {
-        const t = this.copy()
-        t.position().addInPlace(aTransform.position())
-        t.rotation().addInPlace(aTransform.rotation())
-        t.scale().addInPlace(aTransform.scale())
-        return t
-    }
-
-
-    subtract (aTransform) {
-        const t = this.copy()
-        t.position().subtractInPlace(aTransform.position())
-        t.rotation().subtractInPlace(aTransform.rotation())
-        t.scale().subtractInPlace(aTransform.scale())
-        return t
-    }
-    */
-
 }.initThisClass());

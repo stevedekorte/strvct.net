@@ -140,20 +140,6 @@
         return aRecord;
     }
 
-    /*
-    lazyPids (puuids = new Set()) {
-        // when doing Store.collect() will need to check for lazy slot pids on active objects
-        this.allSlotsMap().forEachV(slot => {
-            // only need to do this on unloaded store refs in instances
-            const storeRef = slot.onInstanceGetValueRef(this);
-            if (storeRef) {
-                puuids.add(storeRef.pid());
-            }
-        });
-        return puuids;
-    }
-    */
-
     /**
      * @description Loads object data from a record
      * @param {Object} aRecord - The record containing the object's data

@@ -273,20 +273,6 @@ Example Tool call format:
         }
 
 
-        /*
-        {
-            const slot = this.newSlot("doesWaitForMessageCompletion", false);
-            slot.setDescription("If true, the tool call will wait for the message complete notification before returning.");
-            slot.setSlotType("Boolean");
-            slot.setShouldJsonArchive(false);
-            slot.setIsSubnodeField(true);
-            slot.setCanEditInspection(false);
-            slot.setIsInJsonSchema(false);
-            slot.setShouldStoreSlot(true);
-        }
-        */
-
-
         {
             const slot = this.newSlot("makeCallAction", null);
             slot.setInspectorPath("");
@@ -524,43 +510,6 @@ Example Tool call format:
         }
         return definitions;
     }
-
-    /*
-  assertValidParametersSchema () {
-    const validator = new AjvValidator();
-    const refSet = new Set();
-    const paramsSchema = this.toolDefinition().toolMethod().paramsSchema(refSet);
-
-    // Build a complete schema with definitions for any referenced types
-    const completeSchema = {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "type": "object",
-      "properties": paramsSchema,
-      "additionalProperties": false
-    };
-
-    // Only add definitions if there are referenced types
-    if (refSet.size > 0) {
-      completeSchema.definitions = {};
-      for (const referencedClass of refSet) {
-        const typeName = referencedClass.svType();
-        const typeSchema = referencedClass.asJsonSchema(new Set());
-        completeSchema.definitions[typeName] = typeSchema;
-      }
-    }
-
-    validator.setJsonSchema(completeSchema);
-    const isValid = validator.validate(this.parametersDict());
-    if (!isValid) {
-        const errorString = validator.errorMessageForLLM();
-        console.error("Error during schema validation:", errorString);
-        console.error("Complete schema:", JSON.stringify(completeSchema, null, 2));
-        console.error("Parameters JSON:", JSON.stringify(this.parametersDict(), null, 2));
-        const e = new Error(errorString);
-        this.handleCallError(e);
-    }
-  }
- */
 
     handleParseError (e) {
     //throw new Error(this.svType() + " Error parsing call string: " + e.message);

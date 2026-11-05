@@ -103,23 +103,3 @@
     }
 
 }.initThisClass()); //.selfTest()
-
-/*
-(class Array_mutator extends Array {
-    mutatorMethodNamesSet () {
-        // we can't hook []= or delete[] but we can hook these
-        // and use hooked methods instead of operators for those
-        return new Set([
-            "pop",
-            "push",
-            "reverse",
-            "shift",
-            "sort",
-            "splice",
-            "unshift"
-        ])
-    }
-}).initThisCategory();
-
-Array.prototype.setupMutatorHooks();
-*/

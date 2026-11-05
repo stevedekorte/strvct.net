@@ -300,22 +300,6 @@
             //console.log(this.logPrefix() + "storeObject " + obj.svTypeId());
             const jsonString = this.jsonStringForObject(obj);
 
-            /*
-            const record = obj.recordForStore(this);
-            const jsonString = JSON.stringify(record);
-            //this.logDebug(() => "store " + puuid + " <- " + record.type )
-
-            {
-                // sanity checks
-                // object should have a type and a class
-                const recordType = record.type;
-                assert(!Type.isNullOrUndefined(recordType), "object has no type property");
-
-                const recordClass = SvGlobals.globals()[recordType];
-                assert(recordClass && recordClass.isClass && recordClass.isClass(), "missing class for " + recordType);
-            }
-            */
-
 
             this.putRecordJson(puuid, jsonString, obj);
             this.storeBlobsReferencedByObject(obj);

@@ -10,23 +10,6 @@
  */
 
 
-/*
-(class Function_ideal extends Function {
-
-    static isKindOf (superclass) {
-        if (typeof superclass !== 'function') return false; // Ensure superclass is a valid constructor
-
-        let current = this;
-        while (current) {
-            if (current === superclass) return true;
-            current = Object.getPrototypeOf(current);
-        }
-        return false;
-    }
-
-}).initThisCategory();
-*/
-
 Function.isKindOf = function (superclass) {
     if (typeof superclass !== "function") {
         return false;
@@ -41,34 +24,6 @@ Function.isKindOf = function (superclass) {
     }
     return false;
 };
-
-/*
-Function.isKindOf = function(superclass) {
-    if (typeof superclass !== 'function') {
-        return false; // Ensure superclass is a valid constructor
-    }
-
-    let current = this;
-    while (current) {
-        if (current === superclass) {
-            return true;
-        }
-
-        if (current.name === superclass.name) {
-            // ran into case of Event instance class being a Function not the Event class
-            // so we need to check the name
-            return true;
-        }
-
-        if (current.constructor !== current) {
-            current = current.constructor;
-        } else {
-            current = null;
-        }
-    }
-    return false;
-};
-*/
 
 Function.prototype.isKindOf = function (superclass) {
     if (typeof superclass !== "function") return false;
@@ -372,18 +327,6 @@ Example:
     }
 */
 
-/*
-Function.prototype.asRootJsonSchema = function (refSet = new Set()) {
-    // For functions, we return the schema directly with the $id and $schema added
-    const schema = this.asJsonSchema(refSet);
-    return {
-        "$id": this.assistantToolName(),
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        ...schema
-    };
-}
-*/
-
 Function.prototype.asRootJsonSchema = function asRootJsonSchema (definitionsOnly = false) {
     // NOTE: this uses a format of all definitions at the top level
 
@@ -681,20 +624,4 @@ Function.prototype.canOccurOnClient = function () {
 
 
 // --- JSON Schema Validation ---
-
-/*
-Function.prototype.jsonSchemaValidator = function () {
-    // lazy init validator
-    if (this.getMetaProperty("jsonSchemaValidator") === undefined) {
-        this.setMetaProperty("jsonSchemaValidator", new ZJsonValidator());
-    }
-    return this.getMetaProperty("jsonSchemaValidator") ;
-};
-
-Function.prototype.validateJsonSchema = function (json) {
-    const validator = this.jsonSchemaValidator();
-    validator.setJsonSchema(this.asRootJsonSchema());
-    return validator.validate(json);
-};
-*/
 

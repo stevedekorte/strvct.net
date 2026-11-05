@@ -161,21 +161,6 @@
         return this;
     }
 
-    /*
-    onMouseOver () {
-        this._normalBackgroundColor = this.backgroundColor();
-        this.setBackgroundColor(this.hoverBackgroundColor());
-        return true;
-    }
-
-    onMouseOut () {
-        if (this._normalBackgroundColor) {
-            this.setBackgroundColor(this._normalBackgroundColor);
-        }
-        return true;
-    }
-    */
-
     /**
      * @description Sets the icon name for the button.
      * @param {string} aName - The name of the icon to set.

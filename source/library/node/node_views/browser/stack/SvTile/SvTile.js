@@ -468,20 +468,6 @@
         return this.calcWidth();
     }
 
-    /*
-    setMinAndMaxWidth (w) {
-        super.setMinAndMaxWidth(w)
-        this.contentView().setMinAndMaxWidth(w)
-        return this
-    }
-
-    setMinAndMaxHeight (h) {
-        super.setMinAndMaxHeight(h)
-        this.contentView().setMinAndMaxHeight(h)
-        return this
-    }
-    */
-
     /**
      * @description Adds a content subview.
      * @param {SvDomView} aView - The view to add.
@@ -1055,18 +1041,6 @@
             this.removeFromParentView();
         }
     }
-
-    /*
-	animateOpen () {
-		this.setTransition(this.transitionStyle())
-		this.setOpacity(0)
-		this.setMinAndMaxHeight(0)
-		this.addWeakTimeout(() => {
-			this.setOpacity(1)
-			this.setMinAndMaxHeight(this.defaultHeight())
-		}, 0)
-	},
-	*/
 
 
     // -------------------
