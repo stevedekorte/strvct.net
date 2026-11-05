@@ -250,7 +250,6 @@ The following formats will be used for tool calls and responses:
         for (const toolCall of queuedCalls) {
             if (!toolCall.isQueued()) {
                 console.error("**ERROR**:", this.logPrefix(), "Tool call is not queued, it's '" + toolCall.status() + "', but we're processing queued tool calls");
-                //debugger;
             }
             // assert(toolCall.isQueued(), "sanity check: we're processing queued tool calls, but tool call status is not set to queued");
             await this.processToolCall(toolCall);
@@ -478,7 +477,6 @@ The following formats will be used for tool calls and responses:
         m.setContent(content);
         m.setIsVisibleToUser(false);
         assert(!m.isVisibleToUser(), "Tool call results should not be visible to user");
-        //debugger;
         m.setIsComplete(true); // does this trigger a requestResponse by the conversation assistant?
         //const responseMessage = m.requestResponse();
         //await responseMessage.completionPromise();

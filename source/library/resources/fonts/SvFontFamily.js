@@ -61,7 +61,6 @@
      * @category Modification
      */
     addFont (aFont) {
-        //debugger
         this.addSubnode(aFont);
         return this;
     }

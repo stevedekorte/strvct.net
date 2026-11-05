@@ -91,14 +91,12 @@
 
     /*
     fetchInfoUrl () {
-        //debugger;
         const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
         const url = baseUrl + "/app/info/" + this.svType() + ".json";
         return url;
     }
 
     async fetchInfo () {
-        //debugger;
         return fetch(this.fetchInfoUrl())
             .then(response => response.json())
             .then(json => {

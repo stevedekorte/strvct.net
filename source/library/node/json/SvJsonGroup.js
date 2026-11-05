@@ -553,7 +553,6 @@
                         // Object without json method - skip to avoid circular reference issues
                         // This catches SvField and other objects that should have serializeToJson
                         console.warn("serializeToJson: skipping '" + Type.typeName(value) + "' object value on slot '" + slotName + "' as it's missing serializeToJson");
-                        //debugger;
                     }
                 }
             });

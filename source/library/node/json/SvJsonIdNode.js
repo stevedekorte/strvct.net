@@ -305,7 +305,6 @@
                         return result;
                     } else {
                         console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
-                        //debugger;
                     }
                 }
             }

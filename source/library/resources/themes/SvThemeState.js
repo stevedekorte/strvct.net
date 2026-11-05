@@ -487,7 +487,6 @@
             const stateName = this.title();
             const spacer = "-".repeat(depth);
             console.log(this.logPrefix(), " " + spacer + " " + themeClassName + "/" + stateName + ".getStyleValueNamed('" + name + "')");
-            //debugger
         */
 
         let v = null;

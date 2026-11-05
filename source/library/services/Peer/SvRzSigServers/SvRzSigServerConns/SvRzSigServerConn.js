@@ -753,7 +753,6 @@
    */
     onError (error) {
     //this.logDebug("error ", error);
-    //debugger
         console.log("error: " + error.message);
         this.setStatus(error.message);
         this.setError(error);

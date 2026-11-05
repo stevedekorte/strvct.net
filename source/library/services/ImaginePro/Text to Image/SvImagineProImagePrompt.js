@@ -1138,7 +1138,6 @@ Midjourney
 
     /*
     didUpdateSlotStatus (oldValue, newValue) {
-        //debugger;
         //this.shareProgress(newValue);
     }
     */

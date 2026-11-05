@@ -279,7 +279,6 @@
                 } catch (error) {
                     console.error(this.logPrefix(), "Error shutting down message: " + error.message);
                     console.error(error.stack);
-                    //debugger;
                 }
             }
         });

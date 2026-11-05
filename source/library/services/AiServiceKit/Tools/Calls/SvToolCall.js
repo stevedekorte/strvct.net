@@ -321,7 +321,6 @@ Example Tool call format:
         if (!toolCalls) {
             const msg = "Tool call '" + this.toolName() + "' has a toolCalls slot that is null";
             console.error(msg);
-            //debugger;
             throw new Error(msg);
         }
         return toolCalls.toolDefinitionWithName(toolName);
@@ -937,7 +936,6 @@ Example Tool call format:
         }
 
         console.error("---- TOOLCALL ERROR: " + this.svType() + " Error handling tool call: " + e.message);
-        //debugger;
         const r = this.newToolResult();
         r.setStatus("failure");
         r.setError(e.message);

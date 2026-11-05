@@ -168,7 +168,6 @@
         if (this.hasDoneInit()) {
             console.log(this.logPrefix(), "didUpdateSlotRole", oldValue, newValue);
             if (newValue === "assistant") {
-                //debugger;
             }
         }
     }

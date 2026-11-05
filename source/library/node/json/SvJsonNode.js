@@ -31,7 +31,6 @@
      * @category Data Parsing
      */
     static openMimeChunk (dataChunk) {
-        //debugger;
         const data = dataChunk.decodedData();
         //console.log(this.logPrefix(), "data = '" + data + "'");
         let json = null;
@@ -91,7 +90,6 @@
      */
     static nodeForJson (json, jsonPathComponents = []) {
         const t = Type.typeName(json);
-        //debugger;
         const protoName = this.jsonToProtoNameDict()[t];
         if (protoName) {
             const proto = Object.getClassNamed(protoName);

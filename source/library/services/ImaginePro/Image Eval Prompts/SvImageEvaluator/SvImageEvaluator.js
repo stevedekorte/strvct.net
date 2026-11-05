@@ -447,7 +447,6 @@
 
         this.setScore(Number(this.checklist().score()));
 
-        //debugger;
         if (this.svImage()) {
             this.svImage().setTitle(this.score().toFixed(2));  // Show as 0.75, 0.92, etc.
         }

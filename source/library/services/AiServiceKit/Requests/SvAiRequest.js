@@ -1217,7 +1217,6 @@
    * @param {Error} newValue
    */
     didUpdateSlotError (oldValue, newValue) {
-    //debugger
         if (newValue) {
             this.setStatus("ERROR: " + newValue.message);
         }

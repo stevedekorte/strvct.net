@@ -1875,7 +1875,6 @@
      * @returns {SvNode} This instance.
      */
     postShouldFocusAndExpandSubnode (aSubnode) {
-        //debugger
         assert(aSubnode);
         this.shouldFocusAndExpandSubnodeNote().setInfo(aSubnode).post();
         return this;

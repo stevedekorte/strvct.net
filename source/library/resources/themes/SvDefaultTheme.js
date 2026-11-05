@@ -75,7 +75,6 @@
      */
     setupAsDefault () {
         if (this.themeClasses().length === 0) {
-            //debugger
             this.setTitle("DefaultTheme");
             const defaultThemeClass = SvThemeClass.clone().setupAsDefault();
             this.addSubnode(defaultThemeClass);
