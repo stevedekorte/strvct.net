@@ -1,6 +1,13 @@
 [
     "categories/_imports.json",
     "SvObjectPool.js",
+    "SvObjectPool_textBlobs.js",
+    "SvObjectPool_cloudMirror.js",
+    "SvObjectPool_reading.js",
+    "SvObjectPool_windowedCollections.js",
+    "SvObjectPool_contentChanges.js",
+    "SvObjectPool_collection.js",
+    "SvObjectPool_blobs.js",
     "SvObjectPool_replica.js",
     "SvPersistentObjectPool.js",
     "SvBlobPool.js",
