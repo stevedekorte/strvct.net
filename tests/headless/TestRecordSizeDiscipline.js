@@ -164,11 +164,13 @@ async function main () {
     const warnB = console.warn;
     console.warn = (...args) => { budgetWarnings.push(args.join(" ")); };
     try {
-        pool2.warnIfRecordOverBudget("TestBudgetDoc", SvPersistentObjectPool.recordBudgetLength() + 1);
-        pool2.warnIfRecordOverBudget("TestBudgetDoc", SvPersistentObjectPool.recordBudgetLength() + 2);
-        pool2.warnIfRecordOverBudget("TestSmallDoc", 100);
+        const big = { type: "TestBudgetDoc", entries: [["label", "short"], ["options", "o".repeat(70000)], ["prompt", "p".repeat(900)]] };
+        pool2.warnIfRecordOverBudget(big, SvPersistentObjectPool.recordBudgetLength() + 1);
+        pool2.warnIfRecordOverBudget(big, SvPersistentObjectPool.recordBudgetLength() + 2);
+        pool2.warnIfRecordOverBudget({ type: "TestSmallDoc", entries: [] }, 100);
     } finally { console.warn = warnB; }
     check(budgetWarnings.filter(w => w.includes("record budget")).length === 1, "a record over the budget warns once per class, and a small one not at all");
+    check(budgetWarnings.some(w => w.includes("largest entries: options 70002, prompt 902, label 7")), "…naming its largest entries: " + (budgetWarnings[0] || "").split("largest entries: ")[1]);
 
     console.log("\nThe collection warning");
     const warnings = [];

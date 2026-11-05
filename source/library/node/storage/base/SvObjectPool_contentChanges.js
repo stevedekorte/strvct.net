@@ -273,7 +273,7 @@
             const recordClass = SvGlobals.globals()[recordType];
             assert(recordClass && recordClass.isClass && recordClass.isClass(), "missing class for " + recordType);
         }
-        this.warnIfRecordOverBudget(record.type, jsonString.length);
+        this.warnIfRecordOverBudget(record, jsonString.length);
         return jsonString;
     }
 
@@ -281,16 +281,33 @@
      * @description Record size discipline (Plans/Record Store §5): records
      * stay small (stored Strings are capped, BlobStrings spill), so one over
      * this budget means a class keeps unbounded data inline (a growing list, a
-     * large JSON value) — named here, once per class, long before a row nears a
-     * backend's per-row limit (Firestore's 1 MiB).
+     * large JSON value) — named here, with its largest entries, once per
+     * class, long before a row nears a backend's per-row limit (Firestore's
+     * 1 MiB).
+     * @param {Object} record - { type, entries: [[slotName, value], …] }
+     * @param {Number} length - the record's JSON length
      * @category Record Size
      */
-    warnIfRecordOverBudget (type, length) {
-        if (length > SvObjectPool.recordBudgetLength() && !SvObjectPool.overBudgetTypes().has(type)) {
-            SvObjectPool.overBudgetTypes().add(type);
-            console.warn(this.logPrefix() + "a " + type + " record is " + length + " characters, over the " + SvObjectPool.recordBudgetLength() + " record budget (Record Store §5) — move its unbounded data to rows or text blobs");
+    warnIfRecordOverBudget (record, length) {
+        if (length > SvObjectPool.recordBudgetLength() && !SvObjectPool.overBudgetTypes().has(record.type)) {
+            SvObjectPool.overBudgetTypes().add(record.type);
+            console.warn(this.logPrefix() + "a " + record.type + " record is " + length + " characters, over the " + SvObjectPool.recordBudgetLength() + " record budget (Record Store §5); largest entries: " + this.largestEntriesDescription(record) + " — move its unbounded data to rows or text blobs");
         }
         return this;
+    }
+
+    /**
+     * @description The three largest entries of a record, by JSON length,
+     * e.g. "options 61204, prompt 15880, value 4096".
+     * @param {Object} record
+     * @returns {String}
+     * @category Record Size
+     */
+    largestEntriesDescription (record) {
+        const entries = Array.isArray(record.entries) ? record.entries : [];
+        return entries.map(([name, value]) => [name, JSON.stringify(value === undefined ? null : value).length])
+            .sort((a, b) => b[1] - a[1]).slice(0, 3)
+            .map(([name, size]) => name + " " + size).join(", ") || "(no entries)";
     }
 
     static recordBudgetLength () {
