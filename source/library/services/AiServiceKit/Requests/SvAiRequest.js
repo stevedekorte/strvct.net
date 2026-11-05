@@ -86,6 +86,11 @@
             const slot = this.newSlot("bodyJson", null);
             slot.setSlotType("JSON Object");
             slot.setShouldStoreSlot(true);
+            // A request body is the whole conversation (a GM request runs to
+            // ~150k tokens): checking it is plain JSON walked all of it on
+            // every set, 0.7 s and more on a table worker, stalling the
+            // Narrator's audio (2026-11-04). It is built here, from JSON.
+            slot.setValidatesOnSet(false);
         }
         {
             // Whether the CURRENT body has been through the provider's

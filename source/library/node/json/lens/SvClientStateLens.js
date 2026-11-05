@@ -82,6 +82,11 @@
         {
             // Set<node> — strict ancestors of every target, rendered as
             // path-carrying handles.
+            const slot = this.newSlot("lensParentMap", null);
+            slot.setSlotType("Map");
+            slot.setDescription("each node reachable under the root → its parent in the JSON-visible tree; built once per lens, on the first target");
+        }
+        {
             const slot = this.newSlot("ancestorSet", null);
             slot.setSlotType("Set");
         }
@@ -192,11 +197,63 @@
         if (node === root) {
             return;
         }
-        const chain = root.lensPathToDescendant(node);
+        const chain = this.ancestorChainOf(node);
         if (chain === null) {
             throw new Error("lens: node '" + (node.jsonId ? node.jsonId() : node.svType()) + "' resolved but is not reachable in the JSON-visible tree under this root — it may only be referenced (not contained) here. Select a containing node instead.");
         }
         chain.forEach(ancestor => this.ancestorSet().add(ancestor));
+    }
+
+    /**
+     * @description A target's strict ancestors, root first, through the
+     * JSON-visible child topology (lensChildNodes) — or null when it is not
+     * reachable under the root. Climbs the parent index rather than searching
+     * the tree from the root for each target: a lens with a dozen targets
+     * searched the whole session a dozen times, building every node's child
+     * list each time — about a second per GM request on a table worker,
+     * stalling the Narrator's audio (2026-11-04).
+     * @param {SvNode} node
+     * @returns {Array|null}
+     * @category Resolution
+     */
+    ancestorChainOf (node) {
+        const parents = this.parentIndex();
+        if (!parents.has(node)) {
+            return null;
+        }
+        const chain = [];
+        for (let p = parents.get(node); p; p = parents.get(p)) {
+            chain.unshift(p);
+        }
+        return chain;
+    }
+
+    /**
+     * @description Each node reachable under the root → its parent, from one
+     * breadth-first walk of the JSON-visible tree (the first parent found
+     * wins; a node reached twice is contained once). The root has no entry.
+     * @returns {Map}
+     * @category Resolution
+     */
+    parentIndex () {
+        if (!this.lensParentMap()) {
+            const parents = new Map();
+            const queue = [this.root()];
+            const seen = new Set(queue);
+            for (let i = 0; i < queue.length; i++) {
+                const node = queue[i];
+                const children = node.lensChildNodes ? node.lensChildNodes() : [];
+                children.forEach((child) => {
+                    if (!seen.has(child)) {
+                        seen.add(child);
+                        parents.set(child, node);
+                        queue.push(child);
+                    }
+                });
+            }
+            this.setLensParentMap(parents);
+        }
+        return this.lensParentMap();
     }
 
     // --- emission-walk queries (O(1), consulted per node) ---
