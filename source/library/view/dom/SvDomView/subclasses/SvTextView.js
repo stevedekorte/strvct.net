@@ -19,6 +19,11 @@
 (class SvTextView extends SvStyledDomView {
 
     initPrototypeSlots () {
+        {
+            const slot = this.newSlot("enterEventTimeStamp", null); // when the Enter that last sent input arrived (an event's timeStamp, performance.now() clock)
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
 
         /**
          * @member {String} lastMergeValue
@@ -1168,7 +1173,7 @@
         if (event.inputType === "insertParagraph" && (this.isSingleLine() || this.doesInput())) {
             event.preventDefault();
             this.formatValue();
-            this.afterEnter();
+            this.afterEnter(event);
             return false;
         }
         return true;
@@ -1230,7 +1235,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onEnterKeyUp (/*event*/) {
+    onEnterKeyUp (event) {
         if (!this.isContentEditable()) {
             return;
         }
@@ -1239,7 +1244,7 @@
 	    //this.didEdit();
 
         this.formatValue();
-        this.afterEnter();
+        this.afterEnter(event);
 
         if (this.doesInput()) {
             //this.insertEnterAtCursor();
@@ -1318,6 +1323,7 @@
 
         if (this.doesInput()) {
             if (this.canHitEnter()) {
+                this.setEnterEventTimeStamp(event && event.timeStamp ? event.timeStamp : performance.now());
                 this.tellParentViews("didInput", this);
             } else {
                 // Refused: say so audibly, and let the views above ask their

@@ -61,6 +61,10 @@
             const slot = this.newSlot("longTaskThresholdMs", 1000);
             slot.setSlotType("Number");
         }
+        {
+            const slot = this.newSlot("recentEntries", null); // the last long tasks of any length: [{ at, ms }] (performance.now() times)
+            slot.setSlotType("Array");
+        }
     }
 
     /**
@@ -110,6 +114,7 @@
      * @category Performance Reporting
      */
     onLongTaskEntry (entry) {
+        this.rememberEntry(entry);
         if (entry.duration < this.longTaskThresholdMs()) {
             return this;
         }
@@ -132,6 +137,36 @@
 
         SvClientReport.report("long-task", json);
         return this;
+    }
+
+    /**
+     * @description Keeps the last 50 long tasks (the browser's, 50 ms and up),
+     * so a probe can say what held the main thread during its window.
+     * @param {PerformanceEntry} entry
+     * @returns {SvLongTaskMonitor}
+     * @category Recent
+     */
+    rememberEntry (entry) {
+        if (!this.recentEntries()) {
+            this.setRecentEntries([]);
+        }
+        const entries = this.recentEntries();
+        entries.push({ at: Math.round(entry.startTime), ms: Math.round(entry.duration) });
+        if (entries.length > 50) {
+            entries.shift();
+        }
+        return this;
+    }
+
+    /**
+     * @description The remembered long tasks that overlap a window.
+     * @param {Number} start - performance.now() time
+     * @param {Number} end - performance.now() time
+     * @returns {Array} [{ at, ms }]
+     * @category Recent
+     */
+    entriesBetween (start, end) {
+        return (this.recentEntries() || []).filter((e) => e.at + e.ms >= start && e.at <= end);
     }
 
 }.initThisClass());

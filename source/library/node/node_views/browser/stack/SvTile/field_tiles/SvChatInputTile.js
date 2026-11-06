@@ -106,6 +106,19 @@
     }
 
     /**
+     * @description Enter sent the input: times its way to the screen
+     * (SvChatSendTiming reports a slow one).
+     * @param {SvTextView} aView - the input's text view
+     * @category Event
+     */
+    didInput (aView) {
+        const handledAt = performance.now();
+        super.didInput(aView);
+        const enterAt = aView && aView.enterEventTimeStamp ? aView.enterEventTimeStamp() : null;
+        SvChatSendTiming.clone().setEnterAt(enterAt || handledAt).setHandledAt(handledAt).setInputNode(this.node()).startWatching();
+    }
+
+    /**
      * @description Creates and configures the value view.
      * @returns {SvTextView} The configured value view.
      * @category UI
