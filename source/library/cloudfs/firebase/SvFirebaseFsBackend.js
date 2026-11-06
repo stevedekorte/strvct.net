@@ -214,6 +214,22 @@
         });
     }
 
+    /**
+     * @description Watches a realtime-database value: calls onValue with it
+     * (null while absent) now and each time it changes — pushed, never
+     * polled. A read the rules refuse calls onValue(null) once.
+     * @param {String} path
+     * @param {Function} onValue - (value|null) => void
+     * @returns {Function} stops watching
+     * @category Realtime
+     */
+    observeValue (path, onValue) {
+        const ref = firebase.database().ref(path);
+        const listener = (snap) => onValue(snap.exists() ? snap.val() : null);
+        ref.on("value", listener, () => onValue(null));
+        return () => ref.off("value", listener);
+    }
+
     _seqKey (seq) {
         return String(seq).padStart(12, "0");
     }
