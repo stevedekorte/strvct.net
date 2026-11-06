@@ -291,7 +291,7 @@
     transform: rotate(45deg);
     border: 1px solid var(--sv-status-mark-color);
     position: relative;
-    top: 0.2em; /* level with the capitals' middle, which sits low in their line box */
+    top: 0.06em; /* level with the capitals' middle (measured in EB Garamond), a hair below the line box's centre (0.2em sat it low: Steve, 2026-11-06) */
 }
 
 [data-tile-layout="status"] .SvTileNoteView::before {
