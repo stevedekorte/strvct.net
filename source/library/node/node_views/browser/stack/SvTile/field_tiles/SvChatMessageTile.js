@@ -18,6 +18,10 @@
      */
     initPrototypeSlots () {
         {
+            const slot = this.newSlot("followedThrough", -1); // the revealed sentence last asked to stay in view
+            slot.setSlotType("Number");
+        }
+        {
             const slot = this.newSlot("hasBeenShownUnexpired", false);
             slot.setSlotType("Boolean");
         }
@@ -419,11 +423,44 @@
         if (isDisclosing) {
             this.setAttribute("data-disclosure", "on");
             this.markDisclosure(root, node.disclosedThrough());
+            this.followDisclosure(node.disclosedThrough());
         } else if (this.getAttribute("data-disclosure")) {
             this.element().removeAttribute("data-disclosure");
             root.querySelectorAll("[data-pd-hidden]").forEach(el => el.removeAttribute("data-pd-hidden"));
         }
         return this;
+    }
+
+    /**
+     * @description When a new sentence is revealed, asks the enclosing scroll
+     * view to keep it in view (SvScrollView_follow), so the text being spoken
+     * stays on screen while the reader is following it.
+     * @param {Number} disclosedThrough
+     * @returns {SvChatMessageTile}
+     * @category Disclosure
+     */
+    followDisclosure (disclosedThrough) {
+        if (disclosedThrough === this.followedThrough()) {
+            return this;
+        }
+        this.setFollowedThrough(disclosedThrough);
+        const sentence = this.speakableElements()[disclosedThrough];
+        const scrollView = this.enclosingScrollView();
+        if (sentence && scrollView) {
+            scrollView.keepElementInView(sentence);
+        }
+        return this;
+    }
+
+    /**
+     * @description The scroll view this tile's list scrolls in, if any.
+     * @returns {SvScrollView|null}
+     * @category Disclosure
+     */
+    enclosingScrollView () {
+        const list = this.parentView();
+        const scrollView = list && list.scrollView ? list.scrollView() : null;
+        return scrollView && scrollView.keepElementInView ? scrollView : null;
     }
 
     markDisclosure (root, disclosedThrough) {

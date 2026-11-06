@@ -4,6 +4,7 @@
     "SvDetailView.js",
     "SvNavView.js",
     "SvScrollView.js",
+    "SvScrollView_follow.js",
     "SvScrollToBottomButton.js",
     "SvStackScrollView.js",
     "SvScrollContentView.js",
