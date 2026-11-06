@@ -170,6 +170,9 @@
     --sv-anchor-tab-open-padding: 30px;                     /* each side of an open tab's label (the prototype's) */
     --sv-anchor-tab-top-space: 14px;                        /* empty room above the tabs, so the row does not crowd the header */
     --sv-anchor-tab-font-size: inherit;                     /* the label's size (a theme can set the prototype's 22px) */
+    --sv-anchor-tab-face: inherit;                          /* the label's face (a theme can match its breadcrumbs: var(--sv-face-display)) */
+    --sv-anchor-tab-tracking: normal;                       /* its letter-spacing */
+    --sv-anchor-tab-caps: normal;                           /* its font-variant-caps (small-caps reads as the breadcrumbs do) */
 
     /* INLINE DOCUMENTS (SvTilesView_inline, SvInlineSectionTile): a node's
        next levels shown in place as sections in columns. */

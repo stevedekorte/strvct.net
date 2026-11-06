@@ -541,6 +541,9 @@
                     padding-left: var(--sv-anchor-tab-padding) !important;
                     padding-right: var(--sv-anchor-tab-padding) !important;
                     font-size: var(--sv-anchor-tab-font-size);
+                    font-family: var(--sv-anchor-tab-face);
+                    letter-spacing: var(--sv-anchor-tab-tracking);
+                    font-variant-caps: var(--sv-anchor-tab-caps);
                     /* exactly the tab below its top space: the tile height hint's
                        min-height made it taller, so the tile clipped its bottom
                        (the pinned underline) and centered the label too low */
