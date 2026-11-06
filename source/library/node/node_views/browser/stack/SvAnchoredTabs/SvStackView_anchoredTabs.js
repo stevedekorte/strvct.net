@@ -563,11 +563,11 @@
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabPinned > .TileContentView {
                     /* the pin mark sits in the flow before the label, as in the prototype:
-                       its 6px and a 10px gap; the row re-anchors when a pin changes a width */
-                    padding-left: calc(var(--sv-anchor-tab-padding) + 16px) !important;
+                       its size and a 10px gap; the row re-anchors when a pin changes a width */
+                    padding-left: calc(var(--sv-anchor-tab-padding) + var(--sv-anchor-tab-pin-size) + 10px) !important;
                 }
                 .SvAnchoredTabRow > .SvAnchoredTabOpen.SvAnchoredTabPinned > .TileContentView {
-                    padding-left: calc(var(--sv-anchor-tab-open-padding) + 16px) !important;
+                    padding-left: calc(var(--sv-anchor-tab-open-padding) + var(--sv-anchor-tab-pin-size) + 10px) !important;
                 }
                 .SvAnchoredTabRow > :not(.SvAnchoredTabOpen) > .TileContentView {
                     color: var(--sv-anchor-tab-closed-color) !important;
@@ -591,10 +591,10 @@
                 .SvAnchoredPinButton::before {
                     content: ""; /* decoration: the pin mark, a small diamond in the pin color */
                     position: absolute;
-                    left: 7px;
-                    top: 7px;
-                    width: 6px;
-                    height: 6px;
+                    left: calc((20px - var(--sv-anchor-tab-pin-size)) / 2); /* centered in the 20px button (up to ~13px fits it rotated) */
+                    top: calc((20px - var(--sv-anchor-tab-pin-size)) / 2);
+                    width: var(--sv-anchor-tab-pin-size);
+                    height: var(--sv-anchor-tab-pin-size);
                     box-sizing: border-box;
                     border: 1px solid currentColor;
                     transform: rotate(45deg);
@@ -603,11 +603,11 @@
                     opacity: 0.45;
                 }
                 .SvAnchoredPinButton.isPinned {
-                    left: calc(var(--sv-anchor-tab-padding) - 7px) !important; /* the diamond where the label used to start */
+                    left: calc(var(--sv-anchor-tab-padding) - (20px - var(--sv-anchor-tab-pin-size)) / 2) !important; /* the diamond where the label used to start */
                     opacity: 1;
                 }
                 .SvAnchoredTabOpen > .SvAnchoredPinButton.isPinned {
-                    left: calc(var(--sv-anchor-tab-open-padding) - 7px) !important;
+                    left: calc(var(--sv-anchor-tab-open-padding) - (20px - var(--sv-anchor-tab-pin-size)) / 2) !important;
                 }
                 .SvAnchoredPinButton.isPinned::before {
                     background-color: currentColor;

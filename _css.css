@@ -173,6 +173,7 @@
     --sv-anchor-tab-face: inherit;                          /* the label's face (a theme can match its breadcrumbs: var(--sv-face-display)) */
     --sv-anchor-tab-tracking: normal;                       /* its letter-spacing */
     --sv-anchor-tab-caps: normal;                           /* its font-variant-caps (small-caps reads as the breadcrumbs do) */
+    --sv-anchor-tab-pin-size: 6px;                          /* the pinned tab's diamond (a side; up to ~13px fits its button) */
 
     /* INLINE DOCUMENTS (SvTilesView_inline, SvInlineSectionTile): a node's
        next levels shown in place as sections in columns. */
