@@ -266,6 +266,7 @@ Developers define domain models as JavaScript classes inheriting from `SvStorabl
 
     initPrototype () {
         this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false); // fields are UI, not stored children
     }
 
     title () {

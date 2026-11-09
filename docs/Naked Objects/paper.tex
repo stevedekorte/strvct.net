@@ -375,6 +375,8 @@ Developers define domain models as JavaScript classes inheriting from \texttt{Sv
 
   initPrototype () {
     this.setShouldStore(true);
+    // fields are UI, not stored children
+    this.setShouldStoreSubnodes(false);
   }
 
   title () {

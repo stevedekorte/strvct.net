@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-You write the domain model. The framework handles the rest.
+You write the domain model. STRVCT builds the application from it: the user interface on desktop and phone, local storage, cloud sync, JSON import and export, and an interface AI agents can use to read and edit your data. Add a property, annotate it, and it appears in each of them. There is no separate form, storage mapping, or tool schema to write.
 
 See also: /llms.txt (curated index) and /sitemap.xml.
 
@@ -11,113 +11,24 @@ See also: /llms.txt (curated index) and /sitemap.xml.
 <!-- Page: (root) -->
 Source: /
 
-A naked-objects framework for JavaScript
+Write the domain model. Get the application.
 
-## About
+**You write the domain model. STRVCT builds the application from it:** the user interface on desktop and phone, local storage, cloud sync, JSON import and export, and an interface AI agents can use to read and edit your data. Add a property, annotate it, and it appears in each of them. There is no separate form, storage mapping, or tool schema to write.
 
-**You write the domain model. The framework handles the rest.**
+**Why this hasn't worked before.** The idea is old; it's called *Naked Objects*. Its weakness was that generated interfaces looked like database forms, so real applications ended up hand-building their screens anyway.
 
-STRVCT is a JavaScript framework that eliminates manual UI component authoring, state management boilerplate, and API glue code. By declaring your application's domain model once with property metadata annotations, STRVCT automatically derives responsive user interfaces, manages local-first IndexedDB persistence, handles versioned cloud synchronization, and provides a constant-size tool surface for AI agents.
+**What's different here.** STRVCT starts from an observation: nearly every screen in an information app comes down to a few decisions about the data. What is visible? Does each item open beside its parent, as a column or tab, or sit inside it, as a section of a document? How are lists arranged? The framework handles the mechanics, including navigation and adapting to screen size. You state your choices as small hints on the model. So changing how something looks means changing a hint, not rewriting a screen.
 
-This approach implements the **Naked Objects** architectural pattern: annotated domain classes (inheriting from `SvStorableNode`) serve as the single source of truth. Because domain models contain zero DOM or browser dependencies, the exact same application code runs natively in the browser, on the command line, or headlessly in Node.js for ultra-fast unit testing.
-
-## Architecture Overview
-
-text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  
-  
-    
-      
-    
-  
-
-  
-  Annotated Domain Model (SvStorableNode Subclasses)
-  Single source of truth declaring property slots, subnodes, and metadata annotations
-
-  - 
-  - 
-  - 
-  - 
-
-  
-  Auto-Generated UI
-  Miller column views,
-  tabs, & doc flows
-
-  
-  Local & Cloud Sync
-  IndexedDB pools &
-  SHA-256 CAS store
-
-  
-  Headless Execution
-  Runs in Node.js with
-  zero DOM dependencies
-
-  
-  Native AI Tool Surface
-  Constant tool size:
-  schema-fetch & patch
-
-## Model-First Syntax
-
-Declare domain models as JavaScript classes. Properties are declared as **slots** with method-chained metadata annotations that each framework layer reads independently:
-
-```
-(class Task extends SvStorableNode {
-
-    initPrototypeSlots () {
-        this.newSlot("title", "New Task")
-            .setSlotType("String")
-            .setShouldStoreSlot(true)   // Persisted to IndexedDB
-            .setSyncsToView(true)       // Live UI updates
-            .setCanEditInspection(true); // Editable form tile
-
-        this.newSlot("isCompleted", false)
-            .setSlotType("Boolean")
-            .setShouldStoreSlot(true)
-            .setSyncsToView(true)
-            .setCanEditInspection(true);
-    }
-
-    initPrototype () {
-        this.setTitle("Task");
-        this.setShouldStore(true);
-    }
-
-}.initThisClass());
-```
-*A single 5-line slot declaration replaces a custom form component, a validator, an ORM storage schema, and an LLM tool specification.*
-
-## Key Framework Capabilities
-
-- **Recursive Master-Detail Engine** — Derives orientation-flexible Miller columns, side-by-side tabs, and inline document section flows that compose recursively across the object graph and collapse automatically on narrow viewports.
-- **Multi-Reader Slot Annotations** — Slot metadata drives form generation, type validation, local persistence, notification triggers, Property Inspector fields, and LLM JSON schemas without glue code.
-- **Natively AI-Operable (`O(1)` Tool Surface)** — Traditional stacks force AI agents to generate code across 5 separate layers per feature (causing `O(N)` tool growth). STRVCT flips this: because UI, persistence, and sync are derived from slot metadata, AI agents operate over a **constant-size `O(1)` tool surface** (`schema-fetch` and `apply-patch`) regardless of scale, and can even mint brand-new model classes at runtime.
-- **Local-First & Cloud Sync** — Automatic dirty tracking commits modifications to IndexedDB at the end of each event loop. Syncs versioned atomic deltas to cloud stores.
-- **Headless Node.js Execution** — Domain models hold zero DOM dependencies, running headlessly in Node.js for ultra-fast unit testing and batch processing.
-- **Derived Accessibility & Localization** — ARIA roles, focus management, keyboard navigation, and AI string translations are handled centrally at the tile primitive boundary.
-- **Content-Addressable Memory (CAM)** — Scans source imports to build SHA-256 content-hashed bundles for optimal caching and zero-churn redeployments.
+[**Read the paper →**](docs/Naked%20Objects/index.html)
 
 - docs/Naked Objects
-- docs
 - docs/Getting Started
-- docs/Technical Overview
-- docs/Comparing to React
-- docs/Implementation Overview
-- docs/Services/AI Services
-- Timeline
 - Example App
-- FAQ
+- docs/Comparing to React
+- docs
 - [GitHub Repository](https://github.com/stevedekorte/strvct.net) — Source code, issues, and contributions.
 
-For AI agents: [llms.txt](llms.txt) (curated index) and [llms-full.txt](llms-full.txt) (full content).
+What it doesn't do yet: see [Limitations & Future Work](docs/Naked%20Objects/index.html#10-limitations-future-work). Also: [FAQ](FAQ/index.html) · [Timeline](Timeline/index.html) · [AI Services](docs/Services/AI%20Services/index.html). For AI agents: [llms.txt](llms.txt) (curated index) and [llms-full.txt](llms-full.txt) (full content).
 
 
 ---
@@ -8698,6 +8609,7 @@ Developers define domain models as JavaScript classes inheriting from `SvStorabl
 
     initPrototype () {
         this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false); // fields are UI, not stored children
     }
 
     title () {

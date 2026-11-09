@@ -1,6 +1,6 @@
 # STRVCT
 
-> A naked-objects framework for JavaScript
+> Write the domain model. Get the application.
 
 ## Documentation
 
