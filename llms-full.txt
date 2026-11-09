@@ -8353,9 +8353,9 @@ Strvct is an implementation of this idea in the **Naked Objects** tradition, whi
 
 A [PDF of the earlier revision](compiled/Closing_the_Usability_Gap_in_Naked_Objects.pdf) is also available; it has not yet been updated to match this page.
 
-<a href="figures/GriffinScreenshot.png" target="_blank"><img class="colvmn-zoomable-image" src="figures/GriffinScreenshot.png" alt="undreamedof.ai application built with Strvct" style="width: 100%; height: auto;"></a>
+<p style="text-align: center; margin-top: 2em;"><em>Production example: undreamedof.ai.</em></p>
 
-_Production example: undreamedof.ai. The diagrams below isolate the navigation and layout mechanisms used to compose interfaces like this one._
+<div style="position: relative; overflow: hidden; line-height: 0; margin-bottom: 1.5em; padding: 9px; background: rgba(255, 255, 255, 0.55);"><a href="figures/CryptScreenshot.jpg" target="_blank"><img class="colvmn-zoomable-image" src="figures/CryptScreenshot.jpg" alt="An undreamedof.ai game session built with Strvct: narration, a character's spells, and the scene map side by side" style="width: 100%; height: auto; display: block;"></a><div style="position: absolute; inset: 0; box-shadow: inset 0 4px 6px -2px rgba(0, 0, 0, 0.30), inset 0 0 3px rgba(0, 0, 0, 0.16), inset 0 -1px 0 rgba(255, 255, 255, 0.6); pointer-events: none;"></div></div>
 
 ---
 
@@ -8402,7 +8402,7 @@ Every screen the user sees is a **lens** over that drawing. At first order, a le
 1. **Visibility:** Which nodes to collapse. Typically everything off the current navigation path is collapsed, leaving the path itself and the immediate children of the nodes along it.
 2. **Placement:** For each visible parent→child edge, whether the child is **layered** (given its own plane beside or in front of its parent, as in Miller columns, push stacks, and tabs) or **inlined** (drawn within its parent's extent, as in documents, grouped sections, and side-by-side panes).
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="width: 100%; max-width: 100vw; overflow: hidden; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">One Projection, Three Lenses</div>
   <object type="image/svg+xml" data="diagrams/svg/lens-placement.svg" style="display: block; margin: 0 auto; max-width: 600px; width: 90%;">[Lens Placement Diagram]</object>
 </div>
@@ -8467,21 +8467,21 @@ The fundamental primitive in Strvct is the **Tile**:
 
 - **Summary Tile:** Displays a domain object with a title, subtitle, icon, and contextual actions. Selecting a summary tile opens its details in an adjacent column.
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="width: 100%; max-width: 100vw; overflow: hidden; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Summary Tile</div>
   <object type="image/svg+xml" data="diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[Summary Tile Diagram]</object>
 </div>
 
 - **Property Tile:** Displays an individual object property (key-value pair) with direct inline editing (text inputs, numbers, toggles, date pickers) and validation feedback.
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="width: 100%; max-width: 100vw; overflow: hidden; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Property Tile</div>
   <object type="image/svg+xml" data="diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[Property Tile Diagram]</object>
 </div>
 
 A **Tile Stack** is a scrollable, ordered list or grid of tiles. Stacks support drag-and-drop reordering, slide-to-delete, and direct data import/export.
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="width: 100%; max-width: 100vw; overflow: hidden; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Tile Stack</div>
   <object type="image/svg+xml" data="diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; max-width: 200px; width: 60%;">[Tile Stack Diagram]</object>
 </div>
@@ -8490,7 +8490,7 @@ A **Tile Stack** is a scrollable, ordered list or grid of tiles. Stacks support 
 
 A **Master-Detail View** pairs a master tile stack with a detail pane showing the selected object's contents. Each selection layers the chosen child in a new pane. Because detail panes can themselves contain child master-detail views, navigation composes recursively to arbitrary depth.
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="width: 100%; max-width: 100vw; overflow: hidden; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Master-Detail View</div>
   <object type="image/svg+xml" data="diagrams/svg/master-detail.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[Master-Detail Diagram]</object>
 </div>
@@ -8499,7 +8499,7 @@ Key characteristics of Strvct's master-detail engine:
 
 - **Flexible Orientation:** Each level can layout horizontally (like macOS Miller column file browsers [3]) or vertically (like nested accordion lists or settings panels).
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="width: 100%; max-width: 100vw; overflow: hidden; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Flexible Master-Detail Orientations</div>
   <object type="image/svg+xml" data="diagrams/svg/orientations.svg" style="display: block; margin: 0 auto; max-width: 500px; width: 90%;">[Orientations Diagram]</object>
 </div>
@@ -8511,14 +8511,14 @@ Key characteristics of Strvct's master-detail engine:
   <object type="image/svg+xml" data="diagrams/svg/expanded.svg" style="display: block; width: 100%; height: auto;">[Expanded Viewport Diagram]</object>
 </div>
 <br>
-<div style="max-width: 600px; margin: 0 auto;">
+<div style="max-width: 600px; margin: 0 auto; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Collapsed Viewport (Mobile with Breadcrumbs)</div>
   <object type="image/svg+xml" data="diagrams/svg/collapsed.svg" style="display: block; width: 100%; height: auto;">[Collapsed Viewport Diagram]</object>
 </div>
 
 - **Compositional Diversity:** Combining vertical, horizontal, and hybrid orientations expresses Miller column browsers, email clients, settings panels, chat rooms, and inspectors within a single uniform primitive.
 
-<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2%; width: 100%;">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2%; width: 100%; margin-bottom: 0.5lh;">
   <div style="min-width: 150px; width: 30%; text-align: center;">
     <div style="padding: 0.2em 0 0.5em; margin: 0; font-weight: 600;">Vertical</div>
     <object type="image/svg+xml" data="diagrams/svg/vertical-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[Vertical Diagram]</object>
@@ -8537,7 +8537,7 @@ Key characteristics of Strvct's master-detail engine:
 
 While column traversal is the default, certain complex screens require rendering child views directly inside parent tiles rather than pushing new columns. These children are inlined rather than layered. Strvct provides two inline layout mechanisms and a presentation-delegation hook:
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="width: 100%; max-width: 100vw; overflow: hidden; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Comparison of Subtree Layouts</div>
   <object type="image/svg+xml" data="diagrams/svg/layouts-compared.svg" style="display: block; margin: 0 auto; max-width: 600px; width: 90%;">[Layouts Compared Diagram]</object>
 </div>
@@ -8549,21 +8549,21 @@ While column traversal is the default, certain complex screens require rendering
   <object type="image/svg+xml" data="diagrams/svg/anchored-tabs-wide.svg" style="display: block; width: 100%; height: auto;">[Anchored Tabs Wide Diagram]</object>
 </div>
 <br>
-<div style="max-width: 240px; margin: 0 auto;">
+<div style="max-width: 240px; margin: 0 auto; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Anchored Tabs (Narrow Screen)</div>
   <object type="image/svg+xml" data="diagrams/svg/anchored-tabs-narrow.svg" style="display: block; width: 100%; height: auto;">[Anchored Tabs Narrow Diagram]</object>
 </div>
 
 2. **Document Inlining:** Renders a nested subtree as a continuous multi-column document with flowing sections, headers, and fields. Fields edit in place without triggering navigation transitions.
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="width: 100%; max-width: 100vw; overflow: hidden; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Inline Document Flow</div>
   <object type="image/svg+xml" data="diagrams/svg/inline-document.svg" style="display: block; margin: 0 auto; max-width: 600px; width: 90%;">[Inline Document Diagram]</object>
 </div>
 
 3. **Presented Nodes (Presentation Delegation):** Allows an object to delegate its presentation to a derived node (e.g., displaying a structured RPG character sheet instead of raw property slots), providing bespoke reading views without custom component templates.
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="width: 100%; max-width: 100vw; overflow: hidden; margin-bottom: 0.5lh;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center; font-weight: 600;">Presented Node Pattern</div>
   <object type="image/svg+xml" data="diagrams/svg/presented-node.svg" style="display: block; margin: 0 auto; max-width: 600px; width: 90%;">[Presented Node Diagram]</object>
 </div>
