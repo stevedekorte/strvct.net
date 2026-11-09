@@ -28,7 +28,7 @@ Write the domain model. Get the application.
 - docs
 - [GitHub Repository](https://github.com/stevedekorte/strvct.net) — Source code, issues, and contributions.
 
-What it doesn't do yet: see [Limitations & Future Work](docs/Naked%20Objects/index.html#10-limitations-future-work). Also: [FAQ](FAQ/index.html) · [Timeline](Timeline/index.html) · [AI Services](docs/Services/AI%20Services/index.html). For AI agents: [llms.txt](llms.txt) (curated index) and [llms-full.txt](llms-full.txt) (full content).
+For AI agents: [llms.txt](llms.txt) (curated index) and [llms-full.txt](llms-full.txt) (full content).
 
 
 ---
