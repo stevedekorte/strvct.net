@@ -231,6 +231,24 @@
     --sv-status-mark-color: var(--sv-text);
     --sv-status-pending-color: var(--sv-attention);
 
+    /* ROSTER ROWS (nodeTileLayout "roster"): a member of a list of people —
+       a diamond mark, the name, who or what they are in small capitals at
+       its right, a line in italic beneath, then the row's meter. */
+    --sv-roster-rule: var(--sv-hairline);                   /* the line under each row */
+    --sv-roster-padding: 18px 20px 18px 44px;               /* the left inset holds the mark */
+    --sv-roster-mark-color: var(--sv-text);
+    --sv-roster-title-size: 22px;
+    --sv-roster-title-line: 28px;
+    --sv-roster-note-size: 11px;
+    --sv-roster-note-tracking: 0.18em;
+    --sv-roster-line-size: 16px;                            /* the italic line under the name */
+
+    /* METERS (SvMeterNodeTile): a thin bar with its numbers beside it */
+    --sv-meter-fill: var(--sv-text);
+    --sv-meter-track: color-mix(in srgb, var(--sv-text) 20%, transparent);
+    --sv-meter-width: 230px;                                /* the bar's, at most */
+    --sv-meter-label-size: 16px;
+
     /* the Boolean switch style (SvBooleanView, booleanStyle "switch") */
     --sv-switch-on: rgba(255, 255, 255, 0.5);  /* track, on: white at half (Steve, 2026-10-20) */
     --sv-switch-off: rgba(255, 255, 255, 0.16); /* track, off */
@@ -319,6 +337,134 @@
     [data-tile-layout="status"] .SvTileNoteView::before,
     [data-tile-layout="pendingStatus"] .SvTileNoteView::before {
         animation: none;
+    }
+}
+
+/* Roster rows (nodeTileLayout "roster"). The row's parts are laid out as a
+   grid: the name and the note share the first line, on one baseline; the
+   subtitle and the meter each take a whole line beneath. The !importants
+   are over the tile's inline styles. */
+[data-tile-layout="roster"] {
+    min-height: 0 !important;
+    border-bottom: 1px solid var(--sv-roster-rule);
+}
+
+[data-tile-layout="roster"]:last-child {
+    border-bottom: none;
+}
+
+[data-tile-layout="roster"] > .TileContentView {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: 12px;
+    min-height: 0 !important;
+    padding: var(--sv-roster-padding) !important;
+}
+
+[data-tile-layout="roster"] > .TileContentView::before {
+    content: ""; /* decoration: the row's mark */
+    position: absolute;
+    left: 20px;
+    top: 28px; /* centred on the name's line */
+    width: 8px;
+    height: 8px;
+    box-sizing: border-box;
+    border: 1px solid var(--sv-roster-mark-color);
+    transform: rotate(45deg);
+}
+
+[data-tile-layout="roster"] > .TileContentView > :has(> .SvTileTitleView),
+[data-tile-layout="roster"] > .TileContentView > :has(> .SvTileNoteView) {
+    display: contents !important;
+}
+
+[data-tile-layout="roster"] > .TileContentView > :empty {
+    display: none !important; /* the tile's empty leading area would take a cell */
+}
+
+[data-tile-layout="roster"] .SvTileTitleView {
+    grid-column: 1;
+    grid-row: 1;
+    width: auto !important;
+    max-width: 100%;
+    min-width: 0 !important;
+    padding: 0 !important;
+    font-size: var(--sv-roster-title-size) !important;
+    line-height: var(--sv-roster-title-line) !important;
+    color: var(--sv-text) !important;
+}
+
+[data-tile-layout="roster"] .SvTileNoteView {
+    grid-column: 2;
+    grid-row: 1;
+    display: block !important;
+    max-width: 14em;
+    padding: 0 !important;
+    font-size: var(--sv-roster-note-size) !important;
+    line-height: 1 !important; /* on the name's baseline without making its line taller */
+    letter-spacing: var(--sv-roster-note-tracking);
+    text-transform: uppercase;
+    color: var(--sv-text-muted) !important;
+    opacity: 1 !important;
+}
+
+[data-tile-layout="roster"] .SvTileSubtitleView {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: var(--sv-roster-line-size) !important;
+    line-height: 22px !important;
+    font-style: italic;
+    white-space: nowrap !important;
+    color: var(--sv-text-muted) !important;
+    opacity: 1 !important;
+}
+
+[data-tile-layout="roster"] .SvMeterView {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    margin-top: 10px;
+}
+
+/* Meters (SvMeterNodeTile): the bar is a hairline track with a 2px fill, a
+   1px notch cut at its half; the numbers follow it. */
+.SvMeterView {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    height: 16px;
+    margin-top: 0.4em;
+}
+
+.SvMeterBarView {
+    flex: 0 1 var(--sv-meter-width);
+    height: 2px;
+    background: linear-gradient(var(--sv-meter-track), var(--sv-meter-track)) top / 100% 1px no-repeat;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(50% - 1px), transparent calc(50% - 1px), transparent 50%, #000 50%);
+    mask-image: linear-gradient(to right, #000 calc(50% - 1px), transparent calc(50% - 1px), transparent 50%, #000 50%);
+}
+
+.SvMeterFillView {
+    height: 100%;
+    width: 0%;
+    background-color: var(--sv-meter-fill);
+    transition: width 0.35s ease-out; /* damage and healing read as movement */
+}
+
+.SvMeterLabelView {
+    flex: none;
+    font-size: var(--sv-meter-label-size);
+    line-height: 16px;
+    font-variant-numeric: lining-nums tabular-nums;
+    color: var(--sv-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .SvMeterFillView {
+        transition: none;
     }
 }
 

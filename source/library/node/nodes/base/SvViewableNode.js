@@ -530,7 +530,10 @@
      * or "kicker" (the title as a small-caps line). Anywhere, not only
      * in an inline document: "status" (a large title beside a filled
      * diamond mark, the subtitle in italic beneath) and "pendingStatus" (the
-     * same, the mark dashed and breathing — something under way). Roles, not looks:
+     * same, the mark dashed and breathing — something under way), and
+     * "roster" (a member of a list of people: a diamond mark, the name, the
+     * note in small capitals at its right, the subtitle in italic beneath,
+     * then the tile's meter if it has one). Roles, not looks:
      * the theme sets the sizes.
      * @returns {String|null}
      * @category Layout

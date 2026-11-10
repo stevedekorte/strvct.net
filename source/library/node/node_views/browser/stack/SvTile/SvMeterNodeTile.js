@@ -3,9 +3,12 @@
 /*
     @class SvMeterNodeTile
     @extends SvTitledTile
-    @classdesc Tile for SvMeterNode: title + "value/max" subtitle from the
-    base tile, plus a filled horizontal bar under them whose width is the
-    node's fillFraction and whose color follows it (green → amber → red).
+    @classdesc A titled tile with a meter under its title and subtitle: a
+    thin bar filled to the node's fillFraction (a notch marks its half), and
+    beside it the node's meterLabel ("23 / 35"), when it has one. The view
+    contract is duck-typed: any node implementing fillFraction() renders as
+    a meter. The look is the theme's (--sv-meter-*); the tile sets only the
+    fill's width.
     Resolved from the node by the standard <Type>Tile naming convention.
 */
 
@@ -13,11 +16,11 @@
 
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("barTrackView", null);
+            const slot = this.newSlot("barFillView", null);
             slot.setSlotType("SvDomView");
         }
         {
-            const slot = this.newSlot("barFillView", null);
+            const slot = this.newSlot("meterLabelView", null);
             slot.setSlotType("SvDomView");
         }
     }
@@ -25,29 +28,14 @@
     init () {
         super.init();
 
-        // The bar sits under the title/subtitle column (topContentArea lays
-        // out its children vertically).
-        const track = SvDomView.clone();
-        track.setDisplay("block");
-        track.setWidth("100%");
-        track.setHeight("6px");
-        track.setBorderRadius("3px");
-        track.setBackgroundColor("color-mix(in srgb, currentColor 12%, transparent)"); // faint in any theme, light or dark
-        track.setMarginTop("0.4em");
-        track.setOverflow("hidden");
-
-        const fill = SvDomView.clone();
-        fill.setDisplay("block");
-        fill.setHeight("100%");
-        fill.setBorderRadius("3px");
-        fill.setWidth("0%");
-        // width changes animate so damage/healing reads as movement
-        fill.setTransition("width 0.35s ease-out, background-color 0.35s ease-out");
-        track.addSubview(fill);
-
-        this.topContentArea().addSubview(track);
-        this.setBarTrackView(track);
-        this.setBarFillView(fill);
+        // The meter sits under the title/subtitle column (topContentArea lays
+        // out its children vertically): the bar, then its numbers.
+        const meter = SvDomView.clone().setElementClassName("SvMeterView");
+        const bar = meter.addSubview(SvDomView.clone().setElementClassName("SvMeterBarView"));
+        bar.setAttribute("aria-hidden", "true"); // decoration: the numbers beside it are the value
+        this.setBarFillView(bar.addSubview(SvDomView.clone().setElementClassName("SvMeterFillView")));
+        this.setMeterLabelView(meter.addSubview(SvDomView.clone().setElementClassName("SvMeterLabelView")));
+        this.topContentArea().addSubview(meter);
         return this;
     }
 
@@ -57,7 +45,9 @@
         const fill = this.barFillView();
         if (node && fill && node.fillFraction) {
             fill.setWidth((node.fillFraction() * 100).toFixed(1) + "%");
-            fill.setBackgroundColor(node.fillColor());
+            const label = node.meterLabel ? node.meterLabel() : null;
+            this.meterLabelView().setString(label || "");
+            this.meterLabelView().setIsDisplayHidden(!label);
         }
         return this;
     }

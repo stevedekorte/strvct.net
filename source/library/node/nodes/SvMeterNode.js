@@ -4,13 +4,14 @@
     @class SvMeterNode
     @extends SvSummaryNode
     @classdesc A labeled value/max meter — renders as a titled tile with a
-    filled horizontal bar (SvMeterNodeTile) whose fill fraction is
-    value/maxValue and whose color follows the fraction (green → amber → red).
+    thin horizontal bar (SvMeterNodeTile) filled to value/maxValue, and its
+    numbers beside it.
 
     Generic by design: label (title) + numbers only. Owners either push
     values into it (setValue/setMaxValue from their own observation) or
     subclass to compute. The view contract is duck-typed: any node
-    implementing fillFraction() and fillColor() renders as a meter.
+    implementing fillFraction() (and, for the numbers, meterLabel()) renders
+    as a meter.
 
     Transient view-model — never stored or synced; owners recompute it
     from live state.
@@ -40,8 +41,13 @@
         this.setNoteIsSubnodeCount(false);
     }
 
-    subtitle () {
-        return this.value() + "/" + this.maxValue();
+    /**
+     * @description The meter's numbers, shown beside its bar: "23 / 35".
+     * @returns {String}
+     * @category Meter
+     */
+    meterLabel () {
+        return this.value() + " / " + this.maxValue();
     }
 
     /**
@@ -55,24 +61,6 @@
             return 0;
         }
         return Math.max(0, Math.min(1, this.value() / max));
-    }
-
-    /**
-     * @description Bar color for the current fraction: healthy green above
-     * 50%, warning amber from 20-50%, alarm red below 20%. Muted tones for
-     * the dark theme.
-     * @returns {String}
-     * @category Meter
-     */
-    fillColor () {
-        const f = this.fillFraction();
-        if (f > 0.5) {
-            return "#5a9e6f"; // muted green
-        }
-        if (f > 0.2) {
-            return "#c2a14d"; // muted amber
-        }
-        return "#c05b5b"; // muted red
     }
 
 }.initThisClass());
