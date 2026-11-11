@@ -326,6 +326,34 @@
     }
 
     /**
+     * @description Optional header-items hint: nodes the breadcrumb bar
+     * shows, in a row at its right end, while this node is on the selected
+     * path. The bar collects them from every node on the path, the root's
+     * first, so the root node supplies items shown everywhere and a deeper
+     * node adds its own while it is open. Each item shows its title; one
+     * with a nodeLinkUrl opens that url when clicked. Must be a method
+     * override returning a value, not a stored slot.
+     * @returns {Array<SvNode>|null} The items, or null for none.
+     * @category Layout
+     */
+    nodeHeaderItems () {
+        return null;
+    }
+
+    /**
+     * @description Optional link hint: the url a view opens when this node
+     * is clicked as a link (a header item, see nodeHeaderItems). The view
+     * passes the selected path, so the url can describe where the user is
+     * without the node asking the UI.
+     * @param {Array<SvNode>} pathNodes The selected path, root first.
+     * @returns {String|null} The url, or null when the node is not a link.
+     * @category Layout
+     */
+    nodeLinkUrl (/*pathNodes*/) {
+        return null;
+    }
+
+    /**
      * @description Optional reading-measure hint: a CSS length (e.g. "68ch",
      * or a var() so themes can tune it) that this node's nav column centers
      * its content within (see SvNavView.syncContentMaxWidth). Null means

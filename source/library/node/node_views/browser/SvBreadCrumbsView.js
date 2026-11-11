@@ -74,6 +74,16 @@
             const slot = this.newSlot("isPathCollapsed", false);
             slot.setSlotType("Boolean");
         }
+        /**
+         * @member {SvFlexDomView} headerItemsView - The row of header items
+         * at the bar's right end (SvViewableNode.nodeHeaderItems), or null.
+         * @category Header Items
+         */
+        {
+            const slot = this.newSlot("headerItemsView", null);
+            slot.setSlotType("SvFlexDomView");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     initPrototype () {
@@ -276,6 +286,7 @@
             this.setBackButtonView(this.newBackButton());
             this.addSubview(this.backButtonView());
             this.addSubview(this.newCollapsedCrumbView(collapsedTitle));
+            this.addHeaderItemsView(pathNodes);
             return this;
         }
 
@@ -313,6 +324,7 @@
             renderedIndex++;
             this.addSubview(this.crumbViewForNode(node, i, pathNodes, isSettled));
         });
+        this.addHeaderItemsView(pathNodes);
 
         this.scheduleMethod("updateCompaction");
         return this;
@@ -334,7 +346,7 @@
             return this; // collapsed mode is always [back, title]; nothing to compact
         }
         const e = this.element();
-        const views = this.subviews();
+        const views = this.crumbSubviews();
         const back = this.backButtonView();
         if (!e || !e.isConnected || !back || views.length < 2) {
             return this;
@@ -363,6 +375,92 @@
 
         // Fallback for a single crumb wider than the bar: keep its tail visible.
         e.scrollLeft = e.scrollWidth;
+        return this;
+    }
+
+    /**
+     * @description The back button, crumbs and separators: every subview
+     * but the header items, which compaction never hides.
+     * @returns {Array<SvDomView>}
+     * @category Layout
+     */
+    crumbSubviews () {
+        return this.subviews().filter(v => v !== this.headerItemsView());
+    }
+
+    /**
+     * @description The header items of every node on the path, root first
+     * (see SvViewableNode.nodeHeaderItems), without repeats.
+     * @param {Array<SvNode>} pathNodes
+     * @returns {Array<SvNode>}
+     * @category Header Items
+     */
+    headerItemsForPath (pathNodes) {
+        const items = pathNodes.map(n => (n.nodeHeaderItems ? n.nodeHeaderItems() : null) || []).flat();
+        return Array.from(new Set(items));
+    }
+
+    /**
+     * @description Adds the header items, a row at the bar's right end,
+     * after the crumbs. None on the path: no row.
+     * @param {Array<SvNode>} pathNodes
+     * @returns {SvBreadCrumbsView}
+     * @category Header Items
+     */
+    addHeaderItemsView (pathNodes) {
+        const items = this.headerItemsForPath(pathNodes);
+        this.setHeaderItemsView(items.length > 0 ? this.newHeaderItemsView(items) : null);
+        if (this.headerItemsView()) {
+            this.addSubview(this.headerItemsView());
+        }
+        return this;
+    }
+
+    newHeaderItemsView (items) {
+        const row = SvFlexDomView.clone();
+        row.setElementClassName("SvHeaderItems");
+        row.setDisplay("flex");
+        row.setFlexDirection("row");
+        row.setAlignItems("center");
+        row.setFlexShrink(0);
+        row.setMarginLeft("auto"); // pushes the row to the bar's right end
+        row.setPaddingLeft("1em");
+        row.setCssProperty("gap", "1.25em");
+        items.forEach(node => row.addSubview(this.newHeaderItemView(node)));
+        return row;
+    }
+
+    newHeaderItemView (node) {
+        const v = SvButtonView.clone();
+        v.setDisplay("inline-block");
+        v.setWidth("fit-content");
+        v.setHeight("fit-content");
+        v.setFlexShrink(0);
+        v.setPaddingLeft("0em");
+        v.setPaddingRight("0em");
+        v.titleView().setPaddingLeft("0em");
+        v.titleView().setPaddingRight("0em");
+        v.titleView().setElementClassName("SvBreadCrumbLabel SvHeaderItemLabel settled");
+        v.setTitle(this.titleForNode(node));
+        v.setInfo(node);
+        v.setTarget(this);
+        v.setAction("onClickHeaderItem");
+        return v;
+    }
+
+    /**
+     * @description A header item was clicked: opens its url, given the
+     * path the user is on.
+     * @param {SvButtonView} itemView
+     * @returns {SvBreadCrumbsView}
+     * @category Header Items
+     */
+    onClickHeaderItem (itemView) {
+        const node = itemView.info();
+        const url = node.nodeLinkUrl ? node.nodeLinkUrl(this.pathNodes()) : null;
+        if (url) {
+            SvWebBrowserWindow.shared().openUrl(url);
+        }
         return this;
     }
 

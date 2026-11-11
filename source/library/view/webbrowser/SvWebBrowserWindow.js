@@ -310,6 +310,25 @@
     }
 
     /**
+     * @description Opens a url the way a clicked link would: a web page in
+     * a new tab, any other scheme (mailto:, tel:) handed to its app with
+     * this page left where it is.
+     * @param {String} url The url to open.
+     * @returns {SvWebBrowserWindow}
+     * @category URL Management
+     */
+    openUrl (url) {
+        const a = document.createElement("a");
+        a.href = url;
+        if (/^https?:/i.test(url)) {
+            a.target = "_blank";
+            a.rel = "noopener";
+        }
+        a.click();
+        return this;
+    }
+
+    /**
      * @description Gets the full page URL including path and query.
      * @returns {URL} The full page URL.
      * @category URL Management
