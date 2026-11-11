@@ -371,12 +371,16 @@
             return true;
         }
 
-        let proto = this.__proto__;
-        if (proto && proto.name !== "") {
-            return proto.isKindOf.call(proto, aClass);
+        // A class's superclasses are its prototype chain (class B extends A
+        // sets B.__proto__ to A), so the engine's own isPrototypeOf answers
+        // in one native call. This used to recurse a JS call per level; it
+        // dominated the stacks of multi-second stalls on table workers
+        // (2026-11-05), called per node while a lens walked a whole session.
+        // The unnamed root (Function.prototype) is still never a match.
+        if (!aClass || aClass.name === "") {
+            return false;
         }
-
-        return false;
+        return Object.prototype.isPrototypeOf.call(aClass, this);
     }
 
 }).initThisCategory();
