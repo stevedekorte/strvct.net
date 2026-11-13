@@ -128,7 +128,7 @@ Adopting STRVCT also means adopting its conventions. It uses its own module syst
 
 ## Production use
 
-STRVCT is used in production by [undreamedof.ai](https://undreamedof.ai), an AI-powered virtual tabletop for D&D. The application has roughly 90 domain classes covering characters, campaigns, multiplayer sessions, and AI integration. About 90% of screens are framework-generated; fewer than 10 custom views exist, all for inherently graphical domains (3D dice, chat, maps).
+STRVCT is used in production by [undreamedof.ai](https://undreamedof.ai), an AI-powered virtual tabletop for D&D. The application has roughly 90 domain classes covering characters, campaigns, multiplayer sessions, and AI integration. About 90% of screens are framework-generated; 11 custom view and tile classes exist, mostly for graphical or highly interactive things (3D dice, the battle map, the chat stage, print previews).
 
 ## Architecture
 

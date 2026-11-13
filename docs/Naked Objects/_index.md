@@ -112,6 +112,8 @@ Spatial meaning alone does not determine this boundary: both calendars and battl
 
 An application can combine generated navigation, properties, and actions with such specialized surfaces. The amount of custom work depends on its tasks, not just its domain category.
 
+Historically, the cost of that boundary was paid in human effort against the framework's view internals. Because a specialized renderer works against a fixed contract (a node's typed slots, notifications and actions) rather than wiring its own data access, it is a well-bounded task for a coding agent. Whether this narrows the boundary in practice is untested.
+
 ---
 
 ## 5. Architecture & UI Mechanics in Strvct
@@ -399,15 +401,16 @@ Strvct was used to build **undreamedof.ai**, a commercial AI-powered virtual tab
 
 | Subsystem                  | Estimated Domain Classes | Reported Specialized Custom Views |
 | -------------------------- | -----------------------: | --------------------------------- |
-| **Character System**       |                      ~30 | None reported                     |
-| **Campaign Hierarchy**     |                      ~20 | Map viewer                        |
-| **Session & Gameplay**     |                      ~25 | 3D dice engine                    |
-| **AI Integration & Tools** |                      ~15 | None reported                     |
-| **Total**                  |                  **~90** | **2**                             |
+| **Character System**       |                      ~30 | None                              |
+| **Campaign Hierarchy**     |                      ~20 | None                              |
+| **Session & Gameplay**     |                      ~25 | 3D dice, battle map, combat and theatre stage, chat input, roll and choice request messages (7) |
+| **AI Integration & Tools** |                      ~15 | None                              |
+| **Printing, Account & Sync** |                       — | Book and miniature print previews, credit purchase, sync status indicator (4) |
+| **Total**                  |                  **~90** | **11**                            |
 
-The application uses framework views for character sheets, inventory managers, spellbooks, campaign trees, settings, chat logs, and inspectors. Its reported specialized surfaces are a 3D WebGL dice roller and an interactive tactical battle map.
+The application uses framework views for character sheets, inventory managers, spellbooks, campaign trees, settings, chat logs, and inspectors. Its specialized surfaces are mostly graphical or highly interactive: a 3D WebGL dice roller, a tactical battle map, the session's chat stage, and print previews.
 
-These are author-reported estimates, not a dated source audit, and class counts are not screen counts; the inventory is offered as an existence proof that the grammar covers a substantial application, not as a coverage ratio. The more informative evidence would be a worked example of one screen whose presentation hint grew into a presented node or a new renderer under product pressure, so a reader can see what "policy-sized" looks like in practice; that is planned for a future revision, along with a reproducible comparison of representative tasks on completion rate, time, navigation errors, and mobile usability.
+The class counts are the author's estimates. The custom-view count comes from the source tree, counting the application's view and tile classes as of November 2026. Class counts are not screen counts, and the inventory is offered as an existence proof that the grammar covers a substantial application, not as a coverage ratio. The more informative evidence would be a worked example of one screen whose presentation hint grew into a presented node or a new renderer under product pressure, so a reader can see what "policy-sized" looks like in practice; that is planned for a future revision, along with a reproducible comparison of representative tasks on completion rate, time, navigation errors, and mobile usability.
 
 ---
 

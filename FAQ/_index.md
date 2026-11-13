@@ -8,7 +8,9 @@ The idea that the domain model should be the user interface. Instead of writing 
 
 ## Do I have to use the generated UI?
 
-No. The auto-generated views cover the common case, but you can override any node's view by creating a custom view class that follows the naming convention (e.g., `MyNodeView` for `MyNode`). In practice, most applications need very few custom views — undreamedof.ai has ~90 domain classes and fewer than 10 custom views, all for inherently graphical things like 3D dice, maps, and chat.
+No. The auto-generated views cover the common case, but you can override any node's view by creating a custom view class that follows the naming convention (e.g., `MyNodeView` for `MyNode`). In practice, most applications need very few custom views — undreamedof.ai has ~90 domain classes and 11 custom view and tile classes, mostly for graphical or highly interactive things like 3D dice, the battle map, the chat stage, and print previews.
+
+Custom views are also simple work for a coding agent: the node already defines the data, its types and its notifications, so the view only reads, draws and calls methods. It doesn't need to fetch, cache or persist anything, and nothing outside the one node changes.
 
 ## Does it use npm or standard ES modules?
 

@@ -1,81 +1,30 @@
 # Comparing to React
 
-A technical guide and conceptual "Rosetta Stone" for React developers exploring Strvct.
+A guide to Strvct for developers who know React.
 
-## Core Architectural Divergence
+## The Short Version
 
-React and Strvct both keep user interfaces synchronized with application state, but they start from opposite design philosophies:
+React and Strvct start from opposite ends. React starts from the view: you write the screens, and the model, storage, and sync are yours to connect. Strvct starts from the model: you write the domain objects, and the screens, storage, and sync are derived from them.
 
-- **React is a View-First Library:** You author component trees in JSX, manage component state (`useState`, `useReducer`, Redux, Zustand), and write custom render functions. You are responsible for integrating state management, form components, ORMs, REST/GraphQL APIs, routing, internationalization, and accessibility.
-- **Strvct is a Model-First Naked Objects Framework:** You declare the domain model (`SvStorableNode` classes) with annotated property **slots**. The framework automatically derives the user interface, manages local IndexedDB persistence and cloud sync, generates Miller column navigation, and provides an AI tool surface without hand-authored UI code.
+React is a view library. You write the screens as components, and you choose and connect the rest yourself: state stores, forms, routing, persistence, and any tools you give an AI agent.
 
-<svg viewBox="0 0 820 410" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-  </style>
+Strvct is a model-first framework. You write the domain model as classes with annotated properties (**slots**). The framework builds the rest from that model: the screens, navigation, local storage, cloud sync, JSON import and export, and an interface agents can use to read and edit the data.
 
-  <rect class="box" x="90" y="20" width="290" height="370"/>
-  <text x="105" y="42" class="b">React (View-First)</text>
-  <text x="105" y="62" class="dim">Component &amp; Rendering Library</text>
-
-  <rect class="fill" x="105" y="85" width="260" height="124"/>
-  <text x="120" y="105" class="b">You Must Author &amp; Maintain:</text>
-  <text x="120" y="123" class="dim">• UI Components (JSX / TSX)</text>
-  <text x="120" y="141" class="dim">• Form Controls &amp; Validation</text>
-  <text x="120" y="159" class="dim">• State Stores (Redux/Zustand)</text>
-  <text x="120" y="177" class="dim">• Routing &amp; Navigation Graphs</text>
-  <text x="120" y="195" class="dim">• REST/GraphQL/ORM Sync Logic</text>
-
-  <rect class="fill" x="105" y="224" width="260" height="106"/>
-  <text x="120" y="244" class="b">Framework Provides:</text>
-  <text x="120" y="262" class="dim">• Virtual DOM Reconciliation</text>
-  <text x="120" y="280" class="dim">• Component Lifecycle &amp; Hooks</text>
-  <text x="120" y="298" class="dim">• Event Delegation System</text>
-
-  <text x="105" y="354" class="dim">Requires continuous manual sync</text>
-  <text x="105" y="372" class="dim">across model, UI, &amp; API schemas.</text>
-
-  <rect class="box" x="440" y="20" width="290" height="370"/>
-  <text x="455" y="42" class="b">Strvct (Model-First)</text>
-  <text x="455" y="62" class="dim">Naked Objects Framework</text>
-
-  <rect class="fill" x="455" y="85" width="260" height="106"/>
-  <text x="470" y="105" class="b">You Author:</text>
-  <text x="470" y="123" class="dim">• Domain Models (SvNode classes)</text>
-  <text x="470" y="141" class="dim">• Slot Annotations (metadata)</text>
-  <text x="470" y="159" class="dim">• Action Methods (business logic)</text>
-
-  <rect class="fill" x="455" y="206" width="260" height="124"/>
-  <text x="470" y="226" class="b">Framework Provides Automatically:</text>
-  <text x="470" y="244" class="dim">• Miller Column UI Generation</text>
-  <text x="470" y="262" class="dim">• Local IndexedDB &amp; Cloud Sync</text>
-  <text x="470" y="280" class="dim">• Native AI Tool Surface</text>
-  <text x="470" y="298" class="dim">• Headless Node.js Execution</text>
-  <text x="470" y="316" class="dim">• Universal Accessibility &amp; i18n</text>
-
-  <text x="455" y="354" class="dim">Zero UI maintenance cost;</text>
-  <text x="455" y="372" class="dim">model change updates all layers.</text>
-</svg>
+In a typical React stack, adding one field to a record touches about five places: a database migration, an ORM model, an API schema, a state store, and a form component. In Strvct, you add one slot declaration.
 
 ---
 
-## Code Comparison: Defining a Editable Contact Record
+## One Record, Both Ways
 
-### The React Approach (Manual Component + State + Persistence Wiring)
+### React
 
 ```jsx
-// ContactForm.jsx - Hand-authored UI component
+// ContactForm.jsx
 function ContactForm({ contactId, onSave }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        // Fetch from API or local store
         api.getContact(contactId).then(data => {
             setName(data.name);
             setEmail(data.email);
@@ -84,44 +33,35 @@ function ContactForm({ contactId, onSave }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!email.includes("@")) {
-            setErrors({ email: "Invalid email address" });
-            return;
-        }
         await api.updateContact(contactId, { name, email });
         onSave();
     };
 
     return (
-        <form onSubmit={handleSubmit} className="contact-form">
-            <label>Name:
-                <input value={name} onChange={e => setName(e.target.value)} />
-            </label>
-            <label>Email:
-                <input value={email} onChange={e => setEmail(e.target.value)} />
-                {errors.email && <span className="error">{errors.email}</span>}
-            </label>
-            <button type="submit">Save Changes</button>
+        <form onSubmit={handleSubmit}>
+            <label>Name: <input value={name} onChange={e => setName(e.target.value)} /></label>
+            <label>Email: <input value={email} onChange={e => setEmail(e.target.value)} /></label>
+            <button type="submit">Save</button>
         </form>
     );
 }
 ```
 
-*Summary:* Requires manually coding state hooks, form inputs, validation error handlers, API serializers, and submit listeners.
+This is just the form. The API endpoints, the database schema, the route that reaches this screen, and the list screen that links to it are all separate.
 
-### The Strvct Approach (Model-First Slot Declaration)
+### Strvct
 
 ```javascript
-// Contact.js - Annotated domain model
+// Contact.js
 (class Contact extends SvStorableNode {
 
     initPrototypeSlots () {
         {
             const slot = this.newSlot("name", "");
             slot.setSlotType("String");
-            slot.setShouldStoreSlot(true);   // Persist to IndexedDB
-            slot.setSyncsToView(true);       // Live UI update
-            slot.setCanEditInspection(true); // Editable field
+            slot.setShouldStoreSlot(true);   // saved locally, synced to the cloud
+            slot.setSyncsToView(true);       // the UI updates when it changes
+            slot.setCanEditInspection(true); // shown as an editable field
         }
         {
             const slot = this.newSlot("email", "");
@@ -140,119 +80,79 @@ function ContactForm({ contactId, onSave }) {
 }.initThisClass());
 ```
 
-*Summary:* Declares properties and metadata once. Strvct automatically derives editable UI input fields, handles IndexedDB persistence, emits change notifications, generates Miller column navigation tiles, and exposes an AI tool specification.
+This is the whole thing. A `Contacts` collection holding these objects gets a list, a detail view with editable fields, navigation between them, storage, and sync. There is no save button, because every edit is committed at the end of the event loop.
 
 ---
 
-## Concept Mapping ("Rosetta Stone")
+## Concept Map
 
-| React Concept | Strvct Equivalent | Architectural Difference |
+| In React | In Strvct | The difference |
 |---|---|---|
-| **Component (`JSX`)** | `SvNodeView` (Auto-generated or custom subclass) | React components render JSX trees. Strvct views are derived lazily at runtime from `SvNode` slot metadata. |
-| **State (`useState`)** | Slot getters/setters (`this.name()`, `this.setName(v)`) | React state lives in components. Strvct state lives in model slots (`setSyncsToView(true)`). |
-| **Context / Redux Store** | `SvNotificationCenter` & `SvModel` Object Graph | React uses context or external stores for global state. Strvct uses a single local object graph with notification observers. |
-| **Effects (`useEffect`)** | Notification Observations (`SvNotificationCenter`) | React runs effect hooks after render passes. Strvct observes model events via weak notifications. |
-| **React Router / Next.js** | Miller Column Navigation (`SvStackView`, `SvNavView`) | React maps URLs to components manually. Strvct derives navigation paths directly from parent-child object relationships. |
-| **ORM / REST API Sync** | `SvPersistentObjectPool` (IndexedDB + Cloud) | React requires custom API calls (Axios/TanStack Query). Strvct commits dirty nodes automatically at the end of each event loop. |
-| **Virtual DOM Reconciliation** | Per-Slot Notification Sync (`SvSyncScheduler`) | React diffs full virtual DOM trees. Strvct updates individual DOM elements directly via coalesced slot change passes. |
-| **Bundlers (Vite / Webpack)** | Content-Addressable Memory (`CAM`) System | React bundles code into chunks. Strvct caches individual source files in IndexedDB by SHA-256 hash. |
-| **TypeScript / Prop Types** | Slot Type Declarations (`slot.setSlotType("String")`) | React uses compile-time type checking. Strvct enforces runtime type checking on setters and AI JSON patches. |
+| Component (JSX) | A view derived from the node, or a custom view class | Views are created at runtime, as the user navigates, from the node and its slots. |
+| `useState` | A slot, read with `name()` and set with `setName(v)` | State lives on model objects, not in components. |
+| Context, Redux, Zustand | The object graph itself | There is one model. Views observe it, and nothing copies it into a store. |
+| `useEffect` | A notification observation, or a `didUpdateSlot<Name>()` method | Declaring `didUpdateSlotEmail()` is the subscription. Observations are weak, so there is nothing to unsubscribe. |
+| React Router | The navigation path through the object graph | A screen is a path of nodes, so there is no route table to maintain. |
+| TanStack Query, REST, an ORM | Object pools in IndexedDB, synced to the cloud | Changed objects are marked dirty and committed in a batch. |
+| TypeScript, PropTypes | Slot types, checked at runtime | The same type information validates setters, imported JSON, and agent patches. |
+| Tool definitions for an LLM | A generic schema-and-patch interface | Agents read a class's schema and send JSON patches. Adding a class adds no tools. |
 
 ---
 
-## State & Change Propagation
+## How Screens Are Decided
 
-<svg viewBox="0 0 820 280" width="820" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
-  </style>
-  <defs>
-    <marker id="aro" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
-    </marker>
-  </defs>
+In React you design each screen. In Strvct, a screen comes from a few decisions about the model, which you state as hints on the node class:
 
-  <rect class="box" x="30" y="20" width="360" height="240"/>
-  <text x="45" y="42" class="b">React (Unidirectional Data Flow)</text>
+- **Beside or inside.** When you open a child, does it get its own column or tab beside its parent, or is it drawn inside the parent as a section of a document? The default is a column. `nodeChildrenLayout()` returning `"inline"` shows the next levels in place as a document, and `nodeSubnodesAreAnchoredTabs()` shows children as tabs that open side by side when there is room.
+- **What shows.** A node can present a different node in its place with `nodePresentedNode()`. For example, a character can present a readable character sheet built from its data.
+- **How items look.** Hints such as `nodeTileLayout()` and `nodeChildrenTileWidth()` name a role, like `"status"` or `"roster"`, and the theme decides what that role looks like.
 
-  <rect class="fill" x="45" y="55" width="330" height="35"/>
-  <text x="60" y="77" class="dim">1. State Change (useState / Redux)</text>
-
-  <line class="flow" x1="210" y1="90" x2="210" y2="105" marker-end="url(#aro)"/>
-
-  <rect class="fill" x="45" y="105" width="330" height="35"/>
-  <text x="60" y="127" class="dim">2. Component Subtree Re-Render</text>
-
-  <line class="flow" x1="210" y1="140" x2="210" y2="155" marker-end="url(#aro)"/>
-
-  <rect class="fill" x="45" y="155" width="330" height="35"/>
-  <text x="60" y="177" class="dim">3. Virtual DOM Tree Diffing</text>
-
-  <line class="flow" x1="210" y1="190" x2="210" y2="205" marker-end="url(#aro)"/>
-
-  <rect class="fill" x="45" y="205" width="330" height="35"/>
-  <text x="60" y="227" class="dim">4. Real DOM Minimal Patch</text>
-
-
-  <rect class="box" x="430" y="20" width="360" height="240"/>
-  <text x="445" y="42" class="b">Strvct (Asymmetric Notification)</text>
-
-  <rect class="fill" x="445" y="55" width="330" height="35"/>
-  <text x="460" y="77" class="dim">1. View Calls Model Setter</text>
-
-  <line class="flow" x1="610" y1="90" x2="610" y2="105" marker-end="url(#aro)"/>
-
-  <rect class="fill" x="445" y="105" width="330" height="35"/>
-  <text x="460" y="127" class="dim">2. Model Slot Updates Internal State</text>
-
-  <line class="flow-dashed" x1="610" y1="140" x2="610" y2="155" marker-end="url(#aro)"/>
-
-  <rect class="fill" x="445" y="155" width="330" height="35"/>
-  <text x="460" y="177" class="dim">3. Notification Posted via Center</text>
-
-  <line class="flow" x1="610" y1="190" x2="610" y2="205" marker-end="url(#aro)"/>
-
-  <rect class="fill" x="445" y="205" width="330" height="35"/>
-  <text x="460" y="227" class="dim">4. Coalesced View Pull &amp; Render</text>
-</svg>
-
-- **React:** Uses unidirectional data flow with Virtual DOM diffing. A state update triggers a re-render of the component subtree, computing a Virtual DOM delta to patch the real DOM.
-- **Strvct:** Uses an asymmetric notification model. Views call setter methods on model nodes. Setters update slot state and post named notifications via `SvNotificationCenter`. `SvSyncScheduler` coalesces multiple updates within the event loop, notifying observing views to pull updated values directly.
+The framework takes care of the mechanics: the navigation path, collapsing columns into a stack on a phone, turning side-by-side panes into tabs when space runs out, editing in place, and keyboard and screen-reader support. A layout change is usually a one-line hint, not a new screen.
 
 ---
 
-## Detailed Paradigm Comparison
+## How State Flows
 
-| Dimension | React Ecosystem | Strvct Framework |
-|---|---|---|
-| **Primary Artifact** | Authored Component Trees (`JSX`) | Annotated Domain Models (`SvNode`) |
-| **UI Derivation** | Manual per screen | 100% Derived automatically |
-| **Persistence Strategy** | Custom integration (REST, GraphQL, Firebase) | Built-in local IndexedDB pools + Cloud Sync |
-| **Offline Support** | Complex PWA / Service Worker setup | Native local-first (offline by default) |
-| **AI Agent Interop** | Custom per-screen tool definitions | Native constant-size tool surface (`schema-fetch` / `apply-patch`) |
-| **Headless Testing** | Requires jsdom / Puppeteer | Native Node.js execution (zero DOM dependencies) |
-| **Internationalization** | Manual string wrapping & translation files | Intercepted centrally at tile primitive boundary |
-| **Module Ecosystem** | Full npm ecosystem & Vite / Webpack | Vendored libraries & Content-Addressable Memory (`CAM`) |
+**React:** A state change re-renders the component subtree. React diffs the new virtual DOM against the old one and patches the real DOM. To persist the change, you add an effect, a mutation hook, or a sync layer.
+
+**Strvct:** A view calls a setter on the model. The setter updates the slot, marks the object dirty for storage, and posts a notification. At the end of the event loop, the sync scheduler merges duplicate updates, and each observing view reads the new values from its node. Nothing is diffed, and persistence is part of the same step.
+
+The model never refers to views. Because of this, the same model code runs under Node.js with no browser, so domain tests don't need jsdom or a headless browser.
 
 ---
 
-## Decision Matrix: When to Use Which?
+## When the Generated UI Isn't Enough
 
-### Choose React When:
-- You are building a marketing site, landing page, or media-rich portal requiring highly branded, bespoke visuals.
-- Server-Side Rendering (SSR) or Search Engine Optimization (SEO) is a primary business requirement.
-- Your application relies heavily on third-party npm UI component libraries (e.g., shadcn/ui, MUI, Ant Design).
-- Your UI design bears no structural relationship to a structured domain model.
+Everyone asks this first: what happens when I need a kanban board, a canvas, or a layout that doesn't follow the object hierarchy?
 
-### Choose Strvct When:
-- You are building a data-model-intensive application (CRMs, ERPs, project management, RPG gaming tools, settings panels).
-- You want zero-maintenance UI generation and client-side persistence without writing component or glue code.
-- You want native, zero-cost AI agent operability over your entire data model.
-- You are building a local-first application that must function offline with cloud synchronization.
-- You want ultra-fast, headless unit and integration testing under Node.js without browser automation.
+The answer comes in steps, from least code to most:
+
+1. **Use an existing hint.** Many "custom" layouts turn out to be an inline document, a set of anchored tabs, or a presented node.
+2. **Add a new hint.** If a look is missing, add a hint that names the role and teach the generic view to read it. Every node can use it after that, and it follows the theme.
+3. **Write a custom view.** For genuinely custom drawing, such as a canvas, a map, or a board, write a view class. Views are found by name: a `Contact` node uses a `ContactView` if one exists. You can also name the class with `nodeViewClassName()`. The view observes the node and calls its methods, and everything else in the app stays generated.
+
+A custom view is simpler to write here than a React component, and simpler for a coding agent to write too. The data contract already exists: the node's slots, their types, and its notifications. The view doesn't fetch, cache, or store anything. It reads the node, draws, and calls methods on the node. Its scope is limited to the one node it replaces, and it can still hand that node's children back to the generated views.
+
+The cost is real, though. A custom view is UI that is no longer derived from the model, so it doesn't follow theme changes automatically and you maintain it by hand. That is why it is the last step, not the first.
+
+---
+
+## Trade-offs
+
+**What you give up with Strvct:**
+
+- **The ecosystem.** Strvct doesn't use npm in the browser or React component libraries. Third-party code is vendored as source. You won't find a shadcn/ui or MUI equivalent.
+- **Control over every screen.** You shape screens through the model and hints. If your product is mainly a sequence of designed screens, such as a landing page, a storefront, or a branded onboarding flow, you will be working against the framework.
+- **SEO.** There is no server-side rendering. The UI is built in the browser.
+- **The style.** Strvct uses classes, mutable objects, and declared slots. If you are used to functional components and hooks, it will take some adjustment.
+
+**What you get:**
+
+- One model drives the UI, storage, sync, exchange, and agent access, so they can't drift apart.
+- Local-first by default: the app works offline and syncs when it can.
+- An AI interface that doesn't grow with the model. Agents read schemas and send patches, and a rejected patch can return the slot's schema so the agent can correct itself.
+- Domain tests that run under plain Node.js.
+
+**Strvct fits** structured-information apps: CRMs, project and issue trackers, editors for structured documents, settings panels, admin tools, game tools, and apps where people and AI agents work on the same data.
+
+**React fits** apps where the screens are the product: marketing sites, storefronts, media-heavy pages, and anything that depends on SEO or on a specific component library.

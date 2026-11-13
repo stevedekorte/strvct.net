@@ -1,0 +1,5 @@
+{
+    "siteUrl": "https://strvct.net/",
+    "buildStamp": true,
+    "llmsExclude": ["_unused"]
+}
