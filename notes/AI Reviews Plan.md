@@ -80,7 +80,7 @@ run: reviews.js
 schedule: daily
 watch: ["llms-full.txt", "AI Reviews/models/models.json"]
 minInterval: 30d
-secrets: [ANTHROPIC_REVIEW_KEY, OPENAI_REVIEW_KEY, GEMINI_REVIEW_KEY, XAI_REVIEW_KEY]
+secrets: [ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, XAI_API_KEY]   # built in now: the providers' standard keys (decided 2026-11-12), or names from aiReviews "keys"
 writes: ["AI Reviews/**"]
 publish: direct
 ```
