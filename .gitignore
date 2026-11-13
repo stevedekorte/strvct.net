@@ -116,3 +116,6 @@ test-results/
 
 # Headless-boot local storage (node-indexeddb-lmdb)
 /data/
+
+# Credential values for colvmn jobs: never committed
+_credentials/*.secret.txt
