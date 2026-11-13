@@ -8,11 +8,9 @@ inputHash: 3ddbec0ec0a00161
 ---
 # Claude
 
-## STRVCT review
-
 This review is based only on the supplied documentation. I did not inspect the repository, run the code, or see the production app, and the comparisons to other tools draw on my general knowledge.
 
-### What it is
+## What it is
 
 STRVCT is an MIT-licensed, client-side JavaScript framework in the "naked objects" tradition. You write domain classes whose properties ("slots") carry annotations, and the framework derives the rest at runtime:
 
@@ -23,7 +21,7 @@ STRVCT is an MIT-licensed, client-side JavaScript framework in the "naked object
 
 It has its own class system, its own build and loader, and no npm, ES modules, or TypeScript. It is one author's work, in development since 2016, and its one cited production app is the author's own undreamedof.ai (about 90 domain classes).
 
-### Strengths
+## Strengths
 
 - **One source of truth.** Adding a slot updates the UI, storage, sync, and agent schema together. The docs put the equivalent React-stack change at about five places.
 - **A real answer to the old naked-objects problem.** Per-edge layout hints (layered or inline, tabs, presented nodes) go well beyond forms and tables, and responsive behaviour comes with them.
@@ -33,7 +31,7 @@ It has its own class system, its own build and loader, and no npm, ES modules, o
 - **Unusual candour.** The paper says it offers no controlled evaluation, and the Future Work pages list the framework's own defects in detail.
 - **Small supply chain.** The few third-party libraries are vendored as source, with no transitive dependencies.
 
-### Weaknesses and risks
+## Weaknesses and risks
 
 **Maturity and ecosystem**
 - It has one author, one production app, no community, and an API the FAQ says may still change.
@@ -64,7 +62,7 @@ It has its own class system, its own build and loader, and no npm, ES modules, o
 **Other**
 - Translation depends on a runtime AI service, with the cost and quality variance that implies.
 
-### Who should and shouldn't use it
+## Who should and shouldn't use it
 
 **Reasonable fit**
 - Solo developers or very small teams building logged-in, data-dense, hierarchical tools who are comfortable reading framework source.
@@ -77,7 +75,7 @@ It has its own class system, its own build and loader, and no npm, ES modules, o
 - Multi-user apps needing roles, audit, real-time merging, or regulated accessibility compliance today.
 - Apps with large collections, or where tables are the main view.
 
-### Compared with alternatives
+## Compared with alternatives
 
 | Alternative | Where it wins | Where STRVCT wins |
 |---|---|---|
@@ -88,7 +86,7 @@ It has its own class system, its own build and loader, and no npm, ES modules, o
 | Local-first sync engines (Automerge, Yjs, Replicache, ElectricSQL) | Stronger merging and collaboration, and they work with any UI | An integrated UI and storage story out of the box |
 | MCP or hand-written tool schemas | Works with any stack, explicit authority boundaries | Schemas derived from the model at no extra cost |
 
-### Bottom line
+## Bottom line
 
 The central idea is serious and well argued: describe screens as a few decisions about an object graph and let one annotated model drive everything. The implementation evidence is thin: one app by the author, no outside users, no measurements, and docs that overstate in places what the Future Work pages retract.
 

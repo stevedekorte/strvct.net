@@ -8,11 +8,9 @@ inputHash: 0ca11ed60cc511c3
 ---
 # ChatGPT
 
-## STRVCT review
-
 *Based on the supplied documentation, excluding AI Reviews—not a hands-on test or source-code audit.*
 
-### What it is
+## What it is
 
 STRVCT is an **open-source, MIT-licensed, local-first JavaScript application framework** in the Naked Objects tradition.
 
@@ -30,9 +28,9 @@ Views are created at runtime, rather than generated as source files. However, **
 
 The slogan “write the domain model, get the application” needs qualification. Developers still design workflows, permissions, validation, presentation policies, cloud deployment, and specialized interfaces.
 
-### Strengths
+## Strengths
 
-#### 1. A credible reduction in repetitive application code
+### 1. A credible reduction in repetitive application code
 
 STRVCT targets a genuine maintenance problem: describing the same field repeatedly across forms, state stores, serializers, and tool definitions.
 
@@ -40,7 +38,7 @@ Its slot system offers a coherent alternative. For supported features, adding an
 
 That reduces opportunities for drift; it does **not** guarantee that every subsystem interprets metadata identically or correctly.
 
-#### 2. More expressive presentation than a generic database editor
+### 2. More expressive presentation than a generic database editor
 
 The implemented UI includes recursive master-detail navigation, document inlining, responsive anchored tabs, and presentation delegation through derived nodes.
 
@@ -48,7 +46,7 @@ These are meaningful capabilities. They let a character sheet, settings hierarch
 
 Custom views are supported, so adopting STRVCT does not prohibit a map, canvas, or specialized editor. The trade-off is that custom surfaces regain the maintenance and testing obligations that generated views avoid.
 
-#### 3. Substantial local-first infrastructure
+### 3. Substantial local-first infrastructure
 
 The persistence documentation describes more than basic browser autosave:
 
@@ -61,21 +59,21 @@ The persistence documentation describes more than basic browser autosave:
 
 Using one row representation locally and remotely is a strong simplification. Working with locally available data can also improve responsiveness and resilience to connectivity loss.
 
-#### 4. A useful foundation for agent-operated applications
+### 4. A useful foundation for agent-operated applications
 
 Deriving schemas and applying patches through the live model is preferable to maintaining an unrelated AI-facing representation.
 
 But the advantage is **shared contracts**, not magical constant-cost intelligence. Two generic operation types do not imply constant schema size, discovery effort, token use, or task complexity. Domain actions may require additional exposure and policy.
 
-#### 5. Shared infrastructure and inspectability
+### 5. Shared infrastructure and inspectability
 
 Centralizing keyboard behavior, accessibility metadata, translation hooks, gestures, and inspectors can make improvements propagate broadly. Headless domain execution is valuable for tests and batch processing.
 
 The documentation also exposes limitations candidly in its paper and future-work pages. That transparency is useful, even where it contradicts stronger introductory claims.
 
-### Weaknesses and risks
+## Weaknesses and risks
 
-#### 1. Cloud synchronization is not collaborative merging
+### 1. Cloud synchronization is not collaborative merging
 
 The current [cloud protocol](https://strvct.net/docs/Persistence/Cloud%20Object%20Pools/) detects conflicts **per document pool**, even though it transfers individual changed records.
 
@@ -83,7 +81,7 @@ On conflict, the documented path checks whether the submitted content is already
 
 **Practical consequence:** concurrent edits, including offline edits on different devices, can require recovery or lose local intent. Pool boundaries, conflict messaging, and preservation of rejected work deserve explicit design and testing.
 
-#### 2. Authorization is an acknowledged gap
+### 2. Authorization is an acknowledged gap
 
 [Capabilities & Permissions](https://strvct.net/docs/Future%20Work/Capabilities%20%26%20Permissions/) says there is currently no first-class framework-wide permission model. It describes an actual failure where a prohibited local edit appeared saved but disappeared after reload.
 
@@ -96,7 +94,7 @@ For sensitive or multi-tenant applications:
 - Scope agent reads and writes explicitly.
 - Require appropriate approval and auditing for consequential actions.
 
-#### 3. Validation claims are inconsistent
+### 3. Validation claims are inconsistent
 
 Some pages describe schema-validated setters and patches. However:
 
@@ -106,7 +104,7 @@ Some pages describe schema-validated setters and patches. However:
 
 These contradictions prevent a confident claim of comprehensive validation. **Schema emission, setter type checking, business invariants, and authorization are separate guarantees.** Test each mutation path, including imports and agent patches.
 
-#### 4. Schema evolution is underdeveloped
+### 4. Schema evolution is underdeveloped
 
 [Cleanup Notes](https://strvct.net/docs/Future%20Work/Cleanup%20Notes/) documents class-rename support, but no general schema versioning, slot-type migration, or custom migration framework. Unknown stored slots may be dropped and records re-saved.
 
@@ -114,7 +112,7 @@ This matters especially for long-lived offline clients and mixed application ver
 
 Automatic undo/redo is also proposed work, not an established safety net.
 
-#### 5. Accessibility infrastructure is not verified compliance
+### 5. Accessibility infrastructure is not verified compliance
 
 Shared ARIA and keyboard support are good architectural choices. Nevertheless, [Accessibility Testing & Tuning](https://strvct.net/docs/Future%20Work/Accessibility%20Testing%20%26%20Tuning/) leaves screen-reader testing, custom Tab behavior, navigation announcements, contrast checks, and focus refinements outstanding.
 
@@ -122,7 +120,7 @@ I would **not treat the WCAG matrix as proof of WCAG 2.2 AA conformance**. Share
 
 AI translation likewise needs quality review, privacy controls, and cost management. Translation of strings does not establish complete localization, including pluralization, formatting, and right-to-left behavior.
 
-#### 6. UI coverage and scale have limits
+### 6. UI coverage and scale have limits
 
 Inline documents and tabs are implemented. General aligned tables/spreadsheets remain proposed; calendars, charts, and other arrangements may need specialized renderers.
 
@@ -130,7 +128,7 @@ That is a significant limitation for business software, where dense tables and b
 
 Likewise, lazy creation of navigation views is not list virtualization. The documentation describes a tile for every subnode in ordinary containers and leaves general virtualization and asynchronous navigation as future work. Pool-level loading and windowed record queries help, but do not establish unlimited UI scalability.
 
-#### 7. Ecosystem independence comes at a price
+### 7. Ecosystem independence comes at a price
 
 STRVCT uses Git submodules, ordered `_imports.json` files, global class registration, native-prototype extensions, and an `eval()`-based loader instead of conventional browser package/module tooling.
 
@@ -146,7 +144,7 @@ Content-addressed caching is useful, but the docs do not establish that abandoni
 
 Vendoring removes some package-install risks; it **does not eliminate supply-chain risk or dependency vulnerabilities**. Updates and security review become the maintainer’s responsibility.
 
-### How convincing is the evidence?
+## How convincing is the evidence?
 
 The current [Naked Objects paper](https://strvct.net/docs/Naked%20Objects/) reports a deployed application, undreamedof.ai, with roughly **90 domain classes and 11 specialized view/tile classes**.
 
@@ -156,7 +154,7 @@ The supplied material contains older “two custom views” and percentage claim
 
 The project reports limited adoption, no sponsoring organization, and potentially changing APIs. MIT licensing permits a fork, but maintaining this broad framework would still be substantial work.
 
-### Who should—and should not—use it?
+## Who should—and should not—use it?
 
 **Strong candidates:**
 
@@ -177,7 +175,7 @@ The project reports limited adoption, no sponsoring organization, and potentiall
 
 Being a logged-in SPA alone is not enough to make an application a good fit.
 
-### Comparison with alternatives
+## Comparison with alternatives
 
 | Alternative | Why choose it instead? | Where STRVCT may win |
 |---|---|---|
@@ -189,7 +187,7 @@ Being a logged-in SPA alone is not enough to make an application a good fit.
 
 The site’s React comparison is directionally useful but too absolute. Conventional stacks can share schemas, generate forms, centralize accessibility, and derive agent APIs. STRVCT’s distinction is making that integration the architectural default.
 
-### Recommendation
+## Recommendation
 
 **Pilot it before committing a business-critical product.** Build a representative workflow—not just the contacts example—and test:
 
