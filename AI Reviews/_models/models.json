@@ -1,6 +1,20 @@
 {
     "Gemini": {
-        "id": "gemini-3.1-pro-preview",
-        "name": "Gemini 3.1 Pro Preview"
+        "id": "gemini-4-carbon",
+        "name": "Gemini 4 Carbon",
+        "source": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-carbon/",
+        "why": "Google calls Gemini 4 Carbon its next frontier model and strongest model, and it is now in the Gemini API for all paying developers, ranking above Argon and the cheaper Hydrogen."
+    },
+    "Claude": {
+        "id": "claude-fable-5-2",
+        "name": "Claude Fable 5.2",
+        "source": "https://www.anthropic.com/claude/fable",
+        "why": "Anthropic launched Claude Fable 5.2 on Nov 9, 2026 as its most capable model for technical work and made it generally available on all platforms; Mythos 5.2 is limited to vetted organizations and isn't in this list."
+    },
+    "ChatGPT": {
+        "id": "gpt-6-astra",
+        "name": "GPT-6 Astra",
+        "source": "https://developers.openai.com/api/docs/guides/latest-model",
+        "why": "OpenAI's GPT-6 guide recommends GPT-6 Astra for the most demanding work, and OpenAI describes the newer GPT-6.1 Sol as only nearly matching Astra at a lower price."
     }
 }
