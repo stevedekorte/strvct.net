@@ -800,4 +800,49 @@
             || Boolean(this.nodeCompanionNode());
     }
 
+    // --- optional hooks a view may call on any node it shows; subclasses override ---
+
+    /**
+     * @description CSS custom properties this node's views apply to
+     * themselves (SvNodeView.syncCssFromNode), as a dict of name to value, or
+     * null for none (the default). Any view's node may be asked, so every node
+     * answers: override it to return a dict.
+     * @returns {Object|null}
+     * @category Layout
+     */
+    cssVariableDict () {
+        return null;
+    }
+
+    /**
+     * @description Whether a node dragged onto this node's tile may be
+     * dropped on it (SvTile_dragging). No by default; a drop target
+     * overrides this and nodeDropped().
+     * @param {SvNode} aNode - The node being dragged.
+     * @returns {Boolean}
+     * @category Dropping
+     */
+    nodeAcceptsDrop (/*aNode*/) {
+        return false;
+    }
+
+    /**
+     * @description Takes a node dropped on this node's tile. Called only when
+     * nodeAcceptsDrop() said yes; does nothing by default.
+     * @param {SvNode} aNode - The dropped node.
+     * @category Dropping
+     */
+    nodeDropped (/*aNode*/) {
+    }
+
+    /**
+     * @description Takes data dropped from outside the browser onto this
+     * node's tiles view (SvTilesView). Does nothing by default;
+     * SvViewableNode accepts the drop.
+     * @param {Object} dataChunk - The dropped data.
+     * @category Dropping
+     */
+    onBrowserDropChunk (/*dataChunk*/) {
+    }
+
 }.initThisClass());

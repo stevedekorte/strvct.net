@@ -23,8 +23,8 @@ The fix is a default on the common base class that does nothing or returns a neu
 
 | Hook | Checked in | Defined today | Default to add |
 | --- | --- | --- | --- |
-| `cssVariableDict()` | `SvNodeView`, app tiles | Only app classes (`UoAiChat`, `UoAiResponseMessage`) | `null`, on the node base |
-| `nodeAcceptsDrop(node)`, `nodeDropped(node)` | `SvTile_dragging` | `SvLinkNode` only | `false`, and do nothing |
+| `cssVariableDict()` | `SvNodeView`, app tiles | Only app classes (`UoAiChat`, `UoAiResponseMessage`) | `null`, on `SvNode` |
+| `nodeAcceptsDrop(node)`, `nodeDropped(node)` | `SvTile_dragging` | `SvLinkNode` only | `false`, and do nothing, on `SvNode` |
 | `keyIsComplete()`, `valueIsComplete()` | `SvFieldTile`, image and video well tiles | Slots on some message classes | `true` |
 | `referencedBlobHashesSet()` | `SvObjectPool_blobs` (every pooled object) | `SvBlobNode` only | an empty set, on the storable base |
 
@@ -35,10 +35,12 @@ Some checks guard methods every possible receiver already inherits. They can go 
 | Method | Checked in | Already defined on |
 | --- | --- | --- |
 | `nodeBecameVisible()` | `SvNodeView` | `SvNode` |
-| `onBrowserDropChunk(chunk)` | `SvTilesView` | `SvViewableNode` |
+| `onBrowserDropChunk(chunk)` | `SvTilesView` | `SvViewableNode` (and a do-nothing default on `SvNode`) |
 | `activate()` | `SvFieldTile` (on its value view) | `SvStyledDomView` |
 
 Before deleting each check, confirm the receiver can't be some other class (a plain `SvNode` where an `SvViewableNode` is expected, a value view that isn't an `SvStyledDomView`). Where it can, the base default belongs one level higher, as in kind 1.
+
+The node defaults are on `SvNode`, not `SvViewableNode` where the other hints live: a view may show any node, and some aren't viewable nodes (the top bar's feedback link is an `SvTitledNode`). Defaults first put on `SvViewableNode` threw for it on every sync.
 
 Kept: `SvTile`'s check for `didChangeNavSelection()` on its tiles view, which is just its parent view and isn't always an `SvTilesView` (inline documents, the companion). The sync scheduler has no such check: it calls whatever method it is given.
 

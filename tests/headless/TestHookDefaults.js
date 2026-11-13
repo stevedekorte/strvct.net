@@ -51,15 +51,17 @@ async function boot () {
 const cls = (name) => SvGlobals.get(name);
 
 function testNodeHookDefaults () {
-    console.log("\nNode hooks: defaults on SvViewableNode, overrides kept");
-    const proto = cls("SvViewableNode").prototype;
+    console.log("\nNode hooks: defaults on SvNode (a view may show any node), overrides kept");
+    const proto = cls("SvNode").prototype;
     check(proto.cssVariableDict() === null, "cssVariableDict() is null by default");
     check(proto.nodeAcceptsDrop(null) === false, "nodeAcceptsDrop() is false by default");
     check(typeof proto.nodeDropped === "function", "nodeDropped() exists by default");
     check(cls("SvLinkNode").prototype.nodeAcceptsDrop !== proto.nodeAcceptsDrop, "SvLinkNode still overrides nodeAcceptsDrop");
     check(cls("SvLinkNode").prototype.nodeDropped !== proto.nodeDropped, "SvLinkNode still overrides nodeDropped");
     check(typeof cls("SvNode").prototype.nodeBecameVisible === "function", "every node has nodeBecameVisible (the check in SvNodeView is gone)");
-    check(typeof proto.onBrowserDropChunk === "function", "every viewable node has onBrowserDropChunk (the check in SvTilesView is gone)");
+    check(typeof proto.onBrowserDropChunk === "function", "every node has onBrowserDropChunk (the check in SvTilesView is gone)");
+    check(cls("SvViewableNode").prototype.onBrowserDropChunk !== proto.onBrowserDropChunk, "SvViewableNode still accepts browser drops");
+    check(cls("SvTitledNode").prototype.cssVariableDict() === null, "a node above SvViewableNode (e.g. the top bar's feedback link) answers too");
 }
 
 function testFieldCompleteness () {
