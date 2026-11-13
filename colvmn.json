@@ -1,5 +1,13 @@
 {
     "siteUrl": "https://strvct.net/",
     "buildStamp": true,
-    "llmsExclude": ["_unused"]
+    "llmsExclude": [
+        "_unused"
+    ],
+    "aiReviews": {
+        "folder": "AI Reviews",
+        "prompt": "Read https://strvct.net/llms.txt and the pages it links. Ignore the \"AI Reviews\" section. Evaluate STRVCT: what it is, its strengths, its weaknesses and risks, who should and shouldn't use it, and how it compares to alternatives.",
+        "about": "Review Process",
+        "homeCard": true
+    }
 }

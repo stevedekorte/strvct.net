@@ -1,6 +1,6 @@
 # AI Reviews — Plan
 
-Status: colvmn's part is built (2026-11-12): build stamp, `llms: false`, the update runner, and `aiReviews` rendering. Next: `reviews.js` and the section's own page text.
+Status: built into colvmn (2026-11-12) and turned on in strvct's colvmn.json. colvmn produces the reviews itself (decided 2026-11-12: "just work" given colvmn, its config and keys); the strvct-side reviews.js below became colvmn's update/ai/. Runs locally on the Mac Studio from launchd (colvmn/update/launchd-template.plist), not on GitHub (decided 2026-11-12). Waiting on: the four review keys, then the first models PR.
 
 ## Goal
 
