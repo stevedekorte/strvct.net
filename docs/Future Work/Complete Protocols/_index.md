@@ -2,6 +2,8 @@
 
 Replacing duck-typed method checks with the right kind of contract: a default on a base class, a protocol, or nothing at all.
 
+**Status:** done (2026-11-12) for the hooks and protocol below. `tests/headless/TestHookDefaults.js` checks the defaults and the protocol; `tests/headless/TestDuckTypedChecks.js` keeps new checks from appearing.
+
 ## Context
 
 STRVCT has a [protocol system](../../Programming%20Idioms/Protocols/) for declaring interfaces. A class adopts a protocol with `addProtocol()`, which verifies at class setup that it implements every required method; a protocol can also name optional methods (`optionalMethodNames()`). Protocols declared so far:
@@ -34,11 +36,11 @@ Some checks guard methods every possible receiver already inherits. They can go 
 | --- | --- | --- |
 | `nodeBecameVisible()` | `SvNodeView` | `SvNode` |
 | `onBrowserDropChunk(chunk)` | `SvTilesView` | `SvViewableNode` |
-| `didChangeNavSelection()` | `SvTile` (on its tiles view) | `SvTilesView` |
 | `activate()` | `SvFieldTile` (on its value view) | `SvStyledDomView` |
-| `syncToNode()`, `syncFromNode()` | the sync scheduler | `SvNodeView` |
 
 Before deleting each check, confirm the receiver can't be some other class (a plain `SvNode` where an `SvViewableNode` is expected, a value view that isn't an `SvStyledDomView`). Where it can, the base default belongs one level higher, as in kind 1.
+
+Kept: `SvTile`'s check for `didChangeNavSelection()` on its tiles view, which is just its parent view and isn't always an `SvTilesView` (inline documents, the companion). The sync scheduler has no such check: it calls whatever method it is given.
 
 ### 3. Real contracts: declare a protocol
 
@@ -48,7 +50,7 @@ A protocol fits when several methods must come together and are implemented by c
 
 - Implemented by: `SvJsonGroup`, `SvJsonArrayNode`, `SvJsonDictionaryNode`, `SvField`, `SvBooleanField`, `SvPointerField`, `SvJsonNullField`, `SvDateNode`, `SvTimeNode`, `SvImageNode`, `SvToolResult`, `SvConversation`, `SvJsonIdNode`.
 - The two don't always come as a pair today: `SvImageNode` and `SvJsonDictionaryNode` serialize but don't deserialize, and `SvJsonIdNode` (the base of `SvJsonGroup`) deserializes but doesn't serialize. Declaring the protocol makes each class say which it supports, perhaps as two protocols, or one with an optional half.
-- The checks in `SvJsonGroup`, `SvJsonDictionaryNode` and `SvJsonNode_lens` stay, since the values they test can be strings, numbers or `null`. They become `conformsToProtocol()` checks, which say what is being asked.
+- The checks at call sites stay as method checks (`value.serializeToJson`, `typeof node.deserializeFromJson === "function"`): the values can be strings, numbers or `null`, and the reading checks sit in the JSON patch paths, where a rewrite would change nothing but risk. The protocol's job is the verification at class setup and the one place that documents the contract.
 
 **`SvNodeDropTargetProtocol`**, only if a second drop target appears. With `SvLinkNode` as the only implementer, the defaults in kind 1 are simpler.
 

@@ -541,7 +541,7 @@
         const node = this.node();
         console.log("[SvTilesView] onBrowserDropChunk mimeType:", dataChunk.mimeType(), "node:", node ? node.title() : "(none)");
 
-        if (node && node.onBrowserDropChunk) {
+        if (node) {
             node.onBrowserDropChunk(dataChunk);
         }
         this.scheduleSyncFromNode();

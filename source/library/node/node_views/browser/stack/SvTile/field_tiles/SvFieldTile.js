@@ -508,10 +508,7 @@
      */
     keyIsComplete () {
         const node = this.node();
-        if (node && node.keyIsComplete) {
-            return node.keyIsComplete();
-        }
-        return true; // default to complete (no dots)
+        return node ? node.keyIsComplete() : true;
     }
 
     /**
@@ -520,10 +517,7 @@
      */
     valueIsComplete () {
         const node = this.node();
-        if (node && node.valueIsComplete) {
-            return node.valueIsComplete();
-        }
-        return true; // default to complete (no dots)
+        return node ? node.valueIsComplete() : true;
     }
 
     /**
@@ -532,28 +526,16 @@
      * @category Synchronization
      */
     syncDotsFromNode () {
-        const node = this.node();
-        if (node) {
-            // Check key completion
-            if (node.keyIsComplete) {
-                if (node.keyIsComplete()) {
-                    this.hideKeyDots();
-                } else {
-                    this.showKeyDots();
-                }
-            } else {
+        if (this.node()) {
+            if (this.keyIsComplete()) {
                 this.hideKeyDots();
-            }
-
-            // Check value completion
-            if (node.valueIsComplete) {
-                if (node.valueIsComplete()) {
-                    this.hideValueDots();
-                } else {
-                    this.showValueDots();
-                }
             } else {
+                this.showKeyDots();
+            }
+            if (this.valueIsComplete()) {
                 this.hideValueDots();
+            } else {
+                this.showValueDots();
             }
         }
         return this;
@@ -1077,9 +1059,7 @@
      */
     onEnterKeyUp (/*event*/) {
         //this.logDebug(".onEnterKeyUp()")
-        if (this.valueView().activate) {
-            this.valueView().activate();
-        }
+        this.valueView().activate();
         return this;
     }
 

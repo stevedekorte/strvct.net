@@ -320,11 +320,9 @@
     syncCssFromNode () {
         const node = this.node();
 
-        if (node && node.cssVariableDict) {
-            const dict = node.cssVariableDict();
-            if (dict) {
-                this.applyCssVariableDict(dict);
-            }
+        const dict = node ? node.cssVariableDict() : null;
+        if (dict) {
+            this.applyCssVariableDict(dict);
         }
         return this;
     }
@@ -517,7 +515,7 @@
     onVisibility () {
 	    super.onVisibility();
 	    const node = this.node();
-	    if (node && node.nodeBecameVisible) {
+	    if (node) {
 	        node.nodeBecameVisible();
 	    }
 

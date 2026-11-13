@@ -80,7 +80,7 @@
         });
         SvObjectPool.openPools().forEach((pool) => {
             pool.activeObjects().forEachKV((pid, obj) => {
-                if (obj && obj.referencedBlobHashesSet) {
+                if (obj) {
                     hashesSet.addAll(obj.referencedBlobHashesSet());
                 }
             });
@@ -98,7 +98,7 @@
             }
         });
         this.activeObjects().forEachKV((pid, obj) => {
-            if (obj && obj.referencedBlobHashesSet) {
+            if (obj) {
                 hashesSet.addAll(obj.referencedBlobHashesSet());
             }
         });

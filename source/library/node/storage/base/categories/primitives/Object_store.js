@@ -72,6 +72,17 @@
         return this;
     }
 
+    /**
+     * @description The blob hashes this object refers to, which the object
+     * pool's blob GC must keep. None by default; a class holding blob hashes
+     * (SvBlobNode) overrides this.
+     * @returns {Set<String>}
+     * @category Blobs
+     */
+    referencedBlobHashesSet () {
+        return new Set();
+    }
+
     isDirectObject () {
         return Object.getPrototypeOf(this) === Object.prototype;
     }

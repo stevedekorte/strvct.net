@@ -384,6 +384,38 @@
     }
 
     /**
+     * @description CSS custom properties this node's views apply to
+     * themselves (SvNodeView.syncCssFromNode), as a dict of name to value, or
+     * null for none (the default). A node hint: override it to return a dict.
+     * @returns {Object|null}
+     * @category Layout
+     */
+    cssVariableDict () {
+        return null;
+    }
+
+    /**
+     * @description Whether a node dragged onto this node's tile may be
+     * dropped on it (SvTile_dragging). No by default; a drop target
+     * overrides this and nodeDropped().
+     * @param {SvNode} aNode - The node being dragged.
+     * @returns {Boolean}
+     * @category Dropping
+     */
+    nodeAcceptsDrop (/*aNode*/) {
+        return false;
+    }
+
+    /**
+     * @description Takes a node dropped on this node's tile. Called only when
+     * nodeAcceptsDrop() said yes; does nothing by default.
+     * @param {SvNode} aNode - The dropped node.
+     * @category Dropping
+     */
+    nodeDropped (/*aNode*/) {
+    }
+
+    /**
      * @description Whether a tap on this node's image (an image well) opens it
      * fitted to the window, in a temporary view a second tap closes
      * (SvImageZoomView). Opt-in, in the nodeShowsScrollbar idiom: a method

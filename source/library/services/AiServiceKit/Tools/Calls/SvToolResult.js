@@ -178,6 +178,7 @@ See schema for the particular tool call (whose name is in the toolName property)
     }
 
     initPrototype () {
+        this.addProtocol(SvJsonSerializableProtocol);
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
     }

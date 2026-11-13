@@ -1,4 +1,5 @@
 [
+    "SvJsonSerializableProtocol.js",
     "SvJsonIdNode.js",
     "SvJsonNode.js",
     "SvJsonArrayNode.js",

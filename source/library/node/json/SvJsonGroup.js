@@ -36,6 +36,7 @@
     }
 
     initPrototype () {
+        this.addProtocol(SvJsonSerializableProtocol);
         this.setNoteIconName("right-arrow");
         this.setSummaryFormat("{key}\n{value}");
         this.setHasNewlineAfterSummary(true);

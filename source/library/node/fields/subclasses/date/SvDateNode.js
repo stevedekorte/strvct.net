@@ -104,6 +104,7 @@
      * @category Initialization
      */
     initPrototype () {
+        this.addProtocol(SvJsonSerializableProtocol);
 
         this.setNoteIconName("right-arrow");
 

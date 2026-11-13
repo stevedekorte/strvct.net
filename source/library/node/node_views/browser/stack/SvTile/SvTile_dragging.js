@@ -93,9 +93,7 @@
      */
     acceptsDropHoverComplete (dragView) {
         const node = this.node();
-        if (node && node.nodeAcceptsDrop) {
-            return node.nodeAcceptsDrop(dragView.item().node());
-        }
+        return node ? node.nodeAcceptsDrop(dragView.item().node()) : false;
     }
 
     /**
@@ -110,7 +108,7 @@
         const itemNode = dragView.item().node();
 
         const node = this.node();
-        if (itemNode && node && node.nodeDropped) {
+        if (itemNode && node) {
             return node.nodeDropped(itemNode);
         }
     }

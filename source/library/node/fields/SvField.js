@@ -451,6 +451,28 @@
         return this;
     }
 
+    /**
+     * @description Whether the key is finished; while it isn't, the field's
+     * tile shows animated dots in place of it (e.g. a title still being
+     * generated). Complete by default.
+     * @returns {Boolean}
+     * @category Display
+     */
+    keyIsComplete () {
+        return true;
+    }
+
+    /**
+     * @description Whether the value is finished; while it isn't, the
+     * field's tile shows animated dots in place of it (e.g. a response still
+     * streaming). Complete by default.
+     * @returns {Boolean}
+     * @category Display
+     */
+    valueIsComplete () {
+        return true;
+    }
+
     keyWhiteSpace () {
         const t = this.target();
         if (t && t.keyWhiteSpace) {

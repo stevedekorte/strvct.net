@@ -191,7 +191,7 @@
         } else {
             // ORIGINAL non-progressive path — byte-for-byte as before.
             // Hide the value view if we're still generating (showing dots in key)
-            if (field.keyIsComplete && !field.keyIsComplete()) {
+            if (!field.keyIsComplete()) {
                 this.valueViewContainer().setDisplay("none");
             } else {
                 this.valueViewContainer().setDisplay("");

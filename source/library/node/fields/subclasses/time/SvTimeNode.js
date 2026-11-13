@@ -75,6 +75,7 @@
      * @category Initialization
      */
     initPrototype () {
+        this.addProtocol(SvJsonSerializableProtocol);
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
         this.setNodeCanReorderSubnodes(false);

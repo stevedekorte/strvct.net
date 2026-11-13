@@ -148,6 +148,7 @@
      * @category Initialization
      */
     initPrototype () {
+        this.addProtocol(SvJsonSerializableProtocol);
         this.setNodeCanEditTitle(true);
         this.setNodeCanEditSubtitle(false);
         this.setTitle("Image");

@@ -124,6 +124,7 @@
      * @category Initialization
      */
     initPrototype () {
+        this.addProtocol(SvJsonSerializableProtocol);
     }
 
     /**
