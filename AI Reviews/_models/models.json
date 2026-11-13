@@ -9,12 +9,18 @@
         "id": "claude-fable-5-2",
         "name": "Claude Fable 5.2",
         "source": "https://www.anthropic.com/claude/fable",
-        "why": "Anthropic launched Claude Fable 5.2 on Nov 9, 2026 as its most capable model for technical work and made it generally available on all platforms; Mythos 5.2 is limited to vetted organizations and isn't in this list."
+        "why": "Anthropic calls Claude Fable 5.2, released November 9, 2026, its most capable generally available model and gives claude-fable-5-2 as its API ID; the more powerful Mythos 5.2 is restricted-access and not on this account's list."
     },
     "ChatGPT": {
         "id": "gpt-6-astra",
         "name": "GPT-6 Astra",
-        "source": "https://developers.openai.com/api/docs/guides/latest-model",
-        "why": "OpenAI's GPT-6 guide recommends GPT-6 Astra for the most demanding work, and OpenAI describes the newer GPT-6.1 Sol as only nearly matching Astra at a lower price."
+        "source": "https://openai.com/index/gpt-6-astra/",
+        "why": "OpenAI calls GPT-6 Astra its most intelligent model and says it is available in the API; the newer GPT-6.1 Sol and Terra are cheaper tiers, and OpenAI says Sol only nearly matches Astra."
+    },
+    "Grok": {
+        "id": "grok-4.7",
+        "name": "Grok 4.7",
+        "source": "https://docs.x.ai/overview",
+        "why": "xAI's API docs mark Grok 4.7 as its latest model and its developer guide calls it the frontier model for coding, agentic tasks and knowledge work; it replaced Grok 4.6 on September 21, 2026."
     }
 }
