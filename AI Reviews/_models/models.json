@@ -2,8 +2,8 @@
     "Gemini": {
         "id": "gemini-4-carbon",
         "name": "Gemini 4 Carbon",
-        "source": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-carbon/",
-        "why": "Google calls Gemini 4 Carbon its next frontier model and strongest model, and it is now in the Gemini API for all paying developers, ranking above Argon and the cheaper Hydrogen."
+        "source": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/",
+        "why": "Google's November 10, 2026 post calls Gemini 4 Carbon its strongest model and says it is now available in the paid Gemini API as gemini-4-carbon, making it stronger than Gemini 4 Argon, while Gemini 4 Hydrogen is the faster, more efficient tier."
     },
     "Claude": {
         "id": "claude-fable-5-2",
