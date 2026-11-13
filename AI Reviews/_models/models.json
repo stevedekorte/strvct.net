@@ -1,18 +1,6 @@
 {
-    "Claude": {
-        "id": "claude-fable-5-2",
-        "name": "Claude Fable 5.2"
-    },
-    "ChatGPT": {
-        "id": "gpt-5.5",
-        "name": "GPT-5.5"
-    },
     "Gemini": {
         "id": "gemini-3.1-pro-preview",
         "name": "Gemini 3.1 Pro Preview"
-    },
-    "Grok": {
-        "id": "grok-4.7",
-        "name": "Grok 4.7"
     }
 }
