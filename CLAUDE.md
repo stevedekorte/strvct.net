@@ -327,10 +327,10 @@ all of it again to decide a button's visibility, then writing that button's
 
 ### Verifying
 
-`SvThrashDetector` is wired into the DOM read/write accessors and is ON by default
-for now: a small counter in the window's top-right corner shows forced layouts per
-second and the total since load (grey when quiet, amber/red while it happens);
-`?thrash=0` turns it off. Click the counter, or load with
+`SvThrashDetector` is wired into the DOM read/write accessors and is OFF by default.
+Load with `?thrash=count` and a small counter in the window's top-right corner shows
+forced layouts per second and the total since load (grey when quiet, amber/red while
+it happens). Click the counter, or load with
 **`?thrash=1`** (anywhere in the url — after the hash is fine), and it also reports,
 once per animation frame, every write-then-read pair with the reading code's stack.
 It `console.warn`s that it is ON when it arms, and heartbeats every 5s with either

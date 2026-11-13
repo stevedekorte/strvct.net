@@ -247,8 +247,8 @@
      * on nearly every view operation, so they must not pay for a singleton
      * lookup or a slot read when nobody is measuring.
      *
-     * ON by default for now (counting only, shown by the top-right
-     * indicator); "?thrash=0" turns it off, "?thrash=1" adds the per-frame
+     * OFF by default. "?thrash=count" (any value but 0) turns on counting,
+     * shown by the top-right indicator; "?thrash=1" adds the per-frame
      * console report with stacks — a url is something you can type, and a
      * console paste may not be.
      * @returns {Boolean}
@@ -257,7 +257,7 @@
     static isInstrumenting () {
         if (this._isInstrumenting === undefined) {
             const href = this.pageHref();
-            const on = href !== null && !href.includes("thrash=0");
+            const on = href !== null && href.includes("thrash=") && !href.includes("thrash=0");
             this._isInstrumenting = on;
             if (on) {
                 this.shared().start(href.includes("thrash=1"));
@@ -303,7 +303,7 @@
         if (verbose) {
             this.startFrameLoop(); // the per-frame report and heartbeat need every frame
         }
-        console.warn("[SvThrashDetector] counting forced layouts (top-right indicator; ?thrash=0 turns it off)."
+        console.warn("[SvThrashDetector] counting forced layouts (top-right indicator; load without ?thrash to turn it off)."
             + (verbose ? " Logging each one with the reading code's stack, plus a heartbeat every "
                 + (this.heartbeatMs() / 1000) + "s. Click the indicator to stop."
                 : " Click the indicator (or load with ?thrash=1) to log each one with its stack."));
