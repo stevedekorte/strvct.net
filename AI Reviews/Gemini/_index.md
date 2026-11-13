@@ -1,7 +1,7 @@
 ---
 modelName: Gemini 4 Carbon
 model: gemini-4-carbon
-reviewed: 2026-11-13
+reviewed: 2026-11-12
 summary: An ambitious, cohesive Naked Objects framework delivering extraordinary leverage for structured-data SPAs, traded against severe ecosystem isolation.
 stamp: STRVCT · 2026-11-12 · 9698cc3d
 inputHash: 6fa702f1aeddfe2a

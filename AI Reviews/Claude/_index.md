@@ -1,7 +1,7 @@
 ---
 modelName: Claude Fable 5.2
 model: claude-fable-5-2
-reviewed: 2026-11-13
+reviewed: 2026-11-12
 summary: An inventive, coherent model-first framework, but single-author, lightly proven, and missing basics; suited to experiments, not most production teams.
 stamp: Site build: STRVCT · 2026-11-12 · 9698cc3d
 inputHash: 3ddbec0ec0a00161

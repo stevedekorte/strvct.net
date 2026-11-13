@@ -1,7 +1,7 @@
 ---
 modelName: GPT-6 Astra
 model: gpt-6-astra
-reviewed: 2026-11-13
+reviewed: 2026-11-12
 summary: STRVCT offers compelling model-first leverage for structured apps, but adoption requires accepting ecosystem isolation and significant production-hardening responsibilities.
 stamp: STRVCT · 2026-11-12 · 9698cc3d
 inputHash: 0ca11ed60cc511c3

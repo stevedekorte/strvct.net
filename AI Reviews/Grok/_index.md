@@ -1,7 +1,7 @@
 ---
 modelName: Grok 4.7
 model: grok-4.7
-reviewed: 2026-11-13
+reviewed: 2026-11-12
 summary: Serious solo naked-objects framework for structured local-first tools, not a safe platform bet.
 stamp: STRVCT · 2026-11-12 · 9698cc3d
 inputHash: ffbc523eb91f32af

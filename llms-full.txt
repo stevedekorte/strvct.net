@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-Site build: STRVCT · 2026-11-12 · 067ab8ac
+Site build: STRVCT · 2026-11-12 · e7836a97
 
 You write the domain model. STRVCT does the rest while the app runs: it presents your objects in a user interface on desktop and phone, stores them locally, syncs them to the cloud, imports and exports them as JSON, and lets AI agents read and edit them. Nothing is generated ahead of time: views are created from the live objects as the user navigates, and they update when the objects change. Add a property, annotate it, and every part picks it up. There is no separate form, storage mapping, or tool schema to write.
 
@@ -29,8 +29,6 @@ Write the domain model. Get the application.
 - docs/Comparing to React
 - docs
 - [GitHub Repository](https://github.com/stevedekorte/strvct.net) — Source code, issues, and contributions.
-
-For AI agents: [llms.txt](llms.txt) (curated index) and [llms-full.txt](llms-full.txt) (full content).
 
 
 ---
