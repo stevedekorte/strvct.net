@@ -1,150 +1,71 @@
 # Complete Protocols
 
-Formalizing the many undeclared interface contracts throughout the codebase.
+Replacing duck-typed method checks with the right kind of contract: a default on a base class, a protocol, or nothing at all.
 
 ## Context
 
-STRVCT has a [protocol system](../../Programming%20Idioms/Protocols/) for declaring interfaces and verifying conformance at class-registration time. In practice, only a handful of protocols have been formally declared (audio clip, audio clip delegate, drag source, drag destination). The rest of the codebase relies on informal duck-typing -- checking for a method's existence before calling it, or simply assuming it exists based on context.
+STRVCT has a [protocol system](../../Programming%20Idioms/Protocols/) for declaring interfaces. A class adopts a protocol with `addProtocol()`, which verifies at class setup that it implements every required method; a protocol can also name optional methods (`optionalMethodNames()`). Protocols declared so far:
 
-This means there are many implicit protocols scattered throughout the framework: sets of methods that classes are expected to implement but that have no formal declaration, no early verification, and no central documentation.
+- **Contracts:** `SvRecordStoreProtocol` (the local, memory and cloud record stores), `SvCollapsibleRegionProtocol`, `SvAudioClipProtocol`, `SvProgressiveImageSourceProtocol`.
+- **Delegates:** `SvDelegateProtocol` and its subprotocols, whose methods are all optional: `SvAudioClipDelegateProtocol`, `SvAiRequestDelegateProtocol`, `SvConversationMessageDelegateProtocol`, `SvXhrRequestDelegateProtocol`, `SvHtmlStreamReaderDelegateProtocol`, `SvImagineProImageGenerationDelegateProtocol`, `SvRzPeerConnDelegateProtocol`, `SvRzSigServerConnDelegateProtocol`.
 
-## Examples of Undeclared Protocols
+Elsewhere the code checks whether an object has a method before calling it: `if (node && node.cssVariableDict) { … }`. These checks hide three different situations, and each wants a different fix.
 
-These are recurring interface patterns in the codebase that are currently enforced by convention rather than by protocol declarations:
+## Three Kinds of Check
 
-### Node drop protocol
+### 1. Optional hooks: give the base class a default
 
-Used by tile views to ask a node whether it accepts a dropped item:
+Most checks ask whether a node or view *offers* some optional behavior, because most don't. A protocol doesn't help here: it verifies classes that claim conformance, but these call sites need to know about every object, so the check would only change from `node.foo` to `node.conformsToProtocol(P)`.
 
-- `nodeAcceptsDrop(node)` -- returns whether the drop is allowed
-- `nodeDropped(node)` -- handles the actual drop
+The fix is a default on the common base class that does nothing or returns a neutral value. Subclasses override it, and every call site loses its check. This is the same shape as the `node*` view hints: the base class answers for everyone, and a class that wants something different says so.
 
-Currently checked with `if (node && node.nodeAcceptsDrop)` at call sites. A formal `SvNodeDropProtocol` would make the contract explicit.
+| Hook | Checked in | Defined today | Default to add |
+| --- | --- | --- | --- |
+| `cssVariableDict()` | `SvNodeView`, app tiles | Only app classes (`UoAiChat`, `UoAiResponseMessage`) | `null`, on the node base |
+| `nodeAcceptsDrop(node)`, `nodeDropped(node)` | `SvTile_dragging` | `SvLinkNode` only | `false`, and do nothing |
+| `keyIsComplete()`, `valueIsComplete()` | `SvFieldTile`, image and video well tiles | Slots on some message classes | `true` |
+| `referencedBlobHashesSet()` | `SvObjectPool_blobs` (every pooled object) | `SvBlobNode` only | an empty set, on the storable base |
 
-### Delegate protocols
+### 2. Checks for methods the base class already has: delete them
 
-The framework uses a delegation pattern in many places beyond audio. Any class that accepts delegates and calls methods on them defines an implicit protocol. Formalizing these as `SvThingDelegateProtocol` classes would:
+Some checks guard methods every possible receiver already inherits. They can go now:
 
-- Document which callbacks a delegate must implement
-- Catch missing delegate methods early
-- Make it easy to find all delegate interfaces in the codebase
+| Method | Checked in | Already defined on |
+| --- | --- | --- |
+| `nodeBecameVisible()` | `SvNodeView` | `SvNode` |
+| `onBrowserDropChunk(chunk)` | `SvTilesView` | `SvViewableNode` |
+| `didChangeNavSelection()` | `SvTile` (on its tiles view) | `SvTilesView` |
+| `activate()` | `SvFieldTile` (on its value view) | `SvStyledDomView` |
+| `syncToNode()`, `syncFromNode()` | the sync scheduler | `SvNodeView` |
 
-### Serialization protocols
+Before deleting each check, confirm the receiver can't be some other class (a plain `SvNode` where an `SvViewableNode` is expected, a value view that isn't an `SvStyledDomView`). Where it can, the base default belongs one level higher, as in kind 1.
 
-Classes that participate in persistence implement methods like `recordForStore()`, `loadFromRecord()`, and `referencedBlobHashesSet()`. Classes that participate in JSON exchange implement `serializeToJson()` and `deserializeFromJson()`. These are currently expected by convention -- a formal protocol would verify that a class claiming to be storable actually implements all the required methods.
+### 3. Real contracts: declare a protocol
 
-### View protocols
+A protocol fits when several methods must come together and are implemented by classes that share no base class that could hold them. These are the ones to declare:
 
-Node views implement a set of methods for synchronization (`syncToNode()`, `syncFromNode()`), lifecycle (`prepareToRetire()`), and display (`postNeedsDisplay()`). These expectations are implicit -- a formal protocol would clarify the minimal interface a view must provide.
+**`SvJsonSerializableProtocol`**: `serializeToJson()` and `deserializeFromJson(json)`.
+
+- Implemented by: `SvJsonGroup`, `SvJsonArrayNode`, `SvJsonDictionaryNode`, `SvField`, `SvBooleanField`, `SvPointerField`, `SvJsonNullField`, `SvDateNode`, `SvTimeNode`, `SvImageNode`, `SvToolResult`, `SvConversation`, `SvJsonIdNode`.
+- The two don't always come as a pair today: `SvImageNode` and `SvJsonDictionaryNode` serialize but don't deserialize, and `SvJsonIdNode` (the base of `SvJsonGroup`) deserializes but doesn't serialize. Declaring the protocol makes each class say which it supports, perhaps as two protocols, or one with an optional half.
+- The checks in `SvJsonGroup`, `SvJsonDictionaryNode` and `SvJsonNode_lens` stay, since the values they test can be strings, numbers or `null`. They become `conformsToProtocol()` checks, which say what is being asked.
+
+**`SvNodeDropTargetProtocol`**, only if a second drop target appears. With `SvLinkNode` as the only implementer, the defaults in kind 1 are simpler.
+
+Not a protocol: storage. `recordForStore()` and `loadFromRecord()` are categories on `Object`, `ProtoClass` and the built-ins (`Array_store`, `Map_store`, …), so every object already has them. Protocols can only be adopted by `ProtoClass` subclasses today, so built-ins couldn't declare conformance anyway.
 
 ## Approach
 
-The work is incremental and non-breaking. Each undeclared protocol can be formalized independently:
+1. **Defaults (kind 1).** For each hook: add the default to the base class, delete the checks at its call sites, and check the app (`Uo*`) for overrides that relied on the method being absent.
+2. **Deletions (kind 2).** Confirm each receiver's class, then delete the check.
+3. **Protocols (kind 3).** Declare `SvJsonSerializableProtocol`, have each implementer adopt it, and settle the pairs that are half implemented.
+4. **Keep it from coming back.** A headless test that lists the remaining `if (x && x.method)` checks in `source/`, with an allowance for the deliberate ones (values that can be primitives), so a new check is noticed when it's added.
 
-1. **Identify the contract.** Find all the method names that call sites expect on the target objects.
-2. **Create the Protocol subclass.** List those methods as empty declarations in a new `Protocol` subclass.
-3. **Register conformance.** Add `addProtocol()` calls to classes that implement the interface.
-4. **Verify.** The framework's existing verification machinery checks method presence at registration time. Any missing implementations surface immediately.
-
-No existing behavior changes -- the methods already exist on the classes. The protocol declaration simply makes the contract explicit and verifiable.
+Each step stands alone and changes no behavior: kind 1 replaces a check with a default that gives the same answer, kind 2 removes a check that always passed, and kind 3 adds verification at class setup.
 
 ## Benefits
 
-- **Self-documenting interfaces.** Each protocol class is a readable list of required methods, replacing the need to read call sites to discover the contract.
-- **Early error detection.** A class that claims conformance but is missing a method throws at startup, not when the code path is eventually hit.
-- **Queryable.** `Protocol.allProtocols()` and `protocol.implementers()` provide runtime introspection of which classes implement which interfaces.
-- **Inheritance.** Protocols can extend other protocols, building larger contracts from smaller ones without repeating method lists.
-
-## Scope
-
-This is an ongoing improvement, not a single task. The codebase has dozens of implicit protocols. Formalizing them should happen organically -- when working in an area of the code, identify the implicit contracts and declare them as protocols. Priority should go to contracts that:
-
-- Are implemented by many classes (high fan-out)
-- Have been a source of bugs from missing methods
-- Would benefit from being documented as a discrete interface
-
-## Candidates
-
-Specific informal protocols identified in the codebase, grouped by priority. Each entry lists a suggested protocol name, the methods it would declare, and where the duck-typing checks currently live.
-
-### High priority
-
-These are core framework contracts implemented by many classes.
-
-**`SvStorableProtocol`** -- persistence serialization
-
-- Methods: `recordForStore(store)`, `loadFromRecord(record, store)`
-- Duck-typed in: `SvObjectPool.js` (lines 1133, 1453, 1477)
-- Implementers: `Array_store`, `Map_store`, `ProtoClass_store`, `Object_store`, and 10+ primitive type stores
-
-**`SvJsonSerializableProtocol`** -- JSON exchange for AI and data transfer
-
-- Methods: `serializeToJson()`, `deserializeFromJson(json)`
-- Duck-typed in: `SvJsonGroup.js` (lines 429, 445) via `if (value && value.serializeToJson)`
-- Implementers: `SvJsonGroup`, `SvJsonArrayNode`, `SvJsonDictionaryNode`, `SvField`, `SvBooleanField`, `SvImageNode`
-
-**`SvViewSyncProtocol`** -- bidirectional model-view synchronization
-
-- Methods: `syncToNode()`, `syncFromNode()`
-- Duck-typed in: `SvSyncScheduler.js` (scheduled batch calls)
-- Implementers: `SvNodeView`, `SvStackView`, `SvNavView`, `SvTile`, `SvTilesView`, and 15+ view classes
-
-**`SvFieldRenderingProtocol`** -- field display and completion state
-
-- Methods: `keyIsComplete()`, `valueIsComplete()`, `keyWhiteSpace()`, `valueCanUserSelect()`
-- Duck-typed in: `SvFieldTile.js` (lines 397--470) via `if (node && node.keyIsComplete)`
-- Implementers: `SvField`, `SvAiResponseMessage`, `SvConversationMessage`
-
-### Medium priority
-
-Important contracts with more specialized scope.
-
-**`SvNodeDropTargetProtocol`** -- node-level drop acceptance
-
-- Methods: `nodeAcceptsDrop(node)`, `nodeDropped(node)`
-- Duck-typed in: `SvTile_dragging.js` (lines 99, 116)
-- Implementers: `SvLinkNode`
-
-**`SvBrowserDropHandlerProtocol`** -- browser drag-and-drop data handling
-
-- Methods: `onBrowserDropChunk(chunk)`
-- Duck-typed in: `SvTilesView.js` (line 469)
-- Implementers: `SvViewableNode`, `SvJsonArrayNode`
-
-**`SvBlobTrackableProtocol`** -- blob reference tracking for garbage collection
-
-- Methods: `referencedBlobHashesSet()`
-- Duck-typed in: `SvObjectPool.js` (line 1846)
-- Implementers: `SvBlobNode`, `SvField`, `SvPointerField`
-
-**`SvNodeVisibilityProtocol`** -- visibility lifecycle notification
-
-- Methods: `nodeBecameVisible()`
-- Duck-typed in: `SvNodeView.js` (line 483)
-- Implementers: `SvNode`, `SvViewableNode`
-
-**`SvNavSelectionProtocol`** -- navigation selection changes
-
-- Methods: `didChangeNavSelection()`
-- Duck-typed in: `SvTile.js` (lines 414, 437)
-- Implementers: `SvStackView`, `SvTilesView`
-
-### Lower priority
-
-Narrower contracts or single-implementer interfaces worth formalizing for documentation.
-
-**`SvTileLinkableProtocol`** -- tile navigation target
-
-- Methods: `nodeTileLink()`
-- Duck-typed in: `SvJsonIdNode.js` (lines 185, 232)
-- Implementers: `SvPointerField`, `SvJsonArrayNode`, `SvOptionsNode`, `SvField`, `SvLinkNode`
-
-**`SvCssVariableProviderProtocol`** -- node-defined CSS custom properties
-
-- Methods: `cssVariableDict()`
-- Duck-typed in: `SvNodeView.js` (line 290)
-
-**`SvActivatableProtocol`** -- tile activation on keyboard/gesture
-
-- Methods: `activate()`
-- Duck-typed in: `SvTilesView_keyboard.js` (line 185)
+- **Less code at call sites.** Most checks disappear rather than being rewritten.
+- **One place to look.** A hook's default on the base class documents it: its name, what it's for, what it returns when a class doesn't care.
+- **Early errors where they help.** A class that adopts `SvJsonSerializableProtocol` but lacks a method fails at startup, not when its JSON is first exported.
+- **Consistency with node hints.** Optional behavior works the same way throughout: the base class answers, subclasses override.

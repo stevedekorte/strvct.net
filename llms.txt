@@ -31,7 +31,7 @@ Site build: STRVCT · 2026-11-12 · 9698cc3d
 - [Capabilities & Permissions](/docs/Future%20Work/Capabilities%20%26%20Permissions/): A node-level permissions protocol with a pluggable storage-layer ACL, so the framework can ask "can this caller do this here?" without baking specific roles into call sites.
 - [Case Studies](/docs/Future%20Work/Case%20Studies/): Comparative implementations of small applications in STRVCT and conventional stacks.
 - [Cleanup Notes](/docs/Future%20Work/Cleanup%20Notes/): Areas of the codebase that work but could benefit from simplification, documentation, or restructuring.
-- [Complete Protocols](/docs/Future%20Work/Complete%20Protocols/): Formalizing the many undeclared interface contracts throughout the codebase.
+- [Complete Protocols](/docs/Future%20Work/Complete%20Protocols/): Replacing duck-typed method checks with the right kind of contract: a default on a base class, a protocol, or nothing at all.
 - [Emergent Capabilities](/docs/Future%20Work/Emergent%20Capabilities/): Capabilities that the naked objects architecture makes possible at the framework level.
 - [Graph Database](/docs/Future%20Work/Graph%20Database/): Long-term direction: replacing the current cloud storage backend with a native graph database.
 - [JSON Schema](/docs/Future%20Work/JSON%20Schema/): Expanding auto-generated JSON Schema coverage across slots, classes, and the domain model.
