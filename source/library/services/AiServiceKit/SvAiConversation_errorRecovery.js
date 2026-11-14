@@ -222,9 +222,10 @@
     }
 
     // A typing-draft placeholder persisted mid-compose (an auto-save raced
-    // an active draft) reloads as an empty, incomplete user message —
-    // isTyping is not stored, so it can't be matched on reload. The typer is
-    // long gone; drop it. Committed user messages always carry content, so
+    // an active draft) reloads as an empty, incomplete user message. It is
+    // matched by that shape, not by a typing flag: this class has none (an
+    // app's message class may store one), and records saved before a flag
+    // was stored carry none. The typer is long gone; drop it. Committed user messages always carry content, so
     // the only empty + incomplete user message is a stale draft. "Empty"
     // tolerates a bare speaker-attribution tag (the characterName markup a
     // prepareUserInputMessage override wraps around typed text) with
