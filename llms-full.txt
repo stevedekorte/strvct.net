@@ -7028,10 +7028,9 @@ The design and its measurements (boot went from 12.5 s to 8.3 s, with two-thirds
 <!-- Page: docs/Plans/Meta Plan -->
 Source: /docs/Plans/Meta%20Plan/
 
----
-subtitle: The order to do the other plans in, why, and what should change in them first.
----
 # Meta Plan
+
+The order to do the other plans in, why, and what should change in them first.
 
 **As of:** 2026-11-13. Every plan page now opens with a status line; this page orders them.
 

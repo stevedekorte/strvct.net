@@ -1,3 +1,6 @@
+---
+maxColumns: 1
+---
 # Naked Objects
 
 From Domain Models to Complete Applications
