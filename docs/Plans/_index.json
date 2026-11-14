@@ -1,0 +1,58 @@
+{
+  "title": "Plans",
+  "subtitle": "Design ideas, architectural directions, and planned improvements, with a meta plan for the order to do them in.",
+  "content": [
+    {
+      "type": "ContentCards",
+      "title": "Order",
+      "columns": 3,
+      "items": [
+        "Meta Plan"
+      ]
+    },
+    {
+      "type": "ContentCards",
+      "title": "Next",
+      "columns": 3,
+      "items": [
+        "Naked Objects Issues",
+        "Cleanup Notes",
+        "Promise-Wrapped Slots",
+        "Capabilities & Permissions",
+        "JSON Schema",
+        "Browser Cleanup"
+      ]
+    },
+    {
+      "type": "ContentCards",
+      "title": "Later",
+      "columns": 3,
+      "items": [
+        "Tile Container Views",
+        "Tile Views",
+        "Accessibility Testing & Tuning",
+        "Case Studies"
+      ]
+    },
+    {
+      "type": "ContentCards",
+      "title": "Ideas & Directions",
+      "columns": 3,
+      "items": [
+        "Emergent Capabilities",
+        "Async Navigation",
+        "Graph Database"
+      ]
+    },
+    {
+      "type": "ContentCards",
+      "title": "Done or Closed",
+      "columns": 3,
+      "items": [
+        "Complete Protocols",
+        "Lazy Slots",
+        "Async Final Initialization"
+      ]
+    }
+  ]
+}

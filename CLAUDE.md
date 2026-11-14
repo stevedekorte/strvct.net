@@ -71,7 +71,7 @@ Persistence, View Synchronization, Headless Execution), Notifications, Persisten
 (Local Object Pools, Cloud Object Pools, Local and Cloud Blob Storage), Views,
 Slots, Nodes, Events and Gestures, Services, Programming Idioms (Async Patterns,
 Categories, Protocols, Style Guide), Accessibility, Internationalization,
-Inspectors and Debugging, Reference, Future Work. When the docs cover a topic in
+Inspectors and Debugging, Reference, Plans (start with Plans/Meta Plan). When the docs cover a topic in
 more detail than this file, prefer the docs.
 
 ## Model / View Separation (CRITICAL)

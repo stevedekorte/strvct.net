@@ -4,7 +4,7 @@
 
 /**
  * Headless test: optional hooks answer from a base-class default, and the JSON
- * form is a declared protocol (docs/Future Work/Complete Protocols).
+ * form is a declared protocol (docs/Plans/Complete Protocols).
  *
  * Call sites used to ask "does this object have the method?" before calling
  * an optional hook. Each hook now has a default on the base class every

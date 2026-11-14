@@ -8,7 +8,7 @@
  * `if (node && node.someHook)` asks whether an object has a method before
  * calling it. For an optional hook the better answer is a default on the
  * base class every receiver inherits, so callers just call it; for a real
- * multi-method contract it is a protocol (docs/Future Work/Complete
+ * multi-method contract it is a protocol (docs/Plans/Complete
  * Protocols). This counts the `x && x.method` checks in source/, per file
  * and method, and fails when one appears that the baseline doesn't list.
  * Some are deliberate: a value that may be a string or a number, an object

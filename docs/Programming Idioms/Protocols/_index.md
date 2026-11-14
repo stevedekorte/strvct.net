@@ -209,7 +209,7 @@ The protocol files are the source of truth. These are the ones the framework dec
 - **`SvCollapsibleRegionProtocol`:** a region that expands and collapses (`isExpanded()`, `toggleExpanded()`, `collapsibleAxis()`).
 - **`SvJsonSerializableProtocol`:** a node with a JSON form for AI exchange, import and export (`serializeToJson()`; `deserializeFromJson()` optional, since some nodes are only exported). Adopted by `SvJsonGroup`, `SvJsonArrayNode`, `SvJsonDictionaryNode`, `SvImageNode`, `SvDateNode`, `SvTimeNode` and `SvToolResult`; their subclasses conform through them.
 
-An optional hook that most classes don't implement is not a protocol: it is a method on the base class with a default (`cssVariableDict()` returns null, `nodeAcceptsDrop()` false), which classes that care override. Callers then call it without checking whether it exists. See [Complete Protocols](../../Future%20Work/Complete%20Protocols/).
+An optional hook that most classes don't implement is not a protocol: it is a method on the base class with a default (`cssVariableDict()` returns null, `nodeAcceptsDrop()` false), which classes that care override. Callers then call it without checking whether it exists. See [Complete Protocols](../../Plans/Complete%20Protocols/).
 
 **Delegate protocols** (every message optional)
 
