@@ -98,9 +98,6 @@ function fakeBackendOver (memoryStore) {
                     }
                     return result;
                 }
-                case "records-stage-begin": return memoryStore.asyncStageBegin(args);
-                case "records-stage-write": return memoryStore.asyncStageWrite(args);
-                case "records-stage-finalize": return memoryStore.asyncStageFinalize(args);
                 default: throw new Error("fake backend: unknown function " + name);
             }
         }
@@ -118,7 +115,7 @@ async function main () {
     const TestWinMessage = SvGlobals.get("TestWinMessage");
     const newMessage = (text) => { const m = TestWinMessage.clone(); m.setText(text); return m; };
     const cloudMemory = SvMemoryRecordStore.clone();
-    const cloud = SvCloudRecordStore.clone().setBackend(fakeBackendOver(cloudMemory)).setBusyRetryDelays([]);
+    const cloud = SvCloudRecordStore.clone().setBackend(fakeBackendOver(cloudMemory));
 
     console.log("\nA commit sends placements as row columns");
     const store = SvLocalRecordStore.clone().useMemoryMap();
@@ -167,7 +164,7 @@ async function main () {
             }
             return fakeBackendOver(cloudMemory).callFunction(name, args);
         }
-    }).setBusyRetryDelays([]);
+    });
     chat.subnodes().first().setText("m1 edited"); // something for the held commit to send
     const inFlight = pool.asyncCommitToCloud(held);
     for (let i = 0; i < 50 && !release; i++) { await new Promise(r => setTimeout(r, 10)); }

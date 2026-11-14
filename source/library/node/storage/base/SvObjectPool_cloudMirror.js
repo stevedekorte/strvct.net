@@ -179,7 +179,7 @@
     fitsInOneCommit (cloudStore, commit, projectionPart) {
         const parts = [commit, projectionPart];
         const ops = parts.reduce((n, part) => n + part.writes.length + part.deletes.length, 0);
-        const bytes = parts.reduce((n, part) => n + SvStagedRecordCommit.payloadBytes(part.writes), 0);
+        const bytes = parts.reduce((n, part) => n + SvCloudRecordStore.payloadBytes(part.writes), 0);
         return ops <= cloudStore.maxOpsPerCommit() && bytes <= cloudStore.maxBytesPerCommit();
     }
 
@@ -196,7 +196,7 @@
 
     /**
      * @description A truth commit too large to pair with its projection: both
-     * are sent at once (each staged when large), and the projection's
+     * are sent at once, and the projection's
      * publication waits for the truth's — it is aborted when the truth did not
      * land, so players never see a version the truth lacks.
      * @param {Object} truth - { commit, sentSnapshot }

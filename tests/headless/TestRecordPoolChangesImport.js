@@ -98,9 +98,6 @@ function fakeBackendOver (memoryStore) {
                     }
                     return result;
                 }
-                case "records-stage-begin": return memoryStore.asyncStageBegin(args);
-                case "records-stage-write": return memoryStore.asyncStageWrite(args);
-                case "records-stage-finalize": return memoryStore.asyncStageFinalize(args);
                 default: throw new Error("fake backend: unknown function " + name);
             }
         }
@@ -118,7 +115,7 @@ async function main () {
     const TestWinMessage = SvGlobals.get("TestWinMessage");
     const newMessage = (text) => { const m = TestWinMessage.clone(); m.setText(text); return m; };
     const cloudMemory = SvMemoryRecordStore.clone();
-    const cloud = SvCloudRecordStore.clone().setBackend(fakeBackendOver(cloudMemory)).setBusyRetryDelays([]);
+    const cloud = SvCloudRecordStore.clone().setBackend(fakeBackendOver(cloudMemory));
 
     // the writing device: a session with a chat of six messages, committed (v1)
     const store = SvLocalRecordStore.clone().useMemoryMap();

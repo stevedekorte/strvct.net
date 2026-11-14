@@ -91,9 +91,6 @@ function fakeBackendOver (memoryStore) {
                     }
                     return result;
                 }
-                case "records-stage-begin": return memoryStore.asyncStageBegin(args);
-                case "records-stage-write": return memoryStore.asyncStageWrite(args);
-                case "records-stage-finalize": return memoryStore.asyncStageFinalize(args);
                 default: throw new Error("fake backend: unknown function " + name);
             }
         }
@@ -122,7 +119,7 @@ async function main () {
     const TestReopenItem = SvGlobals.get("TestReopenItem");
 
     const cloudMemory = SvMemoryRecordStore.clone();
-    const cloud = SvCloudRecordStore.clone().setBackend(fakeBackendOver(cloudMemory)).setBusyRetryDelays([]);
+    const cloud = SvCloudRecordStore.clone().setBackend(fakeBackendOver(cloudMemory));
     const sent = recordingCloud(cloud);
 
     // the writing device: a document of twenty items, committed (v1)

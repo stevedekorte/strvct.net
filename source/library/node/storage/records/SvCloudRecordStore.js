@@ -21,13 +21,8 @@
  *                     are the rows placed under it)
  *   records-commit    { poolId, baseVersion, requestId, writes, deletes, create? } → { status, version }
  *   records-limits    {} → { backing, maxOpsPerCommit, maxBytesPerCommit } — the largest
- *                     commit the backing serves whole (asked once, before the first commit)
- *   records-stage-begin / -write / -finalize — a commit too large for one
- *                     transaction, driven by SvStagedRecordCommit
- *
- * While another client's staged commit is open the pool answers "busy" (open and
- * changes: state "busy"; commit: status "busy"); this store waits and retries
- * for a while before handing "busy" back.
+ *                     commit the backing takes (asked once, before the first commit);
+ *                     a larger one is refused
  */
 (class SvCloudRecordStore extends ProtoClass {
 
@@ -65,22 +60,27 @@
             slot.setSlotType("Boolean");
             slot.setDescription("whether a failed records-limits ask was reported (once per store)");
         }
-        {
-            const slot = this.newSlot("busyRetryDelays", [250, 500, 1000, 2000, 4000, 8000, 8000, 8000]);
-            slot.setSlotType("Array");
-            slot.setDescription("ms waited between retries while the pool is busy (another client's staged commit)");
-        }
     }
 
     /**
-     * @description The most operations one commit may carry before it must be
-     * staged: the backend's answer, else the smallest backing's (Firestore, 450).
+     * @description The most operations one commit may carry: the backend's
+     * answer, else the default (Spanner's 6,000, which the local backing matches).
      * @returns {Number}
      * @category Write
      */
     maxOpsPerCommit () {
         const limits = this.commitLimits();
-        return limits && Number.isInteger(limits.maxOpsPerCommit) ? limits.maxOpsPerCommit : 450;
+        return limits && Number.isInteger(limits.maxOpsPerCommit) ? limits.maxOpsPerCommit : 6000;
+    }
+
+    /**
+     * @description The payload bytes of a commit's writes, counted against maxBytesPerCommit.
+     * @param {Array} writes
+     * @returns {Number}
+     * @category Write
+     */
+    static payloadBytes (writes) {
+        return writes.reduce((sum, row) => sum + (row.payloadJson ? row.payloadJson.length : 0), 0);
     }
 
     maxBytesPerCommit () {
@@ -89,10 +89,8 @@
     }
 
     /**
-     * @description Asks the backend how large a commit it serves whole
-     * (Firestore stages above 450 operations; Spanner takes thousands). Until
-     * it answers, or if it cannot, the smaller limits hold — staging is the
-     * safe default on Firestore. One ask at a time, shared by every commit,
+     * @description Asks the backend how large a commit it takes; until it
+     * answers, or if it cannot, the defaults hold. One ask at a time, shared by every commit,
      * and a commit waits for it at most commitLimitsWaitMs: a table worker's
      * first save once sat seven seconds behind asks that never returned
      * (Plans/Session Startup).
@@ -135,25 +133,6 @@
         }
     }
 
-    /**
-     * @description Calls fn until its answer is not busy, waiting between tries;
-     * the last answer when the pool stays busy.
-     * @param {Function} fn - async () → answer
-     * @param {Function} isBusy - (answer) → Boolean
-     * @category Busy
-     */
-    async asyncRetryWhileBusy (fn, isBusy) {
-        let answer = await fn();
-        for (const delay of this.busyRetryDelays()) {
-            if (!isBusy(answer)) {
-                break;
-            }
-            await new Promise(resolve => setTimeout(resolve, delay));
-            answer = await fn();
-        }
-        return answer;
-    }
-
     initPrototype () {
         this.addProtocol(SvRecordStoreProtocol);
     }
@@ -174,14 +153,8 @@
     // --- read side ---
 
     async asyncOpen (poolId) {
-        const pool = await this.asyncRetryWhileBusy(async () => {
-            const result = await this.call("records-open", { poolId: poolId });
-            return result && result.pool ? result.pool : null;
-        }, answer => !!answer && answer.state === "busy");
-        if (pool && pool.state === "busy") {
-            throw new Error("pool " + poolId + " stayed busy (another client's commit is in progress)");
-        }
-        return pool;
+        const result = await this.call("records-open", { poolId: poolId });
+        return result && result.pool ? result.pool : null;
     }
 
     async asyncChildren (nodeId, range = {}) {
@@ -251,14 +224,8 @@
     }
 
     async asyncReadChanges (poolId, sinceVersion) {
-        const changes = await this.asyncRetryWhileBusy(async () => {
-            const result = await this.call("records-changes", { poolId: poolId, sinceVersion: sinceVersion });
-            return result && result.changes ? result.changes : null;
-        }, answer => !!answer && answer.state === "busy");
-        if (changes && changes.state === "busy") {
-            throw new Error("pool " + poolId + " stayed busy (another client's commit is in progress)");
-        }
-        return changes;
+        const result = await this.call("records-changes", { poolId: poolId, sinceVersion: sinceVersion });
+        return result && result.changes ? result.changes : null;
     }
 
     async asyncResolveFar (poolId) {
@@ -287,16 +254,9 @@
      * @category Write
      */
     async asyncCommit (commit, options = {}) {
-        return this.asyncRetryWhileBusy(() => this.asyncCommitOnce(commit, options), answer => !!answer && answer.status === "busy");
-    }
-
-    async asyncCommitOnce (commit, options = {}) {
         await this.asyncEnsureCommitLimits();
         try {
             const gate = options.finalizeGate || null;
-            if (SvStagedRecordCommit.needsStaging(commit, this.maxOpsPerCommit(), this.maxBytesPerCommit())) {
-                return await SvStagedRecordCommit.clone().setStore(this).setCommit(commit).setFinalizeGate(gate).asyncRun();
-            }
             if (gate && !await gate) {
                 return { status: "aborted" };
             }
@@ -343,24 +303,6 @@
             commit.create = { scopeId: scopeId };
         }
         return commit;
-    }
-
-    // --- staging (SvStagedRecordCommit) ---
-
-    async asyncStageBegin (args) {
-        return this.call("records-stage-begin", args);
-    }
-
-    async asyncStageWrite (args) {
-        return this.call("records-stage-write", args);
-    }
-
-    async asyncStageFinalize (args) {
-        return this.call("records-stage-finalize", args);
-    }
-
-    async asyncStageAbort (args) {
-        return this.call("records-stage-abort", args);
     }
 
 }.initThisClass());
