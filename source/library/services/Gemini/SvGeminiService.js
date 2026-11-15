@@ -35,6 +35,18 @@
     modelsJson () {
         return [
             {
+                // Released 2026-11-12. Rates as reported at launch (press;
+                // Google's pricing page to confirm): $1.50/$7.50 per MTok,
+                // cache read $0.075 (implicit caching only, no cachedContents).
+                // Output pricing covers thinking tokens. Window is 1,048,576;
+                // capped here like the other game models.
+                "name": "gemini-4-hydrogen",
+                "title": "Gemini 4 Hydrogen",
+                "inputTokenLimit": 200000,
+                "outputTokenLimit": 65536,
+                "notes": "The GM's model since 2026-11-15 ($1.50/$7.50 per MTok; cache read $0.075, implicit only). Thinking tokens bill as output."
+            },
+            {
                 // Rates at https://ai.google.dev/gemini-api/docs/pricing#gemini-4-argon
                 // (retrieved 2026-10-16): $2.00/$10.00 per MTok intro through
                 // 2026-11-30 (then $4.00/$20.00); cache read $0.10 (implicit
