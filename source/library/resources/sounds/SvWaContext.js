@@ -309,8 +309,16 @@
         return !!context && context.state === "running";
     }
 
+    /**
+     * @description Makes the audio context, once (after the page's first
+     * gesture). Where there is no Web Audio — a headless process, or Safari
+     * in Lockdown Mode — it stays unmade: sounds keep their bytes and never
+     * decode or play, as on a server host.
+     * @returns {SvWaContext}
+     * @category Setup
+     */
     setupIfNeeded () {
-        if (!this.isSetup()) {
+        if (!this.isSetup() && this.thisClass().hasAudio()) {
             this.setAudioContext(new window.AudioContext());
             this.setupPromise().callResolveFunc();
             SvBroadcaster.shared().broadcastNameAndArgument("didSetupSvWaContext", this);

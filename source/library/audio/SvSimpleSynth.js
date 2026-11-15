@@ -58,10 +58,23 @@
     }
 
     /**
+     * @description Whether this browser has Web Audio (Safari in Lockdown
+     * Mode has none): without it every sound here is skipped.
+     * @returns {Boolean}
+     * @category Audio Context
+     */
+    canPlay () {
+        return typeof window !== "undefined" && !!(window.AudioContext || window.webkitAudioContext);
+    }
+
+    /**
    * @description Plays an ominous sound using the Web Audio API.
    * @category Sound Effects
    */
     playOminousSound () {
+        if (!this.canPlay()) {
+            return;
+        }
         const audioContext = this.audioContext();
 
         const notes = [110, 123.47, 130.81, 146.83]; // Frequencies for notes A2, B2, C3, and D3
@@ -95,6 +108,9 @@
     Each note in the array is played for a duration of 0.1 seconds (100 milliseconds) with a delay of 0.1 seconds between each note.
     The gain or volume of the notes is set to a low value of 0.02 to ensure that the notes are not too loud.
     */
+        if (!this.canPlay()) {
+            return;
+        }
         const context = this.audioContext();
         const gainNode = context.createGain();
         const volume = 0.1; //0.02;
@@ -220,6 +236,9 @@
    * @category Sound Playback
    */
     playTrackNotes (notes) {
+        if (!this.canPlay()) {
+            return;
+        }
         const context = this.audioContext();
         let currentTime = context.currentTime;
 
