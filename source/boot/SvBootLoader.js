@@ -137,6 +137,7 @@ class SvBootLoader extends Object {
         "SvResourceManager.js",
         "SvBase.js",
         "categories/Promise_ideal.js",
+        "SvMemoryIndexedDb.js", // before SvIndexedDbFolder, which stores through it where the browser has no IndexedDB
         "browser-only/SvIndexedDbFolder.js",
         "browser-only/SvIndexedDbTx.js",
         "server-only/SvIndexedDbFolder.js",
@@ -184,24 +185,7 @@ class SvBootLoader extends Object {
         SvBootPerf.mark("firstRender");
         await StrvctFile.asyncLoadAndSequentiallyEvalPaths(this.fullPaths());
         SvBootPerf.mark("bootFilesEvaled");
-        if (!SvIndexedDbFolder.hasIndexedDB()) {
-            this.showStorageUnavailable();
-            return;
-        }
         await SvResourceManager.shared().setupAndRun();
-    }
-
-    /**
-     * The boot stops when the browser has no IndexedDB: everything the
-     * framework stores, from its resource cache on, lives there. Safari's
-     * Lockdown Mode removes it, as do browsers with site storage turned off.
-     */
-    static showStorageUnavailable () {
-        console.warn("[SvBootLoader] IndexedDB is not available in this browser; boot stopped.");
-        SvBootLoadingView.shared().showStopMessage(
-            "This browser can't run this app",
-            "It has site storage (IndexedDB) turned off, which the app needs — Safari's Lockdown Mode does this, for example. Please open this page in Chrome."
-        );
     }
 
 }

@@ -15,6 +15,7 @@
 
     static _promiseForPersistence = null;
     static _hasPermission = false;
+    static _usesMemory = null;
 
     static setHasPermission (aBool) {
         this._hasPermission = aBool;
@@ -76,9 +77,43 @@
     }
 
     indexedDB () {
-        const idb = SvGlobals.get("indexedDB");
+        return this.constructor.indexedDbFactory();
+    }
+
+    /**
+     * The factory every folder opens its database through: the browser's
+     * indexedDB, or the in-memory stand-in when this page keeps nothing.
+     * @returns {IDBFactory|SvMemoryIndexedDb}
+     */
+    static indexedDbFactory () {
+        const idb = this.usesMemory() ? SvMemoryIndexedDb.shared() : SvGlobals.get("indexedDB");
         assert(idb, "indexedDB is not available");
         return idb;
+    }
+
+    /**
+     * True when everything stored through folders is held in memory and lost
+     * when the page closes: the browser has no IndexedDB (Safari in Lockdown
+     * Mode, site storage turned off), or the page asked for it.
+     * @returns {boolean}
+     */
+    static usesMemory () {
+        if (this._usesMemory === null) {
+            this._usesMemory = !this.hasIndexedDB() || this.isMemoryOnlyRequested();
+            if (this._usesMemory) {
+                console.warn(this.logPrefix(), "storing in memory only: nothing is kept after this page closes.");
+            }
+        }
+        return this._usesMemory;
+    }
+
+    /**
+     * True when the page's address carries memoryOnly=1 (anywhere in it), for
+     * trying the in-memory mode in a browser that does have IndexedDB.
+     * @returns {boolean}
+     */
+    static isMemoryOnlyRequested () {
+        return /[?&#]memoryOnly=1(&|#|$)/.test(SvPlatform.getWindowLocationURL().href);
     }
 
     static navigator () {
@@ -88,7 +123,7 @@
     /**
      * Checks if this browser offers IndexedDB at all. Some don't: Safari in
      * Lockdown Mode, and browsers with site storage turned off, leave the
-     * global undefined (SvBootLoader checks this before booting).
+     * global undefined; folders then store in memory (usesMemory).
      * @returns {boolean} - True if IndexedDB is available, false otherwise.
      */
     static hasIndexedDB () {
@@ -197,7 +232,9 @@
      */
     async promiseOpen () {
         if (!this.promiseForOpen()) {
-            SvIndexedDbFolder.promisePersistence(); // asked in the background: Firefox waits for the user's answer
+            if (!SvIndexedDbFolder.usesMemory()) {
+                SvIndexedDbFolder.promisePersistence(); // asked in the background: Firefox waits for the user's answer
+            }
             this.setPromiseForOpen(this.newPromiseOpen());
         }
         return this.promiseForOpen();
@@ -208,8 +245,6 @@
      * @returns {Promise} - A promise that resolves when the database is opened.
      */
     newPromiseOpen () {
-        assert(this.hasIndexedDB(), "IndexedDB is not available");
-
         if (this.isOpen()) {
             throw new Error("this should not happen as we should only have a single openPromise instance");
         }
@@ -794,7 +829,7 @@
      * @returns {Promise<number>} - A promise that resolves to the total usage in bytes.
      */
     static async asyncTotalSizeOfAllIndexedDbDatabases () {
-        const idb = SvGlobals.get("indexedDB");
+        const idb = this.indexedDbFactory();
         const databases = await idb.databases();
         let totalUsage = 0;
 
@@ -818,7 +853,7 @@
      */
     static async asyncTotalSizeOfDatabase (databaseName) {
         return new Promise((resolve, reject) => {
-            const idb = SvGlobals.get("indexedDB");
+            const idb = this.indexedDbFactory();
             const request = idb.open(databaseName);
             request.onerror = () => {
                 reject(request.error);

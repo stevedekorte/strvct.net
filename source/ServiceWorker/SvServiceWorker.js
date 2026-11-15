@@ -69,7 +69,7 @@ class SvServiceWorker extends Object {
             return;
         }
 
-        if (!("serviceWorker" in navigator)) {
+        if (!navigator.serviceWorker) { // absent, or present and undefined
             console.log(this.logPrefix(), "serviceWorker unsupported in this browser — skipping");
             return;
         }

@@ -97,6 +97,14 @@ async function releaseSharedLevelDb (dbPath) {
     }
 
     /**
+     * Folders here are always on disk (see the browser's usesMemory).
+     * @returns {boolean}
+     */
+    static usesMemory () {
+        return false;
+    }
+
+    /**
      * Override to indicate IndexedDB availability (simulated via LevelDB).
      * @returns {boolean} - True if LevelDB can be loaded.
      */
