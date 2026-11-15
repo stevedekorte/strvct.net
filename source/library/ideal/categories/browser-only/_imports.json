@@ -1,5 +1,5 @@
 [
     "Number_random.js",
+    "FileReaderShim.js",
     "FileReader_ideal.js"
 ]
-
