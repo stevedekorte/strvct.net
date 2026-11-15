@@ -4,18 +4,16 @@
  * @module boot
  */
 
-
 //assert(SvGlobals.globals().SvIndexedDbFolder === undefined, "SvIndexedDbFolder is already defined");
 /**
  * @class SvIndexedDbFolder
- * @extends SvBase
- * @classdesc Represents a folder in IndexedDB for storing and managing data.
+ * @extends SvStorageFolder
+ * @classdesc A folder kept in IndexedDB (see SvStorageFolder for the contract).
  */
-(class SvIndexedDbFolder extends SvBase {
+(class SvIndexedDbFolder extends SvStorageFolder {
 
     static _promiseForPersistence = null;
     static _hasPermission = false;
-    static _usesMemory = null;
 
     static setHasPermission (aBool) {
         this._hasPermission = aBool;
@@ -29,15 +27,6 @@
      * Initializes the prototype slots for the SvIndexedDbFolder.
      */
     initPrototypeSlots () {
-        /**
-         * @member {string} path - The path of the folder.
-         */
-        this.newSlot("path", "/");
-
-        /**
-         * @member {string} pathSeparator - The separator used in the path. Path should end with pathSeparator.
-         */
-        this.newSlot("pathSeparator", "/");
 
         /**
          * @member {IDBDatabase} db - The IndexedDB database instance.
@@ -53,11 +42,6 @@
          * @member {Promise} promiseForOpen - Promise for opening the database. Has a value while opening.
          */
         this.newSlot("promiseForOpen", null);
-
-        /**
-         * @member {SvIndexedDbTx} lastTx - The last transaction performed.
-         */
-        this.newSlot("lastTx", null) ;
 
         /**
          * @member {number} version - The version of the database.
@@ -76,44 +60,14 @@
         }
     }
 
-    indexedDB () {
-        return this.constructor.indexedDbFactory();
+    txClass () {
+        return SvIndexedDbTx;
     }
 
-    /**
-     * The factory every folder opens its database through: the browser's
-     * indexedDB, or the in-memory stand-in when this page keeps nothing.
-     * @returns {IDBFactory|SvMemoryIndexedDb}
-     */
-    static indexedDbFactory () {
-        const idb = this.usesMemory() ? SvMemoryIndexedDb.shared() : SvGlobals.get("indexedDB");
+    indexedDB () {
+        const idb = SvGlobals.get("indexedDB");
         assert(idb, "indexedDB is not available");
         return idb;
-    }
-
-    /**
-     * True when everything stored through folders is held in memory and lost
-     * when the page closes: the browser has no IndexedDB (Safari in Lockdown
-     * Mode, site storage turned off), or the page asked for it.
-     * @returns {boolean}
-     */
-    static usesMemory () {
-        if (this._usesMemory === null) {
-            this._usesMemory = !this.hasIndexedDB() || this.isMemoryOnlyRequested();
-            if (this._usesMemory) {
-                console.warn(this.logPrefix(), "storing in memory only: nothing is kept after this page closes.");
-            }
-        }
-        return this._usesMemory;
-    }
-
-    /**
-     * True when the page's address carries memoryOnly=1 (anywhere in it), for
-     * trying the in-memory mode in a browser that does have IndexedDB.
-     * @returns {boolean}
-     */
-    static isMemoryOnlyRequested () {
-        return /[?&#]memoryOnly=1(&|#|$)/.test(SvPlatform.getWindowLocationURL().href);
     }
 
     static navigator () {
@@ -123,7 +77,7 @@
     /**
      * Checks if this browser offers IndexedDB at all. Some don't: Safari in
      * Lockdown Mode, and browsers with site storage turned off, leave the
-     * global undefined; folders then store in memory (usesMemory).
+     * global undefined; folders are then SvMemoryDbFolders (SvStorageFolder.usesMemory).
      * @returns {boolean} - True if IndexedDB is available, false otherwise.
      */
     static hasIndexedDB () {
@@ -148,19 +102,6 @@
             return nav.storage && nav.storage.persist;
         }
         return false;
-    }
-
-    /**
-     * Sets the path of the folder.
-     * @param {string} aString - The new path to set.
-     * @returns {SvIndexedDbFolder} - Returns this instance.
-     */
-    setPath (aString) {
-        if (this._path !== aString) {
-            assert(!this.isOpen(), "can't change the path on an open SvIndexedDbFolder instance");
-            this._path = aString;
-        }
-        return this;
     }
 
     /**
@@ -210,14 +151,6 @@
     }
 
     /**
-     * Gets the store name.
-     * @returns {string} - The store name.
-     */
-    storeName () {
-        return this.path();
-    }
-
-    /**
      * Checks if the database is open.
      * @returns {boolean} - True if the database is open, false otherwise.
      */
@@ -232,9 +165,7 @@
      */
     async promiseOpen () {
         if (!this.promiseForOpen()) {
-            if (!SvIndexedDbFolder.usesMemory()) {
-                SvIndexedDbFolder.promisePersistence(); // asked in the background: Firefox waits for the user's answer
-            }
+            SvIndexedDbFolder.promisePersistence(); // asked in the background: Firefox waits for the user's answer
             this.setPromiseForOpen(this.newPromiseOpen());
         }
         return this.promiseForOpen();
@@ -245,6 +176,8 @@
      * @returns {Promise} - A promise that resolves when the database is opened.
      */
     newPromiseOpen () {
+        assert(this.hasIndexedDB(), "IndexedDB is not available");
+
         if (this.isOpen()) {
             throw new Error("this should not happen as we should only have a single openPromise instance");
         }
@@ -343,26 +276,6 @@
     }
 
     /**
-     * Gets a folder at the specified path component.
-     * @param {string} pathComponent - The path component.
-     * @returns {SvIndexedDbFolder} - A new SvIndexedDbFolder instance.
-     */
-    folderAt (pathComponent) {
-        assert(!pathComponent.contains(this.pathSeparator()), "pathComponent contains pathSeparator");
-        const db = SvIndexedDbFolder.clone().setPath(this.path() + pathComponent + this.pathSeparator());
-        return db;
-    }
-
-    /**
-     * Gets the full path for a key.
-     * @param {string} key - The key.
-     * @returns {string} - The full path for the key.
-     */
-    pathForKey (key) {
-        return this.path() + key;
-    }
-
-    /**
      * Gets a read-only object store.
      * @private
      * @returns {IDBObjectStore} - A read-only object store.
@@ -405,19 +318,6 @@
         const objectStore = tx.objectStore(this.storeName());
         objectStore._tx = tx;
         return objectStore;
-    }
-
-    /**
-     * Checks if a key exists in the database.
-     * @async
-     * @param {string} key - The key to check.
-     * @returns {Promise<boolean>} - A promise that resolves to true if the key exists, false otherwise.
-     */
-    async promiseHasKey (key) {
-        await this.promiseOpen();
-        const count = await this.promiseCount(key);
-        const hasKey = count !== 0;
-        return hasKey;
     }
 
     /**
@@ -557,15 +457,6 @@
     }
 
     /**
-     * Displays the contents of the database.
-     * @async
-     */
-    async show () {
-        const map = await this.promiseAsMap();
-        this.logDebug(" " + this.path() + " = " + map.description());
-    }
-
-    /**
      * Clears all data from the database.
      * @async
      * @returns {Promise} - A promise that resolves when the database is cleared.
@@ -638,51 +529,6 @@
         assert(isOk, "lastTx is not committed or aborted");
     }
 
-    /**
-     * Creates a new transaction object.
-     * @async
-     * @returns {Promise<SvIndexedDbTx>} - A promise that resolves to a new transaction object.
-     */
-    async promiseNewTx () {
-        assert(this.isOpen(), "SvIndexedDbFolder is not open");
-
-        this.logDebug(this.path() + " promiseNewTx");
-
-        return Promise.resolve(this.privateNewTx());
-    }
-
-    /**
-     * Creates a new transaction object.
-     * @private
-     * @returns {SvIndexedDbTx} - A new transaction object.
-     */
-    privateNewTx () {
-
-        //SvSyncScheduler.shared().scheduleTargetAndMethod(this, "assertLastTxCommitedOrAborted")
-        if (this.lastTx()) {
-            //assert(this.lastTx().isCommitted() || this.lastTx().isAborted())
-        }
-        const newTx = SvIndexedDbTx.clone().setDbFolder(this);
-        this.setLastTx(newTx);
-        return newTx;
-    }
-
-    /**
-     * Creates a new transaction object for batch operations.
-     * @returns {SvIndexedDbTx} - A new transaction object.
-     */
-    newTransaction () {
-        return this.privateNewTx();
-    }
-
-    /**
-     * Returns a debug type ID for the database folder.
-     * @returns {string} - The debug type ID.
-     */
-    svDebugId () {
-        return super.svDebugId() + " '" + this.path() + "'";
-    }
-
     // -------------------------------------------------------------------
 
     /**
@@ -727,21 +573,6 @@
                 reject(new Error(`Failed to check key existence: ${event.target.error}`));
             };
         });
-    }
-
-
-    /**
-     * Asserts that a key exists in the database.
-     * @async
-     * @param {string} key - The key to assert.
-     * @returns {Promise<void>} - A promise that resolves when the assertion is made.
-     */
-    async promiseAssertHasKey (key) {
-        const hasKey = await this.promiseHasKey(key);
-
-        if (!hasKey) {
-            throw new Error("promiseAssertHasKey(" + key + ") assert failed");
-        }
     }
 
     /**
@@ -790,16 +621,6 @@
         return tx.promiseCommit();
     }
 
-    async promiseRemoveKeySet (keySet) {
-        await this.promiseOpen();
-        const tx = await this.promiseNewTx();
-        tx.begin();
-        keySet.forEach(key => {
-            tx.removeAt(key);
-        });
-        return await tx.promiseCommit();
-    }
-
     async asyncTotalSize () {
         return await this.thisClass().asyncTotalSizeOfDatabase(this.storeName());
     }
@@ -829,7 +650,7 @@
      * @returns {Promise<number>} - A promise that resolves to the total usage in bytes.
      */
     static async asyncTotalSizeOfAllIndexedDbDatabases () {
-        const idb = this.indexedDbFactory();
+        const idb = SvGlobals.get("indexedDB");
         const databases = await idb.databases();
         let totalUsage = 0;
 
@@ -853,7 +674,7 @@
      */
     static async asyncTotalSizeOfDatabase (databaseName) {
         return new Promise((resolve, reject) => {
-            const idb = this.indexedDbFactory();
+            const idb = SvGlobals.get("indexedDB");
             const request = idb.open(databaseName);
             request.onerror = () => {
                 reject(request.error);

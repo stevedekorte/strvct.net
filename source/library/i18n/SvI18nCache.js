@@ -73,7 +73,7 @@
          */
         {
             const slot = this.newSlot("idb", null);
-            slot.setSlotType("SvIndexedDbFolder");
+            slot.setSlotType("SvStorageFolder");
         }
 
         /**
@@ -185,7 +185,7 @@
         this.setSeedCount(0);
 
         // Open per-language database
-        const idb = SvIndexedDbFolder.clone();
+        const idb = SvStorageFolder.newFolder();
         idb.setPath(this.idbPathForLanguage(language));
         this.setIdb(idb);
         await idb.promiseOpen();

@@ -206,7 +206,11 @@ async function loadStrvctEnvironment () {
     // Make ClassicLevel available globally for eval'd code
     global.ClassicLevel = require("classic-level").ClassicLevel;
 
-    // Load the Node.js implementations (they are standalone, not categories)
+    // The contract both kinds extend
+    eval(require("fs").readFileSync(path.join(bootPath, "SvStorageFolder.js"), "utf8"));
+    eval(require("fs").readFileSync(path.join(bootPath, "SvStorageTx.js"), "utf8"));
+
+    // Load the Node.js implementations
     // Read the file content and replace the require statement with global reference
     let folderCode = require("fs").readFileSync(path.join(__dirname, "..", "SvIndexedDbFolder.js"), "utf8");
     folderCode = folderCode.replace(

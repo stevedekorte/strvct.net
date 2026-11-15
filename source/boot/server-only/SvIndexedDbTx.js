@@ -6,11 +6,11 @@
 
 /**
  * @class SvIndexedDbTx
- * @extends SvIndexedDbTx
+ * @extends SvStorageTx
  * @classdesc Node.js implementation of SvIndexedDbTx using LevelDB batch operations.
  * This category provides server-side transaction semantics matching IndexedDB.
  */
-(class SvIndexedDbTx extends SvBase {
+(class SvIndexedDbTx extends SvStorageTx {
 
     /**
      * Initializes the prototype slots for the Node.js implementation.
@@ -228,6 +228,7 @@
 
         } catch (error) {
             this.logDebug(" COMMIT ERROR: " + error.message);
+            this.promiseForFinished().catch(() => {}); // the caller gets the error below; unobserved, this rejection crashed Node
             this.markRejected(error);
             throw error;
         }

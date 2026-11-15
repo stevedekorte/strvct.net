@@ -72,7 +72,7 @@
              * @category Storage
              */
             const slot = this.newSlot("idb", null);
-            slot.setSlotType("SvIndexedDbFolder");
+            slot.setSlotType("SvStorageFolder");
         }
         {
             /**
@@ -114,7 +114,7 @@
      */
     init () {
         super.init();
-        this.setIdb(SvIndexedDbFolder.clone());
+        this.setIdb(SvStorageFolder.newFolder());
         this.setActiveBlobs(SvEnumerableWeakMap.clone());
         this.setIsDebugging(false);
     }

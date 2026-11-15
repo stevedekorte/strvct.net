@@ -117,7 +117,7 @@
      */
     deleteLegacyDatabase () {
         try {
-            const legacy = SvIndexedDbFolder.clone().setPath(this.name());
+            const legacy = SvStorageFolder.newFolder().setPath(this.name());
             legacy.promiseDelete().catch(() => {});
         } catch {
             // no IndexedDB in this environment

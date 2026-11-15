@@ -33,7 +33,7 @@
          */
         {
             const slot = this.newSlot("idb", null);
-            slot.setSlotType("SvIndexedDbFolder");
+            slot.setSlotType("SvStorageFolder");
         }
     }
 
@@ -44,7 +44,7 @@
      */
     init () {
         super.init();
-        this.setIdb(SvIndexedDbFolder.clone());
+        this.setIdb(SvStorageFolder.newFolder());
         this.setIsDebugging(false);
     }
 

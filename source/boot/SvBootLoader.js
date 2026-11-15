@@ -137,12 +137,15 @@ class SvBootLoader extends Object {
         "SvResourceManager.js",
         "SvBase.js",
         "categories/Promise_ideal.js",
-        "SvMemoryIndexedDb.js", // before SvIndexedDbFolder, which stores through it where the browser has no IndexedDB
+        "SvStorageFolder.js", // the folder and transaction contract, before its kinds
+        "SvStorageTx.js",
         "browser-only/SvIndexedDbFolder.js",
         "browser-only/SvIndexedDbTx.js",
         "server-only/SvIndexedDbFolder.js",
         "server-only/SvIndexedDbTx.js",
-        "SvHashCache.js" // important that this be after SvIndexedDbFolder/Tx so it can be used
+        "SvMemoryDbFolder.js",
+        "SvMemoryDbTx.js",
+        "SvHashCache.js" // after the folder kinds, which it stores through
     //"pako.js" // loaded lazily first time SvUrlResource is asked to load a .zip file
     ];
     static _bootPath = "strvct/source/boot";

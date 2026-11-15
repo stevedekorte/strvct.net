@@ -47,11 +47,11 @@ async function releaseSharedLevelDb (dbPath) {
 
 /**
  * @class SvIndexedDbFolder
- * @extends SvIndexedDbFolder
+ * @extends SvStorageFolder
  * @classdesc Node.js implementation of SvIndexedDbFolder using LevelDB as the backend storage.
  * This category provides server-side compatibility for the IndexedDB abstraction.
  */
-(class SvIndexedDbFolder extends SvBase {
+(class SvIndexedDbFolder extends SvStorageFolder {
 
     /**
      * Initializes the prototype slots for the Node.js implementation.
@@ -63,12 +63,9 @@ async function releaseSharedLevelDb (dbPath) {
 
     initPrototypeSlots () {
         // Base slots from original implementation
-        this.newSlot("path", "/");
-        this.newSlot("pathSeparator", "/");
         this.newSlot("db", null);
         this.newSlot("hasPermission", true); // Always true in Node.js
         this.newSlot("promiseForOpen", null);
-        this.newSlot("lastTx", null);
         this.newSlot("version", 2);
 
         // Node.js specific slots
@@ -94,14 +91,6 @@ async function releaseSharedLevelDb (dbPath) {
      */
     static hasIndexedDB () {
         return true;
-    }
-
-    /**
-     * Folders here are always on disk (see the browser's usesMemory).
-     * @returns {boolean}
-     */
-    static usesMemory () {
-        return false;
     }
 
     /**
@@ -147,27 +136,6 @@ async function releaseSharedLevelDb (dbPath) {
      */
     static promisePersistence () {
         return true;
-    }
-
-    /**
-     * Gets the store name.
-     * @returns {string} - The store name (same as path).
-     */
-    storeName () {
-        return this.path();
-    }
-
-    /**
-     * Sets the path of the folder.
-     * @param {string} aString - The new path to set.
-     * @returns {SvIndexedDbFolder} - Returns this instance.
-     */
-    setPath (aString) {
-        if (this._path !== aString) {
-            assert(!this.isOpen(), "can't change the path on an open SvIndexedDbFolder instance");
-            this._path = aString;
-        }
-        return this;
     }
 
     /**
@@ -380,30 +348,10 @@ async function releaseSharedLevelDb (dbPath) {
     }
 
     /**
-     * Creates a new transaction object.
-     * @async
-     * @returns {Promise<SvIndexedDbTx>} - A promise that resolves to a new transaction object.
+     * @returns {Function} SvIndexedDbTx (the LevelDB one).
      */
-    async promiseNewTx () {
-        await this.promiseOpen();
-
-        if (this.isDebugging()) console.log(this.logPrefix(), this.path() + " promiseNewTx");
-
-        // Note: Need to ensure SvIndexedDbTx_node is loaded
-        const newTx = SvIndexedDbTx.clone().setDbFolder(this);
-        this.setLastTx(newTx);
-        return Promise.resolve(newTx);
-    }
-
-    /**
-     * Private method to create a new transaction.
-     * @private
-     * @returns {SvIndexedDbTx} - A new transaction object.
-     */
-    privateNewTx () {
-        const newTx = SvIndexedDbTx.clone().setDbFolder(this);
-        this.setLastTx(newTx);
-        return newTx;
+    txClass () {
+        return SvIndexedDbTx;
     }
 
     /**
@@ -471,21 +419,6 @@ async function releaseSharedLevelDb (dbPath) {
             }
             return Promise.resolve();
         }
-    }
-
-    /**
-     * Creates a new transaction for batch operations.
-     * @returns {SvIndexedDbTx} - A new transaction instance.
-     */
-    newTransaction () {
-        // Make sure we load the transaction class if needed
-        if (!SvGlobals.globals().SvIndexedDbTx) {
-            console.error("SvIndexedDbTx not loaded!");
-            throw new Error("SvIndexedDbTx class not available");
-        }
-        const tx = SvIndexedDbTx.clone();
-        tx.setDbFolder(this);
-        return tx;
     }
 
 }.initThisClass());
