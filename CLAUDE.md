@@ -244,6 +244,17 @@ const observation = SvNotificationCenter.shared().newObservation()
 
 Communication pattern: model → view by notification (push); view → model by calling action methods on nodes (command); model ↔ model through the notification center (publish/subscribe). See `docs/Notifications/`.
 
+## Shared Promises
+
+Async work that several callers may ask for at once goes through `Object_sharedPromises` (on every object, and on classes for static methods) — never a hand-kept `fooPromise` slot with `if (!this.fooPromise()) { … }`:
+
+- `sharedPromiseNamed(name, fn)` — **once**: every caller gets the one promise; a failure is forgotten so the next call retries.
+- `inFlightPromiseNamed(name, fn)` — **one at a time**: callers share the run in flight; the next call after it settles runs again.
+- `freshPromiseNamed(name, fn)` — a caller that arrives mid-run is promised the **next** run. Only for callers that need a result newer than their call; from anything a view sync calls it can chain runs forever.
+- `forgetSharedPromiseNamed(name)` abandons the work; `fn` receives its `run`, and work that must not complete once abandoned checks `run.isCurrent()` after its awaits. `hasSharedPromiseNamed` / `existingSharedPromiseNamed` ask without starting.
+
+A promise created empty and settled later by an event (`Promise.clone()` as a signal) is a different thing and stays as it is. For a slot whose *value* is computed asynchronously, see promise-wrapped slots (`Slot_promiseWrapper.js`). Details: `docs/Programming Idioms/Async Patterns`.
+
 ## Views
 
 The UI is **not precompiled, templated, or code-generated**. Views are created lazily at runtime as the user navigates — a node gets a view only when it becomes visible — and the view tree is a live projection of the model: adding/removing subnodes or changing slots is reflected immediately through notifications.

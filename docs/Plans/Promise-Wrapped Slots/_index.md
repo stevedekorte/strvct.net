@@ -79,6 +79,10 @@ If a promise-wrapped slot is also stored (`setShouldStoreSlot(true)`), the persi
 
 `promiseResetsOnChangeOfSlotName` handles one level of dependency. If slot A depends on slot B which depends on slot C, changes to C don't automatically propagate to A. A chain or graph of dependencies would be more general but significantly more complex.
 
+## Relationship to Shared Promises
+
+[Shared promises](../../Programming%20Idioms/Async%20Patterns/index.html) (`Object_sharedPromises.js`, 2026-11-15) do the same sharing for *work* named by a method: load once, refresh one at a time. The framework and app code that hand-kept a `fooPromise` moved to those, not to promise-wrapped slots, because nearly all of it performs an action rather than computing a slot's value. Promise-wrapped slots remain for a derived value that lives in a slot and resets when a dependency changes. The two are separate implementations: the slot wrapper's reset keeps the promise its callers hold and settles it with the recomputed value, which needs a promise it settles itself.
+
 ## Relationship to Lazy Slots
 
 [Lazy slots](../Lazy%20Slots/) defer *loading* a stored object; promise-wrapped slots defer *computing* a derived value. Lazy slots shipped with a synchronous getter (a pool's records are in memory), so the two no longer need to share an async getter, and a slot can be both without coordination.
