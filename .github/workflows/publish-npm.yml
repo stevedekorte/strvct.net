@@ -1,7 +1,12 @@
 name: Publish to NPM
 
-# This workflow allows manual publishing of the strvct package to NPM
-# It can be triggered from the GitHub Actions UI
+# Publishes the strvct package to npm, tags the commit and creates a GitHub
+# release. Run it from the Actions tab ("Run workflow") with the version.
+#
+# Authentication is npm trusted publishing: npm accepts this workflow's GitHub
+# identity, so there is no token or secret. The trusted publisher is set on
+# https://www.npmjs.com/package/strvct/access (user stevedekorte, repository
+# strvct.net, workflow publish-npm.yml). See npm-pkg/publish-steps.md.
 on:
   workflow_dispatch:
     inputs:
@@ -19,30 +24,44 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Needed for tagging
-      id-token: write  # Required for NPM provenance/OIDC
+      contents: write  # Needed for tagging and the release
+      id-token: write  # Needed for npm trusted publishing and provenance
+    env:
+      VERSION: ${{ inputs.version }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Trusted publishing needs npm 11.5.1 or later, which Node 24 ships.
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Validate version format
+      - name: Validate version
         run: |
-          if ! echo "${{ inputs.version }}" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$'; then
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$'; then
             echo "Error: Invalid version format. Expected format: X.Y.Z or X.Y.Z-beta.N"
             exit 1
           fi
+          if npm view "strvct@$VERSION" version >/dev/null 2>&1; then
+            echo "Error: strvct@$VERSION is already on npm. Versions can't be reused."
+            exit 1
+          fi
+
+      # build/ is not in git; the package needs its _index.json and _cam.json.zip.
+      - name: Build the resource index
+        run: |
+          node source/boot/index-builder/ImportsIndexer.js
+          test -s build/_index.json
+          test -s build/_cam.json.zip
 
       - name: Update version in package.json
         run: |
           cd npm-pkg
-          npm version ${{ inputs.version }} --no-git-tag-version --allow-same-version
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
 
       - name: Copy package files to root
         run: |
@@ -60,33 +79,20 @@ jobs:
         if: ${{ inputs.dry-run }}
         run: |
           echo "Performing dry run - package will NOT be published"
-          npm publish --dry-run --provenance --access public
+          npm publish --dry-run --access public
 
       - name: Publish to NPM
         if: ${{ !inputs.dry-run }}
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Create Git tag
+      - name: Create Git tag and GitHub release
         if: ${{ !inputs.dry-run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v${{ inputs.version }}" -m "Release v${{ inputs.version }}"
-          git push origin "v${{ inputs.version }}"
+          gh release create "v$VERSION" \
+            --target "$GITHUB_SHA" \
+            --title "Release v$VERSION" \
+            --notes "Release of strvct v$VERSION
 
-      - name: Create GitHub Release
-        if: ${{ !inputs.dry-run }}
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ inputs.version }}
-          release_name: Release v${{ inputs.version }}
-          body: |
-            Release of strvct v${{ inputs.version }}
-
-            Published to NPM: https://www.npmjs.com/package/strvct/v/${{ inputs.version }}
-          draft: false
-          prerelease: false
+          Published to NPM: https://www.npmjs.com/package/strvct/v/$VERSION"
