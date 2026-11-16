@@ -6,6 +6,7 @@
     "Object_notification.js",
     "Object_puuid.js",
     "Object_mutation.js",
-    "Object_timeouts.js"
+    "Object_timeouts.js",
+    "Object_sharedPromises.js"
 ]
 
