@@ -1894,7 +1894,8 @@
         }
 
         // Provide specific guidance for common issues
-        if (status === 0 && typeof window !== "undefined" && window.location && window.location.protocol === "file:" && !this.didTimeout() && !this.didAbort()) {
+        const pageUrl = SvPlatform.pageUrl();
+        if (status === 0 && pageUrl && pageUrl.protocol === "file:" && !this.didTimeout() && !this.didAbort()) {
             causes.push("file:// protocol detected - XMLHttpRequest may be blocked");
         }
 

@@ -48,20 +48,6 @@
     }
 
     /**
-     * @description Retrieves an icon view by name.
-     * @param {string} aName - The name of the icon to retrieve.
-     * @returns {Object|null} The SVG icon view if found, null otherwise.
-     * @category Icon Retrieval
-     */
-    iconWithName (aName) {
-        const node = this.firstSubnodeWithTitle(aName);
-        if (node) {
-            return node.svgIconView();
-        }
-        return null;
-    }
-
-    /**
      * @description Gets an array of all icon names.
      * @returns {string[]} An array of icon names.
      * @category Icon Retrieval

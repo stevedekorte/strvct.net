@@ -130,7 +130,7 @@
 
         // If running in browser, construct URL relative to site root
         if (SvPlatform.isBrowserPlatform()) {
-            const baseUrl = window.location.origin;
+            const baseUrl = SvPlatform.pageUrl().origin;
             return baseUrl + "/" + path;
         }
 

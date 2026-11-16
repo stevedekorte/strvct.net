@@ -57,17 +57,6 @@
     }
 
     /**
-    * @description Creates and returns an SvgIconView instance.
-    * @returns {SvgIconView} The created SvgIconView instance.
-    * @category View Creation
-    */
-    svgIconView () {
-        // TODO: this view stuff probably shouldn't be in the model
-        const icon = SvgIconView.clone().setSvgString(this.svgString());
-        return icon;
-    }
-
-    /**
     * @description Returns the icon name.
     * @returns {string} The title of the icon.
     * @category Data Retrieval

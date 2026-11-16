@@ -130,6 +130,38 @@ class SvPlatform extends Object {
         return new URL(window.location.href);
     }
 
+    // --- environment info ---
+    // Models read the page they run in through these, never through
+    // window / navigator / document, so they stay headless-clean.
+
+    /**
+     * @static
+     * @description The URL of the page the app runs in (origin, host, port, query).
+     * @returns {URL|null} null headless, where there is no page
+     * @category Environment Info
+     */
+    static pageUrl () {
+        return this.isBrowserPlatform() ? new URL(window.location.href) : null;
+    }
+
+    /**
+     * @static
+     * @returns {String|null} the browser's user agent string; null headless
+     * @category Environment Info
+     */
+    static userAgent () {
+        return this.isBrowserPlatform() ? navigator.userAgent : null;
+    }
+
+    /**
+     * @static
+     * @returns {String|null} the page that linked to this one, if any; null headless
+     * @category Environment Info
+     */
+    static referrer () {
+        return this.isBrowserPlatform() ? (document.referrer || null) : null;
+    }
+
     // --- ready ---
 
     static async promiseReady () {

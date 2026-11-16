@@ -17,49 +17,5 @@
         return s;
     }
 
-    /*
-
-    // --- finding embeded info tags -------------------------
-
-    contentOfFirstElementOfTag (tagName) {
-        const matches = this.contentOfElementsOfTag(tagName);
-        return matches.first();
-    }
-
-    contentOfElementsOfTag (tagName) {
-        function Element_hasParentWithTag (element, tagName) {
-            tagName = tagName.toLowerCase();
-
-            while (element) {
-                if (element.tagName && element.tagName.toLowerCase() === tagName.toLowerCase()) {
-                    return true;
-                }
-                element = element.parentNode;
-            }
-
-            return false;
-        }
-
-        const el = document.createElement("div");
-        el.innerHTML = this.content();
-        let matches = el.elementsOfTag(tagName);
-        const results = [];
-        const ignored = [...this.tagsToIgnoreInsideSet()];
-        matches = matches.select(e => !ignored.some(tag => Element_hasParentWithTag(e, tag)));
-        matches.forEach((e) => results.push(e.innerHTML));
-        return results;
-    }
-
-    parseAiJsonString (s, description) {
-        try {
-            const json = JSON.parse(s);
-            return json;
-        } catch (e) {
-            this.addAiError("AI responded with invalid JSON in [" + description + "]: " + e.message);
-            throw e;
-        }
-    }
-    */
-
 }).initThisCategory();
 

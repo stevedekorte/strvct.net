@@ -129,9 +129,9 @@
         }
 
         if (SvPlatform.isBrowserPlatform()) {
-            json.userAgent = navigator.userAgent;
-            json.url = window.location.href;
-            json.referrer = document.referrer || null;
+            json.userAgent = SvPlatform.userAgent();
+            json.url = SvPlatform.pageUrl().href;
+            json.referrer = SvPlatform.referrer();
         }
 
         return json;
@@ -187,11 +187,7 @@
             return this.writeToProcessLog();
         }
 
-        // Get the base URL from the current window location
-        const protocol = window.location.protocol; // "http:" or "https:"
-        const host = window.location.hostname;
-        const port = window.location.port || (protocol === "https:" ? "443" : "80");
-        const baseUrl = `${protocol}//${host}:${port}`;
+        const baseUrl = SvPlatform.pageUrl().explicitOrigin(); // e.g. "https://host:443"
 
         // Post the error data to the server
         const response = await fetch(`${baseUrl}/log_error`, {

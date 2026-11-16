@@ -119,21 +119,44 @@
     }
 
     /**
+     * @description The Firestore databases already pointed at the emulator
+     * (pointing one twice throws).
+     * @returns {WeakSet}
+     * @category Firestore Access
+     */
+    static emulatorConfiguredDbs () {
+        if (!Object.hasOwn(SvFirestoreNode, "_emulatorConfiguredDbs")) {
+            SvFirestoreNode._emulatorConfiguredDbs = new WeakSet();
+        }
+        return SvFirestoreNode._emulatorConfiguredDbs;
+    }
+
+    /**
+     * @description Whether the page is served from this machine (local development).
+     * @returns {Boolean}
+     * @category Firestore Access
+     */
+    isLocalPage () {
+        const url = SvPlatform.pageUrl();
+        const h = url ? url.hostname : "";
+        return ["localhost", "127.0.0.1", "::1", "[::1]"].includes(h) || h.endsWith(".local") || h.endsWith(".test");
+    }
+
+    /**
      * @description Configures Firestore emulator for local development
      * @param {Object} db - The Firestore database instance
      * @category Firestore Access
      */
     configureEmulatorIfNeeded (db) {
         try {
-            const h = (typeof window !== "undefined" && window.location && window.location.hostname) || "";
-            const isLocal = ["localhost", "127.0.0.1", "::1"].includes(h) || h.endsWith(".local") || h.endsWith(".test");
-            if (isLocal && !window.__uo_firestore_emulator_configured__) {
+            const configured = SvFirestoreNode.emulatorConfiguredDbs(); // on the base class: every subclass shares one db
+            if (this.isLocalPage() && !configured.has(db)) {
                 if (typeof db.useEmulator === "function") {
                     db.useEmulator("localhost", 8080);
                 } else if (typeof db.settings === "function") {
                     db.settings({ host: "localhost:8080", ssl: false });
                 }
-                window.__uo_firestore_emulator_configured__ = true;
+                configured.add(db);
             }
         } catch (e) {
             console.warn("Firestore emulator configuration failed (non-fatal):", e);

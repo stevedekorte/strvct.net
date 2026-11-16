@@ -345,13 +345,11 @@
     /**
      * @description Reload the page to complete a data reset (pairs with
      * requestClearStoreOnBoot — the boot path deletes the stores before
-     * any connection opens). No-op headless.
+     * any connection opens). Headless there is nothing to reload.
      * @category Data Management
      */
     static hardReloadForDataReset () {
-        if (typeof window !== "undefined" && window.location && window.location.reload) {
-            window.location.reload();
-        }
+        this.shared().userInterface().reloadApp();
     }
 
     /**

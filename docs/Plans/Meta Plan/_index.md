@@ -12,7 +12,7 @@ subtitle: The order to do the other plans in, why, and what should change in the
 | [Complete Protocols](../Complete%20Protocols/) | Done | Defaults on base classes, `SvJsonSerializableProtocol`, and a ratchet test. |
 | [Lazy Slots](../Lazy%20Slots/) | Shipped | Rewritten to describe what shipped; a few items remain. |
 | [Async Final Initialization](../Async%20Final%20Initialization/) | Closed | Its main case was solved by manifests and then lazy loading. |
-| [Naked Objects Issues](../Naked%20Objects%20Issues/) | Next | Nine classes, with a fix for each and a ratchet test to add. |
+| [Naked Objects Issues](../Naked%20Objects%20Issues/) | In progress | Environment info, seven fixes and the ratchet test done; view actions, `SvApp`'s `localStorage` and the low-level utilities left. |
 | [Cleanup Notes](../Cleanup%20Notes/) | Next | Pruned and ordered by risk; the recursive GC comes first. |
 | [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Next, one fix | A failed computation stays cached forever. |
 | [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Next | Rewritten to build on the editability cascade and the Record Store. |

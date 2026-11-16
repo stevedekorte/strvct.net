@@ -48,18 +48,18 @@
             return;
         }
 
-        // default to the window location
-        this.setupForConfigDict(this.configDictForWindowLocation());
+        // default to the page's location
+        this.setupForConfigDict(this.configDictForPageUrl(SvPlatform.pageUrl()));
 
         // SvApp subclass might want to set this in it's init() method
         // Example: SvProxyServers.shared().defaultServer().setupForConfigDict(appProxyConfigDict);
     }
 
-    configDictForWindowLocation () {
+    configDictForPageUrl (url) {
         return {
-            isSecure: window.location.protocol === "https:",
-            hostname: window.location.hostname,
-            port: Number(window.location.port) || null,
+            isSecure: url.protocol === "https:",
+            hostname: url.hostname,
+            port: Number(url.port) || null,
             path: "/proxy",
             parameterName: "proxyUrl"
         };
