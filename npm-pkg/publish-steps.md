@@ -1,79 +1,64 @@
 # Steps to Publish STRVCT as an NPM Package
 
-Follow these steps to publish the STRVCT framework as an npm package.
+The package is published by a GitHub Actions workflow, using npm trusted
+publishing: npm accepts the workflow's GitHub identity, so there is no npm
+token to create, store or rotate. npm is retiring publish tokens that bypass
+2FA, so do not set one up.
 
-## ⚠️ IMPORTANT: NPM Token Migration Required
+## One-time setup on npmjs.com
 
-**NPM is deprecating classic tokens. All classic tokens will stop working on December 9th, 2025.**
+On https://www.npmjs.com/package/strvct/access, under **Trusted Publisher**,
+choose **GitHub Actions** and enter:
 
-Before you can publish, you must migrate to granular access tokens or set up automated publishing. See:
-- **[TOKEN_MIGRATION_GUIDE.md](./TOKEN_MIGRATION_GUIDE.md)** - Complete migration instructions
+| Field | Value |
+|---|---|
+| Organization or user | `stevedekorte` |
+| Repository | `strvct.net` |
+| Workflow filename | `publish-npm.yml` |
+| Environment name | leave blank |
 
-## Preparation
+Allow `npm publish`. npm drops a trusted publisher that has not published
+successfully within two days of being added, so add it when you are ready to
+publish.
 
-1. Ensure that all files are properly organized:
-   - The main entry point is at `source/module/StrvctFramework.js`
-   - The `_imports.json` in `source/module/` includes StrvctFramework.js
+The `repository` URL in `npm-pkg/package.json` must name the same repository
+(`stevedekorte/strvct.net`), or npm rejects the publish.
 
-2. Make sure your build process is working:
-   - Run the build to generate the `build/_index.json` and `build/_cam.json.zip` files
-   - These are required for the resource loading system to work
+## Publishing a version
 
-## Publishing Process
+1. Go to https://github.com/stevedekorte/strvct.net/actions and select
+   **Publish to NPM**.
+2. Click **Run workflow** and enter the version (e.g. `0.1.2`). Tick
+   **dry run** to see what would be published without publishing.
+3. The workflow:
+   - builds `build/_index.json` and `build/_cam.json.zip` (the resource
+     loading system needs them, and `build/` is not in git),
+   - sets the version and copies `npm-pkg/package.json` and
+     `npm-pkg/README.md` to the root,
+   - publishes to npm with provenance,
+   - creates the `v<version>` tag and a GitHub release.
 
-### Option 1: Manual Publishing (Traditional Method)
+Versions follow semantic versioning, and npm never lets a version number be
+reused:
 
-1. Ensure you have a valid granular access token (see TOKEN_MIGRATION_GUIDE.md)
+- Patch for bug fixes: 0.1.0 → 0.1.1
+- Minor for new features: 0.1.1 → 0.2.0
+- Major for breaking changes: 0.2.0 → 1.0.0
 
-2. Copy the package.json and README.md from the npm-pkg directory to the strvct root:
-   ```bash
-   cp npm-pkg/package.json .
-   cp npm-pkg/README.md .
-   ```
+## Publishing by hand (fallback)
 
-3. Verify your npm authentication:
-   ```bash
-   npm whoami
-   ```
+This needs two-factor authentication on your npm account; `npm publish` opens
+a browser page to confirm it.
 
-4. Publish the package:
-   ```bash
-   npm publish
-   ```
-
-### Option 2: Automated Publishing via GitHub Actions (Recommended)
-
-1. Set up trusted publishing with NPM (see TOKEN_MIGRATION_GUIDE.md)
-
-2. Go to the GitHub repository's Actions tab:
-   https://github.com/stevedekorte/strvct.net/actions
-
-3. Select "Publish to NPM" workflow
-
-4. Click "Run workflow" and enter the version number (e.g., `0.1.2`)
-
-5. The workflow will:
-   - Update the version in package.json
-   - Copy files to the root
-   - Publish to NPM with provenance
-   - Create a git tag and GitHub release
-
-## Updating the Package
-
-1. When making changes, update the version in package.json following semantic versioning:
-   - Patch version for bug fixes: 0.1.0 → 0.1.1
-   - Minor version for new features: 0.1.1 → 0.2.0
-   - Major version for breaking changes: 0.2.0 → 1.0.0
-
-2. Rebuild the project to update resource files:
-   ```bash
-   ./build.sh
-   ```
-
-3. Publish the new version:
-   ```bash
-   npm publish
-   ```
+```bash
+node source/boot/index-builder/ImportsIndexer.js
+cp npm-pkg/package.json .       # after setting the version in npm-pkg/package.json
+cp npm-pkg/README.md .
+npm login
+npm publish
+git checkout package.json README.md   # restore the repo's own files
+npm logout
+```
 
 ## Integration with Consuming Applications
 

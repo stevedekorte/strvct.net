@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stevedekorte/strvct.git"
+    "url": "git+https://github.com/stevedekorte/strvct.net.git"
   },
   "keywords": [
     "framework",
@@ -21,9 +21,9 @@
   "author": "Steve Dekorte",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stevedekorte/strvct/issues"
+    "url": "https://github.com/stevedekorte/strvct.net/issues"
   },
-  "homepage": "https://github.com/stevedekorte/strvct",
+  "homepage": "https://github.com/stevedekorte/strvct.net",
   "files": [
     "source/**/*",
     "external-libs/**/*",
