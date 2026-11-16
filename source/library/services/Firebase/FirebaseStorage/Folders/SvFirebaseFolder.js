@@ -47,14 +47,6 @@
             slot.setShouldStoreSlot(false);
         }
 
-        // Promise for current read operation (to prevent concurrent reads)
-        {
-            const slot = this.newSlot("readPromise", null);
-            slot.setSlotType("Promise");
-            slot.setAllowsNullValue(true);
-            slot.setShouldStoreSlot(false);
-        }
-
         // Read subnodes action
         {
             const slot = this.newSlot("asyncReadSubnodesAction", null);
@@ -237,93 +229,88 @@
      * @returns {Promise<void>}
      * @category Storage Operations
      */
-    async asyncReadSubnodes () {
-        // If a read is already in progress, return that promise
-        if (this.readPromise()) {
-            return this.readPromise();
-        }
+    asyncReadSubnodes () {
+        return this.inFlightPromiseNamed("readSubnodes", () => this.asyncJustReadSubnodes()); // one read at a time
+    }
 
-        // Create and store the promise for this read operation
-        const promise = (async () => {
-            try {
-                this.setError(null);
-                const storage = this.getFirebaseStorage();
-                const folderRef = storage.ref(this.fullPath());
+    /**
+     * @description One read of the folder (see asyncReadSubnodes).
+     * @returns {Promise<void>}
+     * @category Storage Operations
+     */
+    async asyncJustReadSubnodes () {
+        try {
+            this.setError(null);
+            const storage = this.getFirebaseStorage();
+            const folderRef = storage.ref(this.fullPath());
 
-                // List all items in this folder
-                const result = await folderRef.listAll();
+            // List all items in this folder
+            const result = await folderRef.listAll();
 
-                // Get server folder names and file names
-                const serverFolderNames = new Set(result.prefixes.map(ref => ref.name));
-                const serverFileNames = new Set(result.items.map(ref => ref.name));
+            // Get server folder names and file names
+            const serverFolderNames = new Set(result.prefixes.map(ref => ref.name));
+            const serverFileNames = new Set(result.items.map(ref => ref.name));
 
-                // Remove subnodes not found on server
-                const existingSubnodes = this.subnodes().slice(); // Copy array
-                for (const subnode of existingSubnodes) {
-                    // Skip non-Firebase nodes (like action fields)
-                    if (!subnode.isKindOf(SvFirebaseNode)) {
-                        throw new Error("subnode is not a SvFirebaseNode: " + subnode.svType());
-                    }
-
-                    const name = subnode.name();
-                    if (subnode.svType() === "SvFirebaseFolder") {
-                        if (!serverFolderNames.has(name)) {
-                            this.removeSubnode(subnode);
-                        }
-                    } else if (subnode.svType() === "SvFirebaseFile") {
-                        if (!serverFileNames.has(name)) {
-                            this.removeSubnode(subnode);
-                        }
-                    }
+            // Remove subnodes not found on server
+            const existingSubnodes = this.subnodes().slice(); // Copy array
+            for (const subnode of existingSubnodes) {
+                // Skip non-Firebase nodes (like action fields)
+                if (!subnode.isKindOf(SvFirebaseNode)) {
+                    throw new Error("subnode is not a SvFirebaseNode: " + subnode.svType());
                 }
 
-                // Add new subfolders not already present
-                for (const prefixRef of result.prefixes) {
-                    const existingFolder = this.subfolderNamed(prefixRef.name);
-                    if (!existingFolder) {
-                        const subfolder = SvFirebaseFolder.clone();
-                        subfolder.setName(prefixRef.name);
-                        this.addSubnode(subfolder);
+                const name = subnode.name();
+                if (subnode.svType() === "SvFirebaseFolder") {
+                    if (!serverFolderNames.has(name)) {
+                        this.removeSubnode(subnode);
+                    }
+                } else if (subnode.svType() === "SvFirebaseFile") {
+                    if (!serverFileNames.has(name)) {
+                        this.removeSubnode(subnode);
                     }
                 }
-
-                // Add new files not already present (with metadata)
-                const newFiles = await Promise.all(
-                    result.items
-                        .filter(itemRef => !this.fileNamed(itemRef.name))
-                        .map(itemRef => SvFirebaseFile.clone().setItemRef(itemRef))
-                );
-
-                // Add all new files
-                newFiles.forEach(file => this.addSubnode(file));
-
-                this.setIsLoaded(true);
-            } catch (error) {
-                // Handle storage/canceled errors gracefully - they're not really errors
-                if (error.code === "storage/canceled") {
-                    console.log(`Read operation canceled for ${this.fullPath()} (likely due to navigation or concurrent read)`);
-                    return; // Don't set error or re-throw for canceled operations
-                }
-
-                // Handle retry-limit-exceeded (often caused by CORS preflight failures on empty/non-existent folders)
-                // Treat this as an empty folder rather than an error
-                if (error.code === "storage/retry-limit-exceeded") {
-                    console.log(`Folder ${this.fullPath()} appears to be empty or doesn't exist yet (CORS preflight failed)`);
-                    this.setIsLoaded(true);
-                    return; // Don't set error or re-throw - treat as empty folder
-                }
-
-                console.error(`Error reading subnodes for ${this.fullPath()}:`, error);
-                this.setError(error);
-                throw error;
-            } finally {
-                // Always clear the read promise when done
-                this.setReadPromise(null);
             }
-        })();
 
-        this.setReadPromise(promise);
-        return promise;
+            // Add new subfolders not already present
+            for (const prefixRef of result.prefixes) {
+                const existingFolder = this.subfolderNamed(prefixRef.name);
+                if (!existingFolder) {
+                    const subfolder = SvFirebaseFolder.clone();
+                    subfolder.setName(prefixRef.name);
+                    this.addSubnode(subfolder);
+                }
+            }
+
+            // Add new files not already present (with metadata)
+            const newFiles = await Promise.all(
+                result.items
+                    .filter(itemRef => !this.fileNamed(itemRef.name))
+                    .map(itemRef => SvFirebaseFile.clone().setItemRef(itemRef))
+            );
+
+            // Add all new files
+            newFiles.forEach(file => this.addSubnode(file));
+
+            this.setIsLoaded(true);
+        } catch (error) {
+            // Handle storage/canceled errors gracefully - they're not really errors
+            if (error.code === "storage/canceled") {
+                console.log(`Read operation canceled for ${this.fullPath()} (likely due to navigation or concurrent read)`);
+                return; // Don't set error or re-throw for canceled operations
+            }
+
+            // Handle retry-limit-exceeded (often caused by CORS preflight failures on empty/non-existent folders)
+            // Treat this as an empty folder rather than an error
+            if (error.code === "storage/retry-limit-exceeded") {
+                console.log(`Folder ${this.fullPath()} appears to be empty or doesn't exist yet (CORS preflight failed)`);
+                this.setIsLoaded(true);
+                return; // Don't set error or re-throw - treat as empty folder
+            }
+
+            console.error(`Error reading subnodes for ${this.fullPath()}:`, error);
+            this.setError(error);
+            throw error;
+        }
     }
 
     /**

@@ -124,15 +124,6 @@
             slot.setCanEditInspection(false);
         }
 
-        // so concurrent asyncFetchIfNeeded() callers share one in-flight download
-        // instead of racing (and clobbering) each other's writes to imageNode.
-        {
-            const slot = this.newSlot("fetchPromise", null);
-            slot.setShouldStoreSlot(false);
-            slot.setSlotType("Promise");
-            slot.setIsSubnodeField(false);
-        }
-
         // retry method
         {
             const slot = this.newSlot("asyncFetchAction", null);
@@ -361,17 +352,7 @@
             return;
         }
 
-        if (this.fetchPromise()) {
-            return this.fetchPromise();
-        }
-
-        const promise = this.asyncFetch();
-        this.setFetchPromise(promise);
-        try {
-            await promise;
-        } finally {
-            this.setFetchPromise(null);
-        }
+        await this.inFlightPromiseNamed("fetch", () => this.asyncFetch());
     }
 
     /**

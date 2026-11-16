@@ -45,12 +45,6 @@
             slot.setDescription("the backend's { backing, maxOpsPerCommit, maxBytesPerCommit }, once asked; null until then");
         }
         {
-            const slot = this.newSlot("commitLimitsPromise", null);
-            slot.setSlotType("Promise");
-            slot.setAllowsNullValue(true);
-            slot.setDescription("the in-flight records-limits ask, shared by every commit that wants it");
-        }
-        {
             const slot = this.newSlot("commitLimitsWaitMs", 1500);
             slot.setSlotType("Number");
             slot.setDescription("the longest a commit waits for the limits before going on with the defaults (the ask carries on)");
@@ -113,10 +107,7 @@
      * @category Write
      */
     asyncAskCommitLimitsOnce () {
-        if (!this.commitLimitsPromise()) {
-            this.setCommitLimitsPromise(this.asyncAskCommitLimits().finally(() => this.setCommitLimitsPromise(null)));
-        }
-        return this.commitLimitsPromise();
+        return this.inFlightPromiseNamed("commitLimits", () => this.asyncAskCommitLimits());
     }
 
     async asyncAskCommitLimits () {

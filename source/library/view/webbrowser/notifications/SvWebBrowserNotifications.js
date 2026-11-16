@@ -36,44 +36,57 @@
      * @category Initialization
      */
     initPrototypeSlots () {
-        /**
-         * @member {Promise} permissionPromise
-         * @category State
-         */
-        {
-            const slot = this.newSlot("permissionPromise", null);
-            slot.setSlotType("Promise");
-        }
         this.setIsDebugging(true);
     }
 
     // --- getting permission ---
 
     /**
-     * @description Requests permission for sending notifications
-     * @returns {Promise} A promise that resolves to a boolean indicating whether permission was granted
+     * @description Asks the browser for permission to send notifications. One
+     * ask at a time; a later call asks again (the browser answers at once
+     * when the user has already decided), so a dismissed prompt can be
+     * offered again from a user gesture.
+     * @returns {Promise<Boolean>} whether permission is granted; never rejects
      * @category Permissions
      */
-    async requestPermission () {
-        if (!this.permissionPromise()) {
-            const promise = Promise.clone();
-            this.setPermissionPromise(promise);
+    requestPermission () {
+        return this.inFlightPromiseNamed("requestPermission", () => this.asyncJustRequestPermission());
+    }
 
-            if (!this.isSupported()) {
-                const msg = this.svType() + " sending browser notifications is not supported";
-                console.warn(msg);
-                promise.callResolveFunc(false);
-            } else {
-                const result = await Notification.requestPermission();
-                this.logDebug("requestPermission:", result);
-                const gotPermission = result === "granted";
-                if (!gotPermission) {
-                    console.warn(this.svType() + " permission denied");
-                }
-                promise.callResolveFunc(gotPermission);
-            }
+    async asyncJustRequestPermission () {
+        if (!this.isSupported()) {
+            console.warn(this.svType() + " sending browser notifications is not supported");
+            return false;
         }
-        return this.permissionPromise();
+        try {
+            const result = await Notification.requestPermission();
+            this.logDebug("requestPermission:", result);
+            return result === "granted";
+        } catch (error) {
+            console.warn(this.svType() + " requestPermission failed:", error);
+            return false;
+        }
+    }
+
+    /**
+     * @description Whether the user has granted permission (no prompt).
+     * @returns {Boolean}
+     * @category Permissions
+     */
+    hasPermission () {
+        return this.isSupported() && Notification.permission === "granted";
+    }
+
+    /**
+     * @description The unprompted ask made when something first posts: once
+     * a session. Asking on every post would nag, and browsers block a site
+     * whose prompt is dismissed repeatedly. Permission granted later (through
+     * requestPermission, from a user gesture) is seen by hasPermission().
+     * @returns {Promise<Boolean>}
+     * @category Permissions
+     */
+    asyncAskOnceToPost () {
+        return this.sharedPromiseNamed("askToPost", () => this.requestPermission());
     }
 
     /**
@@ -93,7 +106,7 @@
      * @category Notification
      */
     async postNote (aNote) {
-        if (await this.requestPermission()) {
+        if (this.hasPermission() || await this.asyncAskOnceToPost()) {
             aNote.justPost();
         }
     }

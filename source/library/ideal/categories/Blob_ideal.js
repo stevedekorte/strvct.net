@@ -98,27 +98,14 @@
      * @returns {Promise<ArrayBuffer>} The ArrayBuffer (cached on first call)
      * @category Conversion
      */
-    async asyncToArrayBuffer () {
-        // Return cached ArrayBuffer if already extracted
-        if (this._cachedArrayBuffer) {
+    asyncToArrayBuffer () {
+        // native arrayBuffer() where there is one, otherwise FileReader. Read
+        // once (a Blob's bytes never change); a failed read is tried again.
+        return this.sharedPromiseNamed("arrayBuffer", async () => {
+            const read = typeof this.arrayBuffer === "function" ? this.arrayBuffer() : FileReader.promiseReadAsArrayBuffer(this);
+            this._cachedArrayBuffer = await read;
             return this._cachedArrayBuffer;
-        }
-
-        if (this._asyncToArrayBufferPromise) {
-            return this._asyncToArrayBufferPromise;
-        }
-
-        // Extract and cache the ArrayBuffer
-        // Use native arrayBuffer() method if available (modern browsers), otherwise fall back to FileReader
-        if (typeof this.arrayBuffer === "function") {
-            this._asyncToArrayBufferPromise = this.arrayBuffer();
-        } else {
-            this._asyncToArrayBufferPromise = FileReader.promiseReadAsArrayBuffer(this);
-        }
-        const arrayBuffer = await this._asyncToArrayBufferPromise;
-        this._cachedArrayBuffer = arrayBuffer;
-        this._asyncToArrayBufferPromise = null;
-        return this._cachedArrayBuffer;
+        });
     }
 
     /**
@@ -156,20 +143,9 @@
      * @returns {Promise<string>} The data URL
      * @category Conversion
      */
-    async asyncAsDataUrl () {
-        if (this._cachedDataUrl) {
-            return this._cachedDataUrl;
-        }
-
-        if (this._dataUrlPromise) {
-            return this._dataUrlPromise; // concurrent callers share one read (the check used a different name, so they never did)
-        }
-
-        this._dataUrlPromise = FileReader.promiseReadAsDataURL(this);
-        const dataUrl = await this._dataUrlPromise;
-        this._cachedDataUrl = dataUrl;
-        this._dataUrlPromise = null;
-        return this._cachedDataUrl;
+    asyncAsDataUrl () {
+        // read once; concurrent callers share the read, and a failed one is tried again
+        return this.sharedPromiseNamed("dataUrl", () => FileReader.promiseReadAsDataURL(this));
     }
 
     /**

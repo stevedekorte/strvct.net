@@ -54,15 +54,6 @@
 
     initPrototypeSlots () {
 
-        // the display-url fetch in flight, shared by concurrent callers
-        {
-            const slot = this.newSlot("objectUrlPromise", null);
-            slot.setIsInJsonSchema(false);
-            slot.setShouldStoreSlot(false);
-            slot.setSlotType("Promise");
-            slot.setIsSubnodeField(false);
-        }
-
         // image object
         {
             const slot = this.newSlot("imageNode", null); // self-referential slot to display the image well field tile
@@ -199,11 +190,7 @@
      * @category Display
      */
     asyncObjectUrl (options) {
-        if (!this.objectUrlPromise()) {
-            this.setObjectUrlPromise(this.asyncFetchObjectUrl(options)
-                .finally(() => this.setObjectUrlPromise(null)));
-        }
-        return this.objectUrlPromise();
+        return this.inFlightPromiseNamed("objectUrl", () => this.asyncFetchObjectUrl(options));
     }
 
     /**

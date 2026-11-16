@@ -71,12 +71,6 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
             slot.setFieldInspectorClassName("SvImageWellField");
         }
 
-        // compose promise
-        {
-            const slot = this.newSlot("composePromise", null);
-            slot.setSlotType("Promise");
-        }
-
         /**
          * @member {Number} dividerWidth - Width of the divider between images in pixels
          * @category Configuration
@@ -207,27 +201,31 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
     }
 
     /**
-     * @description Composes all images into a horizontal mosaic with colored dividers
+     * @description Composes all images into a horizontal mosaic with colored
+     * dividers. One composition at a time: callers during one share it, and a
+     * call after it composes again (the images may have changed).
      * @returns {Promise<SvImageNode>} The composite image node
      * @category Composition
      */
-    async asyncCompose () {
-        if (this.composePromise()) {
-            return this.composePromise();
-        }
-        this.setComposePromise(Promise.clone());
+    asyncCompose () {
+        return this.inFlightPromiseNamed("compose", () => this.asyncComposeWithStatus());
+    }
 
+    /**
+     * @description One composition, reporting its progress in the status.
+     * @returns {Promise<SvImageNode>}
+     * @category Composition
+     */
+    async asyncComposeWithStatus () {
         try {
             this.setStatus("Composing...");
             await this.asyncJustCompose();
             this.setStatus("Composed");
-            this.composePromise().callResolveFunc(this.compositeImageNode());
+            return this.compositeImageNode();
         } catch (error) {
             this.setStatus(error.message);
-            this.composePromise().callRejectFunc(error);
+            throw error;
         }
-
-        return this.composePromise();
     }
 
     async asyncJustCompose () {
