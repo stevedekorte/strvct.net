@@ -221,7 +221,6 @@ async function main () {
         await pool.commitStoreDirtyObjects();
         check(!pool.recordForPid(legacy2.puuid()).entries.some(e => e[0] === "subnodes") && legacy2.subnodeCount() === 4, "after a store pass the record has no subnodes ref and every element is a placed row (" + legacy2.subnodeCount() + ")");
         await pool.promiseClose();
-        await new Promise(resolve => setTimeout(resolve, 100)); // the blob pool's LevelDB releases its lock after close returns
         store.pools().clear();
         pool = SvPersistentObjectPool.clone();
         pool.setName("TestWindowedCollections");
@@ -248,7 +247,6 @@ async function main () {
         const keysNow = chat2.subnodes().map(m => store.rowForKey(pool.poolId(), m.puuid()).orderKey);
         check(keysNow.every((k, i) => i === 0 || keysNow[i - 1] < k), "every row's key now follows the array order (" + keysNow.join(",") + ")");
         await pool.promiseClose();
-        await new Promise(resolve => setTimeout(resolve, 100)); // the blob pool's LevelDB releases its lock after close returns
         store.pools().clear();
         pool = SvPersistentObjectPool.clone();
         pool.setName("TestWindowedCollections");

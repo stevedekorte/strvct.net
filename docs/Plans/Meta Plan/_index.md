@@ -3,7 +3,7 @@ subtitle: The order to do the other plans in, why, and what should change in the
 ---
 # Meta Plan
 
-**As of:** 2026-11-13. Every plan page now opens with a status line; this page orders them.
+**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Step 1, the test runner, is done.
 
 ## Where Things Stand
 
@@ -26,9 +26,9 @@ subtitle: The order to do the other plans in, why, and what should change in the
 
 ## Recommended Order
 
-### 1. A test runner
+### 1. A test runner — done (2026-11-15)
 
-`npm test` is a stub and each headless test is a standalone script. One command should rebuild `build/_index.json` (a stale bundle makes tests fail confusingly) and run every `tests/headless/Test*.js`. Everything below is a refactor, and refactors need this.
+`npm test` (or `just test`) rebuilds `build/_index.json`, then runs every `tests/headless/Test*.js` in its own process, one at a time, with a timeout each; arguments filter by file name (`npm test -- Record`). The tests share LevelDB databases under `data/leveldb/`, so they can't run in parallel. The first full run found one flaky test, `TestWindowedCollections`: classic-level's `close()` resolves before LevelDB lets go of its files, so a quick reopen sometimes failed. `SvIndexedDbFolder` now retries such an open briefly, and the test's sleeps are gone. All 73 tests pass, in about 40 seconds.
 
 ### 2. The model/view boundary
 

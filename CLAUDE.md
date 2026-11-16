@@ -47,8 +47,10 @@ bump in the app repo, in the same release — see "Important" at the end.
 # headless tests boot from build/_index.json and fail confusingly if it is stale)
 node source/boot/index-builder/ImportsIndexer.js
 
-# Headless tests: no runner — each file is a standalone script. `npm test` is a stub.
-node tests/headless/TestCategorySlots.js
+# Headless tests: rebuilds the index, then runs every tests/headless/Test*.js, one process each,
+# one at a time (they share LevelDB databases). Filter by name: `npm test -- Record Xhr`.
+npm test                       # or: just test
+node tests/headless/TestCategorySlots.js   # one test directly (index must be current)
 
 # Lint (eslint.config.js; see Coding Style)
 npx eslint source tests

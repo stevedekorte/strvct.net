@@ -2,7 +2,7 @@
 
 > Write the domain model. Get the application.
 
-Site build: STRVCT · 2026-11-13 · 40fde13f
+Site build: STRVCT · 2026-11-13 · fa729e03
 
 ## Documentation
 

@@ -19,10 +19,31 @@ async function asyncOpenLevelDb (dbPath) {
     const fs = require("fs").promises;
     const path = require("path");
     await fs.mkdir(path.dirname(dbPath), { recursive: true });
+    return asyncOpenLevelDbRetrying(dbPath, 8);
+}
+
+// classic-level's close() resolves before LevelDB has let go of its files, so
+// reopening a just-closed database can fail with a lock or IO error ("…/000005.log:
+// Invalid argument"). That window is a few milliseconds: retry briefly with a
+// growing delay (≈1s in all) before treating the failure as real.
+function isTransientLevelDbOpenError (error) {
+    const code = (error.cause && error.cause.code) || error.code;
+    return code === "LEVEL_LOCKED" || code === "LEVEL_IO_ERROR";
+}
+
+async function asyncOpenLevelDbRetrying (dbPath, attemptsLeft) {
     // IMPORTANT: 'buffer' encoding to properly handle binary data
     const levelDb = new ClassicLevel(dbPath, { createIfMissing: true, errorIfExists: false, valueEncoding: "buffer" });
-    await levelDb.open();
-    return levelDb;
+    try {
+        await levelDb.open();
+        return levelDb;
+    } catch (error) {
+        if (attemptsLeft <= 1 || !isTransientLevelDbOpenError(error)) {
+            throw error;
+        }
+        await new Promise(resolve => setTimeout(resolve, 25 * (9 - attemptsLeft)));
+        return asyncOpenLevelDbRetrying(dbPath, attemptsLeft - 1);
+    }
 }
 
 function acquireSharedLevelDb (dbPath) {

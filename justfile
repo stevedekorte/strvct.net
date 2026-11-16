@@ -10,3 +10,7 @@ class-tree:
   node class-tree.js ../../source > ../class-hierarchy-tree.txt
   echo "✅ Class hierarchy written to docs/class-hierarchy-tree.txt"
 
+
+# Rebuild the resource index and run every headless test (filters: just test Record Xhr)
+test *ARGS:
+  node tests/run-headless.js {{ARGS}}
