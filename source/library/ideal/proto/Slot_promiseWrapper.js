@@ -24,8 +24,7 @@
         slot.setPromiseResetsOnChangeOfSlotName("dataUrl");
         // - adds an onDidChangeOfSlotName("dataUrl") method which resets the promise
 
- 
- 
+
  */
 
 (class Slot_promiseWrapper extends Slot {
@@ -69,40 +68,54 @@
 
         const slot = this;
         const privateName = this.privateName();
-        const computeMethodName = this.computeMethodName();
         const promisePrivateName = this.promisePrivateName();
 
-        return async function (...args) { // Example: asyncPublicUrl()
+        return function (...args) { // Example: asyncPublicUrl()
             assert(args.length === 0, "getter should not be called with arguments");
 
             // If we already have a value, return it (*ASSUME* null means it's not yet computed)?
             if (this[privateName] !== null) {
-                return this[privateName];
+                return Promise.resolve(this[privateName]);
             }
 
-            // If we already have a promise, return it
-            // so we don't do more requests while we're waiting for the first
-            const promise = this[promisePrivateName];
-            if (promise) {
-                return promise;
+            // One computation at a time: callers that arrive while it runs share its promise
+            if (!this[promisePrivateName]) {
+                const promise = Promise.clone();
+                this[promisePrivateName] = promise;
+                slot.asyncFulfillWrappedPromise(this, promise);
             }
-
-            const computeMethod = this[computeMethodName];
-            assert(computeMethod, "compute method not found for promise wrapped slot " + slot.name());
-
-            try {
-                // call the compute method and set the value
-                const value = await computeMethod.call(this);
-                const setterMethod = this[slot.setterName()];
-                setterMethod.call(this, value);
-                slot.onInstanceSetValue(this, value);
-                promise.callResolveFunc(value);
-                return value;
-            } catch (error) {
-                promise.callRejectFunc(error);
-                throw error;
-            }
+            return this[promisePrivateName];
         };
+    }
+
+    /**
+     * @description Runs the instance's compute method and settles the promise
+     * its callers share. A failure rejects those callers and clears the cached
+     * promise, so the next call computes again instead of returning the same
+     * rejection for the life of the object. If the promise was reset while
+     * computing (a dependency changed), the stale result is dropped: the
+     * reset already rejected it.
+     * @param {Object} instance
+     * @param {Promise} promise - made with Promise.clone()
+     * @returns {Promise}
+     * @category Promise Wrapper
+     */
+    async asyncFulfillWrappedPromise (instance, promise) {
+        const promisePrivateName = this.promisePrivateName();
+        try {
+            const computeMethod = instance[this.computeMethodName()];
+            assert(computeMethod, "compute method not found for promise wrapped slot " + this.name());
+            const value = await computeMethod.call(instance);
+            if (instance[promisePrivateName] === promise) {
+                instance[this.setterName()].call(instance, value);
+                promise.callResolveFunc(value);
+            }
+        } catch (error) {
+            if (instance[promisePrivateName] === promise) {
+                instance[promisePrivateName] = null; // let the next call retry
+                promise.callRejectFunc(error);
+            }
+        }
     }
 
     setupPromiseResetMethodIdNeeded () {

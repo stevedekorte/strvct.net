@@ -4,17 +4,14 @@ Areas of the codebase that work but could benefit from simplification, documenta
 
 **Status:** open; checked against the source 2026-11-13. Done since the first draft: Notification Center indexing (`tests/headless/TestNotificationIndexes.js`) and the `isInTx()` question in the object pool. Moved: view compaction to [Browser Cleanup](../Browser%20Cleanup/), model/view items to [Naked Objects Issues](../Naked%20Objects%20Issues/), schema migration to its own entry in the [Meta Plan](../Meta%20Plan/).
 
-The items are in order: the first can fail at runtime; the rest are for when a file is being changed anyway. When rewriting a file, re-check the fixes already applied to it (see the framework guide on diagnostics coming back in rewrites).
+The runtime-risk items are done; the rest are for when a file is being changed anyway. When rewriting a file, re-check the fixes already applied to it (see the framework guide on diagnostics coming back in rewrites).
 
 ## Can Fail at Runtime
 
-### ObjectPool Recursive GC
+Both items here are fixed (2026-11-15):
 
-`markPid()` (`SvObjectPool_collection.js`) marks reachable records by recursion, so a long enough chain of references overflows the stack during GC. Its own TODO says so. Convert it to an iterative walk with an explicit stack; a headless test with a chain deeper than the stack limit shows the difference.
-
-### Promise-Wrapped Slot Errors
-
-A failed computation stays cached, so a promise-wrapped slot never retries. See [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/#error-recovery).
+- **ObjectPool recursive GC.** `markPid()` (`SvObjectPool_collection.js`) walks with an explicit stack; a chain of 300,000 references marks without overflowing (`tests/headless/TestGcDeepReferenceChain.js`).
+- **Promise-wrapped slot errors.** A failed computation is no longer cached. See [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/#error-recovery).
 
 ## Structure
 

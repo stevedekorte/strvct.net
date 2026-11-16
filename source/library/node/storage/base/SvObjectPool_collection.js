@@ -79,16 +79,30 @@
         return this;
     }
 
+    /**
+     * @description Marks a pid and everything reachable from it. Walks with an
+     * explicit stack, not recursion: a long chain of references (a linked
+     * list of records) would otherwise overflow the call stack.
+     * @param {String} pid
+     * @returns {Boolean} false if the pid was already marked
+     * @category Collection
+     */
     markPid (pid) { // private
-        // TODO: rewrite to not use recursion in order to avoid stack depth limit
-        //this.logDebug(() => "markPid(" + pid + ")")
-        if (!this.markedSet().has(pid)) {
-            this.markedSet().add(pid);
-            const refPids = this.refSetForPuuid(pid);
-            refPids.forEach(refPid => this.markPid(refPid));
-            return true;
+        const marked = this.markedSet();
+        if (marked.has(pid)) {
+            return false;
         }
-        return false;
+        marked.add(pid);
+        const pending = [pid];
+        while (pending.length > 0) {
+            this.refSetForPuuid(pending.pop()).forEach((refPid) => {
+                if (!marked.has(refPid)) {
+                    marked.add(refPid);
+                    pending.push(refPid);
+                }
+            });
+        }
+        return true;
     }
 
     /**

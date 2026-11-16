@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-Site build: STRVCT · 2026-11-15 · 8493826c
+Site build: STRVCT · 2026-11-15 · 1e3c63c8
 
 You write the domain model. STRVCT does the rest while the app runs: it presents your objects in a user interface on desktop and phone, stores them locally, syncs them to the cloud, imports and exports them as JSON, and lets AI agents read and edit them. Nothing is generated ahead of time: views are created from the live objects as the user navigates, and they update when the objects change. Add a property, annotate it, and every part picks it up. There is no separate form, storage mapping, or tool schema to write.
 
@@ -6443,17 +6443,14 @@ Areas of the codebase that work but could benefit from simplification, documenta
 
 **Status:** open; checked against the source 2026-11-13. Done since the first draft: Notification Center indexing (`tests/headless/TestNotificationIndexes.js`) and the `isInTx()` question in the object pool. Moved: view compaction to [Browser Cleanup](../Browser%20Cleanup/), model/view items to [Naked Objects Issues](../Naked%20Objects%20Issues/), schema migration to its own entry in the [Meta Plan](../Meta%20Plan/).
 
-The items are in order: the first can fail at runtime; the rest are for when a file is being changed anyway. When rewriting a file, re-check the fixes already applied to it (see the framework guide on diagnostics coming back in rewrites).
+The runtime-risk items are done; the rest are for when a file is being changed anyway. When rewriting a file, re-check the fixes already applied to it (see the framework guide on diagnostics coming back in rewrites).
 
 ## Can Fail at Runtime
 
-### ObjectPool Recursive GC
+Both items here are fixed (2026-11-15):
 
-`markPid()` (`SvObjectPool_collection.js`) marks reachable records by recursion, so a long enough chain of references overflows the stack during GC. Its own TODO says so. Convert it to an iterative walk with an explicit stack; a headless test with a chain deeper than the stack limit shows the difference.
-
-### Promise-Wrapped Slot Errors
-
-A failed computation stays cached, so a promise-wrapped slot never retries. See [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/#error-recovery).
+- **ObjectPool recursive GC.** `markPid()` (`SvObjectPool_collection.js`) walks with an explicit stack; a chain of 300,000 references marks without overflowing (`tests/headless/TestGcDeepReferenceChain.js`).
+- **Promise-wrapped slot errors.** A failed computation is no longer cached. See [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/#error-recovery).
 
 ## Structure
 
@@ -7032,7 +7029,7 @@ Source: /docs/Plans/Meta%20Plan/
 
 The order to do the other plans in, why, and what should change in them first.
 
-**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 and 2 are done.
+**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done.
 
 ## Where Things Stand
 
@@ -7042,8 +7039,8 @@ The order to do the other plans in, why, and what should change in them first.
 | [Lazy Slots](../Lazy%20Slots/) | Shipped | Rewritten to describe what shipped; a few items remain. |
 | [Async Final Initialization](../Async%20Final%20Initialization/) | Closed | Its main case was solved by manifests and then lazy loading. |
 | [Naked Objects Issues](../Naked%20Objects%20Issues/) | Done | Every listed class moved; the ratchet test's baseline is empty. Two gaps stay open until needed. |
-| [Cleanup Notes](../Cleanup%20Notes/) | Next | Pruned and ordered by risk; the recursive GC comes first. |
-| [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Next, one fix | A failed computation stays cached forever. |
+| [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. |
+| [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Fixed, unused | The getter works and retries after a failure, but no slot uses it. |
 | [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Next | Rewritten to build on the editability cascade and the Record Store. |
 | [JSON Schema](../JSON%20Schema/) | Next | Now includes validation; constraints warn on load and reject edits. |
 | [Browser Cleanup](../Browser%20Cleanup/) | Next | Now holds the compaction notes; has its own order. |
@@ -7063,10 +7060,10 @@ The order to do the other plans in, why, and what should change in them first.
 
 [Naked Objects Issues](../Naked%20Objects%20Issues/): add the environment accessors and view actions, move the nine classes onto them, then add the ratchet test. The list is short, and the headless and swappable-UI claims depend on it.
 
-### 3. Runtime-risk fixes
+### 3. Runtime-risk fixes — done (2026-11-15)
 
-- Make `markPid()` iterative ([Cleanup Notes](../Cleanup%20Notes/#objectpool-recursive-gc)).
-- Clear a promise-wrapped slot's cached promise when it fails ([Promise-Wrapped Slots](../Promise-Wrapped%20Slots/#error-recovery)).
+- `markPid()` is iterative ([Cleanup Notes](../Cleanup%20Notes/#can-fail-at-runtime)).
+- A promise-wrapped slot's cached promise is cleared when it fails ([Promise-Wrapped Slots](../Promise-Wrapped%20Slots/#error-recovery)). Its getter had never worked and nothing uses it; whether to keep the feature is an open question on that page.
 
 The rest of Cleanup Notes is for when a file is being changed anyway.
 
@@ -7161,7 +7158,7 @@ Source: /docs/Plans/Promise-Wrapped%20Slots/
 
 Automatic async getter generation with promise caching and dependency-driven invalidation.
 
-**Status:** in use by `SvActorMessage`; no further adoption planned. **Next:** fix the error recovery bug below, which is a one-method change in `Slot_promiseWrapper.js`. The other challenges wait for a second adopter.
+**Status:** working and tested (2026-11-15), but nothing uses it: no slot in the framework or the app sets `setIsPromiseWrapped(true)`. Until that date the generated getter threw on its first call, so nothing could have. The other challenges wait for a first adopter; if none comes, delete the category.
 
 ## Context
 
@@ -7199,7 +7196,7 @@ The implementation lives in `Slot_promiseWrapper.js`, a category on `Slot`:
 - **`newAsyncPromiseWrappedGetter()`** — generates the async getter function. The logic:
   1. If the private value is non-null, return it immediately (synchronous fast path).
   2. If `_slotNamePromise` already exists, return it (promise deduplication).
-  3. Otherwise, call `asyncCompute{SlotName}()`, set the value via the normal setter on success, and resolve/reject the promise.
+  3. Otherwise, make the shared promise and hand it to `asyncFulfillWrappedPromise()`, which calls `asyncCompute{SlotName}()`, sets the value via the normal setter on success, and resolves or rejects the promise.
 
 - **`newPromiseResetMethod()`** — generates the dependency reset function. If the in-flight promise hasn't completed when a reset fires, it rejects the promise with an error before nulling everything.
 
@@ -7209,7 +7206,7 @@ The pattern relies on STRVCT's extended `Promise` class (`Promise_ideal.js`), wh
 
 ## Current Usage
 
-- **`SvActorMessage`** — uses `setIsPromiseWrapped(true)` on its `resultPromise` slot so external callers can `await message.asyncResult()` without duplicating the resolution logic.
+- **None.** An earlier version of this page named `SvActorMessage`; no such class exists.
 - **`SvImageNode`** — has commented-out promise wrapping on `publicUrl` and related slots, suggesting the pattern was tested there but not yet production-ready.
 
 ## Challenges to Solve
@@ -7220,7 +7217,7 @@ The current fast path treats `null` as "not yet computed" — if the slot's valu
 
 ### Error Recovery
 
-When `asyncCompute{Name}()` throws, the promise is rejected and the error propagates to all current awaiters. But the cached promise is not reset — subsequent callers will receive the rejected promise rather than retrying, for the life of the object. This is a latent bug, not a missing feature: on rejection, clear the cached promise so the next call recomputes. A retry policy (backoff, attempt limits) can come later if a caller needs one.
+**Fixed (2026-11-15).** When `asyncCompute{Name}()` throws, the callers waiting on it are rejected and the cached promise is cleared, so the next call computes again. A result that arrives after a dependency reset is dropped rather than set. The fix found a worse bug underneath: the getter never created the promise it resolved, so every first call threw. `tests/headless/TestPromiseWrappedSlots.js` covers the first call, shared computation, retry after failure, and reset mid-computation. A retry policy (backoff, attempt limits) can come later if a caller needs one.
 
 ### Interaction with View Sync
 

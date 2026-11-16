@@ -3,7 +3,7 @@ subtitle: The order to do the other plans in, why, and what should change in the
 ---
 # Meta Plan
 
-**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 and 2 are done.
+**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done.
 
 ## Where Things Stand
 
@@ -13,8 +13,8 @@ subtitle: The order to do the other plans in, why, and what should change in the
 | [Lazy Slots](../Lazy%20Slots/) | Shipped | Rewritten to describe what shipped; a few items remain. |
 | [Async Final Initialization](../Async%20Final%20Initialization/) | Closed | Its main case was solved by manifests and then lazy loading. |
 | [Naked Objects Issues](../Naked%20Objects%20Issues/) | Done | Every listed class moved; the ratchet test's baseline is empty. Two gaps stay open until needed. |
-| [Cleanup Notes](../Cleanup%20Notes/) | Next | Pruned and ordered by risk; the recursive GC comes first. |
-| [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Next, one fix | A failed computation stays cached forever. |
+| [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. |
+| [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Fixed, unused | The getter works and retries after a failure, but no slot uses it. |
 | [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Next | Rewritten to build on the editability cascade and the Record Store. |
 | [JSON Schema](../JSON%20Schema/) | Next | Now includes validation; constraints warn on load and reject edits. |
 | [Browser Cleanup](../Browser%20Cleanup/) | Next | Now holds the compaction notes; has its own order. |
@@ -34,10 +34,10 @@ subtitle: The order to do the other plans in, why, and what should change in the
 
 [Naked Objects Issues](../Naked%20Objects%20Issues/): add the environment accessors and view actions, move the nine classes onto them, then add the ratchet test. The list is short, and the headless and swappable-UI claims depend on it.
 
-### 3. Runtime-risk fixes
+### 3. Runtime-risk fixes — done (2026-11-15)
 
-- Make `markPid()` iterative ([Cleanup Notes](../Cleanup%20Notes/#objectpool-recursive-gc)).
-- Clear a promise-wrapped slot's cached promise when it fails ([Promise-Wrapped Slots](../Promise-Wrapped%20Slots/#error-recovery)).
+- `markPid()` is iterative ([Cleanup Notes](../Cleanup%20Notes/#can-fail-at-runtime)).
+- A promise-wrapped slot's cached promise is cleared when it fails ([Promise-Wrapped Slots](../Promise-Wrapped%20Slots/#error-recovery)). Its getter had never worked and nothing uses it; whether to keep the feature is an open question on that page.
 
 The rest of Cleanup Notes is for when a file is being changed anyway.
 

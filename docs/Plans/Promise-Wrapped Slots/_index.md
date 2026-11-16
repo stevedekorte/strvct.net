@@ -2,7 +2,7 @@
 
 Automatic async getter generation with promise caching and dependency-driven invalidation.
 
-**Status:** in use by `SvActorMessage`; no further adoption planned. **Next:** fix the error recovery bug below, which is a one-method change in `Slot_promiseWrapper.js`. The other challenges wait for a second adopter.
+**Status:** working and tested (2026-11-15), but nothing uses it: no slot in the framework or the app sets `setIsPromiseWrapped(true)`. Until that date the generated getter threw on its first call, so nothing could have. The other challenges wait for a first adopter; if none comes, delete the category.
 
 ## Context
 
@@ -40,7 +40,7 @@ The implementation lives in `Slot_promiseWrapper.js`, a category on `Slot`:
 - **`newAsyncPromiseWrappedGetter()`** — generates the async getter function. The logic:
   1. If the private value is non-null, return it immediately (synchronous fast path).
   2. If `_slotNamePromise` already exists, return it (promise deduplication).
-  3. Otherwise, call `asyncCompute{SlotName}()`, set the value via the normal setter on success, and resolve/reject the promise.
+  3. Otherwise, make the shared promise and hand it to `asyncFulfillWrappedPromise()`, which calls `asyncCompute{SlotName}()`, sets the value via the normal setter on success, and resolves or rejects the promise.
 
 - **`newPromiseResetMethod()`** — generates the dependency reset function. If the in-flight promise hasn't completed when a reset fires, it rejects the promise with an error before nulling everything.
 
@@ -50,7 +50,7 @@ The pattern relies on STRVCT's extended `Promise` class (`Promise_ideal.js`), wh
 
 ## Current Usage
 
-- **`SvActorMessage`** — uses `setIsPromiseWrapped(true)` on its `resultPromise` slot so external callers can `await message.asyncResult()` without duplicating the resolution logic.
+- **None.** An earlier version of this page named `SvActorMessage`; no such class exists.
 - **`SvImageNode`** — has commented-out promise wrapping on `publicUrl` and related slots, suggesting the pattern was tested there but not yet production-ready.
 
 ## Challenges to Solve
@@ -61,7 +61,7 @@ The current fast path treats `null` as "not yet computed" — if the slot's valu
 
 ### Error Recovery
 
-When `asyncCompute{Name}()` throws, the promise is rejected and the error propagates to all current awaiters. But the cached promise is not reset — subsequent callers will receive the rejected promise rather than retrying, for the life of the object. This is a latent bug, not a missing feature: on rejection, clear the cached promise so the next call recomputes. A retry policy (backoff, attempt limits) can come later if a caller needs one.
+**Fixed (2026-11-15).** When `asyncCompute{Name}()` throws, the callers waiting on it are rejected and the cached promise is cleared, so the next call computes again. A result that arrives after a dependency reset is dropped rather than set. The fix found a worse bug underneath: the getter never created the promise it resolved, so every first call threw. `tests/headless/TestPromiseWrappedSlots.js` covers the first call, shared computation, retry after failure, and reset mid-computation. A retry policy (backoff, attempt limits) can come later if a caller needs one.
 
 ### Interaction with View Sync
 
