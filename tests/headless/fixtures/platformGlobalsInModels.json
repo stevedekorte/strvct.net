@@ -1,16 +1,1 @@
-{
-    "source/library/audio/SvSimpleSynth.js window": 4,
-    "source/library/ideal/categories/Image_ideal.js document": 1,
-    "source/library/ideal/categories/object/Object_puuid.js window": 2,
-    "source/library/ideal/categories/String_ideal.js document": 2,
-    "source/library/ideal/categories/String_ideal.js window": 2,
-    "source/library/ideal/html/SvHtmlStreamReader/SvStreamElementNode.js document": 1,
-    "source/library/ideal/html/SvHtmlStreamReader/SvStreamTextNode.js document": 1,
-    "source/library/image/SvImageBorderRemover.js document": 1,
-    "source/library/image/SvImageMosaic.js document": 1,
-    "source/library/node/app/SvApp.js localStorage": 14,
-    "source/library/resources/fonts/SvFont.js document": 1,
-    "source/library/resources/sounds/SvWaContext.js window": 2,
-    "source/library/services/Firebase/FirebaseStorage/Files/SvFirebaseFile.js window": 1,
-    "source/library/services/OpenAI/Style Transfers/SvOpenAiStyleTransfer.js document": 1
-}
+{}

@@ -772,7 +772,7 @@
     async openDownloadUrlInSeparateTab () {
         const url = await this.getDownloadUrl();
         if (url) {
-            window.open(url, "_blank");
+            this.postNoteNamed("onRequestOpenUrl", { url: url });
         }
     }
 

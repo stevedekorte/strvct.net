@@ -502,26 +502,11 @@
      */
     async uploadStyleImage () {
         try {
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = "image/*";
-
-            const fileSelected = new Promise((resolve, reject) => {
-                input.onchange = (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(file);
-                    } else {
-                        reject(new Error("No file selected"));
-                    }
-                };
-            });
-
-            input.click();
-            const dataUrl = await fileSelected;
+            const file = await SvApp.shared().userInterface().asyncPickFile({ accept: "image/*" });
+            if (!file) {
+                return; // the user chose nothing
+            }
+            const dataUrl = await file.asyncAsDataUrl();
 
             this.styleRefImage().setDataUrl(dataUrl);
             this.styleRefImage().setImageLabel("Uploaded style reference");

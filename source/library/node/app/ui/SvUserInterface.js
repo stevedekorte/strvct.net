@@ -35,7 +35,43 @@
         // reference the UI; notification dispatch is synchronous, so a
         // user-gesture context survives to the browser permission prompt.
         this.watchForNote("onRequestUserNotificationsPermission");
+        // A model that wants a URL shown (a download, a file's page) posts
+        // onRequestOpenUrl({ url }); the UI opens it, headless logs it.
+        this.watchForNote("onRequestOpenUrl");
         return this;
+    }
+
+    /**
+     * @description Handles onRequestOpenUrl posted by a model.
+     * @param {SvNotification} aNote - info: { url }
+     * @category Opening URLs
+     */
+    onRequestOpenUrl (aNote) {
+        const info = aNote.info() || {};
+        if (info.url) {
+            this.openUrl(info.url);
+        }
+        return this;
+    }
+
+    /**
+     * @description Shows the URL to the user (a new tab in a browser). Base: logs it.
+     * @param {String} url
+     * @category Opening URLs
+     */
+    openUrl (url) {
+        console.log("[" + this.svType() + "] openUrl: " + url);
+        return this;
+    }
+
+    /**
+     * @description Asks the user to choose a file. Base: there is no one to ask.
+     * @param {Object} [options] - { accept: "image/*" } (an input accept string)
+     * @returns {Promise<File|null>} the chosen file, or null when none was chosen
+     * @category Files
+     */
+    async asyncPickFile (/*options*/) {
+        return null;
     }
 
     /**

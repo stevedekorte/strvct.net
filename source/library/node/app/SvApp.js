@@ -297,9 +297,16 @@
      * @category Data Management
      */
     static requestClearStoreOnBoot () {
-        if (typeof localStorage !== "undefined") {
-            localStorage.setItem(this.clearStoreOnBootKey(), "1");
-        }
+        this.sharedUserInterface().setDeviceValue(this.clearStoreOnBootKey(), true);
+    }
+
+    /**
+     * @description The running app's user interface: device values and reload go through it.
+     * @returns {SvUserInterface}
+     * @category Data Management
+     */
+    static sharedUserInterface () {
+        return this.shared().userInterface();
     }
 
     /**
@@ -318,28 +325,26 @@
     }
 
     // --- account reset epoch (app plan: Account Reset Epoch) ---
-    // The device's last-ACCEPTED reset epoch per user, stored in
-    // localStorage — deliberately OUTSIDE the object pool, because
-    // accepting an epoch bump is what DROPS the pool; the stamp must
-    // survive the drop or the next boot would loop. SvApp owns these so
-    // model code never touches browser globals directly.
+    // The device's last-ACCEPTED reset epoch per user, kept as a device
+    // value (localStorage in a browser) — deliberately OUTSIDE the object
+    // pool, because accepting an epoch bump is what DROPS the pool; the
+    // stamp must survive the drop or the next boot would loop.
 
     static acceptedResetEpochKeyForUser (uid) {
         return "SvApp_acceptedResetEpoch_" + uid;
     }
 
     static acceptedResetEpochForUser (uid) {
-        if (typeof localStorage === "undefined" || !uid) {
+        if (!uid) {
             return 0;
         }
-        return Number(localStorage.getItem(this.acceptedResetEpochKeyForUser(uid))) || 0;
+        return Number(this.sharedUserInterface().deviceValue(this.acceptedResetEpochKeyForUser(uid))) || 0;
     }
 
     static setAcceptedResetEpochForUser (uid, epoch) {
-        if (typeof localStorage === "undefined" || !uid) {
-            return;
+        if (uid) {
+            this.sharedUserInterface().setDeviceValue(this.acceptedResetEpochKeyForUser(uid), Number(epoch));
         }
-        localStorage.setItem(this.acceptedResetEpochKeyForUser(uid), String(epoch));
     }
 
     /**
@@ -358,13 +363,10 @@
      * @category Data Management
      */
     static consumeClearStoreOnBootFlag () {
-        if (typeof localStorage === "undefined") {
-            return false;
-        }
-        const key = this.clearStoreOnBootKey();
-        const isSet = localStorage.getItem(key) === "1";
+        const ui = this.sharedUserInterface();
+        const isSet = Boolean(ui.deviceValue(this.clearStoreOnBootKey())); // true, or 1 from the old "1"
         if (isSet) {
-            localStorage.removeItem(key);
+            ui.setDeviceValue(this.clearStoreOnBootKey(), null);
         }
         return isSet;
     }
@@ -432,15 +434,11 @@
      * @category Performance Tracking
      */
     previousBootStoreDescription () {
-        if (typeof localStorage === "undefined") {
-            return "";
-        }
         try {
-            const raw = localStorage.getItem(SvApp.bootStoreStatsKey());
-            if (!raw) {
-                return "; no previous boot recorded (first visit, or localStorage was cleared too)";
+            const previous = this.userInterface().deviceValue(SvApp.bootStoreStatsKey());
+            if (!previous) {
+                return "; no previous boot recorded (first visit, or the device values were cleared too)";
             }
-            const previous = JSON.parse(raw);
             const hoursAgo = (Date.now() - previous.at) / (1000 * 60 * 60);
             const age = hoursAgo < 1 ? Math.round(hoursAgo * 60) + "m" : hoursAgo.toFixed(1) + "h";
             return "; previous boot " + age + " ago had " + previous.records + " records";
@@ -455,12 +453,8 @@
      * @category Performance Tracking
      */
     recordBootStoreStats (recordCount) {
-        if (typeof localStorage === "undefined") {
-            return;
-        }
         try {
-            localStorage.setItem(SvApp.bootStoreStatsKey(),
-                JSON.stringify({ at: Date.now(), records: recordCount }));
+            this.userInterface().setDeviceValue(SvApp.bootStoreStatsKey(), { at: Date.now(), records: recordCount });
         } catch {
             // diagnostic only — never break boot
         }

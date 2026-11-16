@@ -343,7 +343,7 @@
      * @returns {string} The base64 encoded string
      */
     base64Encoded () {
-        return window.btoa(this);
+        return btoa(this);
     }
 
     /**
@@ -359,7 +359,7 @@
      * @returns {string} The decoded string
      */
     base64Decoded () {
-        return window.atob(this);
+        return atob(this);
     }
 
     base64DecodedAsArrayBuffer () {

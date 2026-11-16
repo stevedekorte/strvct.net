@@ -204,10 +204,36 @@
     deviceValue (key) {
         try {
             const raw = window.localStorage.getItem("sv." + key);
-            return raw === null ? null : JSON.parse(raw);
+            return raw === null ? this.adoptedLegacyDeviceValue(key) : JSON.parse(raw);
         } catch (e) {
             return super.deviceValue(key);
         }
+    }
+
+    /**
+     * @description A value stored before device values existed — under the
+     * bare key, as a plain string (SvApp's clear-on-boot flag, accepted reset
+     * epochs and boot stats were). Moves it to the device-value key, so it
+     * survives the change (an accepted reset epoch that was forgotten would
+     * drop the local data again), and returns it.
+     * @param {String} key
+     * @returns {*} the value, or null
+     * @category Device Values
+     */
+    adoptedLegacyDeviceValue (key) {
+        const legacy = window.localStorage.getItem(key);
+        if (legacy === null) {
+            return null;
+        }
+        let value = legacy;
+        try {
+            value = JSON.parse(legacy);
+        } catch (e) {
+            // a plain string: keep it as one
+        }
+        this.setDeviceValue(key, value);
+        window.localStorage.removeItem(key);
+        return value;
     }
 
     setDeviceValue (key, value) {
@@ -222,6 +248,30 @@
     reloadApp () {
         window.location.reload();
         return this;
+    }
+
+    openUrl (url) {
+        window.open(url, "_blank");
+        return this;
+    }
+
+    /**
+     * @description Opens the browser's file chooser. Resolves null when the
+     * user cancels (the input's cancel event) or picks nothing.
+     * @param {Object} [options] - { accept: "image/*" }
+     * @returns {Promise<File|null>}
+     * @category Files
+     */
+    asyncPickFile (options = {}) {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = options.accept || "";
+        const promise = new Promise((resolve) => {
+            input.onchange = () => resolve(input.files[0] || null);
+            input.oncancel = () => resolve(null);
+        });
+        input.click();
+        return promise;
     }
 
     async asyncCopyText (text) {

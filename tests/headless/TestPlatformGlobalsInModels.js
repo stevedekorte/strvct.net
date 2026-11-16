@@ -16,8 +16,10 @@
  * skipping the view layer and browser-only code, and fails when one appears
  * that the baseline doesn't list. `document.` counts only when followed by
  * a DOM member, so a local variable named `document` (a Firestore document)
- * does not. The baseline holds the uses still to be moved; when you remove
- * one, the test passes and says the baseline can shrink.
+ * does not. ALLOWED below lists the low-level platform utilities that may
+ * use the platform directly, each with its reason; the baseline holds any
+ * other use still to be moved. When you remove one, the test passes and
+ * says the baseline can shrink.
  * A static scan of the source: no boot needed.
  *
  * Usage (from the strvct root):
@@ -35,6 +37,20 @@ const baselinePath = path.join(__dirname, "fixtures", "platformGlobalsInModels.j
 // The view layer and browser-only code may use the platform directly.
 const SKIPPED_DIRS = new Set(["view", "node_views", "browser-only", "_unused", "external-libs", "node_modules"]);
 const SKIPPED_PATHS = ["source/library/node/app/ui/"];
+
+// Platform utilities, not model code reading UI state: each wraps a browser
+// capability (most guard for headless). "<file> <global>" → why it is allowed.
+const ALLOWED = {
+    "source/library/audio/SvSimpleSynth.js window": "Web Audio (AudioContext); skipped where there is none",
+    "source/library/resources/sounds/SvWaContext.js window": "Web Audio (AudioContext); skipped where there is none",
+    "source/library/ideal/categories/Image_ideal.js document": "canvas pixel work on an image",
+    "source/library/image/SvImageBorderRemover.js document": "canvas pixel work on an image",
+    "source/library/image/SvImageMosaic.js document": "canvas pixel work on an image",
+    "source/library/ideal/categories/String_ideal.js document": "HTML parsing by the browser (asNormalizedHtml, contentOfElementsOfTag)",
+    "source/library/ideal/html/SvHtmlStreamReader/SvStreamElementNode.js document": "the stream reader's output is DOM nodes",
+    "source/library/ideal/html/SvHtmlStreamReader/SvStreamTextNode.js document": "the stream reader's output is DOM nodes",
+    "source/library/resources/fonts/SvFont.js document": "registers a loaded FontFace (document.fonts)"
+};
 
 const DOM_MEMBERS = [
     "createElement", "createTextNode", "createRange", "body", "head", "documentElement", "referrer",
@@ -94,7 +110,7 @@ function currentUses () {
         const code = codeWithoutComments(file);
         for (const global of GLOBALS) {
             const n = (code.match(global.pattern) || []).length;
-            if (n > 0) {
+            if (n > 0 && !ALLOWED[`${rel} ${global.name}`]) {
                 counts[`${rel} ${global.name}`] = n;
             }
         }

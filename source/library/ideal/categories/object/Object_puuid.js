@@ -20,14 +20,9 @@
         const charactersLength = characters.length;
         const randomValues = new Uint8Array(length);
 
-        // Use appropriate crypto API based on environment
-        if (typeof window !== "undefined" && window.crypto) {
-            // Browser environment
-            window.crypto.getRandomValues(randomValues);
-        } else if (typeof require !== "undefined") {
-            // Node.js environment
-            const crypto = require("crypto");
-            crypto.randomFillSync(randomValues);
+        // Web Crypto is a global in browsers and in Node (19+)
+        if (typeof globalThis.crypto !== "undefined") {
+            globalThis.crypto.getRandomValues(randomValues);
         } else {
             // Fallback to Math.random (less secure)
             for (let i = 0; i < length; i++) {
