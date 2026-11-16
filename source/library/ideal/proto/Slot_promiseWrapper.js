@@ -5,26 +5,35 @@
 
 /** * @class Slot_promiseWrapper
  * @extends Slot
- * @classdesc Category of Slot class to add support for promise wrapped getters.
- * Their values (and the promise wrapper) can automatically be reset when another slot is updated.
+ * @classdesc Category of Slot adding promise-wrapped getters: a slot whose
+ * value is computed asynchronously, once, however many callers ask for it.
  *
- * Notes on promise wrapped method pattern:
-
-    Related ivars:
-        this.newSimpleSlot("isPromiseWrapped", false);
-        this.newSimpleSlot("promiseResetsOnChangeOfSlotName", null);
-
-    Example usage:
-
-        const slot = this.newSlot("publicUrl", null); // private
-        slot.setIsPromiseWrapped(true);
-        // - adds a asyncPublicUrl() method which does the promise wrapping and returns a promise
-        // and calls asyncComputePublicUrl() method to compute the public url
-
-        slot.setPromiseResetsOnChangeOfSlotName("dataUrl");
-        // - adds an onDidChangeOfSlotName("dataUrl") method which resets the promise
-
-
+ *     const slot = this.newSlot("publicUrl", null);
+ *     slot.setIsPromiseWrapped(true);
+ *     slot.setPromiseResetsOnChangeOfSlotName("dataUrl"); // optional
+ *
+ * gives the class:
+ *
+ *     asyncPublicUrl()         returns THE promise for the value. The first call
+ *                              starts asyncComputePublicUrl(); every later call,
+ *                              during the computation or after it, gets that same
+ *                              promise. The class implements asyncComputePublicUrl().
+ *     didUpdateSlotDataUrl()   resets the value when dataUrl changes.
+ *
+ * The contract:
+ *   - The promise is the cache, so a computed null is a value like any other
+ *     and is not computed again.
+ *   - A failed computation rejects the callers waiting on it and is forgotten:
+ *     the next call computes again.
+ *   - A reset while computing does not reject anyone. The stale computation's
+ *     result is dropped, a new one starts, and the callers already waiting get
+ *     the new value from the promise they hold.
+ *   - A value set with the setter (loaded, or assigned) is the value:
+ *     asyncPublicUrl() resolves to it without computing.
+ *
+ * Per-instance state, beside the slot's own ivar (_publicUrl):
+ *     _publicUrlPromise   the promise callers share (a Promise.clone()), or null
+ *     _publicUrlRun       counts computations, so a superseded one is ignored
  */
 
 (class Slot_promiseWrapper extends Slot {
@@ -41,80 +50,117 @@
         return this.privateName() + "Promise";
     }
 
+    runPrivateName () {
+        return this.privateName() + "Run";
+    }
+
     setupPromiseWrapperIfNeeded () {
         if (this.isPromiseWrapped()) {
-            // set the promise wrapped getter
             this.owner()[this.asyncGetterName()] = this.newAsyncPromiseWrappedGetter();
         }
         this.setupPromiseResetMethodIdNeeded();
     }
 
     newAsyncPromiseWrappedGetter () {
-        /*
-        Example:
-        for a publicUrl slot, we'd set up the following:
-
-            _publicUrl // privateName
-            _publicUrlPromise // promisePrivateName
-            publicUrl() // getterName
-
-            setPublicUrl(value) // setterName
-            asyncPublicUrl() <--- asyncGetterName - this method returns the promise
-            asyncComputePublicUrl() // computeMethodName
-
-            didUpdate{DependencySlotName}
-
-        */
-
         const slot = this;
-        const privateName = this.privateName();
-        const promisePrivateName = this.promisePrivateName();
-
         return function (...args) { // Example: asyncPublicUrl()
             assert(args.length === 0, "getter should not be called with arguments");
-
-            // If we already have a value, return it (*ASSUME* null means it's not yet computed)?
-            if (this[privateName] !== null) {
-                return Promise.resolve(this[privateName]);
-            }
-
-            // One computation at a time: callers that arrive while it runs share its promise
-            if (!this[promisePrivateName]) {
-                const promise = Promise.clone();
-                this[promisePrivateName] = promise;
-                slot.asyncFulfillWrappedPromise(this, promise);
-            }
-            return this[promisePrivateName];
+            return slot.wrappedPromiseOn(this);
         };
     }
 
     /**
-     * @description Runs the instance's compute method and settles the promise
-     * its callers share. A failure rejects those callers and clears the cached
-     * promise, so the next call computes again instead of returning the same
-     * rejection for the life of the object. If the promise was reset while
-     * computing (a dependency changed), the stale result is dropped: the
-     * reset already rejected it.
+     * @description The promise for the instance's value: the one already
+     * shared if it still stands, else a new one — settled at once when the
+     * value was set directly, otherwise computing.
      * @param {Object} instance
-     * @param {Promise} promise - made with Promise.clone()
      * @returns {Promise}
      * @category Promise Wrapper
      */
-    async asyncFulfillWrappedPromise (instance, promise) {
-        const promisePrivateName = this.promisePrivateName();
+    wrappedPromiseOn (instance) {
+        const promiseName = this.promisePrivateName();
+        if (this.wrappedPromiseIsCurrentOn(instance)) {
+            return instance[promiseName];
+        }
+        const promise = Promise.clone();
+        instance[promiseName] = promise;
+        const value = instance[this.privateName()];
+        if (value !== null) {
+            this.resolveWrappedPromise(promise, value); // set with the setter: nothing to compute
+        } else {
+            this.asyncComputeForWrappedPromise(instance, promise);
+        }
+        return promise;
+    }
+
+    /**
+     * @description Whether the instance's shared promise still answers for
+     * its value: it is pending, or it resolved to the value the slot holds
+     * now (the setter may have replaced the value since).
+     * @param {Object} instance
+     * @returns {Boolean}
+     * @category Promise Wrapper
+     */
+    wrappedPromiseIsCurrentOn (instance) {
+        const promise = instance[this.promisePrivateName()];
+        if (!promise) {
+            return false;
+        }
+        return !promise.isCompleted() || promise._wrappedValue === instance[this.privateName()];
+    }
+
+    resolveWrappedPromise (promise, value) {
+        promise._wrappedValue = value;
+        promise.callResolveFunc(value);
+    }
+
+    /**
+     * @description Runs the instance's compute method and settles the promise
+     * its callers share. Each run takes a number; a run that is no longer the
+     * latest when it finishes (the value was reset meanwhile) is ignored,
+     * result or error. A failure of the latest run rejects the callers and
+     * clears the promise, so the next call computes again.
+     * @param {Object} instance
+     * @param {Promise} promise - the shared promise, made with Promise.clone()
+     * @returns {Promise}
+     * @category Promise Wrapper
+     */
+    async asyncComputeForWrappedPromise (instance, promise) {
+        const runName = this.runPrivateName();
+        const run = (instance[runName] || 0) + 1;
+        instance[runName] = run;
         try {
             const computeMethod = instance[this.computeMethodName()];
             assert(computeMethod, "compute method not found for promise wrapped slot " + this.name());
             const value = await computeMethod.call(instance);
-            if (instance[promisePrivateName] === promise) {
+            if (instance[runName] === run) {
                 instance[this.setterName()].call(instance, value);
-                promise.callResolveFunc(value);
+                this.resolveWrappedPromise(promise, value);
             }
         } catch (error) {
-            if (instance[promisePrivateName] === promise) {
-                instance[promisePrivateName] = null; // let the next call retry
+            if (instance[runName] === run) {
+                instance[this.promisePrivateName()] = null; // let the next call retry
                 promise.callRejectFunc(error);
             }
+        }
+    }
+
+    /**
+     * @description Forgets the instance's value so it is computed again. If a
+     * computation is running, its callers keep waiting on the promise they
+     * hold and a new computation starts for it; otherwise the next call to
+     * the async getter computes.
+     * @param {Object} instance
+     * @category Promise Wrapper
+     */
+    resetWrappedPromiseOn (instance) {
+        const promiseName = this.promisePrivateName();
+        const promise = instance[promiseName];
+        instance[this.privateName()] = null;
+        if (promise && !promise.isCompleted()) {
+            this.asyncComputeForWrappedPromise(instance, promise); // supersedes the running one
+        } else {
+            instance[promiseName] = null; // nothing is running: the next call computes
         }
     }
 
@@ -130,25 +176,8 @@
 
     newPromiseResetMethod () {
         const slot = this;
-        return function (/*oldValue, newValue*/) {
-            // This is called when the slot on which our slot's value depends is changed.
-            // We need to reset our slot's value and it's compute promise to null in order
-            // to allow it to be recomputed when needed
-
-            // reset the promise
-            const promisePrivateName = slot.promisePrivateName();
-            const promise = this[promisePrivateName];
-
-            if (promise && !promise.isCompleted()) {
-                // How do we deal with the case of reseting the promise if it's not completed? Reject it?
-                promise.callRejectFunc(new Error("slot wrapped promise reset before completion"));
-            }
-
-            // reset the value
-            this[slot.privateName()] = null;
-
-            // reset the promise
-            this[promisePrivateName] = null;
+        return function (/*oldValue, newValue*/) { // the slot our value depends on changed
+            slot.resetWrappedPromiseOn(this);
         };
     }
 

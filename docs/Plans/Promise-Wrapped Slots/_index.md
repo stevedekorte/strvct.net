@@ -2,7 +2,7 @@
 
 Automatic async getter generation with promise caching and dependency-driven invalidation.
 
-**Status:** working and tested (2026-11-15), but nothing uses it: no slot in the framework or the app sets `setIsPromiseWrapped(true)`. Until that date the generated getter threw on its first call, so nothing could have. The other challenges wait for a first adopter; if none comes, delete the category.
+**Status:** the core contract is done and tested (2026-11-15): one promise per value that every caller shares, a computed `null` is a value, a failure is retried, and a dependency change mid-computation hands the waiting callers the new value. Nothing uses it yet: no slot in the framework or the app sets `setIsPromiseWrapped(true)` (until that date the generated getter threw on its first call). View states, persistence and dependency chains, below, wait for a first adopter.
 
 ## Context
 
@@ -24,29 +24,29 @@ Mark a slot as promise-wrapped:
 
 This generates:
 
-- **`asyncPublicUrl()`** — an async getter that callers use instead of `publicUrl()`. Returns the cached value if available, or the in-flight promise if a computation is already underway, or kicks off a new computation.
-- **`asyncComputePublicUrl()`** — a method the class must implement, containing the actual async logic. Called at most once per computation cycle.
-- **`_publicUrlPromise`** — a private property holding the in-flight `Promise.clone()` instance, ensuring concurrent callers share a single computation.
-- **`didUpdateSlotDataUrl()`** — an auto-generated hook that resets both the cached value and the promise when the `dataUrl` slot changes, so the next call to `asyncPublicUrl()` recomputes.
+- **`asyncPublicUrl()`** — returns *the* promise for the value. The first call starts the computation; every later call, during the computation or after it, gets that same promise.
+- **`asyncComputePublicUrl()`** — a method the class must implement, containing the actual async logic.
+- **`_publicUrlPromise`** — a private property holding the shared `Promise.clone()` instance. The promise is the cache.
+- **`didUpdateSlotDataUrl()`** — an auto-generated hook that resets the value when the `dataUrl` slot changes.
 
-## Existing Scaffolding
+The contract:
 
-The implementation lives in `Slot_promiseWrapper.js`, a category on `Slot`:
+- **A computed `null` is a value.** The promise, not a non-null value, says "computed", so `null` is not computed again.
+- **A failure is forgotten.** The callers waiting on it are rejected; the next call computes again.
+- **A reset while computing rejects nobody.** The stale computation's result is dropped, a new one starts, and the callers already waiting get the new value from the promise they hold. A reset after the computation clears the value, and the next call computes.
+- **A value set with the setter is the value.** `asyncPublicUrl()` resolves to it without computing, so a loaded or assigned value is respected.
 
-- **`isPromiseWrapped`** — boolean flag on `Slot`, registered in `Slot.js` (line 135). When true, `setupPromiseWrapperIfNeeded()` installs the async getter during slot setup.
+## Implementation
 
-- **`promiseResetsOnChangeOfSlotName`** — optional string naming a dependency slot. When set, `setupPromiseResetMethodIfNeeded()` installs a `didUpdateSlot{Name}` method that nulls both the cached value and the in-flight promise.
+`Slot_promiseWrapper.js`, a category on `Slot`:
 
-- **`newAsyncPromiseWrappedGetter()`** — generates the async getter function. The logic:
-  1. If the private value is non-null, return it immediately (synchronous fast path).
-  2. If `_slotNamePromise` already exists, return it (promise deduplication).
-  3. Otherwise, make the shared promise and hand it to `asyncFulfillWrappedPromise()`, which calls `asyncCompute{SlotName}()`, sets the value via the normal setter on success, and resolves or rejects the promise.
+- **`isPromiseWrapped`** — boolean flag on `Slot`. When true, `setupPromiseWrapperIfNeeded()` (called from `Slot.setupGetter()`) installs the async getter beside the synchronous one.
+- **`wrappedPromiseOn(instance)`** — what the async getter returns: the shared promise if it still stands (`wrappedPromiseIsCurrentOn()`: pending, or resolved to the value the slot holds now), else a new one, resolved at once when the value was set directly and otherwise computing.
+- **`asyncComputeForWrappedPromise(instance, promise)`** — runs `asyncCompute{SlotName}()` and settles the promise. Each run takes a number (`_publicUrlRun`); a run that is no longer the latest when it finishes is ignored, result or error.
+- **`resetWrappedPromiseOn(instance)`** — forgets the value. With a computation running it starts a new one for the same promise; otherwise it clears the promise.
+- **`promiseResetsOnChangeOfSlotName`** — optional string naming a dependency slot; installs a `didUpdateSlot{Name}` method that calls the reset.
 
-- **`newPromiseResetMethod()`** — generates the dependency reset function. If the in-flight promise hasn't completed when a reset fires, it rejects the promise with an error before nulling everything.
-
-- **Integration point** — `Slot.setupGetter()` calls `setupPromiseWrapperIfNeeded()` after installing the normal getter, so the async getter is available on the prototype alongside the synchronous one.
-
-The pattern relies on STRVCT's extended `Promise` class (`Promise_ideal.js`), which adds `callResolveFunc()`, `callRejectFunc()`, `isCompleted()`, and timeout support to native promises via `Promise.clone()`.
+The pattern relies on STRVCT's extended `Promise` class (`Promise_ideal.js`), which adds `callResolveFunc()`, `callRejectFunc()` and `isCompleted()` to native promises via `Promise.clone()`. `tests/headless/TestPromiseWrappedSlots.js` checks each line of the contract.
 
 ## Current Usage
 
@@ -57,11 +57,15 @@ The pattern relies on STRVCT's extended `Promise` class (`Promise_ideal.js`), wh
 
 ### Null as Sentinel
 
-The current fast path treats `null` as "not yet computed" — if the slot's value is legitimately `null`, the async getter will recompute on every call. A dedicated sentinel value (e.g., `Slot.UNCOMPUTED`) would be more robust, but adds complexity to the slot value contract.
+**Solved (2026-11-15).** The promise is the cache, so a computed `null` is not computed again. One trace remains: a slot whose value is `null` and which has no promise is "not computed", so a `null` *assigned with the setter* still computes on the first call.
 
 ### Error Recovery
 
-**Fixed (2026-11-15).** When `asyncCompute{Name}()` throws, the callers waiting on it are rejected and the cached promise is cleared, so the next call computes again. A result that arrives after a dependency reset is dropped rather than set. The fix found a worse bug underneath: the getter never created the promise it resolved, so every first call threw. `tests/headless/TestPromiseWrappedSlots.js` covers the first call, shared computation, retry after failure, and reset mid-computation. A retry policy (backoff, attempt limits) can come later if a caller needs one.
+**Solved (2026-11-15).** A failed computation rejects the callers waiting on it and clears the promise, so the next call computes again. The first version of the fix found a worse bug underneath: the getter never created the promise it resolved, so every first call threw. A retry policy (backoff, attempt limits) can come later if a caller needs one.
+
+### Reset While Computing
+
+**Solved (2026-11-15).** It used to reject the waiting callers with "reset before completion", which made every caller write retry logic for a change it had not caused. Now the stale result is dropped and the same promise resolves with the value for the new dependency.
 
 ### Interaction with View Sync
 
@@ -82,7 +86,7 @@ If a promise-wrapped slot is also stored (`setShouldStoreSlot(true)`), the persi
 ## Open Questions
 
 - Should the promise wrapper support configurable retry on failure?
-- Is `null` the right sentinel for "not yet computed," or should a dedicated symbol be used?
 - Should there be a synchronous `hasComputedPublicUrl()` predicate so views can check without triggering computation?
 - How should promise-wrapped slots interact with JSON serialization — should derived values be excluded from `serializeToJson()` by default?
 - Could the dependency system be extended to handle multiple dependencies or dependency chains?
+- When the setter assigns a value while a computation is running, the computation's result replaces it. Should the assigned value win instead?
