@@ -68,24 +68,6 @@
             slot.setIsSubnodeField(true);
         }
 
-        {
-            const slot = this.newSlot("asyncReadFromLocalStoragePromise", null);
-            slot.setIsInJsonSchema(false);
-            slot.setLabel("Async Get Blob From Local Storage Promise");
-            slot.setShouldStoreSlot(false);
-            slot.setSlotType("Promise");
-            slot.setIsSubnodeField(false);
-        }
-
-        {
-            const slot = this.newSlot("asyncWriteToLocalStoragePromise", null);
-            slot.setIsInJsonSchema(false);
-            slot.setLabel("Async Save To Local Storage Promise");
-            slot.setShouldStoreSlot(false);
-            slot.setSlotType("Promise");
-            slot.setIsSubnodeField(false);
-        }
-
     }
 
     /**
@@ -275,80 +257,96 @@
 
     // --- read from and write to local storage ---
 
-    async asyncWriteToLocalStorage () {
+    /**
+     * @description Writes the current blob to the local blob pool. A call
+     * that arrives while a write is in flight is promised the NEXT write,
+     * which starts when that one ends: the blob may have been replaced since
+     * the write in flight read it, and those bytes must be stored too. (The
+     * pool stores by content hash, so writing unchanged bytes again is a
+     * lookup, not a second copy.)
+     * @returns {Promise<SvBlobNode>} this
+     * @category Blob Storage
+     */
+    asyncWriteToLocalStorage () {
+        return this.freshPromiseNamed("writeToLocalStorage", () => this.asyncJustWriteToLocalStorage());
+    }
+
+    /**
+     * @description One write of the current blob (see asyncWriteToLocalStorage).
+     * @returns {Promise<SvBlobNode>} this
+     * @category Blob Storage
+     */
+    async asyncJustWriteToLocalStorage () {
         this.isDebugging() && console.log("[SvBlobNode] writing blob to local storage");
-
-        if (this.asyncWriteToLocalStoragePromise()) {
-            return this.asyncWriteToLocalStoragePromise();
-        }
-
-        this.setAsyncWriteToLocalStoragePromise(Promise.clone());
-
-        try {
-            const blob = this.blobValue();
-            if (blob) {
-                // asyncStoreBlob returns the hash the bytes were actually
-                // stored under — verify with THAT, not with valueHash, which
-                // can be stale for the current bytes (a cloud-provided hash,
-                // or a hash recompute still in flight).
-                const storedHash = await this.defaultStore().blobPool().asyncStoreBlob(blob);
-                this.isDebugging() && console.log("[SvBlobNode] locally stored blob with hash:", storedHash);
-
-                const nodeHash = this.valueHash();
-                if (nodeHash !== null && nodeHash !== storedHash) {
-                    // Self-diagnosing: the node claims an identity its bytes
-                    // don't have. Not fatal here (the bytes are safely stored
-                    // and the hook's recompute will reconcile), but anything
-                    // that recorded nodeHash (cloud JSON, references) points
-                    // at bytes that don't exist.
-                    console.warn(this.svTypeId() + ".asyncWriteToLocalStorage() valueHash " + nodeHash +
-                        " != stored blob hash " + storedHash + " — valueHash is stale for the current bytes");
-                }
-
-                const blobFromPool = await this.defaultStore().blobPool().asyncGetBlob(storedHash);
-                assert(blobFromPool !== null, "blob from pool is null for just-stored hash " + storedHash);
+        const blob = this.blobValue();
+        if (blob) {
+            // asyncStoreBlob returns the hash the bytes were actually
+            // stored under — verify with THAT, not with valueHash, which
+            // can be stale for the current bytes (a cloud-provided hash,
+            // or a hash recompute still in flight).
+            const storedHash = await this.defaultStore().blobPool().asyncStoreBlob(blob);
+            this.isDebugging() && console.log("[SvBlobNode] locally stored blob with hash:", storedHash);
+            if (this.blobValue() === blob) { // replaced mid-write: the next write checks the new bytes
+                this.warnIfHashIsStaleFor(storedHash);
             }
-            this.asyncWriteToLocalStoragePromise().callResolveFunc(null);
-        } catch (error) {
-            this.asyncWriteToLocalStoragePromise().callRejectFunc(error);
-            throw error;
-        } finally {
-            this.setAsyncWriteToLocalStoragePromise(null);
+            const blobFromPool = await this.defaultStore().blobPool().asyncGetBlob(storedHash);
+            assert(blobFromPool !== null, "blob from pool is null for just-stored hash " + storedHash);
         }
         return this;
     }
 
-    async asyncReadFromLocalStorage () {
-        if (this.asyncWriteToLocalStoragePromise()) {
-            await this.asyncWriteToLocalStoragePromise();
+    /**
+     * @description Self-diagnosing: warns when the node claims an identity
+     * its bytes don't have. Not fatal (the bytes are safely stored and the
+     * hash recompute will reconcile), but anything that recorded valueHash
+     * (cloud JSON, references) points at bytes that don't exist.
+     * @param {String} storedHash - the hash the current bytes were stored under
+     * @category Blob Storage
+     */
+    warnIfHashIsStaleFor (storedHash) {
+        const nodeHash = this.valueHash();
+        if (nodeHash !== null && nodeHash !== storedHash) {
+            console.warn(this.svTypeId() + ".asyncWriteToLocalStorage() valueHash " + nodeHash +
+                " != stored blob hash " + storedHash + " — valueHash is stale for the current bytes");
         }
+    }
 
-        if (this.asyncReadFromLocalStoragePromise()) {
-            return this.asyncReadFromLocalStoragePromise();
+    /**
+     * @description Reads this node's blob (by valueHash) from the local blob
+     * pool into memory. One read at a time; callers during a read share it.
+     * @returns {Promise<Blob|null>} the blob, or null when there is no hash or the pool lacks it
+     * @category Blob Storage
+     */
+    asyncReadFromLocalStorage () {
+        return this.inFlightPromiseNamed("readFromLocalStorage", () => this.asyncJustReadFromLocalStorage());
+    }
+
+    /**
+     * @description One read (see asyncReadFromLocalStorage). Waits for a
+     * write in flight to end first — the bytes may not be in the pool yet —
+     * but does not fail because that write did. A blob read for a hash the
+     * node no longer has (the content was replaced while reading) is not
+     * kept: the read answers for the node's content now.
+     * @returns {Promise<Blob|null>}
+     * @category Blob Storage
+     */
+    async asyncJustReadFromLocalStorage () {
+        const writing = this.existingSharedPromiseNamed("writeToLocalStorage");
+        if (writing) {
+            await writing.catch(() => null);
         }
-
-        this.setAsyncReadFromLocalStoragePromise(Promise.clone());
-
-        try {
-            const hash = this.valueHash();
-            if (hash) {
-                const blob = await this.defaultStore().blobPool().asyncGetBlob(hash);
-                if (blob) {
-                    this._blobValue = blob; // don't want to trigger saving the blob value
-                    this.asyncReadFromLocalStoragePromise().callResolveFunc(blob);
-                    this.setAsyncReadFromLocalStoragePromise(null);
-                    return blob;
-                }
-            }
-        } catch (error) {
-            this.asyncReadFromLocalStoragePromise().callRejectFunc(error);
-            this.setAsyncReadFromLocalStoragePromise(null);
-            throw error;
+        const hash = this.valueHash();
+        if (!hash) {
+            return null;
         }
-
-        this.asyncReadFromLocalStoragePromise().callResolveFunc(null);
-        this.setAsyncReadFromLocalStoragePromise(null);
-        return null;
+        const blob = await this.defaultStore().blobPool().asyncGetBlob(hash);
+        if (this.valueHash() !== hash) {
+            return this.blobValue() || this.asyncJustReadFromLocalStorage(); // replaced while reading
+        }
+        if (blob) {
+            this._blobValue = blob; // don't want to trigger saving the blob value
+        }
+        return blob || null;
     }
 
     // -------------------------

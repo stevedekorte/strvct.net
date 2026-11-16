@@ -72,6 +72,19 @@
     }
 
     /**
+     * @description The promise for the work by this name, if it is under way
+     * or was done once and kept — for code that must wait on work it does
+     * not start.
+     * @param {String} name
+     * @returns {Promise|null}
+     * @category Shared Promises
+     */
+    existingSharedPromiseNamed (name) {
+        const run = this.sharedPromiseRunsMap().get(name);
+        return run ? run.promise : null;
+    }
+
+    /**
      * @description Abandons the work by this name (see the class notes).
      * @param {String} name
      * @returns {Object} this

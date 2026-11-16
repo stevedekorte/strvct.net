@@ -55,14 +55,6 @@
             slot.setActionMethodName("asyncPushToCloud");
         }
 
-        // so multiple calls to push to cloud don't result in multiple promises
-        {
-            const slot = this.newSlot("pushToCloudPromise", null);
-            slot.setShouldStoreSlot(false);
-            slot.setSlotType("Promise");
-            slot.setIsSubnodeField(false);
-        }
-
         /// pull from cloud action
         {
             const slot = this.newSlot("pullFromCloudAction", null);
@@ -188,57 +180,60 @@
     }
 
     schedulePushToCloud () {
-        if (this.pushToCloudPromise() || this.hasInCloud()) {
+        if (this.hasSharedPromiseNamed("pushToCloud") || this.hasInCloud()) {
             return;
         }
         SvSyncScheduler.shared().scheduleTargetAndMethod(this, "onScheduledPushToCloud");
     }
 
     onScheduledPushToCloud () {
-        this.asyncPushToCloud();
+        this.asyncPushToCloud().catch((error) => { // nobody awaits a scheduled push
+            console.warn(this.logPrefix() + " scheduled push to cloud failed:", error);
+        });
     }
 
     // --- push to cloud ---
 
-    async asyncPushToCloud () {
-        if (this.pushToCloudPromise()) {
-            return this.pushToCloudPromise();
-        }
+    /**
+     * @description Uploads the current blob. One push at a time; callers
+     * during a push share it.
+     * @returns {Promise<String>} the blob's public url
+     * @category Cloud
+     */
+    asyncPushToCloud () {
+        return this.inFlightPromiseNamed("pushToCloud", (run) => this.asyncJustPushToCloud(run));
+    }
+
+    /**
+     * @description One push. While the upload is in flight the content can
+     * be replaced (asyncJustSetBlobValue / didUpdateSlotValueHash abandon
+     * this push with clearPushToCloudPromise): only a push that is still
+     * current may describe the cloud state — an abandoned one uploaded bytes
+     * that are no longer ours.
+     * @param {Object} run - this push (see Object_sharedPromises)
+     * @returns {Promise<String>}
+     * @category Cloud
+     */
+    async asyncJustPushToCloud (run) {
         const blob = this.blobValue();
         if (!blob) {
             throw new Error(this.logPrefix() + " asyncPushToCloud: no blob value to push");
         }
-        // Hold the promise LOCALLY. While the upload is in flight the content
-        // can be replaced (asyncJustSetBlobValue / didUpdateSlotValueHash
-        // clear the slot to abandon this push), and reading the slot back
-        // after the await then dereferenced null — "Cannot read properties
-        // of null (reading 'callRejectFunc')" on dev 2026-09-13, a regenerated
-        // image landing mid-upload. Settle the promise we made; only clear the
-        // slot if it is still ours (a newer push may have taken it).
-        const promise = Promise.clone();
-        this.setPushToCloudPromise(promise);
-        try {
-            const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
-            if (this.pushToCloudPromise() === promise) {
-                // Only the push that is still current may describe the cloud
-                // state; an abandoned one uploaded bytes that are no longer ours.
-                this.setDownloadUrl(publicUrl);
-                this.setHasInCloud(true);
-                this.clearPushToCloudPromise();
-            }
-            promise.callResolveFunc();
-            return publicUrl;
-        } catch (error) {
-            if (this.pushToCloudPromise() === promise) {
-                this.clearPushToCloudPromise();
-            }
-            promise.callRejectFunc(error);
-            throw error;
+        const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
+        if (run.isCurrent()) {
+            this.setDownloadUrl(publicUrl);
+            this.setHasInCloud(true);
         }
+        return publicUrl;
     }
 
+    /**
+     * @description Abandons a push in flight (the content it is uploading was replaced).
+     * @returns {SvCloudBlobNode}
+     * @category Cloud
+     */
     clearPushToCloudPromise () {
-        this.setPushToCloudPromise(null);
+        this.forgetSharedPromiseNamed("pushToCloud");
         return this;
     }
 

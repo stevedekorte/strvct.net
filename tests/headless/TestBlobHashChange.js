@@ -307,7 +307,7 @@ async function testInFlightPushSurvivesReplacement () {
         const node = SvGlobals.get("SvCloudBlobNode").clone();
         node._blobValue = { marker: "old-bytes" };
         const push = node.asyncPushToCloud();
-        check(node.pushToCloudPromise() !== null, "precondition: the push holds the promise slot while in flight");
+        check(node.hasSharedPromiseNamed("pushToCloud"), "precondition: the push is under way while in flight");
         node.clearPushToCloudPromise(); // new content arrived: the push is abandoned
         resolveUpload("https://example.com/old-bytes");
         let settled = "resolved";
@@ -322,7 +322,8 @@ async function testInFlightPushSurvivesReplacement () {
         resolveUpload("https://example.com/bytes");
         const url = await push2;
         check(url === "https://example.com/bytes" && fresh.hasInCloud() === true && fresh.downloadUrl() === url, "a current push records downloadUrl + hasInCloud");
-        check(fresh.pushToCloudPromise() === null, "…and releases the promise slot");
+        await Promise.resolve();
+        check(!fresh.hasSharedPromiseNamed("pushToCloud"), "…and is no longer under way");
     } finally {
         SvApp.shared = originalShared;
     }
