@@ -87,6 +87,29 @@
             slot.setShouldStoreSlot(true);
         }
 
+        /**
+         * @member {String|null} cacheControl - The Cache-Control the file is
+         * uploaded with, which the server sends back on every read; null for
+         * Storage's default (no browser caching). A content-addressed file
+         * never changes, so its owner can mark it cacheable for good.
+         */
+        {
+            const slot = this.newSlot("cacheControl", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {Boolean} isPubliclyReadable - Whether the storage rules let
+         * anyone read this file. Such a file is read from its fixed public url
+         * (publicUrlFromPath) without first asking for a download url: one
+         * request instead of two, and one url per file for the browser's cache.
+         */
+        {
+            const slot = this.newSlot("isPubliclyReadable", false);
+            slot.setSlotType("Boolean");
+        }
+
         // Download URL (cached)
         {
             const slot = this.newSlot("downloadUrl", null);
@@ -536,10 +559,7 @@
     async asyncDownload () {
         try {
             this.setError(null);
-            const ref = this.storageRef();
-
-            // Get download URL
-            const url = await ref.getDownloadURL();
+            const url = await this.asyncReadUrl();
 
             // Use SvXhrRequest for proper response type handling
             const request = SvXhrRequest.clone();
@@ -549,6 +569,9 @@
             request.setResponseType("blob");
             await request.asyncSend();
 
+            if (request.xhr().status === 404) {
+                throw new Error("storage/object-not-found: " + this.fullPath() + " does not exist (404)"); // as getDownloadURL reports it
+            }
             if (request.hasError()) {
                 throw request.error();
             }
@@ -598,6 +621,9 @@
                 contentType: contentType,
                 customMetadata: this.customMetadata() || {}
             };
+            if (this.cacheControl()) {
+                uploadMetadata.cacheControl = this.cacheControl();
+            }
 
             // Add current user info if available
             if (typeof firebase !== "undefined" && firebase.auth && firebase.auth().currentUser) {
@@ -783,6 +809,19 @@
     }
 
     // --- public url ---
+
+    /**
+     * @description The url to read this file's bytes from: its fixed public
+     * url when anyone may read it, otherwise a download url from Storage.
+     * @returns {Promise<String>}
+     * @category Storage Operations
+     */
+    async asyncReadUrl () {
+        if (this.isPubliclyReadable()) {
+            return this.publicUrlFromPath();
+        }
+        return this.storageRef().getDownloadURL();
+    }
 
     publicUrlFromPath () {
         const bucket = SvApp.shared().cloudStorageService().bucketName();

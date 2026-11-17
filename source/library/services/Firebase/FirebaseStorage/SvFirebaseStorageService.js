@@ -415,8 +415,28 @@
         }
     }
 
+    /**
+     * @description The public blob file for a content hash. Anyone may read
+     * it, and its bytes never change (the name is their hash), so it is read
+     * from its fixed url and uploaded cacheable for a year.
+     * @param {String} hash - The hex sha256 content hash.
+     * @returns {Promise<SvFirebaseFile>}
+     * @category Blob Storage
+     */
     async asyncPublicFileForHash (hash) {
-        return this.publicBlobsFolder().fileNamedCreateIfAbsent(hash);
+        const file = await this.publicBlobsFolder().fileNamedCreateIfAbsent(hash);
+        file.setIsPubliclyReadable(true);
+        file.setCacheControl(this.immutableCacheControl());
+        return file;
+    }
+
+    /**
+     * @description Cache-Control for content that never changes.
+     * @returns {String}
+     * @category Blob Storage
+     */
+    immutableCacheControl () {
+        return "public, max-age=31536000, immutable";
     }
 
     async asyncPublicFileForBlob (blob) {
