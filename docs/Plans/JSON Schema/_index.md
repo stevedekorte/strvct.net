@@ -2,7 +2,7 @@
 
 Expanding auto-generated JSON Schema coverage across slots, classes, and the domain model.
 
-**Status:** open. **Order:** slot-level keywords, then validation against them (which takes in the Data Validation item from [Emergent Capabilities](../Emergent%20Capabilities/)), then type unions. Leave `if`/`then`/`else` until a real case needs it.
+**Status:** slot-level keywords and validation against them are built (2026-11-17, see [What Was Built](#what-was-built)); no slot declares a constraint yet. **Left:** `pattern` as a checked constraint, the class-level keywords, type unions. Leave `if`/`then`/`else` until a real case needs it.
 
 ## Context
 
@@ -46,13 +46,13 @@ The current implementation covers the most common schema features, but there are
 | `properties` | `setFinalInitProto()` | Nested object schemas |
 | `$ref` | Auto-generated | For slots referencing node classes |
 
-### Already inconsistent
+### Already inconsistent (fixed 2026-11-17)
 
-One annotation already has two readers that disagree: `SvFieldTile` emits `aria-valuemin` / `aria-valuemax` from a slot's `minimum` / `maximum` annotations, but `Slot.asJsonSchema()` doesn't emit those annotations. It only derives `minimum` and `maximum` from a contiguous integer `enum`. Wiring the annotation into the schema is the natural first change.
+One annotation had two readers that disagreed: `SvFieldTile` emits `aria-valuemin` / `aria-valuemax` from a slot's `minimum` / `maximum` annotations, but `Slot.asJsonSchema()` doesn't emit those annotations. It only derives `minimum` and `maximum` from a contiguous integer `enum`. Wiring the annotation into the schema is the natural first change.
 
-## Missing Slot-Level Keywords
+## Slot-Level Keywords
 
-These JSON Schema keywords have no corresponding slot annotation yet:
+All of these now have a slot setter named after the keyword (`setMinimum(n)`, `setMaxLength(n)`, …), in `Slot_constraints.js`:
 
 ### Numeric constraints
 
@@ -68,7 +68,7 @@ These JSON Schema keywords have no corresponding slot annotation yet:
 ### Array constraints
 
 - **`minItems` / `maxItems`** — collection size bounds
-- **`uniqueItems`** — partially supported on item-typed arrays but not as a general slot annotation
+- **`uniqueItems`** — partially supported on item-typed arrays but not as a general slot annotation (not added)
 
 ## Missing Class-Level Keywords
 
@@ -87,7 +87,7 @@ These JSON Schema keywords have no corresponding slot annotation yet:
 - **`patternProperties`** — schema for properties matching a regex pattern
 - **`minProperties` / `maxProperties`** — bounds on the number of properties
 
-## Implementation Approach
+## Implementation Approach (as planned)
 
 ### Slot-level additions
 
@@ -132,6 +132,41 @@ This would unify schema declaration and runtime validation, ensuring the contrac
 - **Loading** (`loadFromRecord`, `deserializeFromJson`, lazy materialization): warn and keep the value. The setter already only warns on a type mismatch; constraints should do the same.
 - **Edits** (the user, a JSON patch from an AI): reject, with a message built from the annotation ("must be at least 0"). For AI patches the rejection goes back as a tool-call error, so the model can correct itself.
 - **Field tiles** show the same message beside the field, which is the Data Validation idea from Emergent Capabilities: one set of annotations feeding the schema, the ARIA attributes and the error text.
+
+## What Was Built
+
+2026-11-17. `Slot_constraints.js`, a category of `Slot`, with `tests/headless/TestSlotConstraints.js`.
+
+| Constraint | Applies to | Schema | Checked |
+|---|---|---|---|
+| `setMinimum` / `setMaximum` | Number | yes | yes |
+| `setExclusiveMinimum` / `setExclusiveMaximum` | Number | yes | yes |
+| `setMultipleOf` | Number | yes | yes, allowing for floating point |
+| `setMinLength` / `setMaxLength` | String | yes | yes |
+| `setMinItems` / `setMaxItems` | Array | yes | yes |
+| `setFormat` | String | yes | no |
+
+One declaration has four readers:
+
+- **The schema.** `Slot.asJsonSchema()` emits each declared keyword. A declared `maxLength` never raises the 16 KB cap a stored string already has.
+- **The error sentence.** `slot.constraintErrorForValue(v)` returns "Must be at most 20." or `null`. It judges only the constraints for the value's type; the slot's type check is separate.
+- **ARIA.** `SvFieldTile` reads `slot.minimum()` / `slot.maximum()`, the same values the schema emits.
+- **The setter**, which warns and keeps the value.
+
+Where an edit is refused:
+
+- **A field.** `SvField.validateValue(v)` now returns the target slot's sentence (`SvField.targetSlot()` finds the slot), and `SvNumberField` adds it to its own checks. The field tile already showed a field's error and held the value back from the model, so nothing changed in the view.
+- **A JSON patch.** The preflight refuses the whole batch before anything is applied, for the patched slot and for a field inside a value being added, with the sentence in the error the AI gets back.
+
+Decisions made along the way:
+
+- **The setter cannot refuse.** It can't tell a load from an edit, so the refusal lives where edits come in. Code that calls a setter directly with a bad value gets a warning, not an error.
+- **The patch refusal assumes patches are edits.** Today the only caller of `applyJsonPatches` is the AI's `patchClientState` tool. If patches are ever used again to copy state from one machine to another, that path must skip the constraint check, or a value that loaded with a warning on the host would be refused on the client.
+- **`format` is not checked.** It tells the AI what kind of string to write; checking each format is a separate piece of work.
+- **`pattern` is still schema-only.** `setJsonSchemaPattern` predates this and is emitted but not checked. Checking it belongs here and is the natural next addition.
+- **`SvNumberField`'s own `minValue` / `maxValue`** (used by sliders) are left as they are. A slot's `minimum` / `maximum` could feed them, which would retire the pair.
+
+**No slot declares a constraint yet**, in the framework or the app, so nothing behaves differently until one does. Each one added is a decision about data already stored (it will warn on load) and about what the AI may write (it will be refused), so they are best added where a wrong value has been seen.
 
 ## Richer Type Unions
 

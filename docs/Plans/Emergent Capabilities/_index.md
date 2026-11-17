@@ -47,6 +47,8 @@ Slot annotations already drive three consumers: JSON Schema for AI tool calls, A
 
 Because the metadata is already there, validation rules wouldn't need to be declared separately from the slot definitions. A field tile with `setAnnotation("minimum", 0)` would automatically reject negative input and display an appropriate message, just as it already emits `aria-valuemin="0"` and `"minimum": 0` in JSON Schema.
 
+**Built 2026-11-17** as `slot.setMinimum(0)` and its siblings: see [JSON Schema](../JSON%20Schema/#what-was-built).
+
 ### Automated Testing
 
 The model is effectively its own specification. Slot metadata declares what types, ranges, and constraints each field accepts. This makes generative testing possible: the framework could automatically produce test cases for every editable slot (valid and invalid input for its type), exercise every action, and walk every navigation path in the node graph.

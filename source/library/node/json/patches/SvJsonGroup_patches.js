@@ -422,6 +422,10 @@
         if (!slot) {
             return "unknown field '" + key + "' in a " + valueClass.svType() + " (its fields: [" + valueClass.jsonSchemaSlots().map(sl => sl.name()).join(", ") + "])" + this.subclassHintFor(value, key, valueClass) + " — never invent field names";
         }
+        const constraintFailure = this.preflightConstraintFailure(value[key], slot);
+        if (constraintFailure) {
+            return constraintFailure + " (in a " + valueClass.svType() + ")";
+        }
         return this.unknownKeyIn(value[key], this.preflightClassOfSlot(slot));
     }
 
@@ -498,7 +502,20 @@
         if (slot.finalInitProtoClass && slot.finalInitProtoClass() && value !== null && !isContainer) {
             return "slot '" + slot.name() + "' holds a " + type + " object; a bare " + (typeof value) + " cannot go there";
         }
-        return null;
+        return this.preflightConstraintFailure(value, slot);
+    }
+
+    /**
+     * @description Refuses a value that breaks a constraint declared on the
+     * slot (Slot_constraints: minimum, maxLength, …). The setter would only
+     * warn and keep it, because a stored record must still load; a patch is
+     * an edit, and its sender can correct it.
+     * @returns {String|null} the failure, or null
+     * @category Preflight
+     */
+    preflightConstraintFailure (value, slot) {
+        const error = slot.constraintErrorForValue(value);
+        return error ? "slot '" + slot.name() + "' cannot be " + JSON.stringify(value).slice(0, 60) + ": " + error : null;
     }
 
     notePreflightEffects (operation, created, touchedArrays) {

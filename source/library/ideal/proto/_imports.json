@@ -1,6 +1,7 @@
 [
     "Slot.js",
     "Slot_promiseWrapper.js",
+    "Slot_constraints.js",
     "ProtoClass.js"
 ]
 

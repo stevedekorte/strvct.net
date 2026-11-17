@@ -102,6 +102,9 @@ Each class prototype maintains two slot maps:
 | `setDuplicateOp("duplicate")` | `"nop"` | Cloning policy when duplicating nodes (`"nop"`, `"copyValue"`, `"duplicate"`). |
 | `setValidValues([a, b])` | `null` | Restricts values to an allowed set, rendering dropdown options in the UI. |
 | `setAllowsNullValue(true)` | `false` | Relaxes runtime validation to permit `null` slot values. |
+| `setMinimum(n)` / `setMaximum(n)` | none | Number range. Emitted in JSON Schema and ARIA; a field or an AI patch that breaks it is refused with a message; the setter only warns, so stored records still load. Also `setExclusiveMinimum`, `setExclusiveMaximum`, `setMultipleOf`. |
+| `setMinLength(n)` / `setMaxLength(n)` | none | String length, with the same four readers. `setMinItems` / `setMaxItems` do the same for arrays. |
+| `setFormat("email")` | none | JSON Schema `format`; emitted, not checked. |
 | `setTranslationContext("ui")` | `null` | Declares i18n category for auto-translating string values. |
 
 ---

@@ -1673,6 +1673,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             if (slot.exceedsStoredStringCap(newValue)) {
                 slot.onInstanceExceededStoredStringCap(this, newValue);
             }
+            if (slot.hasConstraints()) {
+                slot.warnIfConstraintViolated(this, newValue); // warns and keeps the value: a stored record must still load
+            }
             const valueDescription = function (v) {
                 let vString = String(v);
                 vString = vString.length < 20 ? vString : (vString.slice(0, 20) + "...");
@@ -2180,6 +2183,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         }
 
         this.jsonSchemeAddRanges(schema);
+        this.jsonSchemaAddConstraints(schema);
 
         // handle array type
         const itemsType = this.jsonSchemaItemsType();

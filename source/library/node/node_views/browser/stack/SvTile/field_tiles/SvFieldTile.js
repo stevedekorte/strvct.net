@@ -1017,10 +1017,8 @@
         }
 
         // aria-valuemin / aria-valuemax from JSON Schema annotations
-        if (slot.getAnnotation) {
-            this.setAriaValueMin(slot.getAnnotation("minimum"));
-            this.setAriaValueMax(slot.getAnnotation("maximum"));
-        }
+        this.setAriaValueMin(slot.minimum());
+        this.setAriaValueMax(slot.maximum());
 
         // Use slot description as aria-description if available
         if (slot.description && slot.description()) {

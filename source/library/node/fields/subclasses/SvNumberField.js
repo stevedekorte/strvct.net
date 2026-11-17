@@ -226,6 +226,11 @@
             if (this.isInteger() && !Number.isInteger(n)) {
                 errors.push("Must be an integer.");
             }
+
+            const slotError = this.slotConstraintError(n);
+            if (slotError) {
+                errors.push(slotError);
+            }
         }
 
         return errors.length ? errors.join("\n") : null;

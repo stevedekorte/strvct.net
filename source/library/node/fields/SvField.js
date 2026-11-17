@@ -676,10 +676,39 @@
      * @returns {String|null} Error message if invalid, null if valid
      * @category Validation
      */
-    validateValue (/*v*/) {
-        // Base implementation - all values valid by default
-        // Subclasses override to add constraints
-        return null;
+    validateValue (v) {
+        // Base implementation: the constraints declared on the slot this field edits.
+        // Subclasses override to add their own (and still ask slotConstraintError).
+        return this.slotConstraintError(v);
+    }
+
+    /**
+     * @description The slot this field edits: the slot named valueMethod on
+     * the target, or null when the target has no such slot (a plain method,
+     * a field with no target).
+     * @returns {Slot|null}
+     * @category Validation
+     */
+    targetSlot () {
+        const target = this.target();
+        const slotName = this.valueMethod();
+        if (!target || !slotName || !Type.isFunction(target.thisPrototype)) {
+            return null;
+        }
+        const slot = target.thisPrototype().slotNamed(slotName);
+        return slot ? slot : null;
+    }
+
+    /**
+     * @description What the target slot's declared constraints (minimum,
+     * maxLength, …) say is wrong with a candidate value, or null.
+     * @param {*} v
+     * @returns {String|null}
+     * @category Validation
+     */
+    slotConstraintError (v) {
+        const slot = this.targetSlot();
+        return slot ? slot.constraintErrorForValue(v) : null;
     }
 
     /**
