@@ -4,8 +4,8 @@
 /** * @class SvOptionNodeTile
  * @extends SvTitledTile
  * @classdesc SvOptionNodeTile represents an option node tile in the browser stack.
- 
- 
+
+
  */
 
 "use strict";

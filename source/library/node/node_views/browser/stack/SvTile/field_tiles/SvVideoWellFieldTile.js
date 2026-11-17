@@ -4,8 +4,8 @@
 /** * @class SvVideoWellFieldTile
  * @extends SvFieldTile
  * @classdesc Represents a video well field tile in the browser stack.
- 
- 
+
+
  */
 
 "use strict";

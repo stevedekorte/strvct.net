@@ -7,8 +7,8 @@
  * SvTilesView_gestures
  *
  * This class extends SvTilesView to add gesture handling functionality.
- 
- 
+
+
  */
 
 "use strict";
@@ -177,8 +177,6 @@
                 newTile.setTransformOrigin(0);
                 //newTile.contentView().setTransformOriginPercentage(0)
                 newTile.contentView().setTransform("rotateX(" + rot + "deg)");
-                const z = -100 * f;
-                //newTile.contentView().setTransform("translateZ(" + z + "dg)")
             } else {
                 newTile.setPerspective(null);
                 newTile.contentView().setTransform(null);

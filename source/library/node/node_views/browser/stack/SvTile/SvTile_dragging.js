@@ -8,8 +8,8 @@
  * @classdesc
  * SvTile_dragging class extends SvTile to provide dragging functionality.
  * This class implements protocols for both drag source and drop destination.
- 
- 
+
+
  */
 
 (class SvTile_dragging extends SvTile {
