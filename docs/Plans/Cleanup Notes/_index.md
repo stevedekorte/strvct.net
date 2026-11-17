@@ -56,6 +56,15 @@ Discovery by naming convention (`Contact` → `ContactTile`) is surprising when 
 
 Errors are reported in several ways: `console.error()` with emoji prefixes, context added to error objects (`evalError.evalPath = path`), custom error classes (`SvJsonPatchError`, `SvMissingSlotError`, the AI request errors), and catch-and-log. A convention for which to use when would make errors easier to trace.
 
+### Hand-Kept Promises
+
+Most code that kept its own `fooPromise` for work several callers ask for at once moved to [shared promises](../../Programming%20Idioms/Async%20Patterns/index.html) (2026-11-15). Two copies are left in the framework:
+
+- **`SvBlobPool`**: `activeReadsMap` / `activeWritesMap` are the one-at-a-time pattern keyed by hash. `inFlightPromiseNamed("read " + hash, …)` would do it, once it is checked that entries are forgotten on failure as they are now.
+- **`SvWaSound.fetchPromise`**: a load done once.
+
+Not candidates: a promise created empty and settled later by an event (`SvResource.loadDataPromise`, `SvWaContext.setupPromise`, `SvDatabase.setupPromise`, `SvRzSigServerConn.connectPromise`, the `completionPromise` slots).
+
 ### Theme Value Generation
 
 `SvThemeState`'s value lists (`validLetterSpacingValues()` and its siblings) are rebuilt on every call, 50+ strings each. Compute them once per class.

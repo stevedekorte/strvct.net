@@ -86,7 +86,7 @@
         this.setMaxWidth("100em"); // get this from node instead?
 
         this.applyStyles(); // normally this would happen in updateSubviews
-        this.videoWellView().setIsEditable(field.valueIsEditable());
+        this.videoWellView().setIsEditable(this.nodeValueIsEditable());
 
         // Hide the value view if we're still generating (showing dots in key)
         if (!field.keyIsComplete()) {
@@ -134,7 +134,7 @@
 
         field.setKey(this.keyView().value());
 
-        if (field.valueIsEditable()) {
+        if (this.nodeValueIsEditable()) {
             const data = this.videoWellView().videoDataUrl();
             field.setValue(data);
         }

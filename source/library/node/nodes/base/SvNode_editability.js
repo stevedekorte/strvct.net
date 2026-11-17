@@ -53,6 +53,44 @@
     }
 
     /**
+     * @description Tells the user that an edit they tried here won't be
+     * made (a file dropped on a read-only list), through the user-alert
+     * note: a panel in the browser, a log line headless. A refused edit is
+     * never silent (docs/Plans/Capabilities & Permissions).
+     * @returns {SvNode}
+     * @category Editability
+     */
+    noteUserEditRefused () {
+        this.postNoteNamed("onRequestUserAlert", {
+            name: "userEditRefused",
+            title: "Read only",
+            message: this.userEditRefusedMessage(),
+            level: "warning"
+        });
+        return this;
+    }
+
+    /**
+     * @description What the user is told when an edit here is refused. It
+     * names the thing, not a role; a node may override.
+     * @returns {String}
+     * @category Editability
+     */
+    userEditRefusedMessage () {
+        return "You can't edit '" + this.userFacingName() + "'.";
+    }
+
+    /**
+     * @description How messages to the user name this node: its title, or "this".
+     * @returns {String}
+     * @category Editability
+     */
+    userFacingName () {
+        const title = this.title();
+        return (title && String(title).length > 0) ? String(title) : "this";
+    }
+
+    /**
      * @description Whether a USER-initiated delete affordance (tile swipe,
      * close button, shift+backspace) must be confirmed via a panel before
      * deleting this node. A node may override to declare it directly; by
@@ -83,9 +121,7 @@
      * @category Editability
      */
     userDeleteConfirmSubtitle () {
-        const title = this.title();
-        const name = (title && String(title).length > 0) ? title : "this";
-        return "Delete '" + name + "'?";
+        return "Delete '" + this.userFacingName() + "'?";
     }
 
 }.initThisCategory());

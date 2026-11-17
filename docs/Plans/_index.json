@@ -15,12 +15,11 @@
       "title": "Next",
       "columns": 3,
       "items": [
-        "Naked Objects Issues",
-        "Cleanup Notes",
-        "Promise-Wrapped Slots",
         "Capabilities & Permissions",
         "JSON Schema",
-        "Browser Cleanup"
+        "Browser Cleanup",
+        "Cleanup Notes",
+        "Promise-Wrapped Slots"
       ]
     },
     {
@@ -50,6 +49,7 @@
       "columns": 3,
       "items": [
         "Complete Protocols",
+        "Naked Objects Issues",
         "Lazy Slots",
         "Async Final Initialization"
       ]

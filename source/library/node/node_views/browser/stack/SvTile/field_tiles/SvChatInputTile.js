@@ -65,8 +65,8 @@
                 // caret collapsed to position 0.
                 console.log(this.logPrefix(), "skipped focused value sync (node lags view by", Math.abs(String(viewValue || "").length - String(nodeValue || "").length), "chars)");
             }
-            if (valueView.setIsEditable && node.valueIsEditable) {
-                valueView.setIsEditable(node.valueIsEditable());
+            if (valueView.setIsEditable) {
+                valueView.setIsEditable(this.nodeValueIsEditable());
             }
             // CRITICAL: also refresh whether Enter can submit. The focused guard
             // returns before super.syncValueFromNode(), which is the only other place

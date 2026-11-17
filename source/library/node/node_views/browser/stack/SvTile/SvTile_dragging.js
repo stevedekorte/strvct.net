@@ -93,7 +93,7 @@
      */
     acceptsDropHoverComplete (dragView) {
         const node = this.node();
-        return node ? node.nodeAcceptsDrop(dragView.item().node()) : false;
+        return node ? node.offersUserEdit(node.nodeAcceptsDrop(dragView.item().node())) : false;
     }
 
     /**

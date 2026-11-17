@@ -54,7 +54,8 @@
      * @category SvTile Management
      */
     canReorderTiles () {
-        return this.node().nodeTileLink().nodeCanReorderSubnodes();
+        const link = this.node().nodeTileLink();
+        return link.offersUserEdit(link.nodeCanReorderSubnodes()); // not in a read-only subtree
     }
 
     /**

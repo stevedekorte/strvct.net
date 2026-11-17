@@ -2,7 +2,7 @@
 
 Asking "can this caller do this here?" in one place, answered by the pool's store, so that views offer only what will be honored and a refused write is never silent.
 
-**Status:** open; rewritten 2026-11-13 to build on the editability cascade and the Record Store, which both shipped after the first draft. The editing half is in use (`SvNode_editability`); the questions about reading, sharing and authority, and the denial path, are not.
+**Status:** open, and next in the [Meta Plan](../Meta%20Plan/); rewritten 2026-11-13 to build on the editability cascade and the Record Store, which both shipped after the first draft. The editing half is in use (`SvNode_editability`); the questions about reading, sharing and authority, and the denial path, are not. Step 1 is done (2026-11-16): every edit path in the view layer asks the cascade, and a test keeps it so.
 
 ## Context
 
@@ -10,14 +10,22 @@ A concrete failure in one application: a non-admin user dragged a JSON file onto
 
 Two things have shipped since:
 
-- **The editability cascade.** `subtreeIsUserEditable` is a tri-state slot (null means "ask the parent"); `effectiveUserEditability()` walks up the parent and owner chain, and views ask `offersUserEdit(rawCapability)` before offering an edit, a delete, an add or a pick. It is deliberately a UI affordance, not authority: server rules remain the write gate. It is consulted by the option picker, keyboard delete and tile delete, and not yet by title editing, inspector slot editing or drops, which is exactly where the catalog failure happened.
+- **The editability cascade.** `subtreeIsUserEditable` is a tri-state slot (null means "ask the parent"); `effectiveUserEditability()` walks up the parent and owner chain, and views ask `offersUserEdit(rawCapability)` before offering an edit, a delete, an add or a pick. It is deliberately a UI affordance, not authority: server rules remain the write gate. Since 2026-11-16 every edit path in the view layer consults it (step 1 below).
 - **The Record Store.** A pool is one document, and it is the unit of sync and of permission: a far reference "keeps nothing alive and grants no permissions", and resolving it opens the target pool under the target's own permissions.
 
 ## Proposed Shape
 
-### 1. Close the editing gaps (small, do first)
+### 1. Close the editing gaps — done (2026-11-16)
 
-Make title editing, inspector slot editing and drops consult `offersUserEdit()`. That alone fixes the catalog failure on the UI side: the drop isn't offered.
+Every edit path in the view layer now asks the cascade, which fixes the catalog failure on the UI side. Before, field values, add and delete asked; these did not:
+
+- **Titles and subtitles** (`SvTitledTile`, `SvActionFieldTile`).
+- **Dragging a node in, and reordering** (`SvTilesView.acceptsDropHover()`, `SvTile.acceptsDropHoverComplete()`, `canReorderTiles()`).
+- **Dragging a node out.** A move removes the node from its list, so from a read-only list a drag is a copy.
+- **Dropping a file from the desktop** (`SvTilesView.onBrowserDropChunk()`). It is refused with a message rather than silently: the node's `noteUserEditRefused()` posts `onRequestUserAlert`, "You can't edit 'Monster Catalog'." The app's own catalog drop gate, which did this for two classes, is gone.
+- **Field paths the first audit missed:** the option picker's toggle, the video well, the chat input.
+
+`tests/headless/TestEditabilityCascade.js` checks the cascade's answers and the refusal message. `tests/headless/TestEditabilityInViews.js` scans the view layer for a raw capability read (`nodeCanEditTitle()`, `canDelete()`, `valueIsEditable()`, `acceptsAddingSubnode()`, …) without `offersUserEdit()`; run over the code before this step it finds all 11 sites. Checked headless only.
 
 ### 2. The pool answers for its contents
 

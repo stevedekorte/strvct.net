@@ -541,7 +541,9 @@
         const node = this.node();
         console.log("[SvTilesView] onBrowserDropChunk mimeType:", dataChunk.mimeType(), "node:", node ? node.title() : "(none)");
 
-        if (node) {
+        if (node && !node.effectiveUserEditability()) {
+            node.noteUserEditRefused(); // a read-only subtree (the editability cascade): say so, don't drop
+        } else if (node) {
             node.onBrowserDropChunk(dataChunk);
         }
         this.scheduleSyncFromNode();

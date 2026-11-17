@@ -2,7 +2,7 @@
 
 Known places where framework model classes still cross the model/view boundary — touching view classes, browser globals, or UI state — plus the framework gaps that force such crossings.
 
-**Status:** done for framework model code (2026-11-15): every class below is moved, and the ratchet test's baseline is empty. Two gaps remain open (a viewport accessor, a platform client id); close them when a model needs them. The browser-side changes were checked headless only.
+**Status:** done for framework model code (2026-11-15): every class below is moved, and the ratchet test's baseline is empty. Two gaps remain open (a viewport accessor, a platform client id); close them when a model needs them. The browser-side changes were checked headless only; a pass in an app is pending.
 
 The target is the model/view separation and **Platform Abstraction** rules in the framework guide (see [App Lifecycle](../../Lifecycle/App%20Lifecycle/index.html)): a model (`SvNode` and subclasses) should never reach into `document` / `window` / `navigator` / `localStorage` or reference view classes, so it stays headless-clean and the UI platform stays swappable.
 

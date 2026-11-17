@@ -332,7 +332,7 @@
                 return true;
             }
 
-            if (node.nodeCanEditSubtitle()) {
+            if (node.offersUserEdit(node.nodeCanEditSubtitle())) {
                 return true;
             }
         }
@@ -351,8 +351,9 @@
         const node = this.node();
 
         if (node) {
-            this.titleView().setIsEditable(node.nodeCanEditTitle());
-            this.subtitleView().setIsEditable(node.nodeCanEditSubtitle());
+            // offersUserEdit folds in the editability cascade: no title edits in a read-only subtree
+            this.titleView().setIsEditable(node.offersUserEdit(node.nodeCanEditTitle()));
+            this.subtitleView().setIsEditable(node.offersUserEdit(node.nodeCanEditSubtitle()));
             this.subtitleView().setIsDisplayHidden(!this.hasSubtitle());
 
             if (node) {

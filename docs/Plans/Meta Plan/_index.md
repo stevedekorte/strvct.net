@@ -3,7 +3,9 @@ subtitle: The order to do the other plans in, why, and what should change in the
 ---
 # Meta Plan
 
-**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done.
+**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done, along with one piece of work that grew out of step 3 (shared promises). **Step 4 is under way: its first part (every view edit path asks the cascade) is done; the rest needs a design conversation.**
+
+Steps 1 to 3 were checked with the headless tests only. The changes that run in a browser (the platform accessors, device values, file picking, the image and blob promise code) still need a pass in an app.
 
 ## Where Things Stand
 
@@ -13,11 +15,11 @@ subtitle: The order to do the other plans in, why, and what should change in the
 | [Lazy Slots](../Lazy%20Slots/) | Shipped | Rewritten to describe what shipped; a few items remain. |
 | [Async Final Initialization](../Async%20Final%20Initialization/) | Closed | Its main case was solved by manifests and then lazy loading. |
 | [Naked Objects Issues](../Naked%20Objects%20Issues/) | Done | Every listed class moved; the ratchet test's baseline is empty. Two gaps stay open until needed. |
-| [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. |
+| [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. Now lists the two hand-kept promises still to move to shared promises. |
 | [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Core done, unused | One shared promise per value, retry after failure, recompute on a dependency change; no slot uses it yet. |
-| [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Next | Rewritten to build on the editability cascade and the Record Store. |
-| [JSON Schema](../JSON%20Schema/) | Next | Now includes validation; constraints warn on load and reject edits. |
-| [Browser Cleanup](../Browser%20Cleanup/) | Next | Now holds the compaction notes; has its own order. |
+| [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | **In progress** | Step 1 done: every view edit path asks the editability cascade, and a ratchet test keeps it so. The pool-level answer is next, after a design conversation. |
+| [JSON Schema](../JSON%20Schema/) | After that | Now includes validation; constraints warn on load and reject edits. |
+| [Browser Cleanup](../Browser%20Cleanup/) | After that | Now holds the compaction notes; has its own order. |
 | [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Later | Wait on compaction. Large collections rewritten around windowed collections. |
 | [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) | Ongoing | Automated checks now; manual passes after the navigation work. |
 | [Case Studies](../Case%20Studies/) | Later | Contacts can run early. |
@@ -28,7 +30,7 @@ subtitle: The order to do the other plans in, why, and what should change in the
 
 ### 1. A test runner — done (2026-11-15)
 
-`npm test` (or `just test`) rebuilds `build/_index.json`, then runs every `tests/headless/Test*.js` in its own process, one at a time, with a timeout each; arguments filter by file name (`npm test -- Record`). The tests share LevelDB databases under `data/leveldb/`, so they can't run in parallel. The first full run found one flaky test, `TestWindowedCollections`: classic-level's `close()` resolves before LevelDB lets go of its files, so a quick reopen sometimes failed. `SvIndexedDbFolder` now retries such an open briefly, and the test's sleeps are gone. All 73 tests pass, in about 40 seconds.
+`npm test` (or `just test`) rebuilds `build/_index.json`, then runs every `tests/headless/Test*.js` in its own process, one at a time, with a timeout each; arguments filter by file name (`npm test -- Record`). The tests share LevelDB databases under `data/leveldb/`, so they can't run in parallel. The first full run found one flaky test, `TestWindowedCollections`: classic-level's `close()` resolves before LevelDB lets go of its files, so a quick reopen sometimes failed. `SvIndexedDbFolder` now retries such an open briefly, and the test's sleeps are gone. All tests pass (73 then; 80 after steps 2 and 3), in under a minute.
 
 ### 2. The model/view boundary — done (2026-11-15)
 
@@ -41,9 +43,11 @@ subtitle: The order to do the other plans in, why, and what should change in the
 
 The rest of Cleanup Notes is for when a file is being changed anyway.
 
-### 4. Capabilities & Permissions
+**Shared promises (2026-11-15), which came out of this step.** Finishing the slot feature raised the question of the code that hand-kept a `fooPromise` for work several callers ask for at once. An audit of those copies found each had something wrong (a failure cached forever, a retry that never ran, a finished run clearing a newer one, an unhandled second rejection, work that carried on after being abandoned). `Object_sharedPromises.js` now gives every object three helpers (once, one at a time, fresh), and 23 hand-written copies in the framework and the app moved onto them. See [Async Patterns](../../Programming%20Idioms/Async%20Patterns/index.html). Two framework copies are left, listed in [Cleanup Notes](../Cleanup%20Notes/#hand-kept-promises).
 
-The most user-facing value: the failure it describes is silent data loss. Its first step (making title editing, inspector editing and drops consult `offersUserEdit()`) is small and fixes that failure on the UI side; the pool-level answer and the denial path follow.
+### 4. Capabilities & Permissions — in progress
+
+The most user-facing value: the failure it describes is silent data loss. **Its first step is done (2026-11-16):** titles, drags in and out, reordering, desktop drops and three field paths now ask the cascade, a refused drop says so, and `TestEditabilityInViews` fails on a view that reads a raw capability. The pool-level answer and the denial path follow, and need a design conversation first: they touch the record store protocol and what the cloud store knows about membership.
 
 ### 5. JSON Schema and validation
 

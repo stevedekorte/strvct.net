@@ -18,7 +18,8 @@
      * @category User Interaction
      */
     toggle () {
-        const canToggle = this.node().optionsNode().valueIsEditable();
+        const optionsNode = this.node().optionsNode();
+        const canToggle = optionsNode.offersUserEdit(optionsNode.valueIsEditable());
         if (canToggle) {
             this.node().toggle();
             this.maybeAutoPopAfterPick();

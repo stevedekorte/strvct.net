@@ -5865,12 +5865,11 @@ Design ideas, architectural directions, and planned improvements, with a meta pl
 
 ## Next
 
-- Naked Objects Issues
-- Cleanup Notes
-- Promise-Wrapped Slots
 - Capabilities & Permissions
 - JSON Schema
 - Browser Cleanup
+- Cleanup Notes
+- Promise-Wrapped Slots
 
 ## Later
 
@@ -5888,6 +5887,7 @@ Design ideas, architectural directions, and planned improvements, with a meta pl
 ## Done or Closed
 
 - Complete Protocols
+- Naked Objects Issues
 - Lazy Slots
 - Async Final Initialization
 
@@ -6283,7 +6283,7 @@ Source: /docs/Plans/Capabilities%20%26%20Permissions/
 
 Asking "can this caller do this here?" in one place, answered by the pool's store, so that views offer only what will be honored and a refused write is never silent.
 
-**Status:** open; rewritten 2026-11-13 to build on the editability cascade and the Record Store, which both shipped after the first draft. The editing half is in use (`SvNode_editability`); the questions about reading, sharing and authority, and the denial path, are not.
+**Status:** open, and next in the [Meta Plan](../Meta%20Plan/); rewritten 2026-11-13 to build on the editability cascade and the Record Store, which both shipped after the first draft. The editing half is in use (`SvNode_editability`); the questions about reading, sharing and authority, and the denial path, are not. Step 1 is done (2026-11-16): every edit path in the view layer asks the cascade, and a test keeps it so.
 
 ## Context
 
@@ -6291,14 +6291,22 @@ A concrete failure in one application: a non-admin user dragged a JSON file onto
 
 Two things have shipped since:
 
-- **The editability cascade.** `subtreeIsUserEditable` is a tri-state slot (null means "ask the parent"); `effectiveUserEditability()` walks up the parent and owner chain, and views ask `offersUserEdit(rawCapability)` before offering an edit, a delete, an add or a pick. It is deliberately a UI affordance, not authority: server rules remain the write gate. It is consulted by the option picker, keyboard delete and tile delete, and not yet by title editing, inspector slot editing or drops, which is exactly where the catalog failure happened.
+- **The editability cascade.** `subtreeIsUserEditable` is a tri-state slot (null means "ask the parent"); `effectiveUserEditability()` walks up the parent and owner chain, and views ask `offersUserEdit(rawCapability)` before offering an edit, a delete, an add or a pick. It is deliberately a UI affordance, not authority: server rules remain the write gate. Since 2026-11-16 every edit path in the view layer consults it (step 1 below).
 - **The Record Store.** A pool is one document, and it is the unit of sync and of permission: a far reference "keeps nothing alive and grants no permissions", and resolving it opens the target pool under the target's own permissions.
 
 ## Proposed Shape
 
-### 1. Close the editing gaps (small, do first)
+### 1. Close the editing gaps — done (2026-11-16)
 
-Make title editing, inspector slot editing and drops consult `offersUserEdit()`. That alone fixes the catalog failure on the UI side: the drop isn't offered.
+Every edit path in the view layer now asks the cascade, which fixes the catalog failure on the UI side. Before, field values, add and delete asked; these did not:
+
+- **Titles and subtitles** (`SvTitledTile`, `SvActionFieldTile`).
+- **Dragging a node in, and reordering** (`SvTilesView.acceptsDropHover()`, `SvTile.acceptsDropHoverComplete()`, `canReorderTiles()`).
+- **Dragging a node out.** A move removes the node from its list, so from a read-only list a drag is a copy.
+- **Dropping a file from the desktop** (`SvTilesView.onBrowserDropChunk()`). It is refused with a message rather than silently: the node's `noteUserEditRefused()` posts `onRequestUserAlert`, "You can't edit 'Monster Catalog'." The app's own catalog drop gate, which did this for two classes, is gone.
+- **Field paths the first audit missed:** the option picker's toggle, the video well, the chat input.
+
+`tests/headless/TestEditabilityCascade.js` checks the cascade's answers and the refusal message. `tests/headless/TestEditabilityInViews.js` scans the view layer for a raw capability read (`nodeCanEditTitle()`, `canDelete()`, `valueIsEditable()`, `acceptsAddingSubnode()`, …) without `offersUserEdit()`; run over the code before this step it finds all 11 sites. Checked headless only.
 
 ### 2. The pool answers for its contents
 
@@ -6494,6 +6502,15 @@ Discovery by naming convention (`Contact` → `ContactTile`) is surprising when 
 ### Error Handling
 
 Errors are reported in several ways: `console.error()` with emoji prefixes, context added to error objects (`evalError.evalPath = path`), custom error classes (`SvJsonPatchError`, `SvMissingSlotError`, the AI request errors), and catch-and-log. A convention for which to use when would make errors easier to trace.
+
+### Hand-Kept Promises
+
+Most code that kept its own `fooPromise` for work several callers ask for at once moved to [shared promises](../../Programming%20Idioms/Async%20Patterns/index.html) (2026-11-15). Two copies are left in the framework:
+
+- **`SvBlobPool`**: `activeReadsMap` / `activeWritesMap` are the one-at-a-time pattern keyed by hash. `inFlightPromiseNamed("read " + hash, …)` would do it, once it is checked that entries are forgotten on failure as they are now.
+- **`SvWaSound.fetchPromise`**: a load done once.
+
+Not candidates: a promise created empty and settled later by an event (`SvResource.loadDataPromise`, `SvWaContext.setupPromise`, `SvDatabase.setupPromise`, `SvRzSigServerConn.connectPromise`, the `completionPromise` slots).
 
 ### Theme Value Generation
 
@@ -7029,7 +7046,9 @@ Source: /docs/Plans/Meta%20Plan/
 
 The order to do the other plans in, why, and what should change in them first.
 
-**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done.
+**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done, along with one piece of work that grew out of step 3 (shared promises). **Step 4 is under way: its first part (every view edit path asks the cascade) is done; the rest needs a design conversation.**
+
+Steps 1 to 3 were checked with the headless tests only. The changes that run in a browser (the platform accessors, device values, file picking, the image and blob promise code) still need a pass in an app.
 
 ## Where Things Stand
 
@@ -7039,11 +7058,11 @@ The order to do the other plans in, why, and what should change in them first.
 | [Lazy Slots](../Lazy%20Slots/) | Shipped | Rewritten to describe what shipped; a few items remain. |
 | [Async Final Initialization](../Async%20Final%20Initialization/) | Closed | Its main case was solved by manifests and then lazy loading. |
 | [Naked Objects Issues](../Naked%20Objects%20Issues/) | Done | Every listed class moved; the ratchet test's baseline is empty. Two gaps stay open until needed. |
-| [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. |
+| [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. Now lists the two hand-kept promises still to move to shared promises. |
 | [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Core done, unused | One shared promise per value, retry after failure, recompute on a dependency change; no slot uses it yet. |
-| [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Next | Rewritten to build on the editability cascade and the Record Store. |
-| [JSON Schema](../JSON%20Schema/) | Next | Now includes validation; constraints warn on load and reject edits. |
-| [Browser Cleanup](../Browser%20Cleanup/) | Next | Now holds the compaction notes; has its own order. |
+| [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | **In progress** | Step 1 done: every view edit path asks the editability cascade, and a ratchet test keeps it so. The pool-level answer is next, after a design conversation. |
+| [JSON Schema](../JSON%20Schema/) | After that | Now includes validation; constraints warn on load and reject edits. |
+| [Browser Cleanup](../Browser%20Cleanup/) | After that | Now holds the compaction notes; has its own order. |
 | [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Later | Wait on compaction. Large collections rewritten around windowed collections. |
 | [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) | Ongoing | Automated checks now; manual passes after the navigation work. |
 | [Case Studies](../Case%20Studies/) | Later | Contacts can run early. |
@@ -7054,7 +7073,7 @@ The order to do the other plans in, why, and what should change in them first.
 
 ### 1. A test runner — done (2026-11-15)
 
-`npm test` (or `just test`) rebuilds `build/_index.json`, then runs every `tests/headless/Test*.js` in its own process, one at a time, with a timeout each; arguments filter by file name (`npm test -- Record`). The tests share LevelDB databases under `data/leveldb/`, so they can't run in parallel. The first full run found one flaky test, `TestWindowedCollections`: classic-level's `close()` resolves before LevelDB lets go of its files, so a quick reopen sometimes failed. `SvIndexedDbFolder` now retries such an open briefly, and the test's sleeps are gone. All 73 tests pass, in about 40 seconds.
+`npm test` (or `just test`) rebuilds `build/_index.json`, then runs every `tests/headless/Test*.js` in its own process, one at a time, with a timeout each; arguments filter by file name (`npm test -- Record`). The tests share LevelDB databases under `data/leveldb/`, so they can't run in parallel. The first full run found one flaky test, `TestWindowedCollections`: classic-level's `close()` resolves before LevelDB lets go of its files, so a quick reopen sometimes failed. `SvIndexedDbFolder` now retries such an open briefly, and the test's sleeps are gone. All tests pass (73 then; 80 after steps 2 and 3), in under a minute.
 
 ### 2. The model/view boundary — done (2026-11-15)
 
@@ -7067,9 +7086,11 @@ The order to do the other plans in, why, and what should change in them first.
 
 The rest of Cleanup Notes is for when a file is being changed anyway.
 
-### 4. Capabilities & Permissions
+**Shared promises (2026-11-15), which came out of this step.** Finishing the slot feature raised the question of the code that hand-kept a `fooPromise` for work several callers ask for at once. An audit of those copies found each had something wrong (a failure cached forever, a retry that never ran, a finished run clearing a newer one, an unhandled second rejection, work that carried on after being abandoned). `Object_sharedPromises.js` now gives every object three helpers (once, one at a time, fresh), and 23 hand-written copies in the framework and the app moved onto them. See [Async Patterns](../../Programming%20Idioms/Async%20Patterns/index.html). Two framework copies are left, listed in [Cleanup Notes](../Cleanup%20Notes/#hand-kept-promises).
 
-The most user-facing value: the failure it describes is silent data loss. Its first step (making title editing, inspector editing and drops consult `offersUserEdit()`) is small and fixes that failure on the UI side; the pool-level answer and the denial path follow.
+### 4. Capabilities & Permissions — in progress
+
+The most user-facing value: the failure it describes is silent data loss. **Its first step is done (2026-11-16):** titles, drags in and out, reordering, desktop drops and three field paths now ask the cascade, a refused drop says so, and `TestEditabilityInViews` fails on a view that reads a raw capability. The pool-level answer and the denial path follow, and need a design conversation first: they touch the record store protocol and what the cloud store knows about membership.
 
 ### 5. JSON Schema and validation
 
@@ -7107,7 +7128,7 @@ Source: /docs/Plans/Naked%20Objects%20Issues/
 
 Known places where framework model classes still cross the model/view boundary — touching view classes, browser globals, or UI state — plus the framework gaps that force such crossings.
 
-**Status:** done for framework model code (2026-11-15): every class below is moved, and the ratchet test's baseline is empty. Two gaps remain open (a viewport accessor, a platform client id); close them when a model needs them. The browser-side changes were checked headless only.
+**Status:** done for framework model code (2026-11-15): every class below is moved, and the ratchet test's baseline is empty. Two gaps remain open (a viewport accessor, a platform client id); close them when a model needs them. The browser-side changes were checked headless only; a pass in an app is pending.
 
 The target is the model/view separation and **Platform Abstraction** rules in the framework guide (see [App Lifecycle](../../Lifecycle/App%20Lifecycle/index.html)): a model (`SvNode` and subclasses) should never reach into `document` / `window` / `navigator` / `localStorage` or reference view classes, so it stays headless-clean and the UI platform stays swappable.
 

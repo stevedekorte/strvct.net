@@ -190,14 +190,22 @@
 
         this.activate();
         const dv = SvDragView.clone().setItems(this.column().selectedTiles()).setSource(this.column());
-
-        if (isTapLongPress) {
-            dv.setDragOperation("copy");
-        } else {
-            dv.setDragOperation("move");
-        }
-
+        dv.setDragOperation(this.dragOperationForLongPress(isTapLongPress));
         dv.openWithEvent(longPressGesture.currentEvent());
+    }
+
+    /**
+     * @description A tap-then-hold copies; a hold moves, unless the list is
+     * in a read-only subtree (the editability cascade), which can be copied
+     * from but not moved out of — a move removes the node from its list.
+     * @param {Boolean} isTapLongPress
+     * @returns {String} "copy" or "move"
+     * @category Gesture
+     */
+    dragOperationForLongPress (isTapLongPress) {
+        const listNode = this.column().node();
+        const canMoveOut = listNode && listNode.effectiveUserEditability();
+        return (isTapLongPress || !canMoveOut) ? "copy" : "move";
     }
 
     // --- handle pan gesture ---

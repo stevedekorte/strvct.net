@@ -231,7 +231,7 @@
                 return false;
             }
 
-            const acceptsNode = node.acceptsAddingSubnode(dropNode);
+            const acceptsNode = node.offersUserEdit(node.acceptsAddingSubnode(dropNode)); // not into a read-only subtree
             const canReorder = this.canReorderTiles();;
             //console.log(node.title() + " acceptsNode " + dropNode.title() + " " + acceptsNode);
             //console.log("parentNode " + node.parentNode().title());

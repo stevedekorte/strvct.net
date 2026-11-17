@@ -133,7 +133,7 @@
             bv.setSubtitle(node.translatedValueOfSlotNamed("subtitle"));
         }
         this.syncStyleAttributes();
-        bv.setIsEditable(node.nodeCanEditTitle() && !this.isRowStyle());
+        bv.setIsEditable(node.offersUserEdit(node.nodeCanEditTitle()) && !this.isRowStyle());
 
         bv.setIsEnabled(node.isEnabled());
 
