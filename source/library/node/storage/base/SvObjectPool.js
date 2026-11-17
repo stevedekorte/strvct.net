@@ -198,6 +198,12 @@
             slot.setDescription("a replica: a read-only copy of a hosted document's projection — it loads each class's replicaClass() and never stores local changes (SvObjectPool_replica)");
         }
         {
+            const slot = this.newSlot("callerCanWrite", null);
+            slot.setSlotType("Boolean");
+            slot.setAllowsNullValue(true);
+            slot.setDescription("whether the store this pool commits to takes the caller's writes, as it last said; null when it has not (a local pool: yes). False makes the pool's root read-only in the editability cascade (SvNode.poolRefusesUserEdits)");
+        }
+        {
             const slot = this.newSlot("lastSyncedSnapshot", null);
             slot.setSlotType("Object");
             slot.setDescription("cloud mirror: the pool.json (record JSON by puuid) as last uploaded or downloaded, for delta collection");

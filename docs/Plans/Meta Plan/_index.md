@@ -3,7 +3,7 @@ subtitle: The order to do the other plans in, why, and what should change in the
 ---
 # Meta Plan
 
-**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done, along with one piece of work that grew out of step 3 (shared promises). **Step 4 is under way: its first part (every view edit path asks the cascade) is done; the rest needs a design conversation.**
+**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done, along with one piece of work that grew out of step 3 (shared promises). **Step 4 is built (2026-11-17) and needs a pass in a browser; step 5, JSON Schema, is next.**
 
 Steps 1 to 3 were checked with the headless tests only. The changes that run in a browser (the platform accessors, device values, file picking, the image and blob promise code) still need a pass in an app.
 
@@ -17,8 +17,8 @@ Steps 1 to 3 were checked with the headless tests only. The changes that run in 
 | [Naked Objects Issues](../Naked%20Objects%20Issues/) | Done | Every listed class moved; the ratchet test's baseline is empty. Two gaps stay open until needed. |
 | [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. Now lists the two hand-kept promises still to move to shared promises. |
 | [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Core done, unused | One shared promise per value, retry after failure, recompute on a dependency change; no slot uses it yet. |
-| [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | **In progress** | Step 1 done: every view edit path asks the editability cascade, and a ratchet test keeps it so. The pool-level answer is next, after a design conversation. |
-| [JSON Schema](../JSON%20Schema/) | After that | Now includes validation; constraints warn on load and reject edits. |
+| [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Built, unverified in a browser | Every view edit path asks the editability cascade; the server says who may write and the cascade uses its answer; a refused commit reloads and says so. Read, share and create hooks wait for a need. |
+| [JSON Schema](../JSON%20Schema/) | **Next up** | Now includes validation; constraints warn on load and reject edits. |
 | [Browser Cleanup](../Browser%20Cleanup/) | After that | Now holds the compaction notes; has its own order. |
 | [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Later | Wait on compaction. Large collections rewritten around windowed collections. |
 | [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) | Ongoing | Automated checks now; manual passes after the navigation work. |
@@ -45,9 +45,11 @@ The rest of Cleanup Notes is for when a file is being changed anyway.
 
 **Shared promises (2026-11-15), which came out of this step.** Finishing the slot feature raised the question of the code that hand-kept a `fooPromise` for work several callers ask for at once. An audit of those copies found each had something wrong (a failure cached forever, a retry that never ran, a finished run clearing a newer one, an unhandled second rejection, work that carried on after being abandoned). `Object_sharedPromises.js` now gives every object three helpers (once, one at a time, fresh), and 23 hand-written copies in the framework and the app moved onto them. See [Async Patterns](../../Programming%20Idioms/Async%20Patterns/index.html). Two framework copies are left, listed in [Cleanup Notes](../Cleanup%20Notes/#hand-kept-promises).
 
-### 4. Capabilities & Permissions — in progress
+### 4. Capabilities & Permissions — built (2026-11-17), to verify in a browser
 
-The most user-facing value: the failure it describes is silent data loss. **Its first step is done (2026-11-16):** titles, drags in and out, reordering, desktop drops and three field paths now ask the cascade, a refused drop says so, and `TestEditabilityInViews` fails on a view that reads a raw capability. The pool-level answer and the denial path follow, and need a design conversation first: they touch the record store protocol and what the cloud store knows about membership.
+The most user-facing value: the failure it describes is silent data loss. **Its first step is done (2026-11-16):** titles, drags in and out, reordering, desktop drops and three field paths now ask the cascade, a refused drop says so, and `TestEditabilityInViews` fails on a view that reads a raw capability.
+
+**The rest followed (2026-11-17).** The server now tells the client, with every read, whether the caller may write; the cloud store remembers it and a document's pool carries it into the cascade, so the views and the commit cannot disagree. A commit refused for permission reloads the cloud's copy and tells the user. The work found that the client had been discarding the server's error codes, so no refusal was ever recognized as one. Not done, by decision: separate read, delete, share and create hooks, and a live push of role changes.
 
 ### 5. JSON Schema and validation
 

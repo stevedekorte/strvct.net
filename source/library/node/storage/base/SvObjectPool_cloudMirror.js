@@ -72,7 +72,7 @@
      * replicas' copy received, for the caller's notice.
      * @param {SvCloudRecordStore} cloudStore
      * @param {Object} [options] { cloudPoolId, create: { scopeId } for a pool's first commit, projection }
-     * @returns {Promise<Object>} { status: "committed"|"conflict"|"refused"|"unchanged", version?, reason?, projection? }
+     * @returns {Promise<Object>} { status: "committed"|"conflict"|"refused"|"unchanged", version?, code?, reason?, commit?, projection? }
      * @category Cloud Mirror
      */
     async asyncCommitToCloud (cloudStore, options = {}) {
@@ -113,6 +113,9 @@
                 projection.didConflict(result.projectionVersion); // only the projection moved: resend it whole next time
             }
             return Object.assign({ commit: commit }, result); // what was refused, for the caller to tell whether reloading loses it
+        }
+        if (result && result.status === "refused") {
+            return Object.assign({ commit: commit }, result); // the same, for a refusal the caller answers by reloading
         }
         return result;
     }
@@ -230,7 +233,8 @@
         } finally {
             openGate(!!result && result.status === "committed");
         }
-        return (result && result.status === "conflict") ? Object.assign({ commit: truth.commit }, result) : result;
+        const carriesCommit = result && (result.status === "conflict" || result.status === "refused");
+        return carriesCommit ? Object.assign({ commit: truth.commit }, result) : result;
     }
 
     /**

@@ -39,6 +39,18 @@
             slot.setDescription("scopeId → the in-flight read of its root rows, shared by concurrent asks");
         }
         {
+            const slot = this.newSlot("poolWriteAnswers", null);
+            slot.setSlotType("Map");
+            slot.setFinalInitProto(Map);
+            slot.setDescription("poolId → whether the caller may write it, as the backend last said (with a read, or by a commit's answer)");
+        }
+        {
+            const slot = this.newSlot("scopeWriteAnswers", null);
+            slot.setSlotType("Map");
+            slot.setFinalInitProto(Map);
+            slot.setDescription("scopeId → whether the caller may write it, as the backend last said");
+        }
+        {
             const slot = this.newSlot("commitLimits", null);
             slot.setSlotType("Object");
             slot.setAllowsNullValue(true);
@@ -145,7 +157,62 @@
 
     async asyncOpen (poolId) {
         const result = await this.call("records-open", { poolId: poolId });
-        return result && result.pool ? result.pool : null;
+        const pool = result && result.pool ? result.pool : null;
+        if (pool) {
+            this.noteCallerCanWritePool(poolId, pool.callerCanWrite);
+            this.noteCallerCanWriteScope(pool.root && pool.root.scopeId, pool.callerCanWrite);
+        }
+        return pool;
+    }
+
+    // --- whether the caller may write (Plans/Capabilities & Permissions) ---
+    // The backend decides who may write and says so with every read, so views
+    // offer only the edits a commit would take. Nothing here restates its rule.
+
+    /**
+     * @description Whether the caller may write this pool, as the backend last
+     * said: with a read of it, or by taking or refusing a commit to it.
+     * @param {String} poolId
+     * @returns {Boolean|null} null when the backend has not said
+     * @category Permissions
+     */
+    callerCanWritePool (poolId) {
+        const answer = this.poolWriteAnswers().get(poolId);
+        return Type.isBoolean(answer) ? answer : null;
+    }
+
+    /**
+     * @description Whether the caller may write records in this scope, as the
+     * backend last said with a listing of it or a read of one of its pools.
+     * @param {String} scopeId
+     * @returns {Boolean|null} null when the backend has not said
+     * @category Permissions
+     */
+    callerCanWriteScope (scopeId) {
+        const answer = this.scopeWriteAnswers().get(scopeId);
+        return Type.isBoolean(answer) ? answer : null;
+    }
+
+    /**
+     * @description Records the backend's answer for a pool. Anything but a
+     * boolean (a backend that does not say) leaves what is known as it is.
+     * @param {String} poolId
+     * @param {Boolean} answer
+     * @returns {SvCloudRecordStore}
+     * @category Permissions
+     */
+    noteCallerCanWritePool (poolId, answer) {
+        if (poolId && Type.isBoolean(answer)) {
+            this.poolWriteAnswers().set(poolId, answer);
+        }
+        return this;
+    }
+
+    noteCallerCanWriteScope (scopeId, answer) {
+        if (scopeId && Type.isBoolean(answer)) {
+            this.scopeWriteAnswers().set(scopeId, answer);
+        }
+        return this;
     }
 
     async asyncChildren (nodeId, range = {}) {
@@ -199,6 +266,7 @@
         let cursor = {};
         for (let page = 0; page < this.maxScopeRootPages(); page++) {
             const result = await this.call("records-scope-roots", Object.assign({ scopeId: scopeId, limit: pageSize }, cursor));
+            this.noteCallerCanWriteScope(scopeId, result ? result.callerCanWrite : null);
             const pageRows = (result && result.rows) || [];
             rows.push(...pageRows);
             if (pageRows.length < pageSize) {
@@ -216,7 +284,9 @@
 
     async asyncReadChanges (poolId, sinceVersion) {
         const result = await this.call("records-changes", { poolId: poolId, sinceVersion: sinceVersion });
-        return result && result.changes ? result.changes : null;
+        const changes = result && result.changes ? result.changes : null;
+        this.noteCallerCanWritePool(poolId, changes ? changes.callerCanWrite : null);
+        return changes;
     }
 
     async asyncResolveFar (poolId) {
@@ -238,8 +308,10 @@
     /**
      * @description The commit protocol. A refusal (invalid argument, permission,
      * precondition) arrives as a thrown error from the backend and is returned as
-     * `{ status: "refused", reason }` so callers see the three outcomes the
-     * protocol names. `options.finalizeGate` (a promise of a boolean) holds the
+     * `{ status: "refused", code, reason }` so callers see the three outcomes the
+     * protocol names. The code says which refusal it is, and they call for
+     * different things: "permission-denied" can never be saved, "unauthenticated"
+     * can once the user signs in, and the other two are the client's own bug. `options.finalizeGate` (a promise of a boolean) holds the
      * commit's publication until another commit has landed, and answers
      * `{ status: "aborted" }` when that commit did not.
      * @category Write
@@ -251,11 +323,14 @@
             if (gate && !await gate) {
                 return { status: "aborted" };
             }
-            return await this.call("records-commit", commit);
+            const result = await this.call("records-commit", commit);
+            this.noteCallerCanWritePool(commit.poolId, result && result.status === "committed" ? true : null);
+            return result;
         } catch (error) {
             const code = error && error.code;
+            this.noteCallerCanWritePool(commit.poolId, code === "permission-denied" ? false : null);
             if (code === "invalid-argument" || code === "permission-denied" || code === "failed-precondition" || code === "unauthenticated") {
-                return { status: "refused", reason: (error && error.message) || String(code) };
+                return { status: "refused", code: code, reason: (error && error.message) || String(code) };
             }
             throw error;
         }

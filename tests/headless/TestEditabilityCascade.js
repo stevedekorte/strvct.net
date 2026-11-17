@@ -11,6 +11,9 @@
  *     with no opinion is editable;
  *   - the nearest opinion wins, so a read-only subtree can hold an editable
  *     one and the other way round;
+ *   - a pool's root with no opinion is read-only when the store its pool
+ *     commits to refuses the caller's writes: the default for the document,
+ *     which a node opinion overrides; a store that takes them is no opinion;
  *   - offersUserEdit(raw) is the raw capability AND the cascade;
  *   - a refused edit is not silent: noteUserEditRefused() posts
  *     onRequestUserAlert naming the node.
@@ -77,6 +80,40 @@ function testCascade () {
     check(field.effectiveUserEditability() === false, "a node with no parent asks its owner (a field asks the node it belongs to)");
 }
 
+// Stands in for the pool `root` is the root of, with the store's answer.
+function placeInPool (root, callerCanWrite) {
+    const pool = { rootObject: () => root, callerCanWrite: () => callerCanWrite };
+    SvGlobals.get("SvObjectPool").objectPoolRegistry().set(root, pool);
+    return pool;
+}
+
+function testPoolAnswer () {
+    console.log("\nThe pool's answer is the document's default");
+    const folder = titled("Characters");
+    const doc = titled("Shared Character");
+    const sheet = titled("Abilities");
+    folder.addSubnode(doc);
+    doc.addSubnode(sheet);
+    const pool = placeInPool(doc, null);
+    check(sheet.effectiveUserEditability() === true, "a store that has not said: the chain goes on up (editable)");
+    pool.callerCanWrite = () => false;
+    check(doc.effectiveUserEditability() === false && sheet.effectiveUserEditability() === false, "a store that refuses the caller's writes makes the document read-only");
+    check(folder.effectiveUserEditability() === true, "…and nothing above it");
+    folder.setSubtreeIsUserEditable(true);
+    check(sheet.effectiveUserEditability() === false, "the pool's refusal is nearer than an ancestor's opinion");
+    sheet.setSubtreeIsUserEditable(true);
+    check(sheet.effectiveUserEditability() === true && doc.effectiveUserEditability() === false, "a node inside may say its input is offered (it does not travel through the pool's commit)");
+    doc.setSubtreeIsUserEditable(true);
+    check(doc.effectiveUserEditability() === true, "the root's own opinion comes before its pool's answer (a guest's session)");
+    doc.setSubtreeIsUserEditable(null);
+    sheet.setSubtreeIsUserEditable(null);
+    pool.callerCanWrite = () => true;
+    folder.setSubtreeIsUserEditable(null);
+    check(sheet.effectiveUserEditability() === true, "a store that takes the caller's writes: editable");
+    folder.setSubtreeIsUserEditable(false);
+    check(sheet.effectiveUserEditability() === false, "…but that is no opinion: a read-only ancestor still applies");
+}
+
 function testOffers () {
     console.log("\nOffering an edit");
     const root = titled("Catalog");
@@ -107,6 +144,7 @@ async function testRefusalIsAnnounced () {
 async function main () {
     await boot();
     testCascade();
+    testPoolAnswer();
     testOffers();
     await testRefusalIsAnnounced();
     console.log("\n" + pass + " passed, " + fail + " failed");

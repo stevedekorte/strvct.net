@@ -18,8 +18,13 @@
      * @description Resolves the cascading editability policy for this node:
      * consult the node's OWN subtreeIsUserEditable (a node's fields are its
      * children), then walk up parentNode()/ownerNode() until an ancestor has
-     * an opinion; an unopinionated chain defaults to true (all existing
-     * behavior preserved). This is a local-UI affordance — it makes the
+     * an opinion; an unopinionated chain defaults to true. A pool's root with
+     * no opinion of its own answers false when the store its pool commits to
+     * refuses the caller's writes (poolRefusesUserEdits); a store that takes
+     * them is no opinion, so what is above still applies. So the nearest
+     * opinion wins, and the store's "no" is the default for a document, not a
+     * veto: a node whose input does not travel through its pool's commit (a
+     * guest's session, whose actions go to the host as messages) says true. This is a local-UI affordance — it makes the
      * interface stop offering edits that won't be honored (a session's
      * copied-in character, a catalog a non-editor can't save to). It is NOT
      * authority: server rules and host mediation remain the write gate.
@@ -31,11 +36,27 @@
         if (v !== null) {
             return v;
         }
+        if (this.poolRefusesUserEdits()) {
+            return false;
+        }
         const parent = this.parentNode() ? this.parentNode() : this.ownerNode();
         if (parent && parent.effectiveUserEditability) {
             return parent.effectiveUserEditability();
         }
         return true;
+    }
+
+    /**
+     * @description For the root of a pool: whether the store the pool commits
+     * to has said it refuses the caller's writes (SvObjectPool.callerCanWrite
+     * — the cloud store's own answer, so the view and the store cannot
+     * disagree). False for any other node, and while the store has not said.
+     * @returns {Boolean}
+     * @category Editability
+     */
+    poolRefusesUserEdits () {
+        const pool = SvObjectPool.poolOfObject(this);
+        return !!pool && pool.rootObject() === this && pool.callerCanWrite() === false;
     }
 
     /**
@@ -57,14 +78,15 @@
      * made (a file dropped on a read-only list), through the user-alert
      * note: a panel in the browser, a log line headless. A refused edit is
      * never silent (docs/Plans/Capabilities & Permissions).
+     * @param {String} [detail] - what became of the edit ("Your change wasn't kept.")
      * @returns {SvNode}
      * @category Editability
      */
-    noteUserEditRefused () {
+    noteUserEditRefused (detail = null) {
         this.postNoteNamed("onRequestUserAlert", {
             name: "userEditRefused",
             title: "Read only",
-            message: this.userEditRefusedMessage(),
+            message: this.userEditRefusedMessage() + (detail ? " " + detail : ""),
             level: "warning"
         });
         return this;
