@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-Site build: STRVCT · 2026-11-18 · fed03dcf
+Site build: STRVCT · 2026-11-18 · 5a831c43
 
 You write the domain model. STRVCT does the rest while the app runs: it presents your objects in a user interface on desktop and phone, stores them locally, syncs them to the cloud, imports and exports them as JSON, and lets AI agents read and edit them. Nothing is generated ahead of time: views are created from the live objects as the user navigates, and they update when the objects change. Add a property, annotate it, and every part picks it up. There is no separate form, storage mapping, or tool schema to write.
 
@@ -23,11 +23,11 @@ Write the domain model. Get the application.
 
 [**Read the paper →**](docs/Naked%20Objects/index.html)
 
-- docs/Naked Objects
-- docs/Getting Started
-- Example App
-- docs/Comparing to React
-- docs
+- [Naked Objects](docs/Naked%20Objects/index.html?back=..%2F..%2Findex.html) — From Domain Models to Complete Applications
+- [Getting Started](docs/Getting%20Started/index.html?back=..%2F..%2Findex.html) — Setup, integration, directory conventions, build pipeline, and running your first Strvct application.
+- [Example App](Example%20App/index.html) — A complete contacts application in four classes, with zero view code.
+- [Comparing to React](docs/Comparing%20to%20React/index.html?back=..%2F..%2Findex.html) — A guide to Strvct for developers who know React.
+- [Documentation](docs/index.html) — Guides, architecture, and API reference.
 - [GitHub Repository](https://github.com/stevedekorte/strvct.net) — Source code, issues, and contributions.
 
 
@@ -40,27 +40,27 @@ Source: /docs/
 
 Guides, architecture, and API reference.
 
-- Naked Objects
-- Technical Overview
-- Implementation Overview
-- Nodes
-- Slots
-- Getting Started
-- Lifecycle
-- Notifications
-- Views
-- Persistence
-- Events and Gestures
-- Inspectors and Debugging
-- Accessibility
-- Internationalization
-- Services
-- Programming Idioms
-- Reference
-- Comparing to React
-- Inspirations
-- Plans
-- Diagrams
+- [Naked Objects](Naked%20Objects/index.html) — From Domain Models to Complete Applications
+- [Technical Overview](Technical%20Overview/index.html) — High-level architecture, core design philosophy, and system-wide concepts of the Strvct framework.
+- [Implementation Overview](Implementation%20Overview/index.html) — Deep technical specifications for class lifecycle, slots, views, persistence, notifications, and build infrastructure.
+- [Nodes](Nodes/index.html) — The core domain object abstraction, object graph hierarchy, and subnode management in Strvct.
+- [Slots](Slots/index.html) — The property system: declaration, slot annotations, runtime type checks, lifecycle hooks, and metadata consumers.
+- [Getting Started](Getting%20Started/index.html) — Setup, integration, directory conventions, build pipeline, and running your first Strvct application.
+- [Lifecycle](Lifecycle/index.html) — Boot sequence, node initialization, view synchronization, and persistence cycles.
+- [Notifications](Notifications/index.html) — Event-driven communication between framework layers using observations, scheduling, and weak references.
+- [Views](Views/index.html) — The view layer: auto-generated UI, custom views, and programmatic styling.
+- [Persistence](Persistence/index.html) — Local storage, cloud sync, and blob management for object graphs.
+- [Events and Gestures](Events%20and%20Gestures/index.html) — Event flow, listeners, gesture recognizers, timers, keyboard handling, and drag-and-drop.
+- [Inspectors and Debugging](Inspectors%20and%20Debugging/index.html) — Built-in tools for live Property Inspection, Developer Mode graph toggles, and Chrome DevTools source debugging.
+- [Accessibility](Accessibility/index.html) — Automatic, framework-level ARIA support, keyboard navigation, and preference adaptation derived from slot metadata annotations and view classes.
+- [Internationalization](Internationalization/index.html) — AI-powered translation of UI text with per-language IndexedDB persistence, batched requests, and content filtering.
+- [Services](Services/index.html) — AI, cloud, media, and IoT service integrations.
+- [Programming Idioms](Programming%20Idioms/index.html) — Recurring patterns and conventions for writing STRVCT code.
+- [Reference](Reference/index.html) — Class hierarchy, module hierarchy, and protocol definitions.
+- [Comparing to React](Comparing%20to%20React/index.html) — A guide to Strvct for developers who know React.
+- [Inspirations](Inspirations/index.html) — Frameworks and ideas that shaped STRVCT's design.
+- [Plans](Plans/index.html) — Design ideas, architectural directions, and planned improvements, with a meta plan for the order to do them in.
+- [Diagrams](Diagrams/index.html) — Architectural sketches of the Strvct framework. Working drafts; not yet placed in their final locations within the docs.
 
 
 ---
@@ -475,12 +475,12 @@ Source: /docs/Diagrams/
 
 Architectural sketches of the Strvct framework. Working drafts; not yet placed in their final locations within the docs.
 
-- Layers
-- Annotations
-- Sync Flow
-- View Resolution
-- Persistence Pipeline
-- Conventions
+- [Layers](Layers/index.html)
+- [Annotations](Annotations/index.html)
+- [View ↔ Model ↔ Storage Syncing](Sync%20Flow/index.html)
+- [View Resolution](View%20Resolution/index.html)
+- [Persistence Pipeline](Persistence%20Pipeline/index.html)
+- [Diagram Conventions](Conventions/index.html) — Style and layout rules for the SVG diagrams used throughout the Strvct docs.
 
 
 ---
@@ -1066,12 +1066,12 @@ Most application code uses gesture recognizers rather than raw event listeners. 
   application logic runs
   For raw events without gestures, the listener calls the view's handler method directly, skipping the gesture layer.
 
-- Event Flow
-- Event Listeners
-- Gesture Recognizers
-- Timers
-- Keyboard and Focus
-- Drag and Drop
+- [Event Flow](Event%20Flow/index.html) — The end-to-end path from a browser event to an application handler.
+- [Event Listeners](Event%20Listeners/index.html) — Thin wrappers around native DOM events that forward to handler methods on views.
+- [Gesture Recognizers](Gesture%20Recognizers/index.html) — Higher-level state machines that interpret sequences of events as meaningful gestures.
+- [Timers](Timers/index.html) — Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
+- [Keyboard and Focus](Keyboard%20and%20Focus/index.html) — Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
+- [Drag and Drop](Drag%20and%20Drop/index.html) — Browser drag-and-drop support for views and nodes, covering drop targets, drag sources, and MIME-type dispatch.
 
 
 ---
@@ -2830,12 +2830,12 @@ The core design challenge is that the same object must work whether it is freshl
   3. afterInit()
   runs once the full object graph is in place
 
-- Boot Sequence
-- App Lifecycle
-- Node Lifecycle
-- View Synchronization
-- Persistence Lifecycle
-- Headless Execution
+- [Boot Sequence](Boot%20Sequence/index.html) — How the application loads from first script tag to a running app.
+- [App Lifecycle](App%20Lifecycle/index.html) — SvApp singleton initialization sequence, extension points, runtime environment hooks, user alert routing, and UI readiness promises.
+- [Node Lifecycle](Node%20Lifecycle/index.html) — Creation, three-phase initialization, parent-child relationships, and update notifications.
+- [View Synchronization](View%20Synchronization/index.html) — How views discover nodes, synchronize state, and batch updates efficiently.
+- [Persistence Lifecycle](Persistence%20Lifecycle/index.html) — How objects are stored, loaded, and kept in sync with the local record store and the cloud.
+- [Headless Execution](Headless%20Execution/index.html) — Running STRVCT applications natively in Node.js without DOM or browser dependencies.
 
 
 ---
@@ -4952,10 +4952,10 @@ These are separate because they optimize for different tradeoffs. The notificati
   
   auto-commit: dirty objects → IndexedDB
 
-- Notification Center
-- Sync Scheduler
-- Broadcaster
-- Slot Change Hooks
+- [Notification Center](Notification%20Center/index.html) — Asynchronous event dispatching, dual WeakMap observation indexing, and decoupled change propagation in SvNotificationCenter.
+- [Sync Scheduler](Sync%20Scheduler/index.html) — Coalescing, deduplication, and event-loop-deferred method execution in SvSyncScheduler.
+- [Broadcaster](Broadcaster/index.html) — Immediate, synchronous event broadcasting across object trees in SvBroadcaster.
+- [Slot Change Hooks](Slot%20Change%20Hooks/index.html) — Declarative lifecycle hooks invoked automatically during slot mutation.
 
 
 ---
@@ -5327,9 +5327,9 @@ Three tiers: the in-memory model, local storage (a record store holding every ob
   blob records
   Mutations are stored locally at once and committed to the cloud asynchronously; GC collects orphan blobs at both tiers.
 
-- Local Object Pools
-- Cloud Object Pools
-- Local and Cloud Blob Storage
+- [Local Object Pools](Local%20Object%20Pools/index.html) — IndexedDB-backed persistence for domain object graphs using dirty tracking, the local record store (SvLocalRecordStore), and atomic event-loop commits.
+- [Cloud Object Pools](Cloud%20Object%20Pools/index.html) — Cloud persistence for object pools: one record per row, a version per pool, and an atomic commit protocol.
+- [Local and Cloud Blob Storage](Local%20and%20Cloud%20Blob%20Storage/index.html) — SHA-256 content-addressable binary asset storage for images, audio, video, and files.
 
 
 ---
@@ -5861,35 +5861,35 @@ Design ideas, architectural directions, and planned improvements, with a meta pl
 
 ## Order
 
-- Meta Plan
+- [Meta Plan](Meta%20Plan/index.html) — The order to do the other plans in, why, and what should change in them first.
 
 ## Next
 
-- Capabilities & Permissions
-- JSON Schema
-- Browser Cleanup
-- Cleanup Notes
-- Promise-Wrapped Slots
+- [Capabilities & Permissions](Capabilities%20%26%20Permissions/index.html)
+- [JSON Schema](JSON%20Schema/index.html)
+- [Browser Cleanup](Browser%20Cleanup/index.html)
+- [Cleanup Notes](Cleanup%20Notes/index.html)
+- [Promise-Wrapped Slots](Promise-Wrapped%20Slots/index.html)
 
 ## Later
 
-- Tile Container Views
-- Tile Views
-- Accessibility Testing & Tuning
-- Case Studies
+- [Tile Container Views](Tile%20Container%20Views/index.html)
+- [Tile Views](Tile%20Views/index.html)
+- [Accessibility Testing & Tuning](Accessibility%20Testing%20%26%20Tuning/index.html)
+- [Case Studies](Case%20Studies/index.html)
 
 ## Ideas & Directions
 
-- Emergent Capabilities
-- Async Navigation
-- Graph Database
+- [Emergent Capabilities](Emergent%20Capabilities/index.html)
+- [Async Navigation](Async%20Navigation/index.html) — Rearchitecting the navigation stack to support asynchronous loading at every level.
+- [Graph Database](Graph%20Database/index.html)
 
 ## Done or Closed
 
-- Complete Protocols
-- Naked Objects Issues
-- Lazy Slots
-- Async Final Initialization
+- [Complete Protocols](Complete%20Protocols/index.html)
+- [Naked Objects Issues](Naked%20Objects%20Issues/index.html)
+- [Lazy Slots](Lazy%20Slots/index.html)
+- [Async Final Initialization](Async%20Final%20Initialization/index.html)
 
 
 ---
@@ -7614,10 +7614,10 @@ Source: /docs/Programming%20Idioms/
 
 Recurring patterns and conventions for writing STRVCT code.
 
-- Style Guide
-- Async Patterns
-- Categories
-- Protocols
+- [Style Guide](Style%20Guide/index.html) — Coding conventions, self-initializing class patterns, method chaining, and file structure rules across STRVCT.
+- [Async Patterns](Async%20Patterns/index.html) — Promise extensions, serial and parallel async array iteration, and error context rethrowing with Error.rethrow().
+- [Categories](Categories/index.html) — Extending existing classes by adding methods from separate files without subclassing.
+- [Protocols](Protocols/index.html) — Declaring interfaces and verifying conformance at runtime with fail-fast registration checks.
 
 
 ---
@@ -8285,9 +8285,9 @@ Source: /docs/Reference/
 
 Class hierarchy, module hierarchy, and protocol definitions.
 
-- Classes
-- Modules
-- Protocols
+- [Classes](Classes/index.html)
+- [Modules](Modules/index.html)
+- [Protocols](Protocols/index.html)
 
 
 ---
@@ -9730,11 +9730,11 @@ AI, cloud, media, and IoT service integrations.
 
 Services are not part of the Strvct core — they are optional integrations provided as a convenient way to quickly connect with important external services. The `Services` singleton is the root container for all of them. Each service is a standard Strvct node with slots, persistence, and automatic UI — the same patterns used for domain objects apply to service configuration. Users can inspect and configure services (API keys, model selection, proxy settings) through the generated interface without any custom settings UI.
 
-- AI Services
-- Cloud Storage
-- Media
-- Proxies
-- Home Assistant
+- [AI Services](AI%20Services/index.html) — Framework architecture for multi-provider AI integration, streaming execution, tool calling, and model-first operability.
+- [Cloud Storage](Cloud%20Storage/index.html) — Firebase integration for cloud persistence and file storage.
+- [Media](Media/index.html) — YouTube audio playback and browser speech recognition.
+- [Proxies](Proxies/index.html) — Client-side proxy configuration for routing API calls through intermediary servers.
+- [Home Assistant](Home%20Assistant/index.html) — IoT device control via Home Assistant's WebSocket API.
 
 
 ---
@@ -10857,12 +10857,12 @@ The view hierarchy wraps DOM elements rather than extending them. This is delibe
   composing recursively (Miller-columns-style)
   Tiles, columns, and splits nest recursively, so a single composition handles arbitrary navigation depth and mixed orientations.
 
-- Auto-Generated Views
-- Custom Views
-- Companion View
-- Programmatic Styling
-- Themes and Style States
-- Responsive
+- [Auto-Generated Views](Auto-Generated%20Views/index.html) — How the view layer connects to model nodes, resolves view classes, synchronizes state, and provides navigation without hand-authored UI code.
+- [Custom Views](Custom%20Views/index.html) — Authoring custom view classes, DOM wrappers, flex shortcuts, and model synchronization for specialized media.
+- [Companion View](Companion%20View/index.html) — A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
+- [Programmatic Styling](Programmatic%20Styling/index.html) — Named CSS methods, the chainable API, and why STRVCT avoids CSS files.
+- [Themes and Style States](Themes%20and%20Style%20States/index.html) — How views resolve their appearance from theme classes, style states, and node configuration.
+- [Responsive Views](Responsive/index.html) — Automatic viewport compaction, last-column stretching, and per-node width hooks without per-screen layout code.
 
 
 ---
