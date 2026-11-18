@@ -115,7 +115,7 @@ Example Tool call format:
             slot.setIsRequired(true);
             slot.setShouldStoreSlot(true);
 
-            slot.setJsonSchemaPattern("^call_\\d+$");
+            slot.setPattern("^call_\\d+$");
         }
 
         // --- begin pass through JSON schema to method info ---

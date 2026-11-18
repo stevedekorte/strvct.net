@@ -30,7 +30,7 @@
  * Constraints by value type; a value of another type is not judged here (the
  * slot's type check has its own say):
  *   Number: minimum, maximum, exclusiveMinimum, exclusiveMaximum, multipleOf
- *   String: minLength, maxLength
+ *   String: minLength, maxLength, pattern
  *   Array:  minItems, maxItems
  *
  * `format` ("date-time", "email", "uri", "uuid", …) is emitted in the schema
@@ -60,7 +60,7 @@
     }
 
     constraintNames () {
-        return ["minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "multipleOf", "minLength", "maxLength", "format", "minItems", "maxItems"];
+        return ["minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "multipleOf", "minLength", "maxLength", "pattern", "format", "minItems", "maxItems"];
     }
 
     /**
@@ -130,6 +130,25 @@
         return this.getAnnotation("maxLength");
     }
 
+    /**
+     * @description A regular expression (as a string, JSON Schema's dialect
+     * is JavaScript's) that a string value must match somewhere; anchor it
+     * with ^ and $ to match the whole value.
+     * @param {String} s
+     * @returns {Slot}
+     * @category Constraints
+     */
+    setPattern (s) {
+        if (s !== undefined) {
+            new RegExp(s); // throws here, at the declaration, on a malformed pattern
+        }
+        return this.setConstraint("pattern", s);
+    }
+
+    pattern () {
+        return this.getAnnotation("pattern");
+    }
+
     setFormat (s) {
         return this.setConstraint("format", s);
     }
@@ -194,7 +213,7 @@
             return this.numberConstraintError(v);
         }
         if (Type.isString(v)) {
-            return this.lengthConstraintError(v.length, "minLength", "maxLength", "character");
+            return this.stringConstraintError(v);
         }
         if (Type.isArray(v)) {
             return this.lengthConstraintError(v.length, "minItems", "maxItems", "item");
@@ -221,6 +240,18 @@
     numberIsMultipleOf (n, step) {
         const quotient = n / step;
         return Math.abs(quotient - Math.round(quotient)) < 1e-9;
+    }
+
+    stringConstraintError (s) {
+        return this.lengthConstraintError(s.length, "minLength", "maxLength", "character") || this.patternConstraintError(s);
+    }
+
+    patternConstraintError (s) {
+        const pattern = this.pattern();
+        if (pattern === undefined || new RegExp(pattern).test(s)) {
+            return null;
+        }
+        return "Must match the pattern " + pattern;
     }
 
     lengthConstraintError (length, minName, maxName, unit) {

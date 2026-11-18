@@ -2,7 +2,7 @@
 
 Expanding auto-generated JSON Schema coverage across slots, classes, and the domain model.
 
-**Status:** slot-level keywords and validation against them are built (2026-11-17, see [What Was Built](#what-was-built)); no slot declares a constraint yet. **Left:** `pattern` as a checked constraint, the class-level keywords, type unions. Leave `if`/`then`/`else` until a real case needs it.
+**Status:** slot-level keywords and validation against them are built (2026-11-17, see [What Was Built](#what-was-built)); `pattern` is checked too (2026-11-18); the only slot that declares a constraint is `SvToolCall.callId`'s pattern. **Left:** the class-level keywords, type unions. Leave `if`/`then`/`else` until a real case needs it.
 
 ## Context
 
@@ -40,7 +40,7 @@ The current implementation covers the most common schema features, but there are
 | `default` | `initValue()` | When not `undefined` |
 | `enum` | `setValidValues()` / `setValidItems()` | |
 | `examples` | `setExamples()` | |
-| `pattern` | `setJsonSchemaPattern()` | String regex |
+| `pattern` | `setPattern()` | String regex; checked (was `setJsonSchemaPattern()`, schema-only, until 2026-11-18) |
 | `readOnly` | `setIsReadOnly()` | |
 | `items` | `setJsonSchemaItemsType()` | Array item type, description, uniqueItems, $ref |
 | `properties` | `setFinalInitProto()` | Nested object schemas |
@@ -63,6 +63,7 @@ All of these now have a slot setter named after the keyword (`setMinimum(n)`, `s
 ### String constraints
 
 - **`minLength` / `maxLength`** — character limits for text fields
+- **`pattern`** — a regular expression the string must match
 - **`format`** — semantic formats like `"date-time"`, `"email"`, `"uri"`, `"uuid"`. Particularly useful for AI — knowing a string is a UUID vs. a display name changes how the AI generates it
 
 ### Array constraints
@@ -143,6 +144,7 @@ This would unify schema declaration and runtime validation, ensuring the contrac
 | `setExclusiveMinimum` / `setExclusiveMaximum` | Number | yes | yes |
 | `setMultipleOf` | Number | yes | yes, allowing for floating point |
 | `setMinLength` / `setMaxLength` | String | yes | yes |
+| `setPattern` | String | yes | yes (2026-11-18) |
 | `setMinItems` / `setMaxItems` | Array | yes | yes |
 | `setFormat` | String | yes | no |
 
@@ -163,10 +165,10 @@ Decisions made along the way:
 - **The setter cannot refuse.** It can't tell a load from an edit, so the refusal lives where edits come in. Code that calls a setter directly with a bad value gets a warning, not an error.
 - **The patch refusal assumes patches are edits.** Today the only caller of `applyJsonPatches` is the AI's `patchClientState` tool. If patches are ever used again to copy state from one machine to another, that path must skip the constraint check, or a value that loaded with a warning on the host would be refused on the client.
 - **`format` is not checked.** It tells the AI what kind of string to write; checking each format is a separate piece of work.
-- **`pattern` is still schema-only.** `setJsonSchemaPattern` predates this and is emitted but not checked. Checking it belongs here and is the natural next addition.
+- **`pattern` is checked (2026-11-18).** `setJsonSchemaPattern`, which predated this and was only emitted, became `setPattern`, one of the constraints: its sentence is "Must match the pattern ^call_\d+$", which suits an AI better than a person, and a malformed pattern throws where it is declared. Its one declarer is `SvToolCall.callId`, so a call id of another shape now warns in the setter (and is kept).
 - **`SvNumberField`'s own `minValue` / `maxValue`** (used by sliders) are left as they are. A slot's `minimum` / `maximum` could feed them, which would retire the pair.
 
-**No slot declares a constraint yet**, in the framework or the app, so nothing behaves differently until one does. Each one added is a decision about data already stored (it will warn on load) and about what the AI may write (it will be refused), so they are best added where a wrong value has been seen.
+**No slot declares a constraint yet apart from `SvToolCall.callId`'s pattern**, in the framework or the app, so nothing else behaves differently until one does. Each one added is a decision about data already stored (it will warn on load) and about what the AI may write (it will be refused), so they are best added where a wrong value has been seen.
 
 ## Richer Type Unions
 

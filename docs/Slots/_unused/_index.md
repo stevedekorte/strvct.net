@@ -175,7 +175,7 @@ slot.setValidValues(["small", "medium", "large"]);
 
 - `setValidValues(array)` — restrict the value to one of the listed options. Produces a popup/dropdown in the inspector and a JSON Schema `enum`.
 - `setValidItems(itemsArray)` — like `validValues` but for dictionary items (each item has a label and a value).
-- `setJsonSchemaPattern(regex)` — string pattern constraint for schema validation.
+- `setPattern(regex)` — string pattern constraint: in the schema, and checked on an edit.
 
 ## Subnode-related annotations
 

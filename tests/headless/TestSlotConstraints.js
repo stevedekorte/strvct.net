@@ -11,7 +11,8 @@
  *     that declares none; a declared maxLength never raises a stored
  *     string's cap;
  *   - constraintErrorForValue() gives a sentence per broken constraint, and
- *     judges only the constraints for the value's type;
+ *     judges only the constraints for the value's type; a pattern is
+ *     checked, and a malformed one throws where it is declared;
  *   - the setter WARNS and keeps the value, and so does loading JSON: a
  *     record stored before the constraint existed must still load;
  *   - a field refuses the edit with that sentence (SvField.validateValue,
@@ -86,6 +87,12 @@ function defineTestClasses () {
                 slot.setFormat("date-time");
             }
             {
+                const slot = this.newSlot("code", "call_0");
+                slot.setSlotType("String");
+                slot.setIsInJsonSchema(true);
+                slot.setPattern("^call_\\d+$");
+            }
+            {
                 const slot = this.newSlot("tags", null);
                 slot.setSlotType("Array");
                 slot.setIsInJsonSchema(true);
@@ -132,6 +139,16 @@ function testSchema () {
     const name = schemaOf("name");
     check(name.minLength === 1 && name.maxLength === 12, "minLength and maxLength are emitted");
     check(schemaOf("bornOn").format === "date-time", "format is emitted");
+    check(schemaOf("code").pattern === "^call_\\d+$", "pattern is emitted");
+    const callIdSchema = SvGlobals.get("SvToolCall").prototype.slotNamed("callId").asJsonSchema(new Set());
+    check(callIdSchema.pattern === "^call_\\d+$", "the one framework slot with a pattern (SvToolCall.callId) still emits it");
+    let malformed = null;
+    try {
+        heroSlot("notes").setPattern("(");
+    } catch (e) {
+        malformed = e;
+    }
+    check(malformed !== null && heroSlot("notes").pattern() === undefined, "a malformed pattern throws where it is declared");
     const tags = schemaOf("tags");
     check(tags.minItems === 1 && tags.maxItems === 2, "minItems and maxItems are emitted");
     const notes = schemaOf("notes");
@@ -156,6 +173,8 @@ function testMessages () {
     check(error("tags", []) === "Must have at least 1 item." && error("tags", [1, 2, 3]) === "Must have at most 2 items.", "array sizes");
     check(error("level", "99") === null && error("name", 99) === null && error("level", null) === null, "a value of another type is not judged here");
     check(error("bornOn", "not a date") === null, "format is not checked");
+    check(error("code", "call_12") === null && error("code", "toolu_12") === "Must match the pattern ^call_\\d+$", "pattern: " + error("code", "toolu_12"));
+    check(error("code", 12) === null, "a pattern judges only strings");
     check(error("notes", "anything") === null, "a slot with no constraints has nothing to say");
 }
 
@@ -196,6 +215,8 @@ function testFields () {
     const nameField = SvGlobals.get("SvStringField").clone().setTarget(hero).setValueMethod("name");
     check(nameField.validateValue("") === "Must have at least 1 character.", "a string field, through SvField: " + nameField.validateValue(""));
     check(nameField.validateValue("Aria") === null, "…accepts a value that fits");
+    const codeField = SvGlobals.get("SvStringField").clone().setTarget(hero).setValueMethod("code");
+    check(codeField.validateValue("nope") !== null && codeField.validateValue("call_3") === null, "a string field refuses a value that misses the pattern");
     const loose = SvGlobals.get("SvStringField").clone();
     check(loose.targetSlot() === null && loose.validateValue("x") === null, "a field with no target has no slot and no constraint");
     const methodField = SvGlobals.get("SvStringField").clone().setTarget(hero).setValueMethod("svType");
@@ -229,6 +250,9 @@ function testPatches () {
     message = refusal(party, [{ op: "add", path: "/heroes/-", value: { name: "Bram", level: 0 } }]);
     check(message !== null && message.includes("slot 'level' cannot be 0: Must be at least 1.") && message.includes("TestScHero"), "a field inside an added value is checked too: " + message);
     check(party.heroes().subnodeCount() === 1, "…and the element is not added");
+
+    message = refusal(party, [{ op: "replace", path: "/heroes/0/code", value: "nope" }]);
+    check(message !== null && message.includes("slot 'code' cannot be") && message.includes("Must match the pattern") && hero.code() === "call_0", "a replace that misses a pattern is refused: " + message);
 
     message = refusal(party, [
         { op: "replace", path: "/heroes/0/level", value: 20 },

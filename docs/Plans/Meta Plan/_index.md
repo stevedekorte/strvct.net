@@ -3,7 +3,7 @@ subtitle: The order to do the other plans in, why, and what should change in the
 ---
 # Meta Plan
 
-**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done, along with one piece of work that grew out of step 3 (shared promises). **Step 4 is built (2026-11-17) and needs a pass in a browser. Step 5's first part (slot constraints: schema and validation) is built the same day; no slot uses it yet.**
+**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done, along with one piece of work that grew out of step 3 (shared promises). **Step 4 is built (2026-11-17) and needs a pass in a browser. Step 5's first part (slot constraints: schema and validation) is built the same day, with `pattern` checked on 2026-11-18; no app slot uses it yet.**
 
 Steps 1 to 3 were checked with the headless tests only. The changes that run in a browser (the platform accessors, device values, file picking, the image and blob promise code) still need a pass in an app.
 
@@ -18,7 +18,7 @@ Steps 1 to 3 were checked with the headless tests only. The changes that run in 
 | [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. Now lists the two hand-kept promises still to move to shared promises. |
 | [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Core done, unused | One shared promise per value, retry after failure, recompute on a dependency change; no slot uses it yet. |
 | [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Built, unverified in a browser | Every view edit path asks the editability cascade; the server says who may write and the cascade uses its answer; a refused commit reloads and says so. Read, share and create hooks wait for a need. |
-| [JSON Schema](../JSON%20Schema/) | Slot constraints built, unused | A slot's `minimum`, `maxLength` and the rest reach the schema, the field's error text, ARIA and a refused AI patch; the setter only warns. No slot declares one yet. Class-level keywords and type unions are left. |
+| [JSON Schema](../JSON%20Schema/) | Slot constraints built, unused | A slot's `minimum`, `maxLength` and the rest reach the schema, the field's error text, ARIA and a refused AI patch; the setter only warns. `pattern` is checked too. No app slot declares one yet. Class-level keywords and type unions are left. |
 | [Browser Cleanup](../Browser%20Cleanup/) | After that | Now holds the compaction notes; has its own order. |
 | [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Later | Wait on compaction. Large collections rewritten around windowed collections. |
 | [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) | Ongoing | Automated checks now; manual passes after the navigation work. |
@@ -55,7 +55,7 @@ The most user-facing value: the failure it describes is silent data loss. **Its 
 
 Additive, and tighter schemas improve AI tool calls at once. Start by emitting the `minimum` / `maximum` annotations that the ARIA code already reads.
 
-**Slot constraints — done (2026-11-17).** Ten setters on `Slot`, named after their JSON Schema keywords, with four readers: the schema, the error sentence a field shows, ARIA, and the setter's warning. An AI patch that breaks one is refused before anything is applied. See [JSON Schema](../JSON%20Schema/#what-was-built). What remains is declaring constraints on real slots (each is a decision about stored data), checking `pattern`, and the class-level keywords and type unions when a case needs them.
+**Slot constraints — done (2026-11-17).** Ten setters on `Slot`, named after their JSON Schema keywords, with four readers: the schema, the error sentence a field shows, ARIA, and the setter's warning. An AI patch that breaks one is refused before anything is applied. See [JSON Schema](../JSON%20Schema/#what-was-built). `pattern` joined them on 2026-11-18 (`setPattern`, replacing the schema-only `setJsonSchemaPattern`). What remains is declaring constraints on real slots (each is a decision about stored data), and the class-level keywords and type unions when a case needs them.
 
 ### 6. Browser Cleanup
 

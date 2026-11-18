@@ -793,15 +793,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         return this.getAnnotation("isHostOnly") === true;
     }
 
-    setJsonSchemaPattern (s) {
-        this.setAnnotation("jsonSchemaPattern", s);
-        return this;
-    }
-
-    jsonSchemaPattern () {
-        return this.getAnnotation("jsonSchemaPattern");
-    }
-
     /**
      * @category Inspector
      */
@@ -2174,10 +2165,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             schema.examples = this.jsonSchemaExamples();
         }
 
-        const pattern = this.jsonSchemaPattern();
-        if (pattern) {
-            schema.pattern = pattern;
-        }
         if (this.slotType() === "String" && this.shouldStoreSlot() && !this.isBlobString()) {
             schema.maxLength = Slot.storedStringCapLength();
         }
