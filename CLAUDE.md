@@ -435,6 +435,7 @@ Code is eval'd at runtime, so every evaluated chunk must end with a sourceURL co
 ```
 
 - No leading slash; `encodeURI()` paths with spaces; no quotes; relative to the served web root.
+- The comment must be appended at the very end of the evaluated code string.
 - The boot system emits these in `source/boot/SvHelpers.js` (`evalStringFromSourceUrl()`), `source/boot/SvUrlResource.js` (`evalDataAsJS()` / `evalDataAsCss()`), and `source/boot/SvBootLoader.js`.
 - VSCode: use the Chrome debugger with `"pathMapping": { "/": "${webRoot}/" }` and `webRoot` set to the directory you serve; do **not** enable `sourceMaps`. Trust the dev certificate in the system keychain (Chrome no longer honors `--ignore-certificate-errors`) or use HTTP locally.
 
