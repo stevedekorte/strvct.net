@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-Site build: STRVCT · 2026-11-17 · 0df81ac6
+Site build: STRVCT · 2026-11-18 · fed03dcf
 
 You write the domain model. STRVCT does the rest while the app runs: it presents your objects in a user interface on desktop and phone, stores them locally, syncs them to the cloud, imports and exports them as JSON, and lets AI agents read and edit them. Nothing is generated ahead of time: views are created from the live objects as the user navigates, and they update when the objects change. Add a property, annotate it, and every part picks it up. There is no separate form, storage mapping, or tool schema to write.
 
@@ -6930,7 +6930,7 @@ Source: /docs/Plans/JSON%20Schema/
 
 Expanding auto-generated JSON Schema coverage across slots, classes, and the domain model.
 
-**Status:** slot-level keywords and validation against them are built (2026-11-17, see [What Was Built](#what-was-built)); `pattern` is checked too (2026-11-18); the only slot that declares a constraint is `SvToolCall.callId`'s pattern. **Left:** the class-level keywords, type unions. Leave `if`/`then`/`else` until a real case needs it.
+**Status:** slot-level keywords and validation against them are built (2026-11-17, see [What Was Built](#what-was-built)); `pattern` is checked too (2026-11-18); in the framework the only slot that declares a constraint is `SvToolCall.callId`'s pattern, and the app declared its first number bounds the same day. **Left:** the class-level keywords, type unions. Leave `if`/`then`/`else` until a real case needs it.
 
 ## Context
 
@@ -7096,7 +7096,7 @@ Decisions made along the way:
 - **`pattern` is checked (2026-11-18).** `setJsonSchemaPattern`, which predated this and was only emitted, became `setPattern`, one of the constraints: its sentence is "Must match the pattern ^call_\d+$", which suits an AI better than a person, and a malformed pattern throws where it is declared. Its one declarer is `SvToolCall.callId`, so a call id of another shape now warns in the setter (and is kept).
 - **`SvNumberField`'s own `minValue` / `maxValue`** (used by sliders) are left as they are. A slot's `minimum` / `maximum` could feed them, which would retire the pair.
 
-**No slot declares a constraint yet apart from `SvToolCall.callId`'s pattern**, in the framework or the app, so nothing else behaves differently until one does. Each one added is a decision about data already stored (it will warn on load) and about what the AI may write (it will be refused), so they are best added where a wrong value has been seen.
+**No slot declares a constraint yet apart from `SvToolCall.callId`'s pattern**, in the framework or the app, so nothing else behaves differently until one does. The app's first ones (2026-11-18) showed how to add them: scan the stored data for the slot first. A proposed minimum of 1 was found to be wrong for two stored records where 0 meant "at will", and the bound became 0; the app's test now checks every stored JSON file against whatever bounds are declared. Each one added is a decision about data already stored (it will warn on load) and about what the AI may write (it will be refused), so they are best added where a wrong value has been seen.
 
 ## Richer Type Unions
 
@@ -7184,7 +7184,7 @@ Source: /docs/Plans/Meta%20Plan/
 
 The order to do the other plans in, why, and what should change in them first.
 
-**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done, along with one piece of work that grew out of step 3 (shared promises). **Step 4 is built (2026-11-17) and needs a pass in a browser. Step 5's first part (slot constraints: schema and validation) is built the same day, with `pattern` checked on 2026-11-18; no app slot uses it yet.**
+**As of:** 2026-11-15. Every plan page now opens with a status line; this page orders them. Steps 1 to 3 are done, along with one piece of work that grew out of step 3 (shared promises). **Step 4 is built (2026-11-17) and needs a pass in a browser. Step 5's first part (slot constraints: schema and validation) is built the same day, with `pattern` checked on 2026-11-18, when the app also declared its first bounds.**
 
 Steps 1 to 3 were checked with the headless tests only. The changes that run in a browser (the platform accessors, device values, file picking, the image and blob promise code) still need a pass in an app.
 
@@ -7199,7 +7199,7 @@ Steps 1 to 3 were checked with the headless tests only. The changes that run in 
 | [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. Now lists the two hand-kept promises still to move to shared promises. |
 | [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Core done, unused | One shared promise per value, retry after failure, recompute on a dependency change; no slot uses it yet. |
 | [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Built, unverified in a browser | Every view edit path asks the editability cascade; the server says who may write and the cascade uses its answer; a refused commit reloads and says so. Read, share and create hooks wait for a need. |
-| [JSON Schema](../JSON%20Schema/) | Slot constraints built, unused | A slot's `minimum`, `maxLength` and the rest reach the schema, the field's error text, ARIA and a refused AI patch; the setter only warns. `pattern` is checked too. No app slot declares one yet. Class-level keywords and type unions are left. |
+| [JSON Schema](../JSON%20Schema/) | Slot constraints built, unused | A slot's `minimum`, `maxLength` and the rest reach the schema, the field's error text, ARIA and a refused AI patch; the setter only warns. `pattern` is checked too. The app declares its first few (2026-11-18). Class-level keywords and type unions are left. |
 | [Browser Cleanup](../Browser%20Cleanup/) | After that | Now holds the compaction notes; has its own order. |
 | [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Later | Wait on compaction. Large collections rewritten around windowed collections. |
 | [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) | Ongoing | Automated checks now; manual passes after the navigation work. |
@@ -7236,7 +7236,7 @@ The most user-facing value: the failure it describes is silent data loss. **Its 
 
 Additive, and tighter schemas improve AI tool calls at once. Start by emitting the `minimum` / `maximum` annotations that the ARIA code already reads.
 
-**Slot constraints — done (2026-11-17).** Ten setters on `Slot`, named after their JSON Schema keywords, with four readers: the schema, the error sentence a field shows, ARIA, and the setter's warning. An AI patch that breaks one is refused before anything is applied. See [JSON Schema](../JSON%20Schema/#what-was-built). `pattern` joined them on 2026-11-18 (`setPattern`, replacing the schema-only `setJsonSchemaPattern`). What remains is declaring constraints on real slots (each is a decision about stored data), and the class-level keywords and type unions when a case needs them.
+**Slot constraints — done (2026-11-17).** Ten setters on `Slot`, named after their JSON Schema keywords, with four readers: the schema, the error sentence a field shows, ARIA, and the setter's warning. An AI patch that breaks one is refused before anything is applied. See [JSON Schema](../JSON%20Schema/#what-was-built). `pattern` joined them on 2026-11-18 (`setPattern`, replacing the schema-only `setJsonSchemaPattern`). The app declared its first bounds the same day, after scanning its stored data for values outside them. What remains is declaring more where a wrong value is seen (each is a decision about stored data), and the class-level keywords and type unions when a case needs them.
 
 ### 6. Browser Cleanup
 

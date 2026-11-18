@@ -2,7 +2,7 @@
 
 Expanding auto-generated JSON Schema coverage across slots, classes, and the domain model.
 
-**Status:** slot-level keywords and validation against them are built (2026-11-17, see [What Was Built](#what-was-built)); `pattern` is checked too (2026-11-18); the only slot that declares a constraint is `SvToolCall.callId`'s pattern. **Left:** the class-level keywords, type unions. Leave `if`/`then`/`else` until a real case needs it.
+**Status:** slot-level keywords and validation against them are built (2026-11-17, see [What Was Built](#what-was-built)); `pattern` is checked too (2026-11-18); in the framework the only slot that declares a constraint is `SvToolCall.callId`'s pattern, and the app declared its first number bounds the same day. **Left:** the class-level keywords, type unions. Leave `if`/`then`/`else` until a real case needs it.
 
 ## Context
 
@@ -168,7 +168,7 @@ Decisions made along the way:
 - **`pattern` is checked (2026-11-18).** `setJsonSchemaPattern`, which predated this and was only emitted, became `setPattern`, one of the constraints: its sentence is "Must match the pattern ^call_\d+$", which suits an AI better than a person, and a malformed pattern throws where it is declared. Its one declarer is `SvToolCall.callId`, so a call id of another shape now warns in the setter (and is kept).
 - **`SvNumberField`'s own `minValue` / `maxValue`** (used by sliders) are left as they are. A slot's `minimum` / `maximum` could feed them, which would retire the pair.
 
-**No slot declares a constraint yet apart from `SvToolCall.callId`'s pattern**, in the framework or the app, so nothing else behaves differently until one does. Each one added is a decision about data already stored (it will warn on load) and about what the AI may write (it will be refused), so they are best added where a wrong value has been seen.
+**No slot declares a constraint yet apart from `SvToolCall.callId`'s pattern**, in the framework or the app, so nothing else behaves differently until one does. The app's first ones (2026-11-18) showed how to add them: scan the stored data for the slot first. A proposed minimum of 1 was found to be wrong for two stored records where 0 meant "at will", and the bound became 0; the app's test now checks every stored JSON file against whatever bounds are declared. Each one added is a decision about data already stored (it will warn on load) and about what the AI may write (it will be refused), so they are best added where a wrong value has been seen.
 
 ## Richer Type Unions
 
