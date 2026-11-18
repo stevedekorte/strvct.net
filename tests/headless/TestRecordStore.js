@@ -121,7 +121,7 @@ async function readAndMirrorSuite (store, data) {
 async function commitSuite (store, data) {
     const SvRecordRow = SvGlobals.get("SvRecordRow");
     console.log("\n[" + store.svType() + "] commit: compare-and-set on the root's version");
-    const changed = SvRecordRow.newRow({ poolId: "camp-Crypt", objectId: "r-loc1", payloadJson: "{\"type\":\"UoLocation\",\"entries\":[[\"name\",\"Antechamber (lit)\"]]}" });
+    const changed = SvRecordRow.newRow({ poolId: "camp-Crypt", objectId: "r-loc1", payloadJson: "{\"type\":\"Location\",\"entries\":[[\"name\",\"Antechamber (lit)\"]]}" });
     let result = await store.asyncCommit({ poolId: "camp-Crypt", baseVersion: 1234, requestId: "req-1", writes: [changed], deletes: [{ poolId: "camp-Crypt", objectId: "r-art1" }] });
     check(result.status === "committed" && result.version === 1235, "a commit at the current version advances it by one: " + JSON.stringify(result));
     let opened = await store.asyncOpen("camp-Crypt");
@@ -155,7 +155,7 @@ async function commitSuite (store, data) {
     check(result.status === "refused", "a commit to an unknown pool is refused");
     check((await store.asyncOpen("camp-Crypt")).version === 1235, "no refused or conflicting commit moved the version");
     result = await store.asyncCommit({ poolId: "camp-Crypt", baseVersion: 1235, requestId: "req-7",
-        writes: [SvRecordRow.newRow({ poolId: "camp-Crypt", objectId: "camp-Crypt", parentId: "lib-ZF36", orderKey: "Crypt", payloadJson: "{\"type\":\"UoCampaign\",\"entries\":[[\"title\",\"Crypt of Alatar II\"]]}" })], deletes: [] });
+        writes: [SvRecordRow.newRow({ poolId: "camp-Crypt", objectId: "camp-Crypt", parentId: "lib-ZF36", orderKey: "Crypt", payloadJson: "{\"type\":\"Campaign\",\"entries\":[[\"title\",\"Crypt of Alatar II\"]]}" })], deletes: [] });
     opened = await store.asyncOpen("camp-Crypt");
     check(result.status === "committed" && opened.version === 1236 && opened.root.ownerUid === "u123" && opened.root.payloadJson.includes("II"),
         "writing the root record keeps the server-owned columns and advances the version");

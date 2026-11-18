@@ -342,9 +342,8 @@
      * is skipped with a console warning), or a bare string/number where an
      * array holds objects (it becomes an EMPTY element). Either way the patch
      * reported success while the array came out empty or full of blanks
-     * (2026-10-20: "UoInitiativeCounter" entries left the combat tracker
-     * blank; string ids in a location's activeCreatures became null
-     * references). The error names what the array holds.
+     * (2026-10-20: an app's tracker entries came out blank; string ids
+     * in an array of references became null references). The error names what the array holds.
      * @returns {String|null} the failure, or null
      * @category Preflight
      */
@@ -1227,7 +1226,7 @@
      * @description The class a whole-object value written into an EMPTY slot
      * becomes: the one its `_type` names, when that is a kind of the slot's
      * class, else the slot's class. Building the slot's class regardless made
-     * {"_type":"UoAiController","personaPrompt":…} on a companion with no
+     * {"_type":"SomeAiController","persona":…} on a node with no
      * controller yet a plain controller, its persona dropped with a warning
      * (2026-11-01).
      * @param {Function|null} declared - the class `_type` names, or null

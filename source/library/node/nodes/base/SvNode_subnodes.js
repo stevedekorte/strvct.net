@@ -425,8 +425,8 @@
      * class is accepted when it IS one of the declared classes or DESCENDS from
      * one. Callers used to test `subnodeClasses().includes(aClass)`, an exact
      * match that rejected a subclass of a declared class — which contradicts the
-     * polymorphism rule the model layer is built on: a UoArtifact that extends
-     * UoItem IS a UoItem, and a collection of UoItem should take it. The exact
+     * polymorphism rule the model layer is built on: an Artifact that extends
+     * Item IS an Item, and a collection of Item should take it. The exact
      * match silently dropped such a node with a console warning.
      * @param {Function} aClass - the candidate subnode's class
      * @returns {Boolean}

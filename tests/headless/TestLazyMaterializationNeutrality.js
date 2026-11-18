@@ -76,7 +76,7 @@ async function boot () {
 let TestLazyDocument = null;
 let lastSectionHookOldValue; // captured by the test class's slot hook
 
-// A syncable document (stand-in for UoCharacter) with one LAZY stored slot,
+// A syncable document (stand-in for an app's character document) with one LAZY stored slot,
 // mirroring how character sheet sections are declared.
 function defineTestClass () {
     const SvSyncableJsonGroup = SvGlobals.get("SvSyncableJsonGroup");

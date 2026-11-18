@@ -6,7 +6,7 @@
  * This is a SEPARATE walk from `serializeToJson`: plain (no-lens) dumps go
  * through the untouched serializeToJson path and stay byte-identical; the
  * lens walk delegates to serializeToJson for unbounded `full` subtrees, so
- * custom per-class serializers (UoLocation, UoImageMessage, ...) are honored
+ * custom per-class serializers (an app's location or image message class, ...) are honored
  * at full detail. At `summary`/`handle` the walk projects from the JSON
  * schema slots directly, bypassing custom serializers — a summary is a
  * projection, not the class's authored full form.

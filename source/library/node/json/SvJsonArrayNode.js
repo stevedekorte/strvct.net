@@ -238,7 +238,7 @@
             // subnodes array and surfaces as a crash somewhere unrelated.
             //
             // That made a collection polymorphic-by-addition a breaking change: the
-            // moment a second class registered itself (UoArtifact into UoItems),
+            // moment a second class registered itself (a subclass of an item class into a collection of items),
             // every previously-valid entry WITHOUT a _type stopped deserializing,
             // including the ones an AI writes via a tool call — and the AI has no way
             // to know a discriminator became mandatory.

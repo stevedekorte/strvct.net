@@ -164,7 +164,7 @@
             // Lazy Loading) the count would materialize the whole subtree
             // mid-commit, and materialization's load-time hooks mutate slots
             // whose didMutate lands mid-store (the mid-store tripwire; seen
-            // live via UoAiChat's message tree). Until the subnodes
+            // live via a chat's message tree). Until the subnodes
             // materialize, serve the last stored note — the count as of the
             // last save, which is also what the lazy design wants displayed
             // at boot. This guard covers all noteSubnodesCount overrides.

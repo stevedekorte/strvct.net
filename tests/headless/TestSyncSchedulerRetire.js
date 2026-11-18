@@ -10,7 +10,7 @@
  * by an earlier action of the pass (a list re-sync replacing a tile) used to
  * get its own queued syncFromNode anyway — on a view with no element
  * ("Cannot read properties of null (reading 'getAttribute')" in
- * UoChatInputTile.syncFromNode, 2026-10-20).
+ * an app's chat message tile's syncFromNode, 2026-10-20).
  *
  * Usage (from this directory):  node TestSyncSchedulerRetire.js
  */

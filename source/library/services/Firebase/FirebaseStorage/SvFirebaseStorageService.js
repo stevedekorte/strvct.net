@@ -313,19 +313,12 @@
                 bucketName = this.defaultBucketName();
             }
 
-            /*
-            SvFirebaseStorageService.shared().setDefaultBucketName(globalThis.UoBuildEnv.storageBucket);
-            if (typeof globalThis !== "undefined" && globalThis.UoBuildEnv) {
-                bucketName = globalThis.UoBuildEnv.storageBucket;
-            }
-            */
-
             if (!bucketName && app.options.storageBucket) {
                 bucketName = app.options.storageBucket;
             }
 
             if (!bucketName) {
-                throw new Error("Firebase Storage bucket found in UoBuildEnv or Firebase app options");
+                throw new Error("No Firebase Storage bucket: set one with setDefaultBucketName() or in the Firebase app options");
             }
 
             return bucketName;

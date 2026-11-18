@@ -8,7 +8,7 @@
  * Adds fetch state management, sync timestamps, and content source references.
  *
  * IMPORTANT: Only ROOT objects of documents that are synced to cloud should inherit
- * from this class (e.g., UoHostSession, UoCharacter). Child objects within those
+ * from this class (e.g. an app's session or character document). Child objects within those
  * documents should inherit from SvJsonGroup instead. The sync timestamps and dirty
  * tracking are managed at the document root level, not on every child object.
  *

@@ -11,7 +11,7 @@
  * ended — still inside the outer pass — and the announcement climbed to the
  * folder, whose answer (a syncable folder stamps localLastModified) mutated an
  * object the outer pass had already stored: a TRIPWIRE every time a document
- * was added, and on a table worker every pass (2026-10-25, UoSessions).
+ * was added, and on a table worker every pass (2026-10-25, an app's sessions folder).
  *
  * Usage (from the strvct root):
  *   node source/boot/index-builder/ImportsIndexer.js   # if index is stale

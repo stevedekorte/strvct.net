@@ -38,7 +38,7 @@
      * which timer, or what cascade it triggered. Lazy: only called when a
      * report actually fires.
      * @param {string|number} timeoutName - The timeout's name, or its id when unnamed.
-     * @returns {string} e.g. "UoSession.timeout('cloudSync')"
+     * @returns {string} e.g. "SvCloudFolder.timeout('cloudSync')"
      * @category Timeout Management
      */
     descriptionForTimeoutNamed (timeoutName) {

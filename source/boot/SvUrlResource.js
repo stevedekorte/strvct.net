@@ -254,7 +254,7 @@
      * answers by URL: after a deploy it can hand back the previous version of
      * a file for as long as the hosting's max-age, and storing those bytes
      * under the new hash poisoned the hash cache until the file's next change
-     * (seen in production 2026-09-21: a new UoBookPage.js evaluated against a
+     * (seen in production 2026-09-21: a newly added app class evaluated against a
      * stale Slot.js). The URL now carries the hash, so it cannot be answered
      * from an older entry; a mismatch anyway refetches bypassing every cache,
      * and a second mismatch throws rather than caching wrong bytes.

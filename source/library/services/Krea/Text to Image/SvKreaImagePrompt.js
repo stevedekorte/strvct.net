@@ -21,10 +21,10 @@
  * no num_images parameter). A `styles` entry does NOT raise the tier, so running
  * our own trained style is free; attaching reference images does raise it.
  *
- * This class implements the duck-typed interface UoImageMessage calls on an
+ * This class implements the duck-typed interface an app's image message calls on an
  * image prompt: setPrompt/setAspectRatio/aspectRatio/extraImagesNode/generate/
  * error/status/resultImageNode/asyncFirstResultImageNode/generations/shutdown.
- * It deliberately has NO setVersion — UoImageMessage guards on that to detect
+ * It deliberately has NO setVersion — a caller can guard on that to detect
  * Midjourney-only prompts.
  */
 
@@ -394,7 +394,7 @@
         /**
          * @member {SvImageNode} resultImageNode
          * @description The generated image. Transient: consumers copy the blob
-         * out (UoImageMessage hands it to its own imageNode), so persisting it
+         * out (e.g. an image message hands it to its own imageNode), so persisting it
          * would duplicate the bytes.
          * @category Output
          */

@@ -28,7 +28,7 @@
  * - onImagePromptImageError
  * - onImagePromptEnd
  *
- * (the delegate will typically be a UoImageMessage)
+ * (the delegate will typically be an app's image message)
  */
 
 (class SvOpenAiStyleTransfer extends SvSummaryNode {

@@ -730,7 +730,7 @@
      * @description Re-resolves the node's headerNode()/footerNode() and
      * rebinds the header/footer views when they changed. The bindings were
      * previously made only in setNode(), so a node that SWAPS its header
-     * mid-life (UoAiChat: TV band ⇄ "Recover from Errors" action) left the
+     * mid-life (e.g. a chat swapping its status band for a "Recover from Errors" action) left the
      * view showing the old node forever — the model swapped back after a
      * successful recovery but the button stayed on screen. Mirrors
      * headerRegion()/footerRegion(), which already re-resolve per sync for

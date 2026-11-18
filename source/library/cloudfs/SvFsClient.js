@@ -15,7 +15,7 @@
  *
  * Apps wire this up once at boot, typically by:
  *   1. Constructing the application's concrete `SvFsBackend` subclass
- *      (e.g. `UoFsBackend extends SvFirebaseFsBackend`) which knows
+ *      (e.g. an app's `SvFirebaseFsBackend` subclass) which knows
  *      how to call the app's specific HTTP routes.
  *   2. Calling `SvFsClient.shared().setBackend(backendInstance)`.
  */

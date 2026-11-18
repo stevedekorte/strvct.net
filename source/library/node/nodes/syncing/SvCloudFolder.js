@@ -469,8 +469,8 @@
         // client-side session mirror living next to host sessions). Such a
         // child can't match a folder entry — treating the throw as
         // "no answer" instead of letting it abort the whole folder
-        // reconciliation (which surfaced as "Sessions sync failed for
-        // realm ...: UoClientSession must override cloudFsStableId()").
+        // reconciliation (which surfaced as an app's whole folder failing to sync
+        // because one child class must override cloudFsStableId()).
         return this.subnodes().detect(sn => {
             if (!sn.cloudFsStableId) {
                 return false;

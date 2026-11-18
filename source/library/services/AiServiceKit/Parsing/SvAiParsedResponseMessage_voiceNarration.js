@@ -163,17 +163,11 @@
         return index;
     }
 
-    session () {
-        const conv = this.conversation();
-        if (!conv) { return null; }
-        return conv.firstOwnerChainNodeOfClass(UoSession);
-    }
-
     /**
      * The conversation owns the narration controller (duck-typed:
      * isEnabled / queueNarrationSegment / stopSpeaking). Session chats
      * forward to their session's controller; assistant conversations carry
-     * their own. Framework stays app-agnostic — no UoSession reference here.
+     * their own. Framework stays app-agnostic — no app session class named here.
      */
     narrationController () {
         const conv = this.conversation();

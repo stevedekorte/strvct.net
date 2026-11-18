@@ -168,8 +168,8 @@
      * cloud JSON (it's a back-reference that would cause a serialize
      * cycle), so without this step the deserialized messages have
      * `conversation === null` and any view-layer code that calls
-     * `this.conversation().session()` (e.g.
-     * `UoRollRequestMessage.sessionHasCharacter`) throws during the
+     * `this.conversation().session()` (as an app's message subclass
+     * may) throws during the
      * first render.
      * @category Initialization
      */

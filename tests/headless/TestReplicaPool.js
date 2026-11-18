@@ -63,7 +63,7 @@ function defineClasses () {
         }
     }).initThisClass();
 
-    (class TestRpTableBase extends SvStorableNode { // what host and player share (as UoSession is to its two)
+    (class TestRpTableBase extends SvStorableNode { // what host and player share (as an app's session class is to its host and player subclasses)
         initPrototypeSlots () {
             {
                 const slot = this.newSlot("chat", null);

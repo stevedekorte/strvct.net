@@ -12,13 +12,13 @@
  * {
  *     subnodeIds: ["id1", "id2", ...],  // Ordered array
  *     items: {
- *         "id1": { type: "UoCharacter", title: "...", subtitle: "...", thumbnailUrl: "...", lastModified: ... },
- *         "id2": { type: "UoCharacters", title: "...", subtitle: "...", thumbnailUrl: "...", lastModified: ... }
+ *         "id1": { type: "Contact", title: "...", subtitle: "...", thumbnailUrl: "...", lastModified: ... },
+ *         "id2": { type: "Contacts", title: "...", subtitle: "...", thumbnailUrl: "...", lastModified: ... }
  *     }
  * }
  *
  * The type field is critical for hierarchical collections where items can be different classes
- * (e.g., UoCharacter instances and UoCharacters folder instances).
+ * (e.g., Contact instances and Contacts folder instances).
  */
 (class SvSyncCollectionSource extends SvSummaryNode {
 
@@ -531,7 +531,7 @@
 
     /**
      * Gets the class for a given type name.
-     * @param {String} typeName - The class name (e.g., "UoCharacter")
+     * @param {String} typeName - The class name (e.g., "Contact")
      * @returns {Class|null} The class or null if not found
      * @category Sync
      */

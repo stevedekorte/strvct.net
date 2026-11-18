@@ -87,7 +87,6 @@
 
     initPrototype () {
         this.addProtocol(SvHtmlStreamReaderDelegateProtocol); // its reader's delegate (SvAiParsedResponseMessage_streaming)
-        this.setNodeTileClassName("UoChatInputTile");
         this.setCanDelete(false);
     }
 

@@ -258,8 +258,8 @@
                             // declared type is the allowed base. fromJson's
                             // newInstanceFromJson asserts _type isKindOf the declared
                             // class, so a JSON payload can never smuggle an arbitrary
-                            // class into the slot. First consumer: UoCharacter.controller
-                            // (UoPlayerController | UoAiController).
+                            // class into the slot. E.g. a controller slot that may
+                            // hold a player controller or an AI controller subclass.
                             const declaredClass = SvGlobals.get(slot.slotType());
                             const node = slot.onInstanceGetValue(this);
                             if (node && node.svType() === v._type && node.deserializeFromJson) {
@@ -306,7 +306,7 @@
                                     // array/object): WARN AND SKIP — the same policy as
                                     // unknown keys below. Throwing here aborted the WHOLE
                                     // deserialize mid-object, blanking the record (e.g. a
-                                    // UoCharacter loaded from cloud losing everything
+                                    // document loaded from the cloud losing everything
                                     // because one field drifted — which then risks the
                                     // blank being saved back over the good cloud copy).
                                     // Skipping keeps that one field at its default and

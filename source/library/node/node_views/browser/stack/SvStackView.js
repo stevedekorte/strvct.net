@@ -1307,7 +1307,7 @@
 
         // Selecting a tile IS opening its node, so ask the node to prepare
         // BEFORE judging whether it has anything to show. A node that fills
-        // its subnodes on first access (UoSrdCreatures populates 300+
+        // its subnodes on first access (e.g. a reference list that populates 300+
         // placeholders in prepareForFirstAccess) has zero subnodes until
         // asked; judging it first made canNavTo() false, the column never
         // opened, and nothing ever asked — so it could never be opened at
