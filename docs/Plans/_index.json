@@ -16,8 +16,9 @@
       "columns": 3,
       "items": [
         "Capabilities & Permissions",
-        "JSON Schema",
+        "Naked Objects Issues",
         "Browser Cleanup",
+        "JSON Schema",
         "Cleanup Notes",
         "Promise-Wrapped Slots"
       ]
@@ -49,7 +50,6 @@
       "columns": 3,
       "items": [
         "Complete Protocols",
-        "Naked Objects Issues",
         "Lazy Slots",
         "Async Final Initialization"
       ]

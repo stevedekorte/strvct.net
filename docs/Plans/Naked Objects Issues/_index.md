@@ -2,7 +2,7 @@
 
 Known places where framework model classes still cross the model/view boundary — touching view classes, browser globals, or UI state — plus the framework gaps that force such crossings.
 
-**Status:** done for framework model code (2026-11-15): every class below is moved, and the ratchet test's baseline is empty. Two gaps remain open (a viewport accessor, a platform client id); close them when a model needs them. The browser-side changes were checked headless only; a pass in an app is pending.
+**Status:** done for framework model code (2026-11-15): every class below is moved, and the ratchet test's baseline is empty. Two gaps remain open (a viewport accessor, a platform client id); close them when a model needs them. App class names were taken out of framework code on 2026-11-18 ([below](#app-names-in-framework-code)); a prompt example and a ratchet test are left. The browser-side changes were checked headless only; a pass in an app is pending.
 
 The target is the model/view separation and **Platform Abstraction** rules in the framework guide (see [App Lifecycle](../../Lifecycle/App%20Lifecycle/index.html)): a model (`SvNode` and subclasses) should never reach into `document` / `window` / `navigator` / `localStorage` or reference view classes, so it stays headless-clean and the UI platform stays swappable.
 
@@ -42,3 +42,16 @@ Closing these unblocks the same cleanups in any app built on STRVCT.
 **Done:** `tests/headless/TestPlatformGlobalsInModels.js` scans `source/library/` (skipping `view/`, `node_views/`, `node/app/ui/`, `browser-only/` and `_unused/`, and comments) for `window.`, `navigator.`, `localStorage`, `sessionStorage` and `document.` followed by a DOM member, so a local variable called `document` doesn't count. It fails on any use its baseline (`tests/headless/fixtures/platformGlobalsInModels.json`) doesn't list, and says when the baseline can shrink.
 
 Low-level platform utilities are not model code reading UI state, and the test's `ALLOWED` table lists them with a reason each: canvas work in `Image_ideal`, `SvImageBorderRemover` and `SvImageMosaic`; HTML parsing in `String_ideal`; `AudioContext` in `SvSimpleSynth` and `SvWaContext`; `document.fonts` in `SvFont`; DOM output in `SvHtmlStreamReader`. Two had a native global that works in both environments and moved to it: `Object_puuid` uses `globalThis.crypto` and `String_ideal` uses `btoa` / `atob` (which threw headless before). Nothing was reimplemented.
+
+## App names in framework code
+
+The same boundary seen from the other side: the framework must not know the app built on it. An audit on 2026-11-18 found app class names in framework code. Fixed in strvct `9bf3aadd`:
+
+- `SvAiParsedResponseMessage_voiceNarration.session()` looked up the app's global `UoSession`, a ReferenceError under any other app or headless. Nothing called it, and the app's response message defines its own; removed.
+- `SvAiParsedResponseMessage` set the app's `UoChatInputTile` as its tile. Removed; it inherits `SvChatMessageTile`, which behaves the same for it (the app tile's one addition, applying `cssVariableDict()`, does nothing for a node that returns none). The app's response message still sets its own tile.
+- `SvFirebaseStorageService` kept a commented-out `UoBuildEnv` block, and its missing-bucket error named it (and said "found" for not found).
+- About 30 comments, and the record-store test fixture's type names, used app classes as examples; they now use generic ones.
+
+**Left, pending a decision:** the tool instructions every AI conversation receives (`SvToolDefinitions`, "How to Use These Definitions") use the app's `rollRequest` tool and `#/definitions/UoRollRequestMessage` as the worked example. Changing it changes the game's prompt. Either a neutral example, or one built from the conversation's first real tool definition (always accurate, but the prompt then varies with the tool list).
+
+**To add:** a ratchet test. For code it can be general and need no app prefix: fail on any class-like global a framework file references (`SomeName.shared()`, `extends SomeName`, `"SomeName"` passed as a class name) that no framework file defines. That catches `UoSession` and would catch another app's names too. Comments can't be checked that way; a prefix check on them would put the app's name into the framework's own test, so leave comments to review, and allow-list the prompt example until it is decided.
