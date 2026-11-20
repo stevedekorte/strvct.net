@@ -2,7 +2,7 @@
 
 > Write the domain model. Get the application.
 
-Site build: STRVCT · 2026-11-19 · f6b62d9a
+Site build: STRVCT · 2026-11-19 · 6b2a733f
 
 ## Documentation
 
@@ -55,6 +55,7 @@ Site build: STRVCT · 2026-11-19 · f6b62d9a
 - [Capabilities & Permissions](/docs/Plans/Capabilities%20%26%20Permissions/)
 - [Case Studies](/docs/Plans/Case%20Studies/)
 - [Cleanup Notes](/docs/Plans/Cleanup%20Notes/)
+- [Compaction Coordinator](/docs/Plans/Compaction%20Coordinator/)
 - [Complete Protocols](/docs/Plans/Complete%20Protocols/)
 - [Emergent Capabilities](/docs/Plans/Emergent%20Capabilities/)
 - [Graph Database](/docs/Plans/Graph%20Database/)

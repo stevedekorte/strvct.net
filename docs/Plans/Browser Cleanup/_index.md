@@ -74,6 +74,8 @@ The browser navigation works well but has accumulated complexity over time. Area
 
 The column compaction system (`updateCompactionChain()` on `SvStackView`, `collapse()` / `uncollapse()` on `SvNavView`) spans both classes with mutual callbacks. It works, but the protocol between them is implicit.
 
+A recommendation for this part is written up in [Compaction Coordinator](../Compaction%20Coordinator/) (2026-11-19, for discussion).
+
 - **A compaction coordinator.** Measuring the available width, choosing which columns to collapse, and collapsing or expanding them could live in one object rather than across `SvStackView` and `SvNavView`.
 - **A written protocol.** What triggers compaction, the order columns compact in, how a column says it can't compact further, and how expansion reverses it.
 - **Priorities.** All columns compact alike today. Some should resist longer: the auxiliary view below, and nodes whose content matters more than their siblings'.
