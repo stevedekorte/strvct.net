@@ -97,6 +97,68 @@ function rawReads () {
     return found;
 }
 
+// --- list mutations ---
+//
+// The scan above catches a view that reads a raw capability. A view that
+// changes a node's list WITHOUT reading any capability passes it, which is
+// how Cmd+D duplicated a tile into a read-only catalog (found in a browser,
+// 2026-11-19). So: a view method that adds to, removes from or reorders a
+// node's subnodes must ask the cascade in the same method, or be listed
+// here with where its gate is.
+
+const LIST_MUTATIONS = ["addSubnode", "addSubnodeAt", "addAt", "removeSubnode", "removeSubnodes", "setSubnodes", "removeFromParentNode"];
+const MUTATION = new RegExp("\\.(" + LIST_MUTATIONS.join("|") + ")\\s*\\(");
+const ASKS_CASCADE = /offersUserEdit\(|effectiveUserEditability\(|\.canDelete\(\)/;
+
+// "<file> <method>" → where the edit was already refused.
+const GATED_ELSEWHERE = {
+    "source/library/node/node_views/browser/stack/SvTile/SvTile_dragging.js onDragRequestRemove": "only a move drag asks this, and dragOperationForLongPress() makes a drag out of a read-only list a copy",
+    "source/library/node/node_views/browser/stack/SvTilesView/SvTilesView_gestures.js onPinchCancelled": "removes the tile onPinchBegin added, which asked the cascade",
+    "source/library/node/node_views/browser/stack/SvTilesView/SvTilesView_dragViewProtocol.js onDragSourceDropped": "a reorder: canReorderTiles() asked the cascade before the drag was accepted (SvTilesView_gestures)",
+    "source/library/node/node_views/browser/stack/SvTilesView/SvTilesView_dragViewProtocol.js onDragDestinationDropped": "a drop: acceptsDropHoverComplete() asked the cascade before the drop was accepted"
+};
+
+function methodsOf (file) {
+    const methods = [];
+    let current = null;
+    for (const line of codeLines(file)) {
+        const start = /^ {4}(?:async\s+)?([A-Za-z0-9_]+)\s*\([^)]*\)\s*\{/.exec(line.text);
+        if (start) {
+            current = { name: start[1], n: line.n, text: "" };
+            methods.push(current);
+        }
+        if (current) {
+            current.text += line.text + "\n";
+        }
+    }
+    return methods;
+}
+
+function ungatedMutations () {
+    const out = [];
+    for (const root of ROOTS) {
+        for (const file of sourceFiles(path.join(strvctRoot, root))) {
+            const rel = path.relative(strvctRoot, file).split(path.sep).join("/");
+            for (const method of methodsOf(file)) {
+                const mutation = MUTATION.exec(method.text);
+                if (mutation && !ASKS_CASCADE.test(method.text) && !GATED_ELSEWHERE[`${rel} ${method.name}`]) {
+                    out.push({ rel, n: method.n, name: method.name, call: mutation[1] });
+                }
+            }
+        }
+    }
+    return out;
+}
+
+const ungated = ungatedMutations();
+for (const m of ungated) {
+    console.log(`  \x1b[31m✗\x1b[0m ${m.rel}:${m.n} ${m.name}() calls ${m.call}() without asking the cascade`);
+    console.log("      ask node.offersUserEdit(...) in the method; if the edit was refused earlier, add it to GATED_ELSEWHERE with where");
+}
+if (ungated.length === 0) {
+    console.log("  \x1b[32m✓\x1b[0m every view method that changes a node's list asks the editability cascade (or says where it was asked)");
+}
+
 const found = rawReads();
 for (const r of found) {
     console.log(`  \x1b[31m✗\x1b[0m ${r.rel}:${r.n} reads ${r.name}() without the cascade: ${r.text}`);
@@ -106,4 +168,5 @@ if (found.length === 0) {
     console.log("  \x1b[32m✓\x1b[0m every raw edit-capability read in the view layer goes through the editability cascade");
 }
 console.log(`\n${found.length} raw read${found.length === 1 ? "" : "s"}.`);
-process.exit(found.length > 0 ? 1 : 0);
+console.log(`${ungated.length} ungated list mutation${ungated.length === 1 ? "" : "s"}.`);
+process.exit(found.length + ungated.length > 0 ? 1 : 0);

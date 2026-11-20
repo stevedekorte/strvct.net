@@ -405,13 +405,17 @@
      * @category Data
      */
     duplicateSelectedTiles () {
+        const node = this.node();
+        if (!node.offersUserEdit(node.nodeCanAddSubnode())) { // a duplicate is an add: not where adding isn't offered, nor in a read-only subtree
+            return this;
+        }
         const newNodes = [];
 
         this.selectedTiles().forEach(tile => {
             const i = this.indexOfSubview(tile);
             const dupNode = tile.node().duplicate();
             newNodes.push(dupNode);
-            this.node().addSubnodeAt(dupNode, i + 1);
+            node.addSubnodeAt(dupNode, i + 1);
         });
         this.unselectAllTiles();
         this.syncFromNodeNow();

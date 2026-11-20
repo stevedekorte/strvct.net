@@ -116,7 +116,7 @@
 
         //console.log("insertIndex: ", insertIndex)
 
-        if (this.node().hasNodeAction("add")) {
+        if (this.node().offersUserEdit(this.node().hasNodeAction("add"))) { // not in a read-only subtree
             // create new subnode at index
             const newSubnode = this.node().addAt(insertIndex);
 
