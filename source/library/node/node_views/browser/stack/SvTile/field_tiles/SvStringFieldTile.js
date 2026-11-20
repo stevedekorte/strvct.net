@@ -99,7 +99,7 @@
         if (at === -1) {
             return false;
         }
-        browser.selectPathWithRetry(current.slice(0, at + 1).concat(route.slice(1)));
+        browser.navigate(SvNavigationRequest.toPath(current.slice(0, at + 1).concat(route.slice(1))).setCause("user"));
         return true;
     }
 

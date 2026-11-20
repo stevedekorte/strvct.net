@@ -38,7 +38,7 @@ Then a ratchet test like `TestPlatformGlobalsInModels`: fail when framework code
 
 ### C. Browser Cleanup, part 1: one navigation entry point
 
-Step 6 below, begun once A is done. The compaction coordinator, Tile Container Views and the navigation announcements in Accessibility all wait on it, so it is the next piece of new work.
+**Built 2026-11-19.** `SvBrowserView.navigate(aRequest)` takes an `SvNavigationRequest` that says where to go and who asked; the older entry points are removed, and the browser remembers the request behind its latest path change. A tile the user taps reports afterwards, and the focus-and-expand notes wait for a second pass. See [Browser Cleanup](../Browser%20Cleanup/#one-navigation-entry-point). The compaction coordinator, Tile Container Views and the navigation announcements in Accessibility waited on it and can start.
 
 ### Not next
 
@@ -56,7 +56,7 @@ More slot constraints are declared where a wrong value is seen, not as a project
 | [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Core done, unused | One shared promise per value, retry after failure, recompute on a dependency change; no slot uses it yet. |
 | [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Built, unverified in a browser (next step A) | Every view edit path asks the editability cascade; the server says who may write and the cascade uses its answer; a refused commit reloads and says so. Read, share and create hooks wait for a need. |
 | [JSON Schema](../JSON%20Schema/) | Slot constraints built, unused | A slot's `minimum`, `maxLength` and the rest reach the schema, the field's error text, ARIA and a refused AI patch; the setter only warns. `pattern` is checked too. The app declares its first few (2026-11-18). Class-level keywords and type unions are left. |
-| [Browser Cleanup](../Browser%20Cleanup/) | Next new work | Holds the compaction notes; has its own order. Part 1 (one navigation entry point) is next step C. |
+| [Browser Cleanup](../Browser%20Cleanup/) | Next new work | Holds the compaction notes; has its own order. Part 1 (one navigation entry point) is built; part 2 (the compaction coordinator) is next. |
 | [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Later | Wait on compaction. Large collections rewritten around windowed collections. |
 | [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) | Ongoing | Automated checks now; manual passes after the navigation work. |
 | [Case Studies](../Case%20Studies/) | Later | Contacts can run early. |
@@ -98,7 +98,7 @@ Additive, and tighter schemas improve AI tool calls at once. Start by emitting t
 
 ### 6. Browser Cleanup
 
-In its own order: one navigation entry point, the compaction coordinator, composable breadcrumbs, the auxiliary view.
+In its own order: one navigation entry point (built 2026-11-19), the compaction coordinator, composable breadcrumbs, the auxiliary view.
 
 ### 7. Tile Container Views and Tile Views
 

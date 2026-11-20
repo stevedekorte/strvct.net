@@ -543,7 +543,7 @@
         if (target.length > 1 && last.nodeSubnodesAreAnchoredTabs && last.nodeSubnodesAreAnchoredTabs()) {
             target.pop();
         }
-        // selectNodePathArray expects the path after the stack's own root node
+        // a path after the browser's own root node
         return this.requestSelectPath(target.slice(1));
     }
 
@@ -584,7 +584,7 @@
         v.setTitle(this.titleForNode(node));
 
         if (!isCurrent) {
-            // selectNodePathArray expects the path *after* the stack's own root node
+            // the path *after* the browser's own root node
             v.setInfo(pathNodes.slice(1, i + 1));
             v.setTarget(this);
             v.setAction("onClickPathComponent");
@@ -615,11 +615,7 @@
         if (!browser) {
             return this;
         }
-        if (browser.selectPathWithRetry) {
-            browser.selectPathWithRetry(subpath);
-        } else if (browser.stackView()) {
-            browser.stackView().selectNodePathArray(subpath);
-        }
+        browser.navigate(SvNavigationRequest.toPath(subpath).setCause("user"));
         // popping to the root unselects without firing a path-change note,
         // so rebuild the crumbs explicitly
         this.scheduleMethod("setupPathViews");

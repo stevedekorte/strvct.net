@@ -133,8 +133,9 @@ Selecting a tile creates a new child `SvStackView` in the detail area. **Orienta
 
 ### `SvBrowserView`
 Top-level application container managing nested `SvStackView` columns to arbitrary depth. Includes a breadcrumb header that auto-compacts on narrow viewports:
-- `navigateToNode(aNode)`: Navigates directly to a target node in the graph.
-- `selectNodePathArray(pathArray)`: Programmatically sets the full navigation path.
+- `navigate(aRequest)`: The one navigation entry point. An `SvNavigationRequest` says where to go (`toPath(nodes)`, `toNode(aNode)`, `toPathString("A/B")` or `toBaseState()`) and who asked (`setCause("user" | "url" | "program" | "base")`).
+- `lastNavigationRequest()`: The request behind the latest path change; a tile the user selected is recorded with the cause `"user"`.
+- Model code asks without referencing a view, by posting `onRequestNavigateToNode` (a node) or `onRequestSelectNodePath` (an explicit path of tiles).
 
 ---
 

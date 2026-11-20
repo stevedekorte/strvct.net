@@ -2,7 +2,7 @@
 
 Simplifying and documenting the browser navigation architecture.
 
-**Status:** open. **Order:** (1) one navigation entry point, (2) a compaction coordinator with a written protocol, (3) composable breadcrumbs, (4) the auxiliary view, which needs 2 and 3. [Tile Container Views](../Tile%20Container%20Views/) waits on 2, and the navigation announcements in [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) wait on 1. The compaction notes from Cleanup Notes are merged in below.
+**Status:** open; part 1 is built (2026-11-19, see [One navigation entry point](#one-navigation-entry-point)). **Order:** (1) one navigation entry point, (2) a compaction coordinator with a written protocol, (3) composable breadcrumbs, (4) the auxiliary view, which needs 2 and 3. [Tile Container Views](../Tile%20Container%20Views/) waits on 2, and the navigation announcements in [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) wait on 1. The compaction notes from Cleanup Notes are merged in below.
 
 ## Current Architecture
 
@@ -57,8 +57,8 @@ When the user clicks a tile:
 
 When the user clicks a breadcrumb:
 
-1. `SvBreadCrumbsTile` reads the stored path array from the clicked button.
-2. Calls `selectNodePathArray()` on the root stack view.
+1. The breadcrumb bar reads the stored path array from the clicked button.
+2. It hands the browser a request: `browser.navigate(SvNavigationRequest.toPath(path).setCause("user"))`.
 3. The stack chain recursively selects each node in the path, collapsing deeper levels.
 4. The resulting path change triggers `onStackViewPathChangeNote`, and breadcrumbs update.
 
@@ -80,9 +80,49 @@ The column compaction system (`updateCompactionChain()` on `SvStackView`, `colla
 - **Animation.** Collapse and expand are instant; animating them would help the user see what moved.
 - **Measure once.** Compaction runs on every node update that bubbles to the root, so it is a hot path. Measure container widths once and cache them, invalidated by resize (as `SvStackView.cachedRootWidth()` does), then write; never measure after writing in the same pass. Verify with `?thrash=count` before and after.
 
-### Navigation API surface
+### One navigation entry point
 
-`selectNodePathArray()`, `navigateToNode()`, `selectNodePathString()`, and `moveToBase()` all navigate but through different entry points. A unified navigation interface would reduce the number of paths through the code. It should also say who asked: the accessibility work announces programmatic navigation and stays quiet for the user's own, and can only tell them apart if every navigation goes through one place that knows its cause.
+**Built 2026-11-19.** `selectNodePathArray()`, `navigateToNode()`, `selectNodePathString()`, `selectPathWithRetry()` and `moveToBase()` all navigated, through different code, and none said who asked. Now there is one way in:
+
+```javascript
+browser.navigate(SvNavigationRequest.toPath([a, b]).setCause("user"));
+```
+
+An `SvNavigationRequest` says where and who.
+
+| Where | Made with |
+| --- | --- |
+| A path of nodes (a leading browser root is skipped) | `toPath(nodes)` |
+| A node, by its parent chain | `toNode(aNode)` |
+| A slash-separated title path, as a URL holds it | `toPathString("A/B")` |
+| The browser's base state | `toBaseState()` |
+
+| Cause | Meaning |
+| --- | --- |
+| `"user"` | The user's own act: a tile, a breadcrumb, a link in the content, a tab tapped again. |
+| `"url"` | The address changed, or the page was opened at one. |
+| `"program"` | Code moved the user without their asking for that place (the default). |
+| `"base"` | A browser nobody has navigated settling into its base state. |
+
+What it does and what it replaced:
+
+- **One mechanism.** Every request gets the bounded retry while columns materialize and announces its arrival as a tap does. Before, only some routes retried, and a URL into a column that wasn't built yet was lost.
+- **Who asked is remembered.** `browser.lastNavigationRequest()` is the request behind the latest path change. A listener to `onBrowserViewPathChange` asks it for the cause; this is what the navigation announcements in Accessibility Testing & Tuning need.
+- **Model code is unchanged.** A model never references a view, so it still posts `onRequestNavigateToNode` or `onRequestSelectNodePath`. The browser turns each into a request with the cause `"program"`.
+- **Panes.** An anchored-tabs stack hands the rest of a path to its pane with `continuingRequestToPath()`, so the pane's request carries the cause of the whole navigation.
+- **Removed.** `navigateToNode`, `selectNodePathString`, `selectPathWithRetry` and the unused `setSelectedPathTitlesArray` / `setSelectedPathTitlesString`. The stack's `selectNodePathArray()` stays as the walk itself, called only by the browser.
+- **Kept from sliding back.** `TestNavigationEntryPoint` fails when anything but the browser calls the stack's walk, or when a retired method returns. `tests/e2e/navigation-entry-point.spec.js` (in the app repo) checks each route and its cause in a browser.
+
+Three decisions (Steve, 2026-11-19):
+
+1. **A request object, not arguments.** New needs (which stack view, don't take focus) become slots, and call sites don't change.
+2. **A tile the user taps reports afterwards.** The columns select it as before; the browser hears of the path change and records a request whose cause is the user. Nothing can veto or redirect a tap before it happens. That moves through the entry point with the compaction coordinator (part 2), the first thing that needs it.
+3. **Focus-and-expand waits for a second pass.** `postShouldFocusAndExpandSubnode` and `postShouldFocusSubnode` ("show this child of where I am", about 16 call sites, most of them in the app) still select in the columns directly, so the path change they cause is recorded as the user's. Until the second pass, an announcement keyed on the cause will miss them.
+
+#### Second pass (open)
+
+- Route the focus-and-expand notes through `navigate()` as a request that names a child of the current place, with the cause `"program"`, or `"user"` when the user's own add caused it.
+- Other path changes with no request behind them, which are also recorded as the user's today: a column folding because its node was removed (`nodeBecameOrphan`), and a selected tile rebinding to a new instance.
 
 ### Mobile and responsive behavior
 

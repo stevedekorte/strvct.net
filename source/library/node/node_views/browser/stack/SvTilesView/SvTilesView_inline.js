@@ -155,8 +155,8 @@
         const at = current.indexOf(stack ? stack.node() : route.document.node()); // the column's node, which may present the document
         if (at !== -1) {
             // the browser's path to the document, then the route inside it;
-            // selectPathWithRetry fills the deeper columns as they appear
-            browser.selectPathWithRetry(current.slice(0, at + 1).concat(route.path));
+            // the browser fills the deeper columns as they appear
+            browser.navigate(SvNavigationRequest.toPath(current.slice(0, at + 1).concat(route.path)).setCause("user"));
         }
         return this;
     }

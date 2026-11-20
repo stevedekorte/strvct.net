@@ -36,7 +36,8 @@
      * shortcut link, so the canonical model parent chain is the wrong path
      * to walk — postOnRequestNavigateToNode would try to walk hidden
      * subnodes and fail). Truncates the currently-selected path at the
-     * options node and re-selects it.
+     * options node and asks the browser to go there. The user did not ask
+     * to be moved, so the request's cause is "program".
      *
      * View-side decision: viewport state and view chain live here, not on
      * the node.
@@ -58,16 +59,10 @@
             return this; // Wide enough that the parent column is still visible.
         }
 
-        // Walk up the view chain to any SvStackView, then to its root.
-        let v = this.parentView();
-        let steps = 0;
-        while (v && !v.previousStackView) {
-            v = v.parentView();
-            if (++steps > 30) return this;
+        const browser = this.firstParentViewWithAncestorClass(SvBrowserView);
+        if (!browser) {
+            return this;
         }
-        if (!v || !v.rootStackView) return this;
-        const root = v.rootStackView();
-        if (!root.selectedNodePathArray || !root.selectNodePathArray) return this;
 
         // Find the options node in the current navigation path. Truncate AT
         // the options node (slice up to idx, exclusive) — this deselects it,
@@ -75,7 +70,7 @@
         // making the parent column visible on narrow viewports. The live path
         // is the user's actual route (may differ from the canonical model
         // parent chain when shortcut links are involved).
-        const currentPath = root.selectedNodePathArray();
+        const currentPath = browser.selectedNodePathArray();
         const idx = currentPath ? currentPath.indexOf(optionsNode) : -1;
         if (idx < 1) {
             return this; // Not on a path that includes the options node.
@@ -87,7 +82,7 @@
         // proper selection animation + slide-back column transition.
         const delayMs = 300;
         this.addWeakTimeout(() => {
-            root.selectNodePathArray(trimmedPath);
+            browser.navigate(SvNavigationRequest.toPath(trimmedPath).setCause("program"));
         }, delayMs);
         return this;
     }

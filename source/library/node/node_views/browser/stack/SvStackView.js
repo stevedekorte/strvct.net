@@ -527,7 +527,7 @@
             // Propagate the child's result: a deep component that can't
             // resolve yet (its column materializes lazily, a cycle after the
             // parent tile is selected) must report failure so the caller's
-            // bounded retry (SvBrowserView.trySelectPendingPath) fires.
+            // bounded retry (SvBrowserView.performPendingNavigation) fires.
             // Returning true unconditionally silently truncated programmatic
             // navs at the first unmaterialized level.
             return childStack.selectNodePathArray(nextNodePathArray);
@@ -666,38 +666,6 @@
             // view in place rather than guess a destructive recovery.
             console.warn(this.svDebugId() + " root stack view's node became an orphan; leaving view in place.");
         }
-        return this;
-    }
-
-    // --- set path titles ----
-
-    /**
-     * @description Sets the selected path titles array.
-     * @param {Array} titles The titles array to set.
-     * @returns {SvStackView} The stack view.
-     */
-    setSelectedPathTitlesArray (titles) {
-        let title = titles.shift();
-        const pathArray = [];
-        let node = this.node();
-        while (title) {
-            node = node.firstSubnodeWithTitle(title);
-            pathArray.push(node);
-            title = titles.shift();
-        }
-        this.selectNodePathArray(pathArray);
-        return this;
-    }
-
-    /**
-     * @description Sets the selected path titles string.
-     * @param {String} s The string to set.
-     * @returns {SvStackView} The stack view.
-     */
-    setSelectedPathTitlesString (s) {
-        console.log("setSelectedPathTitlesString:'" + s + "'");
-        const titles = s.split("/");
-        this.setSelectedPathTitlesArray(titles);
         return this;
     }
 

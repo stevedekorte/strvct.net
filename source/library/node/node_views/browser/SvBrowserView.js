@@ -28,20 +28,32 @@
  * The legacy global "onStackViewPathChange" note still posts (from the root
  * stack view) for app-level consumers.
  *
- * Only a browser with handlesGlobalNavRequests (default true — set it false on
- * embedded browsers) responds to the global navigation-request notes:
+ * NAVIGATION HAS ONE ENTRY POINT: navigate(aRequest), given an
+ * SvNavigationRequest that says where to go and who asked (the user, a URL,
+ * code, or the base state). Breadcrumbs, links in content, the URL, and the
+ * model's navigation notes all arrive there; nothing else selects a path in a
+ * browser from outside its columns. A tile the user taps or reaches by key is
+ * selected by the columns themselves, and the browser hears of that path
+ * change afterwards and records it as the user's own. Either way
+ * lastNavigationRequest() is the request behind the latest path change, so a
+ * listener to "onBrowserViewPathChange" can ask who caused it.
  *
- *   - "onRequestNavigateToNode" — info is the target node
+ * Only a browser with handlesGlobalNavRequests (default true — set it false on
+ * embedded browsers) responds to the global navigation-request notes, which
+ * are how model code asks (a model never references a view):
+ *
+ *   - "onRequestNavigateToNode" — info is the target node, reached by its own
+ *     parent chain
  *   - "onRequestSelectNodePath" — info is an explicit array of visible-tile
- *     node refs whose tiles form the desired path. selectNodePathArray walks
- *     the array column-by-column, and tileWithNode matches on
- *     tile.nodeTileLink() — which for a link tile resolves to the link's
- *     target. So an array like [realm.mySessions(), specificSession] matches
- *     the visible "My Sessions" link tile then the session tile in the next
- *     column. This bypasses navigateToNode's nodePathArray() lookup, which
- *     walks the model parent chain through hidden intermediates and fails on
- *     link redirects. A leading component equal to the browser's root node is
- *     tolerated and skipped (models may post absolute paths).
+ *     node refs whose tiles form the desired path. The stack walks the array
+ *     column-by-column, and tileWithNode matches on tile.nodeTileLink() —
+ *     which for a link tile resolves to the link's target. So an array like
+ *     [realm.mySessions(), specificSession] matches the visible "My Sessions"
+ *     link tile then the session tile in the next column. This is for a node
+ *     whose parent chain runs through hidden intermediates or link redirects,
+ *     which "onRequestNavigateToNode" cannot walk. A leading component equal
+ *     to the browser's root node is tolerated and skipped (models may post
+ *     absolute paths).
  */
 
 (class SvBrowserView extends SvNodeView {
@@ -157,6 +169,41 @@
         {
             const slot = this.newSlot("lastContainerWidth", null);
             slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {SvNavigationRequest|null} pendingNavigationRequest - the
+         * request being carried out: set by navigate(), cleared when its path
+         * is selected or it is given up on. A path it names can need a few
+         * scheduler cycles while columns materialize.
+         * @category Navigation
+         */
+        {
+            const slot = this.newSlot("pendingNavigationRequest", null);
+            slot.setSlotType("SvNavigationRequest");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {Number} pendingNavigationAttempt - how many times the
+         * pending request has been tried
+         * @category Navigation
+         */
+        {
+            const slot = this.newSlot("pendingNavigationAttempt", 0);
+            slot.setSlotType("Number");
+        }
+
+        /**
+         * @member {SvNavigationRequest|null} lastNavigationRequest - the
+         * request behind the latest change of this browser's path; a selection
+         * made in the columns is recorded as one whose cause is the user
+         * @category Navigation
+         */
+        {
+            const slot = this.newSlot("lastNavigationRequest", null);
+            slot.setSlotType("SvNavigationRequest");
             slot.setAllowsNullValue(true);
         }
 
@@ -310,6 +357,7 @@
      * @category Navigation
      */
     childUpdatedNavPath (/*aStackView*/) {
+        this.noteCauseOfPathChange();
         this.syncNavPathMembership();
         this.breadCrumbsView().didChangeBrowserPath();
         this.syncBreadCrumbsVisibilityHint();
@@ -503,71 +551,120 @@
     }
 
     /**
-     * @description Selects the given node path. The array holds the nodes
-     * *after* this browser's root node.
-     * @param {Array} nodePathArray The nodes to select, in order.
+     * @description THE navigation entry point: goes where the request says,
+     * on behalf of whoever it says asked. A column on the way that has not
+     * materialized yet is waited for (performPendingNavigation retries); a
+     * newer request replaces one still being carried out.
+     * @param {SvNavigationRequest} aRequest
      * @returns {SvBrowserView} The current instance.
      * @category Navigation
      */
-    selectNodePathArray (nodePathArray) {
-        if (nodePathArray.length > 0) {
-            this.setHasBeenNavigated(true);
+    navigate (aRequest) {
+        if (aRequest.isBaseState() && this.hasBeenNavigated()) {
+            return this; // navigated before the base state arrived: keep that
         }
-        // returns true if the path resolved, false if a tile in it wasn't found
-        return this.stackView().selectNodePathArray(nodePathArray);
+        this.setPendingNavigationRequest(aRequest);
+        this.setPendingNavigationAttempt(0);
+        return this.performPendingNavigation();
     }
 
     /**
-     * @description Navigates to the specified node.
-     * @param {Node} aNode - The node to navigate to.
-     * @returns {SvBrowserView} The current SvBrowserView instance.
+     * @description Tries the pending request. If its place cannot be shown
+     * yet (a tile on the way is not materialized, or no node is at its path
+     * yet), retries on the next scheduler cycle, bounded. The target tile
+     * (e.g. a link in the root column) can post-date the UI becoming ready
+     * since the root column renders on a scheduled cycle, and a single
+     * attempt would otherwise be lost. Driven by the resolve result, not a
+     * render guess.
+     * @returns {SvBrowserView}
      * @category Navigation
      */
-    navigateToNode (aNode) {
-        const pathArray = aNode.nodePathArray();
-        pathArray.shift(); // remove the root node (the browser's own node)
-        this.selectNodePathArray(pathArray);
-        return this;
-    }
-
-    /**
-     * @description Selects the node at the given slash-separated title path.
-     * A leading component equal to the root node's title is tolerated and
-     * skipped, so absolute paths (e.g. URL hashes of the form
-     * "Root/Section/Item") keep working.
-     * @param {string} aPath The path string.
-     * @returns {SvBrowserView} The current instance.
-     * @category Navigation
-     */
-    selectNodePathString (aPath) {
-        assert(Type.isString(aPath), "aPath must be a string");
-        const components = aPath.split("/");
-
-        if (components.length === 1 && components[0] === "") {
-            this.moveToBase();
+    performPendingNavigation () {
+        const request = this.pendingNavigationRequest();
+        if (!request) {
             return this;
         }
-
-        if (components.first() === "") {
-            components.shift(); // remove empty leading component
+        const path = request.pathIn(this);
+        const didArrive = path !== null && this.selectPathNow(path);
+        if (!didArrive && this.pendingNavigationAttempt() < 12) {
+            this.setPendingNavigationAttempt(this.pendingNavigationAttempt() + 1);
+            // MUST be the next-cycle variant: this retry runs AS a scheduled
+            // action, and scheduleMethod() of the same target+method from
+            // within its own processing trips the scheduler's LOOP DETECTED
+            // throw (seen in prod when deleting a session left the pending
+            // path unresolvable — the second consecutive failed resolve threw).
+            this.scheduleMethodForNextCycle("performPendingNavigation");
+            return this;
         }
-
-        if (this.node() && components.first() === this.node().title()) {
-            components.shift(); // tolerate absolute paths that include the root node
+        if (!didArrive) {
+            console.warn(this.svType() + " could not navigate to " + request.summary());
         }
-
-        const selectedNode = this.node().nodeAtSubpathArray(components);
-        if (selectedNode) {
-            const pathArray = selectedNode.nodePathArray();
-            pathArray.shift(); // remove the root node
-
-            if (pathArray.length > 0) {
-                this.selectNodePathArray(pathArray);
-            }
-        } else {
-            console.warn("no node found for path: '" + aPath + "'");
-        }
+        this.finishPendingNavigation(request.announcesArrivalAt(path));
         return this;
+    }
+
+    /**
+     * @description Selects a path in the columns, now.
+     * @param {Array<SvNode>} path - the nodes after this browser's root
+     * @returns {Boolean} false if a tile in it wasn't found
+     * @category Navigation
+     * @private
+     */
+    selectPathNow (path) {
+        if (path.length > 0) {
+            this.setHasBeenNavigated(true);
+        }
+        return this.stackView().selectNodePathArray(path);
+    }
+
+    /**
+     * @description The pending request is over. Selecting a path selects
+     * tiles without tapping them, so nothing has announced the new path: the
+     * breadcrumbs and the app's URL would keep the old one (a tile opened
+     * from inside an inline document never appeared in either). Announce it
+     * as a tap does, while the request is still the pending one, so the path
+     * change is recorded as its doing; an unchanged path posts nothing.
+     * @param {Boolean} announces
+     * @returns {SvBrowserView}
+     * @category Navigation
+     * @private
+     */
+    finishPendingNavigation (announces) {
+        if (announces) {
+            this.stackView().didChangeNavSelection();
+        }
+        this.setPendingNavigationRequest(null);
+        return this;
+    }
+
+    /**
+     * @description This browser's path changed: remember why. A change with
+     * a request being carried out is that request's; any other was made in
+     * the columns themselves — the user's tap or key. (A model's
+     * focus-this-subnode note also lands in the columns and is recorded as
+     * the user's for now: docs/Plans/Browser Cleanup, part 1, second pass.)
+     * @returns {SvBrowserView}
+     * @category Navigation
+     * @private
+     */
+    noteCauseOfPathChange () {
+        const path = this.selectedNodePathArray().filter(node => node);
+        this.setLastNavigationRequest(this.pendingNavigationRequest() || SvNavigationRequest.toPath(path).setCause("user"));
+        return this;
+    }
+
+    /**
+     * @description A request to a path, on behalf of whoever is behind the
+     * navigation going on in this browser now — the user, when there is
+     * none. For a view that carries a navigation further (an anchored-tabs
+     * stack handing the rest of a path to its pane).
+     * @param {Array<SvNode>} path
+     * @returns {SvNavigationRequest}
+     * @category Navigation
+     */
+    continuingRequestToPath (path) {
+        const pending = this.pendingNavigationRequest();
+        return SvNavigationRequest.toPath(path).setCause(pending ? pending.cause() : "user");
     }
 
     /**
@@ -614,8 +711,7 @@
      * @category Navigation
      */
     returnToBase () {
-        this.selectNodePathArray(this.basePathArray());
-        return this;
+        return this.navigate(SvNavigationRequest.toPath(this.basePathArray()).setCause("user"));
     }
 
     /**
@@ -623,23 +719,14 @@
      * selection (just the root column). A root node may opt into showing its
      * first child by default — `nodeViewShouldAutoSelectFirstSubnode()` — e.g. a
      * tab-strip node (horizontal) that wants its first tab's content shown
-     * beneath it rather than a bare strip. The selection goes through the bounded
-     * pending-path retry, so it lands even if the root column isn't materialized
-     * on the first cycle.
+     * beneath it rather than a bare strip. It applies only to a browser nobody
+     * has navigated yet, and lands even if the root column isn't materialized
+     * on the first cycle (see navigate).
      * @returns {SvBrowserView} The current SvBrowserView instance.
      * @category Navigation
      */
     moveToBase () {
-        const path = this.basePathArray();
-        if (this.hasBeenNavigated()) {
-            // navigated before the scheduled base state arrived: keep that
-        } else if (path.length > 0) {
-            this._pendingSelectPath = path;
-            this._pendingSelectAttempt = 0;
-            this.trySelectPendingPath();
-        } else {
-            this.selectNodePathArray([]);
-        }
+        this.navigate(SvNavigationRequest.toBaseState());
         // The root column is now materialized, so the main browser can fulfill
         // navigation requests. Signal app-level UI readiness once (SvApp
         // dedups) so model code awaiting promiseUserInterfaceReady() can post
@@ -820,77 +907,20 @@
         return super.prepareToRetire();
     }
 
+    // --- the model's navigation notes (see the class comment) ---
+
     onRequestNavigateToNode (aNote) {
-        const node = aNote.info();
-        this.navigateToNode(node);
-        return this;
+        return this.navigate(SvNavigationRequest.toNode(aNote.info()));
     }
 
     /**
-     * @description Programmatic-nav with an explicit path array. See the
-     * class comment for why this exists.
      * @param {SvNotification} aNote — info() is the path array.
      * @returns {SvBrowserView}
      */
     onRequestSelectNodePath (aNote) {
         const path = aNote.info();
         if (Array.isArray(path) && path.length > 0) {
-            this.selectPathWithRetry(path);
-        }
-        return this;
-    }
-
-    /**
-     * @description Selects a path, retrying if a tile has not materialized
-     * yet. Breadcrumb clicks use this so a single missed column does not
-     * swallow the navigation.
-     * @param {Array} path The nodes to select (after the root, or absolute).
-     * @returns {SvBrowserView}
-     * @category Navigation
-     */
-    selectPathWithRetry (path) {
-        this._pendingSelectPath = path;
-        this._pendingSelectAttempt = 0;
-        return this.trySelectPendingPath();
-    }
-
-    /**
-     * @description Attempts the pending select-path; if a tile in it isn't
-     * materialized yet (selectNodePathArray returns false), retries on the next
-     * scheduler cycle, bounded. This replaces the old model-side DOM-polling
-     * retry: the target tile (e.g. the "My Sessions" link) can post-date the
-     * UI becoming ready since the root column renders on a scheduled cycle, and
-     * a single post would otherwise be lost. View-side and driven by the
-     * resolve result, not a render guess.
-     * @returns {SvBrowserView}
-     * @category Navigation
-     */
-    trySelectPendingPath () {
-        const path = this._pendingSelectPath;
-        if (!path) {
-            return this;
-        }
-        const nodePath = path.shallowCopy();
-        if (nodePath.first() === this.node()) {
-            nodePath.shift(); // tolerate absolute paths that include the root node
-        }
-        const resolved = this.selectNodePathArray(nodePath);
-        if (resolved === false && this._pendingSelectAttempt < 12) {
-            this._pendingSelectAttempt += 1;
-            // MUST be the next-cycle variant: this retry runs AS a scheduled
-            // action, and scheduleMethod() of the same target+method from
-            // within its own processing trips the scheduler's LOOP DETECTED
-            // throw (seen in prod when deleting a session left the pending
-            // path unresolvable — the second consecutive failed resolve threw).
-            this.scheduleMethodForNextCycle("trySelectPendingPath");
-        } else {
-            this._pendingSelectPath = null;
-            // Selecting a path selects tiles without tapping them, so nothing
-            // has announced the new path: the breadcrumbs and the app's URL
-            // would keep the old one (a tile opened from inside an inline
-            // document never appeared in either). Announce it as a tap does;
-            // an unchanged path posts nothing.
-            this.stackView().didChangeNavSelection();
+            this.navigate(SvNavigationRequest.toPath(path));
         }
         return this;
     }

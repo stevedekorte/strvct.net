@@ -887,7 +887,8 @@
             // materialized: the pane's own bounded retry finishes the selection
             // (a URL change has no retry of its own; a nav request's would
             // re-open the tab each time)
-            pane.selectPathWithRetry(rest);
+            const outer = this.firstParentViewWithAncestorClass(SvBrowserView);
+            pane.navigate(outer ? outer.continuingRequestToPath(rest) : SvNavigationRequest.toPath(rest)); // on behalf of whoever asked for the whole path
         }
         return true;
     }
