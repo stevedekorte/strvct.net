@@ -18,9 +18,9 @@
   <link rel="modulepreload" href="../../colvmn/layout/PageIndex.js">
   <link rel="modulepreload" href="../../colvmn/layout/MarkdownParser.js">
   <title>Inspectors and Debugging – STRVCT</title>
-  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Inspectors%20and%20Debugging/_unused/">
   <meta name="description" content="Built-in tools for inspecting nodes and revealing hidden parts of the model graph at runtime.">
+  <link rel="alternate" type="text/plain" title="llms.txt" href="../../../llms.txt">
 </head>
 <body>
   <div class="page loaded has-cols has-cols-3 has-cols-4"><div class="header"><div><h1>Inspectors and Debugging</h1><a class="back-link" href="../index.html">&larr; Inspectors and Debugging</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Built-in tools for inspecting nodes and revealing hidden parts of the model graph at runtime.</p></div><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#option-click-inspect-a-tile">Option-Click: Inspect a Tile</a></li><li><a href="#option-shift-d-developer-mode">Option-Shift-D: Developer Mode</a></li><li><a href="#composition">Composition</a></li></ul></nav><div class="col-group"><div class="col-keep"><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Because STRVCT generates the UI from annotated model nodes, the same machinery can render an <em>alternate</em> view of any node &mdash; one that exposes its slots directly. Two interactions take advantage of this:</p><ul><li><strong>Option-Click</strong> on a tile opens an <strong>inspector</strong> for that node &mdash; a column of field tiles, one per inspectable slot, showing the slot's current value, type, and editability.</li><li><strong>Option-Shift-D</strong> toggles <strong>developer mode</strong> &mdash; a global flag that applications use to reveal nodes and subnodes normally hidden from end users.</li></ul><p>Both work in any STRVCT application without per-node setup.</p><svg viewBox="0 0 820 390" width="820" xmlns="http://www.w3.org/2000/svg">

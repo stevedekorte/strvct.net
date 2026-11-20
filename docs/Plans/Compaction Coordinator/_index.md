@@ -1,117 +1,392 @@
 # Compaction Coordinator
 
-One object that decides which columns a browser shows and how wide each is, with the rules written down.
+The rules for which columns a browser shows and how wide each is, gathered into one place that can be tested without a browser.
 
-**Status:** a recommendation for discussion (2026-11-19). Nothing here is built. It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) waits on it. The five decisions at the end are Steve's.
+**Status:** the plan as of 2026-11-20, rewritten after a review against the code, with its recommendations written in as the plan. Nothing here is built, and writing them in is not a go-ahead to build: each part starts on Steve's word. It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in four times on 2026-11-20. What each pass changed is marked "(review)" and "(review 2)" to "(review 4)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fourth pass: the recordings before part A can start, nothing technical blocks them, and C still waits on B.
+
+**What changed from the first draft (2026-11-19).** That draft proposed a layout object, `SvColumnLayout`, that was handed a flat list of columns and answered with a plan. The review found three things it had not taken in: the levels are nested inside each other, not laid side by side; each level chooses its own direction; and an object that solved the whole layout would have to repeat what the views already know about themselves. This version keeps each view's knowledge in the view and moves only the arithmetic. It also puts the small, safe fixes first and a measurement before the larger change.
+
+## Compaction in the lens model
+
+The [Naked Objects](../../Naked%20Objects/) paper describes a screen as a lens over the model, made of three decisions: which nodes are **visible**, whether each visible parent-to-child edge is **layered** (the child gets its own plane, beside or in front of its parent) or **inlined** (the child is drawn within its parent's extent), and how siblings are **arranged**. It says the framework owns the mechanics, and names one of them: *responsive collapse is the lens switching edges from inlined to layered as space runs out, within the bounds the hints allow.*
+
+That mechanic is what this plan is about. Read that way, the code has four separate implementations of it, one per kind of edge:
+
+| What the user sees | In the lens model | Where it is decided today |
+| --- | --- | --- |
+| Earlier columns hide and the breadcrumbs keep the path | Layers stacked in depth, no longer side by side. Still layered. | `SvStackView` and `SvNavView` |
+| A docked companion becomes a tab | An inlined edge becomes layered | `SvDetailView` and `SvCompanionView` |
+| Side-by-side panes become tabs | An inlined edge becomes layered | `SvAnchoredTabsLayout` |
+| A document's sections go from three text columns to one; a section folds to a tile | Inlined siblings rearranged; an inlined edge becomes layered, by the user's hand | CSS, and `SvInlineSectionTile` |
+
+A pin on a companion or a tab, and a folded section, are the same thing too: the user choosing a placement, inside what the hints allow.
+
+So the destination is one protocol in which every edge says how it wants to be placed, how far it may give way, and how much room it needs. It is a shared protocol and not one owner. Part C is the first step: the layers, with each companion's reservation handed in as a number by the companion that worked it out. `SvAnchoredTabsLayout` stays the owner of its panes for good: two panes with the same claim can need different answers, because a player dragged their divider, chose a different member of a group, or closed a pane that should be the first to come back. What it shares with the rest is the edge of the protocol: its reservation goes outward, the width it is given comes inward, and it divides that width by the history it keeps. (review 2) What this page calls a *level* is a layer in the paper's words.
 
 ## What compaction does today
 
-A browser shows a row of columns. When they don't fit, the leftmost ones are hidden. The rule, as the code has it:
+### The structure
 
-- A column is hidden when its target width, plus the target widths of every column to its right, plus any docked companion panels and anchored-tab panes to its right, is not less than the available width.
-- So the columns give way from the left, and the column the user is looking at goes last.
-- A column that fills the leftover width (a narration, an inline document) is never hidden. It shrinks instead.
-- Hidden means `display: none`. Nothing animates.
-- Only side-by-side columns take part. A stack laid out downward is skipped.
+A browser shows a chain of levels. Each level is a `SvStackView` holding a nav view (the column or menu) and a detail view. The detail view holds **the next level's whole stack**, and that level's companion panel if it has one. So the levels are nested: the third column is inside the second level's detail view, which is inside the first's. The one place views sit side by side is an anchored-tabs level, whose panes are siblings.
+
+**An anchored-tabs level ends its browser's chain.** Each open pane is a browser of its own, with its own chain, laid out against the width of its pane's frame. So there are two calculations there, not one: the outer chain, in which the anchored level reserves width and the columns before it give way, and each pane's chain, in which the pane's columns fit the pane. (review)
+
+Each level takes its direction from its node:
+
+- `"right"`: the nav is a column on the left and the next level is beside it.
+- `"down"`: the nav is a row across the top and the next level is beneath it.
+
+**No node in the app supplies a companion today.** `nodeCompanionNode()` answers null in the framework and nothing in the app overrides it; the Narration and Party panels that were companions are now anchored tabs, each pane a browser of its own. The companion panel is exercised only by the framework's own spec, which supplies one at run time. So every companion rule on this page is a rule of the framework that no player reaches, and what that means for C's scope is a question for Steve under [Still open](#still-open). (review 3)
+
+In the app today every node is `"right"`, the default. The only `"down"` levels in use are anchored tabs, which force it. Any other direction throws. `"left"` and `"up"` are wanted eventually, `"left"` for right-to-left languages among other uses; see [Four directions](#four-directions).
+
+A level also chooses how it shows its children (`nodeChildrenLayout()`): one per tile in a column, as anchored tabs, or **inline**, where the next levels are laid out in place as a document (Inline Navigation, in the app's plans). So a level is not always a column, and one column can hold several levels of the tree. See [Inline documents](#inline-documents).
+
+### The rules
+
+- Only `"right"` levels take part. A `"down"` level is never hidden and adds no width, since its row costs height and the levels beneath it get its full width.
+- A column is hidden when its target width, plus the target widths of every `"right"` column after it, plus every docked companion and anchored-tabs claim after it, is not less than the root width. So columns give way from the left.
+- A column that fills the leftover width (a narration, an inline document) is never hidden. It shrinks. Only the last column can be a fill column.
+- A companion's room is the root width minus its own level's column, and nothing else. It docks when its preferred length fits, becomes a tab when it doesn't, and is hidden when even the tab doesn't fit. A user's pin wins while the tab fits.
+- A companion's mode and its docked length are worked out from different budgets. The mode uses the column's comfortable target. The length may grow, for the width hint of the node in focus, into the room above the column's yield floor. A pin to docked keeps the panel at **at least** its preferred length whenever the tab fits, even when that is more than the room; a larger hint can still widen it. (review, review 2)
+- Hidden means `display: none`. A column does not animate. A companion does: its size changes over 380ms, and its embedded browser is laid out again 400ms after it docks. So a companion's reservation is at its new value while its box is still narrower, and a recording has to take three things apart: the reservation when it is decided, the box in transition, and the box once settled. Otherwise a correct frame in between reads as a wrong answer. (review 4)
+
+The arithmetic is **flat**: every comparison is against the root width, although the views are nested. It gives the right answer because columns give way strictly from the left.
 
 A column's target width is the larger of 270px and its node's `nodeMinTileWidth()`, plus a thumbnail allowance, capped at the available width.
 
 ## Where it lives
 
-The decision is spread over five classes. None of them holds the whole rule.
-
 | Class | Its part |
 | --- | --- |
-| `SvStackView` | Sums the widths to the right, decides hide or show for its own column, and loops the whole chain until nothing changes. |
+| `SvStackView` | Sums the widths after it, decides hide or show for its own column, and loops the whole chain until nothing changes. |
 | `SvNavView` | Target width, available width, hide and show, and the width styles. |
-| `SvDetailView` | The arithmetic for a companion panel: how much room it may have. |
+| `SvDetailView` | A companion's room. |
 | `SvCompanionView` | Docked, tab or hidden, and its docked length. |
 | `SvStackView_anchoredTabs` | How much width the panes claim. |
 
 ## What is wrong with it
 
-Each of these was read from the source. The two marked "not measured" are costs I infer from the code and have not counted in a browser.
+Each was read from the source. None has been measured in a browser; part B does that.
 
-1. **It runs far more often than the layout changes.** Every stack view's `syncFromNode` ends in a full pass over the whole chain. A node update bubbles to the root, so a streamed narration re-runs it for every column on every chunk. How many passes that is per chunk is not measured.
-2. **Every column answers a window resize.** Each stack view registers for the resize event, and each one recompacts the whole chain. With N columns that is N full passes per event, each looping up to five times. The source has a TODO saying only the top stack should register. Not measured.
-3. **The loop exists because the decision is spread out.** `recompactBrowserChain` repeats until nothing changes, with a guard of five. The comments in `SvDetailView` and `SvCompanionView` say the inputs were made independent of the current state so that it converges. If that holds, one ordered pass would give the same answer: companions first, then columns.
-4. **Three names for one method.** `safeUpdateCompactionChain`, `updateCompactionChain` and `recompactBrowserChain` all do the same thing. There are 12 call sites.
-5. **The width styles are written twice.** `SvNavView.makeOrientationRight` and `SvNavView.updateWidthForWindow` hold near-copies of the same three-way rule. The second has an extra case the first lacks: the last column fills the row when the window is between one and two column widths.
-6. **Views ask the window instead of the layout.** `SvOptionNodeTile` decides whether to step back after a pick by comparing the window width with 540 ("2 × 270"). What it wants to know is whether the parent column is hidden.
-7. **Numbers without names.** 270, `17em`, 540, and the guard of five.
-8. **No test holds the rules.** The anchored tabs have `TestAnchoredTabsLayout`, which checks their rules with no DOM. The columns have nothing like it, so every fix so far was found in a browser and guarded by a comment.
+1. **It runs far more often than the layout changes.** Every stack's `syncFromNode` ends in a pass over the whole chain. A node update bubbles to the root, so a streamed narration runs it for every level on every chunk.
+2. **Every level answers a window resize.** Each stack registers for the event and each recompacts the whole chain: N passes per event, each looping up to five times. The source has a TODO saying only the top stack should register.
+3. **The pass loops because of its order.** Each level decides its column first and its companion second, so a column reads companion states left over from the pass before. Deciding companions first and columns second needs one pass, since a companion's room does not depend on which columns are hidden.
+4. **Three names for one method.** `safeUpdateCompactionChain`, `updateCompactionChain` and `recompactBrowserChain`, with 12 call sites.
+5. **The width styles are written twice, and disagree.** `SvNavView.makeOrientationRight` and `SvNavView.updateWidthForWindow` hold near-copies of one rule. The second has a case the first lacks: the last column fills the row when the root is between one and two column widths. In that case every sync writes the fixed width and then the full width.
+6. **A height is measured on every pass.** A bottom-edge companion's room is read from `clientHeight` inside the loop, after widths are written. It is a raw element read, so the thrash counter does not see it.
+7. **Views ask the window, not the layout.** `SvOptionNodeTile` decides whether to step back after a pick by comparing the window width with 540. What it wants to know is whether its parent column is hidden.
+8. **Numbers without names.** 270, `17em`, 540, 200, and the loop guard of five.
+9. **No test holds the rules.** The anchored tabs have `TestAnchoredTabsLayout`. The columns have nothing like it, so every fix so far was found in a browser and guarded by a comment.
 
 ## Recommendation
 
-### A layout object with no DOM
+In this order: the recordings, part A, the thumbnail fix, part B, and then part C if B's numbers call for it. Everything before C is small and worth doing whatever is decided about C.
 
-`SvAnchoredTabsLayout` is the model to follow. It is a plain object that is given widths and answers which panes are open and how wide. The view applies the answer. Its rules are tested headlessly.
+### Before part A: record what the fixes must not change (review)
 
-Do the same for the columns. Working name: `SvColumnLayout`.
+Part A is meant to change nothing a user sees, so what it could change is recorded first. **Steve has said to start these (2026-11-20), with one condition: not everything the columns do today is how they should behave.** So a recording says what happens, not what is right. Its assertions are named as today's behaviour, anything that looks wrong is listed for Steve with the recording, and a behaviour he calls wrong is taken out of what part A and part C must reproduce and becomes a fix of its own.
 
-- **It is given** the available width and an ordered list of claims. A column's claim is its target width, its floor when it yields, whether it fills, and whether it may be hidden. A companion's claim is its preferred length, its tab length and the user's pin. An anchored stack's claim is the one number it gives today.
-- **It answers** with a plan: for each column, hidden or shown, and one of three width rules (fixed, fill, full row); for each companion, its mode and length.
-- **It reads nothing from the DOM.** The browser measures the available width once, as `cachedRootWidth()` does now, and hands it in.
-- **It solves in one pass.** Companions first, since their room depends only on the total width and their own content column. Then columns from the right, each against the total.
+- **Mend the width spec.** `app-mobile-column-width.spec.js` asserts on the widest ancestor of the "My Sessions" tile. A wrapper as wide as the viewport passes it while the column itself is stuck at 270px. It should measure the enclosing nav view.
+- **Record a window resize** before A1, counting calls to the chain pass apart from the loops inside each call.
+- *Deferred with the companion (Steve, 2026-11-20):* the bottom-edge companion's height changing, and two side companions in one chain. The reviewer built both fixtures in Chromium from plain `SvSummaryNode`s and the `nodeCompanionNode()` hook, and what they saw is kept here for when the companion is taken up. Bottom edge, on a host with `setNodeIsVertical(false)` at a width of 1,000px: hidden at a detail height of 219px, a tab from 220px to 579px, docked from 580px, no width reserved. Two side companions, each asking for 700px at a 1,000px root with three 270px columns: both dock and reserve 700px, the first two columns hide and the third shows; at 600px both are tabs and reserve nothing. `companion-panel.spec.js` accepts a tab while requiring a reservation above zero, which should depend on the mode. (review 4)
+- **Record a narration that asks for 900px in a 390px pane**, after an ordinary node update, beside a column that is not a fill column and has stretched to fill the row. This is before A3, which touches the rule next to the one that fixed that narration. (review 2)
+- **Record the solo Party sheet**, as the last column and with a tile opened from it. The Party tab asks for 437px and, for a party of one, presents a sheet that asks for 300px, so it is the case in which the two nodes disagree (see [Two fixes that are decisions](#two-fixes-that-are-decisions)).
 
-### One owner, one trigger
+#### What the recordings show (2026-11-20, on dev)
 
-- **The browser owns it.** Each `SvBrowserView` has one layout, so an embedded browser's columns can never be compacted by an outer one. That boundary is enforced today by where the chain walk stops.
-- **One way to ask.** `browser.setNeedsColumnLayout()` marks the layout stale and schedules one pass for the end of the cycle. The scheduler already drops duplicate requests, so a hundred asks in a cycle cost one pass.
-- **The plan is applied only where it changed.** The browser keeps the last plan. A pass that produces the same plan writes nothing.
-- **Only the browser listens for resize.**
+Taken by `tests/e2e/compaction-recordings.spec.js` in the app repo, which writes `tests/e2e/recordings/compaction-before-A.json`: one new session with one character seated, 38 steps, no page errors. `app-mobile-column-width.spec.js` is mended and passes. Nothing below is asserted as right.
 
-### The protocol, written down
+**The width spec was measuring nothing.** On a phone the "My Sessions" text it looked for is the breadcrumb, not a tile, so none of its ancestors was a column. It now reads the columns: the root column hidden, the My Sessions column 393px of 393px.
 
-| Question | Answer |
+**The session at 1,600px.** The app's two columns (the root and My Sessions) are hidden and the session's tab row takes the full width. Narration alone is 1,600px. With Party opened, Narration is 1,076px and Party 522px. Both panes' columns are fill columns.
+
+**The resize.** Both panes stay open down to 1,040px (Narration 602px, Party 436px). At 1,000px and below only Party shows, at the full width, and Narration is closed. Coming back up, Narration returns at 1,040px. This agrees with the reviewer's 1,038px.
+
+**The Narration column at 390px.** It is 390px wide, a fill column with no minimum, before and after an ordinary node update on the chat. The narration that asks for 900px does not overflow.
+
+**The solo Party sheet.** The Party column's own node asks for 437px and the sheet it presents for 300px, as read. At every width recorded it is a fill column, so the difference never shows. **The second case could not be taken:** no tile on a new character's sheet opens past the inlined levels, so there was nothing to open from inside it. That case, and the repeated section column, need a character with something to open, or the Inline Lab.
+
+**Passes.** Script time in the passes only; the layout they cause is not in these numbers, and nothing was streaming.
+
+| What happened | Calls to the chain pass | Level visits inside them | Resize handlers | Script time |
+| --- | --- | --- | --- | --- |
+| One step of the resize, usual | 7 to 9 | 13 to 15 | 6 or 7 | 0.2 to 0.5ms |
+| One step of the resize, worst (to 700px) | 47 | 133 | 6 | 2.3ms |
+| Opening the Party tab | 16 | 34 | 0 | 0.3ms |
+| An ordinary node update on the chat | 6 | 14 | 0 | 0.3ms |
+
+So one resize runs six or seven handlers where one would do, and a single node update runs six passes, as the plan said. But the script cost is small: a third of a millisecond for a node update. If the layout cost is as small, part B will find compaction under the 2ms line and C will rest on testability. That is a first sign and not part B's answer.
+
+**For Steve: things that happen today and may not be wanted.**
+
+1. **Between 541px and 1,037px, opening Party closes Narration**, and the sheet is stretched across the whole width (1,000px wide at a 1,000px window). A player on a small laptop or a tablet who opens their sheet loses the story.
+2. **Some steps of the resize cost several times the others** (47 calls at 700px, 21 at 540px, 19 at 800px and 900px going down, against 7 to 9 elsewhere). I do not know why yet.
+3. **A new character's sheet has nothing that opens.** That may be right; it is why one recording is missing.
+
+### Part A: the fixes that need no design
+
+Each is its own commit, changes no rule, and is checked against the recordings above and the existing specs (`companion-panel`, `session-anchored-tabs`, `app-mobile-column-width`). The numbers are kept as they were, so A5 and A8 stay in the list as moved.
+
+1. Only the root stack answers a window resize. It is bound where the browser takes its root stack: a stack asked whether it is the root while it is being made has no parent yet, and would say yes. (review)
+2. One method name, `recompactBrowserChain`. The other two go.
+3. One width rule in `SvNavView`, the fuller one, used by both callers. This leaves a third writer, `syncMinWidthClaim()`, which a node sync runs. A3 keeps that later write exactly as it is; it moves under one owner in C, not here. See [One method applies a width](#one-method-applies-a-width). (review 2)
+4. The constants get names.
+5. *Moved out: the option tile's test.* See [Two fixes that are decisions](#two-fixes-that-are-decisions).
+6. *Deferred with the companion:* the bottom-edge companion is handed its height by a resize observer. It mends a read that only a bottom companion makes, and no node in the app supplies a companion.
+7. `SvStackView.makeOrientationLeft` is renamed for what it does. It is the method the `"down"` direction calls, and it lays the stack out downward. The name is wanted for a real `"left"`.
+8. *Moved out: which node a column's width comes from.* See [Two fixes that are decisions](#two-fixes-that-are-decisions).
+
+#### Two fixes that are decisions
+
+Both were in part A and both can change what a user sees, so each is its own decision with its own acceptance case. Neither is needed for B or C. (review)
+
+- **The option tile's test (was A5).** After a single pick, `SvOptionNodeTile` steps back when the *window* is narrower than 540px. Whether the column it would step back to is hidden is a different test: the sum of the columns against the *root* width. With two columns of the default 270px in a top-level window the two disagree only at exactly 540px. With wider columns they disagree in an ordinary window: a 400px parent and a 270px picker in a 650px window hide the parent while the picker stays open. In a narrow embedded browser inside a wide window the same follows from the two widths, though nobody has seen it yet. Asking whether the column to return to is hidden is the better rule, and it is a change. If it is adopted (review 2): the test is the visibility of the actual column to return to, on the live path in the tile's own browser; a column hidden by a docked companion counts as hidden; picking several and toggling off behave as now; and the path is checked again before the delayed step back, so a user who has already gone elsewhere stays there.
+- **Which node a column's width comes from (was A8).** The target width, the yield floor and the thumbnail allowance are read from the column's own node; the fill test and a document's text column width from the node it presents. The Party tab (437px) presenting a solo sheet (300px) is a case where they differ, and a fill column hides the difference until a deeper tile is opened. It was found by reading; nobody has seen a sheet at the wrong width. C keeps each value's source as it is today.
+
+  `nodeMinTileWidth` has four readers (review 2): a nav view reads its own node for its target width; an inline document reads the presented node for its text columns; a companion reads the child of its root that owns the selected path; and an anchored level reads a tab's node for the comfortable width of its pane, which is what the Party tab's 437px is for today. Moving every reader to the presented node would throw away what the host knows. If the Party pane and the sheet ever need to ask for different widths, the answer is an optional hint for that one role, defaulting to today's value.
+
+### The thumbnail fix: its own change, after A and before B (review 4)
+
+A column whose tiles have thumbnails is 72px wider, and it finds out by asking its first subnode. Asking can load a lazily stored list just to look at its first row (see [The thumbnail allowance](#the-thumbnail-allowance)). Mending that changes when a list loads and perhaps what a user sees, so it is not a cleanup and it is not part of C. It lands by itself after A, with its own before and after, and its result is the baseline B measures. It stands whether or not C is ever built, and C keeps an exact comparison.
+
+Its three checks:
+
+1. Asking for the width of a column newly bound to a pending list leaves the list pending and gives no allowance, even if the node before it had thumbnails.
+2. Loading that list in the ordinary way gives the first thumbnail row its 72px.
+3. Pointing the same first option at a plain node takes the allowance back to 0 with no change to the list.
+
+The first visible frame and the settled width are both recorded, since ordinary loading may settle the allowance before anything is painted.
+
+### Part B: measure, then decide about C
+
+With A in place, a browser spec records two things.
+
+- **End states.** A matrix of root widths, path depths, companion states and pins (the companion cases in a framework fixture), including a column leading into an anchored-tabs level with a deeper selection inside one of its panes, a companion that mounts docked, an inline document as the last level, and the same document with a tile opened from inside it. For each: which columns are hidden, how wide the rest are, and each companion's mode and the width it reserves. In the anchored case, the outer column must answer to the anchored level's reservation and the pane's columns to the pane's width. (review)
+- **Transitions.** Resizing across each threshold in both directions, docking and undocking, going deeper and back, switching to a tab whose stack was kept off the page and returns at a different width, choosing a sibling with the same title, an embedded browser's first attachment and the first real width its container reports, and an ordinary node update after the last column has stretched to fill the row (its width styles and its rendered width, then again after it is hidden and shown), and the first visible layout of a list that has not been loaded yet, whose tiles have thumbnails. (review, review 3) Past bugs here were about order, and end states alone would not have caught them.
+
+It also counts passes (calls apart from loops), forced layouts, and time spent in passes while a narration streams and while the window is resized. The time comes from a browser performance trace, since the thrash counter misses raw reads.
+
+**The workloads.** (review 3)
+
+| Workload | What is recorded |
 | --- | --- |
-| What asks for a pass? | The path changed. The available width changed. A claim changed: a node's width hint, a companion docked or undocked, a tab pinned or unpinned. |
-| What does not? | A node update that changes none of those. |
-| What order do columns give way in? | From the left. Priorities, below, would change this. |
-| How does a column say it cannot be hidden? | Its claim says so. A fill column says so today. |
-| How does expansion reverse it? | It doesn't need to. Each pass is computed from the claims, not from the last plan, so widening the window gives the wide answer. |
-| Who may measure? | The browser, once per width change. The layout and the columns never do. |
+| Streaming | A warmed, joined session with a character chosen, Narration selected, and the player at the live end of the conversation, in Chromium at 390 by 844 with the processor throttled, standing in for a phone (Steve, 2026-11-20). It is not a phone, and the result is reported as a stand-in's. One representative response replayed through the normal update path, with the same chunk sizes and cadence every run. This is the primary one: it is what a player is doing when it matters. |
+| Resizing | The same session, settled, with Narration pinned and Party selected, in a browser that can be resized. Narration (600px), Party (437px) and a 1px divider need 1,038px: at 1,037px only Party shows, at 1,038px both. Start at 1,280px, take the anchored container below 1,038px and back, and record the pane closing and returning. |
 
-### What the views keep
+The two are reported apart, each with its hardware and browser named. Compaction is counted across the outer browser and its pane browsers, nested time once. A timing on a real phone can be added later and set beside the stand-in's. Companion rules are not in these runs, since the session has no companion; they are checked in a framework fixture.
 
-- `SvNavView` keeps `collapse()` and `uncollapse()` and gains `applyColumnPlan(plan)`. It loses the decisions and one of the two copies of the width styles.
-- `SvStackView` loses the sum, the per-column decision, the loop, and the three method names.
-- `SvCompanionView` keeps its panel and its pin. The arithmetic for docked, tab or hidden moves into the layout.
-- `SvStackView_anchoredTabs` keeps `SvAnchoredTabsLayout` for its panes and goes on supplying one claim.
+**The line, agreed before measuring (proposed by the reviewer, accepted by Steve 2026-11-20).** Compaction is costly if it takes more than **2ms at the 95th percentile per active frame**, on a 60Hz target; that is about 12% of a 16.7ms frame. The device, the path and the workloads are agreed first. Streaming and resizing are measured apart. For each, all compaction time in every frame of the workload is summed, frames that cost nothing included, with the synchronous layout it causes counted once. The speed case is made if either workload goes over the line repeatedly, or if traces repeatedly show compaction causing a missed frame even when the percentile passes. Passes per chunk, loops per resize and forced layouts explain a result; they do not establish what the user pays. (review 2)
 
-### What this opens
+If compaction is under the line, C rests on testability alone. Tile Container Views is not a reason for C: its first grid wraps at the edge of its container with a least cell width, which needs only the width its column is already given, as an inline document shows. Negotiating a width with the columns beside it waits for a real need, such as keeping two cells side by side by asking a neighbour to give way. (review 2) Both are good reasons; they are different sizes of reason, and Steve should see the numbers before choosing.
 
-These are the items the Browser Cleanup page lists. None is in the first build.
+### Part C: claims in the views, allocation in one function
 
-- **Priorities.** A claim gains an order to give way in. The first build keeps "from the left" exactly.
-- **Width extension points for Tile Container Views.** A grid or a table states its claim through the same object a column does, in place of `nodeMinTileWidth()` alone.
-- **Animation.** The browser has the old plan and the new one, so it knows what moved.
-- **A single-column phone mode.** A different layout object behind the same plan, in place of compacting until one column is left.
+**Each level states its own claim.** A stack view answers `layerClaim()`: a small record of plain values that it works out from the model and its own state, each from the node it is read from today.
 
-## A correction to part 1
+A claim holds nothing that depends on a width. `targetWidth()` today reads the available width, and on a root whose width is not cached that is a measurement, so calling it from every sync would not be the model-only comparison this plan promises. The widths are the function's other input, taken once per pass, and anything that depends on them (the cap, a full-width anchored reservation) is worked out inside the function against that one snapshot. (review 2) The level is a layer in the paper's words, and whatever it inlines is part of its claim.
 
-When we chose that a tapped tile reports to the navigation entry point afterwards, I said the compaction coordinator would be the first thing to need taps to go through the entry point beforehand. Having read the compaction code, it doesn't. The coordinator needs to know that the path changed, which the report already gives it. That move can wait for something that has to refuse or redirect a tap.
+| Field | From |
+| --- | --- |
+| axis | horizontal or vertical, from the node's orientation (vertical for anchored tabs). Which way along the axis is not in the claim; see [Four directions](#four-directions) |
+| target width, yield floor | What `SvNavView.targetWidth()` and `yieldTargetWidth()` work from, **before** the cap at the available width: the larger of 270px and the node's hint, plus the thumbnail allowance (see [The thumbnail allowance](#the-thumbnail-allowance)). The function applies the cap. (review 2) |
+| fills | `SvNavView.shouldCurrentlyFillAvailble()` |
+| companion reservation | A number: the width its side companion holds in this pass, worked out by the companion itself (see [The companion stays where it is](#the-companion-stays-where-it-is)). Zero for a bottom companion, a tab, or none. (review 4) |
+| anchored reservation | Either a fixed width, from the pins and the tabs' minimums, or a flag saying "the root's width as reported", for a level that wants the full width. `anchoredClaimWidth()` reads the root width for that case today; the flag keeps the claim free of widths and the function fills it in from the pass's snapshot. (review 3) |
 
-## Stages
+**One function allocates.** `SvLayerAllocation` is given two widths (the root's width as reported, and the width to fit columns in, which differ only while a root has no width yet) and the chain's claims in order, and answers, for each level, hidden or shown and which width rule applies. It has no DOM and no views. It holds today's flat arithmetic for the columns, in one pass. It is run once per browser: the outer chain ends at an anchored level, and each pane's browser runs its own.
 
-1. **Record what happens now.** A browser spec that walks a matrix of window widths, path depths and companion states, and records which columns are hidden and how wide the rest are. It also counts compaction passes and forced layouts (`?thrash=count`) while a narration streams and while the window is resized. This is the reference for stage 3 and gives the two numbers not measured above.
-2. **Build the layout object and its headless test.** Today's rules, not wired to any view. The test is the written protocol in executable form.
-3. **Wire it in.** The browser owns the layout, the one trigger replaces the 12 call sites, the loop and the per-column resize listeners go. The stage 1 recording must come out the same, and the pass counts must drop.
-4. **Then the extensions**, each its own decision: priorities, claims from containers, animation.
+**The function's contract.** These are today's rules, and each is a line in `TestLayerAllocation`. (review)
 
-Stages 1 and 2 change no behaviour. Stage 3 is the only risky one, and stage 1 is what makes it checkable.
+- A level's sum is **itself and every level after it**: target widths of the horizontal levels, docked companions, and anchored reservations. A vertical level adds no nav width of its own, but its anchored reservation still counts, in its own sum and in every earlier level's.
+- The test is applied to a **horizontal nav that is not a fill nav**: it is shown when its sum is **less than** the fitting width, and hidden when equal or more. A fill nav is always shown. A vertical nav is never hidden. (review 2)
+- A target width is capped at the fitting width less one pixel, and that pixel is what keeps a lone column from being hidden by the equality.
+- An anchored level that wants the full width carries the flag, and the function gives it the root width as reported in this pass.
+- **Reservations can come to more than there is.** Each companion works out its room as the root width less only its own level's column, so two on different levels do not see each other. At a 1,000px root with three 270px columns and reservations of 700px on the first two levels, the first two columns are hidden and the third is shown, though the two panels together hold 1,400px. That is today's answer, seen in a browser by the reviewer, and it is one named case in the test. It is also the case a nested allocation in part D would answer differently. (review 3, review 4)
+- **The cap has an edge.** At a fitting width of 2px a default column's target is 1px. At 1px the cap comes to zero, zero is treated as no answer, and the target falls back to 270px. C reproduces that, and the test has the 1px case, so that mending it later is a choice and not an accident. (review 3)
+- A root that reports no width yet (an embedded browser before its container is laid out) is given the window's width for fitting columns. The companion's room uses the root width as reported. Both are kept, which is why the function takes two widths.
+- A level's reservation is counted once: in that level's sum and in every earlier level's.
+- A companion on a vertical level docks on the bottom edge, reserves no width, and keeps its own height rule.
+
+**The browser runs the pass.** It walks its own chain gathering claims, calls the function, and hands each level its answer. Each view applies its own answer to itself and writes only what changed.
+
+#### The companion stays where it is
+
+An earlier version of this page moved the companion's arithmetic (docked, tab or hidden, and its docked length) into the function. It stays in `SvDetailView` and `SvCompanionView`. (review 4)
+
+A side companion has all it needs before any column is hidden. Its mode comes from the root width as reported, less its own column's target. Its docked length may also use the room above that column's yield floor. Neither reads whether a column is hidden, nor another panel's reservation. Today's loop exists only because a column can read a reservation before the companion has brought it up to date.
+
+So a pass in C goes in this order, and needs no loop:
+
+1. Take the two widths once.
+2. Work out each level's column target and yield floor against them.
+3. Each side companion sizes itself from those, with the logic it has now, and gives back a number.
+4. The function allocates the columns, with each reservation as an input.
+
+What starts a pass is separate from what the pass works out. Binding a companion, a pin and a width hint each ask the owning browser for a pass, where today they lay out or compact directly; that way the first pass sees a panel that has just been mounted. The reservation itself is always worked out inside the pass, since a resize alone can change it.
+
+This makes C the same size whatever the companion's future is. Whether it becomes the auxiliary view of [Browser Cleanup](../Browser%20Cleanup/) or is retired is Steve's to decide, and C does not wait for it. The cost is that the companion's own rules stay tested in a browser fixture and not headlessly; the function's test covers what the columns do with a reservation.
+
+#### The thumbnail allowance
+
+A column whose tiles have thumbnails is 72px wider, and it finds out by asking its first subnode. Three things make that less simple than it reads. (review 3)
+
+- **The asking can load the list.** `node.subnodes().first()` goes through the subnodes getter, which loads a lazily stored list before `.first()` runs. The Bestiary makes its list lazy on purpose, since a campaign can hold hundreds of creature sheets. The reviewer saw the production method resolve a lazy list on its first call.
+- **Keeping the last answer until the list changes is wrong too.** With the same first option in the same list, changing what the option points at (an image node to a plain one) took the allowance from 72px to 0. A windowed list can also gain a different first row when older rows arrive.
+- **So the rule for a claim is:** ask `slotIsPendingMaterialization("subnodes")` first. While the list is pending, the claim has no thumbnail allowance and the list stays unloaded. Once it is loaded, each sync reads the first row again and a pass is asked for only when the number changes. A column bound to a new node whose list is pending does not keep the last node's 72px.
+
+**This is a change of behaviour, so it is not in C.** Today the first layout of an unloaded list loads it, on or off the page. Under this rule the first layout may be 72px narrower until the list arrives in the ordinary way, and then corrects. It lands as [the thumbnail fix](#the-thumbnail-fix-its-own-change-after-a-and-before-b-review-4), before B, and C takes its behaviour as the one to reproduce. (review 4)
+
+#### One method applies a width
+
+A nav view's width is written from three places today: the two rules A3 merges, and `syncMinWidthClaim()`, which every node sync runs and which writes a minimum width. Showing a column also re-runs its orientation, which writes widths again. Under C that is a trap: a sync overwrites an allocated width, the level's claim compares equal, no pass is asked for, and nothing puts the width back. So C gives one method, `applyLayerAnswer()`, the only right to write a nav view's width, minimum and maximum, and its flex grow and shrink, which are what let a narration give way. A sync and a reveal call it with the last answer and write nothing of their own. It must be right the first time it is applied to a new view, and on the way out of being a fill column. If part B shows the node's raw minimum reaching the final styles, the answer carries it: two different raw minimums can give the same capped target. (review, review 2) `SvAnchoredTabsLayout` goes on laying out the panes inside an anchored level.
+
+**Why this does not repeat the views' logic.** The line is between *what I need* and *who gets what*. How a column arrives at its target width, whether it fills, what its companion prefers: each stays in the view that knows it, in one place. The function sees numbers and never asks why. A new kind of level, such as a grid from Tile Container Views, states a claim and the function does not learn it exists. The companion's arithmetic does not move at all: the function is handed its result.
+
+The risk to watch: if a claim ever needs to carry a rule and not a value, the function has started to copy a view. That is the signal to stop and put the rule back.
+
+**Nesting and direction.** The claims are gathered by walking the nested chain, and the list keeps its order. A `"down"` level is in the list: it adds no nav width and is never hidden, and any anchored reservation it carries is counted. Because the arithmetic is flat, the function needs no tree. The nested arithmetic (each level handing its leftover width to its child) is a rule change and is in part D.
+
+#### Four directions
+
+`"left"` and `"up"` are not in C, but C is written so that adding them does not reopen it.
+
+- **A direction is an axis and a way along it.** `"right"` and `"left"` are the horizontal axis; `"down"` and `"up"` the vertical. The arithmetic depends only on the axis: a `"left"` column costs the same width as a `"right"` one, and a sum does not care about order. So the claim carries the axis, and the function never learns which way a level faces. A chain that mixes `"right"` and `"left"` levels needs nothing new.
+- **Which way is the view's business when it applies its answer:** the flex order, the edge its companion docks on, the side its border is drawn on.
+- **The rules are worded without sides.** Columns give way "from the root end", the earliest levels first, not "from the left". A companion sits at the "far edge" of its level. The function and its test use these words, and `SvCompanionView` already speaks of an edge and a length.
+- **The vertical axis is not compacted today**, in either direction: a `"down"` level is never hidden. If rows are ever to give way for height, it is the same function run on the other axis with heights, and is a part D decision.
+- **A language's direction and a node's direction are two things.** Mirroring the whole interface for a right-to-left language could be done by the page's text direction, with the views writing start and end where they now write left and right, and no node changing its orientation. A node that asks for `"left"` on its own is the other case. Both come out the same in the arithmetic. Which of them a right-to-left language should use is open, and is not decided here.
+
+#### Inline documents
+
+Inlining is a placement, chosen edge by edge: an inlined child is drawn within its parent's extent and makes no layer of its own. So the rule for claims is that **an inlined child adds to its parent's claim, and a layered child makes its own entry in the chain.** An inline document (a character sheet) is therefore one layer to compaction, whatever it holds. What goes on inside it is CSS: its sections flow into one, two or three text columns from the width it is given, with nothing measured. That fits this plan as it is. The function gives the document a width and never looks inside. Folding a section or opening a row changes height only and asks for no pass.
+
+Four things about it bear on the plan. The second has been seen in a framework fixture; part B records both of the first two on the Party sheet.
+
+1. **A document fills only while it is last.** `shouldCurrentlyFillAvailble()` is true for an inline document only when no level follows it. Open a tile past the inlined levels and the document stops filling: it becomes a fixed column at its target width, and can be hidden like any other. So a sheet three text columns wide drops to one, or disappears, when a spell is opened from it. C reproduces this. Whether it is wanted is a part D question.
+2. **A path through a document names the sections it passes.** Opening a tile from inside a document selects the path to the document, then the sections the tile sits in, then the tile. The stack builds a level for each node on a path, so the chain holds a level for a section the document already shows in place. **The reviewer reproduced it** (review 2): a framework browser 2,000px wide, an inline document holding a section and a tile named Destination. Before the tap the document was 2,000px wide. After it there were three visible columns of 270px: Document, Section, Destination. It is a column that repeats what is beside it. C keeps it; whether to stop building it is a part D decision. A row that opens its description in place takes another path and makes no column. In the lens model it should not exist: the path says what is visible, the placement says whether an edge makes a layer, and an inlined edge on the path makes none.
+3. **`nodeMinTileWidth` means more than one thing.** For a document it is the column's target width, and it is the width of one text column inside the document. (It has two more readers; see [Two fixes that are decisions](#two-fixes-that-are-decisions).) They are read from different nodes: the target width from the column's own node, the text column width and the fill test from the node it presents (`nodePresentedNode`, as a character presents its sheet). The claim should come from one node, and I had put the presented one into part A. The review found a case where the two differ (the Party tab and a solo sheet), so that is now a separate decision and C keeps each value's source as it is.
+4. **A document's real claim is a range**, and it follows from the rule above: its least is its widest inlined child, its most is its children side by side up to its maximum of text columns. It reads at one text column and uses up to its maximum. Today's claim has a target, a yield floor and a fill flag, which can say "exactly this" or "everything left" and nothing between. C keeps that. A claim with a least and a most is listed in part D, and is the same extension a grid or a table from Tile Container Views needs.
+
+**One trigger.** `browser.setNeedsLayerAllocation()` schedules one pass for the end of the cycle. A level's sync works out its claim, which reads only the model, and asks for a pass only when the claim differs from the last one it gave. So a streamed chunk that changes no claim costs a comparison per level and no pass.
+
+Comparing claims is not enough by itself. A stack that replaces another can have exactly the old one's claim and still never have been given an answer. So the browser is also asked for a pass whenever a stack in its chain is added, replaced, removed or put back on the page, whatever the claims say. It is asked on a real change only: `clearOtherView()` runs even when there is nothing to clear, and asking from there without looking would bring back a pass on every sync. (review, review 2)
+
+**What is left alone in C.** An embedded browser goes on getting its width from its container's resize observer. Anchored panes keep their own layout. Every companion keeps its own sizing, side or bottom; a bottom one is handed its height (A6).
+
+### Part D: rule changes, each its own decision
+
+None is in C. Together they are the road from C to the one protocol described in [Compaction in the lens model](#compaction-in-the-lens-model): each brings another kind of edge, or another of the lens's decisions, under the same claims and the same allocation.
+
+- **Document sections state claims as layers do, and the anchored layout speaks the same protocol at its edge.** A companion becoming a tab and a section becoming a tile are then one rule, an inlined edge becoming layered, with pins and folds as the user's choice within it. A pane becoming a tab is the same idea and stays with `SvAnchoredTabsLayout`, which goes on dividing the width it is given.
+- **Nested allocation.** Each level hands what it has left to its child. It differs from today where a companion sits in the middle of a chain.
+- **Priorities.** An order to give way in other than from the left.
+- **A claim with a least and a most**, for inline documents, and for a container in Tile Container Views if one ever has to ask a neighbour to give way. A column then takes a share of the leftover width without having to be last.
+- **A document that stays wide when something is opened from it**, and a level that repeats an inlined section giving way first, or not being built. See [Inline documents](#inline-documents).
+- **Layout that follows width.** A level shown inline when there is room and as a column when there is not. A folded section is already a tile, so the two are the same idea at different widths.
+- **`"left"` and `"up"` directions**, and compaction along the vertical axis. See [Four directions](#four-directions).
+- **Direction that follows width.** A narrow root turns levels `"down"` in place of hiding columns. A single-column phone mode is the far end of this.
+- **Animation.** The browser has the old answers and the new ones, so it knows what moved.
+
+## What asks for a pass
+
+| Asks | Detail |
+| --- | --- |
+| The chain changed | A stack was added, replaced, removed or put back on the page. This is asked from the stack itself, on a real change of which stack is there or whether it is on the page, and not from the path notification, which compares the path's titles joined together and so says nothing when a sibling with the same title is chosen. Mending that notification is navigation work and is not in this plan: it would wake the breadcrumbs, the URL and other listeners on more events. (review 2) It also changes which column is last and so which may fill. (review) |
+| The root width changed | Window resize at the root; the container's resize observer for an embedded browser, including the first real width it reports. |
+| A level's claim changed | Found by the level's own sync comparing claims. Covers a width hint, the thumbnail allowance (it follows the first subnode), the direction, a presented node, the header region. |
+| A companion's claim changed | Docked or undocked by the user, or its width hint moved. The hint comes from the *embedded* browser's path notification, so this one crosses from the inner browser to the outer, and it misses a same-title sibling too. C records and keeps that. If the outer width should follow such a swap, the companion would refresh its hint on the inner chain's change and tell the outer browser only when the hint moved; that is a correction of its own, apart from C. (review 2) |
+| The anchored reservation changed | Not only a pin. An ordinary tap on a tab can move a group's pin, and a tab becoming available can change the largest unpinned minimum. The level compares its reservation and asks when it differs. The test uses an anchored level that claims less than the whole root, so a stale reservation shows in the column before it. (review 2) |
+
+A node update that changes none of these asks for nothing.
+
+## Testing
+
+- **Headless, new:** `TestLayerAllocation` runs whole chains through the function: depth, mixed directions with a `"down"` level at the root, middle and end (made up for the test, since a real anchored level ends its chain), an anchored reservation at the end of a chain, reservations on one level and on two, a fill column, the one-pixel margin and its 1px edge, a root with no width yet, two reservations that come to more than the root holds, an anchored level with the full-width flag, and the one-to-two-widths rule. This is the written protocol in executable form, and it covers the chain, not one level.
+- **Browser fixture, for the companion, when it is taken up:** its modes, budgets, pin and hint, on the side and on the bottom edge, with the reservation, the transition and the settled box recorded apart. These rules stay in the views, so this is where they are held.
+- **Browser, from part B:** the end-state matrix and the transitions, kept as a regression spec. Part C must reproduce both, and the pass counts must drop.
+- **Triggers:** one browser test per row of the table above, since a missed trigger shows as a stale layout that today's run-on-everything hides.
 
 ## Risks
 
-- **One pass may not equal the loop.** That the inputs are independent of the current state is what the comments say. Stage 2's test and stage 3's recording are how to find out. If a case needs two passes, the layout can do two inside itself; the views still see one plan.
-- **A pass at the end of the cycle could show one wrong frame.** Today the pass runs inside the sync that caused it. If a deferred pass paints late, the fallback is to run it at once on a path change and defer only the rest.
-- **Embedded browsers before they have a width.** A companion's browser can be asked to lay out at width 0. Today that falls back to the window width so a column is shown and not hidden. The layout must keep that rule, and the stage 1 matrix must include a companion that mounts docked.
-- **Scale.** This touches the five classes above. It is larger than part 1.
+- **A missed trigger.** The largest risk in C. Today's cost is also its safety net. The trigger tests are the guard, and a debug flag that runs a pass on every sync and reports any difference would find the rest.
+- **One pass may not equal the loop.** The evidence is now better than a reading. The reviewer ran today's loop against one sweep of companions then one of columns, using the production methods with stubbed geometry: 1,944 fixtures of two levels agreed on mode, reserved width and both hidden flags, across widths, hints, pins, starting modes and fill states. The width-hint case I could not rule out resolves in one pass, because no answer about what is hidden feeds back into either of the companion's budgets. A second run covered three levels with two companions on every pair of levels: 16,038 fixtures, all agreeing on both modes, both reserved widths and all three hidden flags, including the cases where the panels are given more than the root holds (review 3). Both runs check the arithmetic with stubbed geometry; rendered widths and the timing of observers are for the browser cases. An observer reporting a new width later is a new input and a new pass, not a second pass on old inputs. (review 2)
+- **A pass at the end of the cycle could show one wrong frame.** Today the pass runs inside the sync that caused it. The transitions recording checks for it; the fallback is to run at once on a path change and defer the rest.
+- **Showing a column has a side effect.** `uncollapse()` re-syncs the column's orientation and its tiles. C must keep the tiles' part of that and move the width's part into `applyLayerAnswer()`.
+- **A width written behind the allocation's back.** See [One method applies a width](#one-method-applies-a-width).
+- **Scale.** C touches the five classes above, about 6,900 lines between them and the anchored-tabs files. A is a few dozen lines.
+
+## Corrections
+
+- **To part 1.** When we chose that a tapped tile reports to the navigation entry point afterwards, I said the compaction coordinator would be the first thing to need taps to go through it beforehand. It doesn't. It needs to know the path changed, which the report gives it.
+- **To the first draft.** It described the columns as a flat row and proposed a layout object that solved the whole layout. See the note at the top.
+- **To the discussion on 2026-11-20.** I proposed handing an embedded browser its width from the outer pass. It already gets its width from a resize observer without measuring, so that would add a second mechanism for nothing. I also listed "a fill column with levels after it" as a case to record; only the last column can fill, so it cannot happen.
+- **From the review.** I put two changes of behaviour into part A as cleanups (A5 and A8). I described an anchored-tabs level as sitting in the middle of a chain; it ends one. I said the thrash counter would check A6; it cannot see the read A6 removes. And I offered Tile Container Views as a reason for C without asking what its first grid needs.
+- **From the second review.** I said the option tile's two tests disagree "only at exactly 540px" in a top-level window; that holds only for two columns of the default width. My contract said a vertical level is passed over and that equality always hides, either of which would have made a wrong headless test. And my claim called `targetWidth()`, which reads a width and can measure, while promising a comparison that reads only the model.
 
 ## Decisions
 
-1. **A layout object with no DOM, or the same logic gathered into the browser view?** I recommend the object. It is the only form that can be tested without a browser, and the anchored tabs show it works.
-2. **Reproduce today's behaviour first, or change rules in the same step?** I recommend reproducing it exactly, including the one-to-two-widths rule, so that stage 3 has a pass or fail answer. Rule changes come after, one at a time.
-3. **When does a pass run?** I recommend once at the end of the cycle, checked against the stage 1 recording for a wrong frame. The alternative is at once, but only when marked stale.
-4. **How much moves in stage 3?** I recommend columns and companions together, since the loop exists because of the two. Anchored panes keep their own layout and supply a claim.
-5. **The name.** `SvColumnLayout`, to sit beside `SvAnchoredTabsLayout`. "Compaction coordinator" stays as the plan's name.
+These were the recommendations; they are now the plan. Any of them can be reopened.
+
+1. **Part A is done first, on its own, after its recordings are taken.** It is small, changes no rule, and makes B's numbers describe the design and not its accidents. A5 and A8 are not in it.
+2. **Part B is measured before C is argued,** with transitions recorded as well as end states.
+3. **Claims in the views, allocation in one function.** The companion's sizing stays in its views and reaches the function as a number. Keeping everything in the views would copy nothing either, but would leave the chain's rules testable only in a browser, which is how they got here.
+4. **C reproduces today's flat arithmetic exactly,** including the one-to-two-widths rule, reservations that come to more than there is, and the 1px edge of the cap, so it has a pass or fail answer. Every rule change is a part D decision. There is no exception: the thumbnail fix lands before B and is part of what C reproduces.
+5. **A pass runs once, at the end of the cycle,** checked against the transitions recording. If that shows a wrong frame, a path change runs its pass at once and the rest stay deferred.
+6. **The names are `SvLayerAllocation`, `layerClaim()`, `setNeedsLayerAllocation()` and `TestLayerAllocation`.** A level is not always a column (it may be a row, a set of tabs or an inline document), "column" also means a text column inside a document, and the paper's word for the unit is a layer. "Compaction coordinator" stays as the plan's name.
+7. **Each value in a claim keeps the source it has today** through C. (Was: the claim comes from the presented node. Withdrawn after the review.)
+8. **The rules are worded by axis and end, not by side,** so `"left"` and `"up"` add nothing to the allocation.
+9. **One method applies a nav view's width,** `applyLayerAnswer()`.
+10. **A change to the chain asks for a pass,** as well as a change to a claim.
+11. **A claim holds no widths.** The cap and a full-width anchored reservation are filled in by the function from the pass's snapshot.
+12. **Part B's primary workload is narration streaming on a phone,** with a resize across 1,038px as the second, reported apart.
+13. **The companion's sizing stays in `SvDetailView` and `SvCompanionView`.** C hands its reservation to the function and removes the loop by doing companions before columns.
+14. **The thumbnail fix is its own change,** after A and before B.
+15. **The recordings before part A start now,** and record what happens today without calling it right. (Steve, 2026-11-20)
+16. **Part B's line is 2ms** at the 95th percentile per active frame, measured in Chromium at phone size with the processor throttled. (Steve, 2026-11-20)
+17. **The companion's code is kept and nothing is spent on it now.** A6 and the two companion recordings wait until a node uses one. C still takes a reservation. (Steve, 2026-11-20)
+18. **The first grid in Tile Container Views does not wait on this plan.** The table and the scrolling keep their place until someone checks what they need. (Steve, 2026-11-20)
+
+### Still open
+
+- **Whether C goes ahead, and argued how.** Steve decides with part B's numbers in hand.
+- **The option tile's test** (was A5): step back when the column to return to is hidden, in place of when the window is under 540px.
+- **Which node a column's width comes from** (was A8), with the Party tab and its solo sheet as the case to settle.
+- **How a right-to-left language mirrors the interface:** by the page's text direction, or by nodes asking for `"left"`. The allocation is the same either way.
+- **Whether to stop building a column for a section an inline document already shows.** It is built today (seen in a fixture). A part D decision.
+- **Everything in part D,** each when it comes up.
+
+## Questions for the reviewer
+
+### Answered in the second review
+
+All nine were answered, and the answers are folded in above. In short:
+
+1. **The Party tab's 437px:** found by reading, not seen. The hint has four readers; keep each through C.
+2. **The option tile:** the embedded case is reasoned. The disagreement is wider than 540px once columns are wider than the default. A docked companion hiding the column counts.
+3. **One pass:** agreed with the loop on 1,944 two-level fixtures.
+4. **Applying a width:** leave `syncMinWidthClaim()` for C; the one owner also owns flex grow and shrink.
+5. **The path's titles:** not in this plan. Ask for a pass on a real change of stack.
+6. **A path through an inline document:** yes, it builds a visible column for the section.
+7. **What counts as costly:** 2ms at the 95th percentile per active frame, proposed.
+8. **The first wrapping grid:** it only reflows; drop the dependency.
+9. **Anchored tabs:** keep `SvAnchoredTabsLayout` apart for good, sharing the protocol at its edge.
+
+### Answered in the third review
+
+1. **Three levels and two companions:** the loop and the one sweep agreed on all 16,038 fixtures, over-allocation included. No player route makes two companions in one chain, and no app node supplies a companion at all.
+2. **The thumbnail allowance on a lazy list:** asking can load the whole list, and keeping the last answer is wrong as well. Check whether the list is pending, then read the first row on each sync.
+3. **The workloads:** narration streaming on a portrait phone first; a resize across 1,038px apart. The 2ms line still needs timing.
+
+Two edits to the contract came with them, both made: the anchored reservation is a fixed width or a flag, and the 1px edge of the cap is a named case.
+
+### Answered in the fourth review
+
+1. **The companion's place in C:** keep its sizing in its views and hand the function a number. The loop goes because companions are done before columns, not because their arithmetic moved.
+2. **The thumbnail change:** its own fix, after A and before B.
+3. **Fixtures:** both work with the `nodeCompanionNode()` hook on plain nodes, with no Lab page. The reviewer built both in Chromium.
+4. **Blockers:** none for the recordings.
+
+### For the next pass
+
+I have no new questions. The next thing to review is the recordings themselves, the bottom-edge trace and the solo Party sheet above all, before Steve decides on part A. Two things are Steve's and not the reviewer's: the phone for part B, and whether 2ms is the line.

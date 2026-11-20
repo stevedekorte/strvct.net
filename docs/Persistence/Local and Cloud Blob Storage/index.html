@@ -18,9 +18,9 @@
   <link rel="modulepreload" href="../../../colvmn/layout/PageIndex.js">
   <link rel="modulepreload" href="../../../colvmn/layout/MarkdownParser.js">
   <title>Local and Cloud Blob Storage – STRVCT</title>
-  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/">
   <meta name="description" content="SHA-256 content-addressable binary asset storage for images, audio, video, and files.">
+  <link rel="alternate" type="text/plain" title="llms.txt" href="../../../llms.txt">
 </head>
 <body>
   <div class="page loaded has-cols has-cols-3"><div class="header"><div><h1>Local and Cloud Blob Storage</h1><a class="back-link" href="../index.html">&larr; Persistence</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>SHA-256 content-addressable binary asset storage for images, audio, video, and files.</p></div><div class="col-group"><div class="col-keep"><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>While domain object properties are serialized into standard JSON record rows, large binary assets (images, audio files, PDFs) are managed by <code>SvBlobPool</code>.</p><p>Binary assets are stored using <strong>Content-Addressable Storage (CAS)</strong>:</p><ul><li>The key for any binary blob is its <strong>SHA-256 hash digest</strong> string.</li><li>Object slots store hash reference strings (e.g., <code>"hash:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"</code>) rather than inline base64 data.</li><li>Duplicate uploads of identical binary files automatically resolve to the same SHA-256 key, providing zero-effort binary deduplication.</li></ul><svg viewBox="0 0 820 180" width="820" xmlns="http://www.w3.org/2000/svg">

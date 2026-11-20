@@ -2,7 +2,7 @@
 
 Layout strategies for presenting a node's subnodes.
 
-**Status:** open. Waits on the compaction coordinator in [Browser Cleanup](../Browser%20Cleanup/), which gives containers the width extension points they need. **Order:** `setNodeTilesViewClass()` and the wrapping grid, then the table, then scrolling over windowed collections; the search and filter chrome takes the Search & Filtering item from [Emergent Capabilities](../Emergent%20Capabilities/). Each container gets its ARIA roles when it is written, not later.
+**Status:** open. The wrapping grid does not wait on anything (decided 2026-11-20): it wraps inside the width its column is already given, as an inline document does. The table and the scrolling keep their place after the [Compaction Coordinator](../Compaction%20Coordinator/) until someone checks whether they need to ask a neighbouring column for width. **Order:** `setNodeTilesViewClass()` and the wrapping grid, then the table, then scrolling over windowed collections; the search and filter chrome takes the Search & Filtering item from [Emergent Capabilities](../Emergent%20Capabilities/). Each container gets its ARIA roles when it is written, not later.
 
 ## Context
 

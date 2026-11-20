@@ -57,7 +57,7 @@ More slot constraints are declared where a wrong value is seen, not as a project
 | [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Built, unverified in a browser (next step A) | Every view edit path asks the editability cascade; the server says who may write and the cascade uses its answer; a refused commit reloads and says so. Read, share and create hooks wait for a need. |
 | [JSON Schema](../JSON%20Schema/) | Slot constraints built, unused | A slot's `minimum`, `maxLength` and the rest reach the schema, the field's error text, ARIA and a refused AI patch; the setter only warns. `pattern` is checked too. The app declares its first few (2026-11-18). Class-level keywords and type unions are left. |
 | [Browser Cleanup](../Browser%20Cleanup/) | Next new work | Holds the compaction notes; has its own order. Part 1 (one navigation entry point) is built; part 2 (the compaction coordinator) is next. |
-| [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Later | Wait on compaction. Large collections rewritten around windowed collections. |
+| [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Later | The wrapping grid can start on its own (2026-11-20); the table and scrolling wait on compaction. Large collections rewritten around windowed collections. |
 | [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) | Ongoing | Automated checks now; manual passes after the navigation work. |
 | [Case Studies](../Case%20Studies/) | Later | Contacts can run early. |
 | [Emergent Capabilities](../Emergent%20Capabilities/) | Ideas | Each candidate now points to the plan that takes it. |

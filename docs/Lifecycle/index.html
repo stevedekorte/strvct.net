@@ -18,9 +18,9 @@
   <link rel="modulepreload" href="../../colvmn/layout/PageIndex.js">
   <link rel="modulepreload" href="../../colvmn/layout/MarkdownParser.js">
   <title>Lifecycle – STRVCT</title>
-  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Lifecycle/">
   <meta name="description" content="Boot sequence, node initialization, view synchronization, and persistence cycles.">
+  <link rel="alternate" type="text/plain" title="llms.txt" href="../../llms.txt">
 </head>
 <body>
   <div class="page loaded"><div class="header"><div><h1>Lifecycle</h1><a class="back-link" href="../index.html">&larr; Documentation</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Boot sequence, node initialization, view synchronization, and persistence cycles.</p></div><div class="section"><div class="section-body"><p>The core design challenge is that the same object must work whether it is freshly created or loaded from storage. A single-phase constructor can't handle both cases — if it creates default child objects, it will overwrite data that was just deserialized. STRVCT solves this with a three-phase sequence: <code>init()</code> sets up primitives and slot defaults, <code>finalInit()</code> creates complex child objects only if they weren't already loaded from the store, and <code>afterInit()</code> runs once the full object graph is ready. This separation means persistence is transparent — a class doesn't need different code paths for "new" vs. "loaded."</p>

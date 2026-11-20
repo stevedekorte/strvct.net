@@ -2,7 +2,7 @@
 
 Simplifying and documenting the browser navigation architecture.
 
-**Status:** open; part 1 is built (2026-11-19, see [One navigation entry point](#one-navigation-entry-point)). **Order:** (1) one navigation entry point, (2) a compaction coordinator with a written protocol, (3) composable breadcrumbs, (4) the auxiliary view, which needs 2 and 3. [Tile Container Views](../Tile%20Container%20Views/) waits on 2, and the navigation announcements in [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) wait on 1. The compaction notes from Cleanup Notes are merged in below.
+**Status:** open; part 1 is built (2026-11-19, see [One navigation entry point](#one-navigation-entry-point)). **Order:** (1) one navigation entry point, (2) a compaction coordinator with a written protocol, (3) composable breadcrumbs, (4) the auxiliary view, which needs 2 and 3. [Tile Container Views](../Tile%20Container%20Views/) waited on 2; its first grid no longer does (2026-11-20), and the navigation announcements in [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) wait on 1. The compaction notes from Cleanup Notes are merged in below.
 
 ## Current Architecture
 
@@ -74,7 +74,7 @@ The browser navigation works well but has accumulated complexity over time. Area
 
 The column compaction system (`updateCompactionChain()` on `SvStackView`, `collapse()` / `uncollapse()` on `SvNavView`) spans both classes with mutual callbacks. It works, but the protocol between them is implicit.
 
-A recommendation for this part is written up in [Compaction Coordinator](../Compaction%20Coordinator/) (2026-11-19, for discussion).
+A recommendation for this part is written up in [Compaction Coordinator](../Compaction%20Coordinator/) (the plan as of 2026-11-20, not yet built): small fixes first, then a measurement, then claims stated by the views and one function, `SvLayerAllocation`, that allocates.
 
 - **A compaction coordinator.** Measuring the available width, choosing which columns to collapse, and collapsing or expanding them could live in one object rather than across `SvStackView` and `SvNavView`.
 - **A written protocol.** What triggers compaction, the order columns compact in, how a column says it can't compact further, and how expansion reverses it.

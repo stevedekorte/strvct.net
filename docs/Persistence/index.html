@@ -18,9 +18,9 @@
   <link rel="modulepreload" href="../../colvmn/layout/PageIndex.js">
   <link rel="modulepreload" href="../../colvmn/layout/MarkdownParser.js">
   <title>Persistence – STRVCT</title>
-  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Persistence/">
   <meta name="description" content="Local storage, cloud sync, and blob management for object graphs.">
+  <link rel="alternate" type="text/plain" title="llms.txt" href="../../llms.txt">
 </head>
 <body>
   <div class="page loaded"><div class="header"><div><h1>Persistence</h1><a class="back-link" href="../index.html">&larr; Documentation</a></div><a class="brand" href="../index.html">STRVCT</a></div><div class="intro"><p>Local storage, cloud sync, and blob management for object graphs.</p></div><div class="section"><div class="section-body"><p>Three tiers: the in-memory model, local storage (a record store holding every object pool's rows, plus a content-addressable blob pool), and the cloud, which holds the same rows one record per row, with a version per pool. Each document is its own pool; a folder's contents are the documents whose root rows are placed under it. Mutations are stored locally at the end of each event loop and committed to the cloud asynchronously, as the records changed since the pool's last acknowledged version.</p>

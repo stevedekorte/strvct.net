@@ -2,104 +2,104 @@
 
 > Write the domain model. Get the application.
 
-Site build: STRVCT · 2026-11-19 · 6b2a733f
+Site build: STRVCT · 2026-11-19 · 3c240aad
 
 ## Documentation
 
-- [Documentation](/docs/): Guides, architecture, and API reference.
-- [Accessibility](/docs/Accessibility/): Automatic, framework-level ARIA support, keyboard navigation, and preference adaptation derived from slot metadata annotations and view classes.
-- [Comparing to React](/docs/Comparing%20to%20React/): A guide to Strvct for developers who know React.
-- [Diagrams](/docs/Diagrams/): Architectural sketches of the Strvct framework. Working drafts; not yet placed in their final locations within the docs.
-- [Annotations](/docs/Diagrams/Annotations/)
-- [Diagram Conventions](/docs/Diagrams/Conventions/): Style and layout rules for the SVG diagrams used throughout the Strvct docs.
-- [Layers](/docs/Diagrams/Layers/)
-- [Persistence Pipeline](/docs/Diagrams/Persistence%20Pipeline/)
-- [View ↔ Model ↔ Storage Syncing](/docs/Diagrams/Sync%20Flow/)
-- [View Resolution](/docs/Diagrams/View%20Resolution/)
-- [Events and Gestures](/docs/Events%20and%20Gestures/): Event flow, listeners, gesture recognizers, timers, keyboard handling, and drag-and-drop.
-- [Drag and Drop](/docs/Events%20and%20Gestures/Drag%20and%20Drop/): Browser drag-and-drop support for views and nodes, covering drop targets, drag sources, and MIME-type dispatch.
-- [Event Flow](/docs/Events%20and%20Gestures/Event%20Flow/): The end-to-end path from a browser event to an application handler.
-- [Event Listeners](/docs/Events%20and%20Gestures/Event%20Listeners/): Thin wrappers around native DOM events that forward to handler methods on views.
-- [Gesture Recognizers](/docs/Events%20and%20Gestures/Gesture%20Recognizers/): Higher-level state machines that interpret sequences of events as meaningful gestures.
-- [Keyboard and Focus](/docs/Events%20and%20Gestures/Keyboard%20and%20Focus/): Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
-- [Timers](/docs/Events%20and%20Gestures/Timers/): Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
-- [Getting Started](/docs/Getting%20Started/): Setup, integration, directory conventions, build pipeline, and running your first Strvct application.
-- [Implementation Overview](/docs/Implementation%20Overview/): Deep technical specifications for class lifecycle, slots, views, persistence, notifications, and build infrastructure.
-- [Inspectors and Debugging](/docs/Inspectors%20and%20Debugging/): Built-in tools for live Property Inspection, Developer Mode graph toggles, and Chrome DevTools source debugging.
-- [Inspirations](/docs/Inspirations/): Frameworks and ideas that shaped STRVCT's design.
-- [Internationalization](/docs/Internationalization/): AI-powered translation of UI text with per-language IndexedDB persistence, batched requests, and content filtering.
-- [Lifecycle](/docs/Lifecycle/): Boot sequence, node initialization, view synchronization, and persistence cycles.
-- [App Lifecycle](/docs/Lifecycle/App%20Lifecycle/): SvApp singleton initialization sequence, extension points, runtime environment hooks, user alert routing, and UI readiness promises.
-- [Boot Sequence](/docs/Lifecycle/Boot%20Sequence/): How the application loads from first script tag to a running app.
-- [Headless Execution](/docs/Lifecycle/Headless%20Execution/): Running STRVCT applications natively in Node.js without DOM or browser dependencies.
-- [Node Lifecycle](/docs/Lifecycle/Node%20Lifecycle/): Creation, three-phase initialization, parent-child relationships, and update notifications.
-- [Persistence Lifecycle](/docs/Lifecycle/Persistence%20Lifecycle/): How objects are stored, loaded, and kept in sync with the local record store and the cloud.
-- [View Synchronization](/docs/Lifecycle/View%20Synchronization/): How views discover nodes, synchronize state, and batch updates efficiently.
-- [Naked Objects](/docs/Naked%20Objects/): From Domain Models to Complete Applications
-- [Naked Objects](/docs/Naked%20Objects%20Old/): From Domain Models to Complete Applications
-- [Nodes](/docs/Nodes/): The core domain object abstraction, object graph hierarchy, and subnode management in Strvct.
-- [Notifications](/docs/Notifications/): Event-driven communication between framework layers using observations, scheduling, and weak references.
-- [Broadcaster](/docs/Notifications/Broadcaster/): Immediate, synchronous event broadcasting across object trees in SvBroadcaster.
-- [Notification Center](/docs/Notifications/Notification%20Center/): Asynchronous event dispatching, dual WeakMap observation indexing, and decoupled change propagation in SvNotificationCenter.
-- [Slot Change Hooks](/docs/Notifications/Slot%20Change%20Hooks/): Declarative lifecycle hooks invoked automatically during slot mutation.
-- [Sync Scheduler](/docs/Notifications/Sync%20Scheduler/): Coalescing, deduplication, and event-loop-deferred method execution in SvSyncScheduler.
-- [Persistence](/docs/Persistence/): Local storage, cloud sync, and blob management for object graphs.
-- [Cloud Object Pools](/docs/Persistence/Cloud%20Object%20Pools/): Cloud persistence for object pools: one record per row, a version per pool, and an atomic commit protocol.
-- [Local and Cloud Blob Storage](/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/): SHA-256 content-addressable binary asset storage for images, audio, video, and files.
-- [Local Object Pools](/docs/Persistence/Local%20Object%20Pools/): IndexedDB-backed persistence for domain object graphs using dirty tracking, the local record store (SvLocalRecordStore), and atomic event-loop commits.
-- [Plans](/docs/Plans/): Design ideas, architectural directions, and planned improvements, with a meta plan for the order to do them in.
-- [Accessibility Testing & Tuning](/docs/Plans/Accessibility%20Testing%20%26%20Tuning/)
-- [Async Final Initialization](/docs/Plans/Async%20Final%20Initialization/)
-- [Async Navigation](/docs/Plans/Async%20Navigation/): Rearchitecting the navigation stack to support asynchronous loading at every level.
-- [Browser Cleanup](/docs/Plans/Browser%20Cleanup/)
-- [Capabilities & Permissions](/docs/Plans/Capabilities%20%26%20Permissions/)
-- [Case Studies](/docs/Plans/Case%20Studies/)
-- [Cleanup Notes](/docs/Plans/Cleanup%20Notes/)
-- [Compaction Coordinator](/docs/Plans/Compaction%20Coordinator/)
-- [Complete Protocols](/docs/Plans/Complete%20Protocols/)
-- [Emergent Capabilities](/docs/Plans/Emergent%20Capabilities/)
-- [Graph Database](/docs/Plans/Graph%20Database/)
-- [JSON Schema](/docs/Plans/JSON%20Schema/)
-- [Lazy Slots](/docs/Plans/Lazy%20Slots/)
-- [Meta Plan](/docs/Plans/Meta%20Plan/): The order to do the other plans in, why, and what should change in them first.
-- [Naked Objects Issues](/docs/Plans/Naked%20Objects%20Issues/)
-- [Promise-Wrapped Slots](/docs/Plans/Promise-Wrapped%20Slots/)
-- [Tile Container Views](/docs/Plans/Tile%20Container%20Views/)
-- [Tile Views](/docs/Plans/Tile%20Views/)
-- [Programming Idioms](/docs/Programming%20Idioms/): Recurring patterns and conventions for writing STRVCT code.
-- [Async Patterns](/docs/Programming%20Idioms/Async%20Patterns/): Promise extensions, serial and parallel async array iteration, and error context rethrowing with Error.rethrow().
-- [Categories](/docs/Programming%20Idioms/Categories/): Extending existing classes by adding methods from separate files without subclassing.
-- [Protocols](/docs/Programming%20Idioms/Protocols/): Declaring interfaces and verifying conformance at runtime with fail-fast registration checks.
-- [Style Guide](/docs/Programming%20Idioms/Style%20Guide/): Coding conventions, self-initializing class patterns, method chaining, and file structure rules across STRVCT.
-- [Reference](/docs/Reference/): Class hierarchy, module hierarchy, and protocol definitions.
-- [Classes](/docs/Reference/Classes/)
-- [Modules](/docs/Reference/Modules/)
-- [Protocols](/docs/Reference/Protocols/)
-- [Services](/docs/Services/): AI, cloud, media, and IoT service integrations.
-- [AI Services](/docs/Services/AI%20Services/): Framework architecture for multi-provider AI integration, streaming execution, tool calling, and model-first operability.
-- [Cloud Storage](/docs/Services/Cloud%20Storage/): Firebase integration for cloud persistence and file storage.
-- [Home Assistant](/docs/Services/Home%20Assistant/): IoT device control via Home Assistant's WebSocket API.
-- [Media](/docs/Services/Media/): YouTube audio playback and browser speech recognition.
-- [Proxies](/docs/Services/Proxies/): Client-side proxy configuration for routing API calls through intermediary servers.
-- [Slots](/docs/Slots/): The property system: declaration, slot annotations, runtime type checks, lifecycle hooks, and metadata consumers.
-- [Technical Overview](/docs/Technical%20Overview/): High-level architecture, core design philosophy, and system-wide concepts of the Strvct framework.
-- [Views](/docs/Views/): The view layer: auto-generated UI, custom views, and programmatic styling.
-- [Auto-Generated Views](/docs/Views/Auto-Generated%20Views/): How the view layer connects to model nodes, resolves view classes, synchronizes state, and provides navigation without hand-authored UI code.
-- [Companion View](/docs/Views/Companion%20View/): A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
-- [Custom Views](/docs/Views/Custom%20Views/): Authoring custom view classes, DOM wrappers, flex shortcuts, and model synchronization for specialized media.
-- [Programmatic Styling](/docs/Views/Programmatic%20Styling/): Named CSS methods, the chainable API, and why STRVCT avoids CSS files.
-- [Responsive Views](/docs/Views/Responsive/): Automatic viewport compaction, last-column stretching, and per-node width hooks without per-screen layout code.
-- [Themes and Style States](/docs/Views/Themes%20and%20Style%20States/): How views resolve their appearance from theme classes, style states, and node configuration.
+- [Documentation](docs/): Guides, architecture, and API reference.
+- [Accessibility](docs/Accessibility/): Automatic, framework-level ARIA support, keyboard navigation, and preference adaptation derived from slot metadata annotations and view classes.
+- [Comparing to React](docs/Comparing%20to%20React/): A guide to Strvct for developers who know React.
+- [Diagrams](docs/Diagrams/): Architectural sketches of the Strvct framework. Working drafts; not yet placed in their final locations within the docs.
+- [Annotations](docs/Diagrams/Annotations/)
+- [Diagram Conventions](docs/Diagrams/Conventions/): Style and layout rules for the SVG diagrams used throughout the Strvct docs.
+- [Layers](docs/Diagrams/Layers/)
+- [Persistence Pipeline](docs/Diagrams/Persistence%20Pipeline/)
+- [View ↔ Model ↔ Storage Syncing](docs/Diagrams/Sync%20Flow/)
+- [View Resolution](docs/Diagrams/View%20Resolution/)
+- [Events and Gestures](docs/Events%20and%20Gestures/): Event flow, listeners, gesture recognizers, timers, keyboard handling, and drag-and-drop.
+- [Drag and Drop](docs/Events%20and%20Gestures/Drag%20and%20Drop/): Browser drag-and-drop support for views and nodes, covering drop targets, drag sources, and MIME-type dispatch.
+- [Event Flow](docs/Events%20and%20Gestures/Event%20Flow/): The end-to-end path from a browser event to an application handler.
+- [Event Listeners](docs/Events%20and%20Gestures/Event%20Listeners/): Thin wrappers around native DOM events that forward to handler methods on views.
+- [Gesture Recognizers](docs/Events%20and%20Gestures/Gesture%20Recognizers/): Higher-level state machines that interpret sequences of events as meaningful gestures.
+- [Keyboard and Focus](docs/Events%20and%20Gestures/Keyboard%20and%20Focus/): Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
+- [Timers](docs/Events%20and%20Gestures/Timers/): Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
+- [Getting Started](docs/Getting%20Started/): Setup, integration, directory conventions, build pipeline, and running your first Strvct application.
+- [Implementation Overview](docs/Implementation%20Overview/): Deep technical specifications for class lifecycle, slots, views, persistence, notifications, and build infrastructure.
+- [Inspectors and Debugging](docs/Inspectors%20and%20Debugging/): Built-in tools for live Property Inspection, Developer Mode graph toggles, and Chrome DevTools source debugging.
+- [Inspirations](docs/Inspirations/): Frameworks and ideas that shaped STRVCT's design.
+- [Internationalization](docs/Internationalization/): AI-powered translation of UI text with per-language IndexedDB persistence, batched requests, and content filtering.
+- [Lifecycle](docs/Lifecycle/): Boot sequence, node initialization, view synchronization, and persistence cycles.
+- [App Lifecycle](docs/Lifecycle/App%20Lifecycle/): SvApp singleton initialization sequence, extension points, runtime environment hooks, user alert routing, and UI readiness promises.
+- [Boot Sequence](docs/Lifecycle/Boot%20Sequence/): How the application loads from first script tag to a running app.
+- [Headless Execution](docs/Lifecycle/Headless%20Execution/): Running STRVCT applications natively in Node.js without DOM or browser dependencies.
+- [Node Lifecycle](docs/Lifecycle/Node%20Lifecycle/): Creation, three-phase initialization, parent-child relationships, and update notifications.
+- [Persistence Lifecycle](docs/Lifecycle/Persistence%20Lifecycle/): How objects are stored, loaded, and kept in sync with the local record store and the cloud.
+- [View Synchronization](docs/Lifecycle/View%20Synchronization/): How views discover nodes, synchronize state, and batch updates efficiently.
+- [Naked Objects](docs/Naked%20Objects/): From Domain Models to Complete Applications
+- [Naked Objects](docs/Naked%20Objects%20Old/): From Domain Models to Complete Applications
+- [Nodes](docs/Nodes/): The core domain object abstraction, object graph hierarchy, and subnode management in Strvct.
+- [Notifications](docs/Notifications/): Event-driven communication between framework layers using observations, scheduling, and weak references.
+- [Broadcaster](docs/Notifications/Broadcaster/): Immediate, synchronous event broadcasting across object trees in SvBroadcaster.
+- [Notification Center](docs/Notifications/Notification%20Center/): Asynchronous event dispatching, dual WeakMap observation indexing, and decoupled change propagation in SvNotificationCenter.
+- [Slot Change Hooks](docs/Notifications/Slot%20Change%20Hooks/): Declarative lifecycle hooks invoked automatically during slot mutation.
+- [Sync Scheduler](docs/Notifications/Sync%20Scheduler/): Coalescing, deduplication, and event-loop-deferred method execution in SvSyncScheduler.
+- [Persistence](docs/Persistence/): Local storage, cloud sync, and blob management for object graphs.
+- [Cloud Object Pools](docs/Persistence/Cloud%20Object%20Pools/): Cloud persistence for object pools: one record per row, a version per pool, and an atomic commit protocol.
+- [Local and Cloud Blob Storage](docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/): SHA-256 content-addressable binary asset storage for images, audio, video, and files.
+- [Local Object Pools](docs/Persistence/Local%20Object%20Pools/): IndexedDB-backed persistence for domain object graphs using dirty tracking, the local record store (SvLocalRecordStore), and atomic event-loop commits.
+- [Plans](docs/Plans/): Design ideas, architectural directions, and planned improvements, with a meta plan for the order to do them in.
+- [Accessibility Testing & Tuning](docs/Plans/Accessibility%20Testing%20%26%20Tuning/)
+- [Async Final Initialization](docs/Plans/Async%20Final%20Initialization/)
+- [Async Navigation](docs/Plans/Async%20Navigation/): Rearchitecting the navigation stack to support asynchronous loading at every level.
+- [Browser Cleanup](docs/Plans/Browser%20Cleanup/)
+- [Capabilities & Permissions](docs/Plans/Capabilities%20%26%20Permissions/)
+- [Case Studies](docs/Plans/Case%20Studies/)
+- [Cleanup Notes](docs/Plans/Cleanup%20Notes/)
+- [Compaction Coordinator](docs/Plans/Compaction%20Coordinator/)
+- [Complete Protocols](docs/Plans/Complete%20Protocols/)
+- [Emergent Capabilities](docs/Plans/Emergent%20Capabilities/)
+- [Graph Database](docs/Plans/Graph%20Database/)
+- [JSON Schema](docs/Plans/JSON%20Schema/)
+- [Lazy Slots](docs/Plans/Lazy%20Slots/)
+- [Meta Plan](docs/Plans/Meta%20Plan/): The order to do the other plans in, why, and what should change in them first.
+- [Naked Objects Issues](docs/Plans/Naked%20Objects%20Issues/)
+- [Promise-Wrapped Slots](docs/Plans/Promise-Wrapped%20Slots/)
+- [Tile Container Views](docs/Plans/Tile%20Container%20Views/)
+- [Tile Views](docs/Plans/Tile%20Views/)
+- [Programming Idioms](docs/Programming%20Idioms/): Recurring patterns and conventions for writing STRVCT code.
+- [Async Patterns](docs/Programming%20Idioms/Async%20Patterns/): Promise extensions, serial and parallel async array iteration, and error context rethrowing with Error.rethrow().
+- [Categories](docs/Programming%20Idioms/Categories/): Extending existing classes by adding methods from separate files without subclassing.
+- [Protocols](docs/Programming%20Idioms/Protocols/): Declaring interfaces and verifying conformance at runtime with fail-fast registration checks.
+- [Style Guide](docs/Programming%20Idioms/Style%20Guide/): Coding conventions, self-initializing class patterns, method chaining, and file structure rules across STRVCT.
+- [Reference](docs/Reference/): Class hierarchy, module hierarchy, and protocol definitions.
+- [Classes](docs/Reference/Classes/)
+- [Modules](docs/Reference/Modules/)
+- [Protocols](docs/Reference/Protocols/)
+- [Services](docs/Services/): AI, cloud, media, and IoT service integrations.
+- [AI Services](docs/Services/AI%20Services/): Framework architecture for multi-provider AI integration, streaming execution, tool calling, and model-first operability.
+- [Cloud Storage](docs/Services/Cloud%20Storage/): Firebase integration for cloud persistence and file storage.
+- [Home Assistant](docs/Services/Home%20Assistant/): IoT device control via Home Assistant's WebSocket API.
+- [Media](docs/Services/Media/): YouTube audio playback and browser speech recognition.
+- [Proxies](docs/Services/Proxies/): Client-side proxy configuration for routing API calls through intermediary servers.
+- [Slots](docs/Slots/): The property system: declaration, slot annotations, runtime type checks, lifecycle hooks, and metadata consumers.
+- [Technical Overview](docs/Technical%20Overview/): High-level architecture, core design philosophy, and system-wide concepts of the Strvct framework.
+- [Views](docs/Views/): The view layer: auto-generated UI, custom views, and programmatic styling.
+- [Auto-Generated Views](docs/Views/Auto-Generated%20Views/): How the view layer connects to model nodes, resolves view classes, synchronizes state, and provides navigation without hand-authored UI code.
+- [Companion View](docs/Views/Companion%20View/): A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
+- [Custom Views](docs/Views/Custom%20Views/): Authoring custom view classes, DOM wrappers, flex shortcuts, and model synchronization for specialized media.
+- [Programmatic Styling](docs/Views/Programmatic%20Styling/): Named CSS methods, the chainable API, and why STRVCT avoids CSS files.
+- [Responsive Views](docs/Views/Responsive/): Automatic viewport compaction, last-column stretching, and per-node width hooks without per-screen layout code.
+- [Themes and Style States](docs/Views/Themes%20and%20Style%20States/): How views resolve their appearance from theme classes, style states, and node configuration.
 
 ## Example App
 
-- [Example App](/Example%20App/): A complete contacts application in four classes, with zero view code.
+- [Example App](Example%20App/): A complete contacts application in four classes, with zero view code.
 
 ## FAQ
 
-- [FAQ](/FAQ/): Frequently asked questions about STRVCT.
+- [FAQ](FAQ/): Frequently asked questions about STRVCT.
 
 ## Project Timeline
 
-- [Project Timeline](/Timeline/): Key milestones from the first commit through present day Framework architecture, UI system, persistence, and developer tooling.
+- [Project Timeline](Timeline/): Key milestones from the first commit through present day Framework architecture, UI system, persistence, and developer tooling.
 

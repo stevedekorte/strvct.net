@@ -18,9 +18,9 @@
   <link rel="modulepreload" href="../../../colvmn/layout/PageIndex.js">
   <link rel="modulepreload" href="../../../colvmn/layout/MarkdownParser.js">
   <title>Lazy Slots – STRVCT</title>
-  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Plans/Lazy%20Slots/">
   <meta name="description" content="Deferring object loading until first access, so large object graphs don't pay for what they don't touch.Status: shipped (2026-07), with a few items left...">
+  <link rel="alternate" type="text/plain" title="llms.txt" href="../../../llms.txt">
 </head>
 <body>
   <div class="page loaded has-cols has-cols-3 has-cols-4"><div class="header"><div><h1>Lazy Slots</h1><a class="back-link" href="../index.html">&larr; Plans</a></div><a class="brand" href="../index.html">STRVCT</a></div><nav class="toc"><ul><li><a href="#what-shipped">What Shipped</a></li><li><a href="#what-changes-for-code-in-a-lazy-subtree">What Changes for Code in a Lazy Subtree</a></li><li><a href="#what-remains">What Remains</a></li><li><a href="#relationship-to-other-plans">Relationship to Other Plans</a></li></ul></nav><div class="section"><div class="section-body"><p>Deferring object loading until first access, so large object graphs don't pay for what they don't touch.</p><p><strong>Status:</strong> shipped (2026-07), with a few items left (below). In use by app collections and character sheet sections; <code>tests/headless/TestLazyMaterializationNeutrality.js</code> and <code>TestPendingMaterialization.js</code> cover it.</p></div></div><div class="col-group"><div class="col-keep"><h2 id="what-shipped">What Shipped</h2><div class="section"><div class="section-body"><p>A stored slot marked lazy isn't loaded with its owner. It holds a placeholder until something reads it:</p><pre><code>{
