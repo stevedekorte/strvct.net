@@ -3,7 +3,7 @@ subtitle: The order to do the other plans in, why, and what should change in the
 ---
 # Meta Plan
 
-**As of:** 2026-11-18. Every plan page opens with a status line; this page orders them. Steps 1 to 5 are built: 1 to 3 done, 4 (Capabilities & Permissions) and 5's first part (slot constraints) built and used by the app, but **none of the browser-side work from steps 2 to 5 has been run in a browser.** Two pieces of work grew out of these steps: shared promises (step 3) and, on 2026-11-18, taking the app's class names out of framework code (step 2's boundary, the other direction).
+**As of:** 2026-11-19. Every plan page opens with a status line; this page orders them. Steps 1 to 5 are built: 1 to 3 done, 4 (Capabilities & Permissions) and 5's first part (slot constraints) built and used by the app, and on 2026-11-19 most of their browser-side work was run in a browser against `just launch` (Next Steps A: what passed, and what is still unseen). Two pieces of work grew out of these steps: shared promises (step 3) and, on 2026-11-18, taking the app's class names out of framework code (step 2's boundary, the other direction).
 
 ## Next Steps
 
@@ -20,6 +20,12 @@ Four steps of work were checked headless only, and the framework guide's evidenc
 - **The 2026-11-18 cleanup:** assistant chat messages now use `SvChatMessageTile` rather than the app's tile; they should look exactly as before, including the narrated-sentence highlight.
 
 Run with `?thrash=count` on, since steps 2 and 4 touched view code. Each failure becomes a fix with a test where one can be written; the pass is done when every line above has been seen working.
+
+**2026-11-19: run against `just launch`, in Playwright specs that cost nothing to rerun.**
+
+- **Passed:** the invite (`hosted-table-invite-signup.spec.js`, made to run locally: a link opened signed out survives boot and sign-in and joins the table, with one session). Step 2's accessors, step 3's retry and reload, the tile wiring and the thrash check (`meta-plan-step-a.spec.js`): the page url and an error report's user agent; opening a link, picking a file and copying through `SvWebUserInterface`; an image read that failed is read again on the next ask and loads, and loads after a reload, with no unhandled rejection; assistant replies resolve to `SvChatMessageTile` and the session's tile inherits its highlight; typing two lines in a chat input with `?thrash=count` forces no layouts (a forced write-then-read is counted, so 0 is a measurement). Steps 4 and 5 through the model (`editability-browser-pass.spec.js`): a non-editor's catalog campaign offers no edits by the server's answer; a forced save is refused 403, reloaded and said ("Read only — You can't edit …"); out-of-bounds patches and field values give their sentences.
+- **Found and fixed:** `just launch` had started with an empty catalog since 2026-11-13 (`records.js` judged "local" at load, before the seeder pointed at the emulators); the editability spec's forced save edited a derived, unstored title and never reached the server.
+- **Still unseen:** the step 4 refusals through the views (a drop onto the catalog, a title, a reorder); step 5 in the rendered sheet (the error sentence shown, `aria-valuemin` / `aria-valuemax`); a failed fetch from Cloud Storage rather than the local pool (locally a public image cannot be pushed, so this needs a deployed project); the narrated-sentence highlight seen during real narration.
 
 ### B. Keep the framework free of app names
 

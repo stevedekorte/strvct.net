@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-Site build: STRVCT · 2026-11-18 · 5a831c43
+Site build: STRVCT · 2026-11-18 · 74ac9ff7
 
 You write the domain model. STRVCT does the rest while the app runs: it presents your objects in a user interface on desktop and phone, stores them locally, syncs them to the cloud, imports and exports them as JSON, and lets AI agents read and edit them. Nothing is generated ahead of time: views are created from the live objects as the user navigates, and they update when the objects change. Add a property, annotate it, and every part picks it up. There is no separate form, storage mapping, or tool schema to write.
 
@@ -6283,7 +6283,7 @@ Source: /docs/Plans/Capabilities%20%26%20Permissions/
 
 Asking "can this caller do this here?" in one place, answered by the pool's store, so that views offer only what will be honored and a refused write is never silent.
 
-**Status:** built; a browser pass is next ([Meta Plan](../Meta%20Plan/#a-a-browser-pass-over-steps-2-to-5), step A). Rewritten 2026-11-13 to build on the editability cascade and the Record Store, which both shipped after the first draft. The editing half is in use (`SvNode_editability`); the questions about reading, sharing and authority, and the denial path, are not. Step 1 is done (2026-11-16): every edit path in the view layer asks the cascade, and a test keeps it so. The rest was agreed and built 2026-11-17 as [the design questions](#design-questions-for-steps-2-to-4) settle it: the server says who may write, the pool's answer is the cascade's default, and a refused commit reloads and says so. Checked headless and with the server's contract tests on the Firestore backing; not yet in a browser, and not on the Spanner backing.
+**Status:** built; seen working in a browser through the model on 2026-11-19, and the refusals through the views are still to see ([Meta Plan](../Meta%20Plan/#a-a-browser-pass-over-steps-2-to-5), step A). Rewritten 2026-11-13 to build on the editability cascade and the Record Store, which both shipped after the first draft. The editing half is in use (`SvNode_editability`); the questions about reading, sharing and authority, and the denial path, are not. Step 1 is done (2026-11-16): every edit path in the view layer asks the cascade, and a test keeps it so. The rest was agreed and built 2026-11-17 as [the design questions](#design-questions-for-steps-2-to-4) settle it: the server says who may write, the pool's answer is the cascade's default, and a refused commit reloads and says so. Checked headless, with the server's contract tests on the Firestore backing, and in a browser against `just launch` (a forced save refused 403, reloaded and said; `editability-browser-pass.spec.js`); not yet on the Spanner backing.
 
 ## Context
 
@@ -7184,7 +7184,7 @@ Source: /docs/Plans/Meta%20Plan/
 
 The order to do the other plans in, why, and what should change in them first.
 
-**As of:** 2026-11-18. Every plan page opens with a status line; this page orders them. Steps 1 to 5 are built: 1 to 3 done, 4 (Capabilities & Permissions) and 5's first part (slot constraints) built and used by the app, but **none of the browser-side work from steps 2 to 5 has been run in a browser.** Two pieces of work grew out of these steps: shared promises (step 3) and, on 2026-11-18, taking the app's class names out of framework code (step 2's boundary, the other direction).
+**As of:** 2026-11-19. Every plan page opens with a status line; this page orders them. Steps 1 to 5 are built: 1 to 3 done, 4 (Capabilities & Permissions) and 5's first part (slot constraints) built and used by the app, and on 2026-11-19 most of their browser-side work was run in a browser against `just launch` (Next Steps A: what passed, and what is still unseen). Two pieces of work grew out of these steps: shared promises (step 3) and, on 2026-11-18, taking the app's class names out of framework code (step 2's boundary, the other direction).
 
 ## Next Steps
 
@@ -7201,6 +7201,12 @@ Four steps of work were checked headless only, and the framework guide's evidenc
 - **The 2026-11-18 cleanup:** assistant chat messages now use `SvChatMessageTile` rather than the app's tile; they should look exactly as before, including the narrated-sentence highlight.
 
 Run with `?thrash=count` on, since steps 2 and 4 touched view code. Each failure becomes a fix with a test where one can be written; the pass is done when every line above has been seen working.
+
+**2026-11-19: run against `just launch`, in Playwright specs that cost nothing to rerun.**
+
+- **Passed:** the invite (`hosted-table-invite-signup.spec.js`, made to run locally: a link opened signed out survives boot and sign-in and joins the table, with one session). Step 2's accessors, step 3's retry and reload, the tile wiring and the thrash check (`meta-plan-step-a.spec.js`): the page url and an error report's user agent; opening a link, picking a file and copying through `SvWebUserInterface`; an image read that failed is read again on the next ask and loads, and loads after a reload, with no unhandled rejection; assistant replies resolve to `SvChatMessageTile` and the session's tile inherits its highlight; typing two lines in a chat input with `?thrash=count` forces no layouts (a forced write-then-read is counted, so 0 is a measurement). Steps 4 and 5 through the model (`editability-browser-pass.spec.js`): a non-editor's catalog campaign offers no edits by the server's answer; a forced save is refused 403, reloaded and said ("Read only — You can't edit …"); out-of-bounds patches and field values give their sentences.
+- **Found and fixed:** `just launch` had started with an empty catalog since 2026-11-13 (`records.js` judged "local" at load, before the seeder pointed at the emulators); the editability spec's forced save edited a derived, unstored title and never reached the server.
+- **Still unseen:** the step 4 refusals through the views (a drop onto the catalog, a title, a reorder); step 5 in the rendered sheet (the error sentence shown, `aria-valuemin` / `aria-valuemax`); a failed fetch from Cloud Storage rather than the local pool (locally a public image cannot be pushed, so this needs a deployed project); the narrated-sentence highlight seen during real narration.
 
 ### B. Keep the framework free of app names
 
