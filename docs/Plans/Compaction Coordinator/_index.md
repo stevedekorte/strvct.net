@@ -2,7 +2,7 @@
 
 The rules for which columns a browser shows and how wide each is, gathered into one place that can be tested without a browser.
 
-**Status:** the plan as of 2026-11-21. **Part A is built** (A1, A2, A3, A4 and A7, on dev, not released): see [Part A as built](#part-a-as-built-2026-11-21). Nothing after it is built, and each part starts on Steve's word. The thumbnail fix is built too, and part B's timings are taken: compaction is under the 2ms line, so C would rest on testability (see [Part B's timings](#part-bs-timings-2026-11-21)). Whether C goes ahead is Steve's decision. It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20 and a sixth on 2026-11-21. What each pass changed is marked "(review)" and "(review 2)" to "(review 6)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
+**Status:** the plan as of 2026-11-21. **Part A is built** (A1, A2, A3, A4 and A7, on dev, not released): see [Part A as built](#part-a-as-built-2026-11-21). Nothing after it is built, and each part starts on Steve's word. The thumbnail fix is built too, and part B's timings are taken: compaction is under the 2ms line, so C would rest on testability (see [Part B's timings](#part-bs-timings-2026-11-21)). **Part C is built** (2026-11-21, on dev): see [Part C as built](#part-c-as-built-2026-11-21). It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20 and a sixth on 2026-11-21. What each pass changed is marked "(review)" and "(review 2)" to "(review 6)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
 
 **What changed from the first draft (2026-11-19).** That draft proposed a layout object, `SvColumnLayout`, that was handed a flat list of columns and answered with a plan. The review found three things it had not taken in: the levels are nested inside each other, not laid side by side; each level chooses its own direction; and an object that solved the whole layout would have to repeat what the views already know about themselves. This version keeps each view's knowledge in the view and moves only the arithmetic. It also puts the small, safe fixes first and a measurement before the larger change.
 
@@ -291,6 +291,38 @@ A claim holds nothing that depends on a width. `targetWidth()` today reads the a
 - A companion on a vertical level docks on the bottom edge, reserves no width, and keeps its own height rule.
 
 **The browser runs the pass.** It walks its own chain gathering claims, calls the function, and hands each level its answer. Each view applies its own answer to itself and writes only what changed.
+
+#### Part C as built (2026-11-21)
+
+Steve said not to stop, with the timings in hand. Three commits in strvct, each deployed to dev and checked there before the next.
+
+| Step | Commit | What changed |
+| --- | --- | --- |
+| Claims and one function | `d2489ea4` | `SvLayerAllocation` (no DOM) takes a chain's claims and two widths and answers hidden or shown and the width rule for each level. A stack states `layerClaim()` and applies its own answer. A pass sizes the companions, then allocates once; the loop is gone, with `sumOfNavWidths`, `compactNavAsNeeded` and `updateCompaction`. |
+| One writer | `bc86afeb` | `SvNavView.applyLayerAnswer()` is the only writer of a column's width, minimum, maximum and flex grow and shrink. A pass gives it a new answer; an orientation sync, a node sync and a reveal apply the last one again. `updateWidthForWindow` and `syncMinWidthClaim` are gone. |
+| One gate | `90f165c1` | A root keeps the signature of its last pass: the two widths and, for each level, which stack it is, whether it is on the page, and its claim. A node sync compares and runs a pass only on a difference. |
+
+**The rules are in a headless test.** `tests/headless/TestLayerAllocation.js`, 55 checks: columns giving way from the root end, the cap and its 1px edge, the width rules, a fill column, vertical levels at the root, middle and end, one and two companion reservations (the case that comes to more than the root holds among them), anchored reservations and the full-width flag, a root with no width yet.
+
+**The checks on dev.**
+
+- **The fixture matrix** (`tests/e2e/compaction-matrix.spec.js`), taken before C: eight variants by path depth by container width, down and back up, 1,482 level states with hidden columns and docked and tabbed companions. The first step matched it at every state. The second changed 9 on purpose (below). The third matched the new baseline.
+- **The session recording:** every layout the same as the baseline taken before part A, after each step.
+- **The triggers** (`tests/e2e/compaction-triggers.spec.js`): a width hint, a fill flag, a deeper path, a sibling with the same title, the container's width, a level's direction, and a companion bound and removed each ran a pass and gave the layout expected; an ordinary node update ran none.
+- `companion-panel`, `app-mobile-column-width` and the width table passed after each step.
+
+**What it saved.** Over the session recording, 165 passes where there were 292 before part A and 193 after it. One explicit node update on the chat: no pass, where there were six. A streamed response at phone size: no pass in any of about 2,000 frames, where there were 204 to 264 passes a response. Resizing costs what it did (it changes a width every step).
+
+**One change of behaviour, made on purpose.** A column whose node hints a width keeps that hint, held to the room there is, as its minimum whichever of a pass or a node sync ran last. Before, a pass left a full-width column's minimum at 17em and the next node sync put the hint back, so the style depended on the order. In 8 of the 9 matrix states only the inline minimum differs. In the ninth, a 300px container, the column had been 340px wide (17em is wider than its container) and is now 300px. The width table's last row changed the same way.
+
+**Where the build differs from the plan above.**
+
+- **The trigger is a gate, not a scheduled pass.** The plan has each level compare its own claim and ask the browser for a pass at the end of the cycle. What is built compares one signature for the whole chain, at the root, and runs the pass at once, inside the sync, as before. Nothing is deferred, so the risk of one wrong frame is not taken, and every place that asked for a pass still asks; only a pass with nothing to do is skipped. Resizes, the container's observer, a companion's pin, hint and dock, and anchored pins call the pass itself, without the comparison.
+- **A companion's binding is seen by the same sync.** A level's sync asks again after its companion is bound or removed, so the columns answer to a new panel in that sync and not the next.
+- **The claim has a yield floor** only so that the signature notices it changing; the function does not read it.
+- **Not done:** the debug flag that runs a pass on every sync and reports a difference. The trigger spec stands in for it.
+
+**What is not shown.** The matrix and the trigger spec use plain nodes in an embedded browser; anchored levels are covered only by the session recording and the headless test. `session-anchored-tabs` still fails the same five tests it failed before part A. No real phone was used. Nothing here is released to prod.
 
 #### The companion stays where it is
 
