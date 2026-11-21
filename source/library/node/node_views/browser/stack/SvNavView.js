@@ -237,6 +237,18 @@
     }
 
     /**
+     * @description The yield floor this column's node declares
+     * (nodeMinTileWidthWhenYielding), or null.
+     * @returns {number|null}
+     * @category Layout
+     */
+    yieldFloorHint () {
+        const node = this.node();
+        const v = (node && node.nodeMinTileWidthWhenYielding) ? node.nodeMinTileWidthWhenYielding() : null;
+        return v === undefined ? null : v;
+    }
+
+    /**
      * @description The width this column claims when a companion's focused
      * node asks for width (its hint). A node may declare a yield floor —
      * nodeMinTileWidthWhenYielding() — smaller than its comfortable
@@ -248,9 +260,7 @@
      * @category Layout
      */
     yieldTargetWidth () {
-        const node = this.node();
-        const yieldMin = (node && node.nodeMinTileWidthWhenYielding)
-            ? node.nodeMinTileWidthWhenYielding() : null;
+        const yieldMin = this.yieldFloorHint();
         if (typeof yieldMin !== "number" || yieldMin <= 0) {
             return this.targetWidth();
         }

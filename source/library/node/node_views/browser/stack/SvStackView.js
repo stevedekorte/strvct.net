@@ -59,6 +59,13 @@
 
     initPrototypeSlots () {
         {
+            // On a root stack: what its last compaction pass was run for
+            // (see layerSignature); null = no pass yet.
+            const slot = this.newSlot("lastLayerSignature", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+        {
             // The root stack's measured width, kept between resizes (see
             // cachedRootWidth); null = measure on next ask.
             const slot = this.newSlot("rootWidthCache", null);
@@ -330,6 +337,7 @@
         //this.navView().syncFromNodeNow();
         this.syncFromNavSelection();
         this.detailView().syncCompanionFromNode(this.node());
+        this.recompactIfLayersChanged(); // a companion just bound or removed changes this level's claim
 
         //this.setupColumnGroupColors();
         //this.fitColumns();
@@ -736,7 +744,7 @@
     syncFromNavSelection () {
         if (this.isAnchoredTabs()) {
             this.syncAnchoredPanes(); // several selected tiles, one pane each (SvStackView_anchoredTabs)
-            this.recompactBrowserChain(); // the panes' claim may have changed (anchoredClaimWidth)
+            this.recompactIfLayersChanged(); // the panes' claim may have changed (anchoredClaimWidth)
             return;
         }
         this.detailView().removeAnchoredPanes(); // a reused stack that showed anchored tabs before
@@ -777,7 +785,7 @@
             this.clearOtherView();
         }
 
-        this.recompactBrowserChain();
+        this.recompactIfLayersChanged();
     }
 
     // stack view chain
@@ -848,7 +856,42 @@
         chain.forEach((sv) => sv.syncCompanionForPass());
         const answers = root.newLayerAllocation().setClaims(chain.map((sv) => sv.layerClaim())).answers();
         chain.forEach((sv, i) => sv.applyLayerAnswer(answers[i]));
+        root.setLastLayerSignature(root.layerSignature()); // after the pass: the companions' reservations are its results
         return this;
+    }
+
+    /**
+     * @description Runs a pass only if something a pass depends on has
+     * changed since this browser's last one. This is what a node sync calls:
+     * a node update that changes no claim, no width and no level costs the
+     * comparison and no pass (a streamed chunk used to cost a pass per
+     * level). Callers that change something a claim does not hold (a
+     * companion's pin or hint, the window's height) call
+     * recompactBrowserChain itself.
+     * @returns {SvStackView}
+     * @category Compaction
+     */
+    recompactIfLayersChanged () {
+        const root = this.rootStackView();
+        if (root.layerSignature() !== root.lastLayerSignature()) {
+            this.recompactBrowserChain();
+        }
+        return this;
+    }
+
+    /**
+     * @description Everything a pass over this root's chain depends on, as
+     * one string: the two widths, and for each level which stack it is,
+     * whether it is on the page, and its claim. A stack that replaces
+     * another has a different id even with an equal claim, and a stack put
+     * back on the page flips its flag, so both ask for a pass. Reads the
+     * model and cached widths only.
+     * @returns {String}
+     * @category Compaction
+     */
+    layerSignature () {
+        const levels = this.stackViewSubchain().map((sv) => [sv.svTypeId(), sv.takesPartInPass(), sv.layerClaim()]);
+        return JSON.stringify([this.topViewWidth() || 0, this.navView().availableNavWidth(), levels]);
     }
 
     /**
@@ -902,6 +945,7 @@
         return {
             axis: this.direction() === "right" ? "horizontal" : "vertical",
             targetWidth: nav.uncappedTargetWidth(),
+            yieldFloor: nav.yieldFloorHint(), // the companion's room reads it; the allocation does not
             fills: !!nav.shouldCurrentlyFillAvailble(),
             companionReservation: this.detailView().companionReservedWidth(),
             anchoredReservation: this.anchoredReservedWidth ? this.anchoredReservedWidth() : 0,
