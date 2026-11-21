@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-Site build: STRVCT · 2026-11-20 · cc5330c5
+Site build: STRVCT · 2026-11-20 · 9e9887d2
 
 You write the domain model. STRVCT does the rest while the app runs: it presents your objects in a user interface on desktop and phone, stores them locally, syncs them to the cloud, imports and exports them as JSON, and lets AI agents read and edit them. Nothing is generated ahead of time: views are created from the live objects as the user navigates, and they update when the objects change. Add a property, annotate it, and every part picks it up. There is no separate form, storage mapping, or tool schema to write.
 
@@ -6688,7 +6688,7 @@ Source: docs/Plans/Compaction%20Coordinator/
 
 The rules for which columns a browser shows and how wide each is, gathered into one place that can be tested without a browser.
 
-**Status:** the plan as of 2026-11-20, rewritten after a review against the code, with its recommendations written in as the plan. Nothing here is built, and writing them in is not a go-ahead to build: each part starts on Steve's word. It is part 2 of [Browser Cleanup](docs/Plans/Browser%20Cleanup/); [Tile Container Views](docs/Plans/Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in four times on 2026-11-20. What each pass changed is marked "(review)" and "(review 2)" to "(review 4)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fourth pass: the recordings before part A can start, nothing technical blocks them, and C still waits on B.
+**Status:** the plan as of 2026-11-20, rewritten after a review against the code, with its recommendations written in as the plan. Nothing here is built, and writing them in is not a go-ahead to build: each part starts on Steve's word. It is part 2 of [Browser Cleanup](docs/Plans/Browser%20Cleanup/); [Tile Container Views](docs/Plans/Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20. What each pass changed is marked "(review)" and "(review 2)" to "(review 5)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
 
 **What changed from the first draft (2026-11-19).** That draft proposed a layout object, `SvColumnLayout`, that was handed a flat list of columns and answered with a plan. The review found three things it had not taken in: the levels are nested inside each other, not laid side by side; each level chooses its own direction; and an object that solved the whole layout would have to repeat what the views already know about themselves. This version keeps each view's knowledge in the view and moves only the arithmetic. It also puts the small, safe fixes first and a measurement before the larger change.
 
@@ -6781,7 +6781,7 @@ Part A is meant to change nothing a user sees, so what it could change is record
 
 #### What the recordings show (2026-11-20, on dev)
 
-Taken by `tests/e2e/compaction-recordings.spec.js` in the app repo, which writes `tests/e2e/recordings/compaction-before-A.json`: one new session with one character seated, 41 steps, no page errors. It was taken twice; the numbers here are the second run's, taken after the GM's opening had finished arriving (see point 2 below). `app-mobile-column-width.spec.js` is mended and passes. Nothing below is asserted as right.
+Taken by `tests/e2e/compaction-recordings.spec.js` in the app repo, which writes `tests/e2e/recordings/compaction-before-A.json`: one new session with one character seated, 41 steps, no page errors. It has been taken three times. The numbers here are the second run's, taken after the GM's opening had finished arriving (see point 2 below), and that run is the baseline (app commit 5e57446e4). The reviewer compared the first two runs: the same open tabs and the same stack states at all 32 steps of the resize. The third run matched the baseline in layout at every step and in every pass count (292 calls, 530 level visits, 212 resize handlers). `app-mobile-column-width.spec.js` is mended and passes. Nothing below is asserted as right.
 
 **The width spec was measuring nothing.** On a phone the "My Sessions" text it looked for is the breadcrumb, not a tile, so none of its ancestors was a column. It now reads the columns: the root column hidden, the My Sessions column 393px of 393px.
 
@@ -6797,22 +6797,41 @@ Taken by `tests/e2e/compaction-recordings.spec.js` in the app repo, which writes
 
 | What happened | Calls to the chain pass | Level visits inside them | Resize handlers | Script time |
 | --- | --- | --- | --- | --- |
-| One step of the resize | 7 to 9 (12 where Narration's pane reopens) | 13 to 20 | 6 or 7 | 0.2 to 0.7ms |
+| One step of the resize (31 of the 32) | 7 to 9 | 13 to 17 | 6 or 7 | 0.2 to 0.7ms |
+| The one step where Narration's pane reopens (1,000px to 1,040px) | 12 | 20 | 6 | 0.6ms |
 | 1.2 seconds with nobody touching anything | 0 | 0 | 0 | 0 |
 | Opening the Party tab | 16 | 34 | 0 | 0.8ms |
 | An ordinary node update on the chat | 6 | 14 | 0 | 0.3ms |
 
-So one resize runs six or seven handlers where one would do, and a single node update runs six passes, as the plan said. But the script cost is small: a third of a millisecond for a node update. If the layout cost is as small, part B will find compaction under the 2ms line and C will rest on testability. That is a first sign and not part B's answer.
+So one resize runs six or seven handlers, and one explicit node update on the chat runs six passes. The handlers are counted across the outer browser and its pane browsers together, so "where one would do" is not yet shown: it may be one per browser. A1 checks which stack answers a resize within its own browser, and that the panes still close and reopen. The script cost is small: a third of a millisecond for the node update. If the layout cost is as small, part B will find compaction under the 2ms line and C will rest on testability. That is a first sign and not part B's answer. (review 5)
 
 **For Steve: things that happen today and may not be wanted.**
 
 1. **Below about 1,038px, opening Party takes Narration's place**, and the tabs swap between the two. **Steve looked at the pictures and this is fine (2026-11-20).** I had called the sheet "stretched" at that width; it is not. At 1,000px it flows into two columns, the portrait beside the sections, and reads well. The pictures are taken by `tests/e2e/compaction-looks.spec.js` into `test-results/compaction-looks/`.
-2. **Explained, and not a fault of the resize.** In the first run some steps of the resize cost several times the others (47 calls at 700px against 7 to 9). The GM's opening was still arriving: each chunk is a node update, each update runs six passes, and the extra calls came in multiples of six. In the second run, with the opening finished, every step of the resize is 7 to 9 calls and an idle second is none. It does show the plan's first complaint at work: a streamed narration runs passes on every chunk, six at a time.
+2. **Probably the narration, and not a fault of the resize.** In the first run some steps of the resize cost several times the others (47 calls at 700px going down, against 7 in the second run). The GM's opening was still arriving in the first run and had finished in the second, where every step is 7 to 9 calls but the one reopening, and an idle second is none. So streaming is the likely cause. It is not proved: the recorder counts no chunks, and I was wrong to say the extra calls came in multiples of six. What a streamed chunk costs is still open, and part B answers it by counting chunks against calls. (review 5)
 3. **Nothing on a new fighter's sheet, or on the Inline Lab, opens past the inlined levels.** Rows with a description open in place. So the repeated section column the reviewer saw in a fixture is not something I could reach in the app, and it stays a case for a fixture. A sheet with spells or a long inventory was not tried.
+
+#### The width rule before A3 (review 5)
+
+Every column that shows in the dev recording is a fill column, so the recording says nothing about the rule A3 merges. The reviewer took the missing comparison in local Chromium: a plain `SvSummaryNode` asking for 300px, not a fill column, with a child that has one leaf, in an embedded browser 390px wide. It is the last column, so it stretches under the one-to-two-widths rule. Its inline width was `100%` and its flex grow and shrink zero throughout.
+
+| Action | Rendered width | Inline minimum | Inline maximum |
+| --- | --- | --- | --- |
+| Show the list | 390px | 17em | 100% |
+| Call `didUpdateNode()` on the list | 390px | 300px | 100% |
+| Open its child | 0px (hidden) | 300px | 300px |
+| Go back to the list | 390px | 17em | 100% |
+
+So an ordinary node update changes the column's minimum from 17em to 300px (the later write from `syncMinWidthClaim()`), and the rendered width does not move. A3 must leave all four rows as they are.
+
+#### How a part A commit is checked
+
+`tests/e2e/compaction-recordings.spec.js` now compares a run with the baseline, step by step: the open tabs, and each stack's direction, hidden flag, widths, target, fill and width styles. A difference fails it. The pass counts are printed beside the baseline's and not asserted, since part A is meant to lower them. A run writes to its own output directory; the baseline is replaced only on purpose (`COMPACTION_BASELINE=write`), by a run that finished. `app-mobile-column-width.spec.js` now also asserts which column shows (My Sessions) and that it is no wider than the screen. (review 5)
+
 
 ### Part A: the fixes that need no design
 
-Each is its own commit, changes no rule, and is checked against the recordings above and the existing specs (`companion-panel`, `session-anchored-tabs`, `app-mobile-column-width`). The numbers are kept as they were, so A5 and A8 stay in the list as moved.
+Each is its own commit, changes no rule, and is checked by the comparison above, the width table for A3, and the existing specs (`companion-panel`, `session-anchored-tabs`, `app-mobile-column-width`). The numbers are kept as they were, so A5 and A8 stay in the list as moved.
 
 1. Only the root stack answers a window resize. It is bound where the browser takes its root stack: a stack asked whether it is the root while it is being made has no parent yet, and would say yes. (review)
 2. One method name, `recompactBrowserChain`. The other two go.
@@ -7073,9 +7092,14 @@ Two edits to the contract came with them, both made: the anchored reservation is
 3. **Fixtures:** both work with the `nodeCompanionNode()` hook on plain nodes, with no Lab page. The reviewer built both in Chromium.
 4. **Blockers:** none for the recordings.
 
+### The fifth review
+
+No questions were outstanding. The reviewer read the recordings and said part A can start. It corrected two claims of mine (the resize is 7 to 9 passes at 31 of 32 steps, with 12 where a pane reopens; and the cost of a streamed chunk was not measured), supplied the width comparison A3 needs, and asked for two changes to the tests, both made: the baseline is kept safe from reruns, and the width spec says which column and how wide at most.
+
 ### For the next pass
 
-I have no new questions. The next thing to review is the recordings themselves, the bottom-edge trace and the solo Party sheet above all, before Steve decides on part A. Two things are Steve's and not the reviewer's: the phone for part B, and whether 2ms is the line.
+1. **A1 and the panes.** Each pane is a browser with its own root stack. After A1, one stack per browser answers a resize. A pane's width comes from its container's resize observer and not from the window, so should a pane's root stack answer a window resize at all? Today it does (that is some of the six or seven handlers). I intend to keep it answering, so A1 changes no layout, and to note the question for part C. Say if you would cut it now.
+2. **Still to see in a browser:** the away-rolls switch, on both devices, after Steve's next deploy to dev. The e2e spec calls the setter and would pass with no switch on the page.
 
 
 ---
