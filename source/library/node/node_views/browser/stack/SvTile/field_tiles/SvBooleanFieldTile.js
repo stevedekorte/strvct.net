@@ -107,9 +107,50 @@
         const label = sections.at(0);
         if (label) {
             label.setFlexGrow(isSwitch ? 1 : null);
+            label.setFlexShrink(isSwitch ? 1 : null);
+            label.setMinWidth(isSwitch ? "0px" : null); // so a long label wraps instead of pushing the switch
             label.setJustifyContent(isSwitch ? "flex-start" : null);
         }
+        if (isSwitch && this.node().keyWhiteSpace() === null) {
+            this.keyView().setWhiteSpace("normal"); // a switch's label is a sentence: it wraps, it isn't cut short
+        }
         return this;
+    }
+
+    // --- taps ---
+
+    /**
+     * @description A tap anywhere on the row switches the value, as a tap on
+     * a label does for a checkbox. A tap on the boolean view itself is left
+     * to its own gesture (so it isn't switched twice), and a row whose label
+     * is edited in place keeps its taps for the editing.
+     * @param {SvTapGestureRecognizer} aGesture
+     * @returns {SvBooleanFieldTile}
+     * @category Gesture
+     */
+    onTapComplete (aGesture) {
+        super.onTapComplete(aGesture);
+        if (this.tapSwitchesValue(aGesture)) {
+            this.booleanView().activate();
+        }
+        return this;
+    }
+
+    /**
+     * @description Whether a tap on this row should switch the value.
+     * @param {SvTapGestureRecognizer} aGesture
+     * @returns {Boolean}
+     * @category Gesture
+     */
+    tapSwitchesValue (aGesture) {
+        const node = this.node();
+        const bv = this.booleanView();
+        if (!node || !bv.isEditable() || node.keyIsEditable()) {
+            return false;
+        }
+        const event = aGesture.upEvent();
+        const target = event ? event.target : null;
+        return !(target && bv.element().contains(target));
     }
 
     // --- ARIA accessibility getters ---
