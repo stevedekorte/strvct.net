@@ -10,7 +10,7 @@
  *
  * Notes: SvNavView instances have their width set in several ways:
  *
- * 1. In makeOrientationRight(): Sets default width using minAndMaxWidth("17em")
+ * 1. In updateWidthForWindow(): the one width rule for a vertical column (target width, or all the room it has)
  * 2. In targetWidth(): Calculates desired width starting from 400px, using the node's minimum tile width as a reference
  * 3. Through gesture handling: The onRightEdgePanMove() method allows users to resize by dragging the right edge
  * 4. Via SvStackView width management: The parent SvStackView can compact and expand NavViews based on available space
@@ -422,7 +422,6 @@
             this.makeOrientationDown();
         }
         this.tilesView().syncOrientation(); // the list follows its column (it may have synced before it had a stack)
-        this.updateWidthForWindow();
         // Orientation stamping writes generic values over the collapsible-
         // region layout (SvStackScrollView.makeVertical sets flexGrow 1
         // unconditionally), and it has many callers — stack compaction among
@@ -514,27 +513,7 @@
         this.setFlexGrow(0);
         this.setFlexShrink(0);
 
-        const targetW = this.targetWidth();
-        const availableW = this.availableNavWidth();
-
-        if (this.shouldCurrentlyFillAvailble()) {
-            // Fill the leftover width by actually flexing: grow into the slack the
-            // stack row leaves after its detail view (which may host a companion)
-            // takes its share, and shrink rather than overflow when the row is
-            // tight. width:null + flexGrow:0 would only size to content — leaving
-            // dead space when wide and overrunning a docked companion when narrow.
-            this.setFlexGrow(1);
-            this.setFlexShrink(1);
-            this.setMinWidth("0px");
-            this.setWidth(null);
-            this.setMaxWidth(null);
-        } else if (targetW >= availableW) {
-            this.setMinWidth("17em");
-            this.setWidth("100%");
-            this.setMaxWidth("100%");
-        } else {
-            this.setMinAndMaxWidth(targetW);
-        }
+        this.updateWidthForWindow(); // the one width rule
 
         this.setMinAndMaxHeight("100%");
 
@@ -1118,15 +1097,28 @@
     }
 
     /**
-     * @description Updates the width constraints based on the available container width
+     * @description The one rule for a vertical column's width, applied when
+     * the column is oriented (makeOrientationRight) and after every
+     * compaction pass (SvStackView.updateCompaction):
+     *   - a fill column flexes into the leftover width;
+     *   - a column whose target is at least the room it has takes all of it;
+     *   - the last column, with less than twice its target available, takes
+     *     the slack too;
+     *   - any other column is exactly its target width.
+     * A node sync writes the minimum again afterwards (syncMinWidthClaim).
+     * Does nothing for a column laid out downward.
+     * @returns {SvNavView}
      * @category Layout
      */
     updateWidthForWindow () {
         if (this.isVertical()) {
             if (this.shouldCurrentlyFillAvailble()) {
-                // A fill nav always flexes (see makeOrientationRight): grow into
-                // the slack after a sibling companion's share, shrink to fit.
-                // Never width:100% here — that would overrun a docked companion.
+                // Fill the leftover width by actually flexing: grow into the
+                // slack the stack row leaves after its detail view (which may
+                // host a companion) takes its share, and shrink rather than
+                // overflow when the row is tight. width:null + flexGrow:0
+                // would only size to content, and width:100% would overrun a
+                // docked companion.
                 this.setFlexGrow(1);
                 this.setFlexShrink(1);
                 this.setMinWidth("0px");
