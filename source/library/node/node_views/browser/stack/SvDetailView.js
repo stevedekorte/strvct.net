@@ -173,6 +173,15 @@
     }
 
     /**
+     * @description The height, in px, a bottom-edge companion leaves for the
+     * content above it.
+     * @returns {number}
+     */
+    bottomCompanionContentRoom () {
+        return 200;
+    }
+
+    /**
      * @description Re-evaluates the companion's docked-vs-tab mode from the
      * space the rest of the chain leaves over. Called on compaction passes
      * (window resizes, selection changes).
@@ -211,7 +220,7 @@
             // bottom edge: size against the detail view's own height
             const h = this.element().clientHeight;
             if (h > 0) {
-                changed = companion.setAvailableLength(h - 200); // leave room for the content above
+                changed = companion.setAvailableLength(h - this.bottomCompanionContentRoom());
             }
         }
 

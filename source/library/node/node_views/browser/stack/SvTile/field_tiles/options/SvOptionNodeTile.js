@@ -28,6 +28,16 @@
     }
 
     /**
+     * @description The window width, in px, below which picking an option
+     * goes back to its options node (twice a column's default width).
+     * @returns {number}
+     * @category Navigation
+     */
+    narrowViewportThreshold () {
+        return 540;
+    }
+
+    /**
      * @description On narrow viewports (single-column compaction), after a
      * single-pick option is picked, navigate back to the parent options
      * node so the user sees their selection in the parent context.
@@ -54,8 +64,7 @@
             return this; // Multi-pick mode: user may pick more, keep column open.
         }
         const viewportWidth = SvWebBrowserWindow.shared().width();
-        const narrowThreshold = 540; // 2 * default SvNavView targetWidth (270px)
-        if (viewportWidth >= narrowThreshold) {
+        if (viewportWidth >= this.narrowViewportThreshold()) {
             return this; // Wide enough that the parent column is still visible.
         }
 

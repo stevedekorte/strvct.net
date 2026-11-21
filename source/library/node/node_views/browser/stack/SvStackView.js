@@ -838,11 +838,20 @@
      * into outer stacks and uncollapsed their columns.)
      * @returns {SvStackView} The stack view.
      */
+    /**
+     * @description The most passes recompactBrowserChain makes over the chain
+     * before it stops, settled or not (a guard against oscillation).
+     * @returns {number}
+     */
+    maxCompactionPasses () {
+        return 5;
+    }
+
     recompactBrowserChain () {
         const chain = this.rootStackView().stackViewSubchain();
         let changed = true;
         let guard = 0;
-        while (changed && guard < 5) {
+        while (changed && guard < this.maxCompactionPasses()) {
             changed = false;
             guard += 1;
             chain.forEach((sv) => {

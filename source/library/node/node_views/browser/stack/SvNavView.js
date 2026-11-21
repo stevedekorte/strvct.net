@@ -177,8 +177,27 @@
         return SvWebBrowserWindow.shared().width();
     }
 
+    /**
+     * @description The width, in px, of a column whose node asks for none.
+     * @returns {number}
+     * @category Layout
+     */
+    defaultTargetWidth () {
+        return 270;
+    }
+
+    /**
+     * @description The CSS minimum width of a column that takes all the room
+     * it has (see updateWidthForWindow).
+     * @returns {string}
+     * @category Layout
+     */
+    fullWidthMinWidth () {
+        return "17em";
+    }
+
     targetWidth () {
-        const defaultWidth = 270;
+        const defaultWidth = this.defaultTargetWidth();
         if (this.node()) {
             const minWidth = this.node().nodeMinTileWidth();
             const maxWidth = this.availableNavWidth() - 1;
@@ -214,7 +233,7 @@
         if (typeof yieldMin !== "number" || yieldMin <= 0) {
             return this.targetWidth();
         }
-        const w = Math.max(270, yieldMin) + this.thumbnailWidthAllowance();
+        const w = Math.max(this.defaultTargetWidth(), yieldMin) + this.thumbnailWidthAllowance();
         return Math.min(w, this.targetWidth());
     }
 
@@ -1132,12 +1151,12 @@
             const isLastNavView = this.stackView() && !this.stackView().nextStackView();
 
             if (targetW >= availableW) {
-                this.setMinWidth("17em");
+                this.setMinWidth(this.fullWidthMinWidth());
                 this.setWidth("100%");
                 this.setMaxWidth("100%");
             } else if (isLastNavView && availableW < targetW * 2) {
                 // Last visible nav view + viewport between 1x and 2x targetWidth: fill the slack
-                this.setMinWidth("17em");
+                this.setMinWidth(this.fullWidthMinWidth());
                 this.setWidth("100%");
                 this.setMaxWidth("100%");
             } else {
