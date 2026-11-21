@@ -277,6 +277,11 @@
         stack.setMinHeight("0px");
         stack.setFlexGrow(1);
         stack.setFlexShrink(1);
+        // The root stack is the one stack of this browser that answers a
+        // window resize (it recompacts the whole chain). A pane's browser
+        // registers its own root too: the window handler also runs on a
+        // height-only resize, which the pane's width observer doesn't see.
+        stack.setIsRegisteredForWindowResize(true);
         this.setStackView(stack);
         this.addSubview(stack);
 

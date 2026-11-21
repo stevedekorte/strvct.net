@@ -167,7 +167,9 @@
         this.setFlexShrink(0);
 
         // events
-        this.setIsRegisteredForWindowResize(true);
+        // Window resize: only a browser's ROOT stack listens. SvBrowserView
+        // registers it where it makes its root stack (a stack can't tell
+        // here whether it is the root: it has no parent yet).
         //this.addGestureRecognizer(SvLeftEdgePanGestureRecognizer.clone());
         //this.addGestureRecognizer(SvRightEdgePanGestureRecognizer.clone());
         this.setOnStackViewPathChangeNote(this.newNoteNamed("onStackViewPathChange"));
@@ -360,12 +362,8 @@
      * @returns {SvStackView} The stack view.
      */
     onWindowResize (/*event*/) {
-        /*
-        if (this.isRootStackView()) {
-            this.safeUpdateCompactionChain();
-        }
-        */
-        // TODO: change so only top stack view registers for resize
+        // Only a browser's root stack is registered for this (see
+        // SvBrowserView), so one resize is one chain pass per browser.
         this.rootStackView().invalidateRootWidth();
         this.recompactBrowserChain();
         return this;
