@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-Site build: STRVCT · 2026-11-20 · 23aa27ab
+Site build: STRVCT · 2026-11-20 · cc5330c5
 
 You write the domain model. STRVCT does the rest while the app runs: it presents your objects in a user interface on desktop and phone, stores them locally, syncs them to the cloud, imports and exports them as JSON, and lets AI agents read and edit them. Nothing is generated ahead of time: views are created from the live objects as the user navigates, and they update when the objects change. Add a property, annotate it, and every part picks it up. There is no separate form, storage mapping, or tool schema to write.
 
@@ -6781,7 +6781,7 @@ Part A is meant to change nothing a user sees, so what it could change is record
 
 #### What the recordings show (2026-11-20, on dev)
 
-Taken by `tests/e2e/compaction-recordings.spec.js` in the app repo, which writes `tests/e2e/recordings/compaction-before-A.json`: one new session with one character seated, 38 steps, no page errors. `app-mobile-column-width.spec.js` is mended and passes. Nothing below is asserted as right.
+Taken by `tests/e2e/compaction-recordings.spec.js` in the app repo, which writes `tests/e2e/recordings/compaction-before-A.json`: one new session with one character seated, 41 steps, no page errors. It was taken twice; the numbers here are the second run's, taken after the GM's opening had finished arriving (see point 2 below). `app-mobile-column-width.spec.js` is mended and passes. Nothing below is asserted as right.
 
 **The width spec was measuring nothing.** On a phone the "My Sessions" text it looked for is the breadcrumb, not a tile, so none of its ancestors was a column. It now reads the columns: the root column hidden, the My Sessions column 393px of 393px.
 
@@ -6797,9 +6797,9 @@ Taken by `tests/e2e/compaction-recordings.spec.js` in the app repo, which writes
 
 | What happened | Calls to the chain pass | Level visits inside them | Resize handlers | Script time |
 | --- | --- | --- | --- | --- |
-| One step of the resize, usual | 7 to 9 | 13 to 15 | 6 or 7 | 0.2 to 0.5ms |
-| One step of the resize, worst (to 700px) | 47 | 133 | 6 | 2.3ms |
-| Opening the Party tab | 16 | 34 | 0 | 0.3ms |
+| One step of the resize | 7 to 9 (12 where Narration's pane reopens) | 13 to 20 | 6 or 7 | 0.2 to 0.7ms |
+| 1.2 seconds with nobody touching anything | 0 | 0 | 0 | 0 |
+| Opening the Party tab | 16 | 34 | 0 | 0.8ms |
 | An ordinary node update on the chat | 6 | 14 | 0 | 0.3ms |
 
 So one resize runs six or seven handlers where one would do, and a single node update runs six passes, as the plan said. But the script cost is small: a third of a millisecond for a node update. If the layout cost is as small, part B will find compaction under the 2ms line and C will rest on testability. That is a first sign and not part B's answer.
@@ -6807,7 +6807,7 @@ So one resize runs six or seven handlers where one would do, and a single node u
 **For Steve: things that happen today and may not be wanted.**
 
 1. **Below about 1,038px, opening Party takes Narration's place**, and the tabs swap between the two. **Steve looked at the pictures and this is fine (2026-11-20).** I had called the sheet "stretched" at that width; it is not. At 1,000px it flows into two columns, the portrait beside the sections, and reads well. The pictures are taken by `tests/e2e/compaction-looks.spec.js` into `test-results/compaction-looks/`.
-2. **Some steps of the resize cost several times the others** (47 calls at 700px, 21 at 540px, 19 at 800px and 900px going down, against 7 to 9 elsewhere). I do not know why yet.
+2. **Explained, and not a fault of the resize.** In the first run some steps of the resize cost several times the others (47 calls at 700px against 7 to 9). The GM's opening was still arriving: each chunk is a node update, each update runs six passes, and the extra calls came in multiples of six. In the second run, with the opening finished, every step of the resize is 7 to 9 calls and an idle second is none. It does show the plan's first complaint at work: a streamed narration runs passes on every chunk, six at a time.
 3. **Nothing on a new fighter's sheet, or on the Inline Lab, opens past the inlined levels.** Rows with a description open in place. So the repeated section column the reviewer saw in a fixture is not something I could reach in the app, and it stays a case for a fixture. A sheet with spells or a long inventory was not tried.
 
 ### Part A: the fixes that need no design
