@@ -2,7 +2,7 @@
 
 The rules for which columns a browser shows and how wide each is, gathered into one place that can be tested without a browser.
 
-**Status:** the plan as of 2026-11-20, rewritten after a review against the code, with its recommendations written in as the plan. Nothing here is built, and writing them in is not a go-ahead to build: each part starts on Steve's word. It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20. What each pass changed is marked "(review)" and "(review 2)" to "(review 5)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
+**Status:** the plan as of 2026-11-20, rewritten after a review against the code, with its recommendations written in as the plan. Nothing here is built, and writing them in is not a go-ahead to build: each part starts on Steve's word. It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20 and a sixth on 2026-11-21. What each pass changed is marked "(review)" and "(review 2)" to "(review 6)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
 
 **What changed from the first draft (2026-11-19).** That draft proposed a layout object, `SvColumnLayout`, that was handed a flat list of columns and answered with a plan. The review found three things it had not taken in: the levels are nested inside each other, not laid side by side; each level chooses its own direction; and an object that solved the whole layout would have to repeat what the views already know about themselves. This version keeps each view's knowledge in the view and moves only the arithmetic. It also puts the small, safe fixes first and a measurement before the larger change.
 
@@ -142,12 +142,14 @@ So an ordinary node update changes the column's minimum from 17em to 300px (the 
 
 `tests/e2e/compaction-recordings.spec.js` now compares a run with the baseline, step by step: the open tabs, and each stack's direction, hidden flag, widths, target, fill and width styles. A difference fails it. The pass counts are printed beside the baseline's and not asserted, since part A is meant to lower them. A run writes to its own output directory; the baseline is replaced only on purpose (`COMPACTION_BASELINE=write`), by a run that finished. `app-mobile-column-width.spec.js` now also asserts which column shows (My Sessions) and that it is no wider than the screen. (review 5)
 
+The commit that added the comparison dropped six helpers the test still calls, so the recorder failed at its first tab lookup; the reviewer caught it. They are restored (app commit `899f07651`), and a step that has a snapshot on one side only is now reported as a difference. The repaired recorder was run on the dev build as it stood before part A: 41 steps, every layout the same as the baseline, and the same 292 calls, 530 level visits and 212 resize handlers. (review 6)
+
 
 ### Part A: the fixes that need no design
 
 Each is its own commit, changes no rule, and is checked by the comparison above, the width table for A3, and the existing specs (`companion-panel`, `session-anchored-tabs`, `app-mobile-column-width`). The numbers are kept as they were, so A5 and A8 stay in the list as moved.
 
-1. Only the root stack answers a window resize. It is bound where the browser takes its root stack: a stack asked whether it is the root while it is being made has no parent yet, and would say yes. (review)
+1. Only the root stack answers a window resize. It is bound where the browser takes its root stack: a stack asked whether it is the root while it is being made has no parent yet, and would say yes. (review) Each pane is a browser, and its root stack keeps its listener: the pane's own observer answers a change of width, while the window handler also runs when only the height changes and clears the cached root width at once. Only the listeners of stacks below a root go. Whether a pane's root needs the window at all is left for C. (review 6)
 2. One method name, `recompactBrowserChain`. The other two go.
 3. One width rule in `SvNavView`, the fuller one, used by both callers. This leaves a third writer, `syncMinWidthClaim()`, which a node sync runs. A3 keeps that later write exactly as it is; it moves under one owner in C, not here. See [One method applies a width](#one-method-applies-a-width). (review 2)
 4. The constants get names.
@@ -410,7 +412,12 @@ Two edits to the contract came with them, both made: the anchored reservation is
 
 No questions were outstanding. The reviewer read the recordings and said part A can start. It corrected two claims of mine (the resize is 7 to 9 passes at 31 of 32 steps, with 12 where a pane reopens; and the cost of a streamed chunk was not measured), supplied the width comparison A3 needs, and asked for two changes to the tests, both made: the baseline is kept safe from reruns, and the width spec says which column and how wide at most.
 
+### The sixth review (2026-11-21)
+
+1. **A1 and the panes:** keep the listener on every browser's root stack, the panes' included, and remove only the descendants'. Dropping a pane root's listener would change when its work happens (a height-only resize, the cached root width), so it is a decision for C.
+2. **The recorder was broken as committed,** and is mended (see [How a part A commit is checked](#how-a-part-a-commit-is-checked)). My note that a third run "matched the baseline" rested on a saved output and not on the committed file running; the run of 2026-11-21 is the committed file.
+3. **Part A can start,** five commits with a dev deploy after each. The first deploy is also the one for the away-rolls switch check.
+
 ### For the next pass
 
-1. **A1 and the panes.** Each pane is a browser with its own root stack. After A1, one stack per browser answers a resize. A pane's width comes from its container's resize observer and not from the window, so should a pane's root stack answer a window resize at all? Today it does (that is some of the six or seven handlers). I intend to keep it answering, so A1 changes no layout, and to note the question for part C. Say if you would cut it now.
-2. **Still to see in a browser:** the away-rolls switch, on both devices, after Steve's next deploy to dev. The e2e spec calls the setter and would pass with no switch on the page.
+1. **Still to see in a browser:** the away-rolls switch, on both devices, on the first part A deploy to dev: flipped off as the guest, back on as the owner, with the shown state read on both. The e2e spec calls the setter and would pass with no switch on the page.
