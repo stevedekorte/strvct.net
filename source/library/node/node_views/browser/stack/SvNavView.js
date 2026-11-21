@@ -240,14 +240,24 @@
     /**
      * @description Extra column width for a leading thumbnail frame when this
      * column's tiles reserve one (frame width + its trailing gap). Checks the
-     * first subnode only — columns are effectively homogeneous — to avoid
-     * scanning a possibly-lazy subnode list. Returns 0 when no thumbnail.
+     * first subnode only — columns are effectively homogeneous. Returns 0
+     * when no thumbnail.
+     *
+     * Asking must not load the list: subnodes() on a lazily stored list
+     * loads it, and a width question is no reason to (a Bestiary can hold
+     * hundreds of sheets). While the list is pending there is no allowance;
+     * once it has loaded in the ordinary way, the node's update syncs this
+     * column and the first row is read then. Nothing is remembered between
+     * calls, so a column bound to a new node never keeps the last one's.
      * @returns {number}
      * @category Layout
      */
     thumbnailWidthAllowance () {
         const node = this.node();
-        const first = node ? node.subnodes().first() : null;
+        if (!node || node.slotIsPendingMaterialization("subnodes")) {
+            return 0;
+        }
+        const first = node.subnodes().first();
         const expects = (first && first.nodeExpectsThumbnail) ? first.nodeExpectsThumbnail() : false;
         return expects ? 72 : 0; // 50px frame + 22px gap (see SvTitledTile)
     }
