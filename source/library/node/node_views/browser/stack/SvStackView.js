@@ -244,7 +244,7 @@
         if (d === "right") {
             this.makeOrientationRight();
         } else if (d == "down") {
-            this.makeOrientationLeft();
+            this.makeOrientationDown();
         } else {
             throw new Error("unimplmented direction '" + d + "'");
         }
@@ -262,10 +262,12 @@
     }
 
     /**
-     * @description Makes the orientation of the stack view left.
+     * @description Lays the stack out downward: the nav view above, the
+     * detail view below it (the "down" direction). It was named
+     * makeOrientationLeft; that name is kept free for a real "left".
      * @returns {SvStackView} The stack view.
      */
-    makeOrientationLeft () {
+    makeOrientationDown () {
         this.setFlexDirection("column");
         return this;
     }
