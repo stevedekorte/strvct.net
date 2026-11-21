@@ -45,7 +45,7 @@
         the top most views will start collpasing to allow the deepest views to be displayed.
 
         The relevant method is:
-        SvStackView.updateCompactionChain()
+        SvStackView.recompactBrowserChain()
 
     Drag & Drop:
 
@@ -734,7 +734,7 @@
     syncFromNavSelection () {
         if (this.isAnchoredTabs()) {
             this.syncAnchoredPanes(); // several selected tiles, one pane each (SvStackView_anchoredTabs)
-            this.safeUpdateCompactionChain(); // the panes' claim may have changed (anchoredClaimWidth)
+            this.recompactBrowserChain(); // the panes' claim may have changed (anchoredClaimWidth)
             return;
         }
         this.detailView().removeAnchoredPanes(); // a reused stack that showed anchored tabs before
@@ -775,7 +775,7 @@
             this.clearOtherView();
         }
 
-        this.safeUpdateCompactionChain();
+        this.recompactBrowserChain();
     }
 
     // stack view chain
@@ -826,29 +826,6 @@
     // --- compaction (adjusts number of visible stack areas to fit top stack view)
 
     /**
-     * @description Safely updates the compaction chain.
-     * @returns {SvStackView} The stack view.
-     */
-    safeUpdateCompactionChain () {
-        //this.bottomStackView().updateCompactionChain();
-        this.updateCompactionChain();
-    }
-
-    /**
-     * @description Recompacts the whole stack chain of THIS browser. Delegates
-     * to recompactBrowserChain — kept as the public name existing callers use.
-     * (Was: updateCompaction() + tellParentViews("updateCompaction"), which
-     * propagated UPWARD via the raw view chain and so crossed embedded-browser
-     * boundaries into outer stacks — the cause of the companion-toggle nav
-     * uncollapse. Compaction is per-browser, so the chain must be bounded.)
-     * @returns {SvStackView} The stack view.
-     */
-    updateCompactionChain () {
-        this.recompactBrowserChain();
-        return this;
-    }
-
-    /**
      * @description Recompacts this browser's stack chain to a fixed point.
      * Iterates the BOUNDED chain (rootStackView().stackViewSubchain(), which
      * stops at the browser boundary) calling updateCompaction() until nothing
@@ -856,6 +833,9 @@
      * budget and can require a column that was already visited to (un)collapse.
      * Bounded iteration guards against any oscillation. Browser-scoped by
      * construction: it cannot touch an outer browser's columns.
+     * This is the one name for a chain pass. (An earlier pass told the raw
+     * parent-view chain to update, which crossed embedded-browser boundaries
+     * into outer stacks and uncollapsed their columns.)
      * @returns {SvStackView} The stack view.
      */
     recompactBrowserChain () {

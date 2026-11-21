@@ -371,7 +371,7 @@
         const id = this.anchoredTabIdFor(node);
         this.anchoredLayout().setTabPinned(id, !this.anchoredLayout().isPinned(id));
         this.storeAnchoredPins();
-        this.safeUpdateCompactionChain(); // the claim follows the pins (anchoredClaimWidth)
+        this.recompactBrowserChain(); // the claim follows the pins (anchoredClaimWidth)
         return this.applyAnchoredLayout(true);
     }
 
@@ -389,7 +389,7 @@
         }
         this.anchoredLayout().pinTab(id);
         this.storeAnchoredPins();
-        this.safeUpdateCompactionChain(); // the claim follows the pins (anchoredClaimWidth)
+        this.recompactBrowserChain(); // the claim follows the pins (anchoredClaimWidth)
         this.applyAnchoredLayout(true);
         return this.anchoredPathMayHaveChanged();
     }
@@ -935,7 +935,7 @@
         if (isPin) {
             this.anchoredLayout().pinTab(id);
             this.storeAnchoredPins();
-            this.safeUpdateCompactionChain(); // the claim follows the pins (anchoredClaimWidth)
+            this.recompactBrowserChain(); // the claim follows the pins (anchoredClaimWidth)
         } else if (!this.anchoredReturnTabToBase(node)) {
             this.anchoredLayout().tapTab(id);
             this.storeAnchoredPins(); // a group's pin may have moved to this tab
