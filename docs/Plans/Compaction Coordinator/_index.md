@@ -2,7 +2,7 @@
 
 The rules for which columns a browser shows and how wide each is, gathered into one place that can be tested without a browser.
 
-**Status:** the plan as of 2026-11-20, rewritten after a review against the code, with its recommendations written in as the plan. Nothing here is built, and writing them in is not a go-ahead to build: each part starts on Steve's word. It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20 and a sixth on 2026-11-21. What each pass changed is marked "(review)" and "(review 2)" to "(review 6)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
+**Status:** the plan as of 2026-11-21. **Part A is built** (A1, A2, A3, A4 and A7, on dev, not released): see [Part A as built](#part-a-as-built-2026-11-21). Nothing after it is built, and each part starts on Steve's word. Next is the thumbnail fix, then part B. It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20 and a sixth on 2026-11-21. What each pass changed is marked "(review)" and "(review 2)" to "(review 6)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
 
 **What changed from the first draft (2026-11-19).** That draft proposed a layout object, `SvColumnLayout`, that was handed a flat list of columns and answered with a plan. The review found three things it had not taken in: the levels are nested inside each other, not laid side by side; each level chooses its own direction; and an object that solved the whole layout would have to repeat what the views already know about themselves. This version keeps each view's knowledge in the view and moves only the arithmetic. It also puts the small, safe fixes first and a measurement before the larger change.
 
@@ -157,6 +157,37 @@ Each is its own commit, changes no rule, and is checked by the comparison above,
 6. *Deferred with the companion:* the bottom-edge companion is handed its height by a resize observer. It mends a read that only a bottom companion makes, and no node in the app supplies a companion.
 7. `SvStackView.makeOrientationLeft` is renamed for what it does. It is the method the `"down"` direction calls, and it lays the stack out downward. The name is wanted for a real `"left"`.
 8. *Moved out: which node a column's width comes from.* See [Two fixes that are decisions](#two-fixes-that-are-decisions).
+
+#### Part A as built (2026-11-21)
+
+Steve said to start. Five commits in strvct, each deployed to dev on its own and checked there before the next.
+
+| Fix | Commit | What changed |
+| --- | --- | --- |
+| A1 | `f730b118` | `SvBrowserView` registers the root stack it makes for the window's resize; a stack no longer registers itself. Pane browsers register their roots the same way. |
+| A2 | `5850899d` | `safeUpdateCompactionChain` and `updateCompactionChain` are gone; their five callers call `recompactBrowserChain`. |
+| A3 | `dbf06eb4` | `makeOrientationRight` calls `updateWidthForWindow`, the one rule. Its own shorter copy is gone, and so is the second call in `syncOrientation`. `syncMinWidthClaim()` is untouched. |
+| A4 | `6aef2beb` | `defaultTargetWidth` (270), `fullWidthMinWidth` (17em), `maxCompactionPasses` (5), `bottomCompanionContentRoom` (200), `narrowViewportThreshold` (540), `minInlineColumnWidth` (200). Values unchanged. |
+| A7 | `a81d0557` | `SvStackView.makeOrientationLeft` is `makeOrientationDown`. |
+
+**The checks, after every one of the five:** the recorder found the layout the same as the baseline at all 41 steps; `app-mobile-column-width` and `companion-panel` passed. From A3 on, the width table below was read too.
+
+**What A1 saved.** Over the whole recording the chain passes fell from 292 to 193, the level visits from 530 to 299 and the resize handlers from 212 to 113. A step of the resize is now 4 to 6 passes and 3 or 4 handlers, where it was 7 to 9 and 6 or 7; the step that reopens Narration is 9, where it was 12. The handlers left should be one per browser (the outer one and each pane, open or not); I counted them and did not name which browser each belongs to. A2, A3, A4 and A7 changed no count.
+
+**The width table, from a fixture of my own** (`tests/e2e/compaction-width-table.spec.js`: plain nodes in an embedded browser 390px wide, on dev). It was read on the build before A3 and again after, and is the same:
+
+| Action | Rendered width | Inline minimum | Inline maximum |
+| --- | ---: | --- | --- |
+| Show the list | 390px | 300px | 100% |
+| Call `didUpdateNode()` on the list | 390px | 300px | 100% |
+| Open its child | 0px (hidden) | 300px | 300px |
+| Navigate back to the list | 390px | 17em | 100% |
+
+The first row's minimum is 300px where the reviewer's reads 17em. My mount ends in a node sync, which writes the minimum again; the other three rows agree with the reviewer's.
+
+**Not a check of part A:** `session-anchored-tabs` fails five of its tests on dev, and did before part A. They are the gaps its last commit names (a call only the host has, Theatre opening beside Narration, a page-local character replaced by the host's party). It is not a guard for this work until it is mended.
+
+**Not exercised:** no step of the recorder lays a stack out downward with a companion, so A7 and the 200 of A4 rest on the rename being mechanical and on `companion-panel`.
 
 #### Two fixes that are decisions
 
@@ -420,4 +451,5 @@ No questions were outstanding. The reviewer read the recordings and said part A 
 
 ### For the next pass
 
-1. **Still to see in a browser:** the away-rolls switch, on both devices, on the first part A deploy to dev: flipped off as the guest, back on as the owner, with the shown state read on both. The e2e spec calls the setter and would pass with no switch on the page.
+1. **Part A is built;** see [Part A as built](#part-a-as-built-2026-11-21). Two things I would like checked: that the fixture behind my width table is a fair stand-in for yours (its first row reads 300px where yours reads 17em, for the reason given there), and whether you see anything A1 could have changed that a recorder of layouts would not show.
+2. **The away-rolls switch was seen in a browser** on the first part A deploy (`tests/e2e/away-rolls-switch.spec.js`, two players on dev): drawn in Settings for owner and guest, switched off by a mouse click as the guest and back on as the owner, and both windows showed each change. Two things it turned up, neither mended: a click on the row's label does not switch it, only a click on the switch itself; and in the Settings pane at a 1,280px window the label is cut short ("GM rolls for away players after a mi…").
