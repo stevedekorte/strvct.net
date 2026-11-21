@@ -10,7 +10,7 @@
  *
  * Notes: SvNavView instances have their width set in several ways:
  *
- * 1. In updateWidthForWindow(): the one width rule for a vertical column (target width, or all the room it has)
+ * 1. In applyLayerAnswer(): the one writer of a vertical column's width, from the answer a compaction pass gave it
  * 2. In targetWidth(): Calculates desired width starting from 400px, using the node's minimum tile width as a reference
  * 3. Through gesture handling: The onRightEdgePanMove() method allows users to resize by dragging the right edge
  * 4. Via SvStackView width management: The parent SvStackView can compact and expand NavViews based on available space
@@ -29,6 +29,17 @@
         {
             const slot = this.newSlot("stackView", null);
             slot.setSlotType("SvStackView");
+        }
+
+        /**
+         * @member {Object} layerAnswer - the answer the last compaction pass
+         * gave this column (SvLayerAllocation), or null before its first pass
+         * @category Layout
+         */
+        {
+            const slot = this.newSlot("layerAnswer", null);
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
         }
 
         /**
@@ -188,7 +199,7 @@
 
     /**
      * @description The CSS minimum width of a column that takes all the room
-     * it has (see updateWidthForWindow).
+     * it has (see writeWidthForRule).
      * @returns {string}
      * @category Layout
      */
@@ -549,10 +560,7 @@
      */
     makeOrientationRight () { // nav view is on left, other view is on right
         this.setFlexDirection("column");
-        this.setFlexGrow(0);
-        this.setFlexShrink(0);
-
-        this.updateWidthForWindow(); // the one width rule
+        this.applyLayerAnswer(); // the column's width is written in one place
 
         this.setMinAndMaxHeight("100%");
 
@@ -693,7 +701,6 @@
         if (this.isVertical()) {
             const w = this.node().nodeMinTileWidth();
             if (w && !Type.isNullOrUndefined(w)) {
-                this.syncMinWidthClaim(w);
                 this.setMinAndMaxHeight("100%");
             }
         } else {
@@ -719,28 +726,6 @@
         }
 
         //console.log(this.svTypeId(), " syncFromNode done");
-        return this;
-    }
-
-    /**
-     * @description A column's minimum width from its node's width claim
-     * (nodeMinTileWidth), never more than the room it has: a column that
-     * fills the leftover width has no minimum (it flexes; see
-     * makeOrientationRight), and any other is held to the available width.
-     * The claim stamped as it was overrode the fit on every sync, so the
-     * narration's 900px reading claim made it 900px wide in a 390px phone
-     * pane, its text running off both sides (2026-10-15).
-     * @param {Number} w - the node's width claim, in px
-     * @returns {SvNavView}
-     * @category Layout
-     */
-    syncMinWidthClaim (w) {
-        if (this.shouldCurrentlyFillAvailble()) {
-            this.setMinWidth("0px");
-            return this;
-        }
-        const available = this.availableNavWidth() - 1;
-        this.setMinWidth(available > 0 ? Math.min(w, available) : w);
         return this;
     }
 
@@ -1135,55 +1120,101 @@
         assert(!this.isDisplayHidden());
     }
 
+    // --- the column's width: one writer ---
+
     /**
-     * @description The one rule for a vertical column's width, applied when
-     * the column is oriented (makeOrientationRight) and after every
-     * compaction pass (SvStackView.applyLayerAnswer):
-     *   - a fill column flexes into the leftover width;
-     *   - a column whose target is at least the room it has takes all of it;
-     *   - the last column, with less than twice its target available, takes
-     *     the slack too;
-     *   - any other column is exactly its target width.
-     * A node sync writes the minimum again afterwards (syncMinWidthClaim).
-     * Does nothing for a column laid out downward.
+     * @description Writes this column's width: its width, minimum and
+     * maximum, and its flex grow and shrink. NOTHING ELSE WRITES THEM for a
+     * vertical column (Plans/Compaction Coordinator, "One method applies a
+     * width"): a compaction pass hands over a new answer; an orientation
+     * sync, a node sync and a reveal call this with none and get the last
+     * answer again. A sync that wrote a width of its own would overwrite the
+     * allocated one, and nothing would put it back.
+     *
+     * By the answer's width rule:
+     *   - "fill": flexes into the leftover width, with no minimum;
+     *   - "full": all the room it has;
+     *   - "target": exactly its target width.
+     * A column whose node hints a width keeps that as its minimum, held to
+     * the fitting width, unless it fills.
+     * Does nothing for a column laid out downward, or before the column is
+     * in a stack.
+     * @param {Object} [answer] - a new answer from a pass
      * @returns {SvNavView}
      * @category Layout
      */
-    updateWidthForWindow () {
-        if (this.isVertical()) {
-            if (this.shouldCurrentlyFillAvailble()) {
-                // Fill the leftover width by actually flexing: grow into the
-                // slack the stack row leaves after its detail view (which may
-                // host a companion) takes its share, and shrink rather than
-                // overflow when the row is tight. width:null + flexGrow:0
-                // would only size to content, and width:100% would overrun a
-                // docked companion.
-                this.setFlexGrow(1);
-                this.setFlexShrink(1);
-                this.setMinWidth("0px");
-                this.setWidth(null);
-                this.setMaxWidth(null);
-                return this;
-            }
-
-            const targetW = this.targetWidth();
-            const availableW = this.availableNavWidth();
-            const isLastNavView = this.stackView() && !this.stackView().nextStackView();
-
-            if (targetW >= availableW) {
-                this.setMinWidth(this.fullWidthMinWidth());
-                this.setWidth("100%");
-                this.setMaxWidth("100%");
-            } else if (isLastNavView && availableW < targetW * 2) {
-                // Last visible nav view + viewport between 1x and 2x targetWidth: fill the slack
-                this.setMinWidth(this.fullWidthMinWidth());
-                this.setWidth("100%");
-                this.setMaxWidth("100%");
-            } else {
-                this.setMinAndMaxWidth(targetW);
-            }
+    applyLayerAnswer (answer) {
+        if (answer) {
+            this.setLayerAnswer(answer);
+        }
+        const current = this.currentLayerAnswer();
+        if (current && this.isVertical()) {
+            this.writeWidthForRule(current);
         }
         return this;
+    }
+
+    /**
+     * @description The last answer given, or, for a column no pass has
+     * reached yet, the answer its chain would get now (so a new column is
+     * right the first time it is written).
+     * @returns {Object|null}
+     * @category Layout
+     */
+    currentLayerAnswer () {
+        if (this.layerAnswer()) {
+            return this.layerAnswer();
+        }
+        return this.stackView() ? this.stackView().layerAnswerNow() : null;
+    }
+
+    /**
+     * @description Writes the styles of one width rule.
+     * @param {Object} answer
+     * @returns {SvNavView}
+     * @category Layout
+     */
+    writeWidthForRule (answer) {
+        if (answer.widthRule === "fill") {
+            // Fill the leftover width by actually flexing: grow into the
+            // slack the stack row leaves after its detail view (which may
+            // host a companion) takes its share, and shrink rather than
+            // overflow when the row is tight. width:null + flexGrow:0 would
+            // only size to content, and width:100% would overrun a docked
+            // companion.
+            this.setFlexGrow(1);
+            this.setFlexShrink(1);
+            this.setMinWidth("0px");
+            this.setWidth(null);
+            this.setMaxWidth(null);
+            return this;
+        }
+        const isFull = answer.widthRule === "full";
+        const hinted = this.hintedMinWidthWithin(answer.fitWidth);
+        this.setFlexGrow(0);
+        this.setFlexShrink(0);
+        this.setWidth("100%");
+        this.setMaxWidth(isFull ? "100%" : answer.targetWidth);
+        this.setMinWidth(hinted !== null ? hinted : (isFull ? this.fullWidthMinWidth() : answer.targetWidth));
+        return this;
+    }
+
+    /**
+     * @description The minimum width this column's node hints
+     * (nodeMinTileWidth), never more than the room there is. The hint
+     * stamped as it was made the narration's 900px reading width 900px wide
+     * in a 390px phone pane, its text running off both sides (2026-10-15).
+     * @param {Number} fitWidth - the fitting width of the pass
+     * @returns {Number|null} null when the node hints none
+     * @category Layout
+     */
+    hintedMinWidthWithin (fitWidth) {
+        const w = this.node() ? this.node().nodeMinTileWidth() : null;
+        if (!w) {
+            return null;
+        }
+        const available = fitWidth - 1;
+        return available > 0 ? Math.min(w, available) : w;
     }
 
     /**

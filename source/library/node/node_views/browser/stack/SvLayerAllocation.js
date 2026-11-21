@@ -31,7 +31,9 @@
  *   widthRule,    "fill" (flex into the leftover width), "full" (all the
  *                 room it has), "target" (exactly its target), or "none"
  *                 (a vertical level: its width is not this function's)
- *   targetWidth   the column's target after the cap
+ *   targetWidth,  the column's target after the cap
+ *   fitWidth      the fitting width of the pass (a column holds its own
+ *                 minimum to it)
  * }
  *
  * The rules (each is a line in tests/headless/TestLayerAllocation.js):
@@ -174,14 +176,15 @@
     /**
      * @description The answer for the level at an index.
      * @param {Number} index
-     * @returns {Object} { isHidden, widthRule, targetWidth }
+     * @returns {Object} { isHidden, widthRule, targetWidth, fitWidth }
      * @category Allocation
      */
     answerAt (index) {
         return {
             isHidden: this.isHiddenAt(index),
             widthRule: this.widthRuleAt(index),
-            targetWidth: this.cappedTargetOf(this.claims()[index])
+            targetWidth: this.cappedTargetOf(this.claims()[index]),
+            fitWidth: this.fitWidth()
         };
     }
 

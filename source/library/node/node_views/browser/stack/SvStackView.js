@@ -921,13 +921,26 @@
             return this;
         }
         const nav = this.navView();
+        nav.setLayerAnswer(answer); // before the reveal, which re-syncs the column's orientation and writes from it
         if (answer.isHidden) {
             nav.collapse();
         } else {
             nav.uncollapse();
         }
-        nav.updateWidthForWindow();
+        nav.applyLayerAnswer();
         return this;
+    }
+
+    /**
+     * @description The answer this level's chain would give it now, with
+     * nothing applied: for a column no pass has reached yet.
+     * @returns {Object}
+     * @category Compaction
+     */
+    layerAnswerNow () {
+        const root = this.rootStackView();
+        const chain = root.stackViewSubchain();
+        return root.newLayerAllocation().setClaims(chain.map((sv) => sv.layerClaim())).answerAt(chain.indexOf(this));
     }
 
     /**
