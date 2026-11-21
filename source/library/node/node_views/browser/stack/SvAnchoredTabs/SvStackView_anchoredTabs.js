@@ -206,11 +206,36 @@
      * @category Anchored Tabs
      */
     anchoredClaimWidth () {
+        if (this.anchoredWantsRootWidth()) {
+            return this.topViewWidth() || 0; // the whole window: every column to the left folds
+        }
+        return this.anchoredReservedWidth();
+    }
+
+    /**
+     * @description Whether this stack's panes claim the whole root width
+     * (the node wants the full width). The claim carries this flag, not a
+     * width, so that stating a claim reads no width.
+     * @returns {Boolean}
+     * @category Anchored Tabs
+     */
+    anchoredWantsRootWidth () {
+        if (!this.isAnchoredTabs() || !this.anchoredTabsLayout()) {
+            return false;
+        }
+        return !!(this.node().nodeWantsFullWidth && this.node().nodeWantsFullWidth());
+    }
+
+    /**
+     * @description The width the panes claim from the pins and the tabs'
+     * minimums (see anchoredClaimWidth), for a stack that does not want the
+     * whole root width. 0 when this is not an anchored stack.
+     * @returns {Number}
+     * @category Anchored Tabs
+     */
+    anchoredReservedWidth () {
         if (!this.isAnchoredTabs() || !this.anchoredTabsLayout()) {
             return 0;
-        }
-        if (this.node().nodeWantsFullWidth && this.node().nodeWantsFullWidth()) {
-            return this.topViewWidth() || 0; // the whole window: every column to the left folds
         }
         const layout = this.anchoredTabsLayout();
         const openMinimums = layout.openIdsInOrder().map(id => layout.tabWithId(id).minWidth);

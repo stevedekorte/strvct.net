@@ -1,5 +1,6 @@
 [
     "SvEdgeHandle/_imports.json",
+    "SvLayerAllocation.js",
     "SvStackView.js",
     "SvDetailView.js",
     "SvNavView.js",

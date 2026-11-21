@@ -158,7 +158,7 @@
 
     /**
      * @description The space the companion currently reserves along the stack's
-     * horizontal axis — included in sumOfNavWidths() so column compaction makes
+     * horizontal axis — part of its level's claim (SvStackView.layerClaim) so column compaction makes
      * room for it.
      * @returns {Number} The reserved width in px (0 without a companion or on a
      * vertical axis).

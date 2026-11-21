@@ -196,23 +196,33 @@
         return "17em";
     }
 
-    targetWidth () {
-        const defaultWidth = this.defaultTargetWidth();
-        if (this.node()) {
-            const minWidth = this.node().nodeMinTileWidth();
-            const maxWidth = this.availableNavWidth() - 1;
-            let w = Math.max(defaultWidth, minWidth);
-            // Columns whose titled tiles reserve a leading thumbnail frame get
-            // that width back, so the frame doesn't steal it from the
-            // title/subtitle. The text area is flex:10, so the extra width
-            // flows straight into it — no content measurement / reflow.
-            w += this.thumbnailWidthAllowance();
-            w = Math.min(w, maxWidth);
-            if (w) {
-                return w;
-            }
+    /**
+     * @description The width this column asks for, before the cap at the
+     * room it has: the larger of the default and its node's hint, plus the
+     * thumbnail allowance. Reads the model only (no width). Not a number
+     * when there is no node or no usable hint; the cap treats that as no
+     * answer and gives the default.
+     * @returns {number}
+     * @category Layout
+     */
+    uncappedTargetWidth () {
+        const node = this.node();
+        if (!node) {
+            return NaN;
         }
-        return defaultWidth;
+        return Math.max(this.defaultTargetWidth(), node.nodeMinTileWidth()) + this.thumbnailWidthAllowance();
+    }
+
+    /**
+     * @description The column's target width: what it asks for, capped at
+     * the available width less one pixel. (SvLayerAllocation.cappedTargetOf
+     * is the same rule for a whole chain.)
+     * @returns {number}
+     * @category Layout
+     */
+    targetWidth () {
+        const w = Math.min(this.uncappedTargetWidth(), this.availableNavWidth() - 1);
+        return w ? w : this.defaultTargetWidth();
     }
 
     /**
@@ -1128,7 +1138,7 @@
     /**
      * @description The one rule for a vertical column's width, applied when
      * the column is oriented (makeOrientationRight) and after every
-     * compaction pass (SvStackView.updateCompaction):
+     * compaction pass (SvStackView.applyLayerAnswer):
      *   - a fill column flexes into the leftover width;
      *   - a column whose target is at least the room it has takes all of it;
      *   - the last column, with less than twice its target available, takes

@@ -828,56 +828,106 @@
     // --- compaction (adjusts number of visible stack areas to fit top stack view)
 
     /**
-     * @description Recompacts this browser's stack chain to a fixed point.
-     * Iterates the BOUNDED chain (rootStackView().stackViewSubchain(), which
-     * stops at the browser boundary) calling updateCompaction() until nothing
-     * changes — needed because a companion docking/undocking changes the width
-     * budget and can require a column that was already visited to (un)collapse.
-     * Bounded iteration guards against any oscillation. Browser-scoped by
-     * construction: it cannot touch an outer browser's columns.
-     * This is the one name for a chain pass. (An earlier pass told the raw
-     * parent-view chain to update, which crossed embedded-browser boundaries
-     * into outer stacks and uncollapsed their columns.)
+     * @description Runs one compaction pass over THIS browser's chain
+     * (Plans/Compaction Coordinator, part C). The chain is bounded
+     * (rootStackView().stackViewSubchain() stops at the browser boundary),
+     * so a pass cannot touch an outer browser's columns. In order:
+     *   1. each side companion sizes itself (docked, tab or hidden, and its
+     *      length) from the root width and its own column's target; it reads
+     *      no column's hidden state, so this needs no second pass;
+     *   2. each level states its claim;
+     *   3. SvLayerAllocation answers, for every level, hidden or shown and
+     *      which width rule;
+     *   4. each level on the page applies its own answer.
+     * This is the one name for a chain pass.
      * @returns {SvStackView} The stack view.
      */
-    /**
-     * @description The most passes recompactBrowserChain makes over the chain
-     * before it stops, settled or not (a guard against oscillation).
-     * @returns {number}
-     */
-    maxCompactionPasses () {
-        return 5;
+    recompactBrowserChain () {
+        const root = this.rootStackView();
+        const chain = root.stackViewSubchain();
+        chain.forEach((sv) => sv.syncCompanionForPass());
+        const answers = root.newLayerAllocation().setClaims(chain.map((sv) => sv.layerClaim())).answers();
+        chain.forEach((sv, i) => sv.applyLayerAnswer(answers[i]));
+        return this;
     }
 
-    recompactBrowserChain () {
-        const chain = this.rootStackView().stackViewSubchain();
-        let changed = true;
-        let guard = 0;
-        while (changed && guard < this.maxCompactionPasses()) {
-            changed = false;
-            guard += 1;
-            chain.forEach((sv) => {
-                if (sv.updateCompaction && sv.updateCompaction()) {
-                    changed = true;
-                }
-            });
+    /**
+     * @description An allocation holding this browser's two widths, taken
+     * once for the pass: the root's width as reported (0 while it has none)
+     * and the width columns are fitted in (the window's while the root has
+     * none, so columns err toward showing).
+     * @returns {SvLayerAllocation}
+     * @category Compaction
+     */
+    newLayerAllocation () {
+        const nav = this.navView();
+        const allocation = SvLayerAllocation.clone();
+        allocation.setRootWidth(this.topViewWidth() || 0);
+        allocation.setFitWidth(nav.availableNavWidth());
+        allocation.setDefaultTargetWidth(nav.defaultTargetWidth());
+        return allocation;
+    }
+
+    /**
+     * @description Whether this stack is on the page. A cached stack (an
+     * earlier selection) still states its claim, but is given no answer and
+     * its companion is not sized: it is compacted when it is attached again.
+     * @returns {Boolean}
+     * @category Compaction
+     */
+    takesPartInPass () {
+        return this.isInDocument();
+    }
+
+    /**
+     * @description Step 1 of a pass: this level's companion sizes itself.
+     * @returns {SvStackView}
+     * @category Compaction
+     */
+    syncCompanionForPass () {
+        if (this.takesPartInPass()) {
+            this.detailView().updateCompanionLayout();
         }
         return this;
     }
 
     /**
-     * @description Compacts this single stack level: collapses/expands its nav
-     * along its axis and resolves its companion's docked/tab state.
-     * @returns {Boolean} true if this level's collapse or companion state
-     * changed (drives the recompactBrowserChain fixed point).
+     * @description This level's claim: what it needs, as plain values, for
+     * SvLayerAllocation. It holds nothing that depends on a width.
+     * @returns {Object}
+     * @category Compaction
      */
-    updateCompaction () {
-        if (!this.isInDocument()) {
-            return false; // off the page: compacted when it is attached again
+    layerClaim () {
+        const nav = this.navView();
+        return {
+            axis: this.direction() === "right" ? "horizontal" : "vertical",
+            targetWidth: nav.uncappedTargetWidth(),
+            fills: !!nav.shouldCurrentlyFillAvailble(),
+            companionReservation: this.detailView().companionReservedWidth(),
+            anchoredReservation: this.anchoredReservedWidth ? this.anchoredReservedWidth() : 0,
+            anchoredWantsRootWidth: this.anchoredWantsRootWidth ? this.anchoredWantsRootWidth() : false
+        };
+    }
+
+    /**
+     * @description Step 4 of a pass: applies this level's answer to its own
+     * column. A level laid out downward has no column to hide.
+     * @param {Object} answer - { isHidden, widthRule, targetWidth }
+     * @returns {SvStackView}
+     * @category Compaction
+     */
+    applyLayerAnswer (answer) {
+        if (!this.takesPartInPass() || answer.widthRule === "none") {
+            return this;
         }
-        const navChanged = this.compactNavAsNeeded();
-        const companionChanged = this.detailView().updateCompanionLayout();
-        return navChanged || companionChanged;
+        const nav = this.navView();
+        if (answer.isHidden) {
+            nav.collapse();
+        } else {
+            nav.uncollapse();
+        }
+        nav.updateWidthForWindow();
+        return this;
     }
 
     /**
@@ -947,33 +997,6 @@
     }
 
     /**
-     * @description Gets the sum of nav widths.
-     * @returns {Number} The sum of nav widths.
-     */
-    sumOfNavWidths () {
-        // Returns sum of self and all preceeding vertical nav view widths.
-        // This is used for compacting
-
-        // NOTES:
-        // - We assume no direct compaction of horizontal nav views (e.g. horizontal menus)
-        //  ** so we need to skip summing widths of horizontal nav views
-        //     as well as compacting them
-        // - Even if vertical and horizontal navs are interleaved,
-        //   we treat all vertical nav view compactions
-        //   as if they are part of the same Miller Column.
-
-        const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
-        let w = verticalNavViews.sum(nv => nv.targetWidth());
-        // companions reserve space in the row exactly as another column would
-        w += this.stackViewSubchain().sum(sv => sv.detailView().companionReservedWidth());
-        // an anchored-tabs stack's panes claim at least one pane's minimum, so
-        // columns to its left give way on a narrow screen (SvStackView_anchoredTabs)
-        w += this.stackViewSubchain().sum(sv => sv.anchoredClaimWidth ? sv.anchoredClaimWidth() : 0);
-        return w;
-
-    }
-
-    /**
      * @description Gets the top view width.
      * @returns {Number} The top view width.
      */
@@ -1031,75 +1054,6 @@
     isInDocument () {
         return this.element().isConnected;
     }
-
-    /**
-     * @description Compacts the nav as needed.
-     * @returns {SvStackView} The stack view.
-     */
-    compactNavAsNeeded () {
-        // this method is called on each stack view in the chain, from left to right (earliest to last view),
-        // in order to compact them as needed to fit the available width.
-        // So each will see the current compaction state (via sumOfNavWidths()) of all previous views in the chain when it makes its decision.
-
-        if (this.direction() === "right") {
-            //console.log("SvStackView " + this.node().title() + " compactNavAsNeeded");
-
-            const wasCollapsed = this.navView().isCollapsed();
-            // The width our subviews must fit into. availableNavWidth, not
-            // topViewWidth: an EMBEDDED browser (the narration companion) can
-            // be asked to compact before its container has been laid out, and
-            // topViewWidth then reads 0 — so every column "overflowed" and the
-            // first content column collapsed to display:none. Nothing re-ran
-            // compaction once the container had its width, and the Me tab's
-            // sheet stayed blank until the user clicked a tab (2026-09-08,
-            // reproduced by tests/e2e/companion-me-tab-inapp-probe.spec.js).
-            // availableNavWidth falls back to the window width while unlaid,
-            // which errs toward showing a column rather than hiding it; the
-            // nav's own targetWidth is capped by the same measure.
-            const maxWidth = this.navView().availableNavWidth();
-
-            // Calculate the sum WITHOUT this nav view
-            // const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
-            let sum = this.sumOfNavWidths();
-
-            /*
-            // if this is the last view, we don't need to check if it can fit
-            if (this.nextStackView() === null) {
-                sum -= this.navView().targetWidth();
-            }
-            */
-
-            //this.topViewWidth();
-
-
-            //const thisWidth = this.navView().targetWidth();
-            //const cw = this.navView().clientWidth();
-
-            // The content fill nav (e.g. the narration) must never fully
-            // collapse to display:none — it is the column the user is looking at.
-            // When space is tight it shrinks via flex (flexGrow/shrink + min-width
-            // 0, see SvNavView), so a docked companion squeezes it rather than
-            // hiding it (which would leave the companion stranded with dead space).
-            const isFillNav = this.navView().shouldCurrentlyFillAvailble
-                && this.navView().shouldCurrentlyFillAvailble();
-            if (isFillNav || sum < maxWidth) {
-                this.navView().uncollapse();
-                //console.log(" -> '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum " + sum + " < win " + maxWidth); // + " UNCOLLAPSE " + this.direction());
-            } else {
-                this.navView().collapse();
-                //console.log(" <- '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum:" + sum + " > win " + maxWidth); //+ " COLLAPSE " + this.direction());
-            }
-
-            // Update SvNavView width constraints for window size
-            this.navView().updateWidthForWindow();
-
-            return wasCollapsed !== this.navView().isCollapsed();
-        } else {
-            //console.log(" X '" + this.node().title()); // + "' skip " + this.direction());
-        }
-
-        return false;
-    };
 
     // --- caching during dragging ---
 
