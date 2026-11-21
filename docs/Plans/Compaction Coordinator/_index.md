@@ -2,7 +2,7 @@
 
 The rules for which columns a browser shows and how wide each is, gathered into one place that can be tested without a browser.
 
-**Status:** the plan as of 2026-11-21. **Part A is built** (A1, A2, A3, A4 and A7, on dev, not released): see [Part A as built](#part-a-as-built-2026-11-21). Nothing after it is built, and each part starts on Steve's word. Next is the thumbnail fix, then part B. It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20 and a sixth on 2026-11-21. What each pass changed is marked "(review)" and "(review 2)" to "(review 6)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
+**Status:** the plan as of 2026-11-21. **Part A is built** (A1, A2, A3, A4 and A7, on dev, not released): see [Part A as built](#part-a-as-built-2026-11-21). Nothing after it is built, and each part starts on Steve's word. The thumbnail fix is built too, and part B's timings are taken: compaction is under the 2ms line, so C would rest on testability (see [Part B's timings](#part-bs-timings-2026-11-21)). Whether C goes ahead is Steve's decision. It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20 and a sixth on 2026-11-21. What each pass changed is marked "(review)" and "(review 2)" to "(review 6)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
 
 **What changed from the first draft (2026-11-19).** That draft proposed a layout object, `SvColumnLayout`, that was handed a flat list of columns and answered with a plan. The review found three things it had not taken in: the levels are nested inside each other, not laid side by side; each level chooses its own direction; and an object that solved the whole layout would have to repeat what the views already know about themselves. This version keeps each view's knowledge in the view and moves only the arithmetic. It also puts the small, safe fixes first and a measurement before the larger change.
 
@@ -210,7 +210,37 @@ Its three checks:
 
 The first visible frame and the settled width are both recorded, since ordinary loading may settle the allowance before anything is painted.
 
+#### The thumbnail fix as built (2026-11-21)
+
+strvct `0ca64f67`. `thumbnailWidthAllowance()` gives 0 while the node's subnodes are pending and does not read the list; once the list has loaded it reads the first row, and it keeps nothing between calls. A loaded list tells its node it updated, which syncs the column, so the 72px arrives with the rows.
+
+The three checks, in `tests/e2e/compaction-width-table.spec.js` on dev, read before the fix and after:
+
+| Check | Before | After |
+| --- | --- | --- |
+| A pending list is asked for its width | 72px, the list read twice | 0px, the list not read |
+| The list has loaded, its first row has a thumbnail | 72px | 72px |
+| The same first row stands for a plain node | 0px, the list unchanged | 0px, the list unchanged |
+
+The recorder still found every layout the same as the baseline. **What this does not show:** "pending" is stood in for (the fixture's node is made to answer that its list is pending); no list pending in a real store was exercised, and the first visible frame of one was not recorded. The Bestiary of a campaign with creatures is the real case, and I have not opened one.
+
 ### Part B: measure, then decide about C
+
+#### Part B's timings (2026-11-21)
+
+`tests/e2e/compaction-measure.spec.js`, three runs on dev with A and the thumbnail fix in place, in headless Chromium under Playwright on Steve's Mac. What is timed is the outermost chain pass, which includes any layout the pass forces by reading geometry inside it. Each frame's passes are summed.
+
+| Workload | Frames | Frames with a pass | p95 over all frames | p95 over frames with a pass | Worst frame | Frames over 2ms |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Streaming, 390 by 844, processor 4x slower | 1,801 to 2,159 | 29 to 39 | 0ms | 2.1 to 2.4ms | 2.5 to 3.0ms | 2 or 3 |
+| Resizing, 1,280px to 980px and back three times, 4x slower | about 455 | about 215 | 0.8 to 0.9ms | 1.0 to 1.1ms | 1.7 to 1.9ms | 0 |
+| The same resizing, not slowed | about 458 | about 217 | 0.2 to 0.3ms | 0.3ms | 0.4 to 0.5ms | 0 |
+
+**Against the line.** Counted as the plan says (every frame of the workload, those that cost nothing included), compaction is far under 2ms in both workloads: the 95th percentile while streaming is 0ms, because a pass runs in about one frame in fifty. Resizing is under the line however it is counted. The one figure near the line is streaming counted over only the frames that had a pass: 2.1 to 2.4ms on a processor slowed four times, with two or three frames a response over 2ms and none over 3ms. So the speed case for C is not made. C would rest on testability.
+
+**What a chunk costs.** Text arrived in 12 to 21 frames a response (the table sends narration in batches, about one every two seconds, not token by token). A frame where text arrived and a pass ran held six calls, in all three runs (90 calls in 15 such frames, 100 in 16, 60 in 10). That is the same six that one explicit `didUpdateNode()` cost in the recordings.
+
+**Limits.** The response was live, not a replay, so chunk sizes and cadence differed between runs. Layout the browser does later for a pass's writes is not attributed to the pass. Frames longer than 25ms were counted (7 to 17 a streaming run) but not traced to a cause, so "compaction caused a missed frame" is neither shown nor ruled out; a performance trace would say. It is a throttled desktop browser and not a phone. The end states and transitions matrix described below is not built.
 
 With A in place, a browser spec records two things.
 
