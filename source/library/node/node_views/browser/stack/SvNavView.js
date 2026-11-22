@@ -573,7 +573,7 @@
      */
     fillsWhenShown () {
         const node = this.presentedNodeFor(this.node());
-        return !!(node && node.nodeChildrenLayout && node.nodeChildrenLayout() === "inline");
+        return !!node && node.nodeChildrenLayout() === "inline"; // every viewable node answers (SvViewableNode)
     }
 
     /**
