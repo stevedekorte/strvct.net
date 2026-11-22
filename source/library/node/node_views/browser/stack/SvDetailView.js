@@ -66,6 +66,30 @@
             const slot = this.newSlot("hasStackContent", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @member {Number|null} allocatedWidth - the width a pass gives this
+         * view, when its stack's column fills before the end of the chain
+         * and so takes what this view leaves (SvLayerAllocation,
+         * trailingWidth); null when this view flexes as usual
+         * @category State
+         */
+        {
+            const slot = this.newSlot("allocatedWidth", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+         * @member {Boolean} allocatedFlexes - with an allocatedWidth: whether
+         * this view also takes a share of the width left over (something in
+         * it fills) or is exactly that width
+         * @category State
+         */
+        {
+            const slot = this.newSlot("allocatedFlexes", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {
@@ -233,15 +257,32 @@
         return this;
     }
 
+    didUpdateSlotAllocatedWidth (/*oldValue, newValue*/) {
+        this.updateOuterFlex();
+        return this;
+    }
+
+    didUpdateSlotAllocatedFlexes (/*oldValue, newValue*/) {
+        this.updateOuterFlex();
+        return this;
+    }
+
     /**
-     * @description This view's own flex sizing within the stack row: flexible
-     * while the child stack has content; sized by the companion alone when it
-     * doesn't; collapsed when empty.
+     * @description This view's own flex sizing within the stack row: the
+     * width a pass allocated, when its column fills before the end (exactly
+     * that, or that and an even share of what is left when something in
+     * this view fills too);
+     * flexible while the child stack has content; sized by the companion
+     * alone when it doesn't; collapsed when empty.
      * @returns {SvDetailView} The current instance.
      * @category Layout
      */
     updateOuterFlex () {
-        if (this.hasStackContent()) {
+        if (this.hasStackContent() && this.allocatedWidth() !== null) {
+            this.setFlexBasis(this.allocatedWidth() + "px");
+            this.setFlexGrow(this.allocatedFlexes() ? 1 : 0);
+            this.setFlexShrink(0);
+        } else if (this.hasStackContent()) {
             this.setFlexBasis(null);
             this.setFlexGrow(1);
             this.setFlexShrink(1);

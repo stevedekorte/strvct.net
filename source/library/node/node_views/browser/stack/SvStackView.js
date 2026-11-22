@@ -467,65 +467,26 @@
         if (nodePathArray.length === 0) {
             //console.log("- only one node in pathArray and it is ours, so unselecting all subtiles and we're done!")
             // no selections left so unselect next
-            this.tilesView().unselectAllTiles();
+            this.tilesView().unselectAllNavTiles();
             this.syncFromNavSelection();
             return true;
         }
 
-        const nextNodePathArray = nodePathArray.shallowCopy();
-        // the path should start with the node *after* this one
-
-        //const p = nodePathArray.map(n => n.title()).join("/");
-        //console.log("--- selectNodePathArray ---");
-        //console.log(this.svType() + " " + this.node().nodePathString() + " selectNodePathArray(" + nodePathArray.map(node => "'" + node.title() + "'").join(", ") + ")");
-        const node = nextNodePathArray.shift(); // pop the first node off (it should be us) and select the next one from our tiles, then pass remaining paths to the tile's stackview
-        //console.warn("- popped '" + node.title() + "'");
-
-        //this.syncFromNodeNow();
-        //assert(node !== this.node());
-
-        /*
-        console.log("1 this.tilesView().node().subnodes(): ", this.tilesView().node().subnodes());
-        this.tilesView().syncFromNodeNow(); //test
-        console.log("2 this.tilesView().subviews(): ", this.tilesView().subviews());
-        */
-
-        let selectedTile = this.tilesView().selectTileWithNode(node);
-
-        if (!selectedTile) {
-            // if we didn't find the tile but the node is a subnode, sync the tilesView and look again
-            if (this.tilesView().node().subnodes().contains(node)) {
-                //console.warn("- the tilesView node's subnodes contain the path node, but there's no matching view!");
-                // console.log("- so syncFromNodeNow and see if we can find it");
-                this.tilesView().syncFromNodeNow();
-                selectedTile = this.tilesView().selectTileWithNode(node);
-                if (selectedTile === null) {
-                    console.error(this.logPrefix(), "failed to find tile for node: " + node.title());
-                }
-            }
-        }
-
-        if (!selectedTile) { // INVALID PATH ERROR
-            console.log("- invalid path - can't find tile for node: " + node.title());
-
-            console.log("debug info:");
-            console.log("  looking for node: ", node.svDebugId());
-            const subnodeIds = this.tilesView().node().subnodes().map(node => node.svDebugId());
-            console.log("  subnodes:" + JSON.stableStringifyWithStdOptions(subnodeIds));
-            // The view half of the comparison. tileWithNode() matches on node
-            // IDENTITY, so a miss has two very different causes and the
-            // subnodes list alone can't tell them apart: no tiles were built
-            // yet (a sync/timing problem), or tiles exist but hold different
-            // nodes than the path does (e.g. a tile keyed to a link's target
-            // rather than the SvLinkNode itself).
-            const tileNodeIds = this.tilesView().tiles().map(aTile => {
-                const tileNode = aTile.node();
-                return tileNode ? tileNode.svDebugId() : "(tile with no node)";
-            });
-            console.log("  tiles (" + tileNodeIds.length + "):" + JSON.stableStringifyWithStdOptions(tileNodeIds));
-
+        // the path starts with the node *after* this one. A section of an
+        // inline document on the path is passed through: it is shown in
+        // place and gets no column (SvTilesView_inline.navTileForPath)
+        const found = this.tilesView().navTileForPath(nodePathArray); // syncs a column that has no tile for its subnode yet
+        if (!found) { // INVALID PATH ERROR
+            this.logInvalidPathNode(nodePathArray.first());
             return false;
         }
+        const nextNodePathArray = nodePathArray.slice(found.consumed);
+        if (!found.tile) { // the path ends on a section: nothing to open
+            this.tilesView().unselectAllNavTiles();
+            this.syncFromNavSelection();
+            return nextNodePathArray.length === 0;
+        }
+        this.tilesView().selectNavTile(found.tile);
 
         //this.syncFromNavSelection();
         //console.log("- selectedTile '" + selectedTile.node().title() + "'");
@@ -543,6 +504,29 @@
         // Remaining path but no child stack yet: same lazy-materialization
         // case — fail so the retry can pick it up next cycle.
         return nextNodePathArray.length === 0;
+    }
+
+    /**
+     * @description Says what a column held when a path named a node it has
+     * no tile for. tileWithNode() matches on node IDENTITY, so a miss has
+     * two very different causes and the subnodes alone can't tell them
+     * apart: no tiles were built yet (a sync or timing problem), or tiles
+     * exist but hold different nodes than the path does (a tile keyed to a
+     * link's target rather than the link node).
+     * @param {SvNode} node
+     * @category Navigation
+     */
+    logInvalidPathNode (node) {
+        console.log("- invalid path - can't find tile for node: " + node.title());
+        console.log("debug info:");
+        console.log("  looking for node: ", node.svDebugId());
+        const subnodeIds = this.tilesView().node().subnodes().map(subnode => subnode.svDebugId());
+        console.log("  subnodes:" + JSON.stableStringifyWithStdOptions(subnodeIds));
+        const tileNodeIds = this.tilesView().tiles().map(aTile => {
+            const tileNode = aTile.node();
+            return tileNode ? tileNode.svDebugId() : "(tile with no node)";
+        });
+        console.log("  tiles (" + tileNodeIds.length + "):" + JSON.stableStringifyWithStdOptions(tileNodeIds));
     }
 
     /**
@@ -750,7 +734,7 @@
         this.detailView().removeAnchoredPanes(); // a reused stack that showed anchored tabs before
         // update otherViewContent view to match selected tile
 
-        const tile = this.navView().tilesView().selectedTile(); // this may get called before tilesView has synced to current subnodes,
+        const tile = this.navView().tilesView().navSelectedTile(); // in an inline document, a tile inside its sections. This may get called before tilesView has synced to current subnodes,
         //console.log("SvStackView syncFromNavSelection " + this.node().title() + " -> " + (tile ? tile.nodeTitle() : null));
 
         // in which case, the tile may be about to be removed
@@ -947,6 +931,7 @@
             targetWidth: nav.uncappedTargetWidth(),
             yieldFloor: nav.yieldFloorHint(), // the companion's room reads it; the allocation does not
             fills: !!nav.shouldCurrentlyFillAvailble(),
+            fillsWhenShown: nav.fillsWhenShown(),
             companionReservation: this.detailView().companionReservedWidth(),
             anchoredReservation: this.anchoredReservedWidth ? this.anchoredReservedWidth() : 0,
             anchoredWantsRootWidth: this.anchoredWantsRootWidth ? this.anchoredWantsRootWidth() : false
@@ -956,11 +941,12 @@
     /**
      * @description Step 4 of a pass: applies this level's answer to its own
      * column. A level laid out downward has no column to hide.
-     * @param {Object} answer - { isHidden, widthRule, targetWidth }
+     * @param {Object} answer - { isHidden, widthRule, targetWidth, trailingWidth, trailingFlexes }
      * @returns {SvStackView}
      * @category Compaction
      */
     applyLayerAnswer (answer) {
+        this.detailView().setAllocatedFlexes(!!answer.trailingFlexes).setAllocatedWidth(answer.trailingWidth); // null but for a column that fills before the end
         if (!this.takesPartInPass() || answer.widthRule === "none") {
             return this;
         }

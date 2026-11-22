@@ -558,10 +558,22 @@
         if (node) {
             // an inline document (Plans/Inline Navigation) takes the room it
             // is given: its sections flow into as many columns as fit
-            const isDocument = node.nodeChildrenLayout && node.nodeChildrenLayout() === "inline";
-            return ((node.nodeFillsRemainingWidth() || isDocument) && this.isLastNavView());
+            return ((node.nodeFillsRemainingWidth() || this.fillsWhenShown()) && this.isLastNavView());
         }
         return false;
+    }
+
+    /**
+     * @description Whether this column takes the width that is left for as
+     * long as it is shown, with columns after it or not: an inline document
+     * (Plans/Compaction Coordinator, part D). It is hidden like any other
+     * column. Reads the model only.
+     * @returns {Boolean}
+     * @category Layout
+     */
+    fillsWhenShown () {
+        const node = this.presentedNodeFor(this.node());
+        return !!(node && node.nodeChildrenLayout && node.nodeChildrenLayout() === "inline");
     }
 
     /**
@@ -1192,6 +1204,12 @@
             // overflow when the row is tight. width:null + flexGrow:0 would
             // only size to content, and width:100% would overrun a docked
             // companion.
+            // A column that fills before the end starts from its target,
+            // so the width left over is its own, or is shared evenly with
+            // what follows (SvDetailView.updateOuterFlex), whatever its
+            // content would measure.
+            const fillsBeforeTheEnd = answer.trailingWidth !== null && answer.trailingWidth !== undefined;
+            this.setFlexBasis(fillsBeforeTheEnd ? answer.targetWidth + "px" : null);
             this.setFlexGrow(1);
             this.setFlexShrink(1);
             this.setMinWidth("0px");
@@ -1199,6 +1217,7 @@
             this.setMaxWidth(null);
             return this;
         }
+        this.setFlexBasis(null);
         const isFull = answer.widthRule === "full";
         const hinted = this.hintedMinWidthWithin(answer.fitWidth);
         this.setFlexGrow(0);

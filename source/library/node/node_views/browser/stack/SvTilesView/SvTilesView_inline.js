@@ -190,6 +190,135 @@
         return { document: view, path: path };
     }
 
+    // --- navigating through a document: a section makes no column ---
+    //
+    // A node its parent shows in place makes no layer of its own
+    // (Plans/Compaction Coordinator, part D). So the tile a column's stack
+    // opens beside it may sit inside sections, and a path that names those
+    // sections passes through them without a column for any.
+
+    /**
+     * @description The top of the document this view is part of: itself,
+     * unless it is nested in a section.
+     * @returns {SvTilesView|null}
+     * @category Inline
+     */
+    inlineDocumentView () {
+        let view = this;
+        while (view && view.isInlineNested()) {
+            const section = view.firstParentViewWithAncestorClass(SvInlineSectionTile);
+            view = section ? section.tilesView() : null;
+        }
+        return view;
+    }
+
+    /**
+     * @description The tiles a stack can open from this view: its tiles,
+     * and for a document the tiles inside its sections in their place.
+     * @returns {Array<SvTile>}
+     * @category Inline
+     */
+    navRowTiles () {
+        if (!this.isInlineLayout()) {
+            return this.tiles();
+        }
+        return this.tiles().flatMap(tile => tile.isKindOf(SvInlineSectionTile) ? tile.sectionTilesView().navRowTiles() : [tile]);
+    }
+
+    /**
+     * @description The one tile whose node the stack shows beside this
+     * view, or null: the selected tile, which in a document may be inside
+     * sections.
+     * @returns {SvTile|null}
+     * @category Inline
+     */
+    navSelectedTile () {
+        if (!this.isInlineLayout()) {
+            return this.selectedTile();
+        }
+        const selected = this.navRowTiles().filter(tile => tile.isSelected && tile.isSelected());
+        return selected.length === 1 ? selected.first() : null;
+    }
+
+    /**
+     * @description Where a path leads in this view: the tile to open and
+     * how many of the path's nodes it took to reach it. A section on the
+     * path is passed through (it takes a node and opens nothing), and a
+     * path that leaves a document's sections out finds its tile inside
+     * them. A path that ends on a section opens nothing: { tile: null }.
+     * @param {Array<SvNode>} path - the nodes after this view's own
+     * @returns {{tile: SvTile|null, consumed: Number}|null} null when the path's first node is not here
+     * @category Inline
+     */
+    navTileForPath (path) {
+        const direct = this.tileWithNodeSyncingIfNeeded(path.first());
+        if (direct && !direct.isKindOf(SvInlineSectionTile)) {
+            return { tile: direct, consumed: 1 };
+        }
+        if (direct) {
+            return this.navTileThroughSection(direct, path);
+        }
+        return this.isInlineLayout() ? this.navTileInsideSections(path) : null;
+    }
+
+    /**
+     * @description The tile for a node. When the node is a subnode this
+     * view has no tile for yet (a column or a section that has not synced
+     * since it was made), the view is synced and asked again.
+     * @param {SvNode} aNode
+     * @returns {SvTile|null}
+     * @category Inline
+     */
+    tileWithNodeSyncingIfNeeded (aNode) {
+        const tile = this.tileWithNode(aNode);
+        const node = this.node();
+        if (tile || !node || !node.subnodes().contains(aNode)) {
+            return tile;
+        }
+        this.syncFromNodeNow();
+        return this.tileWithNode(aNode);
+    }
+
+    navTileThroughSection (section, path) {
+        if (path.length === 1) {
+            return { tile: null, consumed: 1 };
+        }
+        const inner = section.syncSectionTilesView().sectionTilesView().navTileForPath(path.slice(1)); // a new section has no node on its view until it syncs
+        return inner ? { tile: inner.tile, consumed: inner.consumed + 1 } : null;
+    }
+
+    navTileInsideSections (path) {
+        const sections = this.tiles().filter(tile => tile.isKindOf(SvInlineSectionTile));
+        for (const section of sections) {
+            const inner = section.syncSectionTilesView().sectionTilesView().navTileForPath(path);
+            if (inner) {
+                return inner;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @description Selects one of navRowTiles() and no other.
+     * @param {SvTile} aTile
+     * @returns {SvTilesView_inline}
+     * @category Inline
+     */
+    selectNavTile (aTile) {
+        aTile.setIsSelected(true);
+        this.navRowTiles().forEach(tile => {
+            if (tile !== aTile && tile.unselect) {
+                tile.unselect();
+            }
+        });
+        return this;
+    }
+
+    unselectAllNavTiles () {
+        this.navRowTiles().forEachPerformIfResponds("unselect");
+        return this;
+    }
+
     /**
      * @description Opens or closes a row that has a description. Which rows
      * are open is view state, like which tab is open: kept on the row's

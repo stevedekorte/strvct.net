@@ -137,6 +137,37 @@ function testAnchored () {
     check(hidden(allocate(3000, [column(), row({ anchoredWantsRootWidth: true, anchoredReservation: 10 })])) === "hs", "the flag wins over a number");
 }
 
+function testFillsWhenShown () {
+    console.log("\nA column that fills when shown (an inline document)");
+    const doc = (extra = {}) => column(Object.assign({ targetWidth: 300, fillsWhenShown: true }, extra));
+    const wide = allocate(1400, [doc(), column()]);
+    check(hidden(wide) === "ss" && rules(wide) === "fill,target", "a 300px document and a column in 1,400px: the document fills, the column is its target");
+    check(wide[0].trailingWidth === 270 && wide[1].trailingWidth === null, "and the document is told what follows it takes: 270px");
+    check(hidden(allocate(570, [doc(), column()])) === "hs", "300 + 270 in 570px: the document is hidden like any column (equal is not less)");
+    const justFits = allocate(571, [doc(), column()]);
+    check(hidden(justFits) === "ss" && rules(justFits) === "fill,target", "at 571px it is shown and fills, and the last column does not take the slack");
+    const phone = allocate(390, [doc(), column()]);
+    check(hidden(phone) === "hs" && rules(phone) === "target,full", "on a phone it is hidden and the last column takes the row, as before");
+    const lastWider = allocate(700, [doc({ targetWidth: 270 }), column({ targetWidth: 400 })]);
+    check(rules(lastWider) === "fill,target", "a 400px last column in 700px would take the slack beside a plain column; beside a document it is its target");
+    const three = allocate(1400, [column(), doc(), column(), column()]);
+    check(hidden(three) === "ssss" && rules(three) === "target,fill,target,target", "a document in the middle of a chain fills between plain columns");
+    check(three[1].trailingWidth === 540, "and what follows it takes 540px");
+    check(allocate(1400, [doc({ companionReservation: 380 }), column()])[0].trailingWidth === 650, "its own companion's reservation is part of what follows it");
+    check(wide[0].trailingFlexes === false, "plain columns after it are exactly their targets: nothing after it flexes");
+    const twoDocs = allocate(1400, [doc(), doc({ fills: true })]);
+    check(rules(twoDocs) === "fill,fill", "a document opened from a document: both fill");
+    check(twoDocs[0].trailingWidth === 300 && twoDocs[0].trailingFlexes === true, "the first starts from its target, what follows from its own 300px, and they share what is left");
+    const beforeChat = allocate(1400, [doc(), column({ fills: true })]);
+    check(rules(beforeChat) === "fill,fill" && beforeChat[0].trailingFlexes === true, "with a fill column after it, the two share what is left");
+    const beforeRow = allocate(1400, [doc(), row(), column()]);
+    check(rules(beforeRow) === "fill,none,target" && beforeRow[0].trailingFlexes === true, "with a level laid out downward after it, it shares what is left with that level");
+    check(hidden(allocate(600, [doc(), doc({ fills: true })])) === "hs", "two 300px documents in 600px: the first is hidden like any column");
+    const alone = allocate(1400, [doc({ fills: true })]);
+    check(rules(alone) === "fill" && alone[0].trailingWidth === null, "a document that is last fills as it always has");
+    check(hidden(allocate(3000, [doc(), row({ anchoredWantsRootWidth: true })])) === "hs", "a level that wants the whole root width still hides a document before it");
+}
+
 function testNoRootWidthYet () {
     console.log("\nA root with no width yet");
     check(hidden(allocate(1200, [column(), column()], 0)) === "ss", "columns are fitted in the window's width");
@@ -165,6 +196,7 @@ function testPurity () {
     testVertical();
     testCompanions();
     testAnchored();
+    testFillsWhenShown();
     testNoRootWidthYet();
     testPurity();
     console.log("\n=============================");

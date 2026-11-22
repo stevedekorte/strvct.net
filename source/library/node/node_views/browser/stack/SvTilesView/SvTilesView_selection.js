@@ -522,7 +522,8 @@
      * @returns {SvTilesView_selection} The current instance.
      */
     didChangeNavSelection () {
-        const sv = this.stackView();
+        const owner = this.isInlineNested() ? this.inlineDocumentView() : this; // a row inside a section belongs to the document's column
+        const sv = owner ? owner.stackView() : null;
         if (sv) {
             sv.didChangeNavSelection();
         }

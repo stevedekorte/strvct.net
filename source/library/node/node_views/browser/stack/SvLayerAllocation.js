@@ -20,6 +20,9 @@
  *   targetWidth,          the width the column asks for, BEFORE the cap at
  *                         the fitting width (not a number: asks for none)
  *   fills,                the column takes whatever width is left
+ *   fillsWhenShown,       the column takes whatever width is left while it
+ *                         is shown, and is hidden like any other (an inline
+ *                         document)
  *   companionReservation, the width its side companion holds, as the
  *                         companion worked it out for this pass (0 for none)
  *   anchoredReservation,  the width its anchored panes hold (0 for none)
@@ -34,6 +37,13 @@
  *   targetWidth,  the column's target after the cap
  *   fitWidth      the fitting width of the pass (a column holds its own
  *                 minimum to it)
+ *   trailingWidth the width everything after this column asks for, for
+ *                 a column that fills before the end of its chain (its own
+ *                 companion's reservation and the levels after it); null
+ *                 for any other
+ *   trailingFlexes whether what follows such a column takes a share of the
+ *                 width left over (something after it fills, or is laid
+ *                 out downward) or is exactly trailingWidth
  * }
  *
  * The rules (each is a line in tests/headless/TestLayerAllocation.js):
@@ -52,6 +62,13 @@
  *   the room; any other is exactly its target.
  * - Columns give way from the root end: the earliest levels have the
  *   largest sums.
+ * - A column that fills when shown (an inline document) is hidden or shown
+ *   by the same test as any other, with its target as its least. Shown,
+ *   it fills. With only plain columns after it (horizontal, not filling)
+ *   they are exactly their targets, the last one too, and it has the rest.
+ *   With something after it that takes what it is given (a column that
+ *   fills, another document, a level laid out downward), the width left
+ *   over is shared evenly between the column and what follows it.
  *
  * The two widths differ only while a root has no width yet (an embedded
  * browser before its container is laid out): the root width is as reported
@@ -165,18 +182,80 @@
         if (claim.fills) {
             return "fill";
         }
+        if (this.fillsBeforeTheEndAt(index)) {
+            return "fill";
+        }
         const target = this.cappedTargetOf(claim);
         const isLast = index === this.claims().length - 1;
-        if (target >= this.fitWidth() || (isLast && this.fitWidth() < target * 2)) {
+        const takesTheSlack = isLast && !this.hasFillBefore(index) && this.fitWidth() < target * 2;
+        if (target >= this.fitWidth() || takesTheSlack) {
             return "full";
         }
         return "target";
     }
 
     /**
+     * @description Whether a claim is a column of a fixed width: horizontal
+     * and not filling in either way.
+     * @param {Object} claim
+     * @returns {Boolean}
+     * @category Allocation
+     */
+    isPlainColumn (claim) {
+        return claim.axis === "horizontal" && !claim.fills && !claim.fillsWhenShown;
+    }
+
+    /**
+     * @description Whether the level at an index fills with levels after
+     * it: it fills when shown, and it is shown.
+     * @param {Number} index
+     * @returns {Boolean}
+     * @category Allocation
+     */
+    fillsBeforeTheEndAt (index) {
+        const claim = this.claims()[index];
+        const isLast = index === this.claims().length - 1;
+        if (!claim.fillsWhenShown || claim.fills || claim.axis !== "horizontal" || isLast) {
+            return false;
+        }
+        return !this.isHiddenAt(index);
+    }
+
+    /**
+     * @description Whether what follows a column that fills before the end
+     * takes a share of the width left over: something after it is not a
+     * plain column.
+     * @param {Number} index
+     * @returns {Boolean}
+     * @category Allocation
+     */
+    trailingFlexesAt (index) {
+        return this.fillsBeforeTheEndAt(index) && !this.claims().slice(index + 1).every((c) => this.isPlainColumn(c));
+    }
+
+    hasFillBefore (index) {
+        return this.claims().some((claim, i) => i < index && this.fillsBeforeTheEndAt(i));
+    }
+
+    /**
+     * @description The width everything after a column asks for, when that
+     * column fills before the end: its own companion's reservation and the
+     * sum of the levels after it. null for any other level.
+     * @param {Number} index
+     * @returns {Number|null}
+     * @category Allocation
+     */
+    trailingWidthAt (index) {
+        if (!this.fillsBeforeTheEndAt(index)) {
+            return null;
+        }
+        return (this.claims()[index].companionReservation || 0) + this.sumFrom(index + 1);
+    }
+
+    /**
      * @description The answer for the level at an index.
      * @param {Number} index
-     * @returns {Object} { isHidden, widthRule, targetWidth, fitWidth }
+     * @returns {Object} { isHidden, widthRule, targetWidth, fitWidth, trailingWidth, trailingFlexes }
      * @category Allocation
      */
     answerAt (index) {
@@ -184,7 +263,9 @@
             isHidden: this.isHiddenAt(index),
             widthRule: this.widthRuleAt(index),
             targetWidth: this.cappedTargetOf(this.claims()[index]),
-            fitWidth: this.fitWidth()
+            fitWidth: this.fitWidth(),
+            trailingWidth: this.trailingWidthAt(index),
+            trailingFlexes: this.trailingFlexesAt(index)
         };
     }
 
