@@ -28,71 +28,91 @@
     }
 
     /**
-     * @description The window width, in px, below which picking an option
-     * goes back to its options node (twice a column's default width).
-     * @returns {number}
-     * @category Navigation
-     */
-    narrowViewportThreshold () {
-        return 540;
-    }
-
-    /**
-     * @description On narrow viewports (single-column compaction), after a
-     * single-pick option is picked, navigate back to the parent options
-     * node so the user sees their selection in the parent context.
+     * @description After a single-pick option is picked while the column to
+     * return to is hidden (a phone, or any browser too narrow for both),
+     * navigates back to it, so the user sees their pick where the field
+     * is. With that column in view nothing moves.
      *
      * Uses the live navigation path (the user may have arrived here via a
      * shortcut link, so the canonical model parent chain is the wrong path
      * to walk — postOnRequestNavigateToNode would try to walk hidden
-     * subnodes and fail). Truncates the currently-selected path at the
-     * options node and asks the browser to go there. The user did not ask
-     * to be moved, so the request's cause is "program".
+     * subnodes and fail). The user did not ask to be moved, so the
+     * request's cause is "program".
      *
-     * View-side decision: viewport state and view chain live here, not on
+     * View-side decision: the layout and the view chain live here, not on
      * the node.
      * @returns {SvOptionNodeTile}
      * @category Navigation
      */
     maybeAutoPopAfterPick () {
-        const node = this.node();
-        if (!node || !node.isPicked || !node.isPicked()) {
-            return this; // Toggled off, or no node — don't auto-pop.
-        }
-        const optionsNode = node.optionsNode();
-        if (!optionsNode || optionsNode.allowsMultiplePicks()) {
-            return this; // Multi-pick mode: user may pick more, keep column open.
-        }
-        const viewportWidth = SvWebBrowserWindow.shared().width();
-        if (viewportWidth >= this.narrowViewportThreshold()) {
-            return this; // Wide enough that the parent column is still visible.
-        }
-
         const browser = this.firstParentViewWithAncestorClass(SvBrowserView);
-        if (!browser) {
+        if (!browser || !this.didPickTheOneChoice() || !this.returnColumnIsHidden()) {
             return this;
         }
-
-        // Find the options node in the current navigation path. Truncate AT
-        // the options node (slice up to idx, exclusive) — this deselects it,
-        // which clears its otherView (the option list) via syncFromNavSelection,
-        // making the parent column visible on narrow viewports. The live path
-        // is the user's actual route (may differ from the canonical model
-        // parent chain when shortcut links are involved).
-        const currentPath = browser.selectedNodePathArray();
-        const idx = currentPath ? currentPath.indexOf(optionsNode) : -1;
-        if (idx < 1) {
-            return this; // Not on a path that includes the options node.
+        const pathAtPick = browser.selectedNodePathArray();
+        if (pathAtPick.indexOf(this.node().optionsNode()) < 1) {
+            return this; // not on a path that includes the options node
         }
-        const trimmedPath = currentPath.slice(1, idx);
-
         // Brief delay so the user sees the check-mark land on the picked
         // option before the column collapses. Eventual: replace with a
         // proper selection animation + slide-back column transition.
-        const delayMs = 300;
-        this.addWeakTimeout(() => {
-            browser.navigate(SvNavigationRequest.toPath(trimmedPath).setCause("program"));
-        }, delayMs);
+        this.addWeakTimeout(() => this.stepBackIfStillAt(browser, pathAtPick), this.stepBackDelayMs());
+        return this;
+    }
+
+    stepBackDelayMs () {
+        return 300;
+    }
+
+    /**
+     * @description Whether the tap picked an option of a single-pick node:
+     * not a toggle off, and not one of several picks (the user may pick
+     * more, so the column stays open).
+     * @returns {Boolean}
+     * @category Navigation
+     */
+    didPickTheOneChoice () {
+        const node = this.node();
+        if (!node || !node.isPicked || !node.isPicked()) {
+            return false;
+        }
+        const optionsNode = node.optionsNode();
+        return !!optionsNode && !optionsNode.allowsMultiplePicks();
+    }
+
+    /**
+     * @description Whether the column the options were opened from is
+     * hidden: the level before this tile's own, as its browser's last pass
+     * left it. A column hidden to make room for a companion counts. (This
+     * was a test of the window's width against 540px, which is another
+     * question: Plans/Compaction Coordinator, decision 22.)
+     * @returns {Boolean}
+     * @category Navigation
+     */
+    returnColumnIsHidden () {
+        const stack = this.stackView();
+        const previous = stack ? stack.previousStackView() : null;
+        return !!(previous && previous.navView().isCollapsed());
+    }
+
+    /**
+     * @description Goes back to the column the options were opened from,
+     * unless the path has changed since the pick: a user who has already
+     * gone elsewhere stays there. Truncating AT the options node deselects
+     * it, which clears its column (the option list) and shows the one
+     * before.
+     * @param {SvBrowserView} browser
+     * @param {Array<SvNode>} pathAtPick
+     * @returns {SvOptionNodeTile}
+     * @category Navigation
+     */
+    stepBackIfStillAt (browser, pathAtPick) {
+        const now = browser.selectedNodePathArray();
+        const isSamePath = now.length === pathAtPick.length && now.every((node, i) => node === pathAtPick[i]);
+        if (isSamePath) {
+            const idx = pathAtPick.indexOf(this.node().optionsNode());
+            browser.navigate(SvNavigationRequest.toPath(pathAtPick.slice(1, idx)).setCause("program"));
+        }
         return this;
     }
 
