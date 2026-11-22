@@ -2,7 +2,7 @@
 
 The rules for which columns a browser shows and how wide each is, gathered into one place that can be tested without a browser.
 
-**Status:** the plan as of 2026-11-21. **Part A is built** (A1, A2, A3, A4 and A7, on dev, not released): see [Part A as built](#part-a-as-built-2026-11-21). Nothing after it is built, and each part starts on Steve's word. The thumbnail fix is built too, and part B's timings are taken: compaction is under the 2ms line, so C would rest on testability (see [Part B's timings](#part-bs-timings-2026-11-21)). **Part C is built** (2026-11-21, on dev): see [Part C as built](#part-c-as-built-2026-11-21). It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20 and a sixth on 2026-11-21. What each pass changed is marked "(review)" and "(review 2)" to "(review 6)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
+**Status:** the plan as of 2026-11-21. **Part A is built** (A1, A2, A3, A4 and A7, on dev, not released): see [Part A as built](#part-a-as-built-2026-11-21). Nothing after it is built, and each part starts on Steve's word. The thumbnail fix is built too, and part B's timings are taken: compaction is under the 2ms line, so C would rest on testability (see [Part B's timings](#part-bs-timings-2026-11-21)). **Part C is built** (2026-11-21, on dev): see [Part C as built](#part-c-as-built-2026-11-21). It is part 2 of [Browser Cleanup](../Browser%20Cleanup/); [Tile Container Views](../Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. **Steve's decisions of 2026-11-22:** the release of parts A to C is held; three part D changes go ahead (no column for an inlined section, a document that fills whenever it is shown, the option tile's test); which node a column's width comes from is left as it is; a right-to-left language mirrors by the page's direction. See [Decisions](#decisions), 19 to 24. **Those three part D changes are built** (2026-11-22, on dev, not released): see [Part D as built](#part-d-as-built-2026-11-22). The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20 and a sixth on 2026-11-21. What each pass changed is marked "(review)" and "(review 2)" to "(review 6)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
 
 **What changed from the first draft (2026-11-19).** That draft proposed a layout object, `SvColumnLayout`, that was handed a flat list of columns and answered with a plan. The review found three things it had not taken in: the levels are nested inside each other, not laid side by side; each level chooses its own direction; and an object that solved the whole layout would have to repeat what the views already know about themselves. This version keeps each view's knowledge in the view and moves only the arithmetic. It also puts the small, safe fixes first and a measurement before the larger change.
 
@@ -369,7 +369,7 @@ The risk to watch: if a claim ever needs to carry a rule and not a value, the fu
 - **Which way is the view's business when it applies its answer:** the flex order, the edge its companion docks on, the side its border is drawn on.
 - **The rules are worded without sides.** Columns give way "from the root end", the earliest levels first, not "from the left". A companion sits at the "far edge" of its level. The function and its test use these words, and `SvCompanionView` already speaks of an edge and a length.
 - **The vertical axis is not compacted today**, in either direction: a `"down"` level is never hidden. If rows are ever to give way for height, it is the same function run on the other axis with heights, and is a part D decision.
-- **A language's direction and a node's direction are two things.** Mirroring the whole interface for a right-to-left language could be done by the page's text direction, with the views writing start and end where they now write left and right, and no node changing its orientation. A node that asks for `"left"` on its own is the other case. Both come out the same in the arithmetic. Which of them a right-to-left language should use is open, and is not decided here.
+- **A language's direction and a node's direction are two things.** Mirroring the whole interface for a right-to-left language could be done by the page's text direction, with the views writing start and end where they now write left and right, and no node changing its orientation. A node that asks for `"left"` on its own is the other case. Both come out the same in the arithmetic. **Decided (Steve, 2026-11-22): a right-to-left language mirrors by the page's direction.** It is what print and software made for those languages do: the first column of a page is the rightmost, an outline hangs from the right margin and indents leftward, and Windows, macOS, iOS and Android each set one layout direction on the view tree and write their views by start and end (leading and trailing). In an Arabic macOS the Finder's column view has its root on the right and each deeper level opens to its left. Inside a row the thumbnail is on the right and the disclosure mark on the left, pointing left. Numbers and embedded Latin text stay left to right. A short list must not flip: media playback controls and the playback scrubber, clocks, photographs and logos. Nothing is built for it yet. A node that asks for `"left"` on its own remains a separate feature, for when a node wants it.
 
 #### Inline documents
 
@@ -396,11 +396,53 @@ None is in C. Together they are the road from C to the one protocol described in
 - **Nested allocation.** Each level hands what it has left to its child. It differs from today where a companion sits in the middle of a chain.
 - **Priorities.** An order to give way in other than from the left.
 - **A claim with a least and a most**, for inline documents, and for a container in Tile Container Views if one ever has to ask a neighbour to give way. A column then takes a share of the leftover width without having to be last.
-- **A document that stays wide when something is opened from it**, and a level that repeats an inlined section giving way first, or not being built. See [Inline documents](#inline-documents).
+- **A document that stays wide when something is opened from it**, and a level that repeats an inlined section giving way first, or not being built. See [Inline documents](#inline-documents). **Built 2026-11-22:** the section's level is not built, and the document fills whenever it is shown. See [Part D as built](#part-d-as-built-2026-11-22).
 - **Layout that follows width.** A level shown inline when there is room and as a column when there is not. A folded section is already a tile, so the two are the same idea at different widths.
 - **`"left"` and `"up"` directions**, and compaction along the vertical axis. See [Four directions](#four-directions).
 - **Direction that follows width.** A narrow root turns levels `"down"` in place of hiding columns. A single-column phone mode is the far end of this.
 - **Animation.** The browser has the old answers and the new ones, so it knows what moved.
+
+#### Part D as built (2026-11-22)
+
+Three of the changes above, each decided by Steve on 2026-11-22 (decisions 20 to 22). Two strvct commits, on dev, not released.
+
+| Change | Commit | What it does |
+| --- | --- | --- |
+| No column for an inlined section | `d5298fa5` | A path through a document passes through its sections. The tile opens beside the document, and its row is shown selected inside its section. |
+| A document fills whenever it is shown | `d5298fa5` | A claim says `fillsWhenShown`. The hidden-or-shown test is unchanged. |
+| The option tile's test | `93f1204b` | Steps back when the level before its own is hidden. `narrowViewportThreshold` (540) is gone. |
+
+**No column for an inlined section.** `SvTilesView_inline.navTileForPath(path)` answers where a path leads in a column: the tile to open and how many of the path's nodes it took. A section on the path takes a node and opens nothing; a path that leaves the sections out finds its tile inside them. `SvStackView.selectNodePathArray` asks it, selects that tile (`selectNavTile`), and hands the rest of the path to the next level. `syncFromNavSelection` reads `navSelectedTile()`, which in a document looks inside the sections. A row inside a section tells the document's stack when its selection changes, where it told nobody before.
+
+- **The path read back leaves the sections out.** I had told Steve the path would still name the section. It cannot do both that and go back in one step: back removes the last node of the path, and a path of document, section, tile would need two presses, the first of which changes nothing on screen. So a path that is *given* may name the sections (a tap inside a document still sends one that does, and a path worked out from the model would), and the path the browser *reports* has none. The breadcrumbs read Document, Destination.
+- **A path that ends on a section** opens nothing and leaves the document as it was.
+- **A column or section with no tiles yet** is synced before it is searched (`tileWithNodeSyncingIfNeeded`). The fixture found this: a path selected straight into a new document failed, because a new section's rows are not built until it syncs.
+- **Not done:** a tile inside a folded section is found and opened, and the section stays folded, so its selected row is not seen.
+
+**A document fills whenever it is shown.** The claim gains `fillsWhenShown`; `fills` stays as it was (true for a document only while it is last, when it has always been shown). The rule in `SvLayerAllocation`:
+
+- Hidden or shown by the same test as any column, with its target as its least. So a phone is as before.
+- Shown, with only plain columns after it: they are exactly their targets, and it has the rest. The last column no longer takes the slack when a document before it is shown.
+- Shown, with something after it that takes what it is given (another document, a fill column, a level laid out downward): the two share what is left evenly. **This case is not what I described to Steve**, and a real sheet found it. The Spellbook is itself an inline document, so "the deepest one fills" left the sheet at 300px beside a 1,088px Spellbook, the very thing the change was for. With sharing, at 2,000px the sheet is 709px and the Spellbook 679px. The same holds for a chat opened from a sheet.
+- A level whose node returns `nodeWantsFullWidth` still hides every column before it, a document included (decision 21).
+
+The answer carries `trailingWidth` (what everything after the column asks for: its own companion's reservation and the sum of the later levels) and `trailingFlexes` (whether what follows shares the leftover). The column starts from its target and grows; `SvDetailView.updateOuterFlex`, the one writer of the detail view's share, starts it from `trailingWidth` and lets it grow only when `trailingFlexes`. Nothing is measured.
+
+**The option tile.** `returnColumnIsHidden()` reads whether the level before the tile's own is collapsed, as the last pass left it. `stepBackIfStillAt(browser, pathAtPick)` runs after the 300ms delay and does nothing if the path has changed.
+
+**Checked on dev:**
+
+- `TestLayerAllocation`: 72 checks (17 new, for a column that fills when shown).
+- `tests/e2e/compaction-inline-document.spec.js` (new): a fixture of plain nodes at 2,000, 1,400, 800 and 390px, 57 readings (a tap inside a section, the path read back, back to the document, paths that name the section, leave it out and end on it, and a resize with the tile open); and a real character sheet with its Spellbook opened at 2,000px and at 390px. Run against the build before the change, 37 of the fixture's readings differed, which is the record of what it did.
+- `tests/e2e/option-tile-step-back.spec.js` (new): five cases in a 1,800px window. Before the change the two that matter (a 400px parent in 650px, and a 390px browser embedded in the wide window) stayed on the picker.
+- Unchanged: the fixture matrix (1,482 level states, 0 differences), the session recording's layouts at all 41 steps, and the trigger, width table, inline lab, companion, mobile width and character sheet specs.
+
+**Not shown:**
+
+- The session recording opens no tile from a sheet (a new character's sheet has none to open), so the two document rules are seen on a real sheet only in My Characters, not inside a session pane.
+- The matrix has no inline-document variant; the new spec stands in for one.
+- The "gone elsewhere" case passes on the old build too, since the old rule never stepped back in a wide window. It shows the new rule does not move such a user; it does not show the recheck is what stops it.
+- Nothing was run on a real phone.
 
 ## What asks for a pass
 
@@ -461,14 +503,17 @@ These were the recommendations; they are now the plan. Any of them can be reopen
 17. **The companion's code is kept and nothing is spent on it now.** A6 and the two companion recordings wait until a node uses one. C still takes a reservation. (Steve, 2026-11-20)
 18. **The first grid in Tile Container Views does not wait on this plan.** The table and the scrolling keep their place until someone checks what they need. (Steve, 2026-11-20)
 
+19. **The release of parts A to C is held** until `session-anchored-tabs` has been run against a build from before part A and the reviewer has read part C. (Steve, 2026-11-22)
+20. **A node its parent shows inline makes no column of its own.** The path still names it; the stack builds no level for it. First of the part D changes. (Steve, 2026-11-22)
+21. **An inline document fills whenever it is shown,** not only while it is last. The hidden-or-shown test is unchanged, with the document's target as its least, so a phone is as before. The exception is a hint that asks otherwise: a level whose node returns `nodeWantsFullWidth` (a session) still claims the whole root width and is the first thing shown until the user navigates back from it. That hint is read on anchored-tabs levels only, as now. A claim with a least and a most waits for a grid or table that needs it. (Steve, 2026-11-22)
+22. **The option tile steps back when the column to return to is hidden,** in place of when the window is under 540px, with the details agreed in the second review. Checked in a fixture, since no route to the differing cases is known in the app. (Steve, 2026-11-22)
+23. **Which node a column's width comes from is left as it is.** No one has seen a wrong width, 21 hides most of what was left, and either consistent rule changes the Party tab's width in a session. If it is taken up, the presented node is the candidate. (Steve, 2026-11-22)
+24. **A right-to-left language mirrors by the page's direction,** with views written by start and end. See [Four directions](#four-directions). Nothing is built yet. (Steve, 2026-11-22)
+
 ### Still open
 
-- **Whether C goes ahead, and argued how.** Steve decides with part B's numbers in hand.
-- **The option tile's test** (was A5): step back when the column to return to is hidden, in place of when the window is under 540px.
-- **Which node a column's width comes from** (was A8), with the Party tab and its solo sheet as the case to settle.
-- **How a right-to-left language mirrors the interface:** by the page's text direction, or by nodes asking for `"left"`. The allocation is the same either way.
-- **Whether to stop building a column for a section an inline document already shows.** It is built today (seen in a fixture). A part D decision.
-- **Everything in part D,** each when it comes up.
+- **Which node a column's width comes from** (was A8): left as it is for now (decision 23).
+- **The rest of part D,** each when it comes up.
 
 ## Questions for the reviewer
 
@@ -513,5 +558,7 @@ No questions were outstanding. The reviewer read the recordings and said part A 
 
 ### For the next pass
 
-1. **Part A is built;** see [Part A as built](#part-a-as-built-2026-11-21). Two things I would like checked: that the fixture behind my width table is a fair stand-in for yours (its first row reads 300px where yours reads 17em, for the reason given there), and whether you see anything A1 could have changed that a recorder of layouts would not show.
-2. **The away-rolls switch was seen in a browser** on the first part A deploy (`tests/e2e/away-rolls-switch.spec.js`, two players on dev): drawn in Settings for owner and guest, switched off by a mouse click as the guest and back on as the owner, and both windows showed each change. Two things it turned up, neither mended: a click on the row's label does not switch it, only a click on the switch itself; and in the Settings pane at a 1,280px window the label is cut short ("GM rolls for away players after a mi…").
+1. **Part C is built** (see [Part C as built](#part-c-as-built-2026-11-21)) and has had no review. Three things I would like read hardest. The trigger is a comparison at the root (`layerSignature()`: the two widths and, per level, which stack it is, whether it is on the page, and its claim) run where a pass used to be asked for, not a pass scheduled for the end of the cycle; is there a change that alters a layout and none of those? The second step changed 9 matrix states on purpose (a hinted last column under "full" keeps its hint, held to the room, as its minimum); is that the right minimum? And a first node update after a navigation can run one pass on a detached, cached chain whose signature is empty; I worked round it in the trigger spec and did not mend it.
+2. **Three part D changes are built** (see [Part D as built](#part-d-as-built-2026-11-22)), on Steve's decisions of 2026-11-22. Two places where the build is not what I told him, both written up there: the path read back leaves an inlined section out, and two documents (or a document and a fill column) share the width left over. A check of the selection would be welcome: a row inside a section is now selected, and `navSelectedTile()` looks through every section of a document on each change of selection.
+3. **Before a release** (decision 19): `session-anchored-tabs` fails five tests on dev and has not been run against a build from before part A.
+4. **Part A's two questions stand:** whether the fixture behind my width table is a fair stand-in for yours (its first row reads 300px where yours reads 17em), and whether A1 could have changed something a recorder of layouts would not show.
