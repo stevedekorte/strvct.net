@@ -305,12 +305,32 @@
      * @category Inline
      */
     selectNavTile (aTile) {
+        this.unfoldSectionsAround(aTile);
         aTile.setIsSelected(true);
         this.navRowTiles().forEach(tile => {
             if (tile !== aTile && tile.unselect) {
                 tile.unselect();
             }
         });
+        return this;
+    }
+
+    /**
+     * @description Opens the folded sections a tile sits in, so the row a
+     * stack shows as open can be seen. The view changes and the node is not
+     * told: the player did not fold or open anything.
+     * @param {SvTile} aTile
+     * @returns {SvTilesView_inline}
+     * @category Inline
+     */
+    unfoldSectionsAround (aTile) {
+        let section = aTile.firstParentViewWithAncestorClass(SvInlineSectionTile);
+        while (section) {
+            if (section.isCollapsed()) {
+                section.setIsCollapsed(false);
+            }
+            section = section.firstParentViewWithAncestorClass(SvInlineSectionTile);
+        }
         return this;
     }
 

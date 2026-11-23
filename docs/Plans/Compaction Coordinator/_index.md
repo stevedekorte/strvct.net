@@ -417,7 +417,7 @@ Three of the changes above, each decided by Steve on 2026-11-22 (decisions 20 to
 - **The path read back leaves the sections out.** I had told Steve the path would still name the section. It cannot do both that and go back in one step: back removes the last node of the path, and a path of document, section, tile would need two presses, the first of which changes nothing on screen. So a path that is *given* may name the sections (a tap inside a document still sends one that does, and a path worked out from the model would), and the path the browser *reports* has none. The breadcrumbs read Document, Destination.
 - **A path that ends on a section** opens nothing and leaves the document as it was.
 - **A column or section with no tiles yet** is synced before it is searched (`tileWithNodeSyncingIfNeeded`). The fixture found this: a path selected straight into a new document failed, because a new section's rows are not built until it syncs.
-- **Not done:** a tile inside a folded section is found and opened, and the section stays folded, so its selected row is not seen.
+- **A folded section opens** when a path selects a tile inside it (added later on 2026-11-22), so the row shown as open can be seen. The node is not told of it: the player folded nothing. `compaction-inline-document.spec.js` holds it; against the build before, the section stayed folded.
 
 **A document fills whenever it is shown.** The claim gains `fillsWhenShown`; `fills` stays as it was (true for a document only while it is last, when it has always been shown). The rule in `SvLayerAllocation`:
 
