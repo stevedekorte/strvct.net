@@ -2,7 +2,26 @@
 
 Layout strategies for presenting a node's subnodes.
 
-**Status:** open. The wrapping grid does not wait on anything (decided 2026-11-20): it wraps inside the width its column is already given, as an inline document does. The table and the scrolling keep their place after the [Compaction Coordinator](../Compaction%20Coordinator/) until someone checks whether they need to ask a neighbouring column for width. **Order:** `setNodeTilesViewClass()` and the wrapping grid, then the table, then scrolling over windowed collections; the search and filter chrome takes the Search & Filtering item from [Emergent Capabilities](../Emergent%20Capabilities/). Each container gets its ARIA roles when it is written, not later.
+**Status:** open. The wrapping grid does not wait on anything (decided 2026-11-20): it wraps inside the width its column is already given, as an inline document does. The [Compaction Coordinator](../Compaction%20Coordinator/), which the table and the scrolling waited on, was released 2026-11-22; if a table needs to ask a neighbouring column for width, that is the coordinator's "claim with a least and a most", a part D item taken up then. **Order:** `setNodeTilesViewClass()` and the wrapping grid, then the table, then scrolling over windowed collections; the search and filter chrome takes the Search & Filtering item from [Emergent Capabilities](../Emergent%20Capabilities/). Each container gets its ARIA roles when it is written, not later.
+
+## The first grid: a recommendation for discussion (2026-11-23)
+
+Written before any code, because three things in it are Steve's to decide.
+
+**1. Opt in with the layout hint, not a view class.** The plan above says `setNodeTilesViewClass(SvGridTilesView)`. Since it was written, the framework settled on hints that name a role, read by the generic view: `nodeChildrenLayout()` already answers `"column"` or `"inline"`. A grid is a third answer, `"grid"`. The node says how its children are arranged, and the view decides how to draw that. The swap to another UI (a terminal, headless) then needs no class names, and nothing in a node names a view. `setNodeTilesViewClass()` would stay unbuilt until a container needs code the generic view cannot hold, which may be the spatial map. *Recommended.*
+
+**2. How it is built.** It is a mode of `SvTilesView`, as inline documents are (`SvTilesView_inline`), and not a subclass:
+
+- **Layout.** CSS grid, `repeat(auto-fill, minmax(<cell>, 1fr))`, so cells wrap inside the width the column is given, with no measuring. The cell width comes from the parent's `nodeChildrenTileWidth()` (today it means "a tile in a horizontal row"; it would also mean "a grid cell"), or a default.
+- **The column.** A grid fills whenever it is shown, as an inline document does (`fillsWhenShown`), so it is offered the width left over rather than a list column's width. That is a part D rule that already exists, with no new compaction work.
+- **The cell.** It is still the tile the child would have in a list, so selection, drag, theming and drill-in carry over. In a grid, a tile whose node has a thumbnail shows it above the title, filling the cell's width (`SvTitledTile` already decides by layout whether a thumbnail fits).
+- **Keys.** Left and right move along a row; up and down move by one row, by the column count the grid has at that moment. That count is a value the grid writes, not one it measures.
+- **ARIA.** `list` and `listitem`, not `grid` and `gridcell`. A collection of links the user opens is a list; the `grid` role promises spreadsheet-like cell navigation, which this does not have. Each container gets its roles when it is written.
+- **Reorder.** Drag to reorder works by the same index as in a list; the drop indicator is drawn between cells rather than between rows.
+
+**3. The first user, so it can be seen.** A character's artwork (`UoArtworkFolder`, whose items already have thumbnails) is the clearest case in the app: a gallery that today is a list of rows. The alternative is a fixture node in the app's Inline Lab, which shows the grid without changing what players see. *Recommended: the artwork folder, with a fixture for the specs.*
+
+**Not in the first grid:** the switcher between a list and a grid (`nodeAlternativeTilesViewClasses()`), virtual scrolling, and container chrome.
 
 ## Context
 

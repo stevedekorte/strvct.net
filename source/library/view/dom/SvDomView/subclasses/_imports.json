@@ -9,6 +9,7 @@
     "SvImageZoomView.js",
     "SvScrimView.js",
     "SvOverlayBannerView.js",
+    "SvLiveAnnouncer.js",
     "SvgIconCache.js",
     "SvgIconView.js",
     "browser-only/_imports.json",

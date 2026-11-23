@@ -363,6 +363,7 @@
      */
     childUpdatedNavPath (/*aStackView*/) {
         this.noteCauseOfPathChange();
+        this.announceArrivalIfNeeded();
         this.syncNavPathMembership();
         this.breadCrumbsView().didChangeBrowserPath();
         this.syncBreadCrumbsVisibilityHint();
@@ -645,9 +646,8 @@
     /**
      * @description This browser's path changed: remember why. A change with
      * a request being carried out is that request's; any other was made in
-     * the columns themselves — the user's tap or key. (A model's
-     * focus-this-subnode note also lands in the columns and is recorded as
-     * the user's for now: docs/Plans/Browser Cleanup, part 1, second pass.)
+     * the columns themselves — the user's tap or key. (A model's focus note
+     * is selected in the columns on behalf of a request: selectInColumnsFor.)
      * @returns {SvBrowserView}
      * @category Navigation
      * @private
@@ -655,6 +655,45 @@
     noteCauseOfPathChange () {
         const path = this.selectedNodePathArray().filter(node => node);
         this.setLastNavigationRequest(this.pendingNavigationRequest() || SvNavigationRequest.toPath(path).setCause("user"));
+        return this;
+    }
+
+    /**
+     * @description Selection done in the columns themselves, on behalf of a
+     * request, so a path change it makes is recorded as that request's. For
+     * a model's focus note, which the column showing the parent carries out
+     * (it scrolls to and opens the tile) rather than this browser walking a
+     * path. A navigation already being carried out keeps its own cause.
+     * @param {SvNavigationRequest} aRequest
+     * @param {Function} aFunction - the selection, run now
+     * @returns {SvBrowserView}
+     * @category Navigation
+     */
+    selectInColumnsFor (aRequest, aFunction) {
+        const outer = this.pendingNavigationRequest();
+        this.setPendingNavigationRequest(outer || aRequest);
+        try {
+            aFunction();
+        } finally {
+            this.setPendingNavigationRequest(outer);
+        }
+        return this;
+    }
+
+    /**
+     * @description Tells a screen reader where the user has been taken when
+     * code moved them (Accessibility Testing & Tuning: announce programmatic
+     * navigation, stay silent on the user's own). Says the new place's title.
+     * @returns {SvBrowserView}
+     * @category Accessibility
+     * @private
+     */
+    announceArrivalIfNeeded () {
+        const request = this.lastNavigationRequest();
+        const place = this.selectedNodePathArray().filter(node => node).last();
+        if (request && request.isSpokenToScreenReader() && place) {
+            SvLiveAnnouncer.shared().announce(this.breadCrumbsView().titleForNode(place));
+        }
         return this;
     }
 

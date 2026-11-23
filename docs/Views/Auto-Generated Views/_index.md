@@ -148,7 +148,6 @@ Tiles are individual items rendered inside `SvTilesView` columns:
 | **`SvTile`** | Base tile class. Handles selection, long-press reorder, slide-to-delete, and style state cascades. |
 | **`SvTitledTile`** | Default tile. Displays title, subtitle, and note from `SvSummaryNode`. |
 | **`SvHeaderTile`** | Non-selectable section header tile. |
-| **`SvBreadCrumbsTile`** | Compact breadcrumb trail tile. |
 
 ### Field Tiles (`SvFieldTile`):
 

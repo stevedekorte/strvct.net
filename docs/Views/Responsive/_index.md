@@ -1,10 +1,10 @@
 # Responsive Views
 
-Automatic viewport compaction, last-column stretching, and per-node width hooks without per-screen layout code.
+Automatic column compaction, last-column stretching, and per-node width hooks, without per-screen layout code.
 
 ## Overview
 
-Responsive behavior in STRVCT is not a separate rendering mode or set of CSS breakpoints. The same master-detail composition that produces a multi-column Miller view on a wide desktop produces a one-column stack with breadcrumbs on a phone, because `SvStackView` measures available width and automatically collapses columns that would overflow the viewport.
+Responsive behavior in STRVCT is not a separate rendering mode or set of CSS breakpoints. The same master-detail composition that produces a multi-column Miller view on a wide desktop produces a one-column stack with breadcrumbs on a phone, because each column states what it needs and one allocation over the whole chain hides the columns that would overflow.
 
 This behavior—**automatic collapsing**—falls out of the same primitives used for navigation at any width; there is zero separate "mobile" code path in the view hierarchy.
 
@@ -56,34 +56,37 @@ This behavior—**automatic collapsing**—falls out of the same primitives used
 
 ---
 
-## The Two Layout Mechanisms
+## Claims and One Allocation
 
-### 1. Compaction (`compactNavAsNeeded`)
-`SvStackView.compactNavAsNeeded()` walks the stack chain from outermost (leftmost) to innermost (rightmost), summing target widths against available viewport space (`topViewWidth()`):
-- **Fits:** The column is `uncollapse()`d and displayed.
-- **Overflows:** Earlier columns are `collapse()`d (`display: none`). The current (deepest) column stays visible as long as possible.
+Each level of a browser's chain states a **claim**: a small record of plain values that says what it needs, such as the width it asks for, whether it fills the width left over, and how much its companion or anchored panes reserve (`SvStackView.layerClaim()`). The root hands every claim in the chain, with the root's width, to `SvLayerAllocation`, which uses no DOM and no views. It answers for each level whether it is hidden and which width rule it takes. Each column applies its own answer in one place (`SvNavView.applyLayerAnswer()`).
 
-### 2. Last-Column Stretch (`updateWidthForWindow`)
-`SvNavView.updateWidthForWindow()` determines width for visible columns:
-- If `targetWidth() >= windowWidth`, the column takes `width: 100%`.
-- If a column is the last visible column AND `windowWidth < targetWidth * 2`, it stretches to `width: 100%` to fill available slack instead of leaving dead space.
+The rules, each held by a check in `tests/headless/TestLayerAllocation.js`:
+
+- **Which columns show.** A column's sum is its own target plus every target and reservation after it. A column is shown while its sum is less than the width the chain must fit in, and hidden otherwise, so columns give way from the root end and the deepest stays longest. A column that fills is always shown; a level laid out downward is never hidden.
+- **How wide.** A column that fills takes the width left over. A column whose target is at least the available width takes all of it, and so does the last column when it has less than twice its target to fit in, so a narrow window leaves no dead space. Any other column is exactly its target. A target is capped one pixel short of the available width.
+- **An inline document** (a node whose `nodeChildrenLayout()` is `"inline"`) fills whenever it is shown, not only when it is last, and is hidden by the same test as any other column.
+
+**When a pass runs.** A pass runs only when something it depends on has changed: the root's width, which stacks make up the chain and whether each is on the page, or a level's claim. The root keeps the signature of its last pass and skips one that would change nothing, so an ordinary node update, such as a streamed chat chunk, costs nothing. Widths are read once per pass from cached measurements, never after a write.
+
+The design, its history and the measurements are in [Compaction Coordinator](../../Plans/Compaction%20Coordinator/index.html).
 
 ---
 
-## Per-Node Layout Protocol Hooks
+## Per-Node Layout Hooks
 
 Domain nodes can influence layout without writing custom view code:
 
 | Node Method | Purpose & Behavior |
 |---|---|
-| `nodeMinTileWidth()` | Declares a minimum tile width floor for the column. Useful for wide property inspectors. |
-| `nodeFillsRemainingWidth()` | When `true`, forces the column to stretch to 100% width whenever it is the last visible column. Useful for document editors or chat logs. |
+| `nodeMinTileWidth()` | The width the node's column asks for (its target). The default target is 270px; a column whose tiles show thumbnails adds room for them. |
+| `nodeFillsRemainingWidth()` | When `true`, the column stretches to take the width left over whenever it is the last visible column. Useful for document editors or chat logs. |
+| `nodeChildrenLayout()` | `"inline"` draws the children within the node's own column, as a document, and the column fills whenever it is shown. |
 
 ---
 
 ## Viewport vs Device Detection
 
-- **`SvWebBrowserWindow.shared().width()`**: Returns current viewport width in CSS pixels. Always use this for layout and compaction decisions.
+- **`SvWebBrowserWindow.shared().width()`**: Returns current viewport width in CSS pixels. Use it for layout decisions in views. (Compaction itself uses the root's own width, so a browser embedded in a panel compacts to the panel, not the window.)
 - **`SvWebBrowserWindow.shared().isOnMobile()`**: User-agent string match (iPhone/Android). Use *only* for touch-gesture or platform-specific permissions, never for column width sizing.
 
 ---

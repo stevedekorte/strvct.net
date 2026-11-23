@@ -2,7 +2,7 @@
 
 Validating and refining the framework's ARIA implementation across screen readers, devices, and applications.
 
-**Status:** ongoing. **Order:** the automated regression checks (last section) first, since they keep what exists from slipping; the manual screen-reader passes after [Browser Cleanup](../Browser%20Cleanup/) and [Tile Container Views](../Tile%20Container%20Views/), so they test the navigation and containers that will stay. The navigation announcements need Browser Cleanup's single navigation entry point, which knows whether the user or the program navigated.
+**Status:** ongoing; checked against the code 2026-11-23. **Built 2026-11-23:** the [navigation announcements](#navigation-announcement-mechanism), and the breadcrumb bar's `aria-current="location"` put back (it was lost when the bar became `SvBreadCrumbsView` on 2026-06-12). Both are checked in Chromium by `tests/e2e/navigation-announcements.spec.js` in the app repo, which reads the live region's text and attributes. **Not yet heard with a screen reader**: a pass with VoiceOver is the next check. What this plan waited on is done: [Browser Cleanup](../Browser%20Cleanup/) is built and its compaction coordinator released (2026-11-22). **Order:** the VoiceOver check of the announcements; the automated checks (last section), which do not exist yet in either repo; the manual screen-reader passes after the first [Tile Container Views](../Tile%20Container%20Views/) grid, so they test containers that will stay.
 
 ## Overview
 
@@ -33,12 +33,13 @@ The framework overrides native Tab behavior with a custom `nextKeyView` chain. T
 
 ## Navigation Announcement Mechanism
 
-The policy is established: announce programmatic navigation, stay silent on user-initiated navigation. The mechanism needs implementation.
+The policy: announce programmatic navigation, stay silent on user-initiated navigation.
 
-- Investigate whether tile-selection navigation and programmatic navigation go through different code paths in `SvStackView` / `SvNavView`
-- Determine how to detect "this focus change was not a direct response to a tile selection"
-- Implement `aria-live` announcements for programmatic navigation (e.g., "Start Session" navigating to Narration view)
-- Test that user-initiated drill-in/drill-out does not produce redundant announcements
+**Built 2026-11-23.** Every move through `SvBrowserView.navigate(aRequest)` carries a cause, and a model's focus notes are now selected on behalf of a `"program"` request ([Browser Cleanup](../Browser%20Cleanup/#second-pass-built-2026-11-23)). When a browser's path changes, it asks the request behind the change (`SvNavigationRequest.isSpokenToScreenReader()`: true only for `"program"`) and, if so, says the new place's title through `SvLiveAnnouncer`. That is the page's one polite live region (`role="status"`), out of sight but in the accessibility tree. It empties itself and writes the title a moment later, so the same place said twice is heard twice, and a burst of moves is heard as its last.
+
+- Spoken: the app's opening move, a model's `onRequestNavigateToNode`, a focus or focus-and-expand note (a new session opening its chat, a new item opened after an add).
+- Not spoken: a tile, key or breadcrumb the user chose, an address typed or Back, a browser settling into its base state.
+- **Left:** hear it with VoiceOver, on a Mac and on an iPhone. Check that a polite announcement is not cut off by the focus moving at the same moment, and that a session's opening (several moves in a row) says one useful thing rather than several.
 
 ## Cross-Screen-Reader Testing
 

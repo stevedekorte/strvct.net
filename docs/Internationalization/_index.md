@@ -170,7 +170,7 @@ SvI18n.shared().setIsEnabled(true);
 ## View Integration Details
 
 - **Field Tiles (`SvFieldTile`):** Calls `node.translatedValueOfSlotNamed()` in `visibleKey()`, automatically displaying translated field labels.
-- **Breadcrumb Navigation (`SvBreadCrumbsTile`):** Observes `"svI18nLanguageChanged"` notification, rebuilding breadcrumb path segments in the new language.
+- **Breadcrumb Navigation (`SvBreadCrumbsView`):** Observes `"svI18nLanguageChanged"` notification, rebuilding breadcrumb path segments in the new language.
 - **Custom Views:** Any view can observe `"svI18nLanguageChanged"` to trigger a UI refresh when the active language changes.
 
 ---

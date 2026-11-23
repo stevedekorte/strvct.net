@@ -46,8 +46,8 @@
  *     "continuation": true,
  *     "parent_message_id": "def456"
  *   }'
- 
- 
+
+
  */
 
 (class SvAnthropicRequest extends SvAiRequest {
@@ -77,7 +77,7 @@
      */
         {
             const slot = this.newSlot("betaVersion", "tools-2024-05-16"); // "messages-2023-12-15"
-            slot.setSlotType("NumbeStringr");
+            slot.setSlotType("String");
         }
 
     }

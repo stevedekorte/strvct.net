@@ -188,10 +188,60 @@ function testRequest () {
     check(Request.toPathString("A/B").setCause("url").summary() === "'A/B' (url)", "a request can describe itself");
 }
 
+// Browser Cleanup part 1, second pass: a model's focus note is selected in the
+// columns on behalf of a "program" request, and only code's moves are spoken.
+function testFocusNotes () {
+    const Request = SvGlobals.get("SvNavigationRequest");
+    const a = newNode("A", newNode("Root"));
+
+    console.log("\nWhat a screen reader is told");
+    check(Request.toPath([a]).setCause("program").isSpokenToScreenReader(), "code moving the user is spoken");
+    check(["user", "url", "base"].every(cause => !Request.toPath([a]).setCause(cause).isSpokenToScreenReader()), "the user's own move, an address and the base state are not");
+
+    console.log("\nSelection in the columns on behalf of a request");
+    const proto = SvGlobals.get("SvBrowserView").prototype;
+    const browser = { pending: null, pendingNavigationRequest () {
+        return this.pending;
+    }, setPendingNavigationRequest (r) {
+        this.pending = r;
+        return this;
+    }, selectInColumnsFor: proto.selectInColumnsFor };
+    const focus = Request.toNode(a).setCause("program");
+    let seen = null;
+    browser.selectInColumnsFor(focus, () => {
+        seen = browser.pendingNavigationRequest();
+    });
+    check(seen === focus, "a path change made inside is recorded as the focus request's");
+    check(browser.pendingNavigationRequest() === null, "and the browser has no pending request afterwards");
+    const outer = Request.toPath([a]).setCause("url");
+    browser.pending = outer;
+    browser.selectInColumnsFor(focus, () => {
+        seen = browser.pendingNavigationRequest();
+    });
+    check(seen === outer && browser.pendingNavigationRequest() === outer, "a navigation already under way keeps its own cause, and stays pending");
+    browser.pending = null;
+    try {
+        browser.selectInColumnsFor(focus, () => {
+            throw new Error("selection failed");
+        });
+    } catch (e) {
+        // expected
+    }
+    check(browser.pendingNavigationRequest() === null, "a selection that throws still leaves nothing pending");
+
+    console.log("\nBoth focus notes go through it (static scan)");
+    const src = fs.readFileSync(path.join(strvctRoot, "source/library/node/node_views/browser/stack/SvTilesView/SvTilesView_selection.js"), "utf8");
+    ["shouldFocusAndExpandSubnode", "shouldFocusSubnode"].forEach(name => {
+        const body = src.slice(src.indexOf("    " + name + " (aNote) {"));
+        check(/^[\s\S]*?selectForModel\(/.test(body.slice(0, body.indexOf("\n    }\n"))), name + " selects on behalf of a program request");
+    });
+}
+
 async function main () {
     testScan();
     await boot();
     testRequest();
+    testFocusNotes();
     console.log("\n" + passed + " passed, " + failed + " failed");
     process.exit(failed === 0 ? 0 : 1);
 }

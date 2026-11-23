@@ -95,7 +95,7 @@ Each core view class emits an appropriate ARIA role:
 | `SvOptionNodeTile` | `option` | Individual selectable option |
 | `SvStackView` | `navigation` | Top-level navigation landmark |
 | `SvNavView` | `region` | Named content region |
-| `SvBreadCrumbsTile` | `navigation` | Breadcrumb navigation with `aria-label="Breadcrumb"` |
+| `SvBreadCrumbsView` | `navigation` | Breadcrumb navigation with `aria-label="Breadcrumb"`; the last crumb has `aria-current="location"` |
 
 ---
 
@@ -186,7 +186,7 @@ Produces a field tile with `aria-required="true"`, `aria-valuemin="0"`, `aria-va
 Landmark roles provide structural navigation for screen readers:
 - `SvStackView` is marked as `navigation` -- the top-level navigation structure
 - `SvNavView` is marked as `region` with an `aria-label` derived from the current node's title
-- `SvBreadCrumbsTile` is marked as `navigation` with `aria-label="Breadcrumb"`
+- `SvBreadCrumbsView` is marked as `navigation` with `aria-label="Breadcrumb"`, and its last crumb as `aria-current="location"`
 
 ---
 
@@ -221,7 +221,7 @@ Landmark roles provide structural navigation for screen readers:
 | `SvChatMessageTile.js` | `aria-live="polite"` |
 | `SvStackView.js` | `role="navigation"` |
 | `SvNavView.js` | `role="region"`, `aria-label` |
-| `SvBreadCrumbsTile.js` | `role="navigation"`, `aria-label="Breadcrumb"`, `aria-current="location"` |
+| `SvBreadCrumbsView.js` | `role="navigation"`, `aria-label="Breadcrumb"`, `aria-current="location"` |
 
 ---
 

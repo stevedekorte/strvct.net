@@ -32,6 +32,9 @@
  *
  * A selection made directly in the columns does not arrive as a request: the
  * browser hears of the path change afterwards and records it as the user's.
+ * A model's focus note (postShouldFocusSubnode,
+ * postShouldFocusAndExpandSubnode) is selected in the columns too, but on
+ * behalf of a "program" request (SvBrowserView.selectInColumnsFor).
  */
 
 (class SvNavigationRequest extends ProtoClass {
@@ -137,6 +140,17 @@
      */
     isUsersOwn () {
         return this.cause() === "user";
+    }
+
+    /**
+     * @description Whether a screen reader should be told where this request
+     * went: only when code moved the user. The user's own moves, an address
+     * they opened and a browser settling into its base state are not news.
+     * @returns {Boolean}
+     * @category Cause
+     */
+    isSpokenToScreenReader () {
+        return this.cause() === "program";
     }
 
     // --- resolving against a browser ---

@@ -265,6 +265,20 @@
     }
 
     /**
+     * @description Marks the last crumb as the current location for assistive
+     * technology (`aria-current="location"`, the ARIA breadcrumb pattern) and
+     * clears the mark from the others.
+     * @param {Array} crumbViews The crumb segment views, in path order.
+     * @returns {SvBreadCrumbsView} The current instance.
+     * @category Accessibility
+     */
+    markCurrentCrumb (crumbViews) {
+        const last = crumbViews.length - 1;
+        crumbViews.forEach((view, i) => view.setAriaCurrent(i === last ? "location" : null));
+        return this;
+    }
+
+    /**
      * @description Rebuilds the crumb segment views from the current path.
      * @returns {SvBreadCrumbsView} The current instance.
      * @category View Creation
@@ -285,7 +299,9 @@
             this._lastRenderedPathNodes = []; // next normal render fades in fresh
             this.setBackButtonView(this.newBackButton());
             this.addSubview(this.backButtonView());
-            this.addSubview(this.newCollapsedCrumbView(collapsedTitle));
+            const collapsedCrumb = this.newCollapsedCrumbView(collapsedTitle);
+            this.addSubview(collapsedCrumb);
+            this.markCurrentCrumb([collapsedCrumb]);
             this.addHeaderItemsView(pathNodes);
             return this;
         }
@@ -311,6 +327,7 @@
 
         let isFirst = true;
         let renderedIndex = 0;
+        const crumbViews = [];
         pathNodes.forEach((node, i) => {
             const title = this.titleForNode(node);
             if (title === "") {
@@ -322,8 +339,11 @@
             isFirst = false;
             const isSettled = (renderedIndex < settledCount);
             renderedIndex++;
-            this.addSubview(this.crumbViewForNode(node, i, pathNodes, isSettled));
+            const crumbView = this.crumbViewForNode(node, i, pathNodes, isSettled);
+            crumbViews.push(crumbView);
+            this.addSubview(crumbView);
         });
+        this.markCurrentCrumb(crumbViews);
         this.addHeaderItemsView(pathNodes);
 
         this.scheduleMethod("updateCompaction");

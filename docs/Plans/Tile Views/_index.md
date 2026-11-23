@@ -20,7 +20,7 @@ Nodes select their tile class via `setNodeTileClass()`. All tiles inherit the st
 | `SvTitledTile` | `SvTile` | Adds title, subtitle, note, note icon, and thumbnail subviews. |
 | `SvHeaderTile` | `SvTitledTile` | Section header with selectable state and specific theme class. |
 | `SvTextNodeTile` | `SvTile` | Displays and edits text nodes with a `SvTextView`. |
-| `SvBreadCrumbsTile` | `SvTile` | Breadcrumb path navigation. |
+| `SvBreadCrumbsView` | `SvFlexDomView` | Breadcrumb path navigation; a view the browser owns, no longer a tile (2026-06-12). |
 
 ### Field Tiles
 

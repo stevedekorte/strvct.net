@@ -3,46 +3,48 @@ subtitle: The order to do the other plans in, why, and what should change in the
 ---
 # Meta Plan
 
-**As of:** 2026-11-19. Every plan page opens with a status line; this page orders them. Steps 1 to 5 are built: 1 to 3 done, 4 (Capabilities & Permissions) and 5's first part (slot constraints) built and used by the app, and on 2026-11-19 most of their browser-side work was run in a browser against `just launch` (Next Steps A: what passed, and what is still unseen). Two pieces of work grew out of these steps: shared promises (step 3) and, on 2026-11-18, taking the app's class names out of framework code (step 2's boundary, the other direction).
+**As of:** 2026-11-23. Every plan page opens with a status line; this page orders them. Steps 1 to 6 are built: 1 to 3 done, 4 (Capabilities & Permissions) and 5's first part (slot constraints) seen working in a browser on 2026-11-19, and 6 (Browser Cleanup) built in all four parts, its compaction coordinator released to production on 2026-11-22. On 2026-11-23 the plans were checked against the code: Browser Cleanup's composable breadcrumbs and auxiliary view had been built on 2026-06-12, as `SvBreadCrumbsView` and the companion, and the plan had not noticed. The steps below follow from that check.
 
 ## Next Steps
 
-Chosen 2026-11-18, in this order.
+Chosen 2026-11-23, in this order. The 2026-11-18 set (A to C) is [below](#done-the-2026-11-18-steps).
 
-### A. A browser pass over steps 2 to 5
+### 1. Put back what the 2026-11-23 check found broken or stale — done (2026-11-23)
 
-Four steps of work were checked headless only, and the framework guide's evidence bar ("did I verify, or did I just read?") is not met for any of it. This comes before new work, because each later step builds on these, and a bug found now has one suspect rather than five. One session in the app (`just launch`, `https://localhost:8443`), a host and a second player, checking:
+Small, and each is a fault a reader or a user can meet today. All done the same day: the breadcrumbs' `aria-current` (with `TestBreadCrumbsAriaCurrent`), the Responsive page rewritten around claims and `SvLayerAllocation`, and the stale class name replaced.
 
-- **Step 2 (platform accessors):** an invite link's `?invite=` survives boot (`SvPlatform.pageUrl()`); opening a link, picking a file and copying text go through the view actions; an error report carries the user agent.
-- **Step 3 (promises):** images and blobs load after a reload and after a failed fetch (the shared promise retries); nothing logs an unhandled rejection.
-- **Step 4 (editability):** as a non-admin, a drop onto an admin-only catalog is refused and says so, and nothing saves; a title, a reorder and a field edit are refused the same way; a write the server refuses reloads the document and tells the user.
-- **Step 5 (slot constraints):** a character sheet value typed outside its bounds (death saves past 3, negative coins) shows the field's error sentence and is held back from the model; the field carries `aria-valuemin` / `aria-valuemax`; an AI patch that breaks one is refused with the sentence. (There is no `aria-invalid` yet; add it if the pass shows a screen reader misses the error.)
-- **The 2026-11-18 cleanup:** assistant chat messages now use `SvChatMessageTile` rather than the app's tile; they should look exactly as before, including the narrated-sentence highlight.
+- **The breadcrumb bar's `aria-current`.** `SvBreadCrumbsTile` set `aria-current="location"` on the last crumb; `SvBreadCrumbsView`, which replaced it on 2026-06-12, does not. Put it back, with a headless check.
+- **Docs that describe code that is gone.** [Responsive](../../Views/Responsive/) explains compaction with `compactNavAsNeeded` and `updateWidthForWindow`, both removed by the compaction coordinator; rewrite it around claims and `SvLayerAllocation`. [Accessibility](../../Accessibility/), [Internationalization](../../Internationalization/) and [Auto-Generated Views](../../Views/Auto-Generated%20Views/) still name `SvBreadCrumbsTile`.
 
-Run with `?thrash=count` on, since steps 2 and 4 touched view code. Each failure becomes a fix with a test where one can be written; the pass is done when every line above has been seen working.
+### 2. Keep the framework free of app names (was B) — test built (2026-11-23), the prompt example waits
 
-**2026-11-19: run against `just launch`, in Playwright specs that cost nothing to rerun.**
+**Built:** `TestUndefinedClassNames` fails when framework code uses a name as a class (`extends`, `new`, `instanceof`, `.clone()`, `.shared()`, a slot type, `SvGlobals.get`) that no framework file defines, that is not a platform API, and that is not listed with its reason. It found no app names, and two real faults, both fixed: an audio file read through `SvResourceFile` made an `SvSoundResource`, a class that never existed (seen decoding to an `SvWaSound` in a browser after the fix), and a slot type spelled `"NumbeStringr"`. It does not read prose in strings, so it cannot see the prompt example below.
 
-- **Passed:** the invite (`hosted-table-invite-signup.spec.js`, made to run locally: a link opened signed out survives boot and sign-in and joins the table, with one session). Step 2's accessors, step 3's retry and reload, the tile wiring and the thrash check (`meta-plan-step-a.spec.js`): the page url and an error report's user agent; opening a link, picking a file and copying through `SvWebUserInterface`; an image read that failed is read again on the next ask and loads, and loads after a reload, with no unhandled rejection; assistant replies resolve to `SvChatMessageTile` and the session's tile inherits its highlight; typing two lines in a chat input with `?thrash=count` forces no layouts (a forced write-then-read is counted, so 0 is a measurement). Steps 4 and 5 through the model (`editability-browser-pass.spec.js`): a non-editor's catalog campaign offers no edits by the server's answer; a forced save is refused 403, reloaded and said ("Read only — You can't edit …"); out-of-bounds patches and field values give their sentences.
-- **Found and fixed:** `just launch` had started with an empty catalog since 2026-11-13 (`records.js` judged "local" at load, before the seeder pointed at the emulators); the editability spec's forced save edited a derived, unstored title and never reached the server.
-- **Passed through the views, on the deployed dev project** (`editability-views-browser-pass.spec.js`, mouse and keyboard). Step 4, on the catalog tree as a non-editor (the tree is hidden from players, so the spec makes it visible first): no read-only tile offers editable text; typing over a title, Delete and Backspace, a held drag to reorder, and a file dropped on the list all change nothing, and the drop is said. Step 5, on a character's raw death-save and coin fields (a character opens as its derived sheet everywhere, so the spec hangs the fields under a folder to reach their tiles): the tiles carry `aria-valuemin` / `aria-valuemax`; a 4 typed into Failures shows "Must be at most 3." and the model keeps its value; a 2 is taken and the sentence goes.
-- **Found and fixed through the views:** Cmd+D duplicated the selected tile into a read-only list. `duplicateSelectedTiles()` asked nothing, neither the cascade nor `nodeCanAddSubnode()`, so the ratchet test (which looks for raw capability reads) could not see it. It and pinch-to-add now ask the cascade, and `TestEditabilityInViews` also fails on a view method that changes a node's list without asking.
-- **What the pass showed about reach:** a player cannot get to either place by hand. The catalog's own nodes are never shown to a non-admin (My Worlds shows copy offers), and no screen shows a character's raw number fields. So for players today the cascade's view refusals and a field's error sentence are a second line; the first is the server's refusal and the patch preflight.
-- **Still unseen:** a failed fetch from Cloud Storage rather than the local pool (locally a public image cannot be pushed, so this needs a deployed project); the narrated-sentence highlight seen during real narration.
+What was planned: the ratchet test, like `TestPlatformGlobalsInModels`: fail when framework code references a class that no framework file defines. It needs no app prefix, so it stays general, and it stops the drift the 2026-11-18 cleanup undid. One known use stays until Steve chooses: the tool instructions every AI conversation receives (`SvToolDefinitions`) use the app's `rollRequest` and `UoRollRequestMessage` as their worked example. The recommendation is a neutral example made up for the framework, with the game keeping its own in its prompt files; it changes the game's prompt, so it waits on that choice. Details in [Naked Objects Issues](../Naked%20Objects%20Issues/#app-names-in-framework-code).
 
-### B. Keep the framework free of app names
+### 3. Navigation announcements, with the entry point's second pass — built (2026-11-23), not yet heard with VoiceOver
 
-The 2026-11-18 cleanup found a framework method that looked up the app's `UoSession` (a ReferenceError under any other app) and a framework class that named the app's tile; both are gone, along with about 30 comments and a fixture that used app classes as examples. One use is left on purpose, pending a decision: the tool instructions every AI conversation receives (`SvToolDefinitions`) use the app's `rollRequest` tool and `UoRollRequestMessage` as their worked example. Changing it changes the game's prompt, so it waits on a choice between a neutral example and one built from the first real tool definition.
+**Built:** a model's focus notes are selected on behalf of a `"program"` request, and a browser says the title of a place code moved the user to, through one polite live region (`SvLiveAnnouncer`). Checked headless (`TestNavigationEntryPoint`) and in Chromium against `just launch` (`tests/e2e/navigation-announcements.spec.js`, new; `navigation-entry-point` and `meta-plan-step-a` still pass). Still to do: listen with VoiceOver. See [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/#navigation-announcement-mechanism).
 
-Then a ratchet test like `TestPlatformGlobalsInModels`: fail when framework code references a class that no framework file defines, which needs no app prefix and so stays general. Small, and it stops the drift that the cleanup undid. Details in [Naked Objects Issues](../Naked%20Objects%20Issues/#app-names-in-framework-code).
+What was planned:
 
-### C. Browser Cleanup, part 1: one navigation entry point
+The first feature in [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/#navigation-announcement-mechanism), and the last open part of Browser Cleanup. A path change now says who caused it, so announcing a `"program"` navigation is a listener and a live region. It is right only once the focus-and-expand notes and the other unrequested path changes go through `navigate()` ([second pass](../Browser%20Cleanup/#second-pass-open)); today they are recorded as the user's and would go unannounced. Checked in a browser with VoiceOver, not only headless.
 
-**Built 2026-11-19.** `SvBrowserView.navigate(aRequest)` takes an `SvNavigationRequest` that says where to go and who asked; the older entry points are removed, and the browser remembers the request behind its latest path change. A tile the user taps reports afterwards, and the focus-and-expand notes wait for a second pass. See [Browser Cleanup](../Browser%20Cleanup/#one-navigation-entry-point). The compaction coordinator, Tile Container Views and the navigation announcements in Accessibility waited on it and can start.
+### 4. Tile Container Views: the wrapping grid — proposal written, waiting on three decisions (2026-11-23)
+
+A recommendation is in [Tile Container Views](../Tile%20Container%20Views/#the-first-grid-a-recommendation-for-discussion-2026-11-23): opt in with `nodeChildrenLayout()` answering `"grid"`, not a view class; build it as a mode of `SvTilesView` that fills whenever shown; first used by a character's artwork. Nothing is built until those are agreed.
+
+What was planned: `setNodeTilesViewClass()` and the first grid. It waits on nothing (decided 2026-11-20), and the manual accessibility passes and the Photo Gallery case study wait on it. Its ARIA roles come with it.
 
 ### Not next
 
-More slot constraints are declared where a wrong value is seen, not as a project (each is a decision about stored data). The two hand-kept promises in [Cleanup Notes](../Cleanup%20Notes/#hand-kept-promises) wait until their files are changed. Promise-wrapped slots wait for a first user.
+More slot constraints are declared where a wrong value is seen, not as a project (each is a decision about stored data). The two hand-kept promises in [Cleanup Notes](../Cleanup%20Notes/#hand-kept-promises) wait until their files are changed. Promise-wrapped slots wait for a first user. The rest of the compaction coordinator's part D, and the companion's missing hints, wait for a case that needs them. A review of compaction parts C and D, which shipped without one, is welcome whenever a reviewer is free; its questions are in [For the next pass](../Compaction%20Coordinator/#for-the-next-pass).
+
+### Done: the 2026-11-18 steps
+
+- **A. A browser pass over steps 2 to 5** (2026-11-19). Run against `just launch` and the deployed dev project, in Playwright specs that cost nothing to rerun: `hosted-table-invite-signup`, `meta-plan-step-a`, `editability-browser-pass` and `editability-views-browser-pass`. It found and fixed an empty catalog under `just launch` (since 2026-11-13) and Cmd+D duplicating into a read-only list; `TestEditabilityInViews` now also fails on a view method that changes a node's list without asking. It showed that a player cannot reach the catalog's nodes or a character's raw number fields by hand, so for players the view refusals and a field's error sentence are a second line behind the server's refusal and the patch preflight. **Still unseen:** a failed fetch from Cloud Storage rather than the local pool (needs a deployed project), and the narrated-sentence highlight during real narration.
+- **B. App names.** Carried forward as step 2 above.
+- **C. One navigation entry point** (2026-11-19). `SvBrowserView.navigate(aRequest)`; see [Browser Cleanup](../Browser%20Cleanup/#one-navigation-entry-point). The compaction coordinator followed it and was released 2026-11-22.
 
 ## Where Things Stand
 
@@ -51,14 +53,15 @@ More slot constraints are declared where a wrong value is seen, not as a project
 | [Complete Protocols](../Complete%20Protocols/) | Done | Defaults on base classes, `SvJsonSerializableProtocol`, and a ratchet test. |
 | [Lazy Slots](../Lazy%20Slots/) | Shipped | Rewritten to describe what shipped; a few items remain. |
 | [Async Final Initialization](../Async%20Final%20Initialization/) | Closed | Its main case was solved by manifests and then lazy loading. |
-| [Naked Objects Issues](../Naked%20Objects%20Issues/) | Done, one follow-up | Every listed class moved; the ratchet test's baseline is empty. Two gaps stay open until needed. App class names were taken out of framework code (2026-11-18); one prompt example and a ratchet test are left (next step B). |
-| [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. Now lists the two hand-kept promises still to move to shared promises. |
+| [Naked Objects Issues](../Naked%20Objects%20Issues/) | Done, one decision left | Every listed class moved; seen in a browser 2026-11-19. App class names were taken out of framework code (2026-11-18), and `TestUndefinedClassNames` keeps them out (2026-11-23). One prompt example waits on a decision (next step 2). |
+| [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway, including the two hand-kept promises. |
 | [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Core done, unused | One shared promise per value, retry after failure, recompute on a dependency change; no slot uses it yet. |
-| [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Built, unverified in a browser (next step A) | Every view edit path asks the editability cascade; the server says who may write and the cascade uses its answer; a refused commit reloads and says so. Read, share and create hooks wait for a need. |
-| [JSON Schema](../JSON%20Schema/) | Slot constraints built, unused | A slot's `minimum`, `maxLength` and the rest reach the schema, the field's error text, ARIA and a refused AI patch; the setter only warns. `pattern` is checked too. The app declares its first few (2026-11-18). Class-level keywords and type unions are left. |
-| [Browser Cleanup](../Browser%20Cleanup/) | Next new work | Holds the compaction notes; has its own order. Part 1 (one navigation entry point) is built; part 2 (the compaction coordinator) is next. |
-| [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Later | The wrapping grid can start on its own (2026-11-20); the table and scrolling wait on compaction. Large collections rewritten around windowed collections. |
-| [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) | Ongoing | Automated checks now; manual passes after the navigation work. |
+| [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Built, seen in a browser | Every view edit path asks the editability cascade; the server says who may write; a refused commit reloads and says so. Read, share and create hooks wait for a need. Not yet run on the Spanner backing. |
+| [JSON Schema](../JSON%20Schema/) | Slot constraints built | A slot's `minimum`, `maxLength`, `pattern` and the rest reach the schema, the field's error text, ARIA and a refused AI patch. The app declares its first few. Class-level keywords and type unions are left. |
+| [Browser Cleanup](../Browser%20Cleanup/) | Built | All four parts: the entry point (2026-11-19, second pass 2026-11-23), the compaction coordinator (released 2026-11-22), composable breadcrumbs and the companion (2026-06-12). The companion's missing hints wait for a node that uses one. |
+| [Compaction Coordinator](../Compaction%20Coordinator/) | Released | Parts A to D in production 2026-11-22; C and D had no outside review. The rest of part D waits for cases. |
+| [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) | Started | Navigation announcements and the breadcrumbs' `aria-current` built 2026-11-23, checked in Chromium; a VoiceOver check is next. No automated checks yet. |
+| [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Next after | The wrapping grid is next step 4 and waits on nothing; the table and scrolling follow. Large collections rewritten around windowed collections. |
 | [Case Studies](../Case%20Studies/) | Later | Contacts can run early. |
 | [Emergent Capabilities](../Emergent%20Capabilities/) | Ideas | Each candidate now points to the plan that takes it. |
 | [Async Navigation](../Async%20Navigation/), [Graph Database](../Graph%20Database/) | Directions | No work planned. |
@@ -84,7 +87,7 @@ The rest of Cleanup Notes is for when a file is being changed anyway.
 
 **Shared promises (2026-11-15), which came out of this step.** Finishing the slot feature raised the question of the code that hand-kept a `fooPromise` for work several callers ask for at once. An audit of those copies found each had something wrong (a failure cached forever, a retry that never ran, a finished run clearing a newer one, an unhandled second rejection, work that carried on after being abandoned). `Object_sharedPromises.js` now gives every object three helpers (once, one at a time, fresh), and 23 hand-written copies in the framework and the app moved onto them. See [Async Patterns](../../Programming%20Idioms/Async%20Patterns/index.html). Two framework copies are left, listed in [Cleanup Notes](../Cleanup%20Notes/#hand-kept-promises).
 
-### 4. Capabilities & Permissions — built (2026-11-17), to verify in a browser
+### 4. Capabilities & Permissions — built (2026-11-17), seen in a browser (2026-11-19)
 
 The most user-facing value: the failure it describes is silent data loss. **Its first step is done (2026-11-16):** titles, drags in and out, reordering, desktop drops and three field paths now ask the cascade, a refused drop says so, and `TestEditabilityInViews` fails on a view that reads a raw capability.
 
@@ -96,23 +99,25 @@ Additive, and tighter schemas improve AI tool calls at once. Start by emitting t
 
 **Slot constraints — done (2026-11-17).** Ten setters on `Slot`, named after their JSON Schema keywords, with four readers: the schema, the error sentence a field shows, ARIA, and the setter's warning. An AI patch that breaks one is refused before anything is applied. See [JSON Schema](../JSON%20Schema/#what-was-built). `pattern` joined them on 2026-11-18 (`setPattern`, replacing the schema-only `setJsonSchemaPattern`). The app declared its first bounds the same day, after scanning its stored data for values outside them. What remains is declaring more where a wrong value is seen (each is a decision about stored data), and the class-level keywords and type unions when a case needs them.
 
-### 6. Browser Cleanup
+### 6. Browser Cleanup — built
 
-In its own order: one navigation entry point (built 2026-11-19), the compaction coordinator, composable breadcrumbs, the auxiliary view.
+One navigation entry point (2026-11-19); the compaction coordinator (released 2026-11-22); composable breadcrumbs and the auxiliary view, which turned out to have been built on 2026-06-12 as `SvBreadCrumbsView` and the companion. The entry point's second pass is left, and goes with the navigation announcements (next step 3).
 
 ### 7. Tile Container Views and Tile Views
 
-After the compaction coordinator. Meter and badge tiles can be done at any point.
+Next (step 4 above). Meter and badge tiles can be done at any point.
 
 ### 8. Accessibility
 
-Automated checks alongside step 1; manual passes after steps 6 and 7.
+Nothing built yet. The navigation announcements now, with the automated checks alongside; manual passes after the first grid (step 7).
 
 ### 9. Case Studies
 
 Contacts can run as early as step 2, as a gap-finder; what it finds comes back to this page. The rest once their features exist.
 
 ## Not Yet Plans
+
+- **The [First Principles](../../First%20Principles/) essay** is on hold (2026-11-23) until after the Thanksgiving break, or when Steve has time. He edits it by hand first, then asks for help.
 
 - **Undo / redo** has no other home. Write it as its own plan when wanted, built on slot-change notifications and `pool.transaction()`.
 - **Schema migration.** Class renames are handled (`classNameConversionMap()`); slot type changes and custom migrations aren't. Write a plan when a real type change needs it, taking in the migration item from Emergent Capabilities.

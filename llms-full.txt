@@ -1,6 +1,6 @@
 # STRVCT — Full Documentation
 
-Site build: STRVCT · 2026-11-20 · 9e9887d2
+Site build: STRVCT · 2026-11-22 · 02177109
 
 You write the domain model. STRVCT does the rest while the app runs: it presents your objects in a user interface on desktop and phone, stores them locally, syncs them to the cloud, imports and exports them as JSON, and lets AI agents read and edit them. Nothing is generated ahead of time: views are created from the live objects as the user navigates, and they update when the objects change. Add a property, annotate it, and every part picks it up. There is no separate form, storage mapping, or tool schema to write.
 
@@ -25,6 +25,7 @@ Write the domain model. Get the application.
 
 [**Read the paper →**](docs/Naked%20Objects/index.html)
 
+- [First Principles](docs/First%20Principles/index.html?back=..%2F..%2Findex.html) — What would we build if we started from first principles?
 - [Naked Objects](docs/Naked%20Objects/index.html?back=..%2F..%2Findex.html) — From Domain Models to Complete Applications
 - [Getting Started](docs/Getting%20Started/index.html?back=..%2F..%2Findex.html) — Setup, integration, directory conventions, build pipeline, and running your first Strvct application.
 - [Example App](Example%20App/index.html) — A complete contacts application in four classes, with zero view code.
@@ -42,6 +43,7 @@ Source: docs/
 
 Guides, architecture, and API reference.
 
+- [First Principles](docs/First%20Principles/index.html) — What would we build if we started from first principles?
 - [Naked Objects](docs/Naked%20Objects/index.html) — From Domain Models to Complete Applications
 - [Technical Overview](docs/Technical%20Overview/index.html) — High-level architecture, core design philosophy, and system-wide concepts of the Strvct framework.
 - [Implementation Overview](docs/Implementation%20Overview/index.html) — Deep technical specifications for class lifecycle, slots, views, persistence, notifications, and build infrastructure.
@@ -167,7 +169,7 @@ Each core view class emits an appropriate ARIA role:
 | `SvOptionNodeTile` | `option` | Individual selectable option |
 | `SvStackView` | `navigation` | Top-level navigation landmark |
 | `SvNavView` | `region` | Named content region |
-| `SvBreadCrumbsTile` | `navigation` | Breadcrumb navigation with `aria-label="Breadcrumb"` |
+| `SvBreadCrumbsView` | `navigation` | Breadcrumb navigation with `aria-label="Breadcrumb"`; the last crumb has `aria-current="location"` |
 
 ---
 
@@ -258,7 +260,7 @@ Produces a field tile with `aria-required="true"`, `aria-valuemin="0"`, `aria-va
 Landmark roles provide structural navigation for screen readers:
 - `SvStackView` is marked as `navigation` -- the top-level navigation structure
 - `SvNavView` is marked as `region` with an `aria-label` derived from the current node's title
-- `SvBreadCrumbsTile` is marked as `navigation` with `aria-label="Breadcrumb"`
+- `SvBreadCrumbsView` is marked as `navigation` with `aria-label="Breadcrumb"`, and its last crumb as `aria-current="location"`
 
 ---
 
@@ -293,7 +295,7 @@ Landmark roles provide structural navigation for screen readers:
 | `SvChatMessageTile.js` | `aria-live="polite"` |
 | `SvStackView.js` | `role="navigation"` |
 | `SvNavView.js` | `role="region"`, `aria-label` |
-| `SvBreadCrumbsTile.js` | `role="navigation"`, `aria-label="Breadcrumb"`, `aria-current="location"` |
+| `SvBreadCrumbsView.js` | `role="navigation"`, `aria-label="Breadcrumb"`, `aria-current="location"` |
 
 ---
 
@@ -1859,6 +1861,165 @@ These timers do not prevent their views from being garbage collected if the view
 
 ---
 
+<!-- Page: docs/First Principles -->
+Source: docs/First%20Principles/
+
+# First Principles
+
+What would we build if we started from first principles?
+
+## Abstract
+
+Most of the code in a typical application does not say what the application does. It says the same few facts about the domain over and over, in the different forms that screens, databases, networks and AI agents each require. This essay asks what a development environment would look like if it were designed from first principles rather than from the tools we already have.
+
+It argues that an ideal environment would:
+
+1. **Ask only for the essentials.** The author states what defines the problem (the domain's objects, the rules that hold between them, how they may change, and who may do what) once, and nothing more.
+2. **Supply the plumbing itself.** Storage, both local and in the cloud; keeping storage, domain logic and the interface in step as any of them changes; navigation, editing, accessibility and agent access. These are the same problems in nearly every application. They belong in shared, reusable abstractions, not in each application's code.
+3. **Derive the rest from the domain while the application runs.** Screens, storage formats and schemas are computed from the model, not written beside it. Because nothing is written by hand, the same model can be shown in more than one way, and where it helps, the user can choose.
+4. **Make customization cost what it changes.** The default costs nothing, a different arrangement costs a hint, and custom code is needed only for what is truly unusual.
+
+It then takes up the most natural objection, that interfaces vary too much to abstract well, and ends with questions for reviewing a change against these principles.
+
+---
+
+## 1. The minimum specification
+
+Every application has a core that cannot be simplified away, what Fred Brooks called *essential complexity*. It is whatever makes a medical records system different from an invoice ledger or a tabletop campaign manager, and there is a least amount of information needed to state it. It has three parts:
+
+1. **Structure:** the kinds of objects, their values and relationships, and the rules that must always hold between them.
+2. **Behavior:** the changes that are allowed, and the calculations and rules that govern them.
+3. **Policy:** what may be edited, what is shown and how prominently, and who may see or do what.
+
+In a conventional web application, stating those three things is a small part of the code. Most of the rest restates them in other forms: database schemas and migrations, data transfer types, API endpoints, client state stores, route tables, form components, validation rules, CSS selectors, accessibility attributes, and tool definitions for language models.
+
+None of these adds meaning. Each is a translation of the domain into a form some screen, disk or network needs. And each translation written by hand has three costs:
+
+* **More work per change.** Adding one concept to the domain means coordinated edits in several files, often in several languages.
+* **Drift.** Two places that state the same fact can come to disagree.
+* **Harder reading.** A reader, human or machine, has to piece the domain back together from code scattered across layers.
+
+So the ideal environment closes the gap between an application's source and its essential specification. Each fact about the domain is stated once, in a form that runs, and the translations are derived from it.
+
+---
+
+## 2. Reusable abstractions for the plumbing
+
+If the author supplies only the essentials, the environment has to supply everything else. Two questions follow: what should be shared, and how does an author change things when the default isn't right?
+
+### 2.1 Plumbing doesn't depend on the domain
+
+Local storage that survives a crash, cloud storage, keeping the two in sync across devices, keeping storage, domain logic and views in step whenever any of them changes, undo, localization and accessibility are all hard problems. That is exactly why each application should not solve them again. A log of changed records works the same whether the records are contacts or character sheets.
+
+In an ideal environment, a property of a domain object states only policy: its type, whether it is saved, whether it can be edited, whether views follow it. Shared machinery tracks what changed, saves it, updates the views in batches and commits atomically. The domain says *what* is saved and observed; the environment decides *when* and *how*.
+
+Interfaces work the same way. Moving through a graph of objects, selecting, inspecting, editing a field and fitting a small screen are the same operations whether the objects are invoices or spells. One abstraction that handles them, driven by the shape of the model, covers most of what most applications show.
+
+### 2.2 Customization should cost what it changes
+
+The earliest "naked objects" systems, which generated interfaces directly from domain objects, got a reputation for rigidity because of a cliff. If you accepted plain, database-style forms, you wrote no interface code. The moment you needed anything richer, you wrote all of it.
+
+The cost of customization should instead grow with how far an interface departs from the default, the way a compressed delta grows with how much changed:
+
+* **The default costs nothing.** Browsing from a list to its details, summary tiles, editing in place, validation messages, keyboard navigation, accessibility roles, and inspecting any object live all come without declaring a view.
+* **A different arrangement costs a hint.** When part of the model reads better as one continuous document than as nested columns, or a side panel should stay docked beside navigation, the model says so with a hint, or hands its presentation to another object. No templates, no event handlers.
+* **Something truly unusual costs a custom view.** When an object needs its own drawing or interaction, a custom view is attached to that kind of object, and it still takes part in the navigation, theming, change tracking and persistence around it.
+
+### 2.3 One model, many projections
+
+When every view is built by hand, a second way of showing the same data means building it again, so most applications offer one. When views are derived, a projection is written once and every application gets it.
+
+So the same model can appear in more than one form. A collection can be a column of tiles, a table, a grid of cards, or one continuous document. The same application can run on a desktop, on a phone, in a terminal, or with no interface at all for an agent or a test. And where it helps, the choice can be the user's: a table to compare items, a grid to browse them, a document to read them through.
+
+This does not undo the case for uniformity made below. Each projection is uniform in itself and works the same way for every kind of object, so what a user learns in one place still holds everywhere. What multiplies is the set of consistent views, not the number of one-off screens.
+
+---
+
+## 3. Uniformity is a feature
+
+The natural objection to all this is that interfaces vary too much to abstract well: every application seems to need screens of its own. This section argues that much of that variety is not needed, and that less of it is better for users.
+
+It is tempting to judge an environment that generates interfaces by how closely it can copy familiar, hand-built ones. That test assumes the hand-built ones are good for their users. Often they are not. Many familiar patterns come from how their builders think, what their organizations reward, or a domain model that was never properly divided up.
+
+### 3.1 Builders know too much
+
+The people who build an application carry its whole structure in their heads. Each area feels different to them, so they give each its own layout, its own dialogs, its own workflow.
+
+Users are in the opposite position. They don't know the structure, and they can't afford to learn a new visual language on every screen. For them, uniformity is not a compromise made to save engineering time; it makes the application easier to use. When finding, selecting, inspecting and acting on things work the same way everywhere (say, tiles inside columns, opening to their details, collapsing predictably on a phone), moving around becomes habit. Learn one part of the application and you can find your way around the rest.
+
+### 3.2 The first minute and the hundredth hour
+
+Software culture tends to reward visible complexity. Custom chrome, transitions and elaborate multi-pane layouts look impressive in a demo or a design review; they are built for the first minute. A restrained, uniform interface draws almost no attention to itself. Its value shows in the hundredth hour of use, when the interface has faded from view and the user is thinking only about the task.
+
+Treating every screen as a chance for a new design has a price. Each one handles focus, the keyboard and small screens in its own way, and each one is another thing for the user to learn. An environment that discourages this protects its users from it.
+
+### 3.3 Don't build in the patterns you'd avoid
+
+If an environment is judged by whether it can rebuild stacked modal dialogs, wizard carousels, improvised filter drawers and crowded dashboards, its vocabulary of annotations will grow to support all of them, though they are rarely the best answer. Annotations that choreograph layout in detail turn model classes back into view templates. The environment gets more complex, and the applications get no easier to use.
+
+### 3.4 A uniform view tests the model
+
+In conventional development, custom layout is often used to hide a model that is poorly divided. When one class has gathered forty loosely related properties, the interface hides the crowding behind tabs, accordions and rules about which fields appear when.
+
+A uniform view can't hide it. It works like a wind tunnel for the domain model: if an object looks cluttered or confusing when shown the standard way, suspect how the domain is divided before suspecting the view. Splitting an overloaded object into a few coherent parts often fixes the screen, and it also gives storage a better granularity, makes each part easier to test, and makes the model easier for people and agents to understand.
+
+### 3.5 When custom views are earned
+
+Set aside habit, decoration and poorly divided models, and few problems still need custom interfaces. The clearest case is data with **real geometry**: spatial, graphical or temporal relationships that people take in by looking rather than by reading. A map, a 3D scene, a timeline, a page layout.
+
+Away from real geometry, a uniform view is usually not just cheaper than a custom one. It is clearer.
+
+---
+
+## 4. Why this matters more with AI
+
+Keeping the specification minimal matters more when language models help write, review and run the software.
+
+While the application runs, an agent can work on the model with a small, fixed vocabulary: fetch a schema, apply a patch. Adding classes adds no new tools. This alone does not keep an agent's work cheap as the model grows; a larger schema still takes more reading.
+
+The bigger effect is during development:
+
+* **A feature fits in view.** When a feature lives in one class instead of five layers kept in step, everything that matters to it fits in what a model can attend to at once.
+* **There are no seams to drift across.** Language models are good at local changes and poor at keeping unstated agreements between distant files. Remove the duplicate statements and you remove the places where those agreements break.
+
+Language models also bring habits learned from conventional code. Asked to fix a local problem, an AI assistant will tend to reach for the usual fix: a one-off adapter, a global setting, a CSS override, a second copy of a schema. Each fix passes the test in front of it and wears the design down a little. Keeping a codebase minimal therefore means writing its principles down where people and agents will read them, and reviewing changes against them.
+
+---
+
+## 5. Questions for review
+
+The principles become practical as checks that can be made against any plan or change.
+
+### 5.1 Invariants
+
+* **A new property is one edit.** Adding an ordinary property to an existing class (saved, editable, accessible, synced, visible to agents) should touch exactly one place: its declaration. A change that requires a second edit for every new property has leaked a translation.
+* **New classes need no new agent tools.** Growing the domain model must not mean registering tools per class.
+* **The model runs without an interface.** Domain objects and their persistence must run on a bare server runtime or in a test, with no reference to views or browser globals.
+* **Every custom view has a reason.** A new custom view should point to real geometry, or to interaction the uniform interface cannot express, that dividing the model differently would not solve.
+
+### 5.2 Before building a feature
+
+Before building something non-trivial, whether a person or an AI agent proposed it, ask:
+
+1. **Does it add work per class, or a second source of truth?** A design that needs boilerplate in every class, or a second place where a schema, a limit or a list must be kept in step by hand, is a step backward and should be redesigned.
+2. **Is a request for interface hiding a problem in the model?** Before adding a layout option or a custom view, see whether splitting an overloaded object into parts solves it with nothing new at all.
+3. **Does a new shared mechanism pay for itself?** A new primitive or annotation is worth adding when it removes repeated work across different applications, not when it encodes one application's policy.
+
+---
+
+## 6. What it costs
+
+Removing the restatements does not make the domain any easier, and it is not free. Three tensions call for judgment.
+
+**Hints can turn into view code.** If annotations multiply to control the details of layout, domain classes stop reading as descriptions of the domain and become configuration tables. The interface code has only moved onto the model. Hints should stay few, broad, and about meaning rather than appearance.
+
+**Departing from convention makes it unfamiliar.** An environment that derives what other tools have people write by hand works differently from what newcomers know, and their experience transfers only partly. Its documentation, for people and for machines, has to make up the difference, so it has to be complete and current.
+
+**Principles don't replace taste.** Whether a workflow calls for dividing the model differently, a presentation hint, or a custom view is still a judgment about people and systems. What first principles offer is a shared direction: as features accumulate, and as AI writes more of the code, the application moves toward its essential specification and not away from it.
+
+
+---
+
 <!-- Page: docs/Getting Started -->
 Source: docs/Getting%20Started/
 
@@ -2778,7 +2939,7 @@ SvI18n.shared().setIsEnabled(true);
 ## View Integration Details
 
 - **Field Tiles (`SvFieldTile`):** Calls `node.translatedValueOfSlotNamed()` in `visibleKey()`, automatically displaying translated field labels.
-- **Breadcrumb Navigation (`SvBreadCrumbsTile`):** Observes `"svI18nLanguageChanged"` notification, rebuilding breadcrumb path segments in the new language.
+- **Breadcrumb Navigation (`SvBreadCrumbsView`):** Observes `"svI18nLanguageChanged"` notification, rebuilding breadcrumb path segments in the new language.
 - **Custom Views:** Any view can observe `"svI18nLanguageChanged"` to trigger a UI refresh when the active language changes.
 
 ---
@@ -5904,7 +6065,7 @@ Source: docs/Plans/Accessibility%20Testing%20%26%20Tuning/
 
 Validating and refining the framework's ARIA implementation across screen readers, devices, and applications.
 
-**Status:** ongoing. **Order:** the automated regression checks (last section) first, since they keep what exists from slipping; the manual screen-reader passes after [Browser Cleanup](docs/Plans/Browser%20Cleanup/) and [Tile Container Views](docs/Plans/Tile%20Container%20Views/), so they test the navigation and containers that will stay. The navigation announcements need Browser Cleanup's single navigation entry point, which knows whether the user or the program navigated.
+**Status:** ongoing; checked against the code 2026-11-23. **Built 2026-11-23:** the [navigation announcements](docs/Plans/Accessibility%20Testing%20%26%20Tuning/#navigation-announcement-mechanism), and the breadcrumb bar's `aria-current="location"` put back (it was lost when the bar became `SvBreadCrumbsView` on 2026-06-12). Both are checked in Chromium by `tests/e2e/navigation-announcements.spec.js` in the app repo, which reads the live region's text and attributes. **Not yet heard with a screen reader**: a pass with VoiceOver is the next check. What this plan waited on is done: [Browser Cleanup](docs/Plans/Browser%20Cleanup/) is built and its compaction coordinator released (2026-11-22). **Order:** the VoiceOver check of the announcements; the automated checks (last section), which do not exist yet in either repo; the manual screen-reader passes after the first [Tile Container Views](docs/Plans/Tile%20Container%20Views/) grid, so they test containers that will stay.
 
 ## Overview
 
@@ -5935,12 +6096,13 @@ The framework overrides native Tab behavior with a custom `nextKeyView` chain. T
 
 ## Navigation Announcement Mechanism
 
-The policy is established: announce programmatic navigation, stay silent on user-initiated navigation. The mechanism needs implementation.
+The policy: announce programmatic navigation, stay silent on user-initiated navigation.
 
-- Investigate whether tile-selection navigation and programmatic navigation go through different code paths in `SvStackView` / `SvNavView`
-- Determine how to detect "this focus change was not a direct response to a tile selection"
-- Implement `aria-live` announcements for programmatic navigation (e.g., "Start Session" navigating to Narration view)
-- Test that user-initiated drill-in/drill-out does not produce redundant announcements
+**Built 2026-11-23.** Every move through `SvBrowserView.navigate(aRequest)` carries a cause, and a model's focus notes are now selected on behalf of a `"program"` request ([Browser Cleanup](docs/Plans/Browser%20Cleanup/#second-pass-built-2026-11-23)). When a browser's path changes, it asks the request behind the change (`SvNavigationRequest.isSpokenToScreenReader()`: true only for `"program"`) and, if so, says the new place's title through `SvLiveAnnouncer`. That is the page's one polite live region (`role="status"`), out of sight but in the accessibility tree. It empties itself and writes the title a moment later, so the same place said twice is heard twice, and a burst of moves is heard as its last.
+
+- Spoken: the app's opening move, a model's `onRequestNavigateToNode`, a focus or focus-and-expand note (a new session opening its chat, a new item opened after an add).
+- Not spoken: a tile, key or breadcrumb the user chose, an address typed or Back, a browser settling into its base state.
+- **Left:** hear it with VoiceOver, on a Mac and on an iPhone. Check that a polite announcement is not cut off by the focus moving at the same moment, and that a session's opening (several moves in a row) says one useful thing rather than several.
 
 ## Cross-Screen-Reader Testing
 
@@ -6150,7 +6312,7 @@ Source: docs/Plans/Browser%20Cleanup/
 
 Simplifying and documenting the browser navigation architecture.
 
-**Status:** open; part 1 is built (2026-11-19, see [One navigation entry point](docs/Plans/Browser%20Cleanup/#one-navigation-entry-point)). **Order:** (1) one navigation entry point, (2) a compaction coordinator with a written protocol, (3) composable breadcrumbs, (4) the auxiliary view, which needs 2 and 3. [Tile Container Views](docs/Plans/Tile%20Container%20Views/) waited on 2; its first grid no longer does (2026-11-20), and the navigation announcements in [Accessibility Testing & Tuning](docs/Plans/Accessibility%20Testing%20%26%20Tuning/) wait on 1. The compaction notes from Cleanup Notes are merged in below.
+**Status:** built: parts 1 to 4, and part 1's second pass (checked against the code 2026-11-23). (1) One navigation entry point: built 2026-11-19, see [below](docs/Plans/Browser%20Cleanup/#one-navigation-entry-point). (2) The compaction coordinator: released 2026-11-22, see [Compaction Coordinator](docs/Plans/Compaction%20Coordinator/). (3) Composable breadcrumbs and (4) the auxiliary view were built on 2026-06-12, before this plan was last revised, which did not notice: each browser owns its own `SvBreadCrumbsView`, and a node's `nodeCompanionNode()` gives it a [companion](docs/Views/Companion%20View/) with an embedded browser of its own. The entry point's [second pass](docs/Plans/Browser%20Cleanup/#second-pass-built-2026-11-23) was built on 2026-11-23, with the navigation announcements in [Accessibility Testing & Tuning](docs/Plans/Accessibility%20Testing%20%26%20Tuning/). **Left:** the parts of the auxiliary-view sketch the companion did not take, which wait for a node that uses a companion ([below](docs/Plans/Browser%20Cleanup/#auxiliary-view)). The compaction notes from Cleanup Notes are merged in below.
 
 ## Current Architecture
 
@@ -6158,7 +6320,7 @@ The browser is built from four cooperating classes that implement a recursive Mi
 
 ### SvBrowserView
 
-The top-level container. Extends `SvStackView` and adds application-level concerns: listening for `onRequestNavigateToNode` notifications, handling keyboard shortcuts, and managing the root node hierarchy (app root, settings, breadcrumbs). On startup it schedules `moveToBase()` to set the initial navigation state.
+The top-level container. An `SvNodeView` (since 2026-06-12; before that a subclass of `SvStackView`) that owns two subviews: an `SvBreadCrumbsView` above an `SvStackView` rooted at the browser's node. It is the one way in for navigation (`navigate(aRequest)`), listens for `onRequestNavigateToNode` / `onRequestSelectNodePath` when `handlesGlobalNavRequests` is set (an embedded browser clears it), handles keyboard shortcuts, and settles into its base state when nobody has navigated it.
 
 ### SvStackView
 
@@ -6169,8 +6331,8 @@ Key responsibilities:
 - **Path selection**: `selectNodePathArray(pathArray)` walks an array of nodes, selecting one at each level and recursing into the next stack view.
 - **Path reporting**: `selectedNodePathArray()` and `selectedPathTitlesString()` return the current selection path by walking up or down the stack chain.
 - **Direction**: The `direction` slot (`"right"` or `"down"`) controls whether subnodes lay out as side-by-side columns or stacked rows. Nodes set this via `setNodeIsVertical()` -- the stack view reads it and adjusts its flex direction accordingly. The recursive combination of different directions at each level is what distinguishes STRVCT's navigation from a standard Miller column browser.
-- **Compaction**: `updateCompactionChain()` automatically collapses columns that don't fit the available width, showing them as expandable when space is available again.
-- **Notification broadcasting**: When the user selects a tile, `didChangeNavSelection()` propagates up to the root, which posts `onStackViewPathChangeNote` for breadcrumbs and other observers.
+- **Compaction**: each level states a claim (`layerClaim()`); the root runs one allocation over the chain (`SvLayerAllocation`) when a claim, the chain or a width has changed, and each column applies its answer (`applyLayerAnswer()`). See [Compaction Coordinator](docs/Plans/Compaction%20Coordinator/).
+- **Notification broadcasting**: When the user selects a tile, the path change bubbles up the view parents (`childUpdatedNavPath`) to the first `SvBrowserView`, which updates its own breadcrumbs, posts a sender-scoped `onBrowserViewPathChange`, and stops it there, so navigation inside an embedded browser never reaches an outer one. The older global `onStackViewPathChange` note still posts.
 
 ### SvNavView
 
@@ -6182,14 +6344,9 @@ Additional features:
 - **Collapse / uncollapse**: The compaction system can hide a nav view entirely when space is tight, replacing it with a back-navigation affordance.
 - **Orientation sync**: Reads the parent stack view's direction and adjusts its own layout accordingly.
 
-### SvBreadCrumbsTile
+### SvBreadCrumbsView
 
-Displays the current navigation path as a row of clickable buttons. Coordinates with the stack view entirely through notifications:
-
-1. Observes `onStackViewPathChangeNote` from the root stack view.
-2. Reads `targetStackView().selectedNodePathArray()` to get the current path.
-3. Builds a button for each node in the path, storing the path-up-to-that-point in each button's `.info()`.
-4. On click, calls `targetStackView().selectNodePathArray()` with the stored path to navigate back.
+The breadcrumb bar: a back button and one clickable segment per node in its browser's path. A plain view owned by the browser, with no node (it was a tile in the model graph, `SvBreadCrumbsTile`, until 2026-06-12). Its browser tells it when the path changes, so it reflects only navigation beneath that browser, and each browser on screen has its own. A click hands its browser a request with the cause `"user"`.
 
 The breadcrumbs also compact: when the path is too long to fit, earlier crumbs are hidden and a back arrow appears that navigates to the most recent hidden crumb.
 
@@ -6199,8 +6356,8 @@ When the user clicks a tile:
 
 1. `SvTilesView` selects the tile and notifies its `SvNavView`.
 2. The nav view's parent `SvStackView` calls `didChangeNavSelection()`.
-3. This propagates up to the root stack view, which posts `onStackViewPathChangeNote`.
-4. `SvBreadCrumbsTile` receives the notification and rebuilds its path buttons.
+3. This propagates up the view parents to the first `SvBrowserView`, which records the path change and posts `onBrowserViewPathChange`.
+4. That browser's `SvBreadCrumbsView` rebuilds its segments.
 5. The next `SvStackView` in the chain receives the selected node and populates its nav view.
 
 When the user clicks a breadcrumb:
@@ -6208,7 +6365,7 @@ When the user clicks a breadcrumb:
 1. The breadcrumb bar reads the stored path array from the clicked button.
 2. It hands the browser a request: `browser.navigate(SvNavigationRequest.toPath(path).setCause("user"))`.
 3. The stack chain recursively selects each node in the path, collapsing deeper levels.
-4. The resulting path change triggers `onStackViewPathChangeNote`, and breadcrumbs update.
+4. The resulting path change reaches the browser as in the steps above, and the breadcrumbs update.
 
 ## Cleanup Opportunities
 
@@ -6220,15 +6377,12 @@ The browser navigation works well but has accumulated complexity over time. Area
 
 ### Compaction logic
 
-The column compaction system (`updateCompactionChain()` on `SvStackView`, `collapse()` / `uncollapse()` on `SvNavView`) spans both classes with mutual callbacks. It works, but the protocol between them is implicit.
+**Released 2026-11-22** (app PR #788). The plan and what was built are in [Compaction Coordinator](docs/Plans/Compaction%20Coordinator/). What this section asked for, and where it stands:
 
-A recommendation for this part is written up in [Compaction Coordinator](docs/Plans/Compaction%20Coordinator/) (the plan as of 2026-11-20, not yet built): small fixes first, then a measurement, then claims stated by the views and one function, `SvLayerAllocation`, that allocates.
-
-- **A compaction coordinator.** Measuring the available width, choosing which columns to collapse, and collapsing or expanding them could live in one object rather than across `SvStackView` and `SvNavView`.
-- **A written protocol.** What triggers compaction, the order columns compact in, how a column says it can't compact further, and how expansion reverses it.
-- **Priorities.** All columns compact alike today. Some should resist longer: the auxiliary view below, and nodes whose content matters more than their siblings'.
-- **Animation.** Collapse and expand are instant; animating them would help the user see what moved.
-- **Measure once.** Compaction runs on every node update that bubbles to the root, so it is a hot path. Measure container widths once and cache them, invalidated by resize (as `SvStackView.cachedRootWidth()` does), then write; never measure after writing in the same pass. Verify with `?thrash=count` before and after.
+- **A compaction coordinator.** Built as claims stated by the views and one function, `SvLayerAllocation`, that allocates over the whole chain with no DOM. `TestLayerAllocation` holds its rules.
+- **A written protocol.** The plan's [What asks for a pass](docs/Plans/Compaction%20Coordinator/#what-asks-for-a-pass) and the function's tests are the protocol. A pass runs only when a claim, the chain or a width has changed.
+- **Measure once.** Done: a streamed response that ran 204 to 264 passes before runs none.
+- **Priorities** (an order of giving way other than from the left) and **animation** are not built. Priorities are a part D item in the coordinator's plan, taken up when a case needs one.
 
 ### One navigation entry point
 
@@ -6269,10 +6423,12 @@ Three decisions (Steve, 2026-11-19):
 2. **A tile the user taps reports afterwards.** The columns select it as before; the browser hears of the path change and records a request whose cause is the user. Nothing can veto or redirect a tap before it happens. That moves through the entry point with the compaction coordinator (part 2), the first thing that needs it.
 3. **Focus-and-expand waits for a second pass.** `postShouldFocusAndExpandSubnode` and `postShouldFocusSubnode` ("show this child of where I am", about 16 call sites, most of them in the app) still select in the columns directly, so the path change they cause is recorded as the user's. Until the second pass, an announcement keyed on the cause will miss them.
 
-#### Second pass (open)
+#### Second pass (built 2026-11-23)
 
-- Route the focus-and-expand notes through `navigate()` as a request that names a child of the current place, with the cause `"program"`, or `"user"` when the user's own add caused it.
-- Other path changes with no request behind them, which are also recorded as the user's today: a column folding because its node was removed (`nodeBecameOrphan`), and a selected tile rebinding to a new instance.
+- **The focus notes are code's moves.** `postShouldFocusSubnode` and `postShouldFocusAndExpandSubnode` are still carried out by the column that shows the parent: it scrolls to the tile and opens it, which a path walk from the root would not do. That column now does it on behalf of a request with the cause `"program"` (`SvTilesView.selectForModel()` → `SvBrowserView.selectInColumnsFor()`), so the path change is recorded as code's and not the user's. A navigation already under way keeps its own cause. This differs from the first plan, which was to send the notes through `navigate()`; the column keeps its own scrolling and opening, and the browser hears who asked.
+- **Every note is code's**, including one posted after the user's own add. The user asked for the new item, but not for the browser to move to it, so a screen reader should hear where they are.
+- **Left as the user's, on purpose:** a column folding because its node was removed (`nodeBecameOrphan`), and a selected tile rebinding to a new instance. Neither takes the user anywhere new, and both stay silent.
+- **Checked** by `TestNavigationEntryPoint` (both notes go through the request; nothing is left pending, even when the selection throws) and, in a browser against `just launch`, by `tests/e2e/navigation-announcements.spec.js` in the app repo. `navigation-entry-point.spec.js` and `meta-plan-step-a.spec.js` still pass.
 
 ### Mobile and responsive behavior
 
@@ -6280,43 +6436,23 @@ The compaction system provides basic responsive behavior, but a dedicated mobile
 
 ### Composable breadcrumbs
 
-Breadcrumbs are not built into the browser view — they're a regular node (`SvBreadCrumbsTile`) added to the node tree. But the tile currently finds its target by walking up to the root `SvStackView`, so only one set of breadcrumbs can exist per browser. This breaks down when a split view or inspector pane contains its own nested stack view that the user navigates independently. That inner pane needs its own breadcrumbs tracking its own path, not the root's.
-
-A concrete example: during a game narration conversation, a side panel could let the player inspect their character sheet — drilling into inventory, spells, ability scores — without navigating away from the conversation. That panel would be its own stack view with its own breadcrumbs, independent of the main browser path.
-
-The fix is to make breadcrumbs composable: instead of always targeting the root stack view, the breadcrumbs node should target the nearest ancestor stack view (or a specifically assigned one). This would let any stack view — whether it's the top-level browser, one side of a split view, or a deep inspector panel — have its own independent navigation context with its own breadcrumb trail.
+**Built 2026-06-12.** The breadcrumbs used to be a node in the tree (`SvBreadCrumbsTile`) that found its target by walking up to the root stack view, so a browser could have only one set. Now each `SvBrowserView` owns an `SvBreadCrumbsView`, and a path change bubbles only to the nearest browser. An embedded browser, such as the one inside a companion, has its own trail and its own path, independent of the main one.
 
 ### Auxiliary view
 
-A node could declare an auxiliary node that the view system renders as a side panel with its own independent navigation context. The auxiliary panel would be a full stack view — the user can drill into nested content within it — but scoped and constrained by hints from the primary node.
+**Built 2026-06-12, as the companion.** A node answers `nodeCompanionNode()` with another node, and `SvDetailView` shows that node beside (or below) the node's navigation in an `SvCompanionView` holding an embedded browser, with its own breadcrumbs, selection and compaction. It is docked, collapsed to a tab behind an edge handle, or hidden when there is no room; the user's dock or tab choice is kept, and Cmd+\\ toggles the deepest one. See [Companion View](docs/Views/Companion%20View/). In the compaction pass, companions are sized before the columns, which then compact around the reservation.
 
-```javascript
-this.setNodeAuxiliaryNode(this.characterSheet());
-this.setNodeAuxiliaryPosition("right");           // or "bottom"
-this.setNodeAuxiliaryDefaultState("expanded");    // or "collapsed"
-this.setNodeAuxiliaryCompactsFirst(true);         // collapse auxiliary before main columns
-this.setNodeAuxiliaryMaxColumns(2);               // cap drill-in depth within the panel
-```
+The sketch that stood here proposed five hints. The companion took one and left the view to decide the rest:
 
-This stays declarative — the node says what it wants, the view system handles layout. The auxiliary side is a fully independent navigation context with its own breadcrumbs (once breadcrumbs are composable), its own selection, and its own internal compaction. No changes to the main selection model.
+| Sketched | Now |
+| --- | --- |
+| `setNodeAuxiliaryNode(node)` | `nodeCompanionNode()` |
+| `setNodeAuxiliaryPosition("right" / "bottom")` | Not a hint; the edge follows the stack's direction (right, or bottom for a `"down"` stack). |
+| `setNodeAuxiliaryDefaultState("expanded" / "collapsed")` | Not a hint; chosen from the space it is offered until the user pins docked or tab. |
+| `setNodeAuxiliaryCompactsFirst(true)` | Not a hint; the columns compact around a docked companion, and a window too narrow for it hides it whatever the pin. |
+| `setNodeAuxiliaryMaxColumns(n)` | Not built; the embedded browser compacts within its own width. |
 
-The `maxColumns` hint is important for space management. A conversation node knows it only needs a narrow inspector — one or two columns to peek at the character sheet. Once the user drills past the limit, deeper navigation replaces the last column rather than adding a new one.
-
-### Compaction with auxiliary views
-
-The current compaction algorithm walks the stack chain and collapses columns that don't fit the available width. Auxiliary views add a new dimension to this because column compaction (horizontal, across navigation levels) and auxiliary compaction (within a single level's content area) are orthogonal.
-
-The compaction sequence would become:
-
-1. **Auxiliary internal compaction**: If the auxiliary panel has more columns than fit its allotted width, collapse its inner columns first (using the existing compaction logic, scoped to the auxiliary stack view).
-2. **Auxiliary collapse**: If still too tight, collapse the auxiliary panel entirely — to a toggle button, thin strip, or hidden — freeing its width for the main content.
-3. **Main column compaction**: If the main stack chain still doesn't fit, run the existing column compaction on the primary columns.
-
-Expanding works in reverse: as width becomes available, the main columns uncollapse first, then the auxiliary panel reappears, then the auxiliary's internal columns expand.
-
-Node hints control priority: `auxiliaryCompactsFirst` (default `true`) means the auxiliary gives up space before any main columns. A node could set this to `false` if the auxiliary content is more important than the surrounding navigation context — though that would be unusual.
-
-This approach requires no fundamental changes to the compaction algorithm itself. The auxiliary panel's internal compaction is just a smaller instance of the same algorithm running on a scoped stack view. The new work is the coordination layer that decides the order of compaction across the two contexts.
+**No node in the framework or the app supplies a companion yet**, so none of this has been seen in use. The companion's code is kept and nothing is spent on it until one does (Compaction Coordinator, decision 17); the missing hints wait for that node too.
 
 
 ---
@@ -6328,7 +6464,7 @@ Source: docs/Plans/Capabilities%20%26%20Permissions/
 
 Asking "can this caller do this here?" in one place, answered by the pool's store, so that views offer only what will be honored and a refused write is never silent.
 
-**Status:** built; seen working in a browser through the model on 2026-11-19, and the refusals through the views are still to see ([Meta Plan](docs/Plans/Meta%20Plan/#a-a-browser-pass-over-steps-2-to-5), step A). Rewritten 2026-11-13 to build on the editability cascade and the Record Store, which both shipped after the first draft. The editing half is in use (`SvNode_editability`); the questions about reading, sharing and authority, and the denial path, are not. Step 1 is done (2026-11-16): every edit path in the view layer asks the cascade, and a test keeps it so. The rest was agreed and built 2026-11-17 as [the design questions](docs/Plans/Capabilities%20%26%20Permissions/#design-questions-for-steps-2-to-4) settle it: the server says who may write, the pool's answer is the cascade's default, and a refused commit reloads and says so. Checked headless, with the server's contract tests on the Firestore backing, and in a browser against `just launch` (a forced save refused 403, reloaded and said; `editability-browser-pass.spec.js`); not yet on the Spanner backing.
+**Status:** built, and seen working in a browser on 2026-11-19, through the model against `just launch` and through the views on the deployed dev project ([Meta Plan](docs/Plans/Meta%20Plan/#done-the-2026-11-18-steps), step A). That pass found and fixed one more edit path that did not ask the cascade (Cmd+D and pinch-to-add). Rewritten 2026-11-13 to build on the editability cascade and the Record Store, which both shipped after the first draft. The editing half is in use (`SvNode_editability`); the questions about reading, sharing and authority, and the denial path, are not. Step 1 is done (2026-11-16): every edit path in the view layer asks the cascade, and a test keeps it so. The rest was agreed and built 2026-11-17 as [the design questions](docs/Plans/Capabilities%20%26%20Permissions/#design-questions-for-steps-2-to-4) settle it: the server says who may write, the pool's answer is the cascade's default, and a refused commit reloads and says so. Checked headless, with the server's contract tests on the Firestore backing, and in a browser against `just launch` (a forced save refused 403, reloaded and said; `editability-browser-pass.spec.js`); not yet on the Spanner backing.
 
 ## Context
 
@@ -6688,7 +6824,7 @@ Source: docs/Plans/Compaction%20Coordinator/
 
 The rules for which columns a browser shows and how wide each is, gathered into one place that can be tested without a browser.
 
-**Status:** the plan as of 2026-11-20, rewritten after a review against the code, with its recommendations written in as the plan. Nothing here is built, and writing them in is not a go-ahead to build: each part starts on Steve's word. It is part 2 of [Browser Cleanup](docs/Plans/Browser%20Cleanup/); [Tile Container Views](docs/Plans/Tile%20Container%20Views/) no longer waits on it for its first grid. **Steve's decisions of 2026-11-20:** the recordings before part A may start; the line for part B is 2ms; the companion's code is kept and no work is put into it now; the first grid does not wait on this plan. The choices made, and the ones still open, are listed at the end. A review of this page (`_review.md`, beside it) was folded in five times on 2026-11-20. What each pass changed is marked "(review)" and "(review 2)" to "(review 5)"; the reviewer's answers, and the questions that follow from them, are in the last section. The reviewer's verdict on the fifth pass, with the recordings in hand: part A can start (A1, A2, A3, A4 and A7, five commits), and C still waits on B.
+**Status:** **parts A to D are released to production** (2026-11-22, app PR #788, on Steve's word; parts C and D had no outside review). Built: part A (A1, A2, A3, A4, A7), the thumbnail fix, part B's timings (compaction is under the 2ms line, so C rested on testability), part C (claims in the views, allocation in `SvLayerAllocation`) and three part D changes; see the "as built" sections below. Where the text says "on dev, not released", that was true when written. **Open:** the rest of part D, each when a case needs it; the questions in [For the next pass](docs/Plans/Compaction%20Coordinator/#for-the-next-pass), which a review of C and D should answer; and the companion, whose code is kept with nothing spent on it until a node uses one (decision 17). It is part 2 of [Browser Cleanup](docs/Plans/Browser%20Cleanup/). The decisions, dated, are in [Decisions](docs/Plans/Compaction%20Coordinator/#decisions). A review of this page was folded in six times on 2026-11-20 and 2026-11-21 (the reviewer's file was removed on 2026-11-23, with the work finished for now; its answers are in the last section); what each pass changed is marked "(review)" and "(review 2)" to "(review 6)".
 
 **What changed from the first draft (2026-11-19).** That draft proposed a layout object, `SvColumnLayout`, that was handed a flat list of columns and answered with a plan. The review found three things it had not taken in: the levels are nested inside each other, not laid side by side; each level chooses its own direction; and an object that solved the whole layout would have to repeat what the views already know about themselves. This version keeps each view's knowledge in the view and moves only the arithmetic. It also puts the small, safe fixes first and a measurement before the larger change.
 
@@ -6828,12 +6964,14 @@ So an ordinary node update changes the column's minimum from 17em to 300px (the 
 
 `tests/e2e/compaction-recordings.spec.js` now compares a run with the baseline, step by step: the open tabs, and each stack's direction, hidden flag, widths, target, fill and width styles. A difference fails it. The pass counts are printed beside the baseline's and not asserted, since part A is meant to lower them. A run writes to its own output directory; the baseline is replaced only on purpose (`COMPACTION_BASELINE=write`), by a run that finished. `app-mobile-column-width.spec.js` now also asserts which column shows (My Sessions) and that it is no wider than the screen. (review 5)
 
+The commit that added the comparison dropped six helpers the test still calls, so the recorder failed at its first tab lookup; the reviewer caught it. They are restored (app commit `899f07651`), and a step that has a snapshot on one side only is now reported as a difference. The repaired recorder was run on the dev build as it stood before part A: 41 steps, every layout the same as the baseline, and the same 292 calls, 530 level visits and 212 resize handlers. (review 6)
+
 
 ### Part A: the fixes that need no design
 
 Each is its own commit, changes no rule, and is checked by the comparison above, the width table for A3, and the existing specs (`companion-panel`, `session-anchored-tabs`, `app-mobile-column-width`). The numbers are kept as they were, so A5 and A8 stay in the list as moved.
 
-1. Only the root stack answers a window resize. It is bound where the browser takes its root stack: a stack asked whether it is the root while it is being made has no parent yet, and would say yes. (review)
+1. Only the root stack answers a window resize. It is bound where the browser takes its root stack: a stack asked whether it is the root while it is being made has no parent yet, and would say yes. (review) Each pane is a browser, and its root stack keeps its listener: the pane's own observer answers a change of width, while the window handler also runs when only the height changes and clears the cached root width at once. Only the listeners of stacks below a root go. Whether a pane's root needs the window at all is left for C. (review 6)
 2. One method name, `recompactBrowserChain`. The other two go.
 3. One width rule in `SvNavView`, the fuller one, used by both callers. This leaves a third writer, `syncMinWidthClaim()`, which a node sync runs. A3 keeps that later write exactly as it is; it moves under one owner in C, not here. See [One method applies a width](docs/Plans/Compaction%20Coordinator/#one-method-applies-a-width). (review 2)
 4. The constants get names.
@@ -6841,6 +6979,37 @@ Each is its own commit, changes no rule, and is checked by the comparison above,
 6. *Deferred with the companion:* the bottom-edge companion is handed its height by a resize observer. It mends a read that only a bottom companion makes, and no node in the app supplies a companion.
 7. `SvStackView.makeOrientationLeft` is renamed for what it does. It is the method the `"down"` direction calls, and it lays the stack out downward. The name is wanted for a real `"left"`.
 8. *Moved out: which node a column's width comes from.* See [Two fixes that are decisions](docs/Plans/Compaction%20Coordinator/#two-fixes-that-are-decisions).
+
+#### Part A as built (2026-11-21)
+
+Steve said to start. Five commits in strvct, each deployed to dev on its own and checked there before the next.
+
+| Fix | Commit | What changed |
+| --- | --- | --- |
+| A1 | `f730b118` | `SvBrowserView` registers the root stack it makes for the window's resize; a stack no longer registers itself. Pane browsers register their roots the same way. |
+| A2 | `5850899d` | `safeUpdateCompactionChain` and `updateCompactionChain` are gone; their five callers call `recompactBrowserChain`. |
+| A3 | `dbf06eb4` | `makeOrientationRight` calls `updateWidthForWindow`, the one rule. Its own shorter copy is gone, and so is the second call in `syncOrientation`. `syncMinWidthClaim()` is untouched. |
+| A4 | `6aef2beb` | `defaultTargetWidth` (270), `fullWidthMinWidth` (17em), `maxCompactionPasses` (5), `bottomCompanionContentRoom` (200), `narrowViewportThreshold` (540), `minInlineColumnWidth` (200). Values unchanged. |
+| A7 | `a81d0557` | `SvStackView.makeOrientationLeft` is `makeOrientationDown`. |
+
+**The checks, after every one of the five:** the recorder found the layout the same as the baseline at all 41 steps; `app-mobile-column-width` and `companion-panel` passed. From A3 on, the width table below was read too.
+
+**What A1 saved.** Over the whole recording the chain passes fell from 292 to 193, the level visits from 530 to 299 and the resize handlers from 212 to 113. A step of the resize is now 4 to 6 passes and 3 or 4 handlers, where it was 7 to 9 and 6 or 7; the step that reopens Narration is 9, where it was 12. The handlers left should be one per browser (the outer one and each pane, open or not); I counted them and did not name which browser each belongs to. A2, A3, A4 and A7 changed no count.
+
+**The width table, from a fixture of my own** (`tests/e2e/compaction-width-table.spec.js`: plain nodes in an embedded browser 390px wide, on dev). It was read on the build before A3 and again after, and is the same:
+
+| Action | Rendered width | Inline minimum | Inline maximum |
+| --- | ---: | --- | --- |
+| Show the list | 390px | 300px | 100% |
+| Call `didUpdateNode()` on the list | 390px | 300px | 100% |
+| Open its child | 0px (hidden) | 300px | 300px |
+| Navigate back to the list | 390px | 17em | 100% |
+
+The first row's minimum is 300px where the reviewer's reads 17em. My mount ends in a node sync, which writes the minimum again; the other three rows agree with the reviewer's.
+
+**Not a check of part A:** `session-anchored-tabs` fails five of its tests on dev, and did before part A. They are the gaps its last commit names (a call only the host has, Theatre opening beside Narration, a page-local character replaced by the host's party). It is not a guard for this work until it is mended.
+
+**Not exercised:** no step of the recorder lays a stack out downward with a companion, so A7 and the 200 of A4 rest on the rename being mechanical and on `companion-panel`.
 
 #### Two fixes that are decisions
 
@@ -6863,7 +7032,37 @@ Its three checks:
 
 The first visible frame and the settled width are both recorded, since ordinary loading may settle the allowance before anything is painted.
 
+#### The thumbnail fix as built (2026-11-21)
+
+strvct `0ca64f67`. `thumbnailWidthAllowance()` gives 0 while the node's subnodes are pending and does not read the list; once the list has loaded it reads the first row, and it keeps nothing between calls. A loaded list tells its node it updated, which syncs the column, so the 72px arrives with the rows.
+
+The three checks, in `tests/e2e/compaction-width-table.spec.js` on dev, read before the fix and after:
+
+| Check | Before | After |
+| --- | --- | --- |
+| A pending list is asked for its width | 72px, the list read twice | 0px, the list not read |
+| The list has loaded, its first row has a thumbnail | 72px | 72px |
+| The same first row stands for a plain node | 0px, the list unchanged | 0px, the list unchanged |
+
+The recorder still found every layout the same as the baseline. **What this does not show:** "pending" is stood in for (the fixture's node is made to answer that its list is pending); no list pending in a real store was exercised, and the first visible frame of one was not recorded. The Bestiary of a campaign with creatures is the real case, and I have not opened one.
+
 ### Part B: measure, then decide about C
+
+#### Part B's timings (2026-11-21)
+
+`tests/e2e/compaction-measure.spec.js`, three runs on dev with A and the thumbnail fix in place, in headless Chromium under Playwright on Steve's Mac. What is timed is the outermost chain pass, which includes any layout the pass forces by reading geometry inside it. Each frame's passes are summed.
+
+| Workload | Frames | Frames with a pass | p95 over all frames | p95 over frames with a pass | Worst frame | Frames over 2ms |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Streaming, 390 by 844, processor 4x slower | 1,801 to 2,159 | 29 to 39 | 0ms | 2.1 to 2.4ms | 2.5 to 3.0ms | 2 or 3 |
+| Resizing, 1,280px to 980px and back three times, 4x slower | about 455 | about 215 | 0.8 to 0.9ms | 1.0 to 1.1ms | 1.7 to 1.9ms | 0 |
+| The same resizing, not slowed | about 458 | about 217 | 0.2 to 0.3ms | 0.3ms | 0.4 to 0.5ms | 0 |
+
+**Against the line.** Counted as the plan says (every frame of the workload, those that cost nothing included), compaction is far under 2ms in both workloads: the 95th percentile while streaming is 0ms, because a pass runs in about one frame in fifty. Resizing is under the line however it is counted. The one figure near the line is streaming counted over only the frames that had a pass: 2.1 to 2.4ms on a processor slowed four times, with two or three frames a response over 2ms and none over 3ms. So the speed case for C is not made. C would rest on testability.
+
+**What a chunk costs.** Text arrived in 12 to 21 frames a response (the table sends narration in batches, about one every two seconds, not token by token). A frame where text arrived and a pass ran held six calls, in all three runs (90 calls in 15 such frames, 100 in 16, 60 in 10). That is the same six that one explicit `didUpdateNode()` cost in the recordings.
+
+**Limits.** The response was live, not a replay, so chunk sizes and cadence differed between runs. Layout the browser does later for a pass's writes is not attributed to the pass. Frames longer than 25ms were counted (7 to 17 a streaming run) but not traced to a cause, so "compaction caused a missed frame" is neither shown nor ruled out; a performance trace would say. It is a throttled desktop browser and not a phone. The end states and transitions matrix described below is not built.
 
 With A in place, a browser spec records two things.
 
@@ -6915,6 +7114,38 @@ A claim holds nothing that depends on a width. `targetWidth()` today reads the a
 
 **The browser runs the pass.** It walks its own chain gathering claims, calls the function, and hands each level its answer. Each view applies its own answer to itself and writes only what changed.
 
+#### Part C as built (2026-11-21)
+
+Steve said not to stop, with the timings in hand. Three commits in strvct, each deployed to dev and checked there before the next.
+
+| Step | Commit | What changed |
+| --- | --- | --- |
+| Claims and one function | `d2489ea4` | `SvLayerAllocation` (no DOM) takes a chain's claims and two widths and answers hidden or shown and the width rule for each level. A stack states `layerClaim()` and applies its own answer. A pass sizes the companions, then allocates once; the loop is gone, with `sumOfNavWidths`, `compactNavAsNeeded` and `updateCompaction`. |
+| One writer | `bc86afeb` | `SvNavView.applyLayerAnswer()` is the only writer of a column's width, minimum, maximum and flex grow and shrink. A pass gives it a new answer; an orientation sync, a node sync and a reveal apply the last one again. `updateWidthForWindow` and `syncMinWidthClaim` are gone. |
+| One gate | `90f165c1` | A root keeps the signature of its last pass: the two widths and, for each level, which stack it is, whether it is on the page, and its claim. A node sync compares and runs a pass only on a difference. |
+
+**The rules are in a headless test.** `tests/headless/TestLayerAllocation.js`, 55 checks: columns giving way from the root end, the cap and its 1px edge, the width rules, a fill column, vertical levels at the root, middle and end, one and two companion reservations (the case that comes to more than the root holds among them), anchored reservations and the full-width flag, a root with no width yet.
+
+**The checks on dev.**
+
+- **The fixture matrix** (`tests/e2e/compaction-matrix.spec.js`), taken before C: eight variants by path depth by container width, down and back up, 1,482 level states with hidden columns and docked and tabbed companions. The first step matched it at every state. The second changed 9 on purpose (below). The third matched the new baseline.
+- **The session recording:** every layout the same as the baseline taken before part A, after each step.
+- **The triggers** (`tests/e2e/compaction-triggers.spec.js`): a width hint, a fill flag, a deeper path, a sibling with the same title, the container's width, a level's direction, and a companion bound and removed each ran a pass and gave the layout expected; an ordinary node update ran none.
+- `companion-panel`, `app-mobile-column-width` and the width table passed after each step.
+
+**What it saved.** Over the session recording, 165 passes where there were 292 before part A and 193 after it. One explicit node update on the chat: no pass, where there were six. A streamed response at phone size: no pass in any of about 2,000 frames, where there were 204 to 264 passes a response. Resizing costs what it did (it changes a width every step).
+
+**One change of behaviour, made on purpose.** A column whose node hints a width keeps that hint, held to the room there is, as its minimum whichever of a pass or a node sync ran last. Before, a pass left a full-width column's minimum at 17em and the next node sync put the hint back, so the style depended on the order. In 8 of the 9 matrix states only the inline minimum differs. In the ninth, a 300px container, the column had been 340px wide (17em is wider than its container) and is now 300px. The width table's last row changed the same way.
+
+**Where the build differs from the plan above.**
+
+- **The trigger is a gate, not a scheduled pass.** The plan has each level compare its own claim and ask the browser for a pass at the end of the cycle. What is built compares one signature for the whole chain, at the root, and runs the pass at once, inside the sync, as before. Nothing is deferred, so the risk of one wrong frame is not taken, and every place that asked for a pass still asks; only a pass with nothing to do is skipped. Resizes, the container's observer, a companion's pin, hint and dock, and anchored pins call the pass itself, without the comparison.
+- **A companion's binding is seen by the same sync.** A level's sync asks again after its companion is bound or removed, so the columns answer to a new panel in that sync and not the next.
+- **The claim has a yield floor** only so that the signature notices it changing; the function does not read it.
+- **Not done:** the debug flag that runs a pass on every sync and reports a difference. The trigger spec stands in for it.
+
+**What is not shown.** The matrix and the trigger spec use plain nodes in an embedded browser; anchored levels are covered only by the session recording and the headless test. `session-anchored-tabs` still fails the same five tests it failed before part A. No real phone was used. Nothing here is released to prod.
+
 #### The companion stays where it is
 
 An earlier version of this page moved the companion's arithmetic (docked, tab or hidden, and its docked length) into the function. It stays in `SvDetailView` and `SvCompanionView`. (review 4)
@@ -6960,7 +7191,7 @@ The risk to watch: if a claim ever needs to carry a rule and not a value, the fu
 - **Which way is the view's business when it applies its answer:** the flex order, the edge its companion docks on, the side its border is drawn on.
 - **The rules are worded without sides.** Columns give way "from the root end", the earliest levels first, not "from the left". A companion sits at the "far edge" of its level. The function and its test use these words, and `SvCompanionView` already speaks of an edge and a length.
 - **The vertical axis is not compacted today**, in either direction: a `"down"` level is never hidden. If rows are ever to give way for height, it is the same function run on the other axis with heights, and is a part D decision.
-- **A language's direction and a node's direction are two things.** Mirroring the whole interface for a right-to-left language could be done by the page's text direction, with the views writing start and end where they now write left and right, and no node changing its orientation. A node that asks for `"left"` on its own is the other case. Both come out the same in the arithmetic. Which of them a right-to-left language should use is open, and is not decided here.
+- **A language's direction and a node's direction are two things.** Mirroring the whole interface for a right-to-left language could be done by the page's text direction, with the views writing start and end where they now write left and right, and no node changing its orientation. A node that asks for `"left"` on its own is the other case. Both come out the same in the arithmetic. **Decided (Steve, 2026-11-22): a right-to-left language mirrors by the page's direction.** It is what print and software made for those languages do: the first column of a page is the rightmost, an outline hangs from the right margin and indents leftward, and Windows, macOS, iOS and Android each set one layout direction on the view tree and write their views by start and end (leading and trailing). In an Arabic macOS the Finder's column view has its root on the right and each deeper level opens to its left. Inside a row the thumbnail is on the right and the disclosure mark on the left, pointing left. Numbers and embedded Latin text stay left to right. A short list must not flip: media playback controls and the playback scrubber, clocks, photographs and logos. Nothing is built for it yet. A node that asks for `"left"` on its own remains a separate feature, for when a node wants it.
 
 #### Inline documents
 
@@ -6987,11 +7218,53 @@ None is in C. Together they are the road from C to the one protocol described in
 - **Nested allocation.** Each level hands what it has left to its child. It differs from today where a companion sits in the middle of a chain.
 - **Priorities.** An order to give way in other than from the left.
 - **A claim with a least and a most**, for inline documents, and for a container in Tile Container Views if one ever has to ask a neighbour to give way. A column then takes a share of the leftover width without having to be last.
-- **A document that stays wide when something is opened from it**, and a level that repeats an inlined section giving way first, or not being built. See [Inline documents](docs/Plans/Compaction%20Coordinator/#inline-documents).
+- **A document that stays wide when something is opened from it**, and a level that repeats an inlined section giving way first, or not being built. See [Inline documents](docs/Plans/Compaction%20Coordinator/#inline-documents). **Built 2026-11-22:** the section's level is not built, and the document fills whenever it is shown. See [Part D as built](docs/Plans/Compaction%20Coordinator/#part-d-as-built-2026-11-22).
 - **Layout that follows width.** A level shown inline when there is room and as a column when there is not. A folded section is already a tile, so the two are the same idea at different widths.
 - **`"left"` and `"up"` directions**, and compaction along the vertical axis. See [Four directions](docs/Plans/Compaction%20Coordinator/#four-directions).
 - **Direction that follows width.** A narrow root turns levels `"down"` in place of hiding columns. A single-column phone mode is the far end of this.
 - **Animation.** The browser has the old answers and the new ones, so it knows what moved.
+
+#### Part D as built (2026-11-22)
+
+Three of the changes above, each decided by Steve on 2026-11-22 (decisions 20 to 22). Two strvct commits, on dev, not released.
+
+| Change | Commit | What it does |
+| --- | --- | --- |
+| No column for an inlined section | `d5298fa5` | A path through a document passes through its sections. The tile opens beside the document, and its row is shown selected inside its section. |
+| A document fills whenever it is shown | `d5298fa5` | A claim says `fillsWhenShown`. The hidden-or-shown test is unchanged. |
+| The option tile's test | `93f1204b` | Steps back when the level before its own is hidden. `narrowViewportThreshold` (540) is gone. |
+
+**No column for an inlined section.** `SvTilesView_inline.navTileForPath(path)` answers where a path leads in a column: the tile to open and how many of the path's nodes it took. A section on the path takes a node and opens nothing; a path that leaves the sections out finds its tile inside them. `SvStackView.selectNodePathArray` asks it, selects that tile (`selectNavTile`), and hands the rest of the path to the next level. `syncFromNavSelection` reads `navSelectedTile()`, which in a document looks inside the sections. A row inside a section tells the document's stack when its selection changes, where it told nobody before.
+
+- **The path read back leaves the sections out.** I had told Steve the path would still name the section. It cannot do both that and go back in one step: back removes the last node of the path, and a path of document, section, tile would need two presses, the first of which changes nothing on screen. So a path that is *given* may name the sections (a tap inside a document still sends one that does, and a path worked out from the model would), and the path the browser *reports* has none. The breadcrumbs read Document, Destination.
+- **A path that ends on a section** opens nothing and leaves the document as it was.
+- **A column or section with no tiles yet** is synced before it is searched (`tileWithNodeSyncingIfNeeded`). The fixture found this: a path selected straight into a new document failed, because a new section's rows are not built until it syncs.
+- **A folded section opens** when a path selects a tile inside it (added later on 2026-11-22), so the row shown as open can be seen. The node is not told of it: the player folded nothing. `compaction-inline-document.spec.js` holds it; against the build before, the section stayed folded.
+
+**A document fills whenever it is shown.** The claim gains `fillsWhenShown`; `fills` stays as it was (true for a document only while it is last, when it has always been shown). The rule in `SvLayerAllocation`:
+
+- Hidden or shown by the same test as any column, with its target as its least. So a phone is as before.
+- Shown, with only plain columns after it: they are exactly their targets, and it has the rest. The last column no longer takes the slack when a document before it is shown.
+- Shown, with something after it that takes what it is given (another document, a fill column, a level laid out downward): the two share what is left evenly. **This case is not what I described to Steve**, and a real sheet found it. The Spellbook is itself an inline document, so "the deepest one fills" left the sheet at 300px beside a 1,088px Spellbook, the very thing the change was for. With sharing, at 2,000px the sheet is 709px and the Spellbook 679px. The same holds for a chat opened from a sheet.
+- A level whose node returns `nodeWantsFullWidth` still hides every column before it, a document included (decision 21).
+
+The answer carries `trailingWidth` (what everything after the column asks for: its own companion's reservation and the sum of the later levels) and `trailingFlexes` (whether what follows shares the leftover). The column starts from its target and grows; `SvDetailView.updateOuterFlex`, the one writer of the detail view's share, starts it from `trailingWidth` and lets it grow only when `trailingFlexes`. Nothing is measured.
+
+**The option tile.** `returnColumnIsHidden()` reads whether the level before the tile's own is collapsed, as the last pass left it. `stepBackIfStillAt(browser, pathAtPick)` runs after the 300ms delay and does nothing if the path has changed.
+
+**Checked on dev:**
+
+- `TestLayerAllocation`: 72 checks (17 new, for a column that fills when shown).
+- `tests/e2e/compaction-inline-document.spec.js` (new): a fixture of plain nodes at 2,000, 1,400, 800 and 390px, 57 readings (a tap inside a section, the path read back, back to the document, paths that name the section, leave it out and end on it, and a resize with the tile open); and a real character sheet with its Spellbook opened at 2,000px and at 390px. Run against the build before the change, 37 of the fixture's readings differed, which is the record of what it did.
+- `tests/e2e/option-tile-step-back.spec.js` (new): five cases in a 1,800px window. Before the change the two that matter (a 400px parent in 650px, and a 390px browser embedded in the wide window) stayed on the picker.
+- Unchanged: the fixture matrix (1,482 level states, 0 differences), the session recording's layouts at all 41 steps, and the trigger, width table, inline lab, companion, mobile width and character sheet specs.
+
+**Not shown:**
+
+- The session recording opens no tile from a sheet (a new character's sheet has none to open), so the two document rules are seen on a real sheet only in My Characters, not inside a session pane.
+- The matrix has no inline-document variant; the new spec stands in for one.
+- The "gone elsewhere" case passes on the old build too, since the old rule never stepped back in a wide window. It shows the new rule does not move such a user; it does not show the recheck is what stops it.
+- Nothing was run on a real phone.
 
 ## What asks for a pass
 
@@ -7052,14 +7325,17 @@ These were the recommendations; they are now the plan. Any of them can be reopen
 17. **The companion's code is kept and nothing is spent on it now.** A6 and the two companion recordings wait until a node uses one. C still takes a reservation. (Steve, 2026-11-20)
 18. **The first grid in Tile Container Views does not wait on this plan.** The table and the scrolling keep their place until someone checks what they need. (Steve, 2026-11-20)
 
+19. **The release of parts A to C is held** until `session-anchored-tabs` has been run against a build from before part A and the reviewer has read part C. (Steve, 2026-11-22)
+20. **A node its parent shows inline makes no column of its own.** The path still names it; the stack builds no level for it. First of the part D changes. (Steve, 2026-11-22)
+21. **An inline document fills whenever it is shown,** not only while it is last. The hidden-or-shown test is unchanged, with the document's target as its least, so a phone is as before. The exception is a hint that asks otherwise: a level whose node returns `nodeWantsFullWidth` (a session) still claims the whole root width and is the first thing shown until the user navigates back from it. That hint is read on anchored-tabs levels only, as now. A claim with a least and a most waits for a grid or table that needs it. (Steve, 2026-11-22)
+22. **The option tile steps back when the column to return to is hidden,** in place of when the window is under 540px, with the details agreed in the second review. Checked in a fixture, since no route to the differing cases is known in the app. (Steve, 2026-11-22)
+23. **Which node a column's width comes from is left as it is.** No one has seen a wrong width, 21 hides most of what was left, and either consistent rule changes the Party tab's width in a session. If it is taken up, the presented node is the candidate. (Steve, 2026-11-22)
+24. **A right-to-left language mirrors by the page's direction,** with views written by start and end. See [Four directions](docs/Plans/Compaction%20Coordinator/#four-directions). Nothing is built yet. (Steve, 2026-11-22)
+
 ### Still open
 
-- **Whether C goes ahead, and argued how.** Steve decides with part B's numbers in hand.
-- **The option tile's test** (was A5): step back when the column to return to is hidden, in place of when the window is under 540px.
-- **Which node a column's width comes from** (was A8), with the Party tab and its solo sheet as the case to settle.
-- **How a right-to-left language mirrors the interface:** by the page's text direction, or by nodes asking for `"left"`. The allocation is the same either way.
-- **Whether to stop building a column for a section an inline document already shows.** It is built today (seen in a fixture). A part D decision.
-- **Everything in part D,** each when it comes up.
+- **Which node a column's width comes from** (was A8): left as it is for now (decision 23).
+- **The rest of part D,** each when it comes up.
 
 ## Questions for the reviewer
 
@@ -7096,10 +7372,20 @@ Two edits to the contract came with them, both made: the anchored reservation is
 
 No questions were outstanding. The reviewer read the recordings and said part A can start. It corrected two claims of mine (the resize is 7 to 9 passes at 31 of 32 steps, with 12 where a pane reopens; and the cost of a streamed chunk was not measured), supplied the width comparison A3 needs, and asked for two changes to the tests, both made: the baseline is kept safe from reruns, and the width spec says which column and how wide at most.
 
+### The sixth review (2026-11-21)
+
+1. **A1 and the panes:** keep the listener on every browser's root stack, the panes' included, and remove only the descendants'. Dropping a pane root's listener would change when its work happens (a height-only resize, the cached root width), so it is a decision for C.
+2. **The recorder was broken as committed,** and is mended (see [How a part A commit is checked](docs/Plans/Compaction%20Coordinator/#how-a-part-a-commit-is-checked)). My note that a third run "matched the baseline" rested on a saved output and not on the committed file running; the run of 2026-11-21 is the committed file.
+3. **Part A can start,** five commits with a dev deploy after each. The first deploy is also the one for the away-rolls switch check.
+
 ### For the next pass
 
-1. **A1 and the panes.** Each pane is a browser with its own root stack. After A1, one stack per browser answers a resize. A pane's width comes from its container's resize observer and not from the window, so should a pane's root stack answer a window resize at all? Today it does (that is some of the six or seven handlers). I intend to keep it answering, so A1 changes no layout, and to note the question for part C. Say if you would cut it now.
-2. **Still to see in a browser:** the away-rolls switch, on both devices, after Steve's next deploy to dev. The e2e spec calls the setter and would pass with no switch on the page.
+1. **Part C is built** (see [Part C as built](docs/Plans/Compaction%20Coordinator/#part-c-as-built-2026-11-21)) and has had no review. Three things I would like read hardest. The trigger is a comparison at the root (`layerSignature()`: the two widths and, per level, which stack it is, whether it is on the page, and its claim) run where a pass used to be asked for, not a pass scheduled for the end of the cycle; is there a change that alters a layout and none of those? The second step changed 9 matrix states on purpose (a hinted last column under "full" keeps its hint, held to the room, as its minimum); is that the right minimum? And a first node update after a navigation can run one pass on a detached, cached chain whose signature is empty; I worked round it in the trigger spec and did not mend it.
+2. **Three part D changes are built** (see [Part D as built](docs/Plans/Compaction%20Coordinator/#part-d-as-built-2026-11-22)), on Steve's decisions of 2026-11-22. Two places where the build is not what I told him, both written up there: the path read back leaves an inlined section out, and two documents (or a document and a fill column) share the width left over. A check of the selection would be welcome: a row inside a section is now selected, and `navSelectedTile()` looks through every section of a document on each change of selection.
+3. **Before a release** (decision 19): `session-anchored-tabs` was run on dev on 2026-11-22 and six of its nine tests fail. None is a column's layout, though none was run against a build from before part A:
+   - Five are the gaps the spec's own history names on 2026-11-10, eleven days before part A (app commit `500915aac`): `session.listWorlds` is host-only (two tests), Theatre opens in Narration's place (two), and a page-local character is replaced by the host's party (one). The same five failed on 2026-11-21.
+   - The sixth, the phone test, passed once on 2026-11-21 and now fails about two runs in three. Traced: the tap on Settings opens Settings within 30ms, and in a failing run a tap on Narration follows with no pointer event. It comes from the model: a client session that finishes joining posts a focus note for its chat (`UoClientSession`, `postShouldFocusAndExpandSubnode`), which the tab row handles as a tap. A player who changes tab as the table joins is taken back to Narration. That is the app's behaviour and a small fault of its own, not compaction; the test taps inside that window. It is not mended.
+4. **Part A's two questions stand:** whether the fixture behind my width table is a fair stand-in for yours (its first row reads 300px where yours reads 17em), and whether A1 could have changed something a recorder of layouts would not show.
 
 
 ---
@@ -7652,46 +7938,48 @@ Source: docs/Plans/Meta%20Plan/
 
 The order to do the other plans in, why, and what should change in them first.
 
-**As of:** 2026-11-19. Every plan page opens with a status line; this page orders them. Steps 1 to 5 are built: 1 to 3 done, 4 (Capabilities & Permissions) and 5's first part (slot constraints) built and used by the app, and on 2026-11-19 most of their browser-side work was run in a browser against `just launch` (Next Steps A: what passed, and what is still unseen). Two pieces of work grew out of these steps: shared promises (step 3) and, on 2026-11-18, taking the app's class names out of framework code (step 2's boundary, the other direction).
+**As of:** 2026-11-23. Every plan page opens with a status line; this page orders them. Steps 1 to 6 are built: 1 to 3 done, 4 (Capabilities & Permissions) and 5's first part (slot constraints) seen working in a browser on 2026-11-19, and 6 (Browser Cleanup) built in all four parts, its compaction coordinator released to production on 2026-11-22. On 2026-11-23 the plans were checked against the code: Browser Cleanup's composable breadcrumbs and auxiliary view had been built on 2026-06-12, as `SvBreadCrumbsView` and the companion, and the plan had not noticed. The steps below follow from that check.
 
 ## Next Steps
 
-Chosen 2026-11-18, in this order.
+Chosen 2026-11-23, in this order. The 2026-11-18 set (A to C) is [below](docs/Plans/Meta%20Plan/#done-the-2026-11-18-steps).
 
-### A. A browser pass over steps 2 to 5
+### 1. Put back what the 2026-11-23 check found broken or stale — done (2026-11-23)
 
-Four steps of work were checked headless only, and the framework guide's evidence bar ("did I verify, or did I just read?") is not met for any of it. This comes before new work, because each later step builds on these, and a bug found now has one suspect rather than five. One session in the app (`just launch`, `https://localhost:8443`), a host and a second player, checking:
+Small, and each is a fault a reader or a user can meet today. All done the same day: the breadcrumbs' `aria-current` (with `TestBreadCrumbsAriaCurrent`), the Responsive page rewritten around claims and `SvLayerAllocation`, and the stale class name replaced.
 
-- **Step 2 (platform accessors):** an invite link's `?invite=` survives boot (`SvPlatform.pageUrl()`); opening a link, picking a file and copying text go through the view actions; an error report carries the user agent.
-- **Step 3 (promises):** images and blobs load after a reload and after a failed fetch (the shared promise retries); nothing logs an unhandled rejection.
-- **Step 4 (editability):** as a non-admin, a drop onto an admin-only catalog is refused and says so, and nothing saves; a title, a reorder and a field edit are refused the same way; a write the server refuses reloads the document and tells the user.
-- **Step 5 (slot constraints):** a character sheet value typed outside its bounds (death saves past 3, negative coins) shows the field's error sentence and is held back from the model; the field carries `aria-valuemin` / `aria-valuemax`; an AI patch that breaks one is refused with the sentence. (There is no `aria-invalid` yet; add it if the pass shows a screen reader misses the error.)
-- **The 2026-11-18 cleanup:** assistant chat messages now use `SvChatMessageTile` rather than the app's tile; they should look exactly as before, including the narrated-sentence highlight.
+- **The breadcrumb bar's `aria-current`.** `SvBreadCrumbsTile` set `aria-current="location"` on the last crumb; `SvBreadCrumbsView`, which replaced it on 2026-06-12, does not. Put it back, with a headless check.
+- **Docs that describe code that is gone.** [Responsive](docs/Views/Responsive/) explains compaction with `compactNavAsNeeded` and `updateWidthForWindow`, both removed by the compaction coordinator; rewrite it around claims and `SvLayerAllocation`. [Accessibility](docs/Accessibility/), [Internationalization](docs/Internationalization/) and [Auto-Generated Views](docs/Views/Auto-Generated%20Views/) still name `SvBreadCrumbsTile`.
 
-Run with `?thrash=count` on, since steps 2 and 4 touched view code. Each failure becomes a fix with a test where one can be written; the pass is done when every line above has been seen working.
+### 2. Keep the framework free of app names (was B) — test built (2026-11-23), the prompt example waits
 
-**2026-11-19: run against `just launch`, in Playwright specs that cost nothing to rerun.**
+**Built:** `TestUndefinedClassNames` fails when framework code uses a name as a class (`extends`, `new`, `instanceof`, `.clone()`, `.shared()`, a slot type, `SvGlobals.get`) that no framework file defines, that is not a platform API, and that is not listed with its reason. It found no app names, and two real faults, both fixed: an audio file read through `SvResourceFile` made an `SvSoundResource`, a class that never existed (seen decoding to an `SvWaSound` in a browser after the fix), and a slot type spelled `"NumbeStringr"`. It does not read prose in strings, so it cannot see the prompt example below.
 
-- **Passed:** the invite (`hosted-table-invite-signup.spec.js`, made to run locally: a link opened signed out survives boot and sign-in and joins the table, with one session). Step 2's accessors, step 3's retry and reload, the tile wiring and the thrash check (`meta-plan-step-a.spec.js`): the page url and an error report's user agent; opening a link, picking a file and copying through `SvWebUserInterface`; an image read that failed is read again on the next ask and loads, and loads after a reload, with no unhandled rejection; assistant replies resolve to `SvChatMessageTile` and the session's tile inherits its highlight; typing two lines in a chat input with `?thrash=count` forces no layouts (a forced write-then-read is counted, so 0 is a measurement). Steps 4 and 5 through the model (`editability-browser-pass.spec.js`): a non-editor's catalog campaign offers no edits by the server's answer; a forced save is refused 403, reloaded and said ("Read only — You can't edit …"); out-of-bounds patches and field values give their sentences.
-- **Found and fixed:** `just launch` had started with an empty catalog since 2026-11-13 (`records.js` judged "local" at load, before the seeder pointed at the emulators); the editability spec's forced save edited a derived, unstored title and never reached the server.
-- **Passed through the views, on the deployed dev project** (`editability-views-browser-pass.spec.js`, mouse and keyboard). Step 4, on the catalog tree as a non-editor (the tree is hidden from players, so the spec makes it visible first): no read-only tile offers editable text; typing over a title, Delete and Backspace, a held drag to reorder, and a file dropped on the list all change nothing, and the drop is said. Step 5, on a character's raw death-save and coin fields (a character opens as its derived sheet everywhere, so the spec hangs the fields under a folder to reach their tiles): the tiles carry `aria-valuemin` / `aria-valuemax`; a 4 typed into Failures shows "Must be at most 3." and the model keeps its value; a 2 is taken and the sentence goes.
-- **Found and fixed through the views:** Cmd+D duplicated the selected tile into a read-only list. `duplicateSelectedTiles()` asked nothing, neither the cascade nor `nodeCanAddSubnode()`, so the ratchet test (which looks for raw capability reads) could not see it. It and pinch-to-add now ask the cascade, and `TestEditabilityInViews` also fails on a view method that changes a node's list without asking.
-- **What the pass showed about reach:** a player cannot get to either place by hand. The catalog's own nodes are never shown to a non-admin (My Worlds shows copy offers), and no screen shows a character's raw number fields. So for players today the cascade's view refusals and a field's error sentence are a second line; the first is the server's refusal and the patch preflight.
-- **Still unseen:** a failed fetch from Cloud Storage rather than the local pool (locally a public image cannot be pushed, so this needs a deployed project); the narrated-sentence highlight seen during real narration.
+What was planned: the ratchet test, like `TestPlatformGlobalsInModels`: fail when framework code references a class that no framework file defines. It needs no app prefix, so it stays general, and it stops the drift the 2026-11-18 cleanup undid. One known use stays until Steve chooses: the tool instructions every AI conversation receives (`SvToolDefinitions`) use the app's `rollRequest` and `UoRollRequestMessage` as their worked example. The recommendation is a neutral example made up for the framework, with the game keeping its own in its prompt files; it changes the game's prompt, so it waits on that choice. Details in [Naked Objects Issues](docs/Plans/Naked%20Objects%20Issues/#app-names-in-framework-code).
 
-### B. Keep the framework free of app names
+### 3. Navigation announcements, with the entry point's second pass — built (2026-11-23), not yet heard with VoiceOver
 
-The 2026-11-18 cleanup found a framework method that looked up the app's `UoSession` (a ReferenceError under any other app) and a framework class that named the app's tile; both are gone, along with about 30 comments and a fixture that used app classes as examples. One use is left on purpose, pending a decision: the tool instructions every AI conversation receives (`SvToolDefinitions`) use the app's `rollRequest` tool and `UoRollRequestMessage` as their worked example. Changing it changes the game's prompt, so it waits on a choice between a neutral example and one built from the first real tool definition.
+**Built:** a model's focus notes are selected on behalf of a `"program"` request, and a browser says the title of a place code moved the user to, through one polite live region (`SvLiveAnnouncer`). Checked headless (`TestNavigationEntryPoint`) and in Chromium against `just launch` (`tests/e2e/navigation-announcements.spec.js`, new; `navigation-entry-point` and `meta-plan-step-a` still pass). Still to do: listen with VoiceOver. See [Accessibility Testing & Tuning](docs/Plans/Accessibility%20Testing%20%26%20Tuning/#navigation-announcement-mechanism).
 
-Then a ratchet test like `TestPlatformGlobalsInModels`: fail when framework code references a class that no framework file defines, which needs no app prefix and so stays general. Small, and it stops the drift that the cleanup undid. Details in [Naked Objects Issues](docs/Plans/Naked%20Objects%20Issues/#app-names-in-framework-code).
+What was planned:
 
-### C. Browser Cleanup, part 1: one navigation entry point
+The first feature in [Accessibility Testing & Tuning](docs/Plans/Accessibility%20Testing%20%26%20Tuning/#navigation-announcement-mechanism), and the last open part of Browser Cleanup. A path change now says who caused it, so announcing a `"program"` navigation is a listener and a live region. It is right only once the focus-and-expand notes and the other unrequested path changes go through `navigate()` ([second pass](docs/Plans/Browser%20Cleanup/#second-pass-open)); today they are recorded as the user's and would go unannounced. Checked in a browser with VoiceOver, not only headless.
 
-**Built 2026-11-19.** `SvBrowserView.navigate(aRequest)` takes an `SvNavigationRequest` that says where to go and who asked; the older entry points are removed, and the browser remembers the request behind its latest path change. A tile the user taps reports afterwards, and the focus-and-expand notes wait for a second pass. See [Browser Cleanup](docs/Plans/Browser%20Cleanup/#one-navigation-entry-point). The compaction coordinator, Tile Container Views and the navigation announcements in Accessibility waited on it and can start.
+### 4. Tile Container Views: the wrapping grid — proposal written, waiting on three decisions (2026-11-23)
+
+A recommendation is in [Tile Container Views](docs/Plans/Tile%20Container%20Views/#the-first-grid-a-recommendation-for-discussion-2026-11-23): opt in with `nodeChildrenLayout()` answering `"grid"`, not a view class; build it as a mode of `SvTilesView` that fills whenever shown; first used by a character's artwork. Nothing is built until those are agreed.
+
+What was planned: `setNodeTilesViewClass()` and the first grid. It waits on nothing (decided 2026-11-20), and the manual accessibility passes and the Photo Gallery case study wait on it. Its ARIA roles come with it.
 
 ### Not next
 
-More slot constraints are declared where a wrong value is seen, not as a project (each is a decision about stored data). The two hand-kept promises in [Cleanup Notes](docs/Plans/Cleanup%20Notes/#hand-kept-promises) wait until their files are changed. Promise-wrapped slots wait for a first user.
+More slot constraints are declared where a wrong value is seen, not as a project (each is a decision about stored data). The two hand-kept promises in [Cleanup Notes](docs/Plans/Cleanup%20Notes/#hand-kept-promises) wait until their files are changed. Promise-wrapped slots wait for a first user. The rest of the compaction coordinator's part D, and the companion's missing hints, wait for a case that needs them. A review of compaction parts C and D, which shipped without one, is welcome whenever a reviewer is free; its questions are in [For the next pass](docs/Plans/Compaction%20Coordinator/#for-the-next-pass).
+
+### Done: the 2026-11-18 steps
+
+- **A. A browser pass over steps 2 to 5** (2026-11-19). Run against `just launch` and the deployed dev project, in Playwright specs that cost nothing to rerun: `hosted-table-invite-signup`, `meta-plan-step-a`, `editability-browser-pass` and `editability-views-browser-pass`. It found and fixed an empty catalog under `just launch` (since 2026-11-13) and Cmd+D duplicating into a read-only list; `TestEditabilityInViews` now also fails on a view method that changes a node's list without asking. It showed that a player cannot reach the catalog's nodes or a character's raw number fields by hand, so for players the view refusals and a field's error sentence are a second line behind the server's refusal and the patch preflight. **Still unseen:** a failed fetch from Cloud Storage rather than the local pool (needs a deployed project), and the narrated-sentence highlight during real narration.
+- **B. App names.** Carried forward as step 2 above.
+- **C. One navigation entry point** (2026-11-19). `SvBrowserView.navigate(aRequest)`; see [Browser Cleanup](docs/Plans/Browser%20Cleanup/#one-navigation-entry-point). The compaction coordinator followed it and was released 2026-11-22.
 
 ## Where Things Stand
 
@@ -7700,14 +7988,15 @@ More slot constraints are declared where a wrong value is seen, not as a project
 | [Complete Protocols](docs/Plans/Complete%20Protocols/) | Done | Defaults on base classes, `SvJsonSerializableProtocol`, and a ratchet test. |
 | [Lazy Slots](docs/Plans/Lazy%20Slots/) | Shipped | Rewritten to describe what shipped; a few items remain. |
 | [Async Final Initialization](docs/Plans/Async%20Final%20Initialization/) | Closed | Its main case was solved by manifests and then lazy loading. |
-| [Naked Objects Issues](docs/Plans/Naked%20Objects%20Issues/) | Done, one follow-up | Every listed class moved; the ratchet test's baseline is empty. Two gaps stay open until needed. App class names were taken out of framework code (2026-11-18); one prompt example and a ratchet test are left (next step B). |
-| [Cleanup Notes](docs/Plans/Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway. Now lists the two hand-kept promises still to move to shared promises. |
+| [Naked Objects Issues](docs/Plans/Naked%20Objects%20Issues/) | Done, one decision left | Every listed class moved; seen in a browser 2026-11-19. App class names were taken out of framework code (2026-11-18), and `TestUndefinedClassNames` keeps them out (2026-11-23). One prompt example waits on a decision (next step 2). |
+| [Cleanup Notes](docs/Plans/Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway, including the two hand-kept promises. |
 | [Promise-Wrapped Slots](docs/Plans/Promise-Wrapped%20Slots/) | Core done, unused | One shared promise per value, retry after failure, recompute on a dependency change; no slot uses it yet. |
-| [Capabilities & Permissions](docs/Plans/Capabilities%20%26%20Permissions/) | Built, unverified in a browser (next step A) | Every view edit path asks the editability cascade; the server says who may write and the cascade uses its answer; a refused commit reloads and says so. Read, share and create hooks wait for a need. |
-| [JSON Schema](docs/Plans/JSON%20Schema/) | Slot constraints built, unused | A slot's `minimum`, `maxLength` and the rest reach the schema, the field's error text, ARIA and a refused AI patch; the setter only warns. `pattern` is checked too. The app declares its first few (2026-11-18). Class-level keywords and type unions are left. |
-| [Browser Cleanup](docs/Plans/Browser%20Cleanup/) | Next new work | Holds the compaction notes; has its own order. Part 1 (one navigation entry point) is built; part 2 (the compaction coordinator) is next. |
-| [Tile Container Views](docs/Plans/Tile%20Container%20Views/), [Tile Views](docs/Plans/Tile%20Views/) | Later | The wrapping grid can start on its own (2026-11-20); the table and scrolling wait on compaction. Large collections rewritten around windowed collections. |
-| [Accessibility Testing & Tuning](docs/Plans/Accessibility%20Testing%20%26%20Tuning/) | Ongoing | Automated checks now; manual passes after the navigation work. |
+| [Capabilities & Permissions](docs/Plans/Capabilities%20%26%20Permissions/) | Built, seen in a browser | Every view edit path asks the editability cascade; the server says who may write; a refused commit reloads and says so. Read, share and create hooks wait for a need. Not yet run on the Spanner backing. |
+| [JSON Schema](docs/Plans/JSON%20Schema/) | Slot constraints built | A slot's `minimum`, `maxLength`, `pattern` and the rest reach the schema, the field's error text, ARIA and a refused AI patch. The app declares its first few. Class-level keywords and type unions are left. |
+| [Browser Cleanup](docs/Plans/Browser%20Cleanup/) | Built | All four parts: the entry point (2026-11-19, second pass 2026-11-23), the compaction coordinator (released 2026-11-22), composable breadcrumbs and the companion (2026-06-12). The companion's missing hints wait for a node that uses one. |
+| [Compaction Coordinator](docs/Plans/Compaction%20Coordinator/) | Released | Parts A to D in production 2026-11-22; C and D had no outside review. The rest of part D waits for cases. |
+| [Accessibility Testing & Tuning](docs/Plans/Accessibility%20Testing%20%26%20Tuning/) | Started | Navigation announcements and the breadcrumbs' `aria-current` built 2026-11-23, checked in Chromium; a VoiceOver check is next. No automated checks yet. |
+| [Tile Container Views](docs/Plans/Tile%20Container%20Views/), [Tile Views](docs/Plans/Tile%20Views/) | Next after | The wrapping grid is next step 4 and waits on nothing; the table and scrolling follow. Large collections rewritten around windowed collections. |
 | [Case Studies](docs/Plans/Case%20Studies/) | Later | Contacts can run early. |
 | [Emergent Capabilities](docs/Plans/Emergent%20Capabilities/) | Ideas | Each candidate now points to the plan that takes it. |
 | [Async Navigation](docs/Plans/Async%20Navigation/), [Graph Database](docs/Plans/Graph%20Database/) | Directions | No work planned. |
@@ -7733,7 +8022,7 @@ The rest of Cleanup Notes is for when a file is being changed anyway.
 
 **Shared promises (2026-11-15), which came out of this step.** Finishing the slot feature raised the question of the code that hand-kept a `fooPromise` for work several callers ask for at once. An audit of those copies found each had something wrong (a failure cached forever, a retry that never ran, a finished run clearing a newer one, an unhandled second rejection, work that carried on after being abandoned). `Object_sharedPromises.js` now gives every object three helpers (once, one at a time, fresh), and 23 hand-written copies in the framework and the app moved onto them. See [Async Patterns](docs/Programming%20Idioms/Async%20Patterns/index.html). Two framework copies are left, listed in [Cleanup Notes](docs/Plans/Cleanup%20Notes/#hand-kept-promises).
 
-### 4. Capabilities & Permissions — built (2026-11-17), to verify in a browser
+### 4. Capabilities & Permissions — built (2026-11-17), seen in a browser (2026-11-19)
 
 The most user-facing value: the failure it describes is silent data loss. **Its first step is done (2026-11-16):** titles, drags in and out, reordering, desktop drops and three field paths now ask the cascade, a refused drop says so, and `TestEditabilityInViews` fails on a view that reads a raw capability.
 
@@ -7745,23 +8034,25 @@ Additive, and tighter schemas improve AI tool calls at once. Start by emitting t
 
 **Slot constraints — done (2026-11-17).** Ten setters on `Slot`, named after their JSON Schema keywords, with four readers: the schema, the error sentence a field shows, ARIA, and the setter's warning. An AI patch that breaks one is refused before anything is applied. See [JSON Schema](docs/Plans/JSON%20Schema/#what-was-built). `pattern` joined them on 2026-11-18 (`setPattern`, replacing the schema-only `setJsonSchemaPattern`). The app declared its first bounds the same day, after scanning its stored data for values outside them. What remains is declaring more where a wrong value is seen (each is a decision about stored data), and the class-level keywords and type unions when a case needs them.
 
-### 6. Browser Cleanup
+### 6. Browser Cleanup — built
 
-In its own order: one navigation entry point (built 2026-11-19), the compaction coordinator, composable breadcrumbs, the auxiliary view.
+One navigation entry point (2026-11-19); the compaction coordinator (released 2026-11-22); composable breadcrumbs and the auxiliary view, which turned out to have been built on 2026-06-12 as `SvBreadCrumbsView` and the companion. The entry point's second pass is left, and goes with the navigation announcements (next step 3).
 
 ### 7. Tile Container Views and Tile Views
 
-After the compaction coordinator. Meter and badge tiles can be done at any point.
+Next (step 4 above). Meter and badge tiles can be done at any point.
 
 ### 8. Accessibility
 
-Automated checks alongside step 1; manual passes after steps 6 and 7.
+Nothing built yet. The navigation announcements now, with the automated checks alongside; manual passes after the first grid (step 7).
 
 ### 9. Case Studies
 
 Contacts can run as early as step 2, as a gap-finder; what it finds comes back to this page. The rest once their features exist.
 
 ## Not Yet Plans
+
+- **The [First Principles](docs/First%20Principles/) essay** is on hold (2026-11-23) until after the Thanksgiving break, or when Steve has time. He edits it by hand first, then asks for help.
 
 - **Undo / redo** has no other home. Write it as its own plan when wanted, built on slot-change notifications and `pool.transaction()`.
 - **Schema migration.** Class renames are handled (`classNameConversionMap()`); slot type changes and custom migrations aren't. Write a plan when a real type change needs it, taking in the migration item from Emergent Capabilities.
@@ -7777,7 +8068,7 @@ Source: docs/Plans/Naked%20Objects%20Issues/
 
 Known places where framework model classes still cross the model/view boundary — touching view classes, browser globals, or UI state — plus the framework gaps that force such crossings.
 
-**Status:** done for framework model code (2026-11-15): every class below is moved, and the ratchet test's baseline is empty. Two gaps remain open (a viewport accessor, a platform client id); close them when a model needs them. App class names were taken out of framework code on 2026-11-18 ([below](docs/Plans/Naked%20Objects%20Issues/#app-names-in-framework-code)); a prompt example and a ratchet test are left. The browser-side changes were checked headless only; a pass in an app is pending.
+**Status:** done for framework model code (2026-11-15): every class below is moved, and the ratchet test's baseline is empty. Two gaps remain open (a viewport accessor, a platform client id); close them when a model needs them. App class names were taken out of framework code on 2026-11-18 ([below](docs/Plans/Naked%20Objects%20Issues/#app-names-in-framework-code)); `TestUndefinedClassNames` keeps them out (2026-11-23); a prompt example is left, waiting on a decision (the [Meta Plan](docs/Plans/Meta%20Plan/)'s next step 2). The browser-side changes were seen working in the app on 2026-11-19 (Meta Plan, step A).
 
 The target is the model/view separation and **Platform Abstraction** rules in the framework guide (see [App Lifecycle](docs/Lifecycle/App%20Lifecycle/index.html)): a model (`SvNode` and subclasses) should never reach into `document` / `window` / `navigator` / `localStorage` or reference view classes, so it stays headless-clean and the UI platform stays swappable.
 
@@ -7829,7 +8120,7 @@ The same boundary seen from the other side: the framework must not know the app 
 
 **Left, pending a decision:** the tool instructions every AI conversation receives (`SvToolDefinitions`, "How to Use These Definitions") use the app's `rollRequest` tool and `#/definitions/UoRollRequestMessage` as the worked example. Changing it changes the game's prompt. Either a neutral example, or one built from the conversation's first real tool definition (always accurate, but the prompt then varies with the tool list).
 
-**To add:** a ratchet test. For code it can be general and need no app prefix: fail on any class-like global a framework file references (`SomeName.shared()`, `extends SomeName`, `"SomeName"` passed as a class name) that no framework file defines. That catches `UoSession` and would catch another app's names too. Comments can't be checked that way; a prefix check on them would put the app's name into the framework's own test, so leave comments to review, and allow-list the prompt example until it is decided.
+**The ratchet test — built 2026-11-23.** `tests/headless/TestUndefinedClassNames.js` fails on any name framework code uses as a class (`extends X`, `new X(`, `instanceof X`, `X.clone()` / `X.shared()` / `X.prototype`, `setSlotType("X")`, `SvGlobals.get("X")`, `setFinalInitProto(X)`) that no framework file defines and that is not a platform API. It names no app prefix, so it would catch another app's names as well as this one's. It has no baseline: its first run found no app names, and two real faults, both fixed (an audio file read through `SvResourceFile` made an `SvSoundResource`, a class that never existed; a slot type was spelled `"NumbeStringr"`). Comments and prose in strings are not read, so the prompt example above is left to the decision, and comments to review.
 
 
 ---
@@ -7944,7 +8235,26 @@ Source: docs/Plans/Tile%20Container%20Views/
 
 Layout strategies for presenting a node's subnodes.
 
-**Status:** open. The wrapping grid does not wait on anything (decided 2026-11-20): it wraps inside the width its column is already given, as an inline document does. The table and the scrolling keep their place after the [Compaction Coordinator](docs/Plans/Compaction%20Coordinator/) until someone checks whether they need to ask a neighbouring column for width. **Order:** `setNodeTilesViewClass()` and the wrapping grid, then the table, then scrolling over windowed collections; the search and filter chrome takes the Search & Filtering item from [Emergent Capabilities](docs/Plans/Emergent%20Capabilities/). Each container gets its ARIA roles when it is written, not later.
+**Status:** open. The wrapping grid does not wait on anything (decided 2026-11-20): it wraps inside the width its column is already given, as an inline document does. The [Compaction Coordinator](docs/Plans/Compaction%20Coordinator/), which the table and the scrolling waited on, was released 2026-11-22; if a table needs to ask a neighbouring column for width, that is the coordinator's "claim with a least and a most", a part D item taken up then. **Order:** `setNodeTilesViewClass()` and the wrapping grid, then the table, then scrolling over windowed collections; the search and filter chrome takes the Search & Filtering item from [Emergent Capabilities](docs/Plans/Emergent%20Capabilities/). Each container gets its ARIA roles when it is written, not later.
+
+## The first grid: a recommendation for discussion (2026-11-23)
+
+Written before any code, because three things in it are Steve's to decide.
+
+**1. Opt in with the layout hint, not a view class.** The plan above says `setNodeTilesViewClass(SvGridTilesView)`. Since it was written, the framework settled on hints that name a role, read by the generic view: `nodeChildrenLayout()` already answers `"column"` or `"inline"`. A grid is a third answer, `"grid"`. The node says how its children are arranged, and the view decides how to draw that. The swap to another UI (a terminal, headless) then needs no class names, and nothing in a node names a view. `setNodeTilesViewClass()` would stay unbuilt until a container needs code the generic view cannot hold, which may be the spatial map. *Recommended.*
+
+**2. How it is built.** It is a mode of `SvTilesView`, as inline documents are (`SvTilesView_inline`), and not a subclass:
+
+- **Layout.** CSS grid, `repeat(auto-fill, minmax(<cell>, 1fr))`, so cells wrap inside the width the column is given, with no measuring. The cell width comes from the parent's `nodeChildrenTileWidth()` (today it means "a tile in a horizontal row"; it would also mean "a grid cell"), or a default.
+- **The column.** A grid fills whenever it is shown, as an inline document does (`fillsWhenShown`), so it is offered the width left over rather than a list column's width. That is a part D rule that already exists, with no new compaction work.
+- **The cell.** It is still the tile the child would have in a list, so selection, drag, theming and drill-in carry over. In a grid, a tile whose node has a thumbnail shows it above the title, filling the cell's width (`SvTitledTile` already decides by layout whether a thumbnail fits).
+- **Keys.** Left and right move along a row; up and down move by one row, by the column count the grid has at that moment. That count is a value the grid writes, not one it measures.
+- **ARIA.** `list` and `listitem`, not `grid` and `gridcell`. A collection of links the user opens is a list; the `grid` role promises spreadsheet-like cell navigation, which this does not have. Each container gets its roles when it is written.
+- **Reorder.** Drag to reorder works by the same index as in a list; the drop indicator is drawn between cells rather than between rows.
+
+**3. The first user, so it can be seen.** A character's artwork (`UoArtworkFolder`, whose items already have thumbnails) is the clearest case in the app: a gallery that today is a list of rows. The alternative is a fixture node in the app's Inline Lab, which shows the grid without changing what players see. *Recommended: the artwork folder, with a fixture for the specs.*
+
+**Not in the first grid:** the switcher between a list and a grid (`nodeAlternativeTilesViewClasses()`), virtual scrolling, and container chrome.
 
 ## Context
 
@@ -8042,7 +8352,7 @@ Nodes select their tile class via `setNodeTileClass()`. All tiles inherit the st
 | `SvTitledTile` | `SvTile` | Adds title, subtitle, note, note icon, and thumbnail subviews. |
 | `SvHeaderTile` | `SvTitledTile` | Section header with selectable state and specific theme class. |
 | `SvTextNodeTile` | `SvTile` | Displays and edits text nodes with a `SvTextView`. |
-| `SvBreadCrumbsTile` | `SvTile` | Breadcrumb path navigation. |
+| `SvBreadCrumbsView` | `SvFlexDomView` | Breadcrumb path navigation; a view the browser owns, no longer a tile (2026-06-12). |
 
 ### Field Tiles
 
@@ -11382,7 +11692,7 @@ The view hierarchy wraps DOM elements rather than extending them. This is delibe
 - [Companion View](docs/Views/Companion%20View/index.html) — A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
 - [Programmatic Styling](docs/Views/Programmatic%20Styling/index.html) — Named CSS methods, the chainable API, and why STRVCT avoids CSS files.
 - [Themes and Style States](docs/Views/Themes%20and%20Style%20States/index.html) — How views resolve their appearance from theme classes, style states, and node configuration.
-- [Responsive Views](docs/Views/Responsive/index.html) — Automatic viewport compaction, last-column stretching, and per-node width hooks without per-screen layout code.
+- [Responsive Views](docs/Views/Responsive/index.html) — Automatic column compaction, last-column stretching, and per-node width hooks, without per-screen layout code.
 
 
 ---
@@ -11540,7 +11850,6 @@ Tiles are individual items rendered inside `SvTilesView` columns:
 | **`SvTile`** | Base tile class. Handles selection, long-press reorder, slide-to-delete, and style state cascades. |
 | **`SvTitledTile`** | Default tile. Displays title, subtitle, and note from `SvSummaryNode`. |
 | **`SvHeaderTile`** | Non-selectable section header tile. |
-| **`SvBreadCrumbsTile`** | Compact breadcrumb trail tile. |
 
 ### Field Tiles (`SvFieldTile`):
 
@@ -11909,11 +12218,11 @@ Source: docs/Views/Responsive/
 
 # Responsive Views
 
-Automatic viewport compaction, last-column stretching, and per-node width hooks without per-screen layout code.
+Automatic column compaction, last-column stretching, and per-node width hooks, without per-screen layout code.
 
 ## Overview
 
-Responsive behavior in STRVCT is not a separate rendering mode or set of CSS breakpoints. The same master-detail composition that produces a multi-column Miller view on a wide desktop produces a one-column stack with breadcrumbs on a phone, because `SvStackView` measures available width and automatically collapses columns that would overflow the viewport.
+Responsive behavior in STRVCT is not a separate rendering mode or set of CSS breakpoints. The same master-detail composition that produces a multi-column Miller view on a wide desktop produces a one-column stack with breadcrumbs on a phone, because each column states what it needs and one allocation over the whole chain hides the columns that would overflow.
 
 This behavior—**automatic collapsing**—falls out of the same primitives used for navigation at any width; there is zero separate "mobile" code path in the view hierarchy.
 
@@ -11965,34 +12274,37 @@ This behavior—**automatic collapsing**—falls out of the same primitives used
 
 ---
 
-## The Two Layout Mechanisms
+## Claims and One Allocation
 
-### 1. Compaction (`compactNavAsNeeded`)
-`SvStackView.compactNavAsNeeded()` walks the stack chain from outermost (leftmost) to innermost (rightmost), summing target widths against available viewport space (`topViewWidth()`):
-- **Fits:** The column is `uncollapse()`d and displayed.
-- **Overflows:** Earlier columns are `collapse()`d (`display: none`). The current (deepest) column stays visible as long as possible.
+Each level of a browser's chain states a **claim**: a small record of plain values that says what it needs, such as the width it asks for, whether it fills the width left over, and how much its companion or anchored panes reserve (`SvStackView.layerClaim()`). The root hands every claim in the chain, with the root's width, to `SvLayerAllocation`, which uses no DOM and no views. It answers for each level whether it is hidden and which width rule it takes. Each column applies its own answer in one place (`SvNavView.applyLayerAnswer()`).
 
-### 2. Last-Column Stretch (`updateWidthForWindow`)
-`SvNavView.updateWidthForWindow()` determines width for visible columns:
-- If `targetWidth() >= windowWidth`, the column takes `width: 100%`.
-- If a column is the last visible column AND `windowWidth < targetWidth * 2`, it stretches to `width: 100%` to fill available slack instead of leaving dead space.
+The rules, each held by a check in `tests/headless/TestLayerAllocation.js`:
+
+- **Which columns show.** A column's sum is its own target plus every target and reservation after it. A column is shown while its sum is less than the width the chain must fit in, and hidden otherwise, so columns give way from the root end and the deepest stays longest. A column that fills is always shown; a level laid out downward is never hidden.
+- **How wide.** A column that fills takes the width left over. A column whose target is at least the available width takes all of it, and so does the last column when it has less than twice its target to fit in, so a narrow window leaves no dead space. Any other column is exactly its target. A target is capped one pixel short of the available width.
+- **An inline document** (a node whose `nodeChildrenLayout()` is `"inline"`) fills whenever it is shown, not only when it is last, and is hidden by the same test as any other column.
+
+**When a pass runs.** A pass runs only when something it depends on has changed: the root's width, which stacks make up the chain and whether each is on the page, or a level's claim. The root keeps the signature of its last pass and skips one that would change nothing, so an ordinary node update, such as a streamed chat chunk, costs nothing. Widths are read once per pass from cached measurements, never after a write.
+
+The design, its history and the measurements are in [Compaction Coordinator](docs/Plans/Compaction%20Coordinator/index.html).
 
 ---
 
-## Per-Node Layout Protocol Hooks
+## Per-Node Layout Hooks
 
 Domain nodes can influence layout without writing custom view code:
 
 | Node Method | Purpose & Behavior |
 |---|---|
-| `nodeMinTileWidth()` | Declares a minimum tile width floor for the column. Useful for wide property inspectors. |
-| `nodeFillsRemainingWidth()` | When `true`, forces the column to stretch to 100% width whenever it is the last visible column. Useful for document editors or chat logs. |
+| `nodeMinTileWidth()` | The width the node's column asks for (its target). The default target is 270px; a column whose tiles show thumbnails adds room for them. |
+| `nodeFillsRemainingWidth()` | When `true`, the column stretches to take the width left over whenever it is the last visible column. Useful for document editors or chat logs. |
+| `nodeChildrenLayout()` | `"inline"` draws the children within the node's own column, as a document, and the column fills whenever it is shown. |
 
 ---
 
 ## Viewport vs Device Detection
 
-- **`SvWebBrowserWindow.shared().width()`**: Returns current viewport width in CSS pixels. Always use this for layout and compaction decisions.
+- **`SvWebBrowserWindow.shared().width()`**: Returns current viewport width in CSS pixels. Use it for layout decisions in views. (Compaction itself uses the root's own width, so a browser embedded in a panel compacts to the panel, not the window.)
 - **`SvWebBrowserWindow.shared().isOnMobile()`**: User-agent string match (iPhone/Android). Use *only* for touch-gesture or platform-specific permissions, never for column width sizing.
 
 ---

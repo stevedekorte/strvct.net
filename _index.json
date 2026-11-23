@@ -12,6 +12,7 @@
       "type": "ContentCards",
       "columns": 3,
       "items": [
+        "docs/First Principles",
         "docs/Naked Objects",
         "docs/Getting Started",
         "Example App",

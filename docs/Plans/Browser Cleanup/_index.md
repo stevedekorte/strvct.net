@@ -2,7 +2,7 @@
 
 Simplifying and documenting the browser navigation architecture.
 
-**Status:** open; part 1 is built (2026-11-19, see [One navigation entry point](#one-navigation-entry-point)). **Order:** (1) one navigation entry point, (2) a compaction coordinator with a written protocol, (3) composable breadcrumbs, (4) the auxiliary view, which needs 2 and 3. [Tile Container Views](../Tile%20Container%20Views/) waited on 2; its first grid no longer does (2026-11-20), and the navigation announcements in [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) wait on 1. The compaction notes from Cleanup Notes are merged in below.
+**Status:** built: parts 1 to 4, and part 1's second pass (checked against the code 2026-11-23). (1) One navigation entry point: built 2026-11-19, see [below](#one-navigation-entry-point). (2) The compaction coordinator: released 2026-11-22, see [Compaction Coordinator](../Compaction%20Coordinator/). (3) Composable breadcrumbs and (4) the auxiliary view were built on 2026-06-12, before this plan was last revised, which did not notice: each browser owns its own `SvBreadCrumbsView`, and a node's `nodeCompanionNode()` gives it a [companion](../../Views/Companion%20View/) with an embedded browser of its own. The entry point's [second pass](#second-pass-built-2026-11-23) was built on 2026-11-23, with the navigation announcements in [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/). **Left:** the parts of the auxiliary-view sketch the companion did not take, which wait for a node that uses a companion ([below](#auxiliary-view)). The compaction notes from Cleanup Notes are merged in below.
 
 ## Current Architecture
 
@@ -10,7 +10,7 @@ The browser is built from four cooperating classes that implement a recursive Mi
 
 ### SvBrowserView
 
-The top-level container. Extends `SvStackView` and adds application-level concerns: listening for `onRequestNavigateToNode` notifications, handling keyboard shortcuts, and managing the root node hierarchy (app root, settings, breadcrumbs). On startup it schedules `moveToBase()` to set the initial navigation state.
+The top-level container. An `SvNodeView` (since 2026-06-12; before that a subclass of `SvStackView`) that owns two subviews: an `SvBreadCrumbsView` above an `SvStackView` rooted at the browser's node. It is the one way in for navigation (`navigate(aRequest)`), listens for `onRequestNavigateToNode` / `onRequestSelectNodePath` when `handlesGlobalNavRequests` is set (an embedded browser clears it), handles keyboard shortcuts, and settles into its base state when nobody has navigated it.
 
 ### SvStackView
 
@@ -21,8 +21,8 @@ Key responsibilities:
 - **Path selection**: `selectNodePathArray(pathArray)` walks an array of nodes, selecting one at each level and recursing into the next stack view.
 - **Path reporting**: `selectedNodePathArray()` and `selectedPathTitlesString()` return the current selection path by walking up or down the stack chain.
 - **Direction**: The `direction` slot (`"right"` or `"down"`) controls whether subnodes lay out as side-by-side columns or stacked rows. Nodes set this via `setNodeIsVertical()` -- the stack view reads it and adjusts its flex direction accordingly. The recursive combination of different directions at each level is what distinguishes STRVCT's navigation from a standard Miller column browser.
-- **Compaction**: `updateCompactionChain()` automatically collapses columns that don't fit the available width, showing them as expandable when space is available again.
-- **Notification broadcasting**: When the user selects a tile, `didChangeNavSelection()` propagates up to the root, which posts `onStackViewPathChangeNote` for breadcrumbs and other observers.
+- **Compaction**: each level states a claim (`layerClaim()`); the root runs one allocation over the chain (`SvLayerAllocation`) when a claim, the chain or a width has changed, and each column applies its answer (`applyLayerAnswer()`). See [Compaction Coordinator](../Compaction%20Coordinator/).
+- **Notification broadcasting**: When the user selects a tile, the path change bubbles up the view parents (`childUpdatedNavPath`) to the first `SvBrowserView`, which updates its own breadcrumbs, posts a sender-scoped `onBrowserViewPathChange`, and stops it there, so navigation inside an embedded browser never reaches an outer one. The older global `onStackViewPathChange` note still posts.
 
 ### SvNavView
 
@@ -34,14 +34,9 @@ Additional features:
 - **Collapse / uncollapse**: The compaction system can hide a nav view entirely when space is tight, replacing it with a back-navigation affordance.
 - **Orientation sync**: Reads the parent stack view's direction and adjusts its own layout accordingly.
 
-### SvBreadCrumbsTile
+### SvBreadCrumbsView
 
-Displays the current navigation path as a row of clickable buttons. Coordinates with the stack view entirely through notifications:
-
-1. Observes `onStackViewPathChangeNote` from the root stack view.
-2. Reads `targetStackView().selectedNodePathArray()` to get the current path.
-3. Builds a button for each node in the path, storing the path-up-to-that-point in each button's `.info()`.
-4. On click, calls `targetStackView().selectNodePathArray()` with the stored path to navigate back.
+The breadcrumb bar: a back button and one clickable segment per node in its browser's path. A plain view owned by the browser, with no node (it was a tile in the model graph, `SvBreadCrumbsTile`, until 2026-06-12). Its browser tells it when the path changes, so it reflects only navigation beneath that browser, and each browser on screen has its own. A click hands its browser a request with the cause `"user"`.
 
 The breadcrumbs also compact: when the path is too long to fit, earlier crumbs are hidden and a back arrow appears that navigates to the most recent hidden crumb.
 
@@ -51,8 +46,8 @@ When the user clicks a tile:
 
 1. `SvTilesView` selects the tile and notifies its `SvNavView`.
 2. The nav view's parent `SvStackView` calls `didChangeNavSelection()`.
-3. This propagates up to the root stack view, which posts `onStackViewPathChangeNote`.
-4. `SvBreadCrumbsTile` receives the notification and rebuilds its path buttons.
+3. This propagates up the view parents to the first `SvBrowserView`, which records the path change and posts `onBrowserViewPathChange`.
+4. That browser's `SvBreadCrumbsView` rebuilds its segments.
 5. The next `SvStackView` in the chain receives the selected node and populates its nav view.
 
 When the user clicks a breadcrumb:
@@ -60,7 +55,7 @@ When the user clicks a breadcrumb:
 1. The breadcrumb bar reads the stored path array from the clicked button.
 2. It hands the browser a request: `browser.navigate(SvNavigationRequest.toPath(path).setCause("user"))`.
 3. The stack chain recursively selects each node in the path, collapsing deeper levels.
-4. The resulting path change triggers `onStackViewPathChangeNote`, and breadcrumbs update.
+4. The resulting path change reaches the browser as in the steps above, and the breadcrumbs update.
 
 ## Cleanup Opportunities
 
@@ -72,15 +67,12 @@ The browser navigation works well but has accumulated complexity over time. Area
 
 ### Compaction logic
 
-The column compaction system (`updateCompactionChain()` on `SvStackView`, `collapse()` / `uncollapse()` on `SvNavView`) spans both classes with mutual callbacks. It works, but the protocol between them is implicit.
+**Released 2026-11-22** (app PR #788). The plan and what was built are in [Compaction Coordinator](../Compaction%20Coordinator/). What this section asked for, and where it stands:
 
-A recommendation for this part is written up in [Compaction Coordinator](../Compaction%20Coordinator/) (the plan as of 2026-11-20, not yet built): small fixes first, then a measurement, then claims stated by the views and one function, `SvLayerAllocation`, that allocates.
-
-- **A compaction coordinator.** Measuring the available width, choosing which columns to collapse, and collapsing or expanding them could live in one object rather than across `SvStackView` and `SvNavView`.
-- **A written protocol.** What triggers compaction, the order columns compact in, how a column says it can't compact further, and how expansion reverses it.
-- **Priorities.** All columns compact alike today. Some should resist longer: the auxiliary view below, and nodes whose content matters more than their siblings'.
-- **Animation.** Collapse and expand are instant; animating them would help the user see what moved.
-- **Measure once.** Compaction runs on every node update that bubbles to the root, so it is a hot path. Measure container widths once and cache them, invalidated by resize (as `SvStackView.cachedRootWidth()` does), then write; never measure after writing in the same pass. Verify with `?thrash=count` before and after.
+- **A compaction coordinator.** Built as claims stated by the views and one function, `SvLayerAllocation`, that allocates over the whole chain with no DOM. `TestLayerAllocation` holds its rules.
+- **A written protocol.** The plan's [What asks for a pass](../Compaction%20Coordinator/#what-asks-for-a-pass) and the function's tests are the protocol. A pass runs only when a claim, the chain or a width has changed.
+- **Measure once.** Done: a streamed response that ran 204 to 264 passes before runs none.
+- **Priorities** (an order of giving way other than from the left) and **animation** are not built. Priorities are a part D item in the coordinator's plan, taken up when a case needs one.
 
 ### One navigation entry point
 
@@ -121,10 +113,12 @@ Three decisions (Steve, 2026-11-19):
 2. **A tile the user taps reports afterwards.** The columns select it as before; the browser hears of the path change and records a request whose cause is the user. Nothing can veto or redirect a tap before it happens. That moves through the entry point with the compaction coordinator (part 2), the first thing that needs it.
 3. **Focus-and-expand waits for a second pass.** `postShouldFocusAndExpandSubnode` and `postShouldFocusSubnode` ("show this child of where I am", about 16 call sites, most of them in the app) still select in the columns directly, so the path change they cause is recorded as the user's. Until the second pass, an announcement keyed on the cause will miss them.
 
-#### Second pass (open)
+#### Second pass (built 2026-11-23)
 
-- Route the focus-and-expand notes through `navigate()` as a request that names a child of the current place, with the cause `"program"`, or `"user"` when the user's own add caused it.
-- Other path changes with no request behind them, which are also recorded as the user's today: a column folding because its node was removed (`nodeBecameOrphan`), and a selected tile rebinding to a new instance.
+- **The focus notes are code's moves.** `postShouldFocusSubnode` and `postShouldFocusAndExpandSubnode` are still carried out by the column that shows the parent: it scrolls to the tile and opens it, which a path walk from the root would not do. That column now does it on behalf of a request with the cause `"program"` (`SvTilesView.selectForModel()` → `SvBrowserView.selectInColumnsFor()`), so the path change is recorded as code's and not the user's. A navigation already under way keeps its own cause. This differs from the first plan, which was to send the notes through `navigate()`; the column keeps its own scrolling and opening, and the browser hears who asked.
+- **Every note is code's**, including one posted after the user's own add. The user asked for the new item, but not for the browser to move to it, so a screen reader should hear where they are.
+- **Left as the user's, on purpose:** a column folding because its node was removed (`nodeBecameOrphan`), and a selected tile rebinding to a new instance. Neither takes the user anywhere new, and both stay silent.
+- **Checked** by `TestNavigationEntryPoint` (both notes go through the request; nothing is left pending, even when the selection throws) and, in a browser against `just launch`, by `tests/e2e/navigation-announcements.spec.js` in the app repo. `navigation-entry-point.spec.js` and `meta-plan-step-a.spec.js` still pass.
 
 ### Mobile and responsive behavior
 
@@ -132,40 +126,20 @@ The compaction system provides basic responsive behavior, but a dedicated mobile
 
 ### Composable breadcrumbs
 
-Breadcrumbs are not built into the browser view — they're a regular node (`SvBreadCrumbsTile`) added to the node tree. But the tile currently finds its target by walking up to the root `SvStackView`, so only one set of breadcrumbs can exist per browser. This breaks down when a split view or inspector pane contains its own nested stack view that the user navigates independently. That inner pane needs its own breadcrumbs tracking its own path, not the root's.
-
-A concrete example: during a game narration conversation, a side panel could let the player inspect their character sheet — drilling into inventory, spells, ability scores — without navigating away from the conversation. That panel would be its own stack view with its own breadcrumbs, independent of the main browser path.
-
-The fix is to make breadcrumbs composable: instead of always targeting the root stack view, the breadcrumbs node should target the nearest ancestor stack view (or a specifically assigned one). This would let any stack view — whether it's the top-level browser, one side of a split view, or a deep inspector panel — have its own independent navigation context with its own breadcrumb trail.
+**Built 2026-06-12.** The breadcrumbs used to be a node in the tree (`SvBreadCrumbsTile`) that found its target by walking up to the root stack view, so a browser could have only one set. Now each `SvBrowserView` owns an `SvBreadCrumbsView`, and a path change bubbles only to the nearest browser. An embedded browser, such as the one inside a companion, has its own trail and its own path, independent of the main one.
 
 ### Auxiliary view
 
-A node could declare an auxiliary node that the view system renders as a side panel with its own independent navigation context. The auxiliary panel would be a full stack view — the user can drill into nested content within it — but scoped and constrained by hints from the primary node.
+**Built 2026-06-12, as the companion.** A node answers `nodeCompanionNode()` with another node, and `SvDetailView` shows that node beside (or below) the node's navigation in an `SvCompanionView` holding an embedded browser, with its own breadcrumbs, selection and compaction. It is docked, collapsed to a tab behind an edge handle, or hidden when there is no room; the user's dock or tab choice is kept, and Cmd+\\ toggles the deepest one. See [Companion View](../../Views/Companion%20View/). In the compaction pass, companions are sized before the columns, which then compact around the reservation.
 
-```javascript
-this.setNodeAuxiliaryNode(this.characterSheet());
-this.setNodeAuxiliaryPosition("right");           // or "bottom"
-this.setNodeAuxiliaryDefaultState("expanded");    // or "collapsed"
-this.setNodeAuxiliaryCompactsFirst(true);         // collapse auxiliary before main columns
-this.setNodeAuxiliaryMaxColumns(2);               // cap drill-in depth within the panel
-```
+The sketch that stood here proposed five hints. The companion took one and left the view to decide the rest:
 
-This stays declarative — the node says what it wants, the view system handles layout. The auxiliary side is a fully independent navigation context with its own breadcrumbs (once breadcrumbs are composable), its own selection, and its own internal compaction. No changes to the main selection model.
+| Sketched | Now |
+| --- | --- |
+| `setNodeAuxiliaryNode(node)` | `nodeCompanionNode()` |
+| `setNodeAuxiliaryPosition("right" / "bottom")` | Not a hint; the edge follows the stack's direction (right, or bottom for a `"down"` stack). |
+| `setNodeAuxiliaryDefaultState("expanded" / "collapsed")` | Not a hint; chosen from the space it is offered until the user pins docked or tab. |
+| `setNodeAuxiliaryCompactsFirst(true)` | Not a hint; the columns compact around a docked companion, and a window too narrow for it hides it whatever the pin. |
+| `setNodeAuxiliaryMaxColumns(n)` | Not built; the embedded browser compacts within its own width. |
 
-The `maxColumns` hint is important for space management. A conversation node knows it only needs a narrow inspector — one or two columns to peek at the character sheet. Once the user drills past the limit, deeper navigation replaces the last column rather than adding a new one.
-
-### Compaction with auxiliary views
-
-The current compaction algorithm walks the stack chain and collapses columns that don't fit the available width. Auxiliary views add a new dimension to this because column compaction (horizontal, across navigation levels) and auxiliary compaction (within a single level's content area) are orthogonal.
-
-The compaction sequence would become:
-
-1. **Auxiliary internal compaction**: If the auxiliary panel has more columns than fit its allotted width, collapse its inner columns first (using the existing compaction logic, scoped to the auxiliary stack view).
-2. **Auxiliary collapse**: If still too tight, collapse the auxiliary panel entirely — to a toggle button, thin strip, or hidden — freeing its width for the main content.
-3. **Main column compaction**: If the main stack chain still doesn't fit, run the existing column compaction on the primary columns.
-
-Expanding works in reverse: as width becomes available, the main columns uncollapse first, then the auxiliary panel reappears, then the auxiliary's internal columns expand.
-
-Node hints control priority: `auxiliaryCompactsFirst` (default `true`) means the auxiliary gives up space before any main columns. A node could set this to `false` if the auxiliary content is more important than the surrounding navigation context — though that would be unusual.
-
-This approach requires no fundamental changes to the compaction algorithm itself. The auxiliary panel's internal compaction is just a smaller instance of the same algorithm running on a scoped stack view. The new work is the coordination layer that decides the order of compaction across the two contexts.
+**No node in the framework or the app supplies a companion yet**, so none of this has been seen in use. The companion's code is kept and nothing is spent on it until one does (Compaction Coordinator, decision 17); the missing hints wait for that node too.

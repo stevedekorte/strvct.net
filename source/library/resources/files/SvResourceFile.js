@@ -311,9 +311,10 @@
         } else if (mimeCategory === "video") {
             throw new Error("no support for video files yet");
         } else if (mimeCategory === "audio") {
-            const soundResource = SvSoundResource.clone();
-            soundResource.setData(await blob.asyncToArrayBuffer());
-            return soundResource.promiseToDecode(); // returns an SvWaSound
+            const sound = SvWaSound.clone();
+            sound.setData(await blob.asyncToArrayBuffer());
+            await sound.promiseToDecode(); // resolves with nothing, so return the sound itself
+            return sound;
         } else if (mimeCategory === "font") {
             return await blob.asyncToArrayBuffer(); // just return the array buffer
         } else  {

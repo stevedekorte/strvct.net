@@ -2,7 +2,7 @@
 
 > Write the domain model. Get the application.
 
-Site build: STRVCT · 2026-11-20 · 9e9887d2
+Site build: STRVCT · 2026-11-22 · 02177109
 
 ## Documentation
 
@@ -23,6 +23,7 @@ Site build: STRVCT · 2026-11-20 · 9e9887d2
 - [Gesture Recognizers](docs/Events%20and%20Gestures/Gesture%20Recognizers/): Higher-level state machines that interpret sequences of events as meaningful gestures.
 - [Keyboard and Focus](docs/Events%20and%20Gestures/Keyboard%20and%20Focus/): Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
 - [Timers](docs/Events%20and%20Gestures/Timers/): Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
+- [First Principles](docs/First%20Principles/): What would we build if we started from first principles?
 - [Getting Started](docs/Getting%20Started/): Setup, integration, directory conventions, build pipeline, and running your first Strvct application.
 - [Implementation Overview](docs/Implementation%20Overview/): Deep technical specifications for class lifecycle, slots, views, persistence, notifications, and build infrastructure.
 - [Inspectors and Debugging](docs/Inspectors%20and%20Debugging/): Built-in tools for live Property Inspection, Developer Mode graph toggles, and Chrome DevTools source debugging.
@@ -88,7 +89,7 @@ Site build: STRVCT · 2026-11-20 · 9e9887d2
 - [Companion View](docs/Views/Companion%20View/): A persistent secondary context docked alongside a node's navigation, collapsing behind an edge handle or disappearing as the viewport narrows.
 - [Custom Views](docs/Views/Custom%20Views/): Authoring custom view classes, DOM wrappers, flex shortcuts, and model synchronization for specialized media.
 - [Programmatic Styling](docs/Views/Programmatic%20Styling/): Named CSS methods, the chainable API, and why STRVCT avoids CSS files.
-- [Responsive Views](docs/Views/Responsive/): Automatic viewport compaction, last-column stretching, and per-node width hooks without per-screen layout code.
+- [Responsive Views](docs/Views/Responsive/): Automatic column compaction, last-column stretching, and per-node width hooks, without per-screen layout code.
 - [Themes and Style States](docs/Views/Themes%20and%20Style%20States/): How views resolve their appearance from theme classes, style states, and node configuration.
 
 ## Example App

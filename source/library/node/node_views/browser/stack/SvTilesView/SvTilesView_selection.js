@@ -459,8 +459,35 @@
         if (!this.isInBrowser()) {
             return this;
         }
+        return this.selectForModel(aNote.info(), () => this.focusAndExpandSubnode(aNote.info()));
+    }
 
-        const subnode = aNote.info();
+    /**
+     * @description Carries out a model's focus note on behalf of a "program"
+     * request, so the browser records the path change as code's doing and
+     * not the user's (and a screen reader hears where they were taken).
+     * @param {SvNode} subnode - the node the model asked to show
+     * @param {Function} aFunction - the selection, run now
+     * @returns {SvTilesView_selection} The current instance.
+     * @category Selection
+     */
+    selectForModel (subnode, aFunction) {
+        const browser = this.firstParentViewWithAncestorClass(SvBrowserView);
+        if (!browser) {
+            aFunction();
+            return this;
+        }
+        browser.selectInColumnsFor(SvNavigationRequest.toNode(subnode).setCause("program"), aFunction);
+        return this;
+    }
+
+    /**
+     * @description Selects, scrolls to and opens a subnode's tile.
+     * @param {SvNode} subnode - The subnode to focus and expand.
+     * @returns {SvTilesView_selection} The current instance.
+     * @category Selection
+     */
+    focusAndExpandSubnode (subnode) {
         let subview = this.subviewForNode(subnode);
 
         if (!subview) {
@@ -492,8 +519,16 @@
      * @returns {SvTilesView_selection} The current instance.
      */
     shouldFocusSubnode (aNote) {
-        const subnode = aNote.info();
+        return this.selectForModel(aNote.info(), () => this.focusSubnode(aNote.info()));
+    }
 
+    /**
+     * @description Selects and scrolls to a subnode's tile without opening it.
+     * @param {SvNode} subnode - The subnode to focus.
+     * @returns {SvTilesView_selection} The current instance.
+     * @category Selection
+     */
+    focusSubnode (subnode) {
         let subview = this.subviewForNode(subnode);
 
         if (!subview) {
