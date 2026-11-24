@@ -6,6 +6,7 @@
     "SvTilesView_keyboard.js",
     "SvTilesView_gestures.js",
     "SvTilesView_helpers.js",
-    "SvTilesView_inline.js"
+    "SvTilesView_inline.js",
+    "SvTilesView_grid.js"
 ]
 

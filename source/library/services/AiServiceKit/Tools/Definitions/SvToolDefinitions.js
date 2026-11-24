@@ -118,14 +118,14 @@ The following tools are available for you to use (compact JSON):
         
 ### How to Use These Definitions
 
-When making a tool call, use only the "parameters" schema from the definition. For example, for the rollRequest tool:
+When making a tool call, use only the "parameters" schema from the definition. For example, for a hypothetical tool named "addNote" (it is not in your list) whose "parameters" schema has one property, "note", described by #/definitions/Note:
 
 Tool call structure:
 {
   "callId": "call_X",
-  "toolName": "rollRequest",
+  "toolName": "addNote",
   "parameters": {
-    "rollRequest": { /* Use schema from #/definitions/UoRollRequestMessage */ }
+    "note": { /* an object matching #/definitions/Note */ }
   }
 }
 `);

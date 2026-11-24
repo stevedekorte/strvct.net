@@ -13,6 +13,16 @@
 
 (class SvTilesView extends SvScrollContentView {
 
+    /**
+     * @static
+     * @description Class slots: whether the grid's style sheet is on the
+     * page (SvTilesView_grid).
+     * @category Initialization
+     */
+    static initClass () {
+        this.newClassSlot("hasAddedGridCss", false);
+    }
+
     initPrototypeSlots () {
         /**
          * @member {Array} tiles
@@ -31,12 +41,16 @@
             slot.setSlotType("Boolean");
         }
         /**
-         * @member {SvTile} tilePlaceHolder
+         * @member {SvDomView} tilePlaceHolder - the gap a drag leaves where
+         * the tile would land. A plain view, not a tile: typed "SvTile", its
+         * setter refused it, so the slot stayed null and every reorder by
+         * drag failed an assertion (found 2026-11-23).
          * @category UI
          */
         {
             const slot = this.newSlot("tilePlaceHolder", null);
-            slot.setSlotType("SvTile");
+            slot.setSlotType("SvDomView");
+            slot.setAllowsNullValue(true);
         }
         /**
          * @member {Boolean} hasPausedSync
@@ -307,6 +321,7 @@
     syncFromNode () {
         this.syncOrientation(); // implemented in Tiles_orientation.js
         this.syncInlineLayout(); // SvTilesView_inline: a document's sections
+        this.syncGridLayout(); // SvTilesView_grid: cells that wrap
         super.syncFromNode();
 
         // Accessibility: sync label and opt-in live region from node

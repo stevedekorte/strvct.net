@@ -566,14 +566,15 @@
     /**
      * @description Whether this column takes the width that is left for as
      * long as it is shown, with columns after it or not: an inline document
-     * (Plans/Compaction Coordinator, part D). It is hidden like any other
+     * (Plans/Compaction Coordinator, part D) or a wrapping grid, whose
+     * content flows into whatever width it is given. It is hidden like any other
      * column. Reads the model only.
      * @returns {Boolean}
      * @category Layout
      */
     fillsWhenShown () {
         const node = this.presentedNodeFor(this.node());
-        return !!node && node.nodeChildrenLayout() === "inline"; // every viewable node answers (SvViewableNode)
+        return !!node && ["inline", "grid"].includes(node.nodeChildrenLayout()); // every viewable node answers (SvViewableNode)
     }
 
     /**

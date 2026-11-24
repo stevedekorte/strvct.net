@@ -822,6 +822,19 @@
      * @returns {SvTitledTile}
      * @category UI
      */
+    /**
+     * @description Marks the element while the note is the "opens" chevron,
+     * so a layout can style it (a grid cell leaves it out: the whole cell
+     * is what opens). An attribute, not a class: a tile's class names are
+     * rewritten when its node is set.
+     * @param {Boolean} oldValue
+     * @param {Boolean} newValue
+     * @category UI
+     */
+    didUpdateSlotIsShowingNavArrow (oldValue, newValue) {
+        this.element().toggleAttribute("data-nav-arrow", !!newValue);
+    }
+
     showNavArrow () {
         this.hideNoteIconView();
         this.showNoteView();

@@ -153,26 +153,38 @@
         this.unstackTiles();
         this.removeTilePlaceHolder();
 
-        //console.log("---")
-        //this.showNodes(movedNodes)
-        //this.showTiles(this.subviews())
-        const newSubnodesOrder = this.subviews().map(sv => sv.node());
-
-        //this.showNodes(newSubnodesOrder);
-
-        this.node().removeSubnodes(movedNodes); // is this needed?
-        //assert(!newSubnodesOrder.containsAny(movedNodes));
-
-
-        newSubnodesOrder.atInsertItems(insertIndex, movedNodes);
-        //this.showNodes(newSubnodesOrder);
-
-        this.node().setSubnodes(newSubnodesOrder);
-
-        //console.log("new order: " + this.node().subnodes().map(sn => sn.title()).join("-"));
+        this.placeDroppedNodes(movedNodes, insertIndex);
         this.setHasPausedSync(false);
         this.syncFromNodeNow();
         this.selectAndFocusNodes(movedNodes);
+    }
+
+    /**
+     * @description Puts dropped nodes at the place the drag showed, through
+     * the node's own subnode methods. insertIndex counts the subnodes that
+     * are not being dropped, as the tiles did while the drag was on.
+     *
+     * This replaced removeSubnodes() and then setSubnodes() with a plain
+     * Array: a subclass's subnodes slot refuses a plain Array (it wants an
+     * SvSubnodesArray), so the moved nodes were removed and never put back
+     * (found 2026-11-23).
+     * @param {Array<SvNode>} nodes - all in this node already (a move
+     * within it), or none (a copy, or a move from another node)
+     * @param {Number} insertIndex
+     * @returns {SvTilesView_dragViewProtocol}
+     * @category Dropping
+     */
+    placeDroppedNodes (nodes, insertIndex) {
+        const node = this.node();
+        const subnodes = node.subnodes();
+        const anchor = subnodes.filter(n => !nodes.includes(n))[insertIndex]; // the node they go before; none at the end
+        const index = anchor ? subnodes.indexOf(anchor) : subnodes.length;
+        if (nodes.every(n => subnodes.includes(n))) {
+            node.moveSubnodesToIndex(nodes, index); // index in the array as it is, moved nodes included
+        } else {
+            nodes.forEach((n, i) => node.addSubnodeAt(n, index + i));
+        }
+        return this;
     }
 
     /**
@@ -193,12 +205,7 @@
 
         this.unstackTiles();
         this.removeTilePlaceHolder();
-
-        const newSubnodesOrder = this.subviews().map(sv => sv.node());
-        assert(!newSubnodesOrder.containsAny(movedNodes));
-        newSubnodesOrder.atInsertItems(insertIndex, movedNodes);
-        this.node().setSubnodes(newSubnodesOrder);
-
+        this.placeDroppedNodes(movedNodes, insertIndex);
         this.setHasPausedSync(false);
         this.syncFromNodeNow();
         this.selectAndFocusNodes(movedNodes);
@@ -271,6 +278,9 @@
     syncTilePlaceHolderSize (dragView) {
         const ph = this.tilePlaceHolder();
         //const period = 0.1
+        if (ph && this.isGridLayout()) {
+            return this; // the grid sizes its cells
+        }
         if (ph) {
             if (this.isVertical()) {
                 ph.setMinAndMaxWidth(this.computedWidth());
@@ -296,6 +306,9 @@
      * @returns {number} The index of the tile placeholder
      */
     indexOfTilePlaceHolder () {
+        if (this.isGridLayout()) {
+            return this.indexOfGridPlaceHolder();
+        }
         const sortMethod = this.isVertical() ? "topPx" : "leftPx";
         const orderedTiles = this.tiles().shallowCopy().sortPerform(sortMethod);
         const insertIndex = orderedTiles.indexOf(this.tilePlaceHolder());
@@ -331,6 +344,10 @@
     onDragDestinationHover (dragView) {
         // move place holder view
         const ph = this.tilePlaceHolder();
+        if (ph && this.isGridLayout()) {
+            this.moveGridPlaceHolderFor(dragView);
+            return;
+        }
         if (ph) {
             this.syncTilePlaceHolderSize(dragView);
             const vp = this.viewPosForWindowPos(dragView.dropPoint());

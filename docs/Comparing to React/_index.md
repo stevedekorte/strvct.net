@@ -103,7 +103,7 @@ This is the whole thing. A `Contacts` collection holding these objects gets a li
 
 In React you design each screen. In Strvct, a screen comes from a few decisions about the model, which you state as hints on the node class:
 
-- **Beside or inside.** When you open a child, does it get its own column or tab beside its parent, or is it drawn inside the parent as a section of a document? The default is a column. `nodeChildrenLayout()` returning `"inline"` shows the next levels in place as a document, and `nodeSubnodesAreAnchoredTabs()` shows children as tabs that open side by side when there is room.
+- **Beside or inside.** When you open a child, does it get its own column or tab beside its parent, or is it drawn inside the parent as a section of a document? The default is a column. `nodeChildrenLayout()` returning `"inline"` shows the next levels in place as a document, `"grid"` lays the children out as a wrapping gallery of cells, and `nodeSubnodesAreAnchoredTabs()` shows children as tabs that open side by side when there is room.
 - **What shows.** A node can present a different node in its place with `nodePresentedNode()`. For example, a character can present a readable character sheet built from its data.
 - **How items look.** Hints such as `nodeTileLayout()` and `nodeChildrenTileWidth()` name a role, like `"status"` or `"roster"`, and the theme decides what that role looks like.
 

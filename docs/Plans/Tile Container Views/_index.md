@@ -2,24 +2,31 @@
 
 Layout strategies for presenting a node's subnodes.
 
-**Status:** open. The wrapping grid does not wait on anything (decided 2026-11-20): it wraps inside the width its column is already given, as an inline document does. The [Compaction Coordinator](../Compaction%20Coordinator/), which the table and the scrolling waited on, was released 2026-11-22; if a table needs to ask a neighbouring column for width, that is the coordinator's "claim with a least and a most", a part D item taken up then. **Order:** `setNodeTilesViewClass()` and the wrapping grid, then the table, then scrolling over windowed collections; the search and filter chrome takes the Search & Filtering item from [Emergent Capabilities](../Emergent%20Capabilities/). Each container gets its ARIA roles when it is written, not later.
+**Status:** the wrapping grid is built (2026-11-23), first used by artwork. **Next, when a case needs it:** the table, then scrolling over windowed collections, then the list/grid switcher; the search and filter chrome takes the Search & Filtering item from [Emergent Capabilities](../Emergent%20Capabilities/). The table may need to ask a neighbouring column for width, which is the [Compaction Coordinator](../Compaction%20Coordinator/)'s "claim with a least and a most", a part D item taken up then. Each container gets its ARIA roles when it is written, not later.
 
-## The first grid: a recommendation for discussion (2026-11-23)
+## The first grid: built (2026-11-23)
 
-Written before any code, because three things in it are Steve's to decide.
+Proposed and agreed the same day; the three decisions were Steve's.
 
-**1. Opt in with the layout hint, not a view class.** The plan above says `setNodeTilesViewClass(SvGridTilesView)`. Since it was written, the framework settled on hints that name a role, read by the generic view: `nodeChildrenLayout()` already answers `"column"` or `"inline"`. A grid is a third answer, `"grid"`. The node says how its children are arranged, and the view decides how to draw that. The swap to another UI (a terminal, headless) then needs no class names, and nothing in a node names a view. `setNodeTilesViewClass()` would stay unbuilt until a container needs code the generic view cannot hold, which may be the spatial map. *Recommended.*
+**1. A node opts in with the layout hint, not a view class.** `nodeChildrenLayout()` answers `"grid"`, beside `"column"` and `"inline"`. The node says how its children are arranged; the view decides how to draw it, so another UI (a terminal, headless) needs no class names. `setNodeTilesViewClass()`, which this page first proposed, stays unbuilt until a container needs code the generic view cannot hold (perhaps the spatial map).
 
-**2. How it is built.** It is a mode of `SvTilesView`, as inline documents are (`SvTilesView_inline`), and not a subclass:
+**2. It is a mode of `SvTilesView`** (`SvTilesView_grid`), as inline documents are, not a subclass:
 
-- **Layout.** CSS grid, `repeat(auto-fill, minmax(<cell>, 1fr))`, so cells wrap inside the width the column is given, with no measuring. The cell width comes from the parent's `nodeChildrenTileWidth()` (today it means "a tile in a horizontal row"; it would also mean "a grid cell"), or a default.
-- **The column.** A grid fills whenever it is shown, as an inline document does (`fillsWhenShown`), so it is offered the width left over rather than a list column's width. That is a part D rule that already exists, with no new compaction work.
-- **The cell.** It is still the tile the child would have in a list, so selection, drag, theming and drill-in carry over. In a grid, a tile whose node has a thumbnail shows it above the title, filling the cell's width (`SvTitledTile` already decides by layout whether a thumbnail fits).
-- **Keys.** Left and right move along a row; up and down move by one row, by the column count the grid has at that moment. That count is a value the grid writes, not one it measures.
-- **ARIA.** `list` and `listitem`, not `grid` and `gridcell`. A collection of links the user opens is a list; the `grid` role promises spreadsheet-like cell navigation, which this does not have. Each container gets its roles when it is written.
-- **Reorder.** Drag to reorder works by the same index as in a list; the drop indicator is drawn between cells rather than between rows.
+- **Layout.** CSS grid, `repeat(auto-fill, minmax(<cell>, 1fr))`: cells wrap inside the width the column is given, with nothing measured. The narrowest cell is the node's `nodeChildrenTileWidth()` (which also means "a tile in a horizontal row"), or 160px. Only a vertical column wraps; in a horizontal row, or a section of an inline document, the hint is ignored.
+- **The column.** A grid fills whenever it is shown (`SvNavView.fillsWhenShown`), as an inline document does, so it is offered the width left over. No new compaction work.
+- **The cell.** The tile the child would have in a list, so selection, drill-in and theming carry over. Its thumbnail sits above the title, as wide as the cell; the title wraps; the "opens" chevron is left out (the whole cell opens). A tile marks the chevron with a `data-nav-arrow` attribute (a tile's class names are rewritten when its node is set, so a class would not last).
+- **Keys.** Left and right move along a row; left from a row's first cell goes back a column, right from its last goes into the column the cell opened. Up and down move by a row. The row length is read from the grid's computed columns in the key handler, before anything is written: one read per key press. (The proposal said a value the grid writes; with a column that fills, the grid never knows its width as a number, so it reads it.)
+- **ARIA.** `list`, as a list is. The `grid` role promises spreadsheet-like cell navigation, which this does not have.
+- **Reorder.** A list stacks its rows absolutely while dragging, which only works in one line. A grid keeps its cells in the grid and moves a placeholder cell to where the tile would land: after every cell that comes before the pointer in reading order. One read of the cells' frames, then one write, per pointer move.
 
-**3. The first user, so it can be seen.** A character's artwork (`UoArtworkFolder`, whose items already have thumbnails) is the clearest case in the app: a gallery that today is a list of rows. The alternative is a fixture node in the app's Inline Lab, which shows the grid without changing what players see. *Recommended: the artwork folder, with a fixture for the specs.*
+**3. The first user:** `UoArtworkFolder`, a character's, a location's and a trap's gallery, which was a list of rows.
+
+**Checked:** headless (`TestTilesViewGrid`, 33 checks) and in Chromium against `just launch` (`tests/e2e/artwork-grid.spec.js`, a new character's folder given seven items): the cells wrap, the picture is as wide as its cell, the keys move by a row and along it, a held drag reorders and the cells stay in the grid. Not yet seen: a phone width, and real pictures.
+
+**What the grid's drag found in the list's.** Reordering any list by a held drag had been broken, probably since slot types were first set on views (2024-07):
+
+- `tilePlaceHolder` was typed `"SvTile"`, but the placeholder is a plain view, so its setter refused it and the slot stayed null; the drag failed an assertion as it began. Now typed `"SvDomView"`.
+- The drop removed the moved nodes and then called `setSubnodes()` with a plain Array. A class that overrides its `subnodes` slot refuses a plain Array, so the nodes were removed and never put back. The drops now go through `placeDroppedNodes()`, which uses the node's `moveSubnodesToIndex()` and `addSubnodeAt()`. The same spec drags in a plain list.
 
 **Not in the first grid:** the switcher between a list and a grid (`nodeAlternativeTilesViewClasses()`), virtual scrolling, and container chrome.
 
@@ -41,7 +48,7 @@ The framework's current tile container, which lays out subnodes as a linear arra
 
 A container that flows tiles into rows (or columns), wrapping at the container edge. Useful for image galleries, icon grids, card collections, and any set of uniformly-sized items where the count varies.
 
-The node would opt in via something like `setNodeTilesViewClass(SvGridTilesView)` and optionally hint at minimum tile width. The grid container handles layout; each cell is still a standard tile -- so selection, drag-to-reorder, and accessibility carry over.
+Built 2026-11-23 ([above](#the-first-grid-built-2026-11-23)): a node answers `nodeChildrenLayout()` `"grid"` and may hint the narrowest cell with `nodeChildrenTileWidth()`. Each cell is still a standard tile, so selection, drag-to-reorder, and accessibility carry over.
 
 ### Spatial Map
 
@@ -67,7 +74,7 @@ A container that renders subnodes as data series in a chart (bar, line, scatter,
 
 ## Design Considerations
 
-- **Opt-in per node**: Nodes select their container via a new `setNodeTilesViewClass()`. The default remains `SvTilesView`.
+- **Opt-in per node**: Nodes say how their children are laid out with `nodeChildrenLayout()` (`"column"`, `"inline"`, `"grid"`), read by the generic tiles view. A view class (`setNodeTilesViewClass()`) only for a container the generic view cannot hold.
 - **Tile reuse**: Each cell, marker, row, or data point should still be a tile (or tile subclass) so that selection, gestures, theming, and accessibility work without reimplementation.
 - **Stack composability**: New containers should compose within the existing stack navigation model -- drilling into a grid cell or map marker opens the next column just as drilling into a list tile does.
 - **Responsive behavior**: Containers should adapt to their available size, reflowing or scrolling as needed. The existing `SvNavView` width management and compaction logic would need extension points.

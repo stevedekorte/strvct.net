@@ -129,6 +129,9 @@
      * @category Stacking
      */
     stackTiles () {
+        if (this.isGridLayout()) {
+            return this; // a grid's cells stay in the grid (SvTilesView_grid)
+        }
         if (this.isVertical()) {
             this.stackTilesVertically();
         } else {
@@ -143,6 +146,9 @@
      * @category Stacking
      */
     unstackTiles () {
+        if (this.isGridLayout()) {
+            return this; // never stacked
+        }
         if (this.isVertical()) {
             this.unstackTilesVertically();
         } else {

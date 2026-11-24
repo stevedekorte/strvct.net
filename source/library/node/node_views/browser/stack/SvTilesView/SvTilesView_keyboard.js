@@ -277,6 +277,10 @@
         if (!this.canNavigate()) {
             return;
         }
+        if (this.isGridLayout()) {
+            this.moveGridRows(-1);
+            return false;
+        }
 
         if (this.isVertical()) {
             this.moveDown();
@@ -295,6 +299,10 @@
     onDownArrowKeyDown (/*event*/) { // why down and not up?
         if (!this.canNavigate()) {
             return;
+        }
+        if (this.isGridLayout()) {
+            this.moveGridRows(1);
+            return false;
         }
 
         if (this.isVertical()) {
@@ -315,6 +323,9 @@
         if (!this.canNavigate()) {
             return this;
         }
+        if (this.isGridLayout()) {
+            return this.moveGridLeft();
+        }
         if (this.isVertical()) {
             this.moveLeft();
         } else {
@@ -331,6 +342,9 @@
     onRightArrowKeyUp (/*event*/) {
         if (!this.canNavigate()) {
             return this;
+        }
+        if (this.isGridLayout()) {
+            return this.moveGridRight();
         }
 
         if (this.isVertical()) {

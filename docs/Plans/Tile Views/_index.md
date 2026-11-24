@@ -2,7 +2,7 @@
 
 Tile subclasses for presenting individual subnodes in specialized ways.
 
-**Status:** open. The meter and badge tiles are small and can be done any time; the rest follow [Tile Container Views](../Tile%20Container%20Views/), since they're most useful in grids and tables. Prefer a node hint the generic tile reads over a new tile class where the difference is only appearance (see the framework guide: a custom view class is the last resort).
+**Status:** open. The meter and badge tiles are small and can be done any time; the rest follow [Tile Container Views](../Tile%20Container%20Views/), since they're most useful in grids and tables. The wrapping grid is built (2026-11-23); a cell there is the ordinary tile, its thumbnail above its title. Prefer a node hint the generic tile reads over a new tile class where the difference is only appearance (see the framework guide: a custom view class is the last resort).
 
 ## Context
 

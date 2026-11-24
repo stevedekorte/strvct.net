@@ -141,9 +141,7 @@ The following formats will be used for tool calls and responses:
     }
 
     formalToolSpecificationsPrompt () { // is this used?
-        const s = this.toolDefinitions().toolSpecPrompt();
-        assert(s.includes("rollRequest"), "rollRequest tool not found in toolSpecPrompt");
-        return s;
+        return this.toolDefinitions().toolSpecPrompt();
     }
 
     toolTypesJson () { // is this used?

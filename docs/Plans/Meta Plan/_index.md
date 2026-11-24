@@ -3,7 +3,7 @@ subtitle: The order to do the other plans in, why, and what should change in the
 ---
 # Meta Plan
 
-**As of:** 2026-11-23. Every plan page opens with a status line; this page orders them. Steps 1 to 6 are built: 1 to 3 done, 4 (Capabilities & Permissions) and 5's first part (slot constraints) seen working in a browser on 2026-11-19, and 6 (Browser Cleanup) built in all four parts, its compaction coordinator released to production on 2026-11-22. On 2026-11-23 the plans were checked against the code: Browser Cleanup's composable breadcrumbs and auxiliary view had been built on 2026-06-12, as `SvBreadCrumbsView` and the companion, and the plan had not noticed. The steps below follow from that check.
+**As of:** 2026-11-23. Every plan page opens with a status line; this page orders them. Steps 1 to 6 are built: 1 to 3 done, 4 (Capabilities & Permissions) and 5's first part (slot constraints) seen working in a browser on 2026-11-19, and 6 (Browser Cleanup) built in all four parts, its compaction coordinator released to production on 2026-11-22. On 2026-11-23 the plans were checked against the code: Browser Cleanup's composable breadcrumbs and auxiliary view had been built on 2026-06-12, as `SvBreadCrumbsView` and the companion, and the plan had not noticed. The steps below follow from that check; all four were built on 2026-11-23, and only a VoiceOver listen is left.
 
 ## Next Steps
 
@@ -16,9 +16,9 @@ Small, and each is a fault a reader or a user can meet today. All done the same 
 - **The breadcrumb bar's `aria-current`.** `SvBreadCrumbsTile` set `aria-current="location"` on the last crumb; `SvBreadCrumbsView`, which replaced it on 2026-06-12, does not. Put it back, with a headless check.
 - **Docs that describe code that is gone.** [Responsive](../../Views/Responsive/) explains compaction with `compactNavAsNeeded` and `updateWidthForWindow`, both removed by the compaction coordinator; rewrite it around claims and `SvLayerAllocation`. [Accessibility](../../Accessibility/), [Internationalization](../../Internationalization/) and [Auto-Generated Views](../../Views/Auto-Generated%20Views/) still name `SvBreadCrumbsTile`.
 
-### 2. Keep the framework free of app names (was B) — test built (2026-11-23), the prompt example waits
+### 2. Keep the framework free of app names (was B) — done (2026-11-23)
 
-**Built:** `TestUndefinedClassNames` fails when framework code uses a name as a class (`extends`, `new`, `instanceof`, `.clone()`, `.shared()`, a slot type, `SvGlobals.get`) that no framework file defines, that is not a platform API, and that is not listed with its reason. It found no app names, and two real faults, both fixed: an audio file read through `SvResourceFile` made an `SvSoundResource`, a class that never existed (seen decoding to an `SvWaSound` in a browser after the fix), and a slot type spelled `"NumbeStringr"`. It does not read prose in strings, so it cannot see the prompt example below.
+**Built:** `TestUndefinedClassNames` fails when framework code uses a name as a class (`extends`, `new`, `instanceof`, `.clone()`, `.shared()`, a slot type, `SvGlobals.get`) that no framework file defines, that is not a platform API, and that is not listed with its reason. It found no app names, and two real faults, both fixed: an audio file read through `SvResourceFile` made an `SvSoundResource`, a class that never existed (seen decoding to an `SvWaSound` in a browser after the fix), and a slot type spelled `"NumbeStringr"`. It does not read prose in strings, so it could not see the prompt example below. **The prompt example** (Steve chose a neutral one, 2026-11-23): `SvToolDefinitions` now shows a made-up `addNote` tool, marked as not in the model's list; the game's own `rollRequest` examples stay in its prompt files (`DiceRollToolPrompt.txt`), and an assertion that the framework's prompt mentioned `rollRequest` is gone. Three comments still name `rollRequest` as an example of a tool that waits for the user.
 
 What was planned: the ratchet test, like `TestPlatformGlobalsInModels`: fail when framework code references a class that no framework file defines. It needs no app prefix, so it stays general, and it stops the drift the 2026-11-18 cleanup undid. One known use stays until Steve chooses: the tool instructions every AI conversation receives (`SvToolDefinitions`) use the app's `rollRequest` and `UoRollRequestMessage` as their worked example. The recommendation is a neutral example made up for the framework, with the game keeping its own in its prompt files; it changes the game's prompt, so it waits on that choice. Details in [Naked Objects Issues](../Naked%20Objects%20Issues/#app-names-in-framework-code).
 
@@ -30,9 +30,9 @@ What was planned:
 
 The first feature in [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/#navigation-announcement-mechanism), and the last open part of Browser Cleanup. A path change now says who caused it, so announcing a `"program"` navigation is a listener and a live region. It is right only once the focus-and-expand notes and the other unrequested path changes go through `navigate()` ([second pass](../Browser%20Cleanup/#second-pass-open)); today they are recorded as the user's and would go unannounced. Checked in a browser with VoiceOver, not only headless.
 
-### 4. Tile Container Views: the wrapping grid — proposal written, waiting on three decisions (2026-11-23)
+### 4. Tile Container Views: the wrapping grid — built (2026-11-23)
 
-A recommendation is in [Tile Container Views](../Tile%20Container%20Views/#the-first-grid-a-recommendation-for-discussion-2026-11-23): opt in with `nodeChildrenLayout()` answering `"grid"`, not a view class; build it as a mode of `SvTilesView` that fills whenever shown; first used by a character's artwork. Nothing is built until those are agreed.
+**Built** as recommended and agreed (2026-11-23): a node answers `nodeChildrenLayout()` `"grid"`; `SvTilesView_grid` lays its tiles out as cells that wrap, fills whenever shown, moves by arrow keys in two dimensions, and reorders by drag with the cells kept in the grid. A character's (and a location's, and a trap's) artwork is the first user. Checked headless (`TestTilesViewGrid`) and in Chromium (`tests/e2e/artwork-grid.spec.js`). The grid's drag found that **reordering any list by drag had been broken**: the placeholder's slot type refused the placeholder, and the drop handed `setSubnodes()` a plain Array, which a subclass's slot refused after the moved node had been removed, so the node was lost. Both fixed, with a list check in the same spec. See [Tile Container Views](../Tile%20Container%20Views/#the-first-grid-built-2026-11-23).
 
 What was planned: `setNodeTilesViewClass()` and the first grid. It waits on nothing (decided 2026-11-20), and the manual accessibility passes and the Photo Gallery case study wait on it. Its ARIA roles come with it.
 
@@ -53,7 +53,7 @@ More slot constraints are declared where a wrong value is seen, not as a project
 | [Complete Protocols](../Complete%20Protocols/) | Done | Defaults on base classes, `SvJsonSerializableProtocol`, and a ratchet test. |
 | [Lazy Slots](../Lazy%20Slots/) | Shipped | Rewritten to describe what shipped; a few items remain. |
 | [Async Final Initialization](../Async%20Final%20Initialization/) | Closed | Its main case was solved by manifests and then lazy loading. |
-| [Naked Objects Issues](../Naked%20Objects%20Issues/) | Done, one decision left | Every listed class moved; seen in a browser 2026-11-19. App class names were taken out of framework code (2026-11-18), and `TestUndefinedClassNames` keeps them out (2026-11-23). One prompt example waits on a decision (next step 2). |
+| [Naked Objects Issues](../Naked%20Objects%20Issues/) | Done | Every listed class moved; seen in a browser 2026-11-19. App class names were taken out of framework code (2026-11-18), and `TestUndefinedClassNames` keeps them out (2026-11-23). The prompt example is now neutral (2026-11-23). |
 | [Cleanup Notes](../Cleanup%20Notes/) | Opportunistic | The runtime-risk items are fixed; the rest are for when a file is being changed anyway, including the two hand-kept promises. |
 | [Promise-Wrapped Slots](../Promise-Wrapped%20Slots/) | Core done, unused | One shared promise per value, retry after failure, recompute on a dependency change; no slot uses it yet. |
 | [Capabilities & Permissions](../Capabilities%20%26%20Permissions/) | Built, seen in a browser | Every view edit path asks the editability cascade; the server says who may write; a refused commit reloads and says so. Read, share and create hooks wait for a need. Not yet run on the Spanner backing. |
@@ -61,7 +61,7 @@ More slot constraints are declared where a wrong value is seen, not as a project
 | [Browser Cleanup](../Browser%20Cleanup/) | Built | All four parts: the entry point (2026-11-19, second pass 2026-11-23), the compaction coordinator (released 2026-11-22), composable breadcrumbs and the companion (2026-06-12). The companion's missing hints wait for a node that uses one. |
 | [Compaction Coordinator](../Compaction%20Coordinator/) | Released | Parts A to D in production 2026-11-22; C and D had no outside review. The rest of part D waits for cases. |
 | [Accessibility Testing & Tuning](../Accessibility%20Testing%20%26%20Tuning/) | Started | Navigation announcements and the breadcrumbs' `aria-current` built 2026-11-23, checked in Chromium; a VoiceOver check is next. No automated checks yet. |
-| [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Next after | The wrapping grid is next step 4 and waits on nothing; the table and scrolling follow. Large collections rewritten around windowed collections. |
+| [Tile Container Views](../Tile%20Container%20Views/), [Tile Views](../Tile%20Views/) | Grid built | The wrapping grid is built (2026-11-23), first used by artwork; the table and scrolling follow. Large collections rewritten around windowed collections. |
 | [Case Studies](../Case%20Studies/) | Later | Contacts can run early. |
 | [Emergent Capabilities](../Emergent%20Capabilities/) | Ideas | Each candidate now points to the plan that takes it. |
 | [Async Navigation](../Async%20Navigation/), [Graph Database](../Graph%20Database/) | Directions | No work planned. |
@@ -105,11 +105,11 @@ One navigation entry point (2026-11-19); the compaction coordinator (released 20
 
 ### 7. Tile Container Views and Tile Views
 
-Next (step 4 above). Meter and badge tiles can be done at any point.
+The wrapping grid is built (step 4 above). The table, scrolling over windowed collections, and the list/grid switcher are next when a case needs them. Meter and badge tiles can be done at any point.
 
 ### 8. Accessibility
 
-Nothing built yet. The navigation announcements now, with the automated checks alongside; manual passes after the first grid (step 7).
+The navigation announcements are built (step 3), not yet heard with VoiceOver. The manual passes can start: the first grid is built (step 7).
 
 ### 9. Case Studies
 

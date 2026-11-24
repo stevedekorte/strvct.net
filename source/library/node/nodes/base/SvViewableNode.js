@@ -413,8 +413,10 @@
      * @description How this node's subnodes are laid out (Plans/Inline
      * Navigation): "column" — one level per column, choosing a tile opens
      * the next (the default); "inline" — the next levels shown in place as
-     * a responsive document of sections. A role, read by the generic tiles
-     * view (SvTilesView_inline). Anchored tabs keep their own hint for now.
+     * a responsive document of sections; "grid" — the subnodes as cells
+     * that wrap at the column's edge, a gallery (Plans/Tile Container
+     * Views; nodeChildrenTileWidth is the narrowest cell). A role, read by
+     * the generic tiles view (SvTilesView_inline, SvTilesView_grid). Anchored tabs keep their own hint for now.
      * @returns {String}
      * @category Layout
      */

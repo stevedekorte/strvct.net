@@ -114,7 +114,7 @@ const ASKS_CASCADE = /offersUserEdit\(|effectiveUserEditability\(|\.canDelete\(\
 const GATED_ELSEWHERE = {
     "source/library/node/node_views/browser/stack/SvTile/SvTile_dragging.js onDragRequestRemove": "only a move drag asks this, and dragOperationForLongPress() makes a drag out of a read-only list a copy",
     "source/library/node/node_views/browser/stack/SvTilesView/SvTilesView_gestures.js onPinchCancelled": "removes the tile onPinchBegin added, which asked the cascade",
-    "source/library/node/node_views/browser/stack/SvTilesView/SvTilesView_dragViewProtocol.js onDragSourceDropped": "a reorder: canReorderTiles() asked the cascade before the drag was accepted (SvTilesView_gestures)",
+    "source/library/node/node_views/browser/stack/SvTilesView/SvTilesView_dragViewProtocol.js placeDroppedNodes": "the two drops' common step: a reorder passed canReorderTiles() and a drop acceptsDropHoverComplete(), both asking the cascade before the drag was accepted",
     "source/library/node/node_views/browser/stack/SvTilesView/SvTilesView_dragViewProtocol.js onDragDestinationDropped": "a drop: acceptsDropHoverComplete() asked the cascade before the drop was accepted"
 };
 

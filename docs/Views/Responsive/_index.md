@@ -64,7 +64,7 @@ The rules, each held by a check in `tests/headless/TestLayerAllocation.js`:
 
 - **Which columns show.** A column's sum is its own target plus every target and reservation after it. A column is shown while its sum is less than the width the chain must fit in, and hidden otherwise, so columns give way from the root end and the deepest stays longest. A column that fills is always shown; a level laid out downward is never hidden.
 - **How wide.** A column that fills takes the width left over. A column whose target is at least the available width takes all of it, and so does the last column when it has less than twice its target to fit in, so a narrow window leaves no dead space. Any other column is exactly its target. A target is capped one pixel short of the available width.
-- **An inline document** (a node whose `nodeChildrenLayout()` is `"inline"`) fills whenever it is shown, not only when it is last, and is hidden by the same test as any other column.
+- **An inline document or a grid** (a node whose `nodeChildrenLayout()` is `"inline"` or `"grid"`) fills whenever it is shown, not only when it is last, and is hidden by the same test as any other column.
 
 **When a pass runs.** A pass runs only when something it depends on has changed: the root's width, which stacks make up the chain and whether each is on the page, or a level's claim. The root keeps the signature of its last pass and skips one that would change nothing, so an ordinary node update, such as a streamed chat chunk, costs nothing. Widths are read once per pass from cached measurements, never after a write.
 
@@ -80,7 +80,7 @@ Domain nodes can influence layout without writing custom view code:
 |---|---|
 | `nodeMinTileWidth()` | The width the node's column asks for (its target). The default target is 270px; a column whose tiles show thumbnails adds room for them. |
 | `nodeFillsRemainingWidth()` | When `true`, the column stretches to take the width left over whenever it is the last visible column. Useful for document editors or chat logs. |
-| `nodeChildrenLayout()` | `"inline"` draws the children within the node's own column, as a document, and the column fills whenever it is shown. |
+| `nodeChildrenLayout()` | `"inline"` draws the children within the node's own column, as a document; `"grid"` draws them as cells that wrap at the column's edge (at least `nodeChildrenTileWidth()` wide). Either way the column fills whenever it is shown. |
 
 ---
 
